@@ -12,14 +12,17 @@
 #include <ArduinoOTA.h>
 #include "Free_Fonts.h" // Include the header file attached to this sketch
 #include <TFT_eWidget.h> // Widget library
-#include "SPI.h" 
+#include "SPI.h"
 #include "TFT_eSPI.h"
 #include "pindef.h"
 #include "A4988.h"
 
+#define SBI 1
+#define GUG 0
+
 Preferences preferences;
 
-#define WIFI_UPDATE 0
+#define WIFI_UPDATE 1
 WebServer server(80);
 bool OTA_running = false;
 
@@ -78,7 +81,7 @@ void setup() {
     targetWeight = 0.0;
     preferences.putFloat("targetWeight", targetWeight);
   }
-  
+
   tft_TS35_init();
   initStepper();
   initButtons();
@@ -132,12 +135,29 @@ void loop() {
       char buff[16];
       Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
 
-      int grammH = (buff[2] > 0x30) ? (buff[2] - 0x30) : 0;
-      int grammT = (buff[3] > 0x30) ? (buff[3] - 0x30) : 0;
-      int grammO = (buff[4] > 0x30) ? (buff[4] - 0x30) : 0;
-      int milliH = (buff[6] > 0x30) ? (buff[6] - 0x30) : 0;
-      int milliT = (buff[7] > 0x30) ? (buff[7] - 0x30) : 0;
-      int milliO = (buff[8] > 0x30) ? (buff[8] - 0x30) : 0;
+      int grammH = 0;
+      int grammT = 0;
+      int grammO = 0;
+      int milliH = 0;
+      int milliT = 0;
+      int milliO = 0;
+
+      if (GUG) {
+        grammH = (buff[2] > 0x30) ? (buff[2] - 0x30) : 0;
+        grammT = (buff[3] > 0x30) ? (buff[3] - 0x30) : 0;
+        grammO = (buff[4] > 0x30) ? (buff[4] - 0x30) : 0;
+        milliH = (buff[6] > 0x30) ? (buff[6] - 0x30) : 0;
+        milliT = (buff[7] > 0x30) ? (buff[7] - 0x30) : 0;
+        milliO = (buff[8] > 0x30) ? (buff[8] - 0x30) : 0;
+      }
+      if (SBI) {
+        grammH = (buff[3] > 0x30) ? (buff[3] - 0x30) : 0;
+        grammT = (buff[4] > 0x30) ? (buff[4] - 0x30) : 0;
+        grammO = (buff[5] > 0x30) ? (buff[5] - 0x30) : 0;
+        milliH = (buff[7] > 0x30) ? (buff[7] - 0x30) : 0;
+        milliT = (buff[8] > 0x30) ? (buff[8] - 0x30) : 0;
+        milliO = (buff[9] > 0x30) ? (buff[9] - 0x30) : 0;
+      }
 
       weight = grammH * 100.0;
       weight += grammT * 10.0;
@@ -205,23 +225,19 @@ void loop() {
         } else if (weight < (targetWeight - 0.025)) {
           Serial.println("Stepp 180...");
           step(180);
-          avrWeight = 5;
+          avrWeight = 2;
         } else if (weight < (targetWeight - 0.012)) {
           Serial.println("Stepp 40...");
           step(40);
-          avrWeight = 5;
+          avrWeight = 2;
         } else if (weight < (targetWeight - 0.005)) {
           Serial.println("Stepp 20...");
           step(20);
           avrWeight = 5;
-        } else if (weight < (targetWeight - 0.002)) {
-          Serial.println("Stepp 10...");
-          step(10);
-          avrWeight = 10;
         } else {
           Serial.println("Stepp 10...");
           step(10);
-          avrWeight = 20;
+          avrWeight = 5;
         }
       } else {
         stepperX.disable();
