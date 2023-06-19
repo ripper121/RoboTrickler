@@ -58,8 +58,8 @@ void btnUp_pressAction(void)
   if (btnUp.justPressed()) {
     btnUp.drawButton(true);
     stepperSpeed += addSpeed;
-    if (stepperSpeed > 200) {
-      stepperSpeed = 200;
+    if (stepperSpeed > 300) {
+      stepperSpeed = 300;
     }
     setStepperSpeed();
     labelSpeed.drawButton(false, String(stepperSpeed) + " rpm");

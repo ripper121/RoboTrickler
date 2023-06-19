@@ -5,7 +5,7 @@ void setStepperSpeed() {
 
 void initStepper() {
   stepperSpeed = preferences.getInt("stepperSpeed", 200);
-  if (stepperSpeed < 10 || stepperSpeed > 200) {
+  if (stepperSpeed < 10 || stepperSpeed > 300) {
     stepperSpeed = 10;
     preferences.putInt("stepperSpeed", stepperSpeed);
   }

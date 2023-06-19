@@ -22,7 +22,7 @@
 
 Preferences preferences;
 
-#define WIFI_UPDATE 1
+#define WIFI_UPDATE 0
 WebServer server(80);
 bool OTA_running = false;
 
@@ -185,7 +185,7 @@ void loop() {
       }
       lastWeight = weight;
 
-      labelWeight.drawButton(false, String(weight, 3) + " g");
+      labelWeight.drawButton(false,"Diff: " + String((targetWeight - weight), 3) + " g");
     } else if (running) {
       Serial1.write(0x1B);
       Serial1.write(0x70);
@@ -193,7 +193,7 @@ void loop() {
       Serial1.write(0x0A);
     }
 
-    if ((abs(weight - targetWeight) < 0.001)) {
+    if ((abs(weight - targetWeight) < 0.0005)) {
       targetWeightStr = "> " + String(targetWeight, 3) + " g <";
       if (!finished)
         stepperX.beep(500);
@@ -205,39 +205,58 @@ void loop() {
     if (newData && running) {
       if (weight < targetWeight && !finished) {
         stepperX.enable();
-        if (weight < (targetWeight - 0.4)) {
+        if (weight < (targetWeight - 1.0)) {
           Serial.println("Stepp 6x 360...");
           esp_random();
-          step(random(360)); step(360); step(360); step(360); step(360); step(360);
+          step(random(360 * 2)); step(360 * 2); step(360 * 2);
           avrWeight = 2;
-        } else if (weight < (targetWeight - 0.2)) {
+        }
+        if (weight < (targetWeight - 0.5)) {
+          Serial.println("Stepp 6x 360...");
+          esp_random();
+          step(random(360)); step(360); step(360 * 2);
+          avrWeight = 2;
+        } else if (weight < (targetWeight - 0.25)) {
           Serial.println("Stepp 4x 360...");
-          step(360); step(360); step(360); step(360);
+          esp_random();
+          step(random(360)); step(360);
+          avrWeight = 2;
+        } else if (weight < (targetWeight - 0.25)) {
+          Serial.println("Stepp 2x 360...");
+          step(360);
           avrWeight = 2;
         } else if (weight < (targetWeight - 0.1)) {
-          Serial.println("Stepp 2x 360...");
-          step(360); step(360);
-          avrWeight = 2;
-        } else if (weight < (targetWeight - 0.05)) {
           Serial.println("Stepp 360...");
-          step(360);
+          step(180);
+          avrWeight = 2;
+        } else if (weight < (targetWeight - 0.04)) {
+          Serial.println("Stepp 270...");
+          step(90);
           avrWeight = 2;
         } else if (weight < (targetWeight - 0.025)) {
           Serial.println("Stepp 180...");
-          step(180);
-          avrWeight = 2;
-        } else if (weight < (targetWeight - 0.012)) {
+          step(45);
+          avrWeight = 5;
+        } else if (weight < (targetWeight - 0.02)) {
+          Serial.println("Stepp 180...");
+          step(30);
+          avrWeight = 5;
+        } else if (weight < (targetWeight - 0.0125)) {
           Serial.println("Stepp 40...");
-          step(40);
-          avrWeight = 2;
-        } else if (weight < (targetWeight - 0.005)) {
-          Serial.println("Stepp 20...");
           step(20);
           avrWeight = 5;
+        } else if (weight < (targetWeight - 0.005)) {
+          Serial.println("Stepp 20...");
+          step(15);
+          avrWeight = 10;
+        } else if (weight < (targetWeight - 0.0025)) {
+          Serial.println("Stepp 20...");
+          step(10);
+          avrWeight = 15;
         } else {
           Serial.println("Stepp 10...");
           step(10);
-          avrWeight = 5;
+          avrWeight = 20;
         }
       } else {
         stepperX.disable();
