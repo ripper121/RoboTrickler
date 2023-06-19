@@ -1,5 +1,3 @@
-SPIClass *SDspi = NULL;
-
 const char* host = "esp32-webupdate";
 
 const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
@@ -77,32 +75,7 @@ void updateFromFS(fs::FS &fs) {
 }
 
 void initUpdate() {
-  SDspi = new SPIClass(HSPI);
-  SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
-  if (!SD.begin(GRBL_SPI_SS, *SDspi)) {
-    Serial.println("Card Mount Failed");
-  } else {
-    uint8_t cardType = SD.cardType();
-
-    if (cardType == CARD_NONE) {
-      Serial.println("No SD card attached");
-    } else {
-      Serial.print("SD Card Type: ");
-      if (cardType == CARD_MMC) {
-        Serial.println("MMC");
-      } else if (cardType == CARD_SD) {
-        Serial.println("SDSC");
-      } else if (cardType == CARD_SDHC) {
-        Serial.println("SDHC");
-      } else {
-        Serial.println("UNKNOWN");
-      }
-
-      uint64_t cardSize = SD.cardSize() / (1024 * 1024);
-      Serial.printf("SD Card Size: %lluMB\n", cardSize);
-      updateFromFS(SD);
-    }
-  }
+  updateFromFS(SD);
 
   if (WIFI_UPDATE) {
     WiFi.mode(WIFI_AP_STA);

@@ -16,6 +16,25 @@
 #include "TFT_eSPI.h"
 #include "pindef.h"
 #include "A4988.h"
+#include <ArduinoJson.h>
+
+SPIClass *SDspi = NULL;
+
+const char *filename = "/config.txt";  // <- SD library uses 8.3 filenames
+StaticJsonDocument<1536> doc;
+
+struct Config {
+  char wifi_ssid[64];
+  char wifi_psk[64];
+  char scale_protocol[64];
+  int scale_baud;
+  char powder[64];
+  float trickler_weight[32];
+  int trickler_steps[32];
+  int trickler_speed[32];
+  int trickler_measurements[32];
+};
+Config config;                         // <- global configuration object
 
 #define SBI 1
 #define GUG 0
@@ -72,8 +91,36 @@ String lastTargetWeightStr = "";
 void setup() {
   Serial.begin(9600);
   Serial1.begin(9600, SERIAL_8N1, IIC_SCL, IIC_SDA);
+  SDspi = new SPIClass(HSPI);
+  SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
+  if (!SD.begin(GRBL_SPI_SS, *SDspi)) {
+    Serial.println("Card Mount Failed");
+  } else {
+    uint8_t cardType = SD.cardType();
+
+    if (cardType == CARD_NONE) {
+      Serial.println("No SD card attached");
+    } else {
+      Serial.print("SD Card Type: ");
+      if (cardType == CARD_MMC) {
+        Serial.println("MMC");
+      } else if (cardType == CARD_SD) {
+        Serial.println("SDSC");
+      } else if (cardType == CARD_SDHC) {
+        Serial.println("SDHC");
+      } else {
+        Serial.println("UNKNOWN");
+      }
+
+      uint64_t cardSize = SD.cardSize() / (1024 * 1024);
+      Serial.printf("SD Card Size: %lluMB\n", cardSize);
+    }
+  }
+
 
   initUpdate();
+
+  loadConfiguration(filename, config);
 
   preferences.begin("app-settings", false);
   targetWeight = preferences.getFloat("targetWeight", 0.0);
@@ -85,6 +132,8 @@ void setup() {
   tft_TS35_init();
   initStepper();
   initButtons();
+
+
 }
 
 void loop() {
@@ -185,7 +234,7 @@ void loop() {
       }
       lastWeight = weight;
 
-      labelWeight.drawButton(false,"Diff: " + String((targetWeight - weight), 3) + " g");
+      labelWeight.drawButton(false, "Diff: " + String((targetWeight - weight), 3) + " g");
     } else if (running) {
       Serial1.write(0x1B);
       Serial1.write(0x70);
@@ -220,10 +269,6 @@ void loop() {
           Serial.println("Stepp 4x 360...");
           esp_random();
           step(random(360)); step(360);
-          avrWeight = 2;
-        } else if (weight < (targetWeight - 0.25)) {
-          Serial.println("Stepp 2x 360...");
-          step(360);
           avrWeight = 2;
         } else if (weight < (targetWeight - 0.1)) {
           Serial.println("Stepp 360...");
