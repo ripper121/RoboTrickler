@@ -2,11 +2,6 @@ const char* host = "esp32-webupdate";
 
 const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 
-const char* ssid = "";
-const char* password = "";
-
-
-
 // perform the actual update from a given stream
 bool performUpdate(Stream &updateSource, size_t updateSize) {
   if (Update.begin(updateSize)) {
@@ -75,12 +70,19 @@ void updateFromFS(fs::FS &fs) {
 }
 
 void initUpdate() {
+  Serial.println("initUpdate()");
+
   updateFromFS(SD);
 
-  if (WIFI_UPDATE) {
+  WIFI_UPDATE = false;
+  if (String(config.wifi_ssid).length() > 0) {
+    Serial.print("Connect to Wifi: ");
+    Serial.println(config.wifi_ssid);
     WiFi.mode(WIFI_AP_STA);
-    WiFi.begin(ssid, password);
+    WiFi.begin(config.wifi_ssid, config.wifi_psk);
+
     if (WiFi.waitForConnectResult() == WL_CONNECTED) {
+      Serial.println("Wifi Connected");
       MDNS.begin(host);
       server.on("/", HTTP_GET, []() {
         server.sendHeader("Connection", "close");
@@ -132,15 +134,21 @@ void initUpdate() {
 
         // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
         Serial.println("Start updating " + type);
+        String infoText = "Start updating " + String(type);
+        labelInfo.drawButton(false, infoText);
       })
       .onEnd([]() {
         Serial.println("\nEnd");
       })
       .onProgress([](unsigned int progress, unsigned int total) {
         Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+        String infoText = "Progress:" + String((progress / (total / 100))) +"%";
+        labelInfo.drawButton(false, infoText);
       })
       .onError([](ota_error_t error) {
         Serial.printf("Error[%u]: ", error);
+        String infoText = "Error: " + String(error);
+        labelInfo.drawButton(false, infoText);
         if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
         else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
         else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
@@ -149,6 +157,9 @@ void initUpdate() {
       });
 
       ArduinoOTA.begin();
+      WIFI_UPDATE = true;
     }
+  } else {
+    Serial.println("No Wifi");
   }
 }

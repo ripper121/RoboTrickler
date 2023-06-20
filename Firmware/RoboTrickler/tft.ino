@@ -19,6 +19,7 @@
 
 
 void tft_TS35_init() {
+  Serial.println("tft_TS35_init()");
   pinMode(LCD_EN, OUTPUT);
   LCD_BLK_ON;
 

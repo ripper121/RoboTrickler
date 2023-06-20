@@ -1,17 +1,3 @@
-/*
-  struct Config {
-  char wifi_ssid[64];
-  char wifi_psk[64];
-  char scale_protocol[64];
-  int scale_baud;
-  char powder[64];
-  float trickler_weight[32];
-  int trickler_steps[32];
-  int trickler_speed[32];
-  int trickler_measurements[32];
-  };
-*/
-
 void readPowder(const char *filename, Config &config) {
   // Dump config file
   printFile(filename);
@@ -34,11 +20,12 @@ void readPowder(const char *filename, Config &config) {
   }
 
   for (JsonPair item : doc.as<JsonObject>()) {
-    int item_key = String(item.key().c_str()).toInt();
+    int item_key = ((String(item.key().c_str()).toInt()) - 1);
     config.trickler_weight[item_key] = item.value()["weight"];
     config.trickler_steps[item_key] = item.value()["steps"];
     config.trickler_speed[item_key] = item.value()["speed"];
     config.trickler_measurements[item_key] = item.value()["measurements"];
+    config.trickler_count = item_key + 1;
   }
   file.close();
 }
