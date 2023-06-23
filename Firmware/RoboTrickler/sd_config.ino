@@ -71,6 +71,27 @@ void loadConfiguration(const char *filename, Config &config) {
           doc["powder"] | "",  // <- source
           sizeof(config.powder));         // <- destination's capacity
 
+  if (doc["mode"] == "trickler") {
+    config.mode = trickler;
+  } else if (doc["mode"] == "log") {
+    config.mode = logger;
+    config.log_measurements = doc["log_measurements"] | 20;
+  } else {
+    config.mode = trickler;
+  }
+
+  if (doc["beeper"] == "off") {
+    config.beeper = off;
+  } else if (doc["beeper"] == "done") {
+    config.beeper = done;
+  } else if (doc["beeper"] == "button") {
+    config.beeper = button;
+  } else if (doc["beeper"] == "both") {
+    config.beeper = both;
+  } else {
+    config.beeper = off;
+  }
+
   file.close();
 
   String powder_filename = "/" + String(config.powder) + ".txt";

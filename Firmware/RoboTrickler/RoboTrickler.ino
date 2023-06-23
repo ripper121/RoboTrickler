@@ -23,6 +23,21 @@ SPIClass *SDspi = NULL;
 const char *filename = "/config.txt";  // <- SD library uses 8.3 filenames
 StaticJsonDocument<1536> doc;
 
+enum _mode
+{
+  init_mode,
+  trickler,
+  logger
+};
+
+enum _beeper
+{
+  off,
+  done,
+  button,
+  both
+};
+
 struct Config {
   char wifi_ssid[64];
   char wifi_psk[64];
@@ -34,6 +49,9 @@ struct Config {
   int trickler_speed[32];
   int trickler_measurements[32];
   int trickler_count;
+  _mode mode;
+  int log_measurements;
+  _beeper beeper;
 };
 Config config;                         // <- global configuration object
 
@@ -81,19 +99,33 @@ float lastTargetWeight = 0.0;
 float lastWeight = 0;
 float addWeight = 0.1;
 int weightCounter = 0;
-byte avrWeight = 2;
+int avrWeight = 0;
 float newData = false;
 bool running = false;
 bool finished = false;
 String targetWeightStr = "";
 String lastTargetWeightStr = "";
+int logCounter = 0;
+bool stopLogCounter = false;
 
+void beep(_beeper beepMode) {
+  if (config.beeper == done && beepMode == done)
+    stepperX.beep(500);
+  if (config.beeper == button && beepMode == button)
+    stepperX.beep(100);
+
+  if (config.beeper == both && beepMode == done)
+    stepperX.beep(500);
+  if (config.beeper == both && beepMode == button)
+    stepperX.beep(100);
+}
 
 void setup() {
   Serial.begin(9600);
   Serial.println("RoboTrickler v1.1");
 
   String infoText = "";
+  config.mode = init_mode;
 
   tft_TS35_init();
   initStepper();
@@ -129,7 +161,14 @@ void setup() {
   }
 
   loadConfiguration(filename, config);
-  infoText += "Powder:" + String(config.powder) + " ";
+
+  if (config.mode == trickler) {
+    infoText += "Powder:" + String(config.powder) + " ";
+    avrWeight = config.trickler_measurements[0];
+  }
+  if (config.mode == logger) {
+    avrWeight = config.log_measurements;
+  }
 
   Serial1.begin(config.scale_baud, SERIAL_8N1, IIC_SCL, IIC_SDA);
 
@@ -139,27 +178,17 @@ void setup() {
   if (WIFI_UPDATE)
     infoText += "WIFI";
 
-  preferences.begin("app-settings", false);
-  targetWeight = preferences.getFloat("targetWeight", 0.0);
-  if (targetWeight < 0 || targetWeight > 100) {
-    targetWeight = 0.0;
-    preferences.putFloat("targetWeight", targetWeight);
+  if (config.mode == trickler) {
+    preferences.begin("app-settings", false);
+    targetWeight = preferences.getFloat("targetWeight", 0.0);
+    if (targetWeight < 0 || targetWeight > 100) {
+      targetWeight = 0.0;
+      preferences.putFloat("targetWeight", targetWeight);
+    }
   }
 
+  initButtons();
   labelInfo.drawButton(false, infoText);
-
-  for (int i = 0; i < config.trickler_count; i++) {
-    Serial.print("trickler_setting: ");
-    Serial.println(i, DEC);
-    Serial.print("trickler_weight: ");
-    Serial.println(config.trickler_weight[i], DEC);
-    Serial.print("trickler_speed: ");
-    Serial.println(config.trickler_speed[i], DEC);
-    Serial.print("trickler_steps: ");
-    Serial.println(config.trickler_steps[i], DEC);
-    Serial.print("trickler_measurements: ");
-    Serial.println(config.trickler_measurements[i], DEC);
-  }
 }
 
 void loop() {
@@ -249,7 +278,7 @@ void loop() {
       Serial.println((weight - lastWeight), 3);
       Serial.println();
 
-      if (abs(lastWeight - weight) <= 0) {
+      if (abs(lastWeight - weight) < 0.0001) {
         weightCounter++;
         if (weightCounter > avrWeight) {
           newData = true;
@@ -257,10 +286,10 @@ void loop() {
         }
       } else {
         weightCounter = 0;
+        labelWeight.drawButton(false, "Diff: " + String((targetWeight - weight), 3) + " g");
       }
       lastWeight = weight;
 
-      labelWeight.drawButton(false, "Diff: " + String((targetWeight - weight), 3) + " g");
     } else if (running) {
       if (String(config.scale_protocol) == "GUG") {
         Serial1.write(0x1B);
@@ -270,61 +299,78 @@ void loop() {
       }
     }
 
-    if ((abs(weight - targetWeight) < 0.0001)) {
-      targetWeightStr = " > " + String(targetWeight, 3) + " g < ";
-      if (!finished)
-        stepperX.beep(500);
-      finished = true;
-      labelInfo.drawButton(false, "Done :)");
-    } else {
-      targetWeightStr =  String(targetWeight, 3) + " g";
+    if (config.mode == trickler) {
+      if ((abs(weight - targetWeight) < 0.0001)) {
+        targetWeightStr = " > " + String(targetWeight, 3) + " g < ";
+        if (!finished) {
+          beep(done);
+        }
+        finished = true;
+        labelInfo.drawButton(false, "Done :)");
+      } else {
+        targetWeightStr =  String(targetWeight, 3) + " g";
+      }
     }
 
     if (newData && running) {
-      if (weight < targetWeight && !finished) {
-        labelInfo.drawButton(false, "Running...");
-        stepperX.enable();
-        int stepperSpeedOld = 0;
-        for (int i = 0; i < config.trickler_count; i++) {
-          Serial.print("abs: ");
-          Serial.println(abs(weight - targetWeight), 3);
-          Serial.print("trickler_weight: ");
-          Serial.println(config.trickler_weight[i], 3);
+      if (!finished) {
+        if (config.mode == trickler && weight < targetWeight) {
+          labelInfo.drawButton(false, "Running...");
+          stepperX.enable();
+          int stepperSpeedOld = 0;
+          for (int i = 0; i < config.trickler_count; i++) {
+            Serial.print("abs: ");
+            Serial.println(abs(weight - targetWeight), 3);
+            Serial.print("trickler_weight: ");
+            Serial.println(config.trickler_weight[i], 3);
 
-          if (weight < (targetWeight - config.trickler_weight[i])) {
+            if (weight < (targetWeight - config.trickler_weight[i])) {
 
-            Serial.print("Speed: ");
-            Serial.println(config.trickler_speed[i], DEC);
-            if (stepperSpeedOld != config.trickler_speed[i])
-              setStepperSpeed(config.trickler_speed[i]); //only change if value changed
-            stepperSpeedOld = config.trickler_speed[i];
+              Serial.print("Speed: ");
+              Serial.println(config.trickler_speed[i], DEC);
+              if (stepperSpeedOld != config.trickler_speed[i])
+                setStepperSpeed(config.trickler_speed[i]); //only change if value changed
+              stepperSpeedOld = config.trickler_speed[i];
 
-            Serial.print("Stepp: ");
-            Serial.println(config.trickler_steps[i], DEC);
-            if (config.trickler_steps[i] > 360) {
-              //do full rotations
-              for (int j = 0; j < int(config.trickler_steps[i] / 360); j++)
-                step(360);
-              //do remaining steps
-              step((config.trickler_steps[i] % 360));
+              Serial.print("Stepp: ");
+              Serial.println(config.trickler_steps[i], DEC);
+              if (config.trickler_steps[i] > 360) {
+                //do full rotations
+                for (int j = 0; j < int(config.trickler_steps[i] / 360); j++)
+                  step(360);
+                //do remaining steps
+                step((config.trickler_steps[i] % 360));
+              }
+              else
+                step(config.trickler_steps[i]);
+
+              Serial.print("Measurements: ");
+              Serial.println(config.trickler_measurements[i], DEC);
+              avrWeight = config.trickler_measurements[i];
+
+              String infoText = "";
+              infoText += "W" + String(config.trickler_weight[i], 3) + " ";
+              infoText += "ST" + String(config.trickler_steps[i]) + " ";
+              infoText += "SP" + String(config.trickler_speed[i]) + " ";
+              infoText += "M" + String(config.trickler_measurements[i]);
+              labelInfo.drawButton(false, infoText);
+              break;
             }
-            else
-              step(config.trickler_steps[i]);
-
-            Serial.print("Measurements: ");
-            Serial.println(config.trickler_measurements[i], DEC);
-            avrWeight = config.trickler_measurements[i];
-            String infoText = "";
-            infoText += "W" + String(config.trickler_weight[i], 3) + " ";
-            infoText += "ST" + String(config.trickler_steps[i]) + " ";
-            infoText += "SP" + String(config.trickler_speed[i]) + " ";
-            infoText += "M" + String(config.trickler_measurements[i]);
-            labelInfo.drawButton(false, infoText);
-            break;
           }
         }
+        if (config.mode == logger) {
+          String infoText = "";
+          writeCSVFile(SD, "/log", "log", weight, logCounter);
+          avrWeight = config.log_measurements;
+          infoText += "Count: " + String(logCounter) + " Saved :)";
+          labelInfo.drawButton(false, infoText);
+          finished = true;
+          beep(done);
+        }
       } else {
-        stepperX.disable();
+        if (config.mode == trickler) {
+          stepperX.disable();
+        }
       }
 
       newData = false;
@@ -332,11 +378,18 @@ void loop() {
         Serial1.read();
       }
 
+
       if (weight <= 0) {
+        if (config.mode == logger && finished) {
+          logCounter++;
+          labelInfo.drawButton(false, "Place next peace for measurment.");
+        }
         finished = false;
       }
+
     }
   }
+
 
   if (WIFI_UPDATE) {
     if (WiFi.status() == WL_CONNECTED) {
