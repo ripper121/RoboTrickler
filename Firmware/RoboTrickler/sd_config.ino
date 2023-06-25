@@ -1,4 +1,4 @@
-void readPowder(const char *filename, Config &config) {
+bool readPowder(const char *filename, Config &config) {
   // Dump config file
   printFile(filename);
 
@@ -16,7 +16,7 @@ void readPowder(const char *filename, Config &config) {
   if (error) {
     Serial.print("deserializeJson() failed: ");
     Serial.println(error.c_str());
-    return;
+    return false;
   }
 
   for (JsonPair item : doc.as<JsonObject>()) {
@@ -28,10 +28,11 @@ void readPowder(const char *filename, Config &config) {
     config.trickler_count = item_key + 1;
   }
   file.close();
+  return true;
 }
 
 // Loads the configuration from a file
-void loadConfiguration(const char *filename, Config &config) {
+int loadConfiguration(const char *filename, Config &config) {
   // Dump config file
   printFile(filename);
 
@@ -49,7 +50,7 @@ void loadConfiguration(const char *filename, Config &config) {
   if (error) {
     Serial.print("deserializeJson() failed: ");
     Serial.println(error.c_str());
-    return;
+    return 1;
   }
 
   strlcpy(config.wifi_ssid,                  // <- destination
@@ -73,7 +74,7 @@ void loadConfiguration(const char *filename, Config &config) {
 
   if (doc["mode"] == "trickler") {
     config.mode = trickler;
-  } else if (doc["mode"] == "log") {
+  } else if (doc["mode"] == "logger") {
     config.mode = logger;
     config.log_measurements = doc["log_measurements"] | 20;
   } else {
@@ -95,7 +96,10 @@ void loadConfiguration(const char *filename, Config &config) {
   file.close();
 
   String powder_filename = "/" + String(config.powder) + ".txt";
-  readPowder(powder_filename.c_str(), config);
+  if (!readPowder(powder_filename.c_str(), config))
+    return 2;
+
+  return 0;
 }
 
 // Prints the content of a file to the Serial

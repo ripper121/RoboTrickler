@@ -36,48 +36,6 @@ void btnAdd_releaseAction(void)
   }
 }
 
-void btnDown_pressAction(void)
-{
-  if (btnDown.justPressed()) {
-    btnDown.drawButton(true);
-    stepperSpeed -= addSpeed;
-    if (stepperSpeed < 10) {
-      stepperSpeed = 10;
-    }
-    beep(button);
-    setStepperSpeed(stepperSpeed);
-    labelSpeed.drawButton(false, String(stepperSpeed) + " rpm");
-  }
-}
-void btnDown_releaseAction(void)
-{
-  if (btnDown.justReleased()) {
-    btnDown.drawButton(false);
-  }
-}
-
-void btnUp_pressAction(void)
-{
-  if (btnUp.justPressed()) {
-    btnUp.drawButton(true);
-    stepperSpeed += addSpeed;
-    if (stepperSpeed > 300) {
-      stepperSpeed = 300;
-    }
-    beep(button);
-    setStepperSpeed(stepperSpeed);
-    labelSpeed.drawButton(false, String(stepperSpeed) + " rpm");
-  }
-}
-void btnUp_releaseAction(void)
-{
-  if (btnUp.justReleased()) {
-    btnUp.drawButton(false);
-  }
-}
-
-
-
 void btnStart_pressAction(void)
 {
   if (btnStart.justPressed()) {
@@ -85,7 +43,7 @@ void btnStart_pressAction(void)
     running = true;
     finished = false;
     beep(button);
-    labelInfo.drawButton(false, "Stopped");
+    labelInfo.drawButton(false, "Start");
   }
 }
 void btnStart_releaseAction(void)
@@ -101,6 +59,7 @@ void btnStop_pressAction(void)
     btnStop.drawButton(true);
     running = false;
     beep(button);
+    labelInfo.drawButton(false, "Stop");
   }
 }
 void btnStop_releaseAction(void)
@@ -115,7 +74,6 @@ void btn1_pressAction(void)
   if (btn1.justPressed()) {
     btn1.drawButton(true);
     addWeight = 0.001;
-    addSpeed = 1;
     beep(button);
   }
 }
@@ -131,7 +89,6 @@ void btn10_pressAction(void)
   if (btn10.justPressed()) {
     btn10.drawButton(true);
     addWeight = 0.01;
-    addSpeed = 10;
     beep(button);
   }
 }
@@ -147,7 +104,6 @@ void btn100_pressAction(void)
   if (btn100.justPressed()) {
     btn100.drawButton(true);
     addWeight = 0.1;
-    addSpeed = 100;
     beep(button);
   }
 }
@@ -215,31 +171,28 @@ void initButtons() {
   labelWeight.drawButton();
   rowMult++;
 
-  if (config.mode == trickler) {
-    buttonW = (LCD_WIDTH / 2) - buttonSpacing;
-    btnStart.initButtonUL(buttonSpacing, (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_GREEN, TFT_BLACK, "Start", 4);
-    btnStart.setPressAction(btnStart_pressAction);
-    btnStart.setReleaseAction(btnStart_releaseAction);
-    btnStart.setLabelDatum(0, textOffset, MC_DATUM);
-    btnStart.drawButton();
+  buttonW = (LCD_WIDTH / 2) - buttonSpacing;
+  btnStart.initButtonUL(buttonSpacing, (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_GREEN, TFT_BLACK, "Start", 4);
+  btnStart.setPressAction(btnStart_pressAction);
+  btnStart.setReleaseAction(btnStart_releaseAction);
+  btnStart.setLabelDatum(0, textOffset, MC_DATUM);
+  btnStart.drawButton();
 
-    btnStop.initButtonUL(buttonW + (buttonSpacing * 2),  (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_RED, TFT_BLACK, "Stop", 4);
-    btnStop.setPressAction(btnStop_pressAction);
-    btnStop.setReleaseAction(btnStop_releaseAction);
-    btnStop.setLabelDatum(0, textOffset, MC_DATUM);
-    btnStop.drawButton();
-    rowMult++;
-
-    buttonW = (LCD_WIDTH) - buttonSpacing;
-    labelInfo.initButtonUL(buttonSpacing, (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_GREEN, "Loading ...", 2);
-    labelInfo.setLabelDatum(0, textOffset, MC_DATUM);
-    labelInfo.drawButton();
-    rowMult++;
-  }
+  btnStop.initButtonUL(buttonW + (buttonSpacing * 2),  (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_RED, TFT_BLACK, "Stop", 4);
+  btnStop.setPressAction(btnStop_pressAction);
+  btnStop.setReleaseAction(btnStop_releaseAction);
+  btnStop.setLabelDatum(0, textOffset, MC_DATUM);
+  btnStop.drawButton();
+  rowMult++;
 
   buttonW = (LCD_WIDTH) - buttonSpacing;
-  labelBanner.initButtonUL(buttonSpacing, (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_GREEN, "RoboTrickler-1.1 ripper121.com", 2);
+  labelInfo.initButtonUL(buttonSpacing, (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_GREEN, "Loading ...", 2);
+  labelInfo.setLabelDatum(0, textOffset, MC_DATUM);
+  labelInfo.drawButton();
+  rowMult++;
+
+  buttonW = (LCD_WIDTH) - buttonSpacing;
+  labelBanner.initButtonUL(buttonSpacing, LCD_HEIGHT - BUTTON_H, buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_GREEN, "RoboTrickler-1.1 ripper121.com", 2);
   labelBanner.setLabelDatum(0, textOffset, MC_DATUM);
   labelBanner.drawButton();
-  rowMult++;
 }

@@ -1,4 +1,4 @@
-#define  CHX                     0x90
+#define CHX                     0x90
 #define CHY                     0xD0
 #define TFT_COLOR_RED                   0xF800
 #define TFT_COLOR_GREEN                 0x07E0
