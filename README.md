@@ -7,13 +7,15 @@ https://www.paypal.com/paypalme/ripper121
 First off all, format the SD Card to FAT32!
 Otherwise it will not be recognised by the RoboTrickler.
 
+You can update the Firmware when you place a "update.bin" on the SD Card.
+
 
 config.txt
 ```json
 {
-   "wifi":{
-      "ssid":"",		Your Wifi SSID only 2.4GHz
-      "psk":"" 			Your Wifi Password
+   "wifi":{       Wifi is only for Uploading new Firmware via HTTP or Arduino
+      "ssid":"",		Your Wifi SSID only 2.4GHz, leave this empty to disable Wifi
+      "psk":"" 			Your Wifi Password, leave this empty to disable Wifi
    },
    "scale":{
       "protocol":"SBI",		Your Scale Protocol. For now "SBI" (Satorius) and "GUG" (G&G) are supported
