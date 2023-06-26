@@ -7,11 +7,15 @@ https://www.paypal.com/paypalme/ripper121
 First off all, format the SD Card to FAT32!
 Otherwise it will not be recognised by the RoboTrickler.
 
+You can update the Firmware when you place a "update.bin" on the SD Card.
+
+
 config.txt
+```json
 {
-   "wifi":{
-      "ssid":"",		Your Wifi SSID only 2.4GHz
-      "psk":"" 			Your Wifi Password
+   "wifi":{       Wifi is only for Uploading new Firmware via HTTP or Arduino
+      "ssid":"",		Your Wifi SSID only 2.4GHz, leave this empty to disable Wifi
+      "psk":"" 			Your Wifi Password, leave this empty to disable Wifi
    },
    "scale":{
       "protocol":"SBI",		Your Scale Protocol. For now "SBI" (Satorius) and "GUG" (G&G) are supported
@@ -22,6 +26,7 @@ config.txt
    "powder":"N135",		"POWDER-FILE-NAME" this is your Powder config file. Name them "POWDERNAME.txt"
    "beeper":"done"		This is when the buzzer should beep. "done" when something is done, "button" on button press, "both" for both
 }
+```
 
 Use the TEST.txt to check how much Powder is trickled out with one Rotation (360 Steps).
 Slower speed mostly means more powder with one rotation.
@@ -31,7 +36,9 @@ You will need 4 Rotations -> 4*360 Steps = 1440 Steps. But you want to be save a
 This will prevent an overtrickle. This is especially important when you reach the target weight.
 You can also change the Speed of the motor in each trickle step.
 
+
 POWDER.txt
+```json
 {
    "1":{			Trickler Step Number
       "weight":1.0,		Weight at which this applys
@@ -61,3 +68,4 @@ POWDER.txt
       "measurements":20
    }
 }
+```
