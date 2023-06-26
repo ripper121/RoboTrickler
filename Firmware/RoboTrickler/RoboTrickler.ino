@@ -177,7 +177,6 @@ void setup() {
     Serial.println("config.mode == logger");
     infoText += "Logger Mode ";
     avrWeight = config.log_measurements;
-    path = ceateCSVFile(SD, "/log", "log");
   } else {
     Serial.println("config.mode == undefined");
   }
@@ -185,8 +184,10 @@ void setup() {
   Serial1.begin(config.scale_baud, SERIAL_8N1, IIC_SCL, IIC_SDA);
 
   labelInfo.drawButton(false, "Firmware Update...");
-
   initUpdate();
+
+  labelInfo.drawButton(false, "Connecting Wifi...");
+  initWebServer();
   if (WIFI_UPDATE)
     infoText += "WIFI";
 
@@ -364,6 +365,9 @@ void loop() {
           }
           if (config.mode == logger && (abs(weight - targetWeight) > 0.0001)) {
             Serial.println("Log to File");
+            if (String(path).length() > 0) {
+              path = ceateCSVFile(SD, "/log", "log");
+            }
             String infoText = "";
             writeCSVFile(SD, path.c_str(), weight, logCounter);
             avrWeight = config.log_measurements;
