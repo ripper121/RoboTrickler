@@ -1,3 +1,6 @@
+First off all, format the SD Card to FAT32!
+Otherwise it will not be recognised by the RoboTrickler.
+
 config.txt
 {
    "wifi":{
