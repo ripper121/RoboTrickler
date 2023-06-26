@@ -55,9 +55,6 @@ struct Config {
 };
 Config config;                         // <- global configuration object
 
-#define SBI 1
-#define GUG 0
-
 Preferences preferences;
 
 bool WIFI_UPDATE = false;
