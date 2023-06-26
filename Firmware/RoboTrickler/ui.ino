@@ -155,7 +155,7 @@ void initButtons() {
     labelTarget.initButtonUL(buttonW + (buttonSpacing * 2), (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_GREEN, "0.000 g", 2);
     labelTarget.setLabelDatum(0, textOffset, MC_DATUM);
     labelTarget.drawButton();
-    labelTarget.drawButton(false, String(targetWeight) + " g");
+    labelTarget.drawButton(false, String(targetWeight, 3) + " g");
 
     btnAdd.initButtonUL((buttonW * 2) + (buttonSpacing * 3), (BUTTON_H * rowMult) + (buttonSpacing * rowMult),  buttonW, BUTTON_H, TFT_WHITE, TFT_RED, TFT_BLACK, "+", 4);
     btnAdd.setPressAction(btnAdd_pressAction);
