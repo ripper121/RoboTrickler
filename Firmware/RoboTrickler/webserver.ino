@@ -287,24 +287,30 @@ void initWebServer() {
         if (upload.status == UPLOAD_FILE_START) {
           Serial.setDebugOutput(true);
           Serial.printf("Update: %s\n", upload.filename.c_str());
+          String infoText = "Update: " + String(upload.filename);
+          labelInfo.drawButton(false, infoText);
           OTA_running = true;
           if (!Update.begin()) { //start with max available size
             Update.printError(Serial);
-            OTA_running = false;
           }
         } else if (upload.status == UPLOAD_FILE_WRITE) {
           if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
             Update.printError(Serial);
           }
+          OTA_running = true;
         } else if (upload.status == UPLOAD_FILE_END) {
           if (Update.end(true)) { //true to set the size to the current progress
             Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+            String infoText = "Update Success: " + String(upload.totalSize);
+            labelInfo.drawButton(false, infoText);
           } else {
             Update.printError(Serial);
+            OTA_running = false;
           }
           Serial.setDebugOutput(false);
         } else {
           Serial.printf("Update Failed Unexpectedly (likely broken connection): status=%d\n", upload.status);
+          OTA_running = false;
         }
       });
       server.begin();
@@ -312,41 +318,43 @@ void initWebServer() {
 
       Serial.printf("Ready! Open http://%s.local in your browser\n", host);
 
-      ArduinoOTA
-      .onStart([]() {
-        String type;
-        if (ArduinoOTA.getCommand() == U_FLASH)
-          type = "sketch";
-        else // U_SPIFFS
-          type = "filesystem";
+      if (config.arduino_ota) {
+        ArduinoOTA
+        .onStart([]() {
+          String type;
+          if (ArduinoOTA.getCommand() == U_FLASH)
+            type = "sketch";
+          else // U_SPIFFS
+            type = "filesystem";
 
-        OTA_running = true;
+          OTA_running = true;
 
-        // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-        Serial.println("Start updating " + type);
-        String infoText = "Start updating " + String(type);
-        labelInfo.drawButton(false, infoText);
-      })
-      .onEnd([]() {
-        Serial.println("\nEnd");
-      })
-      .onProgress([](unsigned int progress, unsigned int total) {
-        Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-        String infoText = "Progress:" + String((progress / (total / 100))) + "%";
-        labelInfo.drawButton(false, infoText);
-      })
-      .onError([](ota_error_t error) {
-        Serial.printf("Error[%u]: ", error);
-        String infoText = "Error: " + String(error);
-        labelInfo.drawButton(false, infoText);
-        if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-        else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-        else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-        else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-        else if (error == OTA_END_ERROR) Serial.println("End Failed");
-      });
+          // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+          Serial.println("Start updating " + type);
+          String infoText = "Start updating " + String(type);
+          labelInfo.drawButton(false, infoText);
+        })
+        .onEnd([]() {
+          Serial.println("\nEnd");
+        })
+        .onProgress([](unsigned int progress, unsigned int total) {
+          Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+          String infoText = "Progress:" + String((progress / (total / 100))) + "%";
+          labelInfo.drawButton(false, infoText);
+        })
+        .onError([](ota_error_t error) {
+          Serial.printf("Error[%u]: ", error);
+          String infoText = "Error: " + String(error);
+          labelInfo.drawButton(false, infoText);
+          if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+          else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+          else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+          else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+          else if (error == OTA_END_ERROR) Serial.println("End Failed");
+        });
 
-      ArduinoOTA.begin();
+        ArduinoOTA.begin();
+      }
       WIFI_UPDATE = true;
     } else {
       Serial.println("No Wifi");

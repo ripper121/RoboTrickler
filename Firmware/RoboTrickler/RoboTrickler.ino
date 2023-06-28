@@ -41,7 +41,8 @@ enum _beeper
 struct Config {
   char wifi_ssid[64];
   char wifi_psk[64];
-  char scale_protocol[64];
+  bool arduino_ota;
+  char scale_protocol[16];
   int scale_baud;
   char powder[64];
   float trickler_weight[32];
@@ -242,7 +243,7 @@ void loop() {
       lastTargetWeight = targetWeight;
     }
     if (running) {
-      if (Serial1.available()) {     // 2B 20 20 31 32 37 2E 38 32 38 20 67 20 20 0D 0A
+      if (Serial1.available()) {
         char buff[16];
         Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
 
@@ -400,7 +401,9 @@ void loop() {
   if (WIFI_UPDATE) {
     if (WiFi.status() == WL_CONNECTED) {
       server.handleClient();
-      ArduinoOTA.handle();
+      if (config.arduino_ota) {
+        ArduinoOTA.handle();
+      }
     }
   }
 }

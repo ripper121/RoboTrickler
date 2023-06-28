@@ -65,7 +65,8 @@ int loadConfiguration(const char *filename, Config &config) {
           doc["scale"]["protocol"] | "",  // <- source
           sizeof(config.scale_protocol));         // <- destination's capacity
 
-  // Copy values from the JsonDocument to the Config
+  config.arduino_ota = doc["arduino_ota"] | false;
+
   config.scale_baud = doc["scale"]["baud"] | 9600;
 
   strlcpy(config.powder,                  // <- destination
