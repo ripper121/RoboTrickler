@@ -43,7 +43,13 @@ void btnStart_pressAction(void)
     running = true;
     finished = false;
     beep(button);
-    labelInfo.drawButton(false, "Start");
+    if (WIFI_UPDATE && !running) {
+      String text = "Start http://";
+      text += String(WiFi.localIP());
+      labelInfo.drawButton(false, text);
+    } else {
+      labelInfo.drawButton(false, "Start");
+    }
   }
 }
 void btnStart_releaseAction(void)

@@ -262,7 +262,7 @@ void loop() {
           milliT = (buff[7] > 0x30) ? (buff[7] - 0x30) : 0;
           milliO = (buff[8] > 0x30) ? (buff[8] - 0x30) : 0;
         }
-        if (String(config.scale_protocol) = "SBI") {
+        if (String(config.scale_protocol) == "SBI") {
           grammH = (buff[3] > 0x30) ? (buff[3] - 0x30) : 0;
           grammT = (buff[4] > 0x30) ? (buff[4] - 0x30) : 0;
           grammO = (buff[5] > 0x30) ? (buff[5] - 0x30) : 0;
@@ -278,6 +278,8 @@ void loop() {
         weight += (milliT == 0) ? (0.0) : (milliT / 100.0);
         weight += (milliO == 0) ? (0.0) : (milliO / 1000.0);
 
+
+
         if (abs(lastWeight - weight) < 0.0001) {
           weightCounter++;
           if (weightCounter > avrWeight) {
@@ -292,7 +294,8 @@ void loop() {
             labelWeight.drawButton(false, String(weight, 3) + " g");
         }
         lastWeight = weight;
-
+        Serial.print("Scale Read: ");
+        Serial.println(weight, 3);
       } else {
         if (String(config.scale_protocol) == "GUG") {
           Serial1.write(0x1B);
@@ -322,21 +325,21 @@ void loop() {
             stepperX.enable();
             int stepperSpeedOld = 0;
             for (int i = 0; i < config.trickler_count; i++) {
-              Serial.print("abs: ");
-              Serial.println(abs(weight - targetWeight), 3);
-              Serial.print("trickler_weight: ");
-              Serial.println(config.trickler_weight[i], 3);
+              //Serial.print("abs: ");
+              //Serial.println(abs(weight - targetWeight), 3);
+              //Serial.print("trickler_weight: ");
+              //Serial.println(config.trickler_weight[i], 3);
 
               if (weight < (targetWeight - config.trickler_weight[i])) {
 
-                Serial.print("Speed: ");
-                Serial.println(config.trickler_speed[i], DEC);
+                //Serial.print("Speed: ");
+                //Serial.println(config.trickler_speed[i], DEC);
                 if (stepperSpeedOld != config.trickler_speed[i])
                   setStepperSpeed(config.trickler_speed[i]); //only change if value changed
                 stepperSpeedOld = config.trickler_speed[i];
 
-                Serial.print("Stepp: ");
-                Serial.println(config.trickler_steps[i], DEC);
+                //Serial.print("Stepp: ");
+                //Serial.println(config.trickler_steps[i], DEC);
                 if (config.trickler_steps[i] > 360) {
                   //do full rotations
                   for (int j = 0; j < int(config.trickler_steps[i] / 360); j++)
@@ -347,8 +350,8 @@ void loop() {
                 else
                   step(config.trickler_steps[i]);
 
-                Serial.print("Measurements: ");
-                Serial.println(config.trickler_measurements[i], DEC);
+                //Serial.print("Measurements: ");
+                //Serial.println(config.trickler_measurements[i], DEC);
                 avrWeight = config.trickler_measurements[i];
 
                 String infoText = "";
@@ -362,7 +365,7 @@ void loop() {
             }
           }
           if (config.mode == logger && (abs(weight - targetWeight) > 0.0001)) {
-            Serial.println("Log to File");
+            //Serial.println("Log to File");
             if (String(path).length() > 0) {
               path = ceateCSVFile(SD, "/log", "log");
             }
@@ -398,7 +401,7 @@ void loop() {
   }
 
 
-  if (WIFI_UPDATE) {
+  if (WIFI_UPDATE && !running) {
     if (WiFi.status() == WL_CONNECTED) {
       server.handleClient();
       if (config.arduino_ota) {

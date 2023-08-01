@@ -1,5 +1,5 @@
 
-const char* host = "esp32-webupdate";
+const char* host = "robo-trickler";
 
 const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 
