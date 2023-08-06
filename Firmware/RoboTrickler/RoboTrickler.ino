@@ -289,7 +289,7 @@ void loop() {
         } else {
           weightCounter = 0;
           if (config.mode == trickler)
-            labelWeight.drawButton(false, "Diff: " + String((targetWeight - weight), 3) + " g");
+            labelWeight.drawButton(false, String(weight, 3) + " g"); //labelWeight.drawButton(false, "Diff: " + String((targetWeight - weight), 3) + " g");
           else if (config.mode == logger)
             labelWeight.drawButton(false, String(weight, 3) + " g");
         }
