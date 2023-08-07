@@ -192,7 +192,7 @@ void setup() {
   if (config.mode == trickler) {
     preferences.begin("app-settings", false);
     targetWeight = preferences.getFloat("targetWeight", 0.0);
-    if (targetWeight < 0 || targetWeight > 100) {
+    if (targetWeight < 0 || targetWeight > 10) {
       targetWeight = 0.0;
       preferences.putFloat("targetWeight", targetWeight);
     }
@@ -397,7 +397,7 @@ void loop() {
           Serial1.read();
         }
       }
-    }else{
+    } else {
       stepperX.disable();
     }
   }
