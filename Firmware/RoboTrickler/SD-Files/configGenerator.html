@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Configuration Generator</title>
+   </head>
+   <body>
+      <h1>Configuration Generator</h1>
+      <label for="weightInput">Weight for 360 steps (in grams):</label>
+      <input type="number" id="weightInput" step="0.0001" min="0" value = "0.1"><br>
+      <label for="speedInput">Stepper Speed:</label>
+      <input type="number" id="speedInput" step="1" min="5" value="200"><br><br>
+      <button id="generateButton">Generate Configuration</button>
+      <h2>Generated Configuration:</h2>
+      <textarea id="configOutput" rows="10" cols="50"></textarea>
+      <script>
+         document.getElementById("generateButton").addEventListener("click", function() {
+             const measuredWeight = parseFloat(document.getElementById("weightInput").value);
+             const speed = parseFloat(document.getElementById("speedInput").value);
+             if (!isNaN(measuredWeight)) {
+                 const config = {};
+
+                 // Define the weight values for which you want to generate configurations
+                 const weights = [1.0, 0.5, 0.25, 0.125, 0.062, 0.031, 0.015, 0.007, 0.003, 0.001];
+
+                 // Loop through each weight value and calculate the configuration
+                 for (let i = 0; i < weights.length; i++) {
+                     const weight = weights[i];
+                     var steps = Math.round((weight / measuredWeight) * 360); // Assuming 0.1g is dispensed in 360 steps
+                     if(steps<5)
+                        steps = 5;
+                     config[i + 1] = {
+                         weight: weight,
+                         steps: steps,
+                         speed: speed,
+                         measurements: 2
+                     };
+                 }
+
+                 // Convert the config object to JSON format
+                 const configJSON = JSON.stringify(config, null, 3);
+
+
+                 document.getElementById("configOutput").value = configJSON;
+             }
+         });
+      </script>
+   </body>
+</html>
