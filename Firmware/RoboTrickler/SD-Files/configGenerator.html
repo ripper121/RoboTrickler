@@ -6,16 +6,16 @@
    <body>
       <h1>Configuration Generator</h1>
       <table>
-         <tr>
-             <td><label for="weightInput">Weight for 360 steps (in grams):</label></td>
+         <tbody><tr>
+             <td><label for="weightInput">Weight for 3600 steps (in grams):</label></td>
              <td><input type="number" id="weightInput" step="0.0001" min="0" value="0.1"></td>
          </tr>
          <tr>
              <td><label for="speedInput">Stepper Speed:</label></td>
              <td><input type="number" id="speedInput" step="1" min="5" value="200"></td>
          </tr>
-     </table>
-      <button id="generateButton">Generate Configuration</button><br><br>
+     </tbody></table>
+     <button id="generateButton">Generate Configuration</button><br><br>
 
       <h2>Generated Configuration:</h2>
       <textarea id="configOutput" rows="20" cols="50"></textarea><br>
@@ -23,7 +23,7 @@
 
       <script>
          document.getElementById("generateButton").addEventListener("click", function() {
-             const measuredWeight = parseFloat(document.getElementById("weightInput").value);
+             const measuredWeight = parseFloat(document.getElementById("weightInput").value) / 2;
              const speed = parseFloat(document.getElementById("speedInput").value);
              if (!isNaN(measuredWeight)) {
                  const config = {};
@@ -37,14 +37,12 @@
                  for (let i = 0; i < weights.length; i++) {
                      const weight = weights[i];
                      var steps = Math.round((weight / measuredWeight) * 360); // Assuming 0.1g is dispensed in 360 steps
-                     if(steps<5)
-                        steps = 5;
-                        if(i == weights.length-3)
+                     if(i == weights.length-3)
                         measurements = 5;
                      if(i == weights.length-2)
-                        measurements = 10;
-                     if(i == weights.length-1)
                         measurements = 15;
+                     if(i == weights.length-1)
+                        measurements = 20;
                      config[i + 1] = {
                          weight: weight,
                          steps: steps,
