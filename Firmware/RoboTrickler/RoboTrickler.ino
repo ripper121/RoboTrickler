@@ -397,6 +397,8 @@ void loop() {
           Serial1.read();
         }
       }
+    }else{
+      stepperX.disable();
     }
   }
 
