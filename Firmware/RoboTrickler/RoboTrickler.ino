@@ -399,6 +399,7 @@ void loop() {
       }
     } else {
       stepperX.disable();
+      logCounter = 1;
     }
   }
 
