@@ -100,7 +100,7 @@ String targetWeightStr = "";
 String lastTargetWeightStr = "";
 int logCounter = 1;
 bool stopLogCounter = false;
-String path = "";
+String path = "empty";
 
 void beep(_beeper beepMode) {
   if (config.beeper == done && beepMode == done)
@@ -294,8 +294,8 @@ void loop() {
             labelWeight.drawButton(false, String(weight, 3) + " g");
         }
         lastWeight = weight;
-        Serial.print("Scale Read: ");
-        Serial.println(weight, 3);
+        //Serial.print("Scale Read: ");
+        //Serial.println(weight, 3);
       } else {
         if (String(config.scale_protocol) == "GUG") {
           Serial1.write(0x1B);
@@ -320,7 +320,7 @@ void loop() {
 
       if (newData) {
         if (!finished) {
-          if ((config.mode == trickler) && (weight < targetWeight)) {
+          if ((config.mode == trickler) && ((abs(weight - targetWeight)+0.0001) >= 0)) {
             labelInfo.drawButton(false, "Running...");
             stepperX.enable();
             int stepperSpeedOld = 0;
@@ -330,7 +330,7 @@ void loop() {
               //Serial.print("trickler_weight: ");
               //Serial.println(config.trickler_weight[i], 3);
 
-              if (weight < (targetWeight - config.trickler_weight[i])) {
+              if ((weight - 0.0001) <= (targetWeight - config.trickler_weight[i])) {
 
                 //Serial.print("Speed: ");
                 //Serial.println(config.trickler_speed[i], DEC);
@@ -364,9 +364,9 @@ void loop() {
               }
             }
           }
-          if (config.mode == logger && (abs(weight - targetWeight) > 0.0001)) {
-            //Serial.println("Log to File");
-            if (String(path).length() > 0) {
+          if (config.mode == logger && (weight > 0.0001)) {
+            Serial.println("Log to File");
+            if (path == "empty") {
               path = ceateCSVFile(SD, "/log", "log");
             }
             String infoText = "";

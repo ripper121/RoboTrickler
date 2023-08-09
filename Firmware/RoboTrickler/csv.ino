@@ -1,7 +1,7 @@
 String ceateCSVFile(fs::FS &fs, const char * folderName, const char * fileName) {
   int fileCount = 0;
   String path = "";
-
+  Serial.println("ceateCSVFile");
   //cehck if folder exists, if not creat one
   if (!fs.exists(folderName)) {
     Serial.println("Log Folder Created.");
@@ -44,6 +44,7 @@ void writeCSVFile(fs::FS &fs, const char * path, float weight, int count) {
   File file = fs.open(path, FILE_APPEND);
   if (!file) {
     Serial.println("Failed to open file for appending");
+    ceateCSVFile(SD, "/log", "log");
     return;
   }
   Serial.printf("Appending to file: %s\n", path);
