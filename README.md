@@ -32,7 +32,7 @@ Use the TEST.txt to check how much Powder is trickled out with one Rotation (360
 Slower speed mostly means more powder with one rotation.
 You can then calculate how much powder was trickled with one rotation. And apply this to your POWDER.txt
 For example your first Powder step is 1 gramm and the trickler, trickles 0.250mg of powder with one rotation.
-You will need 4 Rotations -> 4*360 Steps = 1440 Steps. But you want to be save and use only 3*360 Steps = 1080.
+You will need 4 Rotations -> 4 x 360 Steps = 1440 Steps. But you want to be save and use only 3*360 Steps = 1080.
 This will prevent an overtrickle. This is especially important when you reach the target weight.
 You can also change the Speed of the motor in each trickle step.
 
