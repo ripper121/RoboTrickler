@@ -76,10 +76,11 @@ ButtonWidget btnStop = ButtonWidget(&tft);
 ButtonWidget btn1 = ButtonWidget(&tft);
 ButtonWidget btn10 = ButtonWidget(&tft);
 ButtonWidget btn100 = ButtonWidget(&tft);
+ButtonWidget btn1000 = ButtonWidget(&tft);
 ButtonWidget labelBanner = ButtonWidget(&tft);
 ButtonWidget labelInfo = ButtonWidget(&tft);
-ButtonWidget* btn[] = {&btnSub , &labelTarget, &btnAdd, &btnStart, &btnStop, &btn1, &btn10, &btn100, &labelWeight, &labelSpeed, &labelBanner, &labelInfo};
-uint8_t buttonCount = sizeof(btn) / sizeof(btn[0]);
+ButtonWidget* btn[] = {&btnSub , &labelTarget, &btnAdd, &btnStart, &btnStop, &btn1, &btn10, &btn100, &btn1000, &labelWeight, &labelSpeed, &labelBanner, &labelInfo};
+uint8_t buttonCount = 13;
 
 #define MOTOR_STEPS 200
 #define RPM 200
@@ -115,7 +116,7 @@ void beep(_beeper beepMode) {
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   Serial.println("RoboTrickler v1.1");
 
@@ -186,8 +187,10 @@ void setup() {
 
   labelInfo.drawButton(false, "Connecting Wifi...");
   initWebServer();
-  if (WIFI_UPDATE)
-    infoText += "WIFI";
+  if (WIFI_UPDATE) {
+    infoText += "WIFI:";
+    infoText += WiFi.localIP().toString();
+  }
 
   if (config.mode == trickler) {
     preferences.begin("app-settings", false);
@@ -201,7 +204,7 @@ void setup() {
 
   initButtons();
   labelInfo.drawButton(false, infoText);
-  Serial.println("Setp done.");
+  Serial.println("Setup done.");
 }
 
 void loop() {
@@ -241,6 +244,10 @@ void loop() {
         preferences.putFloat("targetWeight", targetWeight);
       }
       lastTargetWeight = targetWeight;
+
+      char temp[300];
+      sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());
+      Serial.println(temp);
     }
     if (running) {
       if (Serial1.available()) {
@@ -320,7 +327,7 @@ void loop() {
 
       if (newData) {
         if (!finished) {
-          if ((config.mode == trickler) && ((abs(weight - targetWeight)+0.0001) >= 0)) {
+          if ((config.mode == trickler) && ((abs(weight - targetWeight) + 0.0001) >= 0)) {
             labelInfo.drawButton(false, "Running...");
             stepperX.enable();
             int stepperSpeedOld = 0;

@@ -240,13 +240,36 @@ void handleNotFound() {
 
 void handleAjaxRequest() {
   String message = "test";
-  server.send(200, "text/plane", message); //Send value only to client ajax request
+  server.send(200, "text/plane", message);
 }
 
 void handleReboot() {
   String message = "Reboot now...";
-  server.send(200, "text/plane", message); //Send value only to client ajax request
+  server.send(200, "text/plane", message);
   ESP.restart();
+}
+
+void handleSetValue() {
+  String message = "";
+  message += "URI: ";
+  message += server.uri();
+  message += "\nMethod: ";
+  message += (server.method() == HTTP_GET) ? "GET" : "POST";
+  message += "\nArguments: ";
+  message += server.args();
+  message += "\n";
+  for (uint8_t i = 0; i < server.args(); i++) {
+    message += " NAME:" + server.argName(i) + "\n VALUE:" + server.arg(i) + "\n";
+    if (server.argName(i) == "targetWeight") {
+      if (server.arg(i).toFloat() > 0 && server.arg(i).toFloat() < 10){
+        targetWeight = server.arg(i).toFloat();
+        labelTarget.drawButton(false, String(targetWeight, 3) + " g");
+        preferences.putFloat("targetWeight", targetWeight);
+      }
+    }
+  }
+
+  server.send(200, "text/plane", message);
 }
 
 void initWebServer() {
@@ -267,12 +290,13 @@ void initWebServer() {
       server.on("/edit", HTTP_POST, []() {
         returnOK();
       }, handleFileUpload);
-      server.on("/ajaxRequest", handleAjaxRequest);//To get update of ADC Value only
+      //server.on("/ajaxRequest", handleAjaxRequest);//To get update of ADC Value only
       server.onNotFound(handleNotFound);
       server.on("/generate_204", handleNotFound);
       server.on("/favicon.ico", handleNotFound);
       server.on("/fwlink", handleNotFound);
       server.on("/reboot", handleReboot);
+      server.on("/setValue", handleSetValue);
 
       server.on("/fwupdate", HTTP_GET, []() {
         server.sendHeader("Connection", "close");

@@ -62,7 +62,7 @@ int loadConfiguration(const char *filename, Config &config) {
           sizeof(config.wifi_psk));         // <- destination's capacity
 
   strlcpy(config.scale_protocol,                  // <- destination
-          doc["scale"]["protocol"] | "",  // <- source
+          doc["scale"]["protocol"] | "GUG",  // <- source
           sizeof(config.scale_protocol));         // <- destination's capacity
 
   config.arduino_ota = doc["arduino_ota"] | false;
@@ -70,7 +70,7 @@ int loadConfiguration(const char *filename, Config &config) {
   config.scale_baud = doc["scale"]["baud"] | 9600;
 
   strlcpy(config.powder,                  // <- destination
-          doc["powder"] | "",  // <- source
+          doc["powder"] | "calibrate",  // <- source
           sizeof(config.powder));         // <- destination's capacity
 
   if (doc["mode"] == "trickler") {
