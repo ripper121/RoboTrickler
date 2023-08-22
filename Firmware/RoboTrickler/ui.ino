@@ -7,7 +7,7 @@ void btnSub_pressAction(void)
       targetWeight = 0.0;
     }
     beep(button);
-    labelTarget.drawButton(false, String(targetWeight, 3) + " g");
+    labelTarget.drawButton(false, String(targetWeight, 3));
   }
 }
 void btnSub_ReleaseAction(void)
@@ -26,7 +26,7 @@ void btnAdd_pressAction(void)
       targetWeight = 100.0;
     }
     beep(button);
-    labelTarget.drawButton(false, String(targetWeight, 3) + " g");
+    labelTarget.drawButton(false, String(targetWeight, 3));
   }
 }
 void btnAdd_releaseAction(void)
@@ -179,10 +179,10 @@ void initButtons() {
     btnSub.setLabelDatum(0, textOffset, MC_DATUM);
     btnSub.drawButton();
 
-    labelTarget.initButtonUL(buttonW + (buttonSpacing * 2), (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_WHITE, "0.000 g", 3);
+    labelTarget.initButtonUL(buttonW + (buttonSpacing * 2), (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_WHITE, "0.000", 3);
     labelTarget.setLabelDatum(0, textOffset, MC_DATUM);
     labelTarget.drawButton();
-    labelTarget.drawButton(false, String(targetWeight, 3) + " g");
+    labelTarget.drawButton(false, String(targetWeight, 3));
 
     btnAdd.initButtonUL((buttonW * 2) + (buttonSpacing * 3), (BUTTON_H * rowMult) + (buttonSpacing * rowMult),  buttonW, BUTTON_H, TFT_WHITE, TFT_RED, TFT_BLACK, "+", 4);
     btnAdd.setPressAction(btnAdd_pressAction);
@@ -193,7 +193,7 @@ void initButtons() {
   }
 
   buttonW = (LCD_WIDTH) - buttonSpacing;
-  labelWeight.initButtonUL(buttonSpacing, (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_WHITE, "0.000 g", 4);
+  labelWeight.initButtonUL(buttonSpacing, (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_WHITE, "0.000", 4);
   labelWeight.setLabelDatum(0, textOffset, MC_DATUM);
   labelWeight.drawButton();
   rowMult++;

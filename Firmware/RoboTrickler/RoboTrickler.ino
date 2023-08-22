@@ -253,6 +253,7 @@ void loop() {
       if (Serial1.available()) {
         char buff[16];
         Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
+        //labelWeight.drawButton(false, String(buff,HEX));
 
         int grammH = 0;
         int grammT = 0;
@@ -277,6 +278,14 @@ void loop() {
           milliT = (buff[8] > 0x30) ? (buff[8] - 0x30) : 0;
           milliO = (buff[9] > 0x30) ? (buff[9] - 0x30) : 0;
         }
+        if (String(config.scale_protocol) == "SBS") {
+          grammH = (buff[4] > 0x30) ? (buff[4] - 0x30) : 0;
+          grammT = (buff[5] > 0x30) ? (buff[5] - 0x30) : 0;
+          grammO = (buff[6] > 0x30) ? (buff[6] - 0x30) : 0;
+          milliH = (buff[8] > 0x30) ? (buff[8] - 0x30) : 0;
+          milliT = (buff[9] > 0x30) ? (buff[9] - 0x30) : 0;
+          milliO = (buff[10] > 0x30) ? (buff[10] - 0x30) : 0;
+        }
 
         weight = grammH * 100.0;
         weight += grammT * 10.0;
@@ -296,13 +305,13 @@ void loop() {
         } else {
           weightCounter = 0;
           if (config.mode == trickler)
-            labelWeight.drawButton(false, String(weight, 3) + " g"); //labelWeight.drawButton(false, "Diff: " + String((targetWeight - weight), 3) + " g");
+            labelWeight.drawButton(false, String(weight, 3)); //labelWeight.drawButton(false, "Diff: " + String((targetWeight - weight), 3) + " g");
           else if (config.mode == logger)
-            labelWeight.drawButton(false, String(weight, 3) + " g");
+            labelWeight.drawButton(false, String(weight, 3));
         }
         lastWeight = weight;
-        //Serial.print("Scale Read: ");
-        //Serial.println(weight, 3);
+        Serial.print("Scale Read: ");
+        Serial.println(weight, 3);
       } else {
         if (String(config.scale_protocol) == "GUG") {
           Serial1.write(0x1B);
@@ -314,14 +323,14 @@ void loop() {
 
       if (config.mode == trickler) {
         if ((abs(weight - targetWeight) < 0.0001)) {
-          targetWeightStr = " > " + String(targetWeight, 3) + " g < ";
+          targetWeightStr = String(targetWeight, 3);
           if (!finished) {
             beep(done);
           }
           finished = true;
           labelInfo.drawButton(false, "Done :)");
         } else {
-          targetWeightStr =  String(targetWeight, 3) + " g";
+          targetWeightStr =  String(targetWeight, 3);
         }
       }
 
