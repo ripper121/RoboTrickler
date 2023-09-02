@@ -323,17 +323,21 @@ void loop() {
           Serial1.write(0x70);
           Serial1.write(0x0D);
           Serial1.write(0x0A);
+          delay(50);
         }
         if (String(config.scale_protocol) == "AD") {
           Serial1.write("Q\r\n");
+          delay(50);
         }
         if (String(config.scale_protocol) == "KERN") {
           Serial1.write("w");
+          Serial1.flush();
+          delay(300);
         }
       }
 
       if (config.mode == trickler) {
-        if (weight >= targetWeight) {
+        if ((targetWeight - 0.0001) <= weight) {
           targetWeightStr = String(targetWeight, 3);
           if (!finished) {
             beep(done);
@@ -394,7 +398,7 @@ void loop() {
             infoText += "M" + String(config.trickler_measurements[profileStep]);
             labelInfo.drawButton(false, infoText);
           }
-          if (config.mode == logger && (weight > 0.0001)) {
+          if (config.mode == logger && (weight > 0)) {
             Serial.println("Log to File");
             if (path == "empty") {
               path = ceateCSVFile(SD, "/log", "log");
@@ -413,7 +417,7 @@ void loop() {
           }
         }
 
-        if ((weight <= 0.0001) && finished) {
+        if ((weight <= 0) && finished) {
           if (config.mode == logger) {
             logCounter++;
             labelInfo.drawButton(false, "Place next peace for measurment.");
@@ -429,6 +433,7 @@ void loop() {
       }
     } else {
       stepperX.disable();
+      path = "empty";
       logCounter = 1;
     }
   }
