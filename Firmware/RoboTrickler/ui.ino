@@ -22,8 +22,8 @@ void btnAdd_pressAction(void)
   if (btnAdd.justPressed()) {
     btnAdd.drawButton(true);
     targetWeight += addWeight;
-    if (targetWeight > 100) {
-      targetWeight = 100.0;
+    if (targetWeight > MAX_TARGET_WEIGHT) {
+      targetWeight = MAX_TARGET_WEIGHT;
     }
     beep(button);
     labelTarget.drawButton(false, String(targetWeight, 3));
@@ -219,7 +219,7 @@ void initButtons() {
   rowMult++;
 
   buttonW = (LCD_WIDTH) - buttonSpacing;
-  labelBanner.initButtonUL(buttonSpacing, LCD_HEIGHT - BUTTON_H, buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_WHITE, "RoboTrickler-1.13 ripper121.com", 2);
+  labelBanner.initButtonUL(buttonSpacing, LCD_HEIGHT - BUTTON_H, buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_WHITE, "RoboTrickler-1.14 ripper121.com", 2);
   labelBanner.setLabelDatum(0, textOffset, MC_DATUM);
   labelBanner.drawButton();
 }

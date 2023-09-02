@@ -18,6 +18,8 @@
 #include "A4988.h"
 #include <ArduinoJson.h>
 
+#define FW_VERSION 1.14
+
 SPIClass *SDspi = NULL;
 
 const char *filename = "/config.txt";  // <- SD library uses 8.3 filenames
@@ -87,6 +89,7 @@ uint8_t buttonCount = 13;
 #define MICROSTEPS 1
 A4988 stepperX(MOTOR_STEPS, I2S_X_DIRECTION_PIN, I2S_X_STEP_PIN, I2S_X_DISABLE_PIN);
 
+#define MAX_TARGET_WEIGHT 100
 float weight = 0.0;
 float targetWeight = 0.0;
 float lastTargetWeight = 0.0;
@@ -115,10 +118,16 @@ void beep(_beeper beepMode) {
     stepperX.beep(100);
 }
 
+bool stringContains(const String &haystack, const String &needle) {
+  // Use the indexOf() method to search for the needle in the haystack
+  // If the needle is found, indexOf() returns the starting position; otherwise, it returns -1
+  return (haystack.indexOf(needle) != -1);
+}
+
 void setup() {
   Serial.begin(115200);
 
-  Serial.println("RoboTrickler v1.1");
+  Serial.println("RoboTrickler v" + String(FW_VERSION, 2));
 
   String infoText = "";
   config.mode = init_mode;
@@ -195,8 +204,12 @@ void setup() {
   if (config.mode == trickler) {
     preferences.begin("app-settings", false);
     targetWeight = preferences.getFloat("targetWeight", 0.0);
-    if (targetWeight < 0 || targetWeight > 10) {
+    if (targetWeight < 0) {
       targetWeight = 0.0;
+      preferences.putFloat("targetWeight", targetWeight);
+    }
+    if (targetWeight > MAX_TARGET_WEIGHT) {
+      targetWeight = MAX_TARGET_WEIGHT;
       preferences.putFloat("targetWeight", targetWeight);
     }
   }
@@ -249,54 +262,46 @@ void loop() {
       sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());
       Serial.println(temp);
     }
+
     if (running) {
       if (Serial1.available()) {
         char buff[16];
         Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
         //labelWeight.drawButton(false, String(buff,HEX));
 
-        int grammH = 0;
-        int grammT = 0;
-        int grammO = 0;
-        int milliH = 0;
-        int milliT = 0;
-        int milliO = 0;
+        int N10P3 = 0;
+        int N10P2 = 0;
+        int N10P1 = 0;
+        int N10N1 = 0;
+        int N10N2 = 0;
+        int N10N3 = 0;
+        bool negative = false;
 
-        if (String(config.scale_protocol) == "GUG") {
-          grammH = (buff[2] > 0x30) ? (buff[2] - 0x30) : 0;
-          grammT = (buff[3] > 0x30) ? (buff[3] - 0x30) : 0;
-          grammO = (buff[4] > 0x30) ? (buff[4] - 0x30) : 0;
-          milliH = (buff[6] > 0x30) ? (buff[6] - 0x30) : 0;
-          milliT = (buff[7] > 0x30) ? (buff[7] - 0x30) : 0;
-          milliO = (buff[8] > 0x30) ? (buff[8] - 0x30) : 0;
-        }
-        if (String(config.scale_protocol) == "SBI") {
-          grammH = (buff[3] > 0x30) ? (buff[3] - 0x30) : 0;
-          grammT = (buff[4] > 0x30) ? (buff[4] - 0x30) : 0;
-          grammO = (buff[5] > 0x30) ? (buff[5] - 0x30) : 0;
-          milliH = (buff[7] > 0x30) ? (buff[7] - 0x30) : 0;
-          milliT = (buff[8] > 0x30) ? (buff[8] - 0x30) : 0;
-          milliO = (buff[9] > 0x30) ? (buff[9] - 0x30) : 0;
-        }
-        if (String(config.scale_protocol) == "SBS") {
-          grammH = (buff[4] > 0x30) ? (buff[4] - 0x30) : 0;
-          grammT = (buff[5] > 0x30) ? (buff[5] - 0x30) : 0;
-          grammO = (buff[6] > 0x30) ? (buff[6] - 0x30) : 0;
-          milliH = (buff[8] > 0x30) ? (buff[8] - 0x30) : 0;
-          milliT = (buff[9] > 0x30) ? (buff[9] - 0x30) : 0;
-          milliO = (buff[10] > 0x30) ? (buff[10] - 0x30) : 0;
+        if (String(buff).indexOf('-') != -1) {
+          negative = true;
         }
 
-        weight = grammH * 100.0;
-        weight += grammT * 10.0;
-        weight += grammO * 1.0;
-        weight += (milliH == 0) ? (0.0) : (milliH / 10.0);
-        weight += (milliT == 0) ? (0.0) : (milliT / 100.0);
-        weight += (milliO == 0) ? (0.0) : (milliO / 1000.0);
+        int separator = String(buff).indexOf('.');
+        Serial.print("separator: ");
+        Serial.println(separator, DEC);
 
+        if (separator > 0) {
+          N10P3 = (buff[separator - 3] > 0x30) ? (buff[separator - 3] - 0x30) : 0;
+          N10P2 = (buff[separator - 2] > 0x30) ? (buff[separator - 2] - 0x30) : 0;
+          N10P1 = (buff[separator - 1] > 0x30) ? (buff[separator - 1] - 0x30) : 0;
+          N10N1 = (buff[separator + 1] > 0x30) ? (buff[separator + 1] - 0x30) : 0;
+          N10N2 = (buff[separator + 2] > 0x30) ? (buff[separator + 2] - 0x30) : 0;
+          N10N3 = (buff[separator + 3] > 0x30) ? (buff[separator + 3] - 0x30) : 0;
+        }
 
+        weight = N10P3 * 100.0;
+        weight += N10P2 * 10.0;
+        weight += N10P1 * 1.0;
+        weight += (N10N1 == 0) ? (0.0) : (N10N1 / 10.0);
+        weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
+        weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
 
-        if (abs(lastWeight - weight) < 0.0001) {
+        if (lastWeight == weight) {
           weightCounter++;
           if (weightCounter > avrWeight) {
             newData = true;
@@ -319,10 +324,16 @@ void loop() {
           Serial1.write(0x0D);
           Serial1.write(0x0A);
         }
+        if (String(config.scale_protocol) == "AD") {
+          Serial1.write("Q\r\n");
+        }
+        if (String(config.scale_protocol) == "KERN") {
+          Serial1.write("w");
+        }
       }
 
       if (config.mode == trickler) {
-        if ((abs(weight - targetWeight) < 0.0001)) {
+        if (weight >= targetWeight) {
           targetWeightStr = String(targetWeight, 3);
           if (!finished) {
             beep(done);
@@ -336,49 +347,52 @@ void loop() {
 
       if (newData) {
         if (!finished) {
-          if ((config.mode == trickler) && ((abs(weight - targetWeight) + 0.0001) >= 0)) {
+          if ((config.mode == trickler) && (weight < targetWeight)) {
             labelInfo.drawButton(false, "Running...");
             stepperX.enable();
             int stepperSpeedOld = 0;
+            int profileStep = 0;
+            //Serial.print("abs: ");
+            //Serial.println(abs(weight - targetWeight), 3);
+            //Serial.print("trickler_weight: ");
+            //Serial.println(config.trickler_weight[i], 3);
+
             for (int i = 0; i < config.trickler_count; i++) {
-              //Serial.print("abs: ");
-              //Serial.println(abs(weight - targetWeight), 3);
-              //Serial.print("trickler_weight: ");
-              //Serial.println(config.trickler_weight[i], 3);
 
-              if ((weight - 0.0001) <= (targetWeight - config.trickler_weight[i])) {
-
-                //Serial.print("Speed: ");
-                //Serial.println(config.trickler_speed[i], DEC);
-                if (stepperSpeedOld != config.trickler_speed[i])
-                  setStepperSpeed(config.trickler_speed[i]); //only change if value changed
-                stepperSpeedOld = config.trickler_speed[i];
-
-                //Serial.print("Stepp: ");
-                //Serial.println(config.trickler_steps[i], DEC);
-                if (config.trickler_steps[i] > 360) {
-                  //do full rotations
-                  for (int j = 0; j < int(config.trickler_steps[i] / 360); j++)
-                    step(360);
-                  //do remaining steps
-                  step((config.trickler_steps[i] % 360));
-                }
-                else
-                  step(config.trickler_steps[i]);
-
-                //Serial.print("Measurements: ");
-                //Serial.println(config.trickler_measurements[i], DEC);
-                avrWeight = config.trickler_measurements[i];
-
-                String infoText = "";
-                infoText += "W" + String(config.trickler_weight[i], 3) + " ";
-                infoText += "ST" + String(config.trickler_steps[i]) + " ";
-                infoText += "SP" + String(config.trickler_speed[i]) + " ";
-                infoText += "M" + String(config.trickler_measurements[i]);
-                labelInfo.drawButton(false, infoText);
+              if ((weight) <= (targetWeight - config.trickler_weight[i])) {
+                profileStep = i;
                 break;
               }
             }
+
+            //Serial.print("Speed: ");
+            //Serial.println(config.trickler_speed[profileStep], DEC);
+            if (stepperSpeedOld != config.trickler_speed[profileStep])
+              setStepperSpeed(config.trickler_speed[profileStep]); //only change if value changed
+            stepperSpeedOld = config.trickler_speed[profileStep];
+
+            //Serial.print("Stepp: ");
+            //Serial.println(config.trickler_steps[profileStep], DEC);
+            if (config.trickler_steps[profileStep] > 360) {
+              //do full rotations
+              for (int j = 0; j < int(config.trickler_steps[profileStep] / 360); j++)
+                step(360);
+              //do remaining steps
+              step((config.trickler_steps[profileStep] % 360));
+            }
+            else
+              step(config.trickler_steps[profileStep]);
+
+            //Serial.print("Measurements: ");
+            //Serial.println(config.trickler_measurements[profileStep], DEC);
+            avrWeight = config.trickler_measurements[profileStep];
+
+            String infoText = "";
+            infoText += "W" + String(config.trickler_weight[profileStep], 3) + " ";
+            infoText += "ST" + String(config.trickler_steps[profileStep]) + " ";
+            infoText += "SP" + String(config.trickler_speed[profileStep]) + " ";
+            infoText += "M" + String(config.trickler_measurements[profileStep]);
+            labelInfo.drawButton(false, infoText);
           }
           if (config.mode == logger && (weight > 0.0001)) {
             Serial.println("Log to File");
