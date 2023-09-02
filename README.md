@@ -28,7 +28,7 @@ config.txt
 }
 ```
 
-Use the TEST.txt to check how much Powder is trickled out with one Rotation (360 Steps).
+Use the calibrate.txt to check how much Powder is trickled out with 10 Rotation (3600 Steps).
 Slower speed mostly means more powder with one rotation.
 You can then calculate how much powder was trickled with one rotation. And apply this to your POWDER.txt
 For example your first Powder step is 1 gramm and the trickler, trickles 0.250mg of powder with one rotation.
