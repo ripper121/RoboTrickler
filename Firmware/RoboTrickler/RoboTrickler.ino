@@ -276,9 +276,9 @@ void loop() {
         int N10N2 = 0;
         int N10N3 = 0;
         bool negative = false;
-
-        if (String(buff).indexOf('-') != -1) {
-          negative = true;
+        String unit = "g";
+        if (String(buff).indexOf("gr") != -1) {
+          unit = "gr";
         }
 
         int separator = String(buff).indexOf('.');
@@ -301,6 +301,10 @@ void loop() {
         weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
         weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
 
+        if (String(buff).indexOf('-') != -1) {
+          weight = weight * (-1.0);
+        }
+
         if (lastWeight == weight) {
           weightCounter++;
           if (weightCounter > avrWeight) {
@@ -310,9 +314,9 @@ void loop() {
         } else {
           weightCounter = 0;
           if (config.mode == trickler)
-            labelWeight.drawButton(false, String(weight, 3)); //labelWeight.drawButton(false, "Diff: " + String((targetWeight - weight), 3) + " g");
+            labelWeight.drawButton(false, String(weight, 3) + unit);
           else if (config.mode == logger)
-            labelWeight.drawButton(false, String(weight, 3));
+            labelWeight.drawButton(false, String(weight, 3) + unit);
         }
         lastWeight = weight;
         Serial.print("Scale Read: ");
@@ -337,7 +341,7 @@ void loop() {
       }
 
       if (config.mode == trickler) {
-        if ((targetWeight - 0.0001) <= weight) {
+        if (((targetWeight - 0.0001) <= weight) && (weight >= 0)) {
           targetWeightStr = String(targetWeight, 3);
           if (!finished) {
             beep(done);
@@ -351,7 +355,7 @@ void loop() {
 
       if (newData) {
         if (!finished) {
-          if ((config.mode == trickler) && (weight < targetWeight)) {
+          if ((config.mode == trickler) && (weight < targetWeight) && (weight >= 0)) {
             labelInfo.drawButton(false, "Running...");
             stepperX.enable();
             int stepperSpeedOld = 0;
