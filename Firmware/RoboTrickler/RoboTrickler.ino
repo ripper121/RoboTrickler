@@ -18,7 +18,7 @@
 #include "A4988.h"
 #include <ArduinoJson.h>
 
-#define FW_VERSION 1.14
+#define FW_VERSION 1.15
 
 SPIClass *SDspi = NULL;
 
@@ -322,7 +322,7 @@ void loop() {
         Serial.print("Scale Read: ");
         Serial.println(weight, 3);
       } else {
-        if (String(config.scale_protocol) == "GUG") {
+        if ((String(config.scale_protocol) == "GUG")||(String(config.scale_protocol) == "GG")) { //GUG only for backwards compatibility
           Serial1.write(0x1B);
           Serial1.write(0x70);
           Serial1.write(0x0D);
