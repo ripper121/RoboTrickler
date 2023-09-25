@@ -18,7 +18,7 @@
 #include "A4988.h"
 #include <ArduinoJson.h>
 
-#define FW_VERSION 1.15
+#define FW_VERSION 1.16
 
 SPIClass *SDspi = NULL;
 
@@ -47,6 +47,7 @@ struct Config {
   char scale_protocol[16];
   int scale_baud;
   char powder[64];
+  bool oscillate;
   float trickler_weight[32];
   int trickler_steps[32];
   int trickler_speed[32];
@@ -269,17 +270,15 @@ void loop() {
         Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
         //labelWeight.drawButton(false, String(buff,HEX));
 
+        bool negative = false;
+        String unit = "";
+
         int N10P3 = 0;
         int N10P2 = 0;
         int N10P1 = 0;
         int N10N1 = 0;
         int N10N2 = 0;
         int N10N3 = 0;
-        bool negative = false;
-        String unit = "g";
-        if (String(buff).indexOf("gr") != -1) {
-          unit = "gr";
-        }
 
         int separator = String(buff).indexOf('.');
         Serial.print("separator: ");
@@ -301,7 +300,14 @@ void loop() {
         weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
         weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
 
-        if (String(buff).indexOf('-') != -1) {
+        if (String(buff).indexOf("g") > 0) {
+          unit = "g";
+          if (String(buff).indexOf("gr") > 0) {
+            unit = "gr";
+          }
+        }
+
+        if (String(buff).indexOf('-') > 0) {
           weight = weight * (-1.0);
         }
 
@@ -322,7 +328,7 @@ void loop() {
         Serial.print("Scale Read: ");
         Serial.println(weight, 3);
       } else {
-        if ((String(config.scale_protocol) == "GUG")||(String(config.scale_protocol) == "GG")) { //GUG only for backwards compatibility
+        if ((String(config.scale_protocol) == "GUG") || (String(config.scale_protocol) == "GG")) { //GUG only for backwards compatibility
           Serial1.write(0x1B);
           Serial1.write(0x70);
           Serial1.write(0x0D);

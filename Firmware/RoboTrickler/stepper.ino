@@ -9,12 +9,12 @@ void initStepper() {
 }
 
 void step(int steps) {
-  if (steps > 10) {
+  if (steps > 10 && (config.oscillate)) {
     int forward = steps / 2;
     int backward = -(steps / 2);
     stepperX.rotate(forward);
     stepperX.rotate(backward);
-  } else{
+  } else {
     stepperX.rotate(steps);
   }
 }

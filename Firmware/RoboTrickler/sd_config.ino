@@ -73,6 +73,8 @@ int loadConfiguration(const char *filename, Config &config) {
           doc["powder"] | "calibrate",  // <- source
           sizeof(config.powder));         // <- destination's capacity
 
+  config.oscillate = doc["oscillate"] | true;
+
   if (doc["mode"] == "trickler") {
     config.mode = trickler;
   } else if (doc["mode"] == "logger") {
