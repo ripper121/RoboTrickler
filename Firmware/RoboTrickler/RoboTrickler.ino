@@ -284,7 +284,7 @@ void loop() {
         Serial.print("separator: ");
         Serial.println(separator, DEC);
 
-        if (separator > 0) {
+        if (separator != -1) {
           N10P3 = (buff[separator - 3] > 0x30) ? (buff[separator - 3] - 0x30) : 0;
           N10P2 = (buff[separator - 2] > 0x30) ? (buff[separator - 2] - 0x30) : 0;
           N10P1 = (buff[separator - 1] > 0x30) ? (buff[separator - 1] - 0x30) : 0;
@@ -300,14 +300,14 @@ void loop() {
         weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
         weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
 
-        if (String(buff).indexOf("g") > 0) {
+        if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1) {
           unit = "g";
-          if (String(buff).indexOf("gr") > 0) {
-            unit = "gr";
+          if (String(buff).indexOf("gn") != -1 || String(buff).indexOf("GN") != -1 || String(buff).indexOf("gr") != -1 || String(buff).indexOf("GR") != -1) {
+            unit = "gn";
           }
         }
 
-        if (String(buff).indexOf('-') > 0) {
+        if (String(buff).indexOf('-') != -1) {
           weight = weight * (-1.0);
         }
 
