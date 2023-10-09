@@ -1,20 +1,38 @@
-void setStepperSpeed(int _stepperSpeed) {
-  stepperX.begin(_stepperSpeed, MICROSTEPS);
-  stepperX.setEnableActiveState(LOW);
+void setStepperSpeed(int stepperNum, int _stepperSpeed) {
+  if (stepperNum == 1) {
+    stepper1.begin(_stepperSpeed, MICROSTEPS);
+    stepper1.setEnableActiveState(LOW);
+  }
+  if (stepperNum == 2) {
+    stepper2.begin(_stepperSpeed, MICROSTEPS);
+    stepper2.setEnableActiveState(LOW);
+  }
 }
 
 void initStepper() {
   Serial.println("initStepper()");
-  setStepperSpeed(100);
+  setStepperSpeed(1, 100);
+  setStepperSpeed(2, 100);
 }
 
-void step(int steps) {
+void step(int stepperNum, int steps) {
   if (steps > 10 && (config.oscillate)) {
     int forward = steps / 2;
     int backward = -(steps / 2);
-    stepperX.rotate(forward);
-    stepperX.rotate(backward);
+    if (stepperNum == 1) {
+      stepper1.rotate(forward);
+      stepper1.rotate(backward);
+    }
+    if (stepperNum == 2) {
+      stepper2.rotate(forward);
+      stepper2.rotate(backward);
+    }
   } else {
-    stepperX.rotate(steps);
+    if (stepperNum == 1) {
+      stepper1.rotate(steps);
+    }
+    if (stepperNum == 2) {
+      stepper2.rotate(steps);
+    }
   }
 }

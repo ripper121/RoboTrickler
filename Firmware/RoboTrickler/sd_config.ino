@@ -21,6 +21,7 @@ bool readPowder(const char *filename, Config &config) {
 
   for (JsonPair item : doc.as<JsonObject>()) {
     int item_key = ((String(item.key().c_str()).toInt()) - 1);
+    config.trickler_num[item_key] = item.value()["number"] | 1;
     config.trickler_weight[item_key] = item.value()["weight"];
     config.trickler_steps[item_key] = item.value()["steps"];
     config.trickler_speed[item_key] = item.value()["speed"];

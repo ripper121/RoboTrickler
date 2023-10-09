@@ -18,7 +18,7 @@
 #include "A4988.h"
 #include <ArduinoJson.h>
 
-#define FW_VERSION 1.16
+#define FW_VERSION 1.17
 
 SPIClass *SDspi = NULL;
 
@@ -48,6 +48,7 @@ struct Config {
   int scale_baud;
   char powder[64];
   bool oscillate;
+  int trickler_num[32];
   float trickler_weight[32];
   int trickler_steps[32];
   int trickler_speed[32];
@@ -88,7 +89,8 @@ uint8_t buttonCount = 13;
 #define MOTOR_STEPS 200
 #define RPM 200
 #define MICROSTEPS 1
-A4988 stepperX(MOTOR_STEPS, I2S_X_DIRECTION_PIN, I2S_X_STEP_PIN, I2S_X_DISABLE_PIN);
+A4988 stepper1(MOTOR_STEPS, I2S_X_DIRECTION_PIN, I2S_X_STEP_PIN, I2S_X_DISABLE_PIN);
+A4988 stepper2(MOTOR_STEPS, I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, I2S_Y_DISABLE_PIN);
 
 #define MAX_TARGET_WEIGHT 100
 float weight = 0.0;
@@ -109,14 +111,14 @@ String path = "empty";
 
 void beep(_beeper beepMode) {
   if (config.beeper == done && beepMode == done)
-    stepperX.beep(500);
+    stepper1.beep(500);
   if (config.beeper == button && beepMode == button)
-    stepperX.beep(100);
+    stepper1.beep(100);
 
   if (config.beeper == both && beepMode == done)
-    stepperX.beep(500);
+    stepper1.beep(500);
   if (config.beeper == both && beepMode == button)
-    stepperX.beep(100);
+    stepper1.beep(100);
 }
 
 bool stringContains(const String &haystack, const String &needle) {
@@ -363,7 +365,6 @@ void loop() {
         if (!finished) {
           if ((config.mode == trickler) && (weight < targetWeight) && (weight >= 0)) {
             labelInfo.drawButton(false, "Running...");
-            stepperX.enable();
             int stepperSpeedOld = 0;
             int profileStep = 0;
             //Serial.print("abs: ");
@@ -382,20 +383,26 @@ void loop() {
             //Serial.print("Speed: ");
             //Serial.println(config.trickler_speed[profileStep], DEC);
             if (stepperSpeedOld != config.trickler_speed[profileStep])
-              setStepperSpeed(config.trickler_speed[profileStep]); //only change if value changed
+              setStepperSpeed(config.trickler_num[profileStep], config.trickler_speed[profileStep]); //only change if value changed
             stepperSpeedOld = config.trickler_speed[profileStep];
 
             //Serial.print("Stepp: ");
             //Serial.println(config.trickler_steps[profileStep], DEC);
+            if (config.trickler_num[profileStep] == 1)
+              stepper1.enable();
+            if (config.trickler_num[profileStep] == 2)
+              stepper2.enable();
             if (config.trickler_steps[profileStep] > 360) {
               //do full rotations
               for (int j = 0; j < int(config.trickler_steps[profileStep] / 360); j++)
-                step(360);
+                step(config.trickler_num[profileStep], 360);
               //do remaining steps
-              step((config.trickler_steps[profileStep] % 360));
+              step(config.trickler_num[profileStep], (config.trickler_steps[profileStep] % 360));
             }
             else
-              step(config.trickler_steps[profileStep]);
+              step(config.trickler_num[profileStep], config.trickler_steps[profileStep]);
+            stepper1.disable();
+            stepper2.disable();
 
             //Serial.print("Measurements: ");
             //Serial.println(config.trickler_measurements[profileStep], DEC);
@@ -423,7 +430,8 @@ void loop() {
           }
         } else {
           if (config.mode == trickler) {
-            stepperX.disable();
+            stepper1.disable();
+            stepper2.disable();
           }
         }
 
@@ -442,7 +450,8 @@ void loop() {
         }
       }
     } else {
-      stepperX.disable();
+      stepper1.disable();
+      stepper2.disable();
       path = "empty";
       logCounter = 1;
     }
