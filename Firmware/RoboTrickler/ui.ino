@@ -66,6 +66,7 @@ void btnStop_pressAction(void)
     running = false;
     beep(button);
     labelInfo.drawButton(false, "Stop");
+    labelWeight.drawButton(false, "-.-");
   }
 }
 void btnStop_releaseAction(void)
@@ -193,7 +194,7 @@ void initButtons() {
   }
 
   buttonW = (LCD_WIDTH) - buttonSpacing;
-  labelWeight.initButtonUL(buttonSpacing, (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_WHITE, "0.000", 4);
+  labelWeight.initButtonUL(buttonSpacing, (BUTTON_H * rowMult) + (buttonSpacing * rowMult), buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_WHITE, "-.-", 4);
   labelWeight.setLabelDatum(0, textOffset, MC_DATUM);
   labelWeight.drawButton();
   rowMult++;

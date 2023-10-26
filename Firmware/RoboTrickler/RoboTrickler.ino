@@ -327,10 +327,7 @@ void loop() {
           } else {
             weightCounter = 0;
             if (!config.debugLog) {
-              if (config.mode == trickler)
-                labelWeight.drawButton(false, String(weight, 3) + unit);
-              else if (config.mode == logger)
-                labelWeight.drawButton(false, String(weight, 3) + unit);
+              labelWeight.drawButton(false, String(weight, 3) + unit);
             }
           }
           lastWeight = weight;
@@ -370,7 +367,7 @@ void loop() {
       }
 
       if (newData) {
-        weightCounter = 0;
+        weightCounter = 0;        
         if (!finished) {
           if ((config.mode == trickler) && (weight < targetWeight) && (weight >= 0)) {
             labelInfo.drawButton(false, "Running...");
