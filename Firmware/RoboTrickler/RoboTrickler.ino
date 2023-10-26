@@ -326,7 +326,7 @@ void loop() {
             }
           } else {
             weightCounter = 0;
-            if (config.debugLog) {
+            if (!config.debugLog) {
               if (config.mode == trickler)
                 labelWeight.drawButton(false, String(weight, 3) + unit);
               else if (config.mode == logger)
