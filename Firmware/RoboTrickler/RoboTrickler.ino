@@ -18,7 +18,7 @@
 #include "A4988.h"
 #include <ArduinoJson.h>
 
-#define FW_VERSION 1.17
+#define FW_VERSION 1.18
 
 SPIClass *SDspi = NULL;
 
@@ -44,10 +44,12 @@ struct Config {
   char wifi_ssid[64];
   char wifi_psk[64];
   bool arduino_ota;
+  bool debugLog;
   char scale_protocol[16];
   int scale_baud;
   char powder[64];
   bool oscillate;
+  int microsteps;
   int trickler_num[32];
   float trickler_weight[32];
   int trickler_steps[32];
@@ -88,7 +90,6 @@ uint8_t buttonCount = 13;
 
 #define MOTOR_STEPS 200
 #define RPM 200
-#define MICROSTEPS 1
 A4988 stepper1(MOTOR_STEPS, I2S_X_DIRECTION_PIN, I2S_X_STEP_PIN, I2S_X_DISABLE_PIN);
 A4988 stepper2(MOTOR_STEPS, I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, I2S_Y_DISABLE_PIN);
 
@@ -261,19 +262,23 @@ void loop() {
       }
       lastTargetWeight = targetWeight;
 
-      char temp[300];
-      sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());
-      Serial.println(temp);
+      //char temp[300];
+      //sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());
+      //Serial.println(temp);
     }
 
     if (running) {
       if (Serial1.available()) {
         char buff[16];
         Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
-        //labelWeight.drawButton(false, String(buff,HEX));
+        if (config.debugLog) {
+          labelWeight.drawButton(false, String(buff));
+          debugLog(SD, String(buff) + "\n");
+        }
 
         bool negative = false;
         String unit = "";
+        weight = 0.0;
 
         int N10P3 = 0;
         int N10P2 = 0;
@@ -293,42 +298,46 @@ void loop() {
           N10N1 = (buff[separator + 1] > 0x30) ? (buff[separator + 1] - 0x30) : 0;
           N10N2 = (buff[separator + 2] > 0x30) ? (buff[separator + 2] - 0x30) : 0;
           N10N3 = (buff[separator + 3] > 0x30) ? (buff[separator + 3] - 0x30) : 0;
-        }
 
-        weight = N10P3 * 100.0;
-        weight += N10P2 * 10.0;
-        weight += N10P1 * 1.0;
-        weight += (N10N1 == 0) ? (0.0) : (N10N1 / 10.0);
-        weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
-        weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
 
-        if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1) {
-          unit = "g";
-          if (String(buff).indexOf("gn") != -1 || String(buff).indexOf("GN") != -1 || String(buff).indexOf("gr") != -1 || String(buff).indexOf("GR") != -1) {
-            unit = "gn";
+          weight = N10P3 * 100.0;
+          weight += N10P2 * 10.0;
+          weight += N10P1 * 1.0;
+          weight += (N10N1 == 0) ? (0.0) : (N10N1 / 10.0);
+          weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
+          weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
+
+          if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1) {
+            unit = "g";
+            if (String(buff).indexOf("gn") != -1 || String(buff).indexOf("GN") != -1 || String(buff).indexOf("gr") != -1 || String(buff).indexOf("GR") != -1) {
+              unit = "gn";
+            }
           }
-        }
 
-        if (String(buff).indexOf('-') != -1) {
-          weight = weight * (-1.0);
-        }
+          if (String(buff).indexOf('-') != -1) {
+            weight = weight * (-1.0);
+          }
 
-        if (lastWeight == weight) {
-          weightCounter++;
-          if (weightCounter > avrWeight) {
-            newData = true;
+          if (lastWeight == weight) {
+            weightCounter++;
+            if (weightCounter > avrWeight) {
+              newData = true;
+              weightCounter = 0;
+            }
+          } else {
             weightCounter = 0;
+            if (config.debugLog) {
+              if (config.mode == trickler)
+                labelWeight.drawButton(false, String(weight, 3) + unit);
+              else if (config.mode == logger)
+                labelWeight.drawButton(false, String(weight, 3) + unit);
+            }
           }
-        } else {
-          weightCounter = 0;
-          if (config.mode == trickler)
-            labelWeight.drawButton(false, String(weight, 3) + unit);
-          else if (config.mode == logger)
-            labelWeight.drawButton(false, String(weight, 3) + unit);
+          lastWeight = weight;
+          Serial.print("Scale Read: ");
+          Serial.println(weight, 3);
         }
-        lastWeight = weight;
-        Serial.print("Scale Read: ");
-        Serial.println(weight, 3);
+
       } else {
         if ((String(config.scale_protocol) == "GUG") || (String(config.scale_protocol) == "GG")) { //GUG only for backwards compatibility
           Serial1.write(0x1B);
@@ -343,8 +352,7 @@ void loop() {
         }
         if (String(config.scale_protocol) == "KERN") {
           Serial1.write("w");
-          Serial1.flush();
-          delay(300);
+          delay(50);
         }
       }
 
@@ -362,6 +370,7 @@ void loop() {
       }
 
       if (newData) {
+        weightCounter = 0;
         if (!finished) {
           if ((config.mode == trickler) && (weight < targetWeight) && (weight >= 0)) {
             labelInfo.drawButton(false, "Running...");

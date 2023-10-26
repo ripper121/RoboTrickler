@@ -1,10 +1,10 @@
 void setStepperSpeed(int stepperNum, int _stepperSpeed) {
   if (stepperNum == 1) {
-    stepper1.begin(_stepperSpeed, MICROSTEPS);
+    stepper1.begin(_stepperSpeed, config.microsteps);
     stepper1.setEnableActiveState(LOW);
   }
   if (stepperNum == 2) {
-    stepper2.begin(_stepperSpeed, MICROSTEPS);
+    stepper2.begin(_stepperSpeed, config.microsteps);
     stepper2.setEnableActiveState(LOW);
   }
 }
@@ -16,6 +16,7 @@ void initStepper() {
 }
 
 void step(int stepperNum, int steps) {
+  steps = steps * config.microsteps;
   if (steps > 10 && (config.oscillate)) {
     int forward = steps / 2;
     int backward = -(steps / 2);

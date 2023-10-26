@@ -75,6 +75,7 @@ int loadConfiguration(const char *filename, Config &config) {
           sizeof(config.powder));         // <- destination's capacity
 
   config.oscillate = doc["oscillate"] | true;
+  config.debugLog = doc["debugLog"] | false;
 
   if (doc["mode"] == "trickler") {
     config.mode = trickler;
@@ -84,6 +85,8 @@ int loadConfiguration(const char *filename, Config &config) {
   } else {
     config.mode = trickler;
   }
+
+  config.microsteps = doc["microsteps"] | 1;
 
   if (doc["beeper"] == "off") {
     config.beeper = off;
