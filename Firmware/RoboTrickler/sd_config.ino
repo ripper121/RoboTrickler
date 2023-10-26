@@ -75,7 +75,7 @@ int loadConfiguration(const char *filename, Config &config) {
           sizeof(config.powder));         // <- destination's capacity
 
   config.oscillate = doc["oscillate"] | true;
-  config.debugLog = doc["debugLog"] | false;
+  config.debugLog = doc["debug_log"] | false;
 
   if (doc["mode"] == "trickler") {
     config.mode = trickler;
