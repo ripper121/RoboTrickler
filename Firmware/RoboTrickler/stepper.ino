@@ -15,9 +15,9 @@ void initStepper() {
   setStepperSpeed(2, 100);
 }
 
-void step(int stepperNum, int steps) {
+void step(int stepperNum, int steps, bool oscillate,bool reverse) {
   steps = steps * config.microsteps;
-  if (steps > 10 && (config.oscillate)) {
+  if (steps > 10 && (oscillate)) {
     int forward = steps / 2;
     int backward = -(steps / 2);
     if (stepperNum == 1) {
@@ -29,6 +29,9 @@ void step(int stepperNum, int steps) {
       stepper2.rotate(backward);
     }
   } else {
+    if (reverse) {
+      steps = steps * (-1);
+    }
     if (stepperNum == 1) {
       stepper1.rotate(steps);
     }

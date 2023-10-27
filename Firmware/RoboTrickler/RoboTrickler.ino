@@ -48,13 +48,14 @@ struct Config {
   char scale_protocol[16];
   int scale_baud;
   char powder[64];
-  bool oscillate;
   int microsteps;
   int trickler_num[32];
   float trickler_weight[32];
   int trickler_steps[32];
   int trickler_speed[32];
   int trickler_measurements[32];
+  bool trickler_oscillate[32];
+  bool trickler_reverse[32];
   int trickler_count;
   _mode mode;
   int log_measurements;
@@ -367,7 +368,7 @@ void loop() {
       }
 
       if (newData) {
-        weightCounter = 0;        
+        weightCounter = 0;
         if (!finished) {
           if ((config.mode == trickler) && (weight < targetWeight) && (weight >= 0)) {
             labelInfo.drawButton(false, "Running...");
@@ -398,15 +399,16 @@ void loop() {
               stepper1.enable();
             if (config.trickler_num[profileStep] == 2)
               stepper2.enable();
-            if (config.trickler_steps[profileStep] > 360) {
+
+            if (config.trickler_steps[profileStep] > 360 && config.trickler_oscillate[profileStep]) {
               //do full rotations
               for (int j = 0; j < int(config.trickler_steps[profileStep] / 360); j++)
-                step(config.trickler_num[profileStep], 360);
+                step(config.trickler_num[profileStep], config.trickler_steps[profileStep], config.trickler_oscillate[profileStep], config.trickler_reverse[profileStep]);
               //do remaining steps
-              step(config.trickler_num[profileStep], (config.trickler_steps[profileStep] % 360));
+              step(config.trickler_num[profileStep], (config.trickler_steps[profileStep] % 360), config.trickler_oscillate[profileStep], config.trickler_reverse[profileStep]);
             }
             else
-              step(config.trickler_num[profileStep], config.trickler_steps[profileStep]);
+              step(config.trickler_num[profileStep], config.trickler_steps[profileStep], config.trickler_oscillate[profileStep], config.trickler_reverse[profileStep]);
             stepper1.disable();
             stepper2.disable();
 

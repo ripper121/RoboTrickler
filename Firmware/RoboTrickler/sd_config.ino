@@ -26,6 +26,8 @@ bool readPowder(const char *filename, Config &config) {
     config.trickler_steps[item_key] = item.value()["steps"];
     config.trickler_speed[item_key] = item.value()["speed"];
     config.trickler_measurements[item_key] = item.value()["measurements"];
+    config.trickler_oscillate[item_key] = item.value()["oscillate"] | true;
+    config.trickler_reverse[item_key] = item.value()["reverse"] | false;
     config.trickler_count = item_key + 1;
   }
   file.close();
@@ -74,7 +76,6 @@ int loadConfiguration(const char *filename, Config &config) {
           doc["powder"] | "calibrate",  // <- source
           sizeof(config.powder));         // <- destination's capacity
 
-  config.oscillate = doc["oscillate"] | true;
   config.debugLog = doc["debug_log"] | false;
 
   if (doc["mode"] == "trickler") {
