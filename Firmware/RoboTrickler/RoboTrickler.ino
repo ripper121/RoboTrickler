@@ -18,7 +18,7 @@
 #include "A4988.h"
 #include <ArduinoJson.h>
 
-#define FW_VERSION 1.18
+#define FW_VERSION 1.19
 
 SPIClass *SDspi = NULL;
 
@@ -403,7 +403,7 @@ void loop() {
             if (config.trickler_steps[profileStep] > 360 && config.trickler_oscillate[profileStep]) {
               //do full rotations
               for (int j = 0; j < int(config.trickler_steps[profileStep] / 360); j++)
-                step(config.trickler_num[profileStep], config.trickler_steps[profileStep], config.trickler_oscillate[profileStep], config.trickler_reverse[profileStep]);
+                step(config.trickler_num[profileStep], 360, config.trickler_oscillate[profileStep], config.trickler_reverse[profileStep]);
               //do remaining steps
               step(config.trickler_num[profileStep], (config.trickler_steps[profileStep] % 360), config.trickler_oscillate[profileStep], config.trickler_reverse[profileStep]);
             }
