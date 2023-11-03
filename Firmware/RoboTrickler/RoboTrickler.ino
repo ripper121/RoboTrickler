@@ -51,7 +51,7 @@ struct Config {
   int microsteps;
   int trickler_num[32];
   float trickler_weight[32];
-  int trickler_steps[32];
+  long trickler_steps[32];
   int trickler_speed[32];
   int trickler_measurements[32];
   bool trickler_oscillate[32];
