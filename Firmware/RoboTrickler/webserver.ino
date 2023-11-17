@@ -261,9 +261,9 @@ void handleSetValue() {
   for (uint8_t i = 0; i < server.args(); i++) {
     message += " NAME:" + server.argName(i) + "\n VALUE:" + server.arg(i) + "\n";
     if (server.argName(i) == "targetWeight") {
-      if (server.arg(i).toFloat() > 0 && server.arg(i).toFloat() < 10){
+      if (server.arg(i).toFloat() > 0 && server.arg(i).toFloat() < 100){
         targetWeight = server.arg(i).toFloat();
-        labelTarget.drawButton(false, String(targetWeight, 3) + " g");
+        labelTarget.drawButton(false, String(targetWeight, 3));
         preferences.putFloat("targetWeight", targetWeight);
       }
     }

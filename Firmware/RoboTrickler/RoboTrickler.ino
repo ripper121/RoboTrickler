@@ -101,7 +101,7 @@ float lastTargetWeight = 0.0;
 float lastWeight = 0;
 float addWeight = 0.1;
 int weightCounter = 0;
-int avrWeight = 0;
+int measurementCount = 0;
 float newData = false;
 bool running = false;
 bool finished = false;
@@ -127,6 +127,20 @@ bool stringContains(const String &haystack, const String &needle) {
   // Use the indexOf() method to search for the needle in the haystack
   // If the needle is found, indexOf() returns the starting position; otherwise, it returns -1
   return (haystack.indexOf(needle) != -1);
+}
+
+bool serialWait() {
+  bool timeout = true;
+  for (int i = 0; i < 1000; i++) {
+    if (Serial1.available()) {
+      timeout = false;
+      break;
+    }
+    else {
+      delay(1);
+    }
+  }
+  return timeout;
 }
 
 void setup() {
@@ -185,11 +199,11 @@ void setup() {
   if (config.mode == trickler) {
     Serial.println("config.mode == trickler");
     infoText += "Powder:" + String(config.powder) + " ";
-    avrWeight = config.trickler_measurements[0];
+    measurementCount = config.trickler_measurements[0];
   } else if (config.mode == logger) {
     Serial.println("config.mode == logger");
     infoText += "Logger Mode ";
-    avrWeight = config.log_measurements;
+    measurementCount = config.log_measurements;
   } else {
     Serial.println("config.mode == undefined");
   }
@@ -319,9 +333,10 @@ void loop() {
             weight = weight * (-1.0);
           }
 
+
           if (lastWeight == weight) {
             weightCounter++;
-            if (weightCounter > avrWeight) {
+            if (weightCounter > measurementCount) {
               newData = true;
               weightCounter = 0;
             }
@@ -332,25 +347,35 @@ void loop() {
             }
           }
           lastWeight = weight;
+
           Serial.print("Scale Read: ");
           Serial.println(weight, 3);
         }
 
       } else {
+        bool timeout = false;
         if ((String(config.scale_protocol) == "GUG") || (String(config.scale_protocol) == "GG")) { //GUG only for backwards compatibility
           Serial1.write(0x1B);
           Serial1.write(0x70);
           Serial1.write(0x0D);
           Serial1.write(0x0A);
-          delay(50);
+          timeout = serialWait();
         }
         if (String(config.scale_protocol) == "AD") {
           Serial1.write("Q\r\n");
-          delay(50);
+          timeout = serialWait();
         }
         if (String(config.scale_protocol) == "KERN") {
           Serial1.write("w");
-          delay(50);
+          timeout = serialWait();
+        }
+        if (timeout)
+        {
+          labelInfo.drawButton(false, "Scale Data Timeout!");
+          delay(1000);
+          labelInfo.drawButton(false, "Check RS232 Wiring & Settings!");
+          delay(1000);
+          newData = false;
         }
       }
 
@@ -362,6 +387,7 @@ void loop() {
           }
           finished = true;
           labelInfo.drawButton(false, "Done :)");
+          measurementCount = 0;
         } else {
           targetWeightStr =  String(targetWeight, 3);
         }
@@ -414,7 +440,7 @@ void loop() {
 
             //Serial.print("Measurements: ");
             //Serial.println(config.trickler_measurements[profileStep], DEC);
-            avrWeight = config.trickler_measurements[profileStep];
+            measurementCount = config.trickler_measurements[profileStep];
 
             String infoText = "";
             infoText += "W" + String(config.trickler_weight[profileStep], 3) + " ";
@@ -430,7 +456,7 @@ void loop() {
             }
             String infoText = "";
             writeCSVFile(SD, path.c_str(), weight, logCounter);
-            avrWeight = config.log_measurements;
+            measurementCount = config.log_measurements;
             infoText += "Count: " + String(logCounter) + " Saved :)";
             labelInfo.drawButton(false, infoText);
             finished = true;
@@ -448,14 +474,13 @@ void loop() {
             logCounter++;
             labelInfo.drawButton(false, "Place next peace for measurment.");
             beep(done);
+          } else {
+            labelInfo.drawButton(false, "Ready");
           }
           finished = false;
         }
 
         newData = false;
-        while (Serial1.available()) {
-          Serial1.read();
-        }
       }
     } else {
       stepper1.disable();
