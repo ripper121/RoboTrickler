@@ -2,7 +2,7 @@
 <html>
 
 <head>
-   <title>Configuration Generator</title>
+   <title>Profile Generator</title>
    <style>
       .card {
          max-width: 400px;
@@ -34,10 +34,10 @@
 <body>
    <center>
       <div class="card">
-         <h1>Configuration Generator</h1>
+         <h1>Profile Generator</h1>
          <table>
             <tr>
-               <td><label for="weightInput">Weight for 3600 steps (in grams):</label></td>
+               <td><label for="weightInput">Weight for 3600 steps:</label></td>
                <td><input type="number" id="weightInput" step="0.0001" min="0" value="0.1"></td>
             </tr>
             <tr>
@@ -57,14 +57,17 @@
                <td><input type="radio" id="grainRadio" name="weightUnit" value="Grain"></td>
             </tr>
          </table>
-         <button id="generateButton">Generate Configuration</button><br><br>
-         <h2>Generated Configuration:</h2>
-         <textarea id="configOutput" rows="20" cols="40"></textarea>
+         <button id="generateButton">Generate Profile</button><br><br>
+         <h2>Generated Profile:</h2>
+         <textarea id="profileOutput" rows="20" cols="40"></textarea>
          <br>
          <button id="copyButton">Copy</button>
+         <button id="download-btn">Download</button>
       </div>
    </center>
    <script>
+      var profileJSON;
+
       document.getElementById("generateButton").addEventListener("click", function () {
          const measuredWeight = parseFloat(document.getElementById("weightInput").value);
          const speed = parseFloat(document.getElementById("speedInput").value);
@@ -72,7 +75,7 @@
          const weightUnit = document.querySelector('input[name="weightUnit"]:checked').value;
 
          if (!isNaN(measuredWeight)) {
-            const config = {};
+            const profile = {};
 
             // Define the conversion factor from grams to grains
             const gramToGrain = 15.4323583529;
@@ -89,7 +92,7 @@
 
             var measurements = 5;
 
-            // Loop through each weight value and calculate the configuration
+            // Loop through each weight value and calculate the profile
             for (let i = 0; i < weights.length; i++) {
                const weight = weights[i];
                var steps = Math.round((weight / measuredWeight) * 1800);
@@ -99,7 +102,7 @@
                   measurements = 15;
                if (i == weights.length - 1)
                   measurements = 20;
-               config[i + 1] = {
+               profile[i + 1] = {
                   weight: weight,
                   steps: steps,
                   speed: speed,
@@ -108,17 +111,17 @@
                };
             }
 
-            // Convert the config object to JSON format
-            const configJSON = JSON.stringify(config, null, 3);
+            // Convert the profile object to JSON format
+            profileJSON = JSON.stringify(profile, null, 3);
 
 
-            document.getElementById("configOutput").value = configJSON;
+            document.getElementById("profileOutput").value = profileJSON;
          }
       });
 
       document.getElementById("copyButton").addEventListener("click", function () {
          // Get the text field
-         var copyText = document.getElementById("configOutput");
+         var copyText = document.getElementById("profileOutput");
 
          // Select the text field
          copyText.select();
@@ -127,6 +130,26 @@
          // Copy the text inside the text field
          navigator.clipboard.writeText(copyText.value);
       });
+
+      document.getElementById("download-btn").addEventListener("click", function () {
+         // Get the content from the textarea
+         var text = document.getElementById('profileOutput').value;
+
+         // Convert the content to a Blob
+         var blob = new Blob([text], { type: 'text/plain' });
+
+         // Create a download link
+         var downloadLink = document.createElement('a');
+         downloadLink.href = window.URL.createObjectURL(blob);
+         downloadLink.download = 'MyPowderName.txt';
+
+         // Append the link to the body, click it, and then remove it
+         document.body.appendChild(downloadLink);
+         downloadLink.click();
+         document.body.removeChild(downloadLink);
+      }, false);
+
+
    </script>
 </body>
 
