@@ -220,7 +220,7 @@ void initButtons() {
   rowMult++;
 
   buttonW = (LCD_WIDTH) - buttonSpacing;
-  labelBanner.initButtonUL(buttonSpacing, LCD_HEIGHT - BUTTON_H, buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_WHITE, "RoboTrickler-1.19 ripper121.com", 2);
+  labelBanner.initButtonUL(buttonSpacing, LCD_HEIGHT - BUTTON_H, buttonW, BUTTON_H, TFT_WHITE, TFT_BLACK, TFT_WHITE, "RoboTrickler-1.20 ripper121.com", 2);
   labelBanner.setLabelDatum(0, textOffset, MC_DATUM);
   labelBanner.drawButton();
 }

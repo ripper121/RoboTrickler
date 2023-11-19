@@ -18,7 +18,7 @@
 #include "A4988.h"
 #include <ArduinoJson.h>
 
-#define FW_VERSION 1.19
+#define FW_VERSION 1.20
 
 SPIClass *SDspi = NULL;
 
@@ -284,7 +284,7 @@ void loop() {
 
     if (running) {
       if (Serial1.available()) {
-        char buff[16];
+        char buff[64];
         Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
         if (config.debugLog) {
           labelWeight.drawButton(false, String(buff));
@@ -352,6 +352,12 @@ void loop() {
           Serial.println(weight, 3);
         }
 
+        //flush TX
+        Serial1.flush();
+        //flush RX
+        while (Serial1.available()) {
+          Serial1.read();
+        }
       } else {
         bool timeout = false;
         if ((String(config.scale_protocol) == "GUG") || (String(config.scale_protocol) == "GG")) { //GUG only for backwards compatibility
@@ -360,13 +366,13 @@ void loop() {
           Serial1.write(0x0D);
           Serial1.write(0x0A);
           timeout = serialWait();
-        }
-        if (String(config.scale_protocol) == "AD") {
+        } else if (String(config.scale_protocol) == "AD") {
           Serial1.write("Q\r\n");
           timeout = serialWait();
-        }
-        if (String(config.scale_protocol) == "KERN") {
+        } else if (String(config.scale_protocol) == "KERN") {
           Serial1.write("w");
+          timeout = serialWait();
+        } else {
           timeout = serialWait();
         }
         if (timeout)
