@@ -1,7 +1,7 @@
 
 const char* host = "robo-trickler";
 
-const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
+const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form><br><button onClick='javascript:history.back()'>Back</button>";
 
 File uploadFile;
 
@@ -244,32 +244,21 @@ void handleAjaxRequest() {
 }
 
 void handleReboot() {
-  String message = "Reboot now...";
-  server.send(200, "text/plane", message);
+  server.send(200, "text/html", "<h3>Reboot now.</h3><br><button onClick='javascript:history.back()'>Back</button>");
   ESP.restart();
 }
 
 void handleSetValue() {
-  String message = "";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
   for (uint8_t i = 0; i < server.args(); i++) {
-    message += " NAME:" + server.argName(i) + "\n VALUE:" + server.arg(i) + "\n";
     if (server.argName(i) == "targetWeight") {
-      if (server.arg(i).toFloat() > 0 && server.arg(i).toFloat() < 100){
+      if (server.arg(i).toFloat() > 0 && server.arg(i).toFloat() < 100) {
         targetWeight = server.arg(i).toFloat();
         labelTarget.drawButton(false, String(targetWeight, 3));
         preferences.putFloat("targetWeight", targetWeight);
       }
     }
   }
-
-  server.send(200, "text/plane", message);
+  server.send(200, "text/html", "<h3>Value Set.</h3><br><button onClick='javascript:history.back()'>Back</button>");
 }
 
 void initWebServer() {
@@ -277,7 +266,14 @@ void initWebServer() {
   if (String(config.wifi_ssid).length() > 0) {
     Serial.print("Connect to Wifi: ");
     Serial.println(config.wifi_ssid);
-    WiFi.mode(WIFI_AP_STA);
+
+    WiFi.disconnect();   //added to start with the wifi off, avoid crashing
+    WiFi.softAPdisconnect(true); // Function will set currently configured SSID and password of the soft-AP to null values. The parameter  is optional. If set to true it will switch the soft-AP mode off.
+    WiFi.mode(WIFI_OFF); //added to start with the wifi off, avoid crashing
+
+    delay(500);
+
+    WiFi.mode(WIFI_STA);
     WiFi.begin(config.wifi_ssid, config.wifi_psk);
 
     if (WiFi.waitForConnectResult() == WL_CONNECTED) {
@@ -304,7 +300,7 @@ void initWebServer() {
       });
       server.on("/update", HTTP_POST, []() {
         server.sendHeader("Connection", "close");
-        server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+        server.send(200, "text/html", (Update.hasError()) ? "<h3>FAIL</h3><br><br><input type='button' value='Back' onClick='javascript:history.back()'>" : "<h3>OK</h3><br><br><input type='button' value='Back' onClick='javascript:history.back()'>");
         ESP.restart();
       }, []() {
         HTTPUpload& upload = server.upload();
