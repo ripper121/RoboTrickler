@@ -374,7 +374,10 @@ void loop() {
         } else if (String(config.scale_protocol) == "KERN") {
           Serial1.write("w");
           timeout = serialWait();
-        } else {
+        } else if (String(config.scale_protocol) == "SBI") {
+          Serial1.write("P\r\n");
+          timeout = serialWait();
+        }  else {
           timeout = serialWait();
         }
         if (timeout)
