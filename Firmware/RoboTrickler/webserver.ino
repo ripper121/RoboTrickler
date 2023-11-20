@@ -1,7 +1,7 @@
 
 const char* host = "robo-trickler";
 
-const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form><br><button onClick='javascript:history.back()'>Back</button>";
+const char* updatePage = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form><br><button onClick='javascript:history.back()'>Back</button>";
 
 File uploadFile;
 
@@ -85,7 +85,7 @@ bool loadFromSdCard(String path) {
 }
 
 void handleFileUpload() {
-  if (server.uri() != "/edit") {
+  if (server.uri() != "/resources/edit") {
     return;
   }
   HTTPUpload& upload = server.upload();
@@ -198,7 +198,7 @@ void printDirectory() {
       break;
     }
 
-    if (entry.path() != "/css") {
+    if (entry.path() != "/resources/css") {
 
       String output;
       if (cnt > 0) {
@@ -281,9 +281,9 @@ void initWebServer() {
       MDNS.begin(host);
 
       server.on("/list", HTTP_GET, printDirectory);
-      server.on("/edit", HTTP_DELETE, handleDelete);
-      server.on("/edit", HTTP_PUT, handleCreate);
-      server.on("/edit", HTTP_POST, []() {
+      server.on("/resources/edit", HTTP_DELETE, handleDelete);
+      server.on("/resources/edit", HTTP_PUT, handleCreate);
+      server.on("/resources/edit", HTTP_POST, []() {
         returnOK();
       }, handleFileUpload);
       //server.on("/ajaxRequest", handleAjaxRequest);//To get update of ADC Value only
@@ -296,7 +296,7 @@ void initWebServer() {
 
       server.on("/fwupdate", HTTP_GET, []() {
         server.sendHeader("Connection", "close");
-        server.send(200, "text/html", serverIndex);
+        server.send(200, "text/html", updatePage);
       });
       server.on("/update", HTTP_POST, []() {
         server.sendHeader("Connection", "close");

@@ -146,7 +146,7 @@ bool serialWait() {
 void setup() {
   Serial.begin(115200);
 
-  Serial.println("RoboTrickler v" + String(FW_VERSION, 2));
+  Serial.println("Robo-Trickler v" + String(FW_VERSION, 2));
 
   String infoText = "";
   config.mode = init_mode;
@@ -154,6 +154,7 @@ void setup() {
   tft_TS35_init();
   initStepper();
   initButtons();
+  labelBanner.drawButton(false, "Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com");
 
   SDspi = new SPIClass(HSPI);
   SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
@@ -236,6 +237,7 @@ void setup() {
 
   initButtons();
   labelInfo.drawButton(false, infoText);
+  labelBanner.drawButton(false, "Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com");
   Serial.println("Setup done.");
 }
 
