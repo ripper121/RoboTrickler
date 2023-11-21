@@ -21,14 +21,16 @@ bool readPowder(const char *filename, Config &config) {
 
   if (filename == "PID.txt" || filename == "pid.txt") {
     config.pidThreshold = doc["threshold"] | 0.10;
-    config.pidStepMin = doc["StepMin"] | 5;
-    config.pidStepMax = doc["StepMax"] | 36000;
-    config.pidConsKp = doc["ConsKp"] | 1.00;
-    config.pidConsKi = doc["ConsKi"] | 0.05;
-    config.pidConsKd = doc["ConsKd"] | 0.25;
-    config.pidAggKp = doc["AggKp"] | 4.00;
-    config.pidAggKi = doc["AggKi"] | 0.2;
-    config.pidAggKd = doc["AggKd"] | 1.00;
+    config.pidStepMin = doc["stepMin"] | 5;
+    config.pidStepMax = doc["stepMax"] | 36000;
+    config.pidOscillate = doc["oscillate"] | false;
+    config.pidReverse = doc["reverse"] | false;
+    config.pidConsKp = doc["consKp"] | 1.00;
+    config.pidConsKi = doc["consKi"] | 0.05;
+    config.pidConsKd = doc["consKd"] | 0.25;
+    config.pidAggKp = doc["aggKp"] | 4.00;
+    config.pidAggKi = doc["aggKi"] | 0.2;
+    config.pidAggKd = doc["aggKd"] | 1.00;
     PID_AKTIVE = true;
   } else {
     for (JsonPair item : doc.as<JsonObject>()) {

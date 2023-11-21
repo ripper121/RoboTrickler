@@ -56,6 +56,8 @@ struct Config {
   float pidThreshold;
   long pidStepMin;
   long pidStepMax;
+  bool pidOscillate;
+  bool pidReverse;
   float pidConsKp;
   float pidConsKi;
   float pidConsKd;
@@ -449,16 +451,14 @@ void loop() {
                 roboPID.SetTunings(config.pidAggKp, config.pidAggKi, config.pidAggKd);
               }
               roboPID.Compute();
-              
+
               String infoText = "";
-              infoText += "Input" + String(weight, 3) + " ";
-              infoText += "Gap" + String(gap) + " ";
-              infoText += "Output" + String(Output);
+              infoText += "I:" + String(weight, 3) + " ";
+              infoText += "G:" + String(gap, 3) + " ";
+              infoText += "O:" + String(Output);
               labelInfo.drawButton(false, infoText);
 
-              stepper1.enable();
-              step(1, Output, false, false);
-              stepper1.disable();
+              step(1, Output, config.pidOscillate, config.pidReverse);
             } else {
               int stepperSpeedOld = 0;
               int profileStep = 0;
