@@ -65,85 +65,98 @@
         }
 
         #jsonOutput {
-        width: 95%;
-        height: 270px;
-        resize: none; /* Add this line to prevent resizing */
-    }
+            width: 95%;
+            height: 270px;
+            resize: none;
+            /* Add this line to prevent resizing */
+        }
     </style>
 </head>
 
 <body>
     <center>
-    <div class="card">
-        <h2>Configuration Settings</h2>
-        <form id="configForm">
-            <fieldset>
-                <legend>WiFi Settings</legend>
-                <label for="wifi_ssid">SSID:</label>
-                <input type="text" id="wifi_ssid" name="wifi_ssid" maxlength="32"><br>
+        <div class="card">
+            <h2>Configuration Settings</h2>
+            <form id="configForm">
+                <fieldset>
+                    <legend>WiFi Settings</legend>
+                    <label for="wifi_ssid">Name / SSID:</label>
+                    <input type="text" id="wifi_ssid" name="wifi_ssid" maxlength="32"><br>
 
-                <label for="wifi_psk">PSK:</label>
-                <input type="password" id="wifi_psk" name="wifi_psk" maxlength="64">
-            </fieldset>
+                    <label for="wifi_psk">Password / PSK:</label>
+                    <input type="text" id="wifi_psk" name="wifi_psk" maxlength="64"><br>
+                    <fieldset>
+                        <legend>IP Settings (optional)</legend>
+                        <label for="IPStatic">Static IP:</label>
+                        <input type="text" id="IPStatic" name="IPStatic" maxlength="15" size="15"><br>
 
-            <fieldset>
-                <legend>Scale Settings</legend>
-                Protocol:
-                <select name="scale_protocol">
-                    <option value="GG" selected>G&G</option>
-                    <option value="SBI">Satorius</option>
-                    <option value="KERN">Kern</option>
-                    <option value="STE">Steingerg</option>
-                    <option value="AD">A&D</option>
+                        <label for="IPGateway">Gateway:</label>
+                        <input type="text" id="IPGateway" name="IPGateway" maxlength="15" size="15"><br>
+
+                        <label for="IPSubnet">Subnet:</label>
+                        <input type="text" id="IPSubnet" name="IPSubnet" maxlength="15" size="15"><br>
+                    </fieldset>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Scale Settings</legend>
+                    Protocol:
+                    <select name="scale_protocol">
+                        <option value="GG" selected>G&G</option>
+                        <option value="SBI">Sartorius</option>
+                        <option value="KERN">Kern</option>
+                        <option value="STE">Steingerg</option>
+                        <option value="AD">A&D</option>
+                    </select><br>
+                    Baud: <input type="number" name="scale_baud" value="9600"><br>
+                </fieldset>
+
+                <label for="mode">Mode:</label>
+                <select name="mode">
+                    <option value="trickler" selected>Trickler</option>
+                    <option value="logger">Logger</option>
                 </select><br>
-                Baud: <input type="number" name="scale_baud" value="9600"><br>
-            </fieldset>
 
-            <label for="mode">Mode:</label>
-            <select name="mode">
-                <option value="trickler" selected>Trickler</option>
-                <option value="logger">Logger</option>
-            </select><br>
+                <label for="log_measurements">Log Measurements:</label>
+                <input type="number" name="log_measurements" value="10"><br>
 
-            <label for="log_measurements">Log Measurements:</label>
-            <input type="number" name="log_measurements" value="10"><br>
+                <label for="powder">Powder Profile:</label>
+                <input type="text" name="powder"><br>
 
-            <label for="powder">Powder Profile:</label>
-            <input type="text" name="powder"><br>
+                <label for="beeper">Beeper:</label>
+                <select name="beeper">
+                    <option value="done" selected>Done</option>
+                    <option value="button">Button</option>
+                    <option value="both">Both</option>
+                    <option value="off">Off</option>
+                </select><br>
 
-            <label for="beeper">Beeper:</label>
-            <select name="beeper">
-                <option value="done" selected>Done</option>
-                <option value="button">Button</option>
-                <option value="both">Both</option>
-            </select><br>
+                <label for="microsteps">Microsteps:</label>
+                <select name="microsteps">
+                    <option value="1" selected>1/1</option>
+                    <option value="2">1/2</option>
+                    <option value="4">1/4</option>
+                    <option value="8">1/8</option>
+                    <option value="16">1/16</option>
+                    <option value="32">1/32</option>
+                    <option value="64">1/64</option>
+                </select><br>
 
-            <label for="microsteps">Microsteps:</label>
-            <select name="microsteps">
-                <option value="1" selected>1/1</option>
-                <option value="2">1/2</option>
-                <option value="4">1/4</option>
-                <option value="8">1/8</option>
-                <option value="16">1/16</option>
-                <option value="32">1/32</option>
-                <option value="64">1/64</option>
-            </select><br>
+                <label for="arduino_ota">Arduino OTA:</label>
+                <input type="checkbox" name="arduino_ota"><br><br>
 
-            <label for="arduino_ota">Arduino OTA:</label>
-            <input type="checkbox" name="arduino_ota"><br><br>
-
-            <label for="debug_log">Debug Log:</label>
-            <input type="checkbox" name="debug_log"><br><br>
+                <label for="debug_log">Debug Log:</label>
+                <input type="checkbox" name="debug_log"><br><br>
 
 
-        </form>
-        <h2>Generated config.txt:</h2>
-        <textarea id="jsonOutput"></textarea>
-        <button id="downloadButton" class="button">Download</button><br><br>
-        <button onClick='javascript:history.back()' class="button">Back</button>
-        
-    </div>
-</center>
+            </form>
+            <h2>Generated config.txt:</h2>
+            <textarea id="jsonOutput"></textarea>
+            <button id="downloadButton" class="button">Download</button><br><br>
+            <button onClick='javascript:history.back()' class="button">Back</button>
+
+        </div>
+    </center>
     <script>
         const configForm = document.getElementById('configForm');
         const jsonOutput = document.getElementById('jsonOutput');
@@ -154,7 +167,10 @@
             var jsonObject = {
                 wifi: {
                     ssid: formData.get('wifi_ssid'),
-                    psk: formData.get('wifi_psk')
+                    psk: formData.get('wifi_psk'),
+                    IPStatic: formData.get('IPStatic'),
+                    IPGateway: formData.get('IPGateway'),
+                    IPSubnet: formData.get('IPSubnet')
                 },
                 scale: {
                     protocol: formData.get('scale_protocol'),
@@ -162,7 +178,7 @@
                 },
                 mode: formData.get('mode'),
                 log_measurements: parseInt(formData.get('log_measurements'), 10),
-                powder: formData.get('powder').replaceAll(".txt",""),
+                powder: formData.get('powder').replaceAll(".txt", ""),
                 beeper: formData.get('beeper'),
                 arduino_ota: formData.get('arduino_ota') === 'on',
                 debug_log: formData.get('debug_log') === 'on',
@@ -179,6 +195,9 @@
                 // Update WiFi settings
                 configForm.wifi_ssid.value = jsonObject.wifi.ssid || '';
                 configForm.wifi_psk.value = jsonObject.wifi.psk || '';
+                configForm.IPStatic.value = jsonObject.wifi.IPStatic || '';
+                configForm.IPGateway.value = jsonObject.wifi.IPGateway || '';
+                configForm.IPSubnet.value = jsonObject.wifi.IPSubnet || '';
 
                 // Update Scale settings
                 configForm.scale_protocol.value = jsonObject.scale.protocol || '';
@@ -211,22 +230,22 @@
         // Initialize JSON output
         formToJSON();
 
-        document.getElementById('downloadButton').addEventListener('click', function() {
-        var content = jsonOutput.value;
-        var blob = new Blob([content], { type: 'text/plain' });
-        var url = URL.createObjectURL(blob);
+        document.getElementById('downloadButton').addEventListener('click', function () {
+            var content = jsonOutput.value;
+            var blob = new Blob([content], { type: 'text/plain' });
+            var url = URL.createObjectURL(blob);
 
-        // Create a temporary anchor and trigger the download
-        var tempLink = document.createElement('a');
-        tempLink.href = url;
-        tempLink.download = 'config.txt';
-        document.body.appendChild(tempLink);
-        tempLink.click();
-        document.body.removeChild(tempLink);
+            // Create a temporary anchor and trigger the download
+            var tempLink = document.createElement('a');
+            tempLink.href = url;
+            tempLink.download = 'config.txt';
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
 
-        // Revoke the URL after the download
-        URL.revokeObjectURL(url);
-    });
+            // Revoke the URL after the download
+            URL.revokeObjectURL(url);
+        });
     </script>
 </body>
 

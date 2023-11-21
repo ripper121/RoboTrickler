@@ -43,6 +43,9 @@ enum _beeper
 struct Config {
   char wifi_ssid[64];
   char wifi_psk[64];
+  char IPStatic[15];
+  char IPGateway[15];
+  char IPSubnet[15];
   bool arduino_ota;
   bool debugLog;
   char scale_protocol[16];
@@ -65,9 +68,11 @@ Config config;                         // <- global configuration object
 
 Preferences preferences;
 
-bool WIFI_UPDATE = false;
+bool WIFI_AKTIVE = false;
 WebServer server(80);
 bool OTA_running = false;
+unsigned long wifiPreviousMillis = 0;
+unsigned long wifiInterval = 10000;
 
 TFT_eSPI tft = TFT_eSPI();
 #define LCD_WIDTH               480
@@ -216,7 +221,7 @@ void setup() {
 
   labelInfo.drawButton(false, "Connecting Wifi...");
   initWebServer();
-  if (WIFI_UPDATE) {
+  if (WIFI_AKTIVE) {
     infoText += "WIFI:";
     infoText += WiFi.localIP().toString();
   }
@@ -501,13 +506,21 @@ void loop() {
     }
   }
 
+  if (WIFI_AKTIVE && !running) {
 
-  if (WIFI_UPDATE && !running) {
     if (WiFi.status() == WL_CONNECTED) {
       server.handleClient();
       if (config.arduino_ota) {
         ArduinoOTA.handle();
       }
+    }
+
+    // if WiFi is down, try reconnecting every wifiInterval seconds
+    if ((WiFi.status() != WL_CONNECTED) && (millis() - wifiPreviousMillis >= wifiInterval)) {
+      Serial.println("Reconnecting to WiFi...");
+      WiFi.disconnect();
+      WiFi.reconnect();
+      wifiPreviousMillis = millis();
     }
   }
 }

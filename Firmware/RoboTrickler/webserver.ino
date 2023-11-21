@@ -262,7 +262,7 @@ void handleSetValue() {
 }
 
 void initWebServer() {
-  WIFI_UPDATE = false;
+  WIFI_AKTIVE = false;
   if (String(config.wifi_ssid).length() > 0) {
     Serial.print("Connect to Wifi: ");
     Serial.println(config.wifi_ssid);
@@ -272,6 +272,16 @@ void initWebServer() {
     WiFi.mode(WIFI_OFF); //added to start with the wifi off, avoid crashing
 
     delay(500);
+
+    if (String(config.IPStatic).length() > 0) {
+      IPAddress staticIP(0, 0, 0, 0); // Example IP
+      IPAddress gateway(0, 0, 0, 0);    // Gateway of your network
+      IPAddress subnet(0, 0, 0, 0);   // Subnet mask
+      if (!WiFi.config(staticIP.fromString(config.IPStatic), gateway.fromString(config.IPGateway), subnet.fromString(config.IPSubnet))) {
+        labelInfo.drawButton(false, "STA Failed to configure!");
+        delay(3000);
+      }
+    }
 
     WiFi.mode(WIFI_STA);
     WiFi.begin(config.wifi_ssid, config.wifi_psk);
@@ -375,7 +385,7 @@ void initWebServer() {
 
         ArduinoOTA.begin();
       }
-      WIFI_UPDATE = true;
+      WIFI_AKTIVE = true;
     } else {
       Serial.println("No Wifi");
     }

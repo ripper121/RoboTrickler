@@ -64,6 +64,18 @@ int loadConfiguration(const char *filename, Config &config) {
           doc["wifi"]["psk"] | "",  // <- source
           sizeof(config.wifi_psk));         // <- destination's capacity
 
+  strlcpy(config.IPStatic,                  // <- destination
+          doc["wifi"]["IPStatic"] | "",  // <- source
+          sizeof(config.IPStatic));         // <- destination's capacity
+
+  strlcpy(config.IPGateway,                  // <- destination
+          doc["wifi"]["IPGateway"] | "",  // <- source
+          sizeof(config.IPGateway));         // <- destination's capacity
+
+  strlcpy(config.IPSubnet,                  // <- destination
+          doc["wifi"]["IPSubnet"] | "",  // <- source
+          sizeof(config.IPSubnet));         // <- destination's capacity
+
   strlcpy(config.scale_protocol,                  // <- destination
           doc["scale"]["protocol"] | "GUG",  // <- source
           sizeof(config.scale_protocol));         // <- destination's capacity
