@@ -15,7 +15,12 @@ void initStepper() {
   setStepperSpeed(2, 100);
 }
 
-void step(int stepperNum, int steps, bool oscillate,bool reverse) {
+void step(int stepperNum, int steps, bool oscillate, bool reverse) {
+  if (stepperNum == 1)
+    stepper1.enable();
+  if (stepperNum == 2)
+    stepper2.enable();
+
   steps = steps * config.microsteps;
   if (steps > 10 && (oscillate)) {
     int forward = steps / 2;
@@ -39,4 +44,7 @@ void step(int stepperNum, int steps, bool oscillate,bool reverse) {
       stepper2.rotate(steps);
     }
   }
+
+  stepper1.disable();
+  stepper2.disable();
 }

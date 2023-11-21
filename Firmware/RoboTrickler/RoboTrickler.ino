@@ -17,8 +17,9 @@
 #include "pindef.h"
 #include "A4988.h"
 #include <ArduinoJson.h>
+#include <QuickPID.h>
 
-#define FW_VERSION 1.20
+#define FW_VERSION 2.00
 
 SPIClass *SDspi = NULL;
 
@@ -52,14 +53,23 @@ struct Config {
   int scale_baud;
   char powder[64];
   int microsteps;
-  int trickler_num[32];
-  float trickler_weight[32];
-  long trickler_steps[32];
-  int trickler_speed[32];
-  int trickler_measurements[32];
-  bool trickler_oscillate[32];
-  bool trickler_reverse[32];
-  int trickler_count;
+  float pidThreshold;
+  long pidStepMin;
+  long pidStepMax;
+  float pidConsKp;
+  float pidConsKi;
+  float pidConsKd;
+  float pidAggKp;
+  float pidAggKi;
+  float pidAggKd;
+  int profile_num[32];
+  float profile_weight[32];
+  long profile_steps[32];
+  int profile_speed[32];
+  int profile_measurements[32];
+  bool profile_oscillate[32];
+  bool profile_reverse[32];
+  int profile_count;
   _mode mode;
   int log_measurements;
   _beeper beeper;
@@ -115,6 +125,14 @@ String lastTargetWeightStr = "";
 int logCounter = 1;
 bool stopLogCounter = false;
 String path = "empty";
+
+//Define the aggressive and conservative and POn Tuning Parameters
+float aggKp = 4, aggKi = 0.2, aggKd = 1;
+float consKp = 1, consKi = 0.05, consKd = 0.25;
+float Setpoint, Input, Output;
+//Specify the links
+QuickPID roboPID(&Input, &Output, &targetWeight);
+bool PID_AKTIVE = false;
 
 void beep(_beeper beepMode) {
   if (config.beeper == done && beepMode == done)
@@ -205,7 +223,7 @@ void setup() {
   if (config.mode == trickler) {
     Serial.println("config.mode == trickler");
     infoText += "Powder:" + String(config.powder) + " ";
-    measurementCount = config.trickler_measurements[0];
+    measurementCount = config.profile_measurements[0];
   } else if (config.mode == logger) {
     Serial.println("config.mode == logger");
     infoText += "Logger Mode ";
@@ -239,6 +257,11 @@ void setup() {
     }
   }
 
+  //initialize the variables we're linked to
+  Input = 0;
+  roboPID.SetOutputLimits(config.pidStepMin, config.pidStepMax);
+  //turn the PID on
+  roboPID.SetMode(roboPID.Control::automatic);
 
   initButtons();
   labelInfo.drawButton(false, infoText);
@@ -414,56 +437,74 @@ void loop() {
         if (!finished) {
           if ((config.mode == trickler) && (weight < targetWeight) && (weight >= 0)) {
             labelInfo.drawButton(false, "Running...");
-            int stepperSpeedOld = 0;
-            int profileStep = 0;
-            //Serial.print("abs: ");
-            //Serial.println(abs(weight - targetWeight), 3);
-            //Serial.print("trickler_weight: ");
-            //Serial.println(config.trickler_weight[i], 3);
 
-            for (int i = 0; i < config.trickler_count; i++) {
+            if (PID_AKTIVE) {
+              Input = weight;
 
-              if ((weight) <= (targetWeight - config.trickler_weight[i])) {
-                profileStep = i;
-                break;
+              float gap = abs(targetWeight - Input); //distance away from setpoint
+              if (gap < config.pidThreshold) { //we're close to setpoint, use conservative tuning parameters
+                roboPID.SetTunings(config.pidConsKp, config.pidConsKi, config.pidConsKd);
+              } else {
+                //we're far from setpoint, use aggressive tuning parameters
+                roboPID.SetTunings(config.pidAggKp, config.pidAggKi, config.pidAggKd);
               }
-            }
+              roboPID.Compute();
+              
+              String infoText = "";
+              infoText += "Input" + String(weight, 3) + " ";
+              infoText += "Gap" + String(gap) + " ";
+              infoText += "Output" + String(Output);
+              labelInfo.drawButton(false, infoText);
 
-            //Serial.print("Speed: ");
-            //Serial.println(config.trickler_speed[profileStep], DEC);
-            if (stepperSpeedOld != config.trickler_speed[profileStep])
-              setStepperSpeed(config.trickler_num[profileStep], config.trickler_speed[profileStep]); //only change if value changed
-            stepperSpeedOld = config.trickler_speed[profileStep];
-
-            //Serial.print("Stepp: ");
-            //Serial.println(config.trickler_steps[profileStep], DEC);
-            if (config.trickler_num[profileStep] == 1)
               stepper1.enable();
-            if (config.trickler_num[profileStep] == 2)
-              stepper2.enable();
+              step(1, Output, false, false);
+              stepper1.disable();
+            } else {
+              int stepperSpeedOld = 0;
+              int profileStep = 0;
+              //Serial.print("abs: ");
+              //Serial.println(abs(weight - targetWeight), 3);
+              //Serial.print("profile_weight: ");
+              //Serial.println(config.profile_weight[i], 3);
 
-            if (config.trickler_steps[profileStep] > 360 && config.trickler_oscillate[profileStep]) {
-              //do full rotations
-              for (int j = 0; j < int(config.trickler_steps[profileStep] / 360); j++)
-                step(config.trickler_num[profileStep], 360, config.trickler_oscillate[profileStep], config.trickler_reverse[profileStep]);
-              //do remaining steps
-              step(config.trickler_num[profileStep], (config.trickler_steps[profileStep] % 360), config.trickler_oscillate[profileStep], config.trickler_reverse[profileStep]);
+              for (int i = 0; i < config.profile_count; i++) {
+
+                if ((weight) <= (targetWeight - config.profile_weight[i])) {
+                  profileStep = i;
+                  break;
+                }
+              }
+
+              //Serial.print("Speed: ");
+              //Serial.println(config.profile_speed[profileStep], DEC);
+              if (stepperSpeedOld != config.profile_speed[profileStep])
+                setStepperSpeed(config.profile_num[profileStep], config.profile_speed[profileStep]); //only change if value changed
+              stepperSpeedOld = config.profile_speed[profileStep];
+
+              //Serial.print("Stepp: ");
+              //Serial.println(config.profile_steps[profileStep], DEC);
+
+              if (config.profile_steps[profileStep] > 360 && config.profile_oscillate[profileStep]) {
+                //do full rotations
+                for (int j = 0; j < int(config.profile_steps[profileStep] / 360); j++)
+                  step(config.profile_num[profileStep], 360, config.profile_oscillate[profileStep], config.profile_reverse[profileStep]);
+                //do remaining steps
+                step(config.profile_num[profileStep], (config.profile_steps[profileStep] % 360), config.profile_oscillate[profileStep], config.profile_reverse[profileStep]);
+              }
+              else
+                step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_oscillate[profileStep], config.profile_reverse[profileStep]);
+
+              //Serial.print("Measurements: ");
+              //Serial.println(config.profile_measurements[profileStep], DEC);
+              measurementCount = config.profile_measurements[profileStep];
+
+              String infoText = "";
+              infoText += "W" + String(config.profile_weight[profileStep], 3) + " ";
+              infoText += "ST" + String(config.profile_steps[profileStep]) + " ";
+              infoText += "SP" + String(config.profile_speed[profileStep]) + " ";
+              infoText += "M" + String(config.profile_measurements[profileStep]);
+              labelInfo.drawButton(false, infoText);
             }
-            else
-              step(config.trickler_num[profileStep], config.trickler_steps[profileStep], config.trickler_oscillate[profileStep], config.trickler_reverse[profileStep]);
-            stepper1.disable();
-            stepper2.disable();
-
-            //Serial.print("Measurements: ");
-            //Serial.println(config.trickler_measurements[profileStep], DEC);
-            measurementCount = config.trickler_measurements[profileStep];
-
-            String infoText = "";
-            infoText += "W" + String(config.trickler_weight[profileStep], 3) + " ";
-            infoText += "ST" + String(config.trickler_steps[profileStep]) + " ";
-            infoText += "SP" + String(config.trickler_speed[profileStep]) + " ";
-            infoText += "M" + String(config.trickler_measurements[profileStep]);
-            labelInfo.drawButton(false, infoText);
           }
           if (config.mode == logger && (weight > 0)) {
             Serial.println("Log to File");

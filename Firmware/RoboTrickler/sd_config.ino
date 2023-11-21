@@ -19,16 +19,30 @@ bool readPowder(const char *filename, Config &config) {
     return false;
   }
 
-  for (JsonPair item : doc.as<JsonObject>()) {
-    int item_key = ((String(item.key().c_str()).toInt()) - 1);
-    config.trickler_num[item_key] = item.value()["number"] | 1;
-    config.trickler_weight[item_key] = item.value()["weight"];
-    config.trickler_steps[item_key] = item.value()["steps"];
-    config.trickler_speed[item_key] = item.value()["speed"];
-    config.trickler_measurements[item_key] = item.value()["measurements"];
-    config.trickler_oscillate[item_key] = item.value()["oscillate"] | true;
-    config.trickler_reverse[item_key] = item.value()["reverse"] | false;
-    config.trickler_count = item_key + 1;
+  if (filename == "PID.txt" || filename == "pid.txt") {
+    config.pidThreshold = doc["threshold"] | 0.10;
+    config.pidStepMin = doc["StepMin"] | 5;
+    config.pidStepMax = doc["StepMax"] | 36000;
+    config.pidConsKp = doc["ConsKp"] | 1.00;
+    config.pidConsKi = doc["ConsKi"] | 0.05;
+    config.pidConsKd = doc["ConsKd"] | 0.25;
+    config.pidAggKp = doc["AggKp"] | 4.00;
+    config.pidAggKi = doc["AggKi"] | 0.2;
+    config.pidAggKd = doc["AggKd"] | 1.00;
+    PID_AKTIVE = true;
+  } else {
+    for (JsonPair item : doc.as<JsonObject>()) {
+      int item_key = ((String(item.key().c_str()).toInt()) - 1);
+      config.profile_num[item_key] = item.value()["number"] | 1;
+      config.profile_weight[item_key] = item.value()["weight"];
+      config.profile_steps[item_key] = item.value()["steps"];
+      config.profile_speed[item_key] = item.value()["speed"];
+      config.profile_measurements[item_key] = item.value()["measurements"];
+      config.profile_oscillate[item_key] = item.value()["oscillate"] | true;
+      config.profile_reverse[item_key] = item.value()["reverse"] | false;
+      config.profile_count = item_key + 1;
+    }
+    PID_AKTIVE = false;
   }
   file.close();
   return true;
@@ -80,15 +94,13 @@ int loadConfiguration(const char *filename, Config &config) {
           doc["scale"]["protocol"] | "GUG",  // <- source
           sizeof(config.scale_protocol));         // <- destination's capacity
 
-  config.arduino_ota = doc["arduino_ota"] | false;
-
   config.scale_baud = doc["scale"]["baud"] | 9600;
 
   strlcpy(config.powder,                  // <- destination
           doc["powder"] | "calibrate",  // <- source
           sizeof(config.powder));         // <- destination's capacity
 
-  config.debugLog = doc["debug_log"] | false;
+
 
   if (doc["mode"] == "trickler") {
     config.mode = trickler;
@@ -112,6 +124,10 @@ int loadConfiguration(const char *filename, Config &config) {
   } else {
     config.beeper = off;
   }
+
+  config.arduino_ota = doc["arduino_ota"] | false;
+
+  config.debugLog = doc["debug_log"] | false;
 
   file.close();
 
