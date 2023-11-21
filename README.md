@@ -2,7 +2,7 @@
  
 If you like it, spend me a coffee :)
 
-### Donation: [Paypal](https://www.paypal.com/donate/?hosted_button_id=UHZEEUSTRAF88)
+### Donation: [Paypal](https://www.paypal.com/donate/?hosted_button_id=UHZEEUSTRAF88) (paypal.me/ripper121)
 
 ### Full Manual: [Wiki](https://github.com/ripper121/RoboTrickler/wiki)
 
