@@ -261,6 +261,29 @@ void handleSetValue() {
   server.send(200, "text/html", "<h3>Value Set.</h3><br><button onClick='javascript:history.back()'>Back</button>");
 }
 
+IPAddress stringToIPAddress(const String& ipAddressString) {
+  IPAddress ipAddress;
+  int parts[4] = {0}; // Initialize the parts array with zeros
+  int partCount = 0;
+
+  // Split the string into four parts using '.' as the delimiter
+  char* token = strtok((char*)ipAddressString.c_str(), ".");
+  while (token != NULL && partCount < 4) {
+    parts[partCount] = atoi(token);
+    partCount++;
+    token = strtok(NULL, ".");
+  }
+
+  // Check if we successfully parsed four parts
+  if (partCount == 4) {
+    ipAddress = IPAddress(parts[0], parts[1], parts[2], parts[3]);
+  } else {
+    Serial.println("Invalid IP Address format.");
+  }
+
+  return ipAddress;
+}
+
 void initWebServer() {
   WIFI_AKTIVE = false;
   if (String(config.wifi_ssid).length() > 0) {
@@ -274,10 +297,11 @@ void initWebServer() {
     delay(500);
 
     if (String(config.IPStatic).length() > 0) {
-      IPAddress staticIP(0, 0, 0, 0); // Example IP
-      IPAddress gateway(0, 0, 0, 0);    // Gateway of your network
-      IPAddress subnet(0, 0, 0, 0);   // Subnet mask
-      if (!WiFi.config(staticIP.fromString(config.IPStatic), gateway.fromString(config.IPGateway), subnet.fromString(config.IPSubnet))) {
+      IPAddress staticIP =stringToIPAddress(String(config.IPStatic)); // Example IP
+      IPAddress gateway =stringToIPAddress(String(config.IPGateway));    // Gateway of your network
+      IPAddress subnet =stringToIPAddress(String(config.IPSubnet));   // Subnet mask
+
+      if (!WiFi.config(staticIP, gateway, subnet)) {
         labelInfo.drawButton(false, "STA Failed to configure!");
         delay(3000);
       }

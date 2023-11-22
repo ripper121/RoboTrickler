@@ -19,18 +19,21 @@ bool readPowder(const char *filename, Config &config) {
     return false;
   }
 
-  if (filename == "PID.txt" || filename == "pid.txt") {
+  if (String(filename).indexOf("pid") != -1) {
     config.pidThreshold = doc["threshold"] | 0.10;
     config.pidStepMin = doc["stepMin"] | 5;
     config.pidStepMax = doc["stepMax"] | 36000;
-    config.pidOscillate = doc["oscillate"] | false;
-    config.pidReverse = doc["reverse"] | false;
+    config.pidConMeasurements = doc["conMeasurements"] | 2;
+    config.pidAggMeasurements = doc["aggMeasurements"] | 25;
     config.pidConsKp = doc["consKp"] | 1.00;
     config.pidConsKi = doc["consKi"] | 0.05;
     config.pidConsKd = doc["consKd"] | 0.25;
     config.pidAggKp = doc["aggKp"] | 4.00;
     config.pidAggKi = doc["aggKi"] | 0.2;
     config.pidAggKd = doc["aggKd"] | 1.00;
+    config.pidOscillate = doc["oscillate"] | false;
+    config.pidReverse = doc["reverse"] | false;
+    Serial.println("PID_AKTIVE");
     PID_AKTIVE = true;
   } else {
     for (JsonPair item : doc.as<JsonObject>()) {
@@ -44,6 +47,7 @@ bool readPowder(const char *filename, Config &config) {
       config.profile_reverse[item_key] = item.value()["reverse"] | false;
       config.profile_count = item_key + 1;
     }
+    Serial.println("POWDER_AKTIVE");
     PID_AKTIVE = false;
   }
   file.close();

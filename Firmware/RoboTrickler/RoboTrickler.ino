@@ -56,6 +56,8 @@ struct Config {
   float pidThreshold;
   long pidStepMin;
   long pidStepMax;
+  int  pidConMeasurements;
+  int  pidAggMeasurements;
   bool pidOscillate;
   bool pidReverse;
   float pidConsKp;
@@ -318,6 +320,9 @@ void loop() {
       if (Serial1.available()) {
         char buff[64];
         Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
+
+        Serial.println(buff);
+
         if (config.debugLog) {
           labelWeight.drawButton(false, String(buff));
           debugLog(SD, String(buff) + "\n");
@@ -365,13 +370,15 @@ void loop() {
             weight = weight * (-1.0);
           }
 
+          Serial.print("Weight Counter: ");
+          Serial.println(weightCounter);
 
           if (lastWeight == weight) {
-            weightCounter++;
-            if (weightCounter > measurementCount) {
+            if (weightCounter >= measurementCount) {
               newData = true;
               weightCounter = 0;
             }
+            weightCounter++;
           } else {
             weightCounter = 0;
             if (!config.debugLog) {
@@ -382,6 +389,8 @@ void loop() {
 
           Serial.print("Scale Read: ");
           Serial.println(weight, 3);
+
+
         }
 
         //flush TX
@@ -397,6 +406,8 @@ void loop() {
           Serial1.write(0x70);
           Serial1.write(0x0D);
           Serial1.write(0x0A);
+          //The G&G PLC100BC dosent like to be asked to often via RS232, the Values get unstabel, so we wait little more
+          //delay(200);
           timeout = serialWait();
         } else if (String(config.scale_protocol) == "AD") {
           Serial1.write("Q\r\n");
@@ -429,37 +440,48 @@ void loop() {
           finished = true;
           labelInfo.drawButton(false, "Done :)");
           measurementCount = 0;
+          delay(250);
         } else {
           targetWeightStr =  String(targetWeight, 3);
         }
       }
 
       if (newData) {
+        newData = false;
         weightCounter = 0;
         if (!finished) {
           if ((config.mode == trickler) && (weight < targetWeight) && (weight >= 0)) {
             labelInfo.drawButton(false, "Running...");
 
             if (PID_AKTIVE) {
+              Serial.println("PID Running");
+              String infoText = "";
               Input = weight;
 
               float gap = abs(targetWeight - Input); //distance away from setpoint
-              if (gap < config.pidThreshold) { //we're close to setpoint, use conservative tuning parameters
+
+              if (gap <= config.pidThreshold) { //we're close to setpoint, use conservative tuning parameters
                 roboPID.SetTunings(config.pidConsKp, config.pidConsKi, config.pidConsKd);
+                measurementCount = config.pidConMeasurements;
+                infoText += "GOV:CON ";
               } else {
                 //we're far from setpoint, use aggressive tuning parameters
                 roboPID.SetTunings(config.pidAggKp, config.pidAggKi, config.pidAggKd);
+                measurementCount = config.pidAggMeasurements;
+                infoText += "GOV:AGG ";
               }
               roboPID.Compute();
 
-              String infoText = "";
-              infoText += "I:" + String(weight, 3) + " ";
-              infoText += "G:" + String(gap, 3) + " ";
-              infoText += "O:" + String(Output);
+              long steps = (long)Output;
+
+              infoText += "GAP:" + String(gap, 3) + " ";
+              infoText += "STP:" + String(steps) + " ";
+              infoText += "MES:" + String(measurementCount);
               labelInfo.drawButton(false, infoText);
 
-              step(1, Output, config.pidOscillate, config.pidReverse);
+              step(1, steps, config.pidOscillate, config.pidReverse);
             } else {
+              Serial.println("Powder Running");
               int stepperSpeedOld = 0;
               int profileStep = 0;
               //Serial.print("abs: ");
@@ -536,8 +558,6 @@ void loop() {
           }
           finished = false;
         }
-
-        newData = false;
       }
     } else {
       stepper1.disable();
