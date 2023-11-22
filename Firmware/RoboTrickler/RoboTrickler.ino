@@ -60,13 +60,15 @@ struct Config {
   int  pidAggMeasurements;
   bool pidOscillate;
   bool pidReverse;
+  byte pidConsNum;
   float pidConsKp;
   float pidConsKi;
   float pidConsKd;
+  byte pidAggNum;
   float pidAggKp;
   float pidAggKi;
   float pidAggKd;
-  int profile_num[32];
+  byte profile_num[32];
   float profile_weight[32];
   long profile_steps[32];
   int profile_speed[32];
@@ -456,6 +458,7 @@ void loop() {
             if (PID_AKTIVE) {
               Serial.println("PID Running");
               String infoText = "";
+              byte stepperNum = 1;
               Input = weight;
 
               float gap = abs(targetWeight - Input); //distance away from setpoint
@@ -463,11 +466,13 @@ void loop() {
               if (gap <= config.pidThreshold) { //we're close to setpoint, use conservative tuning parameters
                 roboPID.SetTunings(config.pidConsKp, config.pidConsKi, config.pidConsKd);
                 measurementCount = config.pidConMeasurements;
+                stepperNum = config.pidConsNum;
                 infoText += "GOV:CON ";
               } else {
                 //we're far from setpoint, use aggressive tuning parameters
                 roboPID.SetTunings(config.pidAggKp, config.pidAggKi, config.pidAggKd);
                 measurementCount = config.pidAggMeasurements;
+                stepperNum = config.pidAggNum;
                 infoText += "GOV:AGG ";
               }
               roboPID.Compute();
@@ -477,9 +482,9 @@ void loop() {
               infoText += "GAP:" + String(gap, 3) + " ";
               infoText += "STP:" + String(steps) + " ";
               infoText += "MES:" + String(measurementCount);
-              labelInfo.drawButton(false, infoText);
+              labelInfo.drawButton(false, infoText);              
 
-              step(1, steps, config.pidOscillate, config.pidReverse);
+              step(stepperNum, steps, config.pidOscillate, config.pidReverse);
             } else {
               Serial.println("Powder Running");
               int stepperSpeedOld = 0;

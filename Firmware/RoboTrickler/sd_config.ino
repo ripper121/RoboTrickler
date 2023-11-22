@@ -25,9 +25,11 @@ bool readPowder(const char *filename, Config &config) {
     config.pidStepMax = doc["stepMax"] | 36000;
     config.pidConMeasurements = doc["conMeasurements"] | 2;
     config.pidAggMeasurements = doc["aggMeasurements"] | 25;
+    config.pidConsNum = doc["consNum"] | 1;
     config.pidConsKp = doc["consKp"] | 1.00;
     config.pidConsKi = doc["consKi"] | 0.05;
     config.pidConsKd = doc["consKd"] | 0.25;
+    config.pidAggNum = doc["aggNum"] | 1;
     config.pidAggKp = doc["aggKp"] | 4.00;
     config.pidAggKi = doc["aggKi"] | 0.2;
     config.pidAggKd = doc["aggKd"] | 1.00;
