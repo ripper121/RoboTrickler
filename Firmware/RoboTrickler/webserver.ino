@@ -437,11 +437,6 @@ void initWebServer() {
           OTA_running = false;
         }
       });
-      server.begin();
-      MDNS.addService("http", "tcp", 80);
-
-      Serial.printf("Ready! Open http://%s.local in your browser\n", host);
-
       if (config.arduino_ota) {
         ArduinoOTA
         .onStart([]() {
@@ -480,10 +475,10 @@ void initWebServer() {
         ArduinoOTA.begin();
       }
 
-      while (WiFi.status() != WL_CONNECTED) {
-        delay(1000);
-        Serial.println("Connecting to WiFi..");
-      }
+      server.begin();
+      MDNS.addService("http", "tcp", 80);
+
+      Serial.printf("Ready! Open http://%s.local in your browser\n", host);
 
       String serverPath = "https://ripper121.com/roboTrickler/userTracker.php?mac=" + String(WiFi.macAddress());
       makeHttpsGetRequest(serverPath);

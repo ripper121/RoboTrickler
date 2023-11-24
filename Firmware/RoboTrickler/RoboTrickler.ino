@@ -20,7 +20,6 @@
 #include <QuickPID.h>
 #include <HTTPClient.h>
 
-
 #define FW_VERSION 2.01
 
 SPIClass *SDspi = NULL;
