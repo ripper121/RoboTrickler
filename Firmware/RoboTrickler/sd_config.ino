@@ -1,4 +1,8 @@
 bool readPowder(const char *filename, Config &config) {
+  String infoText = "Loading Powder...";
+  labelInfo.drawButton(false, infoText);
+  delay(500);
+  
   // Dump config file
   printFile(filename);
 
@@ -53,6 +57,10 @@ bool readPowder(const char *filename, Config &config) {
     PID_AKTIVE = false;
   }
   file.close();
+  
+  infoText = "Powder Loaded:";
+  infoText += filename;
+  labelInfo.drawButton(false, infoText);
   return true;
 }
 

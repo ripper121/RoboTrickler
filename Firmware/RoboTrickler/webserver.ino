@@ -105,6 +105,9 @@ void handleFileUpload() {
       uploadFile.close();
     }
     Serial.print("Upload: END, Size: "); Serial.println(upload.totalSize);
+    if (String(upload.filename).indexOf(".txt") != -1 ) {
+      readPowder(upload.filename.c_str(), config);
+    }
   }
 }
 
@@ -297,9 +300,9 @@ void initWebServer() {
     delay(500);
 
     if (String(config.IPStatic).length() > 0) {
-      IPAddress staticIP =stringToIPAddress(String(config.IPStatic)); // Example IP
-      IPAddress gateway =stringToIPAddress(String(config.IPGateway));    // Gateway of your network
-      IPAddress subnet =stringToIPAddress(String(config.IPSubnet));   // Subnet mask
+      IPAddress staticIP = stringToIPAddress(String(config.IPStatic)); // Example IP
+      IPAddress gateway = stringToIPAddress(String(config.IPGateway));   // Gateway of your network
+      IPAddress subnet = stringToIPAddress(String(config.IPSubnet));  // Subnet mask
 
       if (!WiFi.config(staticIP, gateway, subnet)) {
         labelInfo.drawButton(false, "STA Failed to configure!");
@@ -409,6 +412,9 @@ void initWebServer() {
 
         ArduinoOTA.begin();
       }
+      HTTPClient http;
+      http.begin("http://ripper121.com/roboTrickler/online.php?id=10");
+      http.end();
       WIFI_AKTIVE = true;
     } else {
       Serial.println("No Wifi");

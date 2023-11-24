@@ -19,7 +19,7 @@
 #include <ArduinoJson.h>
 #include <QuickPID.h>
 
-#define FW_VERSION 2.00
+#define FW_VERSION 2.01
 
 SPIClass *SDspi = NULL;
 
@@ -160,7 +160,7 @@ bool stringContains(const String &haystack, const String &needle) {
 
 bool serialWait() {
   bool timeout = true;
-  for (int i = 0; i < 1000; i++) {
+  for (int i = 0; i < 5000; i++) {
     if (Serial1.available()) {
       timeout = false;
       break;

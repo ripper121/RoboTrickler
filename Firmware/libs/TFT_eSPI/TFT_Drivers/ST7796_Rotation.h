@@ -6,7 +6,7 @@
   writecommand(TFT_MADCTL);
   switch (rotation) {
     case 0:
-      writedata(TFT_MAD_MX | TFT_MAD_COLOR_ORDER);
+      writedata(TFT_MAD_MX | TFT_MAD_MY | TFT_MAD_MV | TFT_MAD_COLOR_ORDER);//writedata(TFT_MAD_MX | TFT_MAD_COLOR_ORDER);
       _width  = _init_width;
       _height = _init_height;
       break;
