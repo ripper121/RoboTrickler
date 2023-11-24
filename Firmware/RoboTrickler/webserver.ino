@@ -352,18 +352,30 @@ void initWebServer() {
 
     delay(500);
 
+
+    IPAddress ipDNS = IPAddress(8, 8, 8, 8);
+    if (String(config.IPDns).length() > 0) {
+      IPAddress ipDNS = stringToIPAddress(String(config.IPDns));
+    }
+
     if (String(config.IPStatic).length() > 0) {
       IPAddress staticIP = stringToIPAddress(String(config.IPStatic)); // Example IP
       IPAddress gateway = stringToIPAddress(String(config.IPGateway));   // Gateway of your network
       IPAddress subnet = stringToIPAddress(String(config.IPSubnet));  // Subnet mask
 
-      if (!WiFi.config(staticIP, gateway, subnet, IPAddress(8, 8, 8, 8))) {
-        labelInfo.drawButton(false, "STA Failed to configure!");
+      if (!WiFi.config(staticIP, gateway, subnet, ipDNS)) {
+        labelInfo.drawButton(false, "Static IP Failed to configure!");
         delay(3000);
       }
     } else {
-      WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, IPAddress(8, 8, 8, 8));
+      if (!WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, ipDNS)) {
+        labelInfo.drawButton(false, "DNS Failed to configure!");
+        delay(3000);
+      }
     }
+
+    Serial.println("DNS-Server:");
+    Serial.println(ipDNS);
 
     WiFi.mode(WIFI_STA);
     WiFi.begin(config.wifi_ssid, config.wifi_psk);
@@ -467,8 +479,6 @@ void initWebServer() {
 
         ArduinoOTA.begin();
       }
-      Serial.print("Default ESP32 MAC Address: ");
-      Serial.println(WiFi.macAddress());
 
       while (WiFi.status() != WL_CONNECTED) {
         delay(1000);

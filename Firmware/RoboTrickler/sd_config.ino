@@ -2,7 +2,7 @@ bool readPowder(const char *filename, Config &config) {
   String infoText = "Loading Powder...";
   labelInfo.drawButton(false, infoText);
   delay(500);
-  
+
   // Dump config file
   printFile(filename);
 
@@ -57,7 +57,7 @@ bool readPowder(const char *filename, Config &config) {
     PID_AKTIVE = false;
   }
   file.close();
-  
+
   infoText = "Powder Loaded:";
   infoText += filename;
   labelInfo.drawButton(false, infoText);
@@ -106,8 +106,12 @@ int loadConfiguration(const char *filename, Config &config) {
           doc["wifi"]["IPSubnet"] | "",  // <- source
           sizeof(config.IPSubnet));         // <- destination's capacity
 
+  strlcpy(config.IPDns,                  // <- destination
+          doc["wifi"]["IPDNS"] | "",  // <- source
+          sizeof(config.IPDns));         // <- destination's capacity
+
   strlcpy(config.scale_protocol,                  // <- destination
-          doc["scale"]["protocol"] | "GUG",  // <- source
+          doc["scale"]["protocol"] | "GG",  // <- source
           sizeof(config.scale_protocol));         // <- destination's capacity
 
   config.scale_baud = doc["scale"]["baud"] | 9600;

@@ -49,6 +49,7 @@ struct Config {
   char IPStatic[15];
   char IPGateway[15];
   char IPSubnet[15];
+  char IPDns[15];  
   bool arduino_ota;
   bool debugLog;
   char scale_protocol[16];
