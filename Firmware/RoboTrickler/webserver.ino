@@ -3,6 +3,37 @@ const char* host = "robo-trickler";
 
 const char* updatePage = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form><br><button onClick='javascript:history.back()'>Back</button>";
 
+const char* test_root_ca = \
+                           "-----BEGIN CERTIFICATE-----\n" \
+                           "MIIE+TCCA+GgAwIBAgISA0G2hx1qiBcP3XSb0jtdihnrMA0GCSqGSIb3DQEBCwUA\n" \
+                           "MDIxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQswCQYDVQQD\n" \
+                           "EwJSMzAeFw0yMzEwMDQwNjAzMTNaFw0yNDAxMDIwNjAzMTJaMBgxFjAUBgNVBAMT\n" \
+                           "DXJpcHBlcjEyMS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCi\n" \
+                           "6iqg/7unQacYeidkKJYGs39X/bazIBj7tw6RijuCg2ZuQ7OSrXLQ/TqBRqn045Qb\n" \
+                           "Gru3x5AaXJlwGnX5QENf3RbYmfuVCkTvhN7UNpOwMDJkKwGBaEt47ur1OqWpAAD7\n" \
+                           "SriZzyHFQQFHX/10lZ5JpkL0tk1ZVpyY8KDPSy1ub3fuSsZx6SNBtHXkgCkRK1W3\n" \
+                           "5ilPnlFMYTxyJOl17RShjt116wNMsKSFFSrmSaGYpa96lAJ+nhrqB8xS6p1qEr09\n" \
+                           "oDXJyNfd2Ao2mQHo7kNPDm4oGXRcWmw8FsjM4Lca25w6mk39usTiN0yUf6A68iqO\n" \
+                           "LKMfRGctJc6KYw1T5yM7AgMBAAGjggIhMIICHTAOBgNVHQ8BAf8EBAMCBaAwHQYD\n" \
+                           "VR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMAwGA1UdEwEB/wQCMAAwHQYDVR0O\n" \
+                           "BBYEFCifNw2ZhI5BRgEZhml9yltktQzvMB8GA1UdIwQYMBaAFBQusxe3WFbLrlAJ\n" \
+                           "QOYfr52LFMLGMFUGCCsGAQUFBwEBBEkwRzAhBggrBgEFBQcwAYYVaHR0cDovL3Iz\n" \
+                           "Lm8ubGVuY3Iub3JnMCIGCCsGAQUFBzAChhZodHRwOi8vcjMuaS5sZW5jci5vcmcv\n" \
+                           "MCsGA1UdEQQkMCKCDXJpcHBlcjEyMS5jb22CEXd3dy5yaXBwZXIxMjEuY29tMBMG\n" \
+                           "A1UdIAQMMAowCAYGZ4EMAQIBMIIBAwYKKwYBBAHWeQIEAgSB9ASB8QDvAHYA2ra/\n" \
+                           "az+1tiKfm8K7XGvocJFxbLtRhIU0vaQ9MEjX+6sAAAGK+X9xjAAABAMARzBFAiAo\n" \
+                           "PW6y35BrCxW610xgREHrkqZeiCjv0iqbdH8pXocWQQIhALL4cMGRS+dvwZRo3gKW\n" \
+                           "nz3FPyBIorVEJWIK36mJJmuyAHUAO1N3dT4tuYBOizBbBv5AO2fYT8P0x70ADS1y\n" \
+                           "b+H61BcAAAGK+X9zbwAABAMARjBEAiAok9lpGGSDED0nyiul2vWdZaXkHlaX5ggF\n" \
+                           "o9x2IieSngIgDZWfbjW/xJQ8drK//jE53Y7rwwDfk1KkTNqNrcAMpq4wDQYJKoZI\n" \
+                           "hvcNAQELBQADggEBAIrqmx2tkMYkrjPGTNnUSGkO3Nyvt25zQFzA1J+3w9rD1vL0\n" \
+                           "Ld9lBayDcljkV45X4o6TJqqZekJIiQ00PfZWaeWY2cDHWrKN9wQVGw6DDWEseWO2\n" \
+                           "7wXbSE88DnVO/t99U/XDMNosEekxn9EsBCMfCtReJ7XvH3ZG7po5zxAOoLYI6UKK\n" \
+                           "5DRkkUereGPUhnzKQwm+qcNXlQ7HnwvQApknACrKrghxW290g8hknqYMRbPY3BQt\n" \
+                           "KfztBtWRkd7f0XJvU/tNqCXxh9CERCfsHsy/BvevCBZDf4iYfuB5utEsXMu5aMX5\n" \
+                           "zXr6aW5VnR/jkoo1iiFYKEc/ZU1VHpcecqpV+BA=\n" \
+                           "-----END CERTIFICATE-----\n";
+
 File uploadFile;
 
 void returnOK() {
@@ -287,6 +318,28 @@ IPAddress stringToIPAddress(const String& ipAddressString) {
   return ipAddress;
 }
 
+void makeHttpsGetRequest(String serverPath) {
+  HTTPClient http;
+  if (http.begin(serverPath)) {
+    int httpResponseCode = http.GET();
+
+    if (httpResponseCode > 0) {
+      Serial.print("HTTP Response code: ");
+      Serial.println(httpResponseCode);
+      String payload = http.getString();
+      Serial.println(payload);
+    }
+    else {
+      Serial.print("Error code: ");
+      Serial.println(httpResponseCode);
+    }
+    http.end();
+  }
+  else {
+    Serial.println("Unable to connect");
+  }
+}
+
 void initWebServer() {
   WIFI_AKTIVE = false;
   if (String(config.wifi_ssid).length() > 0) {
@@ -304,10 +357,12 @@ void initWebServer() {
       IPAddress gateway = stringToIPAddress(String(config.IPGateway));   // Gateway of your network
       IPAddress subnet = stringToIPAddress(String(config.IPSubnet));  // Subnet mask
 
-      if (!WiFi.config(staticIP, gateway, subnet)) {
+      if (!WiFi.config(staticIP, gateway, subnet, IPAddress(8, 8, 8, 8))) {
         labelInfo.drawButton(false, "STA Failed to configure!");
         delay(3000);
       }
+    } else {
+      WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, IPAddress(8, 8, 8, 8));
     }
 
     WiFi.mode(WIFI_STA);
@@ -412,9 +467,17 @@ void initWebServer() {
 
         ArduinoOTA.begin();
       }
-      HTTPClient http;
-      http.begin("http://ripper121.com/roboTrickler/online.php?id=10");
-      http.end();
+      Serial.print("Default ESP32 MAC Address: ");
+      Serial.println(WiFi.macAddress());
+
+      while (WiFi.status() != WL_CONNECTED) {
+        delay(1000);
+        Serial.println("Connecting to WiFi..");
+      }
+
+      String serverPath = "https://ripper121.com/roboTrickler/userTracker.php?mac=" + String(WiFi.macAddress());
+      makeHttpsGetRequest(serverPath);
+
       WIFI_AKTIVE = true;
     } else {
       Serial.println("No Wifi");

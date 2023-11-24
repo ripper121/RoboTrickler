@@ -18,6 +18,8 @@
 #include "A4988.h"
 #include <ArduinoJson.h>
 #include <QuickPID.h>
+#include <HTTPClient.h>
+
 
 #define FW_VERSION 2.01
 
