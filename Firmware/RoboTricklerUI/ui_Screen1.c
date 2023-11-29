@@ -41,7 +41,7 @@ ui_ButtonTricklerStart = lv_btn_create(ui_TabPageTrickler);
 lv_obj_set_height( ui_ButtonTricklerStart, 50);
 lv_obj_set_width( ui_ButtonTricklerStart, lv_pct(100));
 lv_obj_set_x( ui_ButtonTricklerStart, 0 );
-lv_obj_set_y( ui_ButtonTricklerStart, 66 );
+lv_obj_set_y( ui_ButtonTricklerStart, 68 );
 lv_obj_set_align( ui_ButtonTricklerStart, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_ButtonTricklerStart, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
 lv_obj_clear_flag( ui_ButtonTricklerStart, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
@@ -149,9 +149,9 @@ lv_label_set_text(ui_LabelSub,"-");
 lv_obj_set_style_text_font(ui_LabelSub, &lv_font_montserrat_48, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_PanelTricklerWeight = lv_obj_create(ui_TabPageTrickler);
-lv_obj_set_height( ui_PanelTricklerWeight, 35);
+lv_obj_set_height( ui_PanelTricklerWeight, 40);
 lv_obj_set_width( ui_PanelTricklerWeight, lv_pct(100));
-lv_obj_set_x( ui_PanelTricklerWeight, 0 );
+lv_obj_set_x( ui_PanelTricklerWeight, 1 );
 lv_obj_set_y( ui_PanelTricklerWeight, 13 );
 lv_obj_set_align( ui_PanelTricklerWeight, LV_ALIGN_CENTER );
 lv_obj_clear_flag( ui_PanelTricklerWeight, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
@@ -159,8 +159,10 @@ lv_obj_clear_flag( ui_PanelTricklerWeight, LV_OBJ_FLAG_SCROLLABLE );    /// Flag
 ui_LabelTricklerWeight = lv_label_create(ui_PanelTricklerWeight);
 lv_obj_set_width( ui_LabelTricklerWeight, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelTricklerWeight, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_x( ui_LabelTricklerWeight, 0 );
+lv_obj_set_y( ui_LabelTricklerWeight, -4 );
 lv_obj_set_align( ui_LabelTricklerWeight, LV_ALIGN_CENTER );
-lv_label_set_text(ui_LabelTricklerWeight,"-.-");
+lv_label_set_text(ui_LabelTricklerWeight,"0.000g");
 
 ui_PanelInfo = lv_obj_create(ui_TabPageTrickler);
 lv_obj_set_height( ui_PanelInfo, 30);
@@ -217,6 +219,8 @@ ui_LabelLoggerStart = lv_label_create(ui_ButtonLoggerStart);
 lv_obj_set_width( ui_LabelLoggerStart, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelLoggerStart, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelLoggerStart, LV_ALIGN_CENTER );
+lv_obj_set_flex_flow(ui_LabelLoggerStart,LV_FLEX_FLOW_ROW);
+lv_obj_set_flex_align(ui_LabelLoggerStart, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
 lv_label_set_text(ui_LabelLoggerStart,"Start");
 
 ui_PanelLoggerInfo = lv_obj_create(ui_TabPageLogger);
@@ -231,6 +235,8 @@ ui_LabelLoggerInfo = lv_label_create(ui_PanelLoggerInfo);
 lv_obj_set_width( ui_LabelLoggerInfo, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelLoggerInfo, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelLoggerInfo, LV_ALIGN_CENTER );
+lv_obj_set_flex_flow(ui_LabelLoggerInfo,LV_FLEX_FLOW_ROW);
+lv_obj_set_flex_align(ui_LabelLoggerInfo, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
 lv_label_set_text(ui_LabelLoggerInfo,"...");
 
 ui_TabPageInfo = lv_tabview_add_tab(ui_TabView, "Info");

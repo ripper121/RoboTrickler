@@ -14,10 +14,10 @@ void trickler_start_event_cb(lv_event_t *e)
     lv_label_set_text(ui_LabelTricklerStart, "Start");
     lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    running = true;
-    finished = false;
+    running = false;
     beep(button);
-    lv_label_set_text(ui_LabelInfo, "Start");
+    lv_label_set_text(ui_LabelInfo, "Stop");
+    lv_label_set_text(ui_LabelTricklerWeight, "-.-");
   }
   else
   {
@@ -26,10 +26,10 @@ void trickler_start_event_cb(lv_event_t *e)
     lv_label_set_text(ui_LabelLoggerStart, "Start");
     lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    running = false;
+    running = true;
+    finished = false;
     beep(button);
-    lv_label_set_text(ui_LabelInfo, "Stop");
-    lv_label_set_text(ui_LabelTricklerWeight, "-.-");
+    lv_label_set_text(ui_LabelInfo, "Start");
   }
 }
 

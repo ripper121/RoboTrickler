@@ -19,7 +19,7 @@
 #include <TFT_eSPI.h>
 #define LCD_EN GPIO_NUM_5
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
@@ -328,6 +328,7 @@ void setup()
   // initButtons();
   // labelInfo.drawButton(false, infoText);
   // labelBanner.drawButton(false, "Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com");
+  lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
   DEBUG_PRINTLN("Setup done.");
 }
 
@@ -336,7 +337,6 @@ void loop()
   static uint32_t scanTime = millis();
   static uint32_t writeETime = millis();
 
-  // Scan keys every 50ms at most
   if (millis() - scanTime >= 50)
   {
     scanTime = millis();
@@ -372,7 +372,6 @@ void loop()
 
       if (config.debugLog)
       {
-        // labelWeight.drawButton(false, String(buff));
         lv_label_set_text(ui_LabelTricklerWeight, String(buff).c_str());
         logToFile(SD, String(buff) + "\n");
       }
@@ -439,7 +438,6 @@ void loop()
           weightCounter = 0;
           if (!config.debugLog)
           {
-            // labelWeight.drawButton(false, String(weight, 3) + unit);
             lv_label_set_text(ui_LabelTricklerWeight,String(String(weight, 3) + unit).c_str());
           }
         }
