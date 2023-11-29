@@ -54,7 +54,7 @@ lv_obj_t *ui_PanelLoggerInfo;
 lv_obj_t *ui_LabelLoggerInfo;
 lv_obj_t *ui_TabPageInfo;
 lv_obj_t *ui_PanelPageInfo;
-lv_obj_t *ui_LabelPageInfo;
+lv_obj_t *ui_TextAreaInfo;
 lv_obj_t *ui_PanelMessages;
 void ui_event_ButtonMessage( lv_event_t * e);
 lv_obj_t *ui_ButtonMessage;

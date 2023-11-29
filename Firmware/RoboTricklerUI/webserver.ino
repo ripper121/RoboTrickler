@@ -407,6 +407,9 @@ void initWebServer()
     DEBUG_PRINT("Connect to Wifi: ");
     DEBUG_PRINTLN(config.wifi_ssid);
 
+    updateDisplayLog("Connect to Wifi: ");
+    updateDisplayLog(config.wifi_ssid);
+
     WiFi.disconnect();           // added to start with the wifi off, avoid crashing
     WiFi.softAPdisconnect(true); // Function will set currently configured SSID and password of the soft-AP to null values. The parameter  is optional. If set to true it will switch the soft-AP mode off.
     WiFi.mode(WIFI_OFF);         // added to start with the wifi off, avoid crashing
@@ -428,6 +431,7 @@ void initWebServer()
       if (!WiFi.config(staticIP, gateway, subnet, ipDNS))
       {
         // labelInfo.drawButton(false, "Static IP Failed to configure!");
+        updateDisplayLog("Static IP Failed to configure!");
         delay(3000);
       }
     }
@@ -436,12 +440,15 @@ void initWebServer()
       if (!WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, ipDNS))
       {
         // labelInfo.drawButton(false, "DNS Failed to configure!");
+        updateDisplayLog("DNS Failed to configure!");
         delay(3000);
       }
     }
 
     DEBUG_PRINTLN("DNS-Server:");
     DEBUG_PRINTLN(ipDNS);
+    updateDisplayLog("DNS-Server:");
+    updateDisplayLog(String(ipDNS));
 
     WiFi.mode(WIFI_STA);
     WiFi.begin(config.wifi_ssid, config.wifi_psk);
@@ -449,14 +456,16 @@ void initWebServer()
     if (WiFi.waitForConnectResult() == WL_CONNECTED)
     {
       DEBUG_PRINTLN("Wifi Connected");
+      updateDisplayLog("Wifi Connected");
       MDNS.begin(host);
 
       server.on("/list", HTTP_GET, printDirectory);
       server.on("/resources/edit", HTTP_DELETE, handleDelete);
       server.on("/resources/edit", HTTP_PUT, handleCreate);
-      server.on("/resources/edit", HTTP_POST, []()
-                { returnOK(); },
-                handleFileUpload);
+      server.on(
+          "/resources/edit", HTTP_POST, []()
+          { returnOK(); },
+          handleFileUpload);
       // server.on("/ajaxRequest", handleAjaxRequest);//To get update of ADC Value only
       server.onNotFound(handleNotFound);
       server.on("/generate_204", handleNotFound);
@@ -468,7 +477,11 @@ void initWebServer()
       server.begin();
       MDNS.addService("http", "tcp", 80);
 
-      Serial.printf("Ready! Open http://%s.local in your browser\n", host);
+      DEBUG_PRINT("Ready! Open http://");
+      DEBUG_PRINT(host);
+      DEBUG_PRINTLN(".local in your browser");
+
+      updateDisplayLog(String(String("Ready! Open http://") + host + String(".local in your browser")));
 
       String serverPath = "https://ripper121.com/roboTrickler/userTracker.php?mac=" + String(WiFi.macAddress());
       makeHttpsGetRequest(serverPath);
@@ -478,10 +491,12 @@ void initWebServer()
     else
     {
       DEBUG_PRINTLN("No Wifi");
+      updateDisplayLog("No Wifi");
     }
   }
   else
   {
     DEBUG_PRINTLN("No Wifi");
+    updateDisplayLog("No Wifi");
   }
 }

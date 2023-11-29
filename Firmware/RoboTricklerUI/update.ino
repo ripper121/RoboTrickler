@@ -6,26 +6,31 @@ bool performUpdate(Stream &updateSource, size_t updateSize) {
       DEBUG_PRINTLN("Written : " + String(written) + " successfully");
     }
     else {
-      DEBUG_PRINTLN("Written only : " + String(written) + "/" + String(updateSize) + ". Retry?");
+      DEBUG_PRINTLN("Written only : " + String(written) + "/" + String(updateSize));
     }
     if (Update.end()) {
-      DEBUG_PRINTLN("OTA done!");
+      DEBUG_PRINTLN("FW Update done!");
+      updateDisplayLog("FW Update done!");
       if (Update.isFinished()) {
         DEBUG_PRINTLN("Update successfully completed. Rebooting.");
+        updateDisplayLog("Update successfully completed. Rebooting.");
         return true;
       }
       else {
         DEBUG_PRINTLN("Update not finished? Something went wrong!");
+        updateDisplayLog("Update not finished? Something went wrong!");
       }
     }
     else {
       DEBUG_PRINTLN("Error Occurred. Error #: " + String(Update.getError()));
+      updateDisplayLog("Error Occurred.");
     }
 
   }
   else
   {
-    DEBUG_PRINTLN("Not enough space to begin OTA");
+    DEBUG_PRINTLN("Not enough space to begin FW Update");
+    updateDisplayLog("Not enough space to begin FW Update");
   }
   return false;
 }
@@ -37,6 +42,7 @@ void updateFromFS(fs::FS &fs) {
   if (updateBin) {
     if (updateBin.isDirectory()) {
       DEBUG_PRINTLN("Error, update.bin is not a file");
+      updateDisplayLog("Error, update.bin is not a file");
       updateBin.close();
       return;
     }
@@ -45,10 +51,12 @@ void updateFromFS(fs::FS &fs) {
 
     if (updateSize > 0) {
       DEBUG_PRINTLN("Try to start update");
+      updateDisplayLog("Try to start update");
       successfully = performUpdate(updateBin, updateSize);
     }
     else {
       DEBUG_PRINTLN("Error, file is empty");
+      updateDisplayLog("Error, file is empty");
     }
 
     updateBin.close();
@@ -62,10 +70,12 @@ void updateFromFS(fs::FS &fs) {
   }
   else {
     DEBUG_PRINTLN("Could not load update.bin from sd root");
+    updateDisplayLog("Could not load update.bin from sd root");
   }
 }
 
 void initUpdate() {
   DEBUG_PRINTLN("initUpdate()");
+  updateDisplayLog("Check for Firmware Update...");
   updateFromFS(SD);
 }

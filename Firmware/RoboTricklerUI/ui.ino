@@ -11,25 +11,14 @@ void trickler_start_event_cb(lv_event_t *e)
 {
   if (String(lv_label_get_text(ui_LabelTricklerStart)) == "Stop")
   {
-    lv_label_set_text(ui_LabelTricklerStart, "Start");
-    lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    running = false;
-    beep(button);
-    lv_label_set_text(ui_LabelInfo, "Stop");
-    lv_label_set_text(ui_LabelTricklerWeight, "-.-");
+    stopLogger();
+    startTrickler();
+    startMeasurment();
   }
   else
   {
-    lv_label_set_text(ui_LabelTricklerStart, "Stop");
-    lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_label_set_text(ui_LabelLoggerStart, "Start");
-    lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    running = true;
-    finished = false;
-    beep(button);
-    lv_label_set_text(ui_LabelInfo, "Start");
+    stopTrickler();
+    stopMeasurment();
   }
 }
 
@@ -37,16 +26,55 @@ void logger_start_event_cb(lv_event_t *e)
 {
   if (String(lv_label_get_text(ui_LabelLoggerStart)) == "Stop")
   {
-    lv_label_set_text(ui_LabelLoggerStart, "Start");
-    lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+    stopTrickler();
+    startLogger();
+    startMeasurment();
   }
   else
   {
-    lv_label_set_text(ui_LabelLoggerStart, "Stop");
-    lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_label_set_text(ui_LabelTricklerStart, "Start");
-    lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+    stopLogger();
+    stopMeasurment();
   }
+}
+
+void startMeasurment()
+{
+  running = true;
+  finished = false;
+  beep(button);
+}
+
+void stopMeasurment()
+{
+  running = false;
+  finished = true;
+  beep(button);
+}
+
+void startTrickler()
+{
+  config.mode = trickler;
+  lv_label_set_text(ui_LabelTricklerStart, "Start");
+  lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+}
+
+void stopTrickler()
+{
+  lv_label_set_text(ui_LabelTricklerStart, "Stop");
+  lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+}
+
+void startLogger()
+{
+  config.mode = logger;
+  lv_label_set_text(ui_LabelLoggerStart, "Start");
+  lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+}
+
+void stopLogger()
+{
+  lv_label_set_text(ui_LabelLoggerStart, "Stop");
+  lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
 }
 
 void nnn_event_cb(lv_event_t *e)

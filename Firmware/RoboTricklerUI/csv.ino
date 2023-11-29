@@ -1,10 +1,10 @@
 String ceateCSVFile(fs::FS &fs, const char * folderName, const char * fileName) {
   int fileCount = 0;
   String path = "";
-  DEBUG_PRINT("ceateCSVFile\n");
+  DEBUG_PRINTLN("ceateCSVFile");
   //cehck if folder exists, if not creat one
   if (!fs.exists(folderName)) {
-    DEBUG_PRINT("Log Folder Created.\n");
+    DEBUG_PRINTLN("Log Folder Created.");
     fs.mkdir(folderName);
   }
   //check if file exists, if not count up and creat new one
@@ -19,15 +19,17 @@ String ceateCSVFile(fs::FS &fs, const char * folderName, const char * fileName) 
 
   File file = fs.open(path.c_str(), FILE_WRITE);
   if (!file) {
-    DEBUG_PRINT("Failed to open file for writing\n");
+    DEBUG_PRINTLN("Failed to open file for writing");
     return "";
   }
-  Serial.printf("Create file: %s\n", path);
+
+  DEBUG_PRINT("Create file: ");
+  DEBUG_PRINTLN(path);
   String header = "Count,Weight\r\n";
   if (file.print(header.c_str())) {
-    DEBUG_PRINT("File written\n");
+    DEBUG_PRINTLN("File written");
   } else {
-    DEBUG_PRINT("Write failed\n");
+    DEBUG_PRINTLN("Write failed");
   }
   file.close();
 
@@ -35,11 +37,14 @@ String ceateCSVFile(fs::FS &fs, const char * folderName, const char * fileName) 
 }
 
 void writeCSVFile(fs::FS &fs, const char * path, float weight, int count) {
-  Serial.printf("Try to open file: %s\n", path);
+  DEBUG_PRINT("Try to open file: ");
+  DEBUG_PRINTLN(path);
 
   String message = String(count) + "," + String(weight, 4) + "\r\n";
 
-  Serial.printf("Message: %s", message);
+
+  DEBUG_PRINT("Message: ");
+  DEBUG_PRINTLN(message);
 
   File file = fs.open(path, FILE_APPEND);
   if (!file) {
@@ -47,7 +52,8 @@ void writeCSVFile(fs::FS &fs, const char * path, float weight, int count) {
     ceateCSVFile(SD, "/log", "log");
     return;
   }
-  Serial.printf("Appending to file: %s\n", path);
+  DEBUG_PRINT("Appending to file: ");
+  DEBUG_PRINTLN(path);
   if (file.print(message.c_str())) {
     DEBUG_PRINT("Message appended\n");
   } else {
@@ -57,8 +63,8 @@ void writeCSVFile(fs::FS &fs, const char * path, float weight, int count) {
 }
 
 void writeFile(fs::FS &fs, const char * path, String message){
-    Serial.printf("Writing file: %s\n", path);
-
+    DEBUG_PRINT("Writing file: ");
+    DEBUG_PRINTLN(path);
     File file = fs.open(path, FILE_WRITE);
     if(!file){
         DEBUG_PRINTLN("Failed to open file for writing");
@@ -73,7 +79,8 @@ void writeFile(fs::FS &fs, const char * path, String message){
 }
 
 void logToFile(fs::FS &fs, String message){
-    Serial.printf("Appending to file: %s\n", path);
+    DEBUG_PRINT("Appending to file: ");
+    DEBUG_PRINTLN(path);
 
     File file = fs.open("/debugLog.txt", FILE_APPEND);
     if(!file){

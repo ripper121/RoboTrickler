@@ -19,7 +19,7 @@
 #include <TFT_eSPI.h>
 #define LCD_EN GPIO_NUM_5
 
-//#define DEBUG
+// #define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
@@ -44,6 +44,8 @@ TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 SPIClass *SDspi = NULL;
 
 const char *filename = "/config.txt"; // <- SD library uses 8.3 filenames
+
+String fullLogOutput = "";
 
 enum _mode
 {
@@ -187,7 +189,6 @@ IRAM_ATTR void lvgl_disp_task(void *parg)
 
 IRAM_ATTR void disp_task_init(void)
 {
-
   xTaskCreatePinnedToCore(lvgl_disp_task,  // task
                           "lvglTask",      // name for task
                           DISP_TASK_STACK, // size of task stack
@@ -200,6 +201,17 @@ IRAM_ATTR void disp_task_init(void)
   );
 }
 
+void updateDisplayLog(String logOutput)
+{
+  // max length of String is 4000 Byte
+  if(fullLogOutput.length()>3000)
+    fullLogOutput="";
+  fullLogOutput += logOutput;
+  fullLogOutput += "\n";
+  lv_label_set_text(ui_LabelPageInfo, fullLogOutput.c_str());
+  lv_label_set_text(ui_LabelInfo, logOutput.c_str());
+}
+
 void setup()
 {
   Serial.begin(115200); /* prepare for possible serial debug */
@@ -207,22 +219,22 @@ void setup()
   displayInit();
   ui_init();
   disp_task_init();
-  DEBUG_PRINTLN("Setup done");
+  DEBUG_PRINTLN("Display Init");
 
+  updateDisplayLog(String("Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com").c_str());
   DEBUG_PRINTLN("Robo-Trickler v" + String(FW_VERSION, 2));
 
-  String infoText = "";
   config.mode = init_mode;
 
   initStepper();
-  // labelBanner.drawButton(false, "Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com");
 
   SDspi = new SPIClass(HSPI);
   SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
   if (!SD.begin(GRBL_SPI_SS, *SDspi))
   {
     DEBUG_PRINTLN("Card Mount Failed");
-    // labelInfo.drawButton(false, "Card Mount Failed");
+
+    updateDisplayLog("Card Mount Failed");
     delay(5000);
     ESP.restart();
   }
@@ -233,7 +245,7 @@ void setup()
     if (cardType == CARD_NONE)
     {
       DEBUG_PRINTLN("No SD card attached");
-      // labelInfo.drawButton(false, "No SD card attached");
+      updateDisplayLog("No SD card attached");
       delay(5000);
       ESP.restart();
     }
@@ -255,52 +267,53 @@ void setup()
       else
       {
         DEBUG_PRINTLN("UNKNOWN");
-        // labelInfo.drawButton(false, "CardType UNKNOWN");
+        updateDisplayLog("CardType UNKNOWN");
       }
 
       uint64_t cardSize = SD.cardSize() / (1024 * 1024);
-      Serial.printf("SD Card Size: %lluMB\n", cardSize);
+      DEBUG_PRINT("SD Card Size: ");
+      DEBUG_PRINT(cardSize);
+      DEBUG_PRINTLN("MB\n");
     }
   }
 
   int configState = loadConfiguration(filename, config);
   if (configState == 1)
   {
-    infoText += "config.txt deserializeJson() failed";
+    updateDisplayLog("config.txt deserializeJson() failed");
   }
   if (configState == 2)
   {
-    infoText += "powder.txt deserializeJson() failed";
+    updateDisplayLog("powder.txt deserializeJson() failed");
   }
 
   if (config.mode == trickler)
   {
     DEBUG_PRINTLN("config.mode == trickler");
-    infoText += "Powder:" + String(config.powder) + " ";
+    updateDisplayLog("Powder:" + String(config.powder));
     measurementCount = config.profile_measurements[0];
   }
   else if (config.mode == logger)
   {
     DEBUG_PRINTLN("config.mode == logger");
-    infoText += "Logger Mode ";
+    updateDisplayLog("Logger Mode");
     measurementCount = config.log_measurements;
   }
   else
   {
     DEBUG_PRINTLN("config.mode == undefined");
+    updateDisplayLog("Mode undefined!");
   }
 
   Serial1.begin(config.scale_baud, SERIAL_8N1, IIC_SCL, IIC_SDA);
 
-  // labelInfo.drawButton(false, "Firmware Update...");
   initUpdate();
 
-  // labelInfo.drawButton(false, "Connecting Wifi...");
   initWebServer();
+
   if (WIFI_AKTIVE)
   {
-    infoText += "WIFI:";
-    infoText += WiFi.localIP().toString();
+    updateDisplayLog("WIFI:" + WiFi.localIP().toString());
   }
 
   if (config.mode == trickler)
@@ -325,9 +338,7 @@ void setup()
   // turn the PID on
   roboPID.SetMode(roboPID.Control::automatic);
 
-  // initButtons();
-  // labelInfo.drawButton(false, infoText);
-  // labelBanner.drawButton(false, "Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com");
+  lv_label_set_text(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com").c_str());
   lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
   DEBUG_PRINTLN("Setup done.");
 }
@@ -438,7 +449,7 @@ void loop()
           weightCounter = 0;
           if (!config.debugLog)
           {
-            lv_label_set_text(ui_LabelTricklerWeight,String(String(weight, 3) + unit).c_str());
+            lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, 3) + unit).c_str());
           }
         }
         lastWeight = weight;
@@ -489,9 +500,9 @@ void loop()
       }
       if (timeout)
       {
-        // labelInfo.drawButton(false, "Scale Data Timeout!");
+        updateDisplayLog("Scale Data Timeout!");
         delay(1000);
-        // labelInfo.drawButton(false, "Check RS232 Wiring & Settings!");
+        updateDisplayLog("Check RS232 Wiring & Settings!");
         delay(1000);
         newData = false;
       }
@@ -501,20 +512,18 @@ void loop()
     {
       if (((targetWeight - 0.0001) <= weight) && (weight >= 0))
       {
-        targetWeightStr = String(targetWeight, 3);
         if (!finished)
         {
           beep(done);
         }
         finished = true;
-        // labelInfo.drawButton(false, "Done :)");
+        updateDisplayLog("Done :)");
+
         measurementCount = 0;
         delay(250);
       }
-      else
-      {
-        targetWeightStr = String(targetWeight, 3);
-      }
+
+      targetWeightStr = String(targetWeight, 3);
     }
 
     if (newData)
@@ -525,7 +534,7 @@ void loop()
       {
         if ((config.mode == trickler) && (weight < targetWeight) && (weight >= 0))
         {
-          // labelInfo.drawButton(false, "Running...");
+          updateDisplayLog("Running...");
 
           if (PID_AKTIVE)
           {
@@ -558,7 +567,7 @@ void loop()
             infoText += "GAP:" + String(gap, 3) + " ";
             infoText += "STP:" + String(steps) + " ";
             infoText += "MES:" + String(measurementCount);
-            // labelInfo.drawButton(false, infoText);
+            updateDisplayLog(infoText);
 
             step(stepperNum, steps, config.pidOscillate, config.pidReverse);
           }
@@ -611,7 +620,7 @@ void loop()
             infoText += "ST" + String(config.profile_steps[profileStep]) + " ";
             infoText += "SP" + String(config.profile_speed[profileStep]) + " ";
             infoText += "M" + String(config.profile_measurements[profileStep]);
-            // labelInfo.drawButton(false, infoText);
+            updateDisplayLog(infoText);
           }
         }
         if (config.mode == logger && (weight > 0))
@@ -625,7 +634,7 @@ void loop()
           writeCSVFile(SD, path.c_str(), weight, logCounter);
           measurementCount = config.log_measurements;
           infoText += "Count: " + String(logCounter) + " Saved :)";
-          // labelInfo.drawButton(false, infoText);
+          updateDisplayLog(infoText);
           finished = true;
           beep(done);
         }
@@ -644,12 +653,12 @@ void loop()
         if (config.mode == logger)
         {
           logCounter++;
-          // labelInfo.drawButton(false, "Place next peace for measurment.");
+          updateDisplayLog("Place next peace for measurment.");
           beep(done);
         }
         else
         {
-          // labelInfo.drawButton(false, "Ready");
+          updateDisplayLog("Ready");
         }
         finished = false;
       }
@@ -675,6 +684,7 @@ void loop()
     if ((WiFi.status() != WL_CONNECTED) && (millis() - wifiPreviousMillis >= wifiInterval))
     {
       DEBUG_PRINTLN("Reconnecting to WiFi...");
+      updateDisplayLog("Reconnecting to WiFi...");
       WiFi.disconnect();
       WiFi.reconnect();
       wifiPreviousMillis = millis();
