@@ -150,7 +150,7 @@ void handleFileUpload()
     }
     DEBUG_PRINT("Upload: END, Size: ");
     DEBUG_PRINTLN(upload.totalSize);
-    if (String(upload.filename).indexOf(".txt") != -1)
+    if ((String(upload.filename).indexOf(".txt")) != -1 && (String(upload.filename).indexOf("conf") == -1))
     {
       readPowder(upload.filename.c_str(), config);
     }

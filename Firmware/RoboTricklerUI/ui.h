@@ -59,7 +59,7 @@ extern lv_obj_t *ui_PanelLoggerInfo;
 extern lv_obj_t *ui_LabelLoggerInfo;
 extern lv_obj_t *ui_TabPageInfo;
 extern lv_obj_t *ui_PanelPageInfo;
-extern lv_obj_t *ui_LabelPageInfo;
+extern lv_obj_t *ui_TextAreaInfo;
 extern lv_obj_t *ui_PanelMessages;
 void ui_event_ButtonMessage( lv_event_t * e);
 extern lv_obj_t *ui_ButtonMessage;

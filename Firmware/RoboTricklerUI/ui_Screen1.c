@@ -21,6 +21,7 @@ lv_obj_set_style_text_font(ui_TabView, &lv_font_montserrat_14, LV_PART_MAIN| LV_
 
 ui_TabPageTrickler = lv_tabview_add_tab(ui_TabView, "Trickler");
 lv_obj_clear_flag( ui_TabPageTrickler, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+lv_obj_set_scrollbar_mode(ui_TabPageTrickler, LV_SCROLLBAR_MODE_OFF);
 lv_obj_set_style_text_font(ui_TabPageTrickler, &lv_font_montserrat_32, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_PanelTarget = lv_obj_create(ui_TabPageTrickler);
@@ -151,7 +152,7 @@ lv_obj_set_style_text_font(ui_LabelSub, &lv_font_montserrat_48, LV_PART_MAIN| LV
 ui_PanelTricklerWeight = lv_obj_create(ui_TabPageTrickler);
 lv_obj_set_height( ui_PanelTricklerWeight, 40);
 lv_obj_set_width( ui_PanelTricklerWeight, lv_pct(100));
-lv_obj_set_x( ui_PanelTricklerWeight, 1 );
+lv_obj_set_x( ui_PanelTricklerWeight, 0 );
 lv_obj_set_y( ui_PanelTricklerWeight, 13 );
 lv_obj_set_align( ui_PanelTricklerWeight, LV_ALIGN_CENTER );
 lv_obj_clear_flag( ui_PanelTricklerWeight, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
@@ -181,21 +182,24 @@ lv_label_set_text(ui_LabelInfo,"Robo-Trickler v2.0 // ripper121.com");
 
 ui_TabPageProfile = lv_tabview_add_tab(ui_TabView, "Profile");
 lv_obj_clear_flag( ui_TabPageProfile, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+lv_obj_set_scrollbar_mode(ui_TabPageProfile, LV_SCROLLBAR_MODE_OFF);
 lv_obj_set_style_text_font(ui_TabPageProfile, &lv_font_montserrat_32, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_RollerProfile = lv_roller_create(ui_TabPageProfile);
-lv_roller_set_options( ui_RollerProfile, "N135\nN140\nPDI_GN\nPDI_GM\nRS14\nRS14GN\n", LV_ROLLER_MODE_NORMAL );
-lv_obj_set_width( ui_RollerProfile, lv_pct(100));
-lv_obj_set_height( ui_RollerProfile, lv_pct(100));
+lv_obj_set_width( ui_RollerProfile, lv_pct(105));
+lv_obj_set_height( ui_RollerProfile, lv_pct(110));
 lv_obj_set_align( ui_RollerProfile, LV_ALIGN_CENTER );
 
 ui_TabPageLogger = lv_tabview_add_tab(ui_TabView, "Logger");
+lv_obj_set_scrollbar_mode(ui_TabPageLogger, LV_SCROLLBAR_MODE_OFF);
 lv_obj_set_style_text_font(ui_TabPageLogger, &lv_font_montserrat_32, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_PanelLoggerWeight = lv_obj_create(ui_TabPageLogger);
 lv_obj_set_height( ui_PanelLoggerWeight, 50);
 lv_obj_set_width( ui_PanelLoggerWeight, lv_pct(100));
-lv_obj_set_align( ui_PanelLoggerWeight, LV_ALIGN_TOP_MID );
+lv_obj_set_x( ui_PanelLoggerWeight, 0 );
+lv_obj_set_y( ui_PanelLoggerWeight, -100 );
+lv_obj_set_align( ui_PanelLoggerWeight, LV_ALIGN_CENTER );
 lv_obj_clear_flag( ui_PanelLoggerWeight, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_LabelLoggerWeight = lv_label_create(ui_PanelLoggerWeight);
@@ -208,8 +212,8 @@ ui_ButtonLoggerStart = lv_btn_create(ui_TabPageLogger);
 lv_obj_set_height( ui_ButtonLoggerStart, 50);
 lv_obj_set_width( ui_ButtonLoggerStart, lv_pct(100));
 lv_obj_set_x( ui_ButtonLoggerStart, 0 );
-lv_obj_set_y( ui_ButtonLoggerStart, 150 );
-lv_obj_set_align( ui_ButtonLoggerStart, LV_ALIGN_TOP_MID );
+lv_obj_set_y( ui_ButtonLoggerStart, 68 );
+lv_obj_set_align( ui_ButtonLoggerStart, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_ButtonLoggerStart, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
 lv_obj_clear_flag( ui_ButtonLoggerStart, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT );
@@ -226,9 +230,7 @@ lv_label_set_text(ui_LabelLoggerStart,"Start");
 ui_PanelLoggerInfo = lv_obj_create(ui_TabPageLogger);
 lv_obj_set_height( ui_PanelLoggerInfo, 50);
 lv_obj_set_width( ui_PanelLoggerInfo, lv_pct(100));
-lv_obj_set_x( ui_PanelLoggerInfo, 0 );
-lv_obj_set_y( ui_PanelLoggerInfo, 75 );
-lv_obj_set_align( ui_PanelLoggerInfo, LV_ALIGN_TOP_MID );
+lv_obj_set_align( ui_PanelLoggerInfo, LV_ALIGN_CENTER );
 lv_obj_clear_flag( ui_PanelLoggerInfo, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_LabelLoggerInfo = lv_label_create(ui_PanelLoggerInfo);
@@ -240,18 +242,24 @@ lv_obj_set_flex_align(ui_LabelLoggerInfo, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_STA
 lv_label_set_text(ui_LabelLoggerInfo,"...");
 
 ui_TabPageInfo = lv_tabview_add_tab(ui_TabView, "Info");
+lv_obj_set_scrollbar_mode(ui_TabPageInfo, LV_SCROLLBAR_MODE_OFF);
 
 ui_PanelPageInfo = lv_obj_create(ui_TabPageInfo);
-lv_obj_set_width( ui_PanelPageInfo, lv_pct(100));
-lv_obj_set_height( ui_PanelPageInfo, lv_pct(100));
+lv_obj_set_width( ui_PanelPageInfo, lv_pct(105));
+lv_obj_set_height( ui_PanelPageInfo, lv_pct(110));
 lv_obj_set_align( ui_PanelPageInfo, LV_ALIGN_CENTER );
 lv_obj_clear_flag( ui_PanelPageInfo, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+lv_obj_set_scrollbar_mode(ui_PanelPageInfo, LV_SCROLLBAR_MODE_OFF);
 
-ui_LabelPageInfo = lv_label_create(ui_PanelPageInfo);
-lv_obj_set_width( ui_LabelPageInfo, lv_pct(100));
-lv_obj_set_height( ui_LabelPageInfo, lv_pct(100));
-lv_obj_set_align( ui_LabelPageInfo, LV_ALIGN_CENTER );
-lv_label_set_text(ui_LabelPageInfo,"Some Infos");
+ui_TextAreaInfo = lv_textarea_create(ui_PanelPageInfo);
+lv_obj_set_width( ui_TextAreaInfo, lv_pct(100));
+lv_obj_set_height( ui_TextAreaInfo, lv_pct(100));
+lv_obj_set_align( ui_TextAreaInfo, LV_ALIGN_CENTER );
+lv_textarea_set_placeholder_text(ui_TextAreaInfo,"Log");
+lv_obj_clear_flag( ui_TextAreaInfo, LV_OBJ_FLAG_CLICK_FOCUSABLE );    /// Flags
+lv_obj_set_style_text_align(ui_TextAreaInfo, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN| LV_STATE_DEFAULT);
+
+
 
 ui_PanelMessages = lv_obj_create(ui_Screen1);
 lv_obj_set_width( ui_PanelMessages, lv_pct(50));

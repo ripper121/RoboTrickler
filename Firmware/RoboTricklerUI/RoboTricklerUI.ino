@@ -204,11 +204,13 @@ IRAM_ATTR void disp_task_init(void)
 void updateDisplayLog(String logOutput)
 {
   // max length of String is 4000 Byte
+  /*
   if(fullLogOutput.length()>3000)
     fullLogOutput="";
   fullLogOutput += logOutput;
   fullLogOutput += "\n";
-  lv_label_set_text(ui_LabelPageInfo, fullLogOutput.c_str());
+  */
+  lv_textarea_add_text(ui_TextAreaInfo, logOutput.c_str());
   lv_label_set_text(ui_LabelInfo, logOutput.c_str());
 }
 

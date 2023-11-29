@@ -8,6 +8,7 @@
 
 ///////////////////// VARIABLES ////////////////////
 
+
 // SCREEN: ui_Screen1
 void ui_Screen1_screen_init(void);
 lv_obj_t *ui_Screen1;
@@ -15,25 +16,25 @@ lv_obj_t *ui_TabView;
 lv_obj_t *ui_TabPageTrickler;
 lv_obj_t *ui_PanelTarget;
 lv_obj_t *ui_LabelTarget;
-void ui_event_ButtonTricklerStart(lv_event_t *e);
+void ui_event_ButtonTricklerStart( lv_event_t * e);
 lv_obj_t *ui_ButtonTricklerStart;
 lv_obj_t *ui_LabelTricklerStart;
-void ui_event_ButtonNNN(lv_event_t *e);
+void ui_event_ButtonNNN( lv_event_t * e);
 lv_obj_t *ui_ButtonNNN;
 lv_obj_t *ui_LabelNNN;
-void ui_event_ButtonNN(lv_event_t *e);
+void ui_event_ButtonNN( lv_event_t * e);
 lv_obj_t *ui_ButtonNN;
 lv_obj_t *ui_LabelNN;
-void ui_event_ButtonN(lv_event_t *e);
+void ui_event_ButtonN( lv_event_t * e);
 lv_obj_t *ui_ButtonN;
 lv_obj_t *ui_LabelN;
-void ui_event_ButtonP(lv_event_t *e);
+void ui_event_ButtonP( lv_event_t * e);
 lv_obj_t *ui_ButtonP;
 lv_obj_t *ui_LabelP;
-void ui_event_ButtonAdd(lv_event_t *e);
+void ui_event_ButtonAdd( lv_event_t * e);
 lv_obj_t *ui_ButtonAdd;
 lv_obj_t *ui_LabelAdd;
-void ui_event_ButtonSub(lv_event_t *e);
+void ui_event_ButtonSub( lv_event_t * e);
 lv_obj_t *ui_ButtonSub;
 lv_obj_t *ui_LabelSub;
 lv_obj_t *ui_PanelTricklerWeight;
@@ -41,21 +42,21 @@ lv_obj_t *ui_LabelTricklerWeight;
 lv_obj_t *ui_PanelInfo;
 lv_obj_t *ui_LabelInfo;
 lv_obj_t *ui_TabPageProfile;
-void ui_event_RollerProfile(lv_event_t *e);
+void ui_event_RollerProfile( lv_event_t * e);
 lv_obj_t *ui_RollerProfile;
 lv_obj_t *ui_TabPageLogger;
 lv_obj_t *ui_PanelLoggerWeight;
 lv_obj_t *ui_LabelLoggerWeight;
-void ui_event_ButtonLoggerStart(lv_event_t *e);
+void ui_event_ButtonLoggerStart( lv_event_t * e);
 lv_obj_t *ui_ButtonLoggerStart;
 lv_obj_t *ui_LabelLoggerStart;
 lv_obj_t *ui_PanelLoggerInfo;
 lv_obj_t *ui_LabelLoggerInfo;
 lv_obj_t *ui_TabPageInfo;
 lv_obj_t *ui_PanelPageInfo;
-lv_obj_t *ui_LabelPageInfo;
+lv_obj_t *ui_TextAreaInfo;
 lv_obj_t *ui_PanelMessages;
-void ui_event_ButtonMessage(lv_event_t *e);
+void ui_event_ButtonMessage( lv_event_t * e);
 lv_obj_t *ui_ButtonMessage;
 lv_obj_t *ui_LabelButtonMessage;
 lv_obj_t *ui_LabelMessages;
@@ -63,114 +64,84 @@ lv_obj_t *ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16
-#error "LV_COLOR_DEPTH should be 16bit to match SquareLine Studio's settings"
+    #error "LV_COLOR_DEPTH should be 16bit to match SquareLine Studio's settings"
 #endif
-#if LV_COLOR_16_SWAP != 0
-#error "LV_COLOR_16_SWAP should be 0 to match SquareLine Studio's settings"
+#if LV_COLOR_16_SWAP !=0
+    #error "LV_COLOR_16_SWAP should be 0 to match SquareLine Studio's settings"
 #endif
 
 ///////////////////// ANIMATIONS ////////////////////
 
 ///////////////////// FUNCTIONS ////////////////////
-void ui_event_ButtonTricklerStart(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-    lv_obj_t *target = lv_event_get_target(e);
-    if (event_code == LV_EVENT_CLICKED)
-    {
-        trickler_start_event_cb(e);
-    }
+void ui_event_ButtonTricklerStart( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      trickler_start_event_cb( e );
 }
-void ui_event_ButtonNNN(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-    lv_obj_t *target = lv_event_get_target(e);
-    if (event_code == LV_EVENT_CLICKED)
-    {
-        nnn_event_cb(e);
-    }
 }
-void ui_event_ButtonNN(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-    lv_obj_t *target = lv_event_get_target(e);
-    if (event_code == LV_EVENT_CLICKED)
-    {
-        nn_event_cb(e);
-    }
+void ui_event_ButtonNNN( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      nnn_event_cb( e );
 }
-void ui_event_ButtonN(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-    lv_obj_t *target = lv_event_get_target(e);
-    if (event_code == LV_EVENT_CLICKED)
-    {
-        n_event_cb(e);
-    }
 }
-void ui_event_ButtonP(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-    lv_obj_t *target = lv_event_get_target(e);
-    if (event_code == LV_EVENT_CLICKED)
-    {
-        p_event_cb(e);
-    }
+void ui_event_ButtonNN( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      nn_event_cb( e );
 }
-void ui_event_ButtonAdd(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-    lv_obj_t *target = lv_event_get_target(e);
-    if (event_code == LV_EVENT_CLICKED)
-    {
-        add_event_cb(e);
-    }
 }
-void ui_event_ButtonSub(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-    lv_obj_t *target = lv_event_get_target(e);
-    if (event_code == LV_EVENT_CLICKED)
-    {
-        sub_event_cb(e);
-    }
+void ui_event_ButtonN( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      n_event_cb( e );
 }
-void ui_event_RollerProfile(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-    lv_obj_t *target = lv_event_get_target(e);
-    if (event_code == LV_EVENT_VALUE_CHANGED)
-    {
-        profile_event_cb(e);
-    }
 }
-void ui_event_ButtonLoggerStart(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-    lv_obj_t *target = lv_event_get_target(e);
-    if (event_code == LV_EVENT_CLICKED)
-    {
-        logger_start_event_cb(e);
-    }
+void ui_event_ButtonP( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      p_event_cb( e );
 }
-void ui_event_ButtonMessage(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-    lv_obj_t *target = lv_event_get_target(e);
-    if (event_code == LV_EVENT_CLICKED)
-    {
-        message_event_cb(e);
-    }
+}
+void ui_event_ButtonAdd( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      add_event_cb( e );
+}
+}
+void ui_event_ButtonSub( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      sub_event_cb( e );
+}
+}
+void ui_event_RollerProfile( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_VALUE_CHANGED) {
+      profile_event_cb( e );
+}
+}
+void ui_event_ButtonLoggerStart( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      logger_start_event_cb( e );
+}
+}
+void ui_event_ButtonMessage( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      message_event_cb( e );
+}
 }
 
 ///////////////////// SCREENS ////////////////////
 
-void ui_init(void)
+void ui_init( void )
 {
-    lv_disp_t *dispp = lv_disp_get_default();
-    lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), true, LV_FONT_DEFAULT);
-    lv_disp_set_theme(dispp, theme);
-    ui_Screen1_screen_init();
-    ui____initial_actions0 = lv_obj_create(NULL);
-    lv_disp_load_scr(ui_Screen1);
+lv_disp_t *dispp = lv_disp_get_default();
+lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), true, LV_FONT_DEFAULT);
+lv_disp_set_theme(dispp, theme);
+ui_Screen1_screen_init();
+ui____initial_actions0 = lv_obj_create(NULL);
+lv_disp_load_scr( ui_Screen1);
 }

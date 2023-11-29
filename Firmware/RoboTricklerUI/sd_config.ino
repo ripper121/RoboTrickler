@@ -1,4 +1,5 @@
-bool readPowder(const char *filename, Config &config) {
+bool readPowder(const char *filename, Config &config)
+{
   String infoText = "Loading Powder...";
   // labelInfo.drawButton(false, infoText);
   delay(500);
@@ -17,13 +18,15 @@ bool readPowder(const char *filename, Config &config) {
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(doc, file);
 
-  if (error) {
+  if (error)
+  {
     DEBUG_PRINT("deserializeJson() failed: ");
     DEBUG_PRINTLN(error.c_str());
     return false;
   }
 
-  if (String(filename).indexOf("pid") != -1) {
+  if (String(filename).indexOf("pid") != -1)
+  {
     config.pidThreshold = doc["threshold"] | 0.10;
     config.pidStepMin = doc["stepMin"] | 5;
     config.pidStepMax = doc["stepMax"] | 36000;
@@ -41,8 +44,11 @@ bool readPowder(const char *filename, Config &config) {
     config.pidReverse = doc["reverse"] | false;
     DEBUG_PRINTLN("PID_AKTIVE");
     PID_AKTIVE = true;
-  } else {
-    for (JsonPair item : doc.as<JsonObject>()) {
+  }
+  else
+  {
+    for (JsonPair item : doc.as<JsonObject>())
+    {
       int item_key = ((String(item.key().c_str()).toInt()) - 1);
       config.profile_num[item_key] = item.value()["number"] | 1;
       config.profile_weight[item_key] = item.value()["weight"];
@@ -65,7 +71,8 @@ bool readPowder(const char *filename, Config &config) {
 }
 
 // Loads the configuration from a file
-int loadConfiguration(const char *filename, Config &config) {
+int loadConfiguration(const char *filename, Config &config)
+{
   // Dump config file
   printFile(filename);
 
@@ -80,68 +87,81 @@ int loadConfiguration(const char *filename, Config &config) {
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(doc, file);
 
-  if (error) {
+  if (error)
+  {
     DEBUG_PRINT("deserializeJson() failed: ");
     DEBUG_PRINTLN(error.c_str());
     return 1;
   }
 
-  strlcpy(config.wifi_ssid,                  // <- destination
+  strlcpy(config.wifi_ssid,          // <- destination
           doc["wifi"]["ssid"] | "",  // <- source
-          sizeof(config.wifi_ssid));         // <- destination's capacity
+          sizeof(config.wifi_ssid)); // <- destination's capacity
 
-  strlcpy(config.wifi_psk,                  // <- destination
+  strlcpy(config.wifi_psk,          // <- destination
           doc["wifi"]["psk"] | "",  // <- source
-          sizeof(config.wifi_psk));         // <- destination's capacity
+          sizeof(config.wifi_psk)); // <- destination's capacity
 
-  strlcpy(config.IPStatic,                  // <- destination
-          doc["wifi"]["IPStatic"] | "",  // <- source
-          sizeof(config.IPStatic));         // <- destination's capacity
+  strlcpy(config.IPStatic,              // <- destination
+          doc["wifi"]["IPStatic"] | "", // <- source
+          sizeof(config.IPStatic));     // <- destination's capacity
 
-  strlcpy(config.IPGateway,                  // <- destination
-          doc["wifi"]["IPGateway"] | "",  // <- source
-          sizeof(config.IPGateway));         // <- destination's capacity
+  strlcpy(config.IPGateway,              // <- destination
+          doc["wifi"]["IPGateway"] | "", // <- source
+          sizeof(config.IPGateway));     // <- destination's capacity
 
-  strlcpy(config.IPSubnet,                  // <- destination
-          doc["wifi"]["IPSubnet"] | "",  // <- source
-          sizeof(config.IPSubnet));         // <- destination's capacity
+  strlcpy(config.IPSubnet,              // <- destination
+          doc["wifi"]["IPSubnet"] | "", // <- source
+          sizeof(config.IPSubnet));     // <- destination's capacity
 
-  strlcpy(config.IPDns,                  // <- destination
-          doc["wifi"]["IPDNS"] | "",  // <- source
-          sizeof(config.IPDns));         // <- destination's capacity
+  strlcpy(config.IPDns,              // <- destination
+          doc["wifi"]["IPDNS"] | "", // <- source
+          sizeof(config.IPDns));     // <- destination's capacity
 
-  strlcpy(config.scale_protocol,                  // <- destination
-          doc["scale"]["protocol"] | "GG",  // <- source
-          sizeof(config.scale_protocol));         // <- destination's capacity
+  strlcpy(config.scale_protocol,           // <- destination
+          doc["scale"]["protocol"] | "GG", // <- source
+          sizeof(config.scale_protocol));  // <- destination's capacity
 
   config.scale_baud = doc["scale"]["baud"] | 9600;
 
-  strlcpy(config.powder,                  // <- destination
-          doc["powder"] | "calibrate",  // <- source
-          sizeof(config.powder));         // <- destination's capacity
+  strlcpy(config.powder,               // <- destination
+          doc["powder"] | "calibrate", // <- source
+          sizeof(config.powder));      // <- destination's capacity
 
-
-
-  if (doc["mode"] == "trickler") {
+  if (doc["mode"] == "trickler")
+  {
     config.mode = trickler;
-  } else if (doc["mode"] == "logger") {
+  }
+  else if (doc["mode"] == "logger")
+  {
     config.mode = logger;
     config.log_measurements = doc["log_measurements"] | 20;
-  } else {
+  }
+  else
+  {
     config.mode = trickler;
   }
 
   config.microsteps = doc["microsteps"] | 1;
 
-  if (doc["beeper"] == "off") {
+  if (doc["beeper"] == "off")
+  {
     config.beeper = off;
-  } else if (doc["beeper"] == "done") {
+  }
+  else if (doc["beeper"] == "done")
+  {
     config.beeper = done;
-  } else if (doc["beeper"] == "button") {
+  }
+  else if (doc["beeper"] == "button")
+  {
     config.beeper = button;
-  } else if (doc["beeper"] == "both") {
+  }
+  else if (doc["beeper"] == "both")
+  {
     config.beeper = both;
-  } else {
+  }
+  else
+  {
     config.beeper = off;
   }
 
@@ -156,20 +176,66 @@ int loadConfiguration(const char *filename, Config &config) {
   return 0;
 }
 
+void getPowderList(fs::FS &fs)
+{
+  String powderList = "";
+
+  File root = fs.open("/");
+  if (!root)
+  {
+    DEBUG_PRINTLN("Failed to open directory");
+    return;
+  }
+  if (!root.isDirectory())
+  {
+    DEBUG_PRINTLN("Not a directory");
+    return;
+  }
+
+  File file = root.openNextFile();
+  while (file)
+  {
+    if (file.isDirectory())
+    {
+      DEBUG_PRINT("  DIR : ");
+      DEBUG_PRINTLN(file.name());
+    }
+    else
+    {
+      if ((String(file.name()).indexOf(".txt") != -1) && (String(file.name()).indexOf("config.txt") == -1))
+      {
+        String filename = String(file.name());
+        filename.replace(".txt", "");
+        powderList += filename;
+        powderList += "\n";
+      }
+      DEBUG_PRINT("  FILE: ");
+      DEBUG_PRINT(file.name());
+      DEBUG_PRINT("  SIZE: ");
+      DEBUG_PRINTLN(file.size());
+    }
+    file = root.openNextFile();
+  }
+  lv_roller_set_options(ui_RollerProfile, powderList.c_str(), LV_ROLLER_MODE_INFINITE);
+}
+
 // Prints the content of a file to the Serial
-void printFile(const char *filename) {
+void printFile(const char *filename)
+{
   // Open file for reading
   File file = SD.open(filename);
 
   DEBUG_PRINTLN(filename);
 
-  if (!file) {
+  if (!file)
+  {
     DEBUG_PRINTLN(F("Failed to read file"));
     return;
   }
 
   // Extract each characters by one by one
-  while (file.available()) {
+  while (file.available())
+  {
     DEBUG_PRINT((char)file.read());
   }
   DEBUG_PRINTLN();
