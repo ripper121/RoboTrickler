@@ -525,6 +525,11 @@ void loop()
         delay(250);
       }
 
+      if (targetWeight < weight)
+      {
+        finished = false;
+      }
+
       targetWeightStr = String(targetWeight, 3);
     }
 
