@@ -19,7 +19,7 @@
 #include <TFT_eSPI.h>
 #define LCD_EN GPIO_NUM_5
 
-// #define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
@@ -73,7 +73,7 @@ struct Config
   bool debugLog;
   char scale_protocol[16];
   int scale_baud;
-  char powder[64];
+  char profile[64];
   int microsteps;
   float pidThreshold;
   long pidStepMin;
@@ -210,8 +210,10 @@ void updateDisplayLog(String logOutput)
   fullLogOutput += logOutput;
   fullLogOutput += "\n";
   */
+  logOutput += "\n";
   lv_textarea_add_text(ui_TextAreaInfo, logOutput.c_str());
   lv_label_set_text(ui_LabelInfo, logOutput.c_str());
+  DEBUG_PRINTLN(logOutput);
 }
 
 void setup()
@@ -283,16 +285,17 @@ void setup()
   if (configState == 1)
   {
     updateDisplayLog("config.txt deserializeJson() failed");
-  }
-  if (configState == 2)
+  }else if (configState == 2)
   {
-    updateDisplayLog("powder.txt deserializeJson() failed");
+    updateDisplayLog("profile.txt deserializeJson() failed");
+  }else{
+    getProfileList();
   }
 
   if (config.mode == trickler)
   {
     DEBUG_PRINTLN("config.mode == trickler");
-    updateDisplayLog("Powder:" + String(config.powder));
+    updateDisplayLog("Profile:" + String(config.profile));
     measurementCount = config.profile_measurements[0];
   }
   else if (config.mode == logger)
@@ -342,6 +345,9 @@ void setup()
 
   lv_label_set_text(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com").c_str());
   lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
+
+  //lv_roller_set_selected(roller, id, LV_ANIM_ON/OFF)
+  set_roller_selected_str(ui_RollerProfile, config.profile);
   DEBUG_PRINTLN("Setup done.");
 }
 
@@ -580,7 +586,7 @@ void loop()
           }
           else
           {
-            DEBUG_PRINTLN("Powder Running");
+            DEBUG_PRINTLN("Profile Running");
             int stepperSpeedOld = 0;
             int profileStep = 0;
             // Serial.print("abs: ");

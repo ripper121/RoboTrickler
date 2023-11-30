@@ -49,6 +49,7 @@ extern lv_obj_t *ui_LabelInfo;
 extern lv_obj_t *ui_TabPageProfile;
 void ui_event_RollerProfile( lv_event_t * e);
 extern lv_obj_t *ui_RollerProfile;
+extern lv_obj_t *ui_DropdownProfile;
 extern lv_obj_t *ui_TabPageLogger;
 extern lv_obj_t *ui_PanelLoggerWeight;
 extern lv_obj_t *ui_LabelLoggerWeight;

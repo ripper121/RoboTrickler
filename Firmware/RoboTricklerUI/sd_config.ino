@@ -1,6 +1,6 @@
-bool readPowder(const char *filename, Config &config)
+bool readProfile(const char *filename, Config &config)
 {
-  String infoText = "Loading Powder...";
+  String infoText = "Loading Profile...";
   // labelInfo.drawButton(false, infoText);
   delay(500);
 
@@ -64,7 +64,7 @@ bool readPowder(const char *filename, Config &config)
   }
   file.close();
 
-  infoText = "Powder Loaded:";
+  infoText = "Profile Loaded:";
   infoText += filename;
   // labelInfo.drawButton(false, infoText);
   return true;
@@ -124,9 +124,9 @@ int loadConfiguration(const char *filename, Config &config)
 
   config.scale_baud = doc["scale"]["baud"] | 9600;
 
-  strlcpy(config.powder,               // <- destination
-          doc["powder"] | "calibrate", // <- source
-          sizeof(config.powder));      // <- destination's capacity
+  strlcpy(config.profile,               // <- destination
+          doc["profile"] | "calibrate", // <- source
+          sizeof(config.profile));      // <- destination's capacity
 
   if (doc["mode"] == "trickler")
   {
@@ -169,18 +169,18 @@ int loadConfiguration(const char *filename, Config &config)
 
   file.close();
 
-  String powder_filename = "/" + String(config.powder) + ".txt";
-  if (!readPowder(powder_filename.c_str(), config))
+  String profile_filename = "/" + String(config.profile) + ".txt";
+  if (!readProfile(profile_filename.c_str(), config))
     return 2;
 
   return 0;
 }
 
-void getPowderList(fs::FS &fs)
+void getProfileList()
 {
-  String powderList = "";
+  String profileList = "";
 
-  File root = fs.open("/");
+  File root = SD.open("/");
   if (!root)
   {
     DEBUG_PRINTLN("Failed to open directory");
@@ -193,6 +193,8 @@ void getPowderList(fs::FS &fs)
   }
 
   File file = root.openNextFile();
+  
+  updateDisplayLog("Search Profiles: ");
   while (file)
   {
     if (file.isDirectory())
@@ -206,9 +208,10 @@ void getPowderList(fs::FS &fs)
       {
         String filename = String(file.name());
         filename.replace(".txt", "");
-        powderList += filename;
-        powderList += "\n";
+        profileList += filename;
+        profileList += "\n";
       }
+      
       DEBUG_PRINT("  FILE: ");
       DEBUG_PRINT(file.name());
       DEBUG_PRINT("  SIZE: ");
@@ -216,7 +219,8 @@ void getPowderList(fs::FS &fs)
     }
     file = root.openNextFile();
   }
-  lv_roller_set_options(ui_RollerProfile, powderList.c_str(), LV_ROLLER_MODE_INFINITE);
+  updateDisplayLog(profileList);
+  lv_roller_set_options(ui_RollerProfile, profileList.c_str(), LV_ROLLER_MODE_INFINITE);
 }
 
 // Prints the content of a file to the Serial

@@ -190,6 +190,16 @@ lv_roller_set_options( ui_RollerProfile, "N135\nN140\nPDI_GN\nPDI_GM\nRS14\nRS14
 lv_obj_set_width( ui_RollerProfile, lv_pct(105));
 lv_obj_set_height( ui_RollerProfile, lv_pct(110));
 lv_obj_set_align( ui_RollerProfile, LV_ALIGN_CENTER );
+lv_obj_add_flag( ui_RollerProfile, LV_OBJ_FLAG_HIDDEN );   /// Flags
+
+ui_DropdownProfile = lv_dropdown_create(ui_TabPageProfile);
+lv_dropdown_set_options( ui_DropdownProfile, "Option 1\nOption 2\nOption 3\nOption 1\nOption 2\nOption 3\nOption 1\nOption 2\nOption 3\nOption 1\nOption 2\nOption 3" );
+lv_obj_set_width( ui_DropdownProfile, lv_pct(100));
+lv_obj_set_height( ui_DropdownProfile, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_align( ui_DropdownProfile, LV_ALIGN_TOP_MID );
+lv_obj_add_flag( ui_DropdownProfile, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
+
+
 
 ui_TabPageLogger = lv_tabview_add_tab(ui_TabView, "Logger");
 lv_obj_set_scrollbar_mode(ui_TabPageLogger, LV_SCROLLBAR_MODE_OFF);

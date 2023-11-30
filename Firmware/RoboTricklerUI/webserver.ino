@@ -152,7 +152,7 @@ void handleFileUpload()
     DEBUG_PRINTLN(upload.totalSize);
     if ((String(upload.filename).indexOf(".txt")) != -1 && (String(upload.filename).indexOf("conf") == -1))
     {
-      readPowder(upload.filename.c_str(), config);
+      readProfile(upload.filename.c_str(), config);
     }
   }
 }
@@ -404,9 +404,6 @@ void initWebServer()
   WIFI_AKTIVE = false;
   if (String(config.wifi_ssid).length() > 0)
   {
-    DEBUG_PRINT("Connect to Wifi: ");
-    DEBUG_PRINTLN(config.wifi_ssid);
-
     updateDisplayLog("Connect to Wifi: ");
     updateDisplayLog(config.wifi_ssid);
 
@@ -445,17 +442,11 @@ void initWebServer()
       }
     }
 
-    DEBUG_PRINTLN("DNS-Server:");
-    DEBUG_PRINTLN(ipDNS);
-    updateDisplayLog("DNS-Server:");
-    updateDisplayLog(String(ipDNS));
-
     WiFi.mode(WIFI_STA);
     WiFi.begin(config.wifi_ssid, config.wifi_psk);
 
     if (WiFi.waitForConnectResult() == WL_CONNECTED)
     {
-      DEBUG_PRINTLN("Wifi Connected");
       updateDisplayLog("Wifi Connected");
       MDNS.begin(host);
 
@@ -477,11 +468,7 @@ void initWebServer()
       server.begin();
       MDNS.addService("http", "tcp", 80);
 
-      DEBUG_PRINT("Ready! Open http://");
-      DEBUG_PRINT(host);
-      DEBUG_PRINTLN(".local in your browser");
-
-      updateDisplayLog(String(String("Ready! Open http://") + host + String(".local in your browser")));
+      updateDisplayLog(String(String("Open http://") + host + String(".local in your browser")));
 
       String serverPath = "https://ripper121.com/roboTrickler/userTracker.php?mac=" + String(WiFi.macAddress());
       makeHttpsGetRequest(serverPath);
@@ -490,13 +477,11 @@ void initWebServer()
     }
     else
     {
-      DEBUG_PRINTLN("No Wifi");
       updateDisplayLog("No Wifi");
     }
   }
   else
   {
-    DEBUG_PRINTLN("No Wifi");
     updateDisplayLog("No Wifi");
   }
 }
