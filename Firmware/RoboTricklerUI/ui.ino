@@ -73,9 +73,12 @@ void startTrickler()
 
 void stopTrickler()
 {
+  stopMeasurment();
   lv_label_set_text(ui_LabelTricklerStart, "Start");
   lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-  stopMeasurment();
+  lv_label_set_text(ui_LabelTricklerWeight,"-.-");
+  lv_label_set_text(ui_LabelInfo, "");
+  lv_label_set_text(ui_LabelLoggerInfo, "");
 }
 
 void startLogger()
@@ -88,9 +91,12 @@ void startLogger()
 
 void stopLogger()
 {
+  stopMeasurment();
   lv_label_set_text(ui_LabelLoggerStart, "Start");
   lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-  stopMeasurment();
+  lv_label_set_text(ui_LabelLoggerWeight,"-.-");
+  lv_label_set_text(ui_LabelInfo, "");
+  lv_label_set_text(ui_LabelLoggerInfo, "");
 }
 
 void nnn_event_cb(lv_event_t *e)

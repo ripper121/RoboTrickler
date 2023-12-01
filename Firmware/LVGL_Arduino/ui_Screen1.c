@@ -192,15 +192,6 @@ lv_obj_set_width( ui_RollerProfile, lv_pct(105));
 lv_obj_set_height( ui_RollerProfile, lv_pct(110));
 lv_obj_set_align( ui_RollerProfile, LV_ALIGN_CENTER );
 
-ui_DropdownProfile = lv_dropdown_create(ui_TabPageProfile);
-lv_dropdown_set_options( ui_DropdownProfile, "Option 1\nOption 2\nOption 3\nOption 1\nOption 2\nOption 3\nOption 1\nOption 2\nOption 3\nOption 1\nOption 2\nOption 3" );
-lv_obj_set_width( ui_DropdownProfile, lv_pct(100));
-lv_obj_set_height( ui_DropdownProfile, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_align( ui_DropdownProfile, LV_ALIGN_TOP_MID );
-lv_obj_add_flag( ui_DropdownProfile, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
-
-
-
 ui_TabPageLogger = lv_tabview_add_tab(ui_TabView, "Logger");
 lv_obj_clear_flag( ui_TabPageLogger, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 lv_obj_set_style_text_font(ui_TabPageLogger, &lv_font_montserrat_32, LV_PART_MAIN| LV_STATE_DEFAULT);
@@ -264,16 +255,11 @@ lv_obj_set_align( ui_PanelPageInfo, LV_ALIGN_CENTER );
 lv_obj_clear_flag( ui_PanelPageInfo, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 lv_obj_set_scrollbar_mode(ui_PanelPageInfo, LV_SCROLLBAR_MODE_OFF);
 
-ui_TextAreaInfo = lv_textarea_create(ui_PanelPageInfo);
-lv_obj_set_width( ui_TextAreaInfo, lv_pct(100));
-lv_obj_set_height( ui_TextAreaInfo, lv_pct(100));
-lv_obj_set_align( ui_TextAreaInfo, LV_ALIGN_CENTER );
-lv_textarea_set_max_length(ui_TextAreaInfo,4000);
-lv_textarea_set_placeholder_text(ui_TextAreaInfo,"Log");
-lv_obj_clear_flag( ui_TextAreaInfo, LV_OBJ_FLAG_CLICK_FOCUSABLE );    /// Flags
-lv_obj_set_style_text_align(ui_TextAreaInfo, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN| LV_STATE_DEFAULT);
-
-
+ui_LabelLog = lv_label_create(ui_PanelPageInfo);
+lv_obj_set_width( ui_LabelLog, lv_pct(100));
+lv_obj_set_height( ui_LabelLog, lv_pct(100));
+lv_obj_set_align( ui_LabelLog, LV_ALIGN_CENTER );
+lv_label_set_text(ui_LabelLog,"");
 
 ui_PanelMessages = lv_obj_create(ui_Screen1);
 lv_obj_set_width( ui_PanelMessages, lv_pct(90));

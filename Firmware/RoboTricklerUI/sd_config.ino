@@ -194,7 +194,7 @@ void getProfileList()
 
   File file = root.openNextFile();
 
-  updateDisplayLog("Search Profiles: ");
+  updateDisplayLog("Search Profiles...");
   while (file)
   {
     if (file.isDirectory())
@@ -219,7 +219,6 @@ void getProfileList()
     }
     file = root.openNextFile();
   }
-  updateDisplayLog(profileList);
   lv_roller_set_options(ui_RollerProfile, profileList.c_str(), LV_ROLLER_MODE_INFINITE);
 }
 
@@ -241,6 +240,7 @@ void saveConfiguration(const char *filename, const Config &config)
   // Use https://arduinojson.org/assistant to compute the capacity.
   StaticJsonDocument<512> doc;
 
+  doc["log_measurements"] = config.log_measurements;
   doc["wifi"]["ssid"] = config.wifi_ssid;
   doc["wifi"]["psk"] = config.wifi_psk;
   doc["wifi"]["IPStatic"] = config.IPStatic;
@@ -250,7 +250,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["protocol"] = config.scale_protocol;
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
-  doc["log_measurements"] = config.log_measurements;
+
 
   if (config.mode == trickler)
     doc["mode"] = "trickler";

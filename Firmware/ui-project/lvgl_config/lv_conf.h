@@ -19,6 +19,9 @@
 
 #include <stdint.h>
 
+#define LV_HOR_RES_MAX          (480)
+#define LV_VER_RES_MAX          (320)
+
 /*====================
    COLOR SETTINGS
  *====================*/
@@ -49,7 +52,7 @@
 #define LV_MEM_CUSTOM 0
 #if LV_MEM_CUSTOM == 0
     /*Size of the memory available for `lv_mem_alloc()` in bytes (>= 2kB)*/
-    #define LV_MEM_SIZE (24U * 1024U)          /*[bytes]*/
+    #define LV_MEM_SIZE (16U * 1024U)          /*[bytes]*/
 
     /*Set an address for the memory pool instead of allocating it as a normal array. Can be in external SRAM too.*/
     #define LV_MEM_ADR 0     /*0: unused*/
@@ -78,10 +81,7 @@
  *====================*/
 
 /*Default display refresh period. LVG will redraw changed areas with this period time*/
-#define LV_DISP_DEF_REFR_PERIOD 30      /*[ms]*/
-
-/*Input device read period in milliseconds*/
-#define LV_INDEV_DEF_READ_PERIOD 30     /*[ms]*/
+#define LV_DISP_DEF_REFR_PERIOD 10      /*[ms]*/
 
 /*Use a custom tick source that tells the elapsed time in milliseconds.
  *It removes the need to manually update the tick with `lv_tick_inc()`)*/
@@ -97,6 +97,16 @@
 /*Default Dot Per Inch. Used to initialize default sizes such as widgets sized, style paddings.
  *(Not so important, you can adjust it to modify default sizes and spaces)*/
 #define LV_DPI_DEF 130     /*[px/inch]*/
+
+/*=======================
+   Input device settings
+ *=======================*/
+
+/* Input device default settings.
+ * Can be changed in the Input device driver (`lv_indev_drv_t`)*/
+
+/* Input device read period in milliseconds */
+#define LV_INDEV_DEF_READ_PERIOD          30
 
 /*=======================
  * FEATURE CONFIGURATION
@@ -188,7 +198,7 @@
  *If LV_USE_LOG is enabled an error message will be printed on failure*/
 #define LV_USE_ASSERT_NULL          1   /*Check if the parameter is NULL. (Very fast, recommended)*/
 #define LV_USE_ASSERT_MALLOC        1   /*Checks is the memory is successfully allocated or no. (Very fast, recommended)*/
-#define LV_USE_ASSERT_STYLE         0   /*Check if the styles are properly initialized. (Very fast, recommended)*/
+#define LV_USE_ASSERT_STYLE         1   /*Check if the styles are properly initialized. (Very fast, recommended)*/
 #define LV_USE_ASSERT_MEM_INTEGRITY 0   /*Check the integrity of `lv_mem` after critical operations. (Slow)*/
 #define LV_USE_ASSERT_OBJ           0   /*Check the object's type and existence (e.g. not deleted). (Slow)*/
 
@@ -206,17 +216,21 @@
     #define LV_USE_MEM_MONITOR_POS LV_ALIGN_BOTTOM_LEFT
 #endif
 
-#define LV_USE_USER_DATA 0
-
 /*=====================
- *  COMPILER SETTINGS
+ *  Compiler settings
  *====================*/
-/*Required alignment size for buffers*/
-#define LV_ATTRIBUTE_MEM_ALIGN_SIZE 1
+/* With size optimization (-Os) the compiler might not align data to
+ * 4 or 8 byte boundary. This alignment will be explicitly applied where needed.
+ * E.g. __attribute__((aligned(4))) */
+#define LV_ATTRIBUTE_MEM_ALIGN 1
 
-/*Export integer constant to binding. This macro is used with constants in the form of LV_<CONST> that
- *should also appear on LVGL binding API such as Micropython.*/
-#define LV_EXPORT_CONST_INT(int_value) struct _silence_gcc_warning /*The default value just prevents GCC warning*/
+/* Export integer constant to binding.
+ * This macro is used with constants in the form of LV_<CONST> that
+ * should also appear on lvgl binding API such as Micropython
+ *
+ * The default value just prevents a GCC warning.
+ */
+#define LV_EXPORT_CONST_INT(int_value) struct _silence_gcc_warning
 
 /*==================
  *   FONT USAGE
@@ -224,60 +238,12 @@
 
 /*Montserrat fonts with ASCII range and some symbols using bpp = 4
  *https://fonts.google.com/specimen/Montserrat*/
-#define LV_FONT_MONTSERRAT_8  0
-#define LV_FONT_MONTSERRAT_10 0
-#define LV_FONT_MONTSERRAT_12 0
 #define LV_FONT_MONTSERRAT_14 1
-#define LV_FONT_MONTSERRAT_16 0
-#define LV_FONT_MONTSERRAT_18 0
-#define LV_FONT_MONTSERRAT_20 0
-#define LV_FONT_MONTSERRAT_22 0
-#define LV_FONT_MONTSERRAT_24 0
-#define LV_FONT_MONTSERRAT_26 0
-#define LV_FONT_MONTSERRAT_28 0
-#define LV_FONT_MONTSERRAT_30 0
 #define LV_FONT_MONTSERRAT_32 1
-#define LV_FONT_MONTSERRAT_34 0
-#define LV_FONT_MONTSERRAT_36 0
-#define LV_FONT_MONTSERRAT_38 0
-#define LV_FONT_MONTSERRAT_40 0
-#define LV_FONT_MONTSERRAT_42 0
-#define LV_FONT_MONTSERRAT_44 0
-#define LV_FONT_MONTSERRAT_46 0
 #define LV_FONT_MONTSERRAT_48 1
-
-/*Demonstrate special features*/
-#define LV_FONT_MONTSERRAT_12_SUBPX      0
-#define LV_FONT_MONTSERRAT_28_COMPRESSED 0  /*bpp = 3*/
-#define LV_FONT_DEJAVU_16_PERSIAN_HEBREW 0  /*Hebrew, Arabic, Persian letters and all their forms*/
-#define LV_FONT_SIMSUN_16_CJK            0  /*1000 most common CJK radicals*/
-
-/*Pixel perfect monospace fonts*/
-#define LV_FONT_UNSCII_8  0
-#define LV_FONT_UNSCII_16 0
-
-/*Optionally declare custom fonts here.
- *You can use these fonts as default font too and they will be available globally.
- *E.g. #define LV_FONT_CUSTOM_DECLARE   LV_FONT_DECLARE(my_font_1) LV_FONT_DECLARE(my_font_2)*/
-#define LV_FONT_CUSTOM_DECLARE
 
 /*Always set a default font*/
 #define LV_FONT_DEFAULT &lv_font_montserrat_14
-
-/*Enable handling large font and/or fonts with a lot of characters.
- *The limit depends on the font size, font face and bpp.
- *Compiler error will be triggered if a font needs it.*/
-#define LV_FONT_FMT_TXT_LARGE 0
-
-/*Enables/disables support for compressed fonts.*/
-#define LV_USE_FONT_COMPRESSED 0
-
-/*Enable subpixel rendering*/
-#define LV_USE_FONT_SUBPX 0
-#if LV_USE_FONT_SUBPX
-    /*Set the pixel order of the display. Physical order of RGB channels. Doesn't matter with "normal" fonts.*/
-    #define LV_FONT_SUBPX_BGR 0  /*0: RGB; 1:BGR order*/
-#endif
 
 /*Enable drawing placeholders when glyph dsc is not found*/
 #define LV_USE_FONT_PLACEHOLDER 1
@@ -312,43 +278,15 @@
 /*The control character to use for signalling text recoloring.*/
 #define LV_TXT_COLOR_CMD "#"
 
-/*Support bidirectional texts. Allows mixing Left-to-Right and Right-to-Left texts.
- *The direction will be processed according to the Unicode Bidirectional Algorithm:
- *https://www.w3.org/International/articles/inline-bidi-markup/uba-basics*/
-#define LV_USE_BIDI 0
-#if LV_USE_BIDI
-    /*Set the default direction. Supported values:
-    *`LV_BASE_DIR_LTR` Left-to-Right
-    *`LV_BASE_DIR_RTL` Right-to-Left
-    *`LV_BASE_DIR_AUTO` detect texts base direction*/
-    #define LV_BIDI_BASE_DIR_DEF LV_BASE_DIR_AUTO
-#endif
-
-/*Enable Arabic/Persian processing
- *In these languages characters should be replaced with an other form based on their position in the text*/
-#define LV_USE_ARABIC_PERSIAN_CHARS 0
-
 /*==================
  *  WIDGET USAGE
  *================*/
 
 /*Documentation of the widgets: https://docs.lvgl.io/latest/en/html/widgets/index.html*/
 
-#define LV_USE_ARC        0
-
-#define LV_USE_BAR        0
-
 #define LV_USE_BTN        1
 
 #define LV_USE_BTNMATRIX  1
-
-#define LV_USE_CANVAS     0
-
-#define LV_USE_CHECKBOX   0
-
-#define LV_USE_DROPDOWN   1   /*Requires: lv_label*/
-
-#define LV_USE_IMG        0   /*Requires: lv_label*/
 
 #define LV_USE_LABEL      1
 #if LV_USE_LABEL
@@ -356,23 +294,10 @@
     #define LV_LABEL_LONG_TXT_HINT 1  /*Store some extra info in labels to speed up drawing of very long texts*/
 #endif
 
-#define LV_USE_LINE       0
-
 #define LV_USE_ROLLER     1   /*Requires: lv_label*/
 #if LV_USE_ROLLER
     #define LV_ROLLER_INF_PAGES 7 /*Number of extra "pages" when the roller is infinite*/
 #endif
-
-#define LV_USE_SLIDER     0   /*Requires: lv_bar*/
-
-#define LV_USE_SWITCH     0
-
-#define LV_USE_TEXTAREA   1   /*Requires: lv_label*/
-#if LV_USE_TEXTAREA != 0
-    #define LV_TEXTAREA_DEF_PWD_SHOW_TIME 1500    /*ms*/
-#endif
-
-#define LV_USE_TABLE      0
 
 /*==================
  * EXTRA COMPONENTS
@@ -381,55 +306,9 @@
 /*-----------
  * Widgets
  *----------*/
-#define LV_USE_ANIMIMG    0
-
-#define LV_USE_CALENDAR   0
-#if LV_USE_CALENDAR
-    #define LV_CALENDAR_WEEK_STARTS_MONDAY 0
-    #if LV_CALENDAR_WEEK_STARTS_MONDAY
-        #define LV_CALENDAR_DEFAULT_DAY_NAMES {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"}
-    #else
-        #define LV_CALENDAR_DEFAULT_DAY_NAMES {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"}
-    #endif
-
-    #define LV_CALENDAR_DEFAULT_MONTH_NAMES {"January", "February", "March",  "April", "May",  "June", "July", "August", "September", "October", "November", "December"}
-    #define LV_USE_CALENDAR_HEADER_ARROW 1
-    #define LV_USE_CALENDAR_HEADER_DROPDOWN 1
-#endif  /*LV_USE_CALENDAR*/
-
-#define LV_USE_CHART      0
-
-#define LV_USE_COLORWHEEL 0
-
-#define LV_USE_IMGBTN     0
-
-#define LV_USE_KEYBOARD   0
-
-#define LV_USE_LED        0
-
-#define LV_USE_LIST       0
-
-#define LV_USE_MENU       0
-
-#define LV_USE_METER      0
-
 #define LV_USE_MSGBOX     1
 
-#define LV_USE_SPAN       0
-#if LV_USE_SPAN
-    /*A line text can contain maximum num of span descriptor */
-    #define LV_SPAN_SNIPPET_STACK_SIZE 64
-#endif
-
-#define LV_USE_SPINBOX    0
-
-#define LV_USE_SPINNER    0
-
-#define LV_USE_TABVIEW    1
-
-#define LV_USE_TILEVIEW   0
-
-#define LV_USE_WIN        0
+#define LV_USE_TABVIEW      1
 
 /*-----------
  * Themes
@@ -452,9 +331,6 @@
 /*A very simple theme that is a good starting point for a custom theme*/
 #define LV_USE_THEME_BASIC 1
 
-/*A theme designed for monochrome displays*/
-#define LV_USE_THEME_MONO 0
-
 /*-----------
  * Layouts
  *----------*/
@@ -465,105 +341,13 @@
 /*A layout similar to Grid in CSS.*/
 #define LV_USE_GRID 1
 
-/*---------------------
- * 3rd party libraries
- *--------------------*/
-
-/*File system interfaces for common APIs */
-
-/*API for fopen, fread, etc*/
-#define LV_USE_FS_STDIO 0
-#if LV_USE_FS_STDIO
-    #define LV_FS_STDIO_LETTER '\0'     /*Set an upper cased letter on which the drive will accessible (e.g. 'A')*/
-    #define LV_FS_STDIO_PATH ""         /*Set the working directory. File/directory paths will be appended to it.*/
-    #define LV_FS_STDIO_CACHE_SIZE 0    /*>0 to cache this number of bytes in lv_fs_read()*/
-#endif
-
-/*API for open, read, etc*/
-#define LV_USE_FS_POSIX 0
-#if LV_USE_FS_POSIX
-    #define LV_FS_POSIX_LETTER '\0'     /*Set an upper cased letter on which the drive will accessible (e.g. 'A')*/
-    #define LV_FS_POSIX_PATH ""         /*Set the working directory. File/directory paths will be appended to it.*/
-    #define LV_FS_POSIX_CACHE_SIZE 0    /*>0 to cache this number of bytes in lv_fs_read()*/
-#endif
-
-/*API for CreateFile, ReadFile, etc*/
-#define LV_USE_FS_WIN32 0
-#if LV_USE_FS_WIN32
-    #define LV_FS_WIN32_LETTER '\0'     /*Set an upper cased letter on which the drive will accessible (e.g. 'A')*/
-    #define LV_FS_WIN32_PATH ""         /*Set the working directory. File/directory paths will be appended to it.*/
-    #define LV_FS_WIN32_CACHE_SIZE 0    /*>0 to cache this number of bytes in lv_fs_read()*/
-#endif
-
-/*API for FATFS (needs to be added separately). Uses f_open, f_read, etc*/
-#define LV_USE_FS_FATFS 0
-#if LV_USE_FS_FATFS
-    #define LV_FS_FATFS_LETTER '\0'     /*Set an upper cased letter on which the drive will accessible (e.g. 'A')*/
-    #define LV_FS_FATFS_CACHE_SIZE 0    /*>0 to cache this number of bytes in lv_fs_read()*/
-#endif
-
-/*PNG decoder library*/
-#define LV_USE_PNG 0
-
-/*BMP decoder library*/
-#define LV_USE_BMP 0
-
-/* JPG + split JPG decoder library.
- * Split JPG is a custom format optimized for embedded systems. */
-#define LV_USE_SJPG 0
-
-/*GIF decoder library*/
-#define LV_USE_GIF 0
-
 /*QR code library*/
 #define LV_USE_QRCODE 0
 
-/*FreeType library*/
-#define LV_USE_FREETYPE 0
-#if LV_USE_FREETYPE
-    /*Memory used by FreeType to cache characters [bytes] (-1: no caching)*/
-    #define LV_FREETYPE_CACHE_SIZE (16 * 1024)
-    #if LV_FREETYPE_CACHE_SIZE >= 0
-        /* 1: bitmap cache use the sbit cache, 0:bitmap cache use the image cache. */
-        /* sbit cache:it is much more memory efficient for small bitmaps(font size < 256) */
-        /* if font size >= 256, must be configured as image cache */
-        #define LV_FREETYPE_SBIT_CACHE 0
-        /* Maximum number of opened FT_Face/FT_Size objects managed by this cache instance. */
-        /* (0:use system defaults) */
-        #define LV_FREETYPE_CACHE_FT_FACES 0
-        #define LV_FREETYPE_CACHE_FT_SIZES 0
-    #endif
-#endif
-
-/*Rlottie library*/
-#define LV_USE_RLOTTIE 0
-
-/*FFmpeg library for image decoding and playing videos
- *Supports all major image formats so do not enable other image decoder with it*/
-#define LV_USE_FFMPEG 0
-#if LV_USE_FFMPEG
-    /*Dump input information to stderr*/
-    #define LV_FFMPEG_DUMP_FORMAT 0
-#endif
 
 /*-----------
  * Others
  *----------*/
-
-/*1: Enable API to take snapshot for object*/
-#define LV_USE_SNAPSHOT 0
-
-/*1: Enable Monkey test*/
-#define LV_USE_MONKEY 0
-
-/*1: Enable grid navigation*/
-#define LV_USE_GRIDNAV 0
-
-/*1: Enable lv_obj fragment*/
-#define LV_USE_FRAGMENT 0
-
-/*1: Support using images as font in label or span widgets */
-#define LV_USE_IMGFONT 0
 
 /*1: Enable a published subscriber based messaging system */
 #define LV_USE_MSG 0
