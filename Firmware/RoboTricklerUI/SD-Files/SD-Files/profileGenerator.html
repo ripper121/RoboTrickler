@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <title>Profile Generator</title>
+   <style>
+      .card {
+          max-width: 400px;
+          min-height: 250px;
+          background: #02b875;
+          padding: 30px;
+          box-sizing: border-box;
+          color: #FFF;
+          margin: 20px auto;
+          box-shadow: 0px 2px 18px -4px rgba(0, 0, 0, 0.75);
+      }
+
+      .button {
+          background-color: #1c87c9;
+          border: none;
+          color: white;
+          padding: 20px 20px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 10px 0;
+          cursor: pointer;
+      }
+
+      input[type="text"],
+      input[type="password"],
+      input[type="number"] {
+          width: 90%;
+          padding: 10px;
+          margin: 5px 0 15px 0;
+          border-radius: 4px;
+          border: 1px solid #ccc;
+      }
+
+      select {
+          width: 96%;
+          padding: 10px;
+          margin: 5px 0 15px 0;
+          border-radius: 4px;
+          border: 1px solid #ccc;
+      }
+
+      label {
+          margin-bottom: 5px;
+          font-weight: bold;
+      }
+
+      fieldset {
+          background: #027353;
+          border-radius: 8px;
+          padding: 15px;
+          margin-bottom: 20px;
+      }
+
+      legend {
+          color: #FFD700;
+          font-weight: bold;
+          margin-bottom: 10px;
+      }
+
+      #jsonOutput {
+      width: 95%;
+      height: 270px;
+      resize: none; /* Add this line to prevent resizing */
+  }
+  </style>
+</head>
+
+<body>
+   <center>
+      <div class="card">
+          <h1>Profile Generator</h1>
+          <form id="profileForm">
+              <fieldset>
+                  <legend>Profile Settings</legend>
+                  <label for="weightInput">Weight for 3600 steps:</label>
+                  <input type="number" id="weightInput" step="0.0001" min="0" value="0.1"><br>
+
+                  <label for="speedInput">Stepper Speed:</label>
+                  <input type="number" id="speedInput" step="1" min="5" value="200"><br>
+
+                  <label for="oscillateCheckbox">Oscillate:</label>
+                  <input type="checkbox" id="oscillateCheckbox"><br>
+
+                  <label for="gramRadio">Gram:</label>
+                  <input type="radio" id="gramRadio" name="weightUnit" value="Gram" checked><br>
+
+                  <label for="grainRadio">Grain:</label>
+                  <input type="radio" id="grainRadio" name="weightUnit" value="Grain"><br>
+              </fieldset>
+          </form>
+          
+          <button id="generateButton" class="button">Generate Profile</button><br><br>
+          <h2>Generated Profile:</h2>
+          <textarea id="profileOutput" rows="20" cols="40"></textarea><br>
+          <button id="download-btn" class="button">Download</button><br><br>
+          <button onClick='javascript:history.back()' class="button">Back</button>
+      </div>
+  </center>
+
+   <script>
+      var profileJSON;
+
+      document.getElementById("generateButton").addEventListener("click", function () {
+         const measuredWeight = parseFloat(document.getElementById("weightInput").value);
+         const speed = parseFloat(document.getElementById("speedInput").value);
+         const oscillate = document.getElementById("oscillateCheckbox").checked; // Get the checkbox value
+         const weightUnit = document.querySelector('input[name="weightUnit"]:checked').value;
+
+         if (!isNaN(measuredWeight)) {
+            const profile = {};
+
+            // Define the conversion factor from grams to grains
+            const gramToGrain = 15.4323583529;
+
+            // Define the weight values in grams
+            let weights = [1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625, 0.0078125, 0.00390625, 0.000];
+
+            // Convert weights to grains if Grain is selected
+            if (weightUnit === "Grain") {
+               weights = weights.map(weight => weight * gramToGrain);
+            }
+
+            weights = weights.map(weight => parseFloat(weight.toFixed(3)));
+
+            var measurements = 5;
+
+            // Loop through each weight value and calculate the profile
+            for (let i = 0; i < weights.length; i++) {
+               const weight = weights[i];
+               var steps = Math.round((weight / measuredWeight) * 1800);
+               if (steps < 5)
+                  steps = 5;
+               if (i == weights.length - 2)
+                  measurements = 15;
+               if (i == weights.length - 1)
+                  measurements = 20;
+               profile[i + 1] = {
+                  weight: weight,
+                  steps: steps,
+                  speed: speed,
+                  measurements: measurements,
+                  oscillate: oscillate
+               };
+            }
+
+            // Convert the profile object to JSON format
+            profileJSON = JSON.stringify(profile, null, 3);
+
+
+            document.getElementById("profileOutput").value = profileJSON;
+         }
+      });
+
+      document.getElementById("download-btn").addEventListener("click", function () {
+         // Get the content from the textarea
+         var text = document.getElementById('profileOutput').value;
+
+         // Convert the content to a Blob
+         var blob = new Blob([text], { type: 'text/plain' });
+
+         // Create a download link
+         var downloadLink = document.createElement('a');
+         downloadLink.href = window.URL.createObjectURL(blob);
+         downloadLink.download = 'MyPowderName.txt';
+
+         // Append the link to the body, click it, and then remove it
+         document.body.appendChild(downloadLink);
+         downloadLink.click();
+         document.body.removeChild(downloadLink);
+      }, false);
+
+
+   </script>
+</body>
+
+</html>

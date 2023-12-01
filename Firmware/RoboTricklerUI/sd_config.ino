@@ -2,6 +2,7 @@ bool readProfile(const char *filename, Config &config)
 {
   String infoText = "Loading Profile...";
   // labelInfo.drawButton(false, infoText);
+
   delay(500);
 
   // Dump config file
@@ -30,6 +31,7 @@ bool readProfile(const char *filename, Config &config)
     config.pidThreshold = doc["threshold"] | 0.10;
     config.pidStepMin = doc["stepMin"] | 5;
     config.pidStepMax = doc["stepMax"] | 36000;
+    config.pidSpeed = doc["speed"] | 200;
     config.pidConMeasurements = doc["conMeasurements"] | 2;
     config.pidAggMeasurements = doc["aggMeasurements"] | 25;
     config.pidConsNum = doc["consNum"] | 1;
@@ -135,12 +137,14 @@ int loadConfiguration(const char *filename, Config &config)
   else if (doc["mode"] == "logger")
   {
     config.mode = logger;
-    config.log_measurements = doc["log_measurements"] | 20;
   }
   else
   {
     config.mode = trickler;
   }
+
+
+  config.log_measurements = doc["log_Measurements"] | 20;
 
   config.microsteps = doc["microsteps"] | 1;
 
@@ -239,8 +243,6 @@ void saveConfiguration(const char *filename, const Config &config)
   // Don't forget to change the capacity to match your requirements.
   // Use https://arduinojson.org/assistant to compute the capacity.
   StaticJsonDocument<512> doc;
-
-  doc["log_measurements"] = config.log_measurements;
   doc["wifi"]["ssid"] = config.wifi_ssid;
   doc["wifi"]["psk"] = config.wifi_psk;
   doc["wifi"]["IPStatic"] = config.IPStatic;
@@ -250,7 +252,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["protocol"] = config.scale_protocol;
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
-
+  doc["log_Measurements"] = config.log_measurements;
 
   if (config.mode == trickler)
     doc["mode"] = "trickler";
@@ -281,7 +283,7 @@ void saveConfiguration(const char *filename, const Config &config)
   // Serialize JSON to file
   if (serializeJsonPretty(doc, file) == 0)
   {
-    Serial.println(F("Failed to write to file"));
+    DEBUG_PRINTLN("Failed to write to file");
   }
 
   // Close the file

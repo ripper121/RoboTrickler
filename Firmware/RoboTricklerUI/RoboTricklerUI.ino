@@ -7,19 +7,23 @@
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
-#include "SPI.h"
-#include "A4988.h"
+#include <SPI.h>
+#include <A4988.h>
 #include <ArduinoJson.h>
 #include <QuickPID.h>
 #include <HTTPClient.h>
 #include <Update.h>
+#include <esp_task_wdt.h>
+#include <soc/rtc_wdt.h>
+// 3 seconds WDT
+#define WDT_TIMEOUT 10
 
 #include <lvgl.h>
 #include "ui.h"
 #include <TFT_eSPI.h>
-#define LCD_EN GPIO_NUM_5
 
-#define DEBUG
+
+#define DEBUG 0
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
@@ -29,17 +33,15 @@
 #endif
 
 #define DISP_TASK_STACK 4096 * 2
-#define DISP_TASK_PRO 2
+#define DISP_TASK_PRO 1
 #define DISP_TASK_CORE 0
 TaskHandle_t lv_disp_tcb = NULL;
 /*Change to your screen resolution*/
-static const uint16_t screenWidth = 480;
-static const uint16_t screenHeight = 320;
 static lv_disp_draw_buf_t draw_buf;
-static lv_color_t buf[screenWidth * screenHeight / 10];
-TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
+static lv_color_t buf[LV_HOR_RES_MAX * LV_VER_RES_MAX / 10];
+TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 
-#define FW_VERSION 2.04
+#define FW_VERSION 2.00
 
 SPIClass *SDspi = NULL;
 
@@ -76,6 +78,7 @@ struct Config
   float pidThreshold;
   long pidStepMin;
   long pidStepMax;
+  int pidSpeed;
   int pidConMeasurements;
   int pidAggMeasurements;
   bool pidOscillate;
@@ -154,13 +157,6 @@ void beep(_beeper beepMode)
     stepper1.beep(100);
 }
 
-bool stringContains(const String &haystack, const String &needle)
-{
-  // Use the indexOf() method to search for the needle in the haystack
-  // If the needle is found, indexOf() returns the starting position; otherwise, it returns -1
-  return (haystack.indexOf(needle) != -1);
-}
-
 bool serialWait()
 {
   bool timeout = true;
@@ -184,6 +180,7 @@ IRAM_ATTR void lvgl_disp_task(void *parg)
   while (1)
   {
     lv_timer_handler();
+    //esp_task_wdt_reset();
   }
 }
 
@@ -202,30 +199,32 @@ IRAM_ATTR void disp_task_init(void)
 }
 
 void insertLine(String newLine)
-{  
+{
   // Shift all lines up by one position
-  for (int i = 0; i < (sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1; i++) 
+  for (int i = 0; i < (sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1; i++)
   {
     infoMessagBuff[i] = infoMessagBuff[i + 1];
   }
   // Add new line at the bottom
-  infoMessagBuff[(sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1] = newLine; 
+  infoMessagBuff[(sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1] = newLine;
 }
 
-
-void updateDisplayLog(String logOutput)
+void updateDisplayLog(String logOutput, bool noLog = false)
 {
   lv_label_set_text(ui_LabelInfo, logOutput.c_str());
   lv_label_set_text(ui_LabelLoggerInfo, logOutput.c_str());
   logOutput += "\n";
 
-  insertLine(logOutput);
-  String temp="";
-  for (int i = 0; i < (sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) ; i++) 
+  if (!noLog)
   {
-    temp += infoMessagBuff[i];
+    insertLine(logOutput);
+    String temp = "";
+    for (int i = 0; i < (sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])); i++)
+    {
+      temp += infoMessagBuff[i];
+    }
+    lv_label_set_text(ui_LabelLog, temp.c_str());
   }
-  lv_label_set_text(ui_LabelLog, temp.c_str());
 
   DEBUG_PRINT(logOutput);
 }
@@ -233,6 +232,13 @@ void updateDisplayLog(String logOutput)
 void setup()
 {
   Serial.begin(115200); /* prepare for possible serial debug */
+
+  //esp_task_wdt_init(WDT_TIMEOUT, true); // enable panic so ESP32 restarts
+  //esp_task_wdt_add(NULL);               // add current thread to WDT watch
+  //esp_task_wdt_add(lv_disp_tcb);
+
+  rtc_wdt_protect_off();
+  rtc_wdt_disable();
 
   displayInit();
   ui_init();
@@ -292,7 +298,7 @@ void setup()
     }
   }
 
-  int configState = loadConfiguration("/config.txt", config);  
+  int configState = loadConfiguration("/config.txt", config);
   if (configState == 1)
   {
     updateDisplayLog("config.txt deserializeJson() failed");
@@ -392,6 +398,9 @@ void loop()
     char temp[300];
     sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());
     DEBUG_PRINTLN(temp);
+
+    printf("lv_disp_tcb stackHWM: %d / %d\n", (DISP_TASK_STACK - uxTaskGetStackHighWaterMark(lv_disp_tcb)), DISP_TASK_STACK);
+    printf("loop stackHWM: %d / %d\n", (getArduinoLoopTaskStackSize() - uxTaskGetStackHighWaterMark(NULL)), getArduinoLoopTaskStackSize());
   }
 
   if (running)
@@ -531,44 +540,45 @@ void loop()
       }
     }
 
-    if (config.mode == trickler)
-    {
-      if (((targetWeight - 0.0001) <= weight) && (weight >= 0))
-      {
-        if (!finished)
-        {
-          beep(done);
-        }
-        finished = true;
-        updateDisplayLog("Done :)");
-
-        measurementCount = 0;
-        delay(250);
-      }
-
-      if (targetWeight < weight)
-      {
-        finished = false;
-      }
-
-      targetWeightStr = String(targetWeight, 3);
-    }
-
     if (newData)
     {
       newData = false;
       weightCounter = 0;
+
+      if (config.mode == trickler)
+      {
+        if (((targetWeight - 0.0001) <= weight) && (weight >= 0))
+        {
+          if (!finished)
+          {
+            beep(done);
+          }
+          finished = true;
+          updateDisplayLog("Done :)");
+
+          measurementCount = 0;
+          delay(250);
+        }
+
+        if (weight < targetWeight)
+        {
+          finished = false;
+        }
+
+        targetWeightStr = String(targetWeight, 3);
+      }
       if (!finished)
       {
         if ((config.mode == trickler) && (weight < targetWeight) && (weight >= 0))
         {
-          updateDisplayLog("Running...");
+          updateDisplayLog("Running...",true);
 
           if (PID_AKTIVE)
           {
             DEBUG_PRINTLN("PID Running");
             String infoText = "";
             byte stepperNum = 1;
+            int stepperSpeedOld = 0;
             Input = weight;
 
             float gap = abs(targetWeight - Input); // distance away from setpoint
@@ -595,8 +605,11 @@ void loop()
             infoText += "GAP:" + String(gap, 3) + " ";
             infoText += "STP:" + String(steps) + " ";
             infoText += "MES:" + String(measurementCount);
-            updateDisplayLog(infoText);
+            updateDisplayLog(infoText,true);
 
+            if (stepperSpeedOld != config.pidSpeed)
+              setStepperSpeed(stepperNum, config.pidSpeed); // only change if value changed
+            stepperSpeedOld = config.pidSpeed;
             step(stepperNum, steps, config.pidOscillate, config.pidReverse);
           }
           else
@@ -648,7 +661,7 @@ void loop()
             infoText += "ST" + String(config.profile_steps[profileStep]) + " ";
             infoText += "SP" + String(config.profile_speed[profileStep]) + " ";
             infoText += "M" + String(config.profile_measurements[profileStep]);
-            updateDisplayLog(infoText);
+            updateDisplayLog(infoText,true);
           }
         }
         if (config.mode == logger && (weight > 0))
@@ -662,7 +675,7 @@ void loop()
           writeCSVFile(SD, path.c_str(), weight, logCounter);
           measurementCount = config.log_measurements;
           infoText += "Count: " + String(logCounter) + " Saved :)";
-          updateDisplayLog(infoText);
+          updateDisplayLog(infoText,true);
           finished = true;
           beep(done);
         }
@@ -681,12 +694,12 @@ void loop()
         if (config.mode == logger)
         {
           logCounter++;
-          updateDisplayLog("Place next peace for measurment.");
+          updateDisplayLog("Place next peace for measurment.",true);
           beep(done);
         }
         else
         {
-          updateDisplayLog("Ready");
+          updateDisplayLog("Ready",true);
         }
         finished = false;
       }
@@ -717,4 +730,5 @@ void loop()
       wifiPreviousMillis = millis();
     }
   }
+  //esp_task_wdt_reset();
 }

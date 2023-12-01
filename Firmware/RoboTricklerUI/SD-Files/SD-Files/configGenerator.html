@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Configuration Page</title>
+    <style>
+        .card {
+            max-width: 400px;
+            min-height: 250px;
+            background: #02b875;
+            padding: 30px;
+            box-sizing: border-box;
+            color: #FFF;
+            margin: 20px auto;
+            box-shadow: 0px 2px 18px -4px rgba(0, 0, 0, 0.75);
+        }
+
+        .button {
+            background-color: #1c87c9;
+            border: none;
+            color: white;
+            padding: 20px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"] {
+            width: 90%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        select {
+            width: 96%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        fieldset {
+            background: #027353;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        legend {
+            color: #FFD700;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #jsonOutput {
+            width: 95%;
+            height: 270px;
+            resize: none;
+            /* Add this line to prevent resizing */
+        }
+    </style>
+</head>
+
+<body>
+    <center>
+        <div class="card">
+            <h2>Configuration Settings</h2>
+            <form id="configForm">
+                <fieldset>
+                    <legend>WiFi Settings</legend>
+                    <label for="wifi_ssid">Name / SSID:</label>
+                    <input type="text" id="wifi_ssid" name="wifi_ssid" maxlength="32"><br>
+
+                    <label for="wifi_psk">Password / PSK:</label>
+                    <input type="text" id="wifi_psk" name="wifi_psk" maxlength="64"><br>
+                    <fieldset>
+                        <legend>IP Settings (optional)</legend>
+                        <label for="IPStatic">Static IP:</label>
+                        <input type="text" id="IPStatic" name="IPStatic" maxlength="15" size="15"><br>
+
+                        <label for="IPGateway">Gateway:</label>
+                        <input type="text" id="IPGateway" name="IPGateway" maxlength="15" size="15"><br>
+
+                        <label for="IPSubnet">Subnet:</label>
+                        <input type="text" id="IPSubnet" name="IPSubnet" maxlength="15" size="15"><br>
+                    </fieldset>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Scale Settings</legend>
+                    Protocol:
+                    <select name="scale_protocol">
+                        <option value="GG" selected>G&G</option>
+                        <option value="SBI">Sartorius</option>
+                        <option value="KERN">Kern</option>
+                        <option value="STE">Steingerg</option>
+                        <option value="AD">A&D</option>
+                    </select><br>
+                    Baud: <input type="number" name="scale_baud" value="9600"><br>
+                </fieldset>
+
+                <label for="mode">Mode:</label>
+                <select name="mode">
+                    <option value="trickler" selected>Trickler</option>
+                    <option value="logger">Logger</option>
+                </select><br>
+
+                <label for="log_measurements">Log Measurements:</label>
+                <input type="number" name="log_measurements" value="10"><br>
+
+                <label for="powder">Powder Profile:</label>
+                <input type="text" name="powder"><br>
+
+                <label for="beeper">Beeper:</label>
+                <select name="beeper">
+                    <option value="done" selected>Done</option>
+                    <option value="button">Button</option>
+                    <option value="both">Both</option>
+                    <option value="off">Off</option>
+                </select><br>
+
+                <label for="microsteps">Microsteps:</label>
+                <select name="microsteps">
+                    <option value="1" selected>1/1</option>
+                    <option value="2">1/2</option>
+                    <option value="4">1/4</option>
+                    <option value="8">1/8</option>
+                    <option value="16">1/16</option>
+                    <option value="32">1/32</option>
+                    <option value="64">1/64</option>
+                </select><br>
+
+                <label for="arduino_ota">Arduino OTA:</label>
+                <input type="checkbox" name="arduino_ota"><br><br>
+
+                <label for="debug_log">Debug Log:</label>
+                <input type="checkbox" name="debug_log"><br><br>
+
+
+            </form>
+            <h2>Generated config.txt:</h2>
+            <textarea id="jsonOutput"></textarea>
+            <button id="downloadButton" class="button">Download</button><br><br>
+            <button onClick='javascript:history.back()' class="button">Back</button>
+
+        </div>
+    </center>
+    <script>
+        const configForm = document.getElementById('configForm');
+        const jsonOutput = document.getElementById('jsonOutput');
+
+        // Function to update JSON based on form data
+        function formToJSON() {
+            var formData = new FormData(configForm);
+            var jsonObject = {
+                wifi: {
+                    ssid: formData.get('wifi_ssid'),
+                    psk: formData.get('wifi_psk'),
+                    IPStatic: formData.get('IPStatic'),
+                    IPGateway: formData.get('IPGateway'),
+                    IPSubnet: formData.get('IPSubnet')
+                },
+                scale: {
+                    protocol: formData.get('scale_protocol'),
+                    baud: parseInt(formData.get('scale_baud'), 10)
+                },
+                mode: formData.get('mode'),
+                log_measurements: parseInt(formData.get('log_measurements'), 10),
+                powder: formData.get('powder').replaceAll(".txt", ""),
+                beeper: formData.get('beeper'),
+                arduino_ota: formData.get('arduino_ota') === 'on',
+                debug_log: formData.get('debug_log') === 'on',
+                microsteps: parseInt(formData.get('microsteps'), 10)
+            };
+            jsonOutput.value = JSON.stringify(jsonObject, null, 4);
+        }
+
+        // Function to update form based on JSON data
+        function jsonToForm() {
+            try {
+                var jsonObject = JSON.parse(jsonOutput.value);
+
+                // Update WiFi settings
+                configForm.wifi_ssid.value = jsonObject.wifi.ssid || '';
+                configForm.wifi_psk.value = jsonObject.wifi.psk || '';
+                configForm.IPStatic.value = jsonObject.wifi.IPStatic || '';
+                configForm.IPGateway.value = jsonObject.wifi.IPGateway || '';
+                configForm.IPSubnet.value = jsonObject.wifi.IPSubnet || '';
+
+                // Update Scale settings
+                configForm.scale_protocol.value = jsonObject.scale.protocol || '';
+                configForm.scale_baud.value = jsonObject.scale.baud || '';
+
+                // Update other settings
+                configForm.mode.value = jsonObject.mode || '';
+                configForm.log_measurements.value = jsonObject.log_measurements || '';
+                configForm.powder.value = jsonObject.powder || '';
+                configForm.beeper.value = jsonObject.beeper || '';
+
+                // Update boolean fields
+                configForm.arduino_ota.checked = jsonObject.arduino_ota || false;
+                configForm.debug_log.checked = jsonObject.debug_log || false;
+
+                // Update microsteps
+                configForm.microsteps.value = jsonObject.microsteps || 1;
+            } catch (e) {
+                console.error('Invalid JSON');
+            }
+        }
+
+        // Event listener for form changes
+        configForm.addEventListener('input', formToJSON);
+
+        // Event listener for JSON textarea changes
+        jsonOutput.addEventListener('input', jsonToForm);
+        jsonOutput.addEventListener('select', jsonToForm);
+
+        // Initialize JSON output
+        formToJSON();
+
+        document.getElementById('downloadButton').addEventListener('click', function () {
+            var content = jsonOutput.value;
+            var blob = new Blob([content], { type: 'text/plain' });
+            var url = URL.createObjectURL(blob);
+
+            // Create a temporary anchor and trigger the download
+            var tempLink = document.createElement('a');
+            tempLink.href = url;
+            tempLink.download = 'config.txt';
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+
+            // Revoke the URL after the download
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+
+</html>
