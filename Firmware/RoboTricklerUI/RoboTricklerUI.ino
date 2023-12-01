@@ -39,7 +39,7 @@ static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * screenHeight / 10];
 TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
-#define FW_VERSION 2.02
+#define FW_VERSION 2.03
 
 SPIClass *SDspi = NULL;
 

@@ -268,7 +268,7 @@ ui_TextAreaInfo = lv_textarea_create(ui_PanelPageInfo);
 lv_obj_set_width( ui_TextAreaInfo, lv_pct(100));
 lv_obj_set_height( ui_TextAreaInfo, lv_pct(100));
 lv_obj_set_align( ui_TextAreaInfo, LV_ALIGN_CENTER );
-lv_textarea_set_max_length(ui_TextAreaInfo,4000);
+lv_textarea_set_max_length(ui_TextAreaInfo,500);
 lv_textarea_set_placeholder_text(ui_TextAreaInfo,"Log");
 lv_obj_clear_flag( ui_TextAreaInfo, LV_OBJ_FLAG_CLICK_FOCUSABLE );    /// Flags
 lv_obj_set_style_text_align(ui_TextAreaInfo, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN| LV_STATE_DEFAULT);
