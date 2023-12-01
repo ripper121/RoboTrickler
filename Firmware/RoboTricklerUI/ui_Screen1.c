@@ -8,10 +8,9 @@
 void ui_Screen1_screen_init(void)
 {
 ui_Screen1 = lv_obj_create(NULL);
-lv_obj_clear_flag( ui_Screen1, LV_OBJ_FLAG_SCROLL_ELASTIC );    /// Flags
-lv_obj_set_scrollbar_mode(ui_Screen1, LV_SCROLLBAR_MODE_OFF);
+lv_obj_clear_flag( ui_Screen1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
-ui_TabView = lv_tabview_create(ui_Screen1, LV_DIR_TOP, 50);
+ui_TabView = lv_tabview_create(ui_Screen1, LV_DIR_TOP, 35);
 lv_obj_set_width( ui_TabView, lv_pct(100));
 lv_obj_set_height( ui_TabView, lv_pct(100));
 lv_obj_set_align( ui_TabView, LV_ALIGN_CENTER );
@@ -21,7 +20,7 @@ lv_obj_set_style_text_font(ui_TabView, &lv_font_montserrat_14, LV_PART_MAIN| LV_
 
 ui_TabPageTrickler = lv_tabview_add_tab(ui_TabView, "Trickler");
 lv_obj_clear_flag( ui_TabPageTrickler, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-lv_obj_set_scrollbar_mode(ui_TabPageTrickler, LV_SCROLLBAR_MODE_OFF);
+lv_obj_set_scroll_dir(ui_TabPageTrickler, LV_DIR_VER);
 lv_obj_set_style_text_font(ui_TabPageTrickler, &lv_font_montserrat_32, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_PanelTarget = lv_obj_create(ui_TabPageTrickler);
@@ -37,6 +36,7 @@ lv_obj_set_width( ui_LabelTarget, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelTarget, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelTarget, LV_ALIGN_CENTER );
 lv_label_set_text(ui_LabelTarget,"0.000");
+lv_obj_clear_flag( ui_LabelTarget, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_ButtonTricklerStart = lv_btn_create(ui_TabPageTrickler);
 lv_obj_set_height( ui_ButtonTricklerStart, 50);
@@ -164,6 +164,7 @@ lv_obj_set_x( ui_LabelTricklerWeight, 0 );
 lv_obj_set_y( ui_LabelTricklerWeight, -4 );
 lv_obj_set_align( ui_LabelTricklerWeight, LV_ALIGN_CENTER );
 lv_label_set_text(ui_LabelTricklerWeight,"0.000g");
+lv_obj_clear_flag( ui_LabelTricklerWeight, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_PanelInfo = lv_obj_create(ui_TabPageTrickler);
 lv_obj_set_height( ui_PanelInfo, 30);
@@ -179,19 +180,29 @@ lv_obj_set_width( ui_LabelInfo, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelInfo, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelInfo, LV_ALIGN_CENTER );
 lv_label_set_text(ui_LabelInfo,"Robo-Trickler v2.0 // ripper121.com");
+lv_obj_clear_flag( ui_LabelInfo, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_TabPageProfile = lv_tabview_add_tab(ui_TabView, "Profile");
 lv_obj_clear_flag( ui_TabPageProfile, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-lv_obj_set_scrollbar_mode(ui_TabPageProfile, LV_SCROLLBAR_MODE_OFF);
 lv_obj_set_style_text_font(ui_TabPageProfile, &lv_font_montserrat_32, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_RollerProfile = lv_roller_create(ui_TabPageProfile);
+lv_roller_set_options( ui_RollerProfile, "N135\nN140\nPDI_GN\nPDI_GM\nRS14\nRS14GN\n", LV_ROLLER_MODE_INFINITE );
 lv_obj_set_width( ui_RollerProfile, lv_pct(105));
 lv_obj_set_height( ui_RollerProfile, lv_pct(110));
 lv_obj_set_align( ui_RollerProfile, LV_ALIGN_CENTER );
 
+ui_DropdownProfile = lv_dropdown_create(ui_TabPageProfile);
+lv_dropdown_set_options( ui_DropdownProfile, "Option 1\nOption 2\nOption 3\nOption 1\nOption 2\nOption 3\nOption 1\nOption 2\nOption 3\nOption 1\nOption 2\nOption 3" );
+lv_obj_set_width( ui_DropdownProfile, lv_pct(100));
+lv_obj_set_height( ui_DropdownProfile, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_align( ui_DropdownProfile, LV_ALIGN_TOP_MID );
+lv_obj_add_flag( ui_DropdownProfile, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
+
+
+
 ui_TabPageLogger = lv_tabview_add_tab(ui_TabView, "Logger");
-lv_obj_set_scrollbar_mode(ui_TabPageLogger, LV_SCROLLBAR_MODE_OFF);
+lv_obj_clear_flag( ui_TabPageLogger, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 lv_obj_set_style_text_font(ui_TabPageLogger, &lv_font_montserrat_32, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_PanelLoggerWeight = lv_obj_create(ui_TabPageLogger);
@@ -207,6 +218,7 @@ lv_obj_set_width( ui_LabelLoggerWeight, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelLoggerWeight, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelLoggerWeight, LV_ALIGN_CENTER );
 lv_label_set_text(ui_LabelLoggerWeight,"-.-");
+lv_obj_clear_flag( ui_LabelLoggerWeight, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_ButtonLoggerStart = lv_btn_create(ui_TabPageLogger);
 lv_obj_set_height( ui_ButtonLoggerStart, 50);
@@ -240,9 +252,10 @@ lv_obj_set_align( ui_LabelLoggerInfo, LV_ALIGN_CENTER );
 lv_obj_set_flex_flow(ui_LabelLoggerInfo,LV_FLEX_FLOW_ROW);
 lv_obj_set_flex_align(ui_LabelLoggerInfo, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
 lv_label_set_text(ui_LabelLoggerInfo,"...");
+lv_obj_clear_flag( ui_LabelLoggerInfo, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_TabPageInfo = lv_tabview_add_tab(ui_TabView, "Info");
-lv_obj_set_scrollbar_mode(ui_TabPageInfo, LV_SCROLLBAR_MODE_OFF);
+lv_obj_clear_flag( ui_TabPageInfo, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_PanelPageInfo = lv_obj_create(ui_TabPageInfo);
 lv_obj_set_width( ui_PanelPageInfo, lv_pct(105));
@@ -255,6 +268,7 @@ ui_TextAreaInfo = lv_textarea_create(ui_PanelPageInfo);
 lv_obj_set_width( ui_TextAreaInfo, lv_pct(100));
 lv_obj_set_height( ui_TextAreaInfo, lv_pct(100));
 lv_obj_set_align( ui_TextAreaInfo, LV_ALIGN_CENTER );
+lv_textarea_set_max_length(ui_TextAreaInfo,4000);
 lv_textarea_set_placeholder_text(ui_TextAreaInfo,"Log");
 lv_obj_clear_flag( ui_TextAreaInfo, LV_OBJ_FLAG_CLICK_FOCUSABLE );    /// Flags
 lv_obj_set_style_text_align(ui_TextAreaInfo, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN| LV_STATE_DEFAULT);
@@ -262,12 +276,11 @@ lv_obj_set_style_text_align(ui_TextAreaInfo, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN| L
 
 
 ui_PanelMessages = lv_obj_create(ui_Screen1);
-lv_obj_set_width( ui_PanelMessages, lv_pct(50));
-lv_obj_set_height( ui_PanelMessages, lv_pct(50));
+lv_obj_set_width( ui_PanelMessages, lv_pct(90));
+lv_obj_set_height( ui_PanelMessages, lv_pct(60));
 lv_obj_set_align( ui_PanelMessages, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_PanelMessages, LV_OBJ_FLAG_HIDDEN );   /// Flags
 lv_obj_clear_flag( ui_PanelMessages, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-lv_obj_set_scrollbar_mode(ui_PanelMessages, LV_SCROLLBAR_MODE_OFF);
 
 ui_ButtonMessage = lv_btn_create(ui_PanelMessages);
 lv_obj_set_width( ui_ButtonMessage, 100);

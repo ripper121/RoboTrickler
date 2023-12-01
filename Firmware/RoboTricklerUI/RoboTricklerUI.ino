@@ -39,11 +39,9 @@ static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * screenHeight / 10];
 TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
-#define FW_VERSION 2.01
+#define FW_VERSION 2.02
 
 SPIClass *SDspi = NULL;
-
-const char *filename = "/config.txt"; // <- SD library uses 8.3 filenames
 
 String fullLogOutput = "";
 
@@ -203,17 +201,11 @@ IRAM_ATTR void disp_task_init(void)
 
 void updateDisplayLog(String logOutput)
 {
-  // max length of String is 4000 Byte
-  /*
-  if(fullLogOutput.length()>3000)
-    fullLogOutput="";
-  fullLogOutput += logOutput;
-  fullLogOutput += "\n";
-  */
+  lv_label_set_text(ui_LabelInfo, logOutput.c_str());
+  lv_label_set_text(ui_LabelLoggerInfo, logOutput.c_str());
   logOutput += "\n";
   lv_textarea_add_text(ui_TextAreaInfo, logOutput.c_str());
-  lv_label_set_text(ui_LabelInfo, logOutput.c_str());
-  DEBUG_PRINTLN(logOutput);
+  DEBUG_PRINT(logOutput);
 }
 
 void setup()
@@ -223,10 +215,10 @@ void setup()
   displayInit();
   ui_init();
   disp_task_init();
+
   DEBUG_PRINTLN("Display Init");
 
   updateDisplayLog(String("Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com").c_str());
-  DEBUG_PRINTLN("Robo-Trickler v" + String(FW_VERSION, 2));
 
   config.mode = init_mode;
 
@@ -236,8 +228,6 @@ void setup()
   SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
   if (!SD.begin(GRBL_SPI_SS, *SDspi))
   {
-    DEBUG_PRINTLN("Card Mount Failed");
-
     updateDisplayLog("Card Mount Failed");
     delay(5000);
     ESP.restart();
@@ -248,7 +238,6 @@ void setup()
 
     if (cardType == CARD_NONE)
     {
-      DEBUG_PRINTLN("No SD card attached");
       updateDisplayLog("No SD card attached");
       delay(5000);
       ESP.restart();
@@ -277,18 +266,21 @@ void setup()
       uint64_t cardSize = SD.cardSize() / (1024 * 1024);
       DEBUG_PRINT("SD Card Size: ");
       DEBUG_PRINT(cardSize);
-      DEBUG_PRINTLN("MB\n");
+      DEBUG_PRINTLN("MB");
     }
   }
 
-  int configState = loadConfiguration(filename, config);
+  int configState = loadConfiguration("/config.txt", config);
   if (configState == 1)
   {
     updateDisplayLog("config.txt deserializeJson() failed");
-  }else if (configState == 2)
+  }
+  else if (configState == 2)
   {
     updateDisplayLog("profile.txt deserializeJson() failed");
-  }else{
+  }
+  else
+  {
     getProfileList();
   }
 
@@ -346,7 +338,7 @@ void setup()
   lv_label_set_text(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com").c_str());
   lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
 
-  //lv_roller_set_selected(roller, id, LV_ANIM_ON/OFF)
+  // lv_roller_set_selected(roller, id, LV_ANIM_ON/OFF)
   set_roller_selected_str(ui_RollerProfile, config.profile);
   DEBUG_PRINTLN("Setup done.");
 }
@@ -696,7 +688,6 @@ void loop()
     // if WiFi is down, try reconnecting every wifiInterval seconds
     if ((WiFi.status() != WL_CONNECTED) && (millis() - wifiPreviousMillis >= wifiInterval))
     {
-      DEBUG_PRINTLN("Reconnecting to WiFi...");
       updateDisplayLog("Reconnecting to WiFi...");
       WiFi.disconnect();
       WiFi.reconnect();

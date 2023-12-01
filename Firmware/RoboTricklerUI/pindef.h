@@ -10,7 +10,7 @@
     
 #define I2S_Y_DISABLE_PIN               0
 #define I2S_Y_DIRECTION_PIN             6
-#define I2S_Y_STEP_PIN                  5
+#define I2S_Y_STEP_PIN                  5 
     
 #define I2S_Z_DISABLE_PIN               0
 #define I2S_Z_DIRECTION_PIN             4

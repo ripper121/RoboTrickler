@@ -193,7 +193,7 @@ void getProfileList()
   }
 
   File file = root.openNextFile();
-  
+
   updateDisplayLog("Search Profiles: ");
   while (file)
   {
@@ -211,7 +211,7 @@ void getProfileList()
         profileList += filename;
         profileList += "\n";
       }
-      
+
       DEBUG_PRINT("  FILE: ");
       DEBUG_PRINT(file.name());
       DEBUG_PRINT("  SIZE: ");
@@ -221,6 +221,71 @@ void getProfileList()
   }
   updateDisplayLog(profileList);
   lv_roller_set_options(ui_RollerProfile, profileList.c_str(), LV_ROLLER_MODE_INFINITE);
+}
+
+void saveConfiguration(const char *filename, const Config &config)
+{
+  // Delete existing file, otherwise the configuration is appended to the file
+  SD.remove(filename);
+
+  // Open file for writing
+  File file = SD.open(filename, FILE_WRITE);
+  if (!file)
+  {
+    Serial.println(F("Failed to create file"));
+    return;
+  }
+
+  // Allocate a temporary JsonDocument
+  // Don't forget to change the capacity to match your requirements.
+  // Use https://arduinojson.org/assistant to compute the capacity.
+  StaticJsonDocument<512> doc;
+
+  doc["wifi"]["ssid"] = config.wifi_ssid;
+  doc["wifi"]["psk"] = config.wifi_psk;
+  doc["wifi"]["IPStatic"] = config.IPStatic;
+  doc["wifi"]["IPGateway"] = config.IPGateway;
+  doc["wifi"]["IPSubnet"] = config.IPSubnet;
+  doc["wifi"]["IPDNS"] = config.IPDns;
+  doc["scale"]["protocol"] = config.scale_protocol;
+  doc["scale"]["baud"] = config.scale_baud;
+  doc["profile"] = config.profile;
+  doc["log_measurements"] = config.log_measurements;
+
+  if (config.mode == trickler)
+    doc["mode"] = "trickler";
+  else
+    doc["mode"] = "logger";
+
+  doc["microsteps"] = config.microsteps;
+
+  if (config.beeper == off)
+  {
+    doc["beeper"] = "off";
+  }
+  else if (config.beeper == done)
+  {
+    doc["beeper"] = "done";
+  }
+  else if (config.beeper == button)
+  {
+    doc["beeper"] = "button";
+  }
+  else if (config.beeper == both)
+  {
+    doc["beeper"] = "both";
+  }
+
+  doc["debug_log"] = config.debugLog;
+
+  // Serialize JSON to file
+  if (serializeJsonPretty(doc, file) == 0)
+  {
+    Serial.println(F("Failed to write to file"));
+  }
+
+  // Close the file
+  file.close();
 }
 
 // Prints the content of a file to the Serial
@@ -233,7 +298,7 @@ void printFile(const char *filename)
 
   if (!file)
   {
-    DEBUG_PRINTLN(F("Failed to read file"));
+    DEBUG_PRINTLN("Failed to read file");
     return;
   }
 

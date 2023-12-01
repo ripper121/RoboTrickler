@@ -9,31 +9,31 @@ void my_print(const char *buf)
 
 void trickler_start_event_cb(lv_event_t *e)
 {
-  if (String(lv_label_get_text(ui_LabelTricklerStart)) == "Stop")
+  if (String(lv_label_get_text(ui_LabelTricklerStart)) == "Start")
   {
+    DEBUG_PRINTLN("TricklerStart");
     stopLogger();
     startTrickler();
-    startMeasurment();
   }
   else
   {
+    DEBUG_PRINTLN("TricklerStop");
     stopTrickler();
-    stopMeasurment();
   }
 }
 
 void logger_start_event_cb(lv_event_t *e)
 {
-  if (String(lv_label_get_text(ui_LabelLoggerStart)) == "Stop")
+  if (String(lv_label_get_text(ui_LabelLoggerStart)) == "Start")
   {
+    DEBUG_PRINTLN("LoggerStart");
     stopTrickler();
     startLogger();
-    startMeasurment();
   }
   else
   {
+    DEBUG_PRINTLN("LoggerStop");
     stopLogger();
-    stopMeasurment();
   }
 }
 
@@ -54,36 +54,43 @@ void stopMeasurment()
 void startTrickler()
 {
   config.mode = trickler;
-  lv_label_set_text(ui_LabelTricklerStart, "Start");
-  lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_label_set_text(ui_LabelTricklerStart, "Stop");
+  lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
 
+  String tempProfile = String(config.profile);
   char buffer[64];
   lv_roller_get_selected_str(ui_RollerProfile, config.profile, sizeof(config.profile));
 
-  String message = "Profile: " + String(config.profile) + " selected!";
-  readProfile(String(config.profile).c_str(), config);
-  updateDisplayLog(message);
-
-  // todo save profile back to config.txt
+  if (tempProfile != String(config.profile))
+  {
+    readProfile(String("/" + String(config.profile) + ".txt").c_str(), config);
+    saveConfiguration("/config.txt", config);
+  }
+  updateDisplayLog(String("Profile: " + String(config.profile) + " selected!"));
+  
+  startMeasurment();
 }
 
 void stopTrickler()
 {
-  lv_label_set_text(ui_LabelTricklerStart, "Stop");
-  lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_label_set_text(ui_LabelTricklerStart, "Start");
+  lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+  stopMeasurment();
 }
 
 void startLogger()
 {
   config.mode = logger;
-  lv_label_set_text(ui_LabelLoggerStart, "Start");
-  lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_label_set_text(ui_LabelLoggerStart, "Stop");
+  lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+  startMeasurment();
 }
 
 void stopLogger()
 {
-  lv_label_set_text(ui_LabelLoggerStart, "Stop");
-  lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_label_set_text(ui_LabelLoggerStart, "Start");
+  lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+  stopMeasurment();
 }
 
 void nnn_event_cb(lv_event_t *e)
@@ -177,33 +184,39 @@ void my_touchpad_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
 }
 
 // Helper function to find the index of an option
-static int find_option_index(lv_obj_t *roller, const char *desired_option) {
-    const char *options = lv_roller_get_options(roller);
-    int index = 0;
-    const char *current_option = options;
+static int find_option_index(lv_obj_t *roller, const char *desired_option)
+{
+  const char *options = lv_roller_get_options(roller);
+  int index = 0;
+  const char *current_option = options;
 
-    while (current_option) {
-        // Check if the current option matches the desired option
-        if (strncmp(current_option, desired_option, strlen(desired_option)) == 0 &&
-            (current_option[strlen(desired_option)] == '\n' || current_option[strlen(desired_option)] == '\0')) {
-            return index;
-        }
-        // Move to the next option
-        current_option = strchr(current_option, '\n');
-        if (current_option) {
-            current_option++; // Skip the newline character
-        }
-        index++;
+  while (current_option)
+  {
+    // Check if the current option matches the desired option
+    if (strncmp(current_option, desired_option, strlen(desired_option)) == 0 &&
+        (current_option[strlen(desired_option)] == '\n' || current_option[strlen(desired_option)] == '\0'))
+    {
+      return index;
     }
-    return -1; // Option not found
+    // Move to the next option
+    current_option = strchr(current_option, '\n');
+    if (current_option)
+    {
+      current_option++; // Skip the newline character
+    }
+    index++;
+  }
+  return -1; // Option not found
 }
 
 // Function to set the roller's selected option based on a string
-void set_roller_selected_str(lv_obj_t *roller, const char *option_str) {
-    int index = find_option_index(roller, option_str);
-    if (index != -1) {
-        lv_roller_set_selected(roller, index, LV_ANIM_ON);
-    }
+void set_roller_selected_str(lv_obj_t *roller, const char *option_str)
+{
+  int index = find_option_index(roller, option_str);
+  if (index != -1)
+  {
+    lv_roller_set_selected(roller, index, LV_ANIM_ON);
+  }
 }
 
 void displayInit()

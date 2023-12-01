@@ -4,7 +4,7 @@
 // Project name: RoboTricklerUI
 
 #ifndef _UI_EVENTS_H
-#define _UI_EVENTS_H
+#define _UI_EVENTS_H 
 
 #ifdef __cplusplus
 extern "C" {

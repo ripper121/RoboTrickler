@@ -3,7 +3,7 @@
 // LVGL version: 8.3.6
 // Project name: RoboTricklerUI
 
-#include "ui_helpers.h"
+#include "ui_helpers.h" 
 
 void _ui_bar_set_property( lv_obj_t *target, int id, int val) 
 {
@@ -17,11 +17,6 @@ void _ui_basic_set_property( lv_obj_t *target, int id, int val)
    if (id == _UI_BASIC_PROPERTY_POSITION_Y) lv_obj_set_y(target, val);
    if (id == _UI_BASIC_PROPERTY_WIDTH) lv_obj_set_width(target, val);
    if (id == _UI_BASIC_PROPERTY_HEIGHT) lv_obj_set_height(target, val);
-}
-
-void _ui_dropdown_set_property( lv_obj_t *target, int id, int val) 
-{
-   if (id == _UI_DROPDOWN_PROPERTY_SELECTED) lv_dropdown_set_selected(target, val);
 }
 
 void _ui_image_set_property( lv_obj_t *target, int id, uint8_t *val) 
@@ -139,4 +134,3 @@ void _ui_spinbox_step(lv_obj_t * target, int val)
 
 	lv_event_send(target,LV_EVENT_VALUE_CHANGED, 0);
 }
-
