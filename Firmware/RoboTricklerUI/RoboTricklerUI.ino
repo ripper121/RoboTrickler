@@ -39,7 +39,7 @@ static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * screenHeight / 10];
 TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
-#define FW_VERSION 2.03
+#define FW_VERSION 2.04
 
 SPIClass *SDspi = NULL;
 
@@ -139,6 +139,8 @@ float Setpoint, Input, Output;
 QuickPID roboPID(&Input, &Output, &targetWeight);
 bool PID_AKTIVE = false;
 
+String infoMessagBuff[14];
+
 void beep(_beeper beepMode)
 {
   if (config.beeper == done && beepMode == done)
@@ -199,12 +201,32 @@ IRAM_ATTR void disp_task_init(void)
   );
 }
 
+void insertLine(String newLine)
+{  
+  // Shift all lines up by one position
+  for (int i = 0; i < (sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1; i++) 
+  {
+    infoMessagBuff[i] = infoMessagBuff[i + 1];
+  }
+  // Add new line at the bottom
+  infoMessagBuff[(sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1] = newLine; 
+}
+
+
 void updateDisplayLog(String logOutput)
 {
   lv_label_set_text(ui_LabelInfo, logOutput.c_str());
   lv_label_set_text(ui_LabelLoggerInfo, logOutput.c_str());
   logOutput += "\n";
-  lv_textarea_add_text(ui_TextAreaInfo, logOutput.c_str());
+
+  insertLine(logOutput);
+  String temp="";
+  for (int i = 0; i < (sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) ; i++) 
+  {
+    temp += infoMessagBuff[i];
+  }
+  lv_label_set_text(ui_LabelLog, temp.c_str());
+
   DEBUG_PRINT(logOutput);
 }
 
@@ -270,7 +292,7 @@ void setup()
     }
   }
 
-  int configState = loadConfiguration("/config.txt", config);
+  int configState = loadConfiguration("/config.txt", config);  
   if (configState == 1)
   {
     updateDisplayLog("config.txt deserializeJson() failed");
@@ -367,9 +389,9 @@ void loop()
     }
     lastTargetWeight = targetWeight;
 
-    // char temp[300];
-    // sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());
-    // Serial.println(temp);
+    char temp[300];
+    sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());
+    DEBUG_PRINTLN(temp);
   }
 
   if (running)
@@ -450,6 +472,7 @@ void loop()
           if (!config.debugLog)
           {
             lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, 3) + unit).c_str());
+            lv_label_set_text(ui_LabelLoggerWeight, String(String(weight, 3) + unit).c_str());
           }
         }
         lastWeight = weight;
