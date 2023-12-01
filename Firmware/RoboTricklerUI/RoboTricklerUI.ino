@@ -554,7 +554,7 @@ void loop()
             beep(done);
           }
           finished = true;
-          updateDisplayLog("Done :)",false);
+          updateDisplayLog("Done :)",true);
 
           measurementCount = 0;
           delay(250);
