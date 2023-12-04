@@ -42,8 +42,12 @@ lv_obj_t *ui_LabelTricklerWeight;
 lv_obj_t *ui_PanelInfo;
 lv_obj_t *ui_LabelInfo;
 lv_obj_t *ui_TabPageProfile;
-void ui_event_RollerProfile( lv_event_t * e);
-lv_obj_t *ui_RollerProfile;
+lv_obj_t *ui_PanelProfile;
+lv_obj_t *ui_LabelProfile;
+lv_obj_t *ui_ButtonProfilePrev;
+lv_obj_t *ui_LabelProfilePrev;
+lv_obj_t *ui_ButtonProfileNext;
+lv_obj_t *ui_LabelProfileNext;
 lv_obj_t *ui_TabPageLogger;
 lv_obj_t *ui_PanelLoggerWeight;
 lv_obj_t *ui_LabelLoggerWeight;
@@ -113,12 +117,6 @@ void ui_event_ButtonSub( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
 if ( event_code == LV_EVENT_CLICKED) {
       sub_event_cb( e );
-}
-}
-void ui_event_RollerProfile( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
-if ( event_code == LV_EVENT_VALUE_CHANGED) {
-      profile_event_cb( e );
 }
 }
 void ui_event_ButtonLoggerStart( lv_event_t * e) {
