@@ -106,3 +106,7 @@ def trickler_start_event_cb(event_struct):
 def logger_start_event_cb(event_struct):
     return
 
+
+def prev_event_cb(event_struct):
+    return
+

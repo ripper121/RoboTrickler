@@ -35,7 +35,7 @@ ui_LabelTarget = lv_label_create(ui_PanelTarget);
 lv_obj_set_width( ui_LabelTarget, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelTarget, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelTarget, LV_ALIGN_CENTER );
-lv_label_set_text(ui_LabelTarget,"-.-");
+lv_label_set_text(ui_LabelTarget,"0.000");
 lv_obj_clear_flag( ui_LabelTarget, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_ButtonTricklerStart = lv_btn_create(ui_TabPageTrickler);
@@ -186,11 +186,48 @@ ui_TabPageProfile = lv_tabview_add_tab(ui_TabView, "Profile");
 lv_obj_clear_flag( ui_TabPageProfile, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 lv_obj_set_style_text_font(ui_TabPageProfile, &lv_font_montserrat_32, LV_PART_MAIN| LV_STATE_DEFAULT);
 
-ui_RollerProfile = lv_roller_create(ui_TabPageProfile);
-lv_roller_set_options( ui_RollerProfile, "N135\nN140\nPDI_GN\nPDI_GM\nRS14\nRS14GN\n", LV_ROLLER_MODE_INFINITE );
-lv_obj_set_width( ui_RollerProfile, lv_pct(105));
-lv_obj_set_height( ui_RollerProfile, lv_pct(110));
-lv_obj_set_align( ui_RollerProfile, LV_ALIGN_CENTER );
+ui_PanelProfile = lv_obj_create(ui_TabPageProfile);
+lv_obj_set_height( ui_PanelProfile, 75);
+lv_obj_set_width( ui_PanelProfile, lv_pct(100));
+lv_obj_set_align( ui_PanelProfile, LV_ALIGN_CENTER );
+lv_obj_clear_flag( ui_PanelProfile, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+
+ui_LabelProfile = lv_label_create(ui_PanelProfile);
+lv_obj_set_width( ui_LabelProfile, lv_pct(100));
+lv_obj_set_height( ui_LabelProfile, lv_pct(100));
+lv_obj_set_align( ui_LabelProfile, LV_ALIGN_CENTER );
+lv_label_set_text(ui_LabelProfile,"Profile");
+lv_obj_set_style_text_align(ui_LabelProfile, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
+
+ui_ButtonProfilePrev = lv_btn_create(ui_TabPageProfile);
+lv_obj_set_height( ui_ButtonProfilePrev, 75);
+lv_obj_set_width( ui_ButtonProfilePrev, lv_pct(100));
+lv_obj_set_align( ui_ButtonProfilePrev, LV_ALIGN_TOP_MID );
+lv_obj_add_flag( ui_ButtonProfilePrev, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
+lv_obj_clear_flag( ui_ButtonProfilePrev, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+
+ui_LabelProfilePrev = lv_label_create(ui_ButtonProfilePrev);
+lv_obj_set_width( ui_LabelProfilePrev, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_LabelProfilePrev, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_align( ui_LabelProfilePrev, LV_ALIGN_CENTER );
+lv_label_set_text(ui_LabelProfilePrev,"<");
+lv_obj_set_style_text_align(ui_LabelProfilePrev, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
+lv_obj_set_style_text_font(ui_LabelProfilePrev, &lv_font_montserrat_48, LV_PART_MAIN| LV_STATE_DEFAULT);
+
+ui_ButtonProfileNext = lv_btn_create(ui_TabPageProfile);
+lv_obj_set_height( ui_ButtonProfileNext, 75);
+lv_obj_set_width( ui_ButtonProfileNext, lv_pct(100));
+lv_obj_set_align( ui_ButtonProfileNext, LV_ALIGN_BOTTOM_MID );
+lv_obj_add_flag( ui_ButtonProfileNext, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
+lv_obj_clear_flag( ui_ButtonProfileNext, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+
+ui_LabelProfileNext = lv_label_create(ui_ButtonProfileNext);
+lv_obj_set_width( ui_LabelProfileNext, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_LabelProfileNext, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_align( ui_LabelProfileNext, LV_ALIGN_CENTER );
+lv_label_set_text(ui_LabelProfileNext,">");
+lv_obj_set_style_text_align(ui_LabelProfileNext, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
+lv_obj_set_style_text_font(ui_LabelProfileNext, &lv_font_montserrat_48, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_TabPageLogger = lv_tabview_add_tab(ui_TabView, "Logger");
 lv_obj_clear_flag( ui_TabPageLogger, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
@@ -297,7 +334,8 @@ lv_obj_add_event_cb(ui_ButtonN, ui_event_ButtonN, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonP, ui_event_ButtonP, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonAdd, ui_event_ButtonAdd, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonSub, ui_event_ButtonSub, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_RollerProfile, ui_event_RollerProfile, LV_EVENT_ALL, NULL);
+lv_obj_add_event_cb(ui_ButtonProfilePrev, ui_event_ButtonProfilePrev, LV_EVENT_ALL, NULL);
+lv_obj_add_event_cb(ui_ButtonProfileNext, ui_event_ButtonProfileNext, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonLoggerStart, ui_event_ButtonLoggerStart, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonMessage, ui_event_ButtonMessage, LV_EVENT_ALL, NULL);
 

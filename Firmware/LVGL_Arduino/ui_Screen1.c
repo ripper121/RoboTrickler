@@ -334,6 +334,8 @@ lv_obj_add_event_cb(ui_ButtonN, ui_event_ButtonN, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonP, ui_event_ButtonP, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonAdd, ui_event_ButtonAdd, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonSub, ui_event_ButtonSub, LV_EVENT_ALL, NULL);
+lv_obj_add_event_cb(ui_ButtonProfilePrev, ui_event_ButtonProfilePrev, LV_EVENT_ALL, NULL);
+lv_obj_add_event_cb(ui_ButtonProfileNext, ui_event_ButtonProfileNext, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonLoggerStart, ui_event_ButtonLoggerStart, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonMessage, ui_event_ButtonMessage, LV_EVENT_ALL, NULL);
 

@@ -29,10 +29,6 @@ void _ui_image_set_property( lv_obj_t *target, int id, uint8_t *val);
 #define _UI_LABEL_PROPERTY_TEXT 0
 void _ui_label_set_property( lv_obj_t *target, int id, const char *val);
 
-#define _UI_ROLLER_PROPERTY_SELECTED 0
-#define _UI_ROLLER_PROPERTY_SELECTED_WITH_ANIM 1
-void _ui_roller_set_property( lv_obj_t *target, int id, int val);
-
 #define _UI_SLIDER_PROPERTY_VALUE 0
 #define _UI_SLIDER_PROPERTY_VALUE_WITH_ANIM 1
 void _ui_slider_set_property( lv_obj_t *target, int id, int val);

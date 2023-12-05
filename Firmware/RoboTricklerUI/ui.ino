@@ -58,8 +58,6 @@ void startTrickler()
   lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
 
   String tempProfile = String(config.profile);
-  char buffer[64];
-  lv_roller_get_selected_str(ui_RollerProfile, config.profile, sizeof(config.profile));
 
   if (tempProfile != String(config.profile))
   {
@@ -145,9 +143,16 @@ void sub_event_cb(lv_event_t *e)
   lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
 }
 
-void profile_event_cb(lv_event_t *e)
+void prev_event_cb(lv_event_t * e)
 {
+	// Your code here
 }
+
+void next_event_cb(lv_event_t * e)
+{
+	// Your code here
+}
+
 
 void message_event_cb(lv_event_t *e)
 {
@@ -186,42 +191,6 @@ void my_touchpad_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
     /*Set the coordinates*/
     data->point.x = touchX;
     data->point.y = touchY;
-  }
-}
-
-// Helper function to find the index of an option
-static int find_option_index(lv_obj_t *roller, const char *desired_option)
-{
-  const char *options = lv_roller_get_options(roller);
-  int index = 0;
-  const char *current_option = options;
-
-  while (current_option)
-  {
-    // Check if the current option matches the desired option
-    if (strncmp(current_option, desired_option, strlen(desired_option)) == 0 &&
-        (current_option[strlen(desired_option)] == '\n' || current_option[strlen(desired_option)] == '\0'))
-    {
-      return index;
-    }
-    // Move to the next option
-    current_option = strchr(current_option, '\n');
-    if (current_option)
-    {
-      current_option++; // Skip the newline character
-    }
-    index++;
-  }
-  return -1; // Option not found
-}
-
-// Function to set the roller's selected option based on a string
-void set_roller_selected_str(lv_obj_t *roller, const char *option_str)
-{
-  int index = find_option_index(roller, option_str);
-  if (index != -1)
-  {
-    lv_roller_set_selected(roller, index, LV_ANIM_ON);
   }
 }
 

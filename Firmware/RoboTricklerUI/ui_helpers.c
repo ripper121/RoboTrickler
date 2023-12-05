@@ -29,12 +29,6 @@ void _ui_label_set_property( lv_obj_t *target, int id, const char *val)
    if (id == _UI_LABEL_PROPERTY_TEXT) lv_label_set_text(target, val);
 }
 
-void _ui_roller_set_property( lv_obj_t *target, int id, int val) 
-{
-   if (id == _UI_ROLLER_PROPERTY_SELECTED_WITH_ANIM) lv_roller_set_selected(target, val, LV_ANIM_ON);
-   if (id == _UI_ROLLER_PROPERTY_SELECTED) lv_roller_set_selected(target, val, LV_ANIM_OFF);
-}
-
 void _ui_slider_set_property( lv_obj_t *target, int id, int val) 
 {
    if (id == _UI_SLIDER_PROPERTY_VALUE_WITH_ANIM) lv_slider_set_value(target, val, LV_ANIM_ON);

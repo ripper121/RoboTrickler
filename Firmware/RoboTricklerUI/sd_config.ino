@@ -143,8 +143,9 @@ int loadConfiguration(const char *filename, Config &config)
     config.mode = trickler;
   }
 
-
   config.log_measurements = doc["log_Measurements"] | 20;
+  
+  config.tolerance = doc["tolerance"] | 0.00;
 
   config.microsteps = doc["microsteps"] | 1;
 
@@ -223,7 +224,6 @@ void getProfileList()
     }
     file = root.openNextFile();
   }
-  lv_roller_set_options(ui_RollerProfile, profileList.c_str(), LV_ROLLER_MODE_INFINITE);
 }
 
 void saveConfiguration(const char *filename, const Config &config)
@@ -253,6 +253,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
   doc["log_Measurements"] = config.log_measurements;
+  doc["tolerance"] = config.tolerance;
 
   if (config.mode == trickler)
     doc["mode"] = "trickler";

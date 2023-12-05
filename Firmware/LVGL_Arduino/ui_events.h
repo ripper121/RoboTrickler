@@ -17,6 +17,8 @@ void n_event_cb(lv_event_t * e);
 void p_event_cb(lv_event_t * e);
 void add_event_cb(lv_event_t * e);
 void sub_event_cb(lv_event_t * e);
+void prev_event_cb(lv_event_t * e);
+void next_event_cb(lv_event_t * e);
 void logger_start_event_cb(lv_event_t * e);
 void message_event_cb(lv_event_t * e);
 

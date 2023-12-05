@@ -22,7 +22,6 @@
 #include "ui.h"
 #include <TFT_eSPI.h>
 
-
 #define DEBUG 0
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
@@ -74,6 +73,7 @@ struct Config
   char scale_protocol[16];
   int scale_baud;
   char profile[64];
+  float tolerance;
   int microsteps;
   float pidThreshold;
   long pidStepMin;
@@ -180,7 +180,7 @@ IRAM_ATTR void lvgl_disp_task(void *parg)
   while (1)
   {
     lv_timer_handler();
-    //esp_task_wdt_reset();
+    // esp_task_wdt_reset();
   }
 }
 
@@ -233,9 +233,9 @@ void setup()
 {
   Serial.begin(115200); /* prepare for possible serial debug */
 
-  //esp_task_wdt_init(WDT_TIMEOUT, true); // enable panic so ESP32 restarts
-  //esp_task_wdt_add(NULL);               // add current thread to WDT watch
-  //esp_task_wdt_add(lv_disp_tcb);
+  // esp_task_wdt_init(WDT_TIMEOUT, true); // enable panic so ESP32 restarts
+  // esp_task_wdt_add(NULL);               // add current thread to WDT watch
+  // esp_task_wdt_add(lv_disp_tcb);
 
   rtc_wdt_protect_off();
   rtc_wdt_disable();
@@ -366,8 +366,6 @@ void setup()
   lv_label_set_text(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com").c_str());
   lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
 
-  // lv_roller_set_selected(roller, id, LV_ANIM_ON/OFF)
-  set_roller_selected_str(ui_RollerProfile, config.profile);
   DEBUG_PRINTLN("Setup done.");
 }
 
@@ -554,7 +552,12 @@ void loop()
             beep(done);
           }
           finished = true;
-          updateDisplayLog("Done :)",true);
+          updateDisplayLog("Done :)", true);
+
+          if (weight > (targetWeight + (targetWeight * config.tolerance)))
+          {
+            // Send Alarm
+          }
 
           measurementCount = 0;
           delay(250);
@@ -571,7 +574,7 @@ void loop()
       {
         if ((config.mode == trickler) && (weight < targetWeight) && (weight >= 0))
         {
-          updateDisplayLog("Running...",true);
+          updateDisplayLog("Running...", true);
 
           if (PID_AKTIVE)
           {
@@ -605,7 +608,7 @@ void loop()
             infoText += "GAP:" + String(gap, 3) + " ";
             infoText += "STP:" + String(steps) + " ";
             infoText += "MES:" + String(measurementCount);
-            updateDisplayLog(infoText,true);
+            updateDisplayLog(infoText, true);
 
             if (stepperSpeedOld != config.pidSpeed)
               setStepperSpeed(stepperNum, config.pidSpeed); // only change if value changed
@@ -661,7 +664,7 @@ void loop()
             infoText += "ST" + String(config.profile_steps[profileStep]) + " ";
             infoText += "SP" + String(config.profile_speed[profileStep]) + " ";
             infoText += "M" + String(config.profile_measurements[profileStep]);
-            updateDisplayLog(infoText,true);
+            updateDisplayLog(infoText, true);
           }
         }
         if (config.mode == logger && (weight > 0))
@@ -675,7 +678,7 @@ void loop()
           writeCSVFile(SD, path.c_str(), weight, logCounter);
           measurementCount = config.log_measurements;
           infoText += "Count: " + String(logCounter) + " Saved :)";
-          updateDisplayLog(infoText,true);
+          updateDisplayLog(infoText, true);
           finished = true;
           beep(done);
         }
@@ -694,12 +697,12 @@ void loop()
         if (config.mode == logger)
         {
           logCounter++;
-          updateDisplayLog("Place next peace for measurment.",true);
+          updateDisplayLog("Place next peace for measurment.", true);
           beep(done);
         }
         else
         {
-          updateDisplayLog("Ready",true);
+          updateDisplayLog("Ready", true);
         }
         finished = false;
       }
@@ -730,5 +733,5 @@ void loop()
       wifiPreviousMillis = millis();
     }
   }
-  //esp_task_wdt_reset();
+  // esp_task_wdt_reset();
 }

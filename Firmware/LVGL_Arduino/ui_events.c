@@ -54,3 +54,13 @@ void message_event_cb(lv_event_t * e)
 {
 	// Your code here
 }
+
+void prev_event_cb(lv_event_t * e)
+{
+	// Your code here
+}
+
+void next_event_cb(lv_event_t * e)
+{
+	// Your code here
+}
