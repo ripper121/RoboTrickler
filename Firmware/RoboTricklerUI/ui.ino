@@ -65,7 +65,7 @@ void startTrickler()
     saveConfiguration("/config.txt", config);
   }
   updateDisplayLog(String("Profile: " + String(config.profile) + " selected!"));
-  
+
   startMeasurment();
 }
 
@@ -74,7 +74,7 @@ void stopTrickler()
   stopMeasurment();
   lv_label_set_text(ui_LabelTricklerStart, "Start");
   lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_label_set_text(ui_LabelTricklerWeight,"-.-");
+  lv_label_set_text(ui_LabelTricklerWeight, "-.-");
   lv_label_set_text(ui_LabelInfo, "");
   lv_label_set_text(ui_LabelLoggerInfo, "");
 }
@@ -92,7 +92,7 @@ void stopLogger()
   stopMeasurment();
   lv_label_set_text(ui_LabelLoggerStart, "Start");
   lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_label_set_text(ui_LabelLoggerWeight,"-.-");
+  lv_label_set_text(ui_LabelLoggerWeight, "-.-");
   lv_label_set_text(ui_LabelInfo, "");
   lv_label_set_text(ui_LabelLoggerInfo, "");
 }
@@ -143,20 +143,41 @@ void sub_event_cb(lv_event_t *e)
   lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
 }
 
-void prev_event_cb(lv_event_t * e)
+void prev_event_cb(lv_event_t *e)
 {
-	// Your code here
+  profileListCounter--;
+  if (profileListCounter < 0)
+    profileListCounter = 0;
+
+  strlcpy(config.profile,                              // <- destination
+          profileListBuff[profileListCounter].c_str(), // <- source
+          sizeof(config.profile));                     // <- destination's capacity
+
+  lv_label_set_text(ui_LabelProfile, config.profile);
 }
 
-void next_event_cb(lv_event_t * e)
+void next_event_cb(lv_event_t *e)
 {
-	// Your code here
-}
+  profileListCounter++;
+  if (profileListCounter > profileListCount)
+    profileListCounter = profileListCount;
 
+  strlcpy(config.profile,                              // <- destination
+          profileListBuff[profileListCounter].c_str(), // <- source
+          sizeof(config.profile));                     // <- destination's capacity
+
+  lv_label_set_text(ui_LabelProfile, config.profile);
+}
 
 void message_event_cb(lv_event_t *e)
 {
   lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+}
+
+void messageBox(String message)
+{
+  lv_label_set_text(ui_LabelMessages, message.c_str());
+  lv_obj_clear_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
 }
 
 /* Display flushing */

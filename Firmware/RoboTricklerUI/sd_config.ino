@@ -144,8 +144,10 @@ int loadConfiguration(const char *filename, Config &config)
   }
 
   config.log_measurements = doc["log_Measurements"] | 20;
-  
+
   config.tolerance = doc["tolerance"] | 0.00;
+
+  config.alarmThreshold = doc["alarm_threshold"] | 0.00;
 
   config.microsteps = doc["microsteps"] | 1;
 
@@ -183,8 +185,7 @@ int loadConfiguration(const char *filename, Config &config)
 
 void getProfileList()
 {
-  String profileList = "";
-
+  byte profileCounter = 0;
   File root = SD.open("/");
   if (!root)
   {
@@ -200,8 +201,11 @@ void getProfileList()
   File file = root.openNextFile();
 
   updateDisplayLog("Search Profiles...");
+
   while (file)
   {
+    if (profileCounter > 31)
+      break;
     if (file.isDirectory())
     {
       DEBUG_PRINT("  DIR : ");
@@ -213,8 +217,8 @@ void getProfileList()
       {
         String filename = String(file.name());
         filename.replace(".txt", "");
-        profileList += filename;
-        profileList += "\n";
+        profileListBuff[profileCounter] = filename;
+        profileCounter++;
       }
 
       DEBUG_PRINT("  FILE: ");
@@ -224,6 +228,7 @@ void getProfileList()
     }
     file = root.openNextFile();
   }
+  profileListCount = profileCounter - 1;
 }
 
 void saveConfiguration(const char *filename, const Config &config)
@@ -254,6 +259,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["profile"] = config.profile;
   doc["log_Measurements"] = config.log_measurements;
   doc["tolerance"] = config.tolerance;
+  doc["alarm_threshold"] = config.alarmThreshold;
 
   if (config.mode == trickler)
     doc["mode"] = "trickler";

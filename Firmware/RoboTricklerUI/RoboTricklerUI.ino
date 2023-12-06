@@ -72,8 +72,9 @@ struct Config
   bool debugLog;
   char scale_protocol[16];
   int scale_baud;
-  char profile[64];
+  char profile[32];
   float tolerance;
+  float alarmThreshold;
   int microsteps;
   float pidThreshold;
   long pidStepMin;
@@ -143,6 +144,9 @@ QuickPID roboPID(&Input, &Output, &targetWeight);
 bool PID_AKTIVE = false;
 
 String infoMessagBuff[14];
+String profileListBuff[32];
+byte profileListCount;
+byte profileListCounter;
 
 void beep(_beeper beepMode)
 {
@@ -554,9 +558,10 @@ void loop()
           finished = true;
           updateDisplayLog("Done :)", true);
 
-          if (weight > (targetWeight + (targetWeight * config.tolerance)))
+          if (weight > (targetWeight + (targetWeight * config.alarmThreshold)))
           {
             // Send Alarm
+            messageBox("Check Weight!!!");
           }
 
           measurementCount = 0;
