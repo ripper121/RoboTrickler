@@ -84,7 +84,7 @@ int loadConfiguration(const char *filename, Config &config)
   // Allocate a temporary JsonDocument
   // Don't forget to change the capacity to match your requirements.
   // Use https://arduinojson.org/v6/assistant to compute the capacity.
-  StaticJsonDocument<512> doc;
+  StaticJsonDocument<768> doc;
 
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(doc, file);
@@ -130,19 +130,6 @@ int loadConfiguration(const char *filename, Config &config)
           doc["profile"] | "calibrate", // <- source
           sizeof(config.profile));      // <- destination's capacity
 
-  if (doc["mode"] == "trickler")
-  {
-    config.mode = trickler;
-  }
-  else if (doc["mode"] == "logger")
-  {
-    config.mode = logger;
-  }
-  else
-  {
-    config.mode = trickler;
-  }
-
   config.log_measurements = doc["log_Measurements"] | 20;
 
   config.tolerance = doc["tolerance"] | 0.00;
@@ -151,26 +138,9 @@ int loadConfiguration(const char *filename, Config &config)
 
   config.microsteps = doc["microsteps"] | 1;
 
-  if (doc["beeper"] == "off")
-  {
-    config.beeper = off;
-  }
-  else if (doc["beeper"] == "done")
-  {
-    config.beeper = done;
-  }
-  else if (doc["beeper"] == "button")
-  {
-    config.beeper = button;
-  }
-  else if (doc["beeper"] == "both")
-  {
-    config.beeper = both;
-  }
-  else
-  {
-    config.beeper = off;
-  }
+  strlcpy(config.beeper,               // <- destination
+    doc["beeper"] | "done", // <- source
+    sizeof(config.beeper));      // <- destination's capacity
 
   config.debugLog = doc["debug_log"] | false;
 
@@ -185,7 +155,6 @@ int loadConfiguration(const char *filename, Config &config)
 
 void getProfileList()
 {
-  byte profileCounter = 0;
   File root = SD.open("/");
   if (!root)
   {
@@ -202,6 +171,7 @@ void getProfileList()
 
   updateDisplayLog("Search Profiles...");
 
+  byte profileCounter = 0;
   while (file)
   {
     if (profileCounter > 31)
@@ -228,7 +198,13 @@ void getProfileList()
     }
     file = root.openNextFile();
   }
-  profileListCount = profileCounter - 1;
+
+  profileListCount = profileCounter;
+  DEBUG_PRINT("  profileListCount: ");
+  DEBUG_PRINTLN(profileListCount);
+  for(int i=0;i<profileListCount;i++){
+      DEBUG_PRINTLN(profileListBuff[i] );
+  }
 }
 
 void saveConfiguration(const char *filename, const Config &config)
@@ -260,31 +236,8 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["log_Measurements"] = config.log_measurements;
   doc["tolerance"] = config.tolerance;
   doc["alarm_threshold"] = config.alarmThreshold;
-
-  if (config.mode == trickler)
-    doc["mode"] = "trickler";
-  else
-    doc["mode"] = "logger";
-
   doc["microsteps"] = config.microsteps;
-
-  if (config.beeper == off)
-  {
-    doc["beeper"] = "off";
-  }
-  else if (config.beeper == done)
-  {
-    doc["beeper"] = "done";
-  }
-  else if (config.beeper == button)
-  {
-    doc["beeper"] = "button";
-  }
-  else if (config.beeper == both)
-  {
-    doc["beeper"] = "both";
-  }
-
+  doc["beeper"] = config.beeper;
   doc["debug_log"] = config.debugLog;
 
   // Serialize JSON to file

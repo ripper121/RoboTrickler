@@ -1,3 +1,6 @@
+String tempProfile = "";
+int profileListCounter;
+
 #if LV_USE_LOG != 0
 /* Serial debugging */
 void my_print(const char *buf)
@@ -41,28 +44,29 @@ void startMeasurment()
 {
   running = true;
   finished = false;
-  beep(button);
+  beep("button");
 }
 
 void stopMeasurment()
 {
   running = false;
   finished = true;
-  beep(button);
+  beep("button");
 }
 
 void startTrickler()
 {
-  config.mode = trickler;
+  strlcpy(config.mode,          // <- destination
+          "trickler",           // <- source
+          sizeof(config.mode)); // <- destination's capacity
   lv_label_set_text(ui_LabelTricklerStart, "Stop");
   lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-
-  String tempProfile = String(config.profile);
 
   if (tempProfile != String(config.profile))
   {
     readProfile(String("/" + String(config.profile) + ".txt").c_str(), config);
     saveConfiguration("/config.txt", config);
+    tempProfile = String(config.profile);
   }
   updateDisplayLog(String("Profile: " + String(config.profile) + " selected!"));
 
@@ -81,7 +85,9 @@ void stopTrickler()
 
 void startLogger()
 {
-  config.mode = logger;
+  strlcpy(config.mode,          // <- destination
+          "logger",             // <- source
+          sizeof(config.mode)); // <- destination's capacity
   lv_label_set_text(ui_LabelLoggerStart, "Stop");
   lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
   startMeasurment();
@@ -100,25 +106,25 @@ void stopLogger()
 void nnn_event_cb(lv_event_t *e)
 {
   addWeight = 0.001;
-  beep(button);
+  beep("button");
 }
 
 void nn_event_cb(lv_event_t *e)
 {
   addWeight = 0.01;
-  beep(button);
+  beep("button");
 }
 
 void n_event_cb(lv_event_t *e)
 {
   addWeight = 0.1;
-  beep(button);
+  beep("button");
 }
 
 void p_event_cb(lv_event_t *e)
 {
   addWeight = 1.0;
-  beep(button);
+  beep("button");
 }
 
 void add_event_cb(lv_event_t *e)
@@ -128,7 +134,7 @@ void add_event_cb(lv_event_t *e)
   {
     targetWeight = MAX_TARGET_WEIGHT;
   }
-  beep(button);
+  beep("button");
   lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
 }
 
@@ -139,34 +145,36 @@ void sub_event_cb(lv_event_t *e)
   {
     targetWeight = 0.0;
   }
-  beep(button);
+  beep("button");
   lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
+}
+
+void setProfile(int num)
+{
+  strlcpy(config.profile,               // <- destination
+          profileListBuff[num].c_str(), // <- source
+          sizeof(config.profile));      // <- destination's capacity
+
+  DEBUG_PRINT("num: ");
+  DEBUG_PRINTLN(num);
+
+  lv_label_set_text(ui_LabelProfile, config.profile);
 }
 
 void prev_event_cb(lv_event_t *e)
 {
   profileListCounter--;
   if (profileListCounter < 0)
-    profileListCounter = 0;
-
-  strlcpy(config.profile,                              // <- destination
-          profileListBuff[profileListCounter].c_str(), // <- source
-          sizeof(config.profile));                     // <- destination's capacity
-
-  lv_label_set_text(ui_LabelProfile, config.profile);
+    profileListCounter = (profileListCount - 1);
+  setProfile(profileListCounter);
 }
 
 void next_event_cb(lv_event_t *e)
 {
   profileListCounter++;
-  if (profileListCounter > profileListCount)
-    profileListCounter = profileListCount;
-
-  strlcpy(config.profile,                              // <- destination
-          profileListBuff[profileListCounter].c_str(), // <- source
-          sizeof(config.profile));                     // <- destination's capacity
-
-  lv_label_set_text(ui_LabelProfile, config.profile);
+  if (profileListCounter > (profileListCount - 1))
+    profileListCounter = 0;
+  setProfile(profileListCounter);
 }
 
 void message_event_cb(lv_event_t *e)

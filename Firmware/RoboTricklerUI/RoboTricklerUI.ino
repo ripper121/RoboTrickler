@@ -46,21 +46,6 @@ SPIClass *SDspi = NULL;
 
 String fullLogOutput = "";
 
-enum _mode
-{
-  init_mode,
-  trickler,
-  logger
-};
-
-enum _beeper
-{
-  off,
-  done,
-  button,
-  both
-};
-
 struct Config
 {
   char wifi_ssid[64];
@@ -69,13 +54,18 @@ struct Config
   char IPGateway[15];
   char IPSubnet[15];
   char IPDns[15];
+
+  char mode[9];
+  char beeper[6];
   bool debugLog;
   char scale_protocol[16];
   int scale_baud;
   char profile[32];
+  int log_measurements;
   float tolerance;
   float alarmThreshold;
   int microsteps;
+
   float pidThreshold;
   long pidStepMin;
   long pidStepMax;
@@ -92,6 +82,7 @@ struct Config
   float pidAggKp;
   float pidAggKi;
   float pidAggKd;
+
   byte profile_num[32];
   float profile_weight[32];
   long profile_steps[32];
@@ -100,9 +91,6 @@ struct Config
   bool profile_oscillate[32];
   bool profile_reverse[32];
   int profile_count;
-  _mode mode;
-  int log_measurements;
-  _beeper beeper;
 };
 Config config; // <- global configuration object
 
@@ -146,18 +134,18 @@ bool PID_AKTIVE = false;
 String infoMessagBuff[14];
 String profileListBuff[32];
 byte profileListCount;
-byte profileListCounter;
 
-void beep(_beeper beepMode)
+void beep(String beepMode)
 {
-  if (config.beeper == done && beepMode == done)
+
+  if ((String(config.beeper).indexOf("done") != -1) && (String(beepMode).indexOf("done") != -1))
     stepper1.beep(500);
-  if (config.beeper == button && beepMode == button)
+  if ((String(config.beeper).indexOf("button") != -1) && (String(beepMode).indexOf("button") != -1))
     stepper1.beep(100);
 
-  if (config.beeper == both && beepMode == done)
+  if ((String(config.beeper).indexOf("both") != -1) && (String(beepMode).indexOf("done") != -1))
     stepper1.beep(500);
-  if (config.beeper == both && beepMode == button)
+  if ((String(config.beeper).indexOf("both") != -1) && (String(beepMode).indexOf("button") != -1))
     stepper1.beep(100);
 }
 
@@ -252,8 +240,6 @@ void setup()
 
   updateDisplayLog(String("Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com").c_str());
 
-  config.mode = init_mode;
-
   initStepper();
 
   SDspi = new SPIClass(HSPI);
@@ -316,13 +302,13 @@ void setup()
     getProfileList();
   }
 
-  if (config.mode == trickler)
+  if (String(config.mode).indexOf("trickler") != -1)
   {
     DEBUG_PRINTLN("config.mode == trickler");
     updateDisplayLog("Profile:" + String(config.profile));
     measurementCount = config.profile_measurements[0];
   }
-  else if (config.mode == logger)
+  else if (String(config.mode).indexOf("logger") != -1)
   {
     DEBUG_PRINTLN("config.mode == logger");
     updateDisplayLog("Logger Mode");
@@ -345,20 +331,17 @@ void setup()
     updateDisplayLog("WIFI:" + WiFi.localIP().toString());
   }
 
-  if (config.mode == trickler)
+  preferences.begin("app-settings", false);
+  targetWeight = preferences.getFloat("targetWeight", 0.0);
+  if (targetWeight < 0)
   {
-    preferences.begin("app-settings", false);
-    targetWeight = preferences.getFloat("targetWeight", 0.0);
-    if (targetWeight < 0)
-    {
-      targetWeight = 0.0;
-      preferences.putFloat("targetWeight", targetWeight);
-    }
-    if (targetWeight > MAX_TARGET_WEIGHT)
-    {
-      targetWeight = MAX_TARGET_WEIGHT;
-      preferences.putFloat("targetWeight", targetWeight);
-    }
+    targetWeight = 0.0;
+    preferences.putFloat("targetWeight", targetWeight);
+  }
+  if (targetWeight > MAX_TARGET_WEIGHT)
+  {
+    targetWeight = MAX_TARGET_WEIGHT;
+    preferences.putFloat("targetWeight", targetWeight);
   }
 
   // initialize the variables we're linked to
@@ -369,24 +352,14 @@ void setup()
 
   lv_label_set_text(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com").c_str());
   lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
+  lv_label_set_text(ui_LabelProfile, config.profile);
 
   DEBUG_PRINTLN("Setup done.");
 }
 
 void loop()
 {
-  static uint32_t scanTime = millis();
   static uint32_t writeETime = millis();
-
-  if (millis() - scanTime >= 50)
-  {
-    scanTime = millis();
-    if (targetWeightStr != lastTargetWeightStr)
-    {
-      // labelTarget.drawButton(false, targetWeightStr);
-    }
-    lastTargetWeightStr = targetWeightStr;
-  }
 
   if (millis() - writeETime >= 1000)
   {
@@ -547,21 +520,26 @@ void loop()
       newData = false;
       weightCounter = 0;
 
-      if (config.mode == trickler)
+      if (String(config.mode).indexOf("trickler") != -1)
       {
-        if (((targetWeight - 0.0001) <= weight) && (weight >= 0))
+        if (weight >= ((targetWeight - (targetWeight + (targetWeight * config.tolerance)))) && (weight >= 0))
         {
           if (!finished)
           {
-            beep(done);
+            beep("done");
           }
           finished = true;
           updateDisplayLog("Done :)", true);
 
-          if (weight > (targetWeight + (targetWeight * config.alarmThreshold)))
+          if (weight >= (targetWeight + (targetWeight * config.alarmThreshold)))
           {
             // Send Alarm
             messageBox("Check Weight!!!");
+            beep("done");
+            delay(250);
+            beep("done");
+            delay(250);
+            beep("done");
           }
 
           measurementCount = 0;
@@ -577,7 +555,7 @@ void loop()
       }
       if (!finished)
       {
-        if ((config.mode == trickler) && (weight < targetWeight) && (weight >= 0))
+        if ((String(config.mode).indexOf("trickler") != -1) && (weight < targetWeight) && (weight >= 0))
         {
           updateDisplayLog("Running...", true);
 
@@ -672,7 +650,7 @@ void loop()
             updateDisplayLog(infoText, true);
           }
         }
-        if (config.mode == logger && (weight > 0))
+        if (String(config.mode).indexOf("logger") != -1 && (weight > 0))
         {
           DEBUG_PRINTLN("Log to File");
           if (path == "empty")
@@ -685,12 +663,12 @@ void loop()
           infoText += "Count: " + String(logCounter) + " Saved :)";
           updateDisplayLog(infoText, true);
           finished = true;
-          beep(done);
+          beep("done");
         }
       }
       else
       {
-        if (config.mode == trickler)
+        if (String(config.mode).indexOf("trickler") != -1)
         {
           stepper1.disable();
           stepper2.disable();
@@ -699,11 +677,11 @@ void loop()
 
       if ((weight <= 0) && finished)
       {
-        if (config.mode == logger)
+        if (String(config.mode).indexOf("logger") != -1)
         {
           logCounter++;
           updateDisplayLog("Place next peace for measurment.", true);
-          beep(done);
+          beep("done");
         }
         else
         {
