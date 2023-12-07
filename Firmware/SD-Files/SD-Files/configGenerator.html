@@ -95,6 +95,9 @@
 
                         <label for="IPSubnet">Subnet:</label>
                         <input type="text" id="IPSubnet" name="IPSubnet" maxlength="15" size="15"><br>
+
+                        <label for="IPDNS">DNS:</label>
+                        <input type="text" id="IPDNS" name="IPDNS" maxlength="15" size="15"><br>
                     </fieldset>
                 </fieldset>
 
@@ -111,25 +114,17 @@
                     Baud: <input type="number" name="scale_baud" value="9600"><br>
                 </fieldset>
 
-                <label for="mode">Mode:</label>
-                <select name="mode">
-                    <option value="trickler" selected>Trickler</option>
-                    <option value="logger">Logger</option>
-                </select><br>
+                <label for="profile">Powder Profile:</label>
+                <input type="text" name="profile"><br>
 
                 <label for="log_measurements">Log Measurements:</label>
-                <input type="number" name="log_measurements" value="10"><br>
+                <input type="number" name="log_measurements" value="20"><br>
 
-                <label for="powder">Powder Profile:</label>
-                <input type="text" name="powder"><br>
+                <label for="tolerance">Target weight tolerance in %:</label>
+                <input type="number" name="tolerance" value="0.000"><br>
 
-                <label for="beeper">Beeper:</label>
-                <select name="beeper">
-                    <option value="done" selected>Done</option>
-                    <option value="button">Button</option>
-                    <option value="both">Both</option>
-                    <option value="off">Off</option>
-                </select><br>
+                <label for="alarm_threshold">Threshold for over Trickle Alarm in %:</label>
+                <input type="number" name="alarm_threshold" value="0.000"><br>
 
                 <label for="microsteps">Microsteps:</label>
                 <select name="microsteps">
@@ -142,8 +137,13 @@
                     <option value="64">1/64</option>
                 </select><br>
 
-                <label for="arduino_ota">Arduino OTA:</label>
-                <input type="checkbox" name="arduino_ota"><br><br>
+                <label for="beeper">Beeper:</label>
+                <select name="beeper">
+                    <option value="done" selected>Done</option>
+                    <option value="button">Button</option>
+                    <option value="both">Both</option>
+                    <option value="off">Off</option>
+                </select><br>
 
                 <label for="debug_log">Debug Log:</label>
                 <input type="checkbox" name="debug_log"><br><br>
@@ -170,19 +170,20 @@
                     psk: formData.get('wifi_psk'),
                     IPStatic: formData.get('IPStatic'),
                     IPGateway: formData.get('IPGateway'),
-                    IPSubnet: formData.get('IPSubnet')
+                    IPSubnet: formData.get('IPSubnet'),
+                    IPDNS: formData.get('IPDNS')
                 },
                 scale: {
                     protocol: formData.get('scale_protocol'),
                     baud: parseInt(formData.get('scale_baud'), 10)
                 },
-                mode: formData.get('mode'),
+                profile: formData.get('profile').replaceAll(".txt", ""),
                 log_measurements: parseInt(formData.get('log_measurements'), 10),
-                powder: formData.get('powder').replaceAll(".txt", ""),
+                tolerance: parseFloat(formData.get('tolerance')),
+                alarm_threshold: parseFloat(formData.get('alarm_threshold')),
+                microsteps: parseInt(formData.get('microsteps'), 10),
                 beeper: formData.get('beeper'),
-                arduino_ota: formData.get('arduino_ota') === 'on',
-                debug_log: formData.get('debug_log') === 'on',
-                microsteps: parseInt(formData.get('microsteps'), 10)
+                debug_log: formData.get('debug_log') === 'on'
             };
             jsonOutput.value = JSON.stringify(jsonObject, null, 4);
         }
@@ -198,23 +199,25 @@
                 configForm.IPStatic.value = jsonObject.wifi.IPStatic || '';
                 configForm.IPGateway.value = jsonObject.wifi.IPGateway || '';
                 configForm.IPSubnet.value = jsonObject.wifi.IPSubnet || '';
+                configForm.IPDNS.value = jsonObject.wifi.IPDNS || '';
 
                 // Update Scale settings
-                configForm.scale_protocol.value = jsonObject.scale.protocol || '';
-                configForm.scale_baud.value = jsonObject.scale.baud || '';
+                configForm.scale_protocol.value = jsonObject.scale.protocol || 'GG';
+                configForm.scale_baud.value = jsonObject.scale.baud || 9600;
 
                 // Update other settings
-                configForm.mode.value = jsonObject.mode || '';
-                configForm.log_measurements.value = jsonObject.log_measurements || '';
-                configForm.powder.value = jsonObject.powder || '';
-                configForm.beeper.value = jsonObject.beeper || '';
+                configForm.profile.value = jsonObject.profile || 'calibrate';
+                configForm.log_measurements.value = jsonObject.log_measurements || 20;
 
-                // Update boolean fields
-                configForm.arduino_ota.checked = jsonObject.arduino_ota || false;
-                configForm.debug_log.checked = jsonObject.debug_log || false;
+                configForm.tolerance.value = jsonObject.tolerance || 0.000;
+                configForm.alarm_threshold.value = jsonObject.alarm_threshold || 0.000;
 
                 // Update microsteps
                 configForm.microsteps.value = jsonObject.microsteps || 1;
+                configForm.beeper.value = jsonObject.beeper || 'done';
+
+                // Update boolean fields
+                configForm.debug_log.checked = jsonObject.debug_log || false;
             } catch (e) {
                 console.error('Invalid JSON');
             }
