@@ -117,8 +117,6 @@ int measurementCount = 0;
 float newData = false;
 bool running = false;
 bool finished = false;
-String targetWeightStr = "";
-String lastTargetWeightStr = "";
 int logCounter = 1;
 bool stopLogCounter = false;
 String path = "empty";
@@ -219,6 +217,17 @@ void updateDisplayLog(String logOutput, bool noLog = false)
   }
 
   DEBUG_PRINT(logOutput);
+}
+
+void serialFlush()
+{
+  // flush TX
+  Serial1.flush();
+  // flush RX
+  while (Serial1.available())
+  {
+    Serial1.read();
+  }
 }
 
 void setup()
@@ -465,13 +474,7 @@ void loop()
         DEBUG_PRINTLN(weight);
       }
 
-      // flush TX
-      Serial1.flush();
-      // flush RX
-      while (Serial1.available())
-      {
-        Serial1.read();
-      }
+      serialFlush();
     }
     else
     {
@@ -522,36 +525,42 @@ void loop()
 
       if (String(config.mode).indexOf("trickler") != -1)
       {
-        if (weight >= ((targetWeight - (targetWeight + (targetWeight * config.tolerance)))) && (weight >= 0))
+        DEBUG_PRINT("Weight: ");
+        DEBUG_PRINTLN(weight);
+        DEBUG_PRINT("TargetWeight: ");
+        DEBUG_PRINTLN(String(((targetWeight - (targetWeight * config.tolerance))), 3));
+        DEBUG_PRINT("alarmThreshold: ");
+        DEBUG_PRINTLN(String((targetWeight + (targetWeight * config.alarmThreshold)), 3));
+        if ((weight >= ((targetWeight - (targetWeight * config.tolerance)))) && (weight >= 0))
         {
           if (!finished)
           {
             beep("done");
+            updateDisplayLog("Done :)", true);
           }
-          finished = true;
-          updateDisplayLog("Done :)", true);
 
-          if (weight >= (targetWeight + (targetWeight * config.alarmThreshold)))
+          if ((weight >= (targetWeight + (targetWeight * config.alarmThreshold))) && (config.alarmThreshold > 0))
           {
             // Send Alarm
-            messageBox("Check Weight!!!");
+            messageBox("!Overtrickel!\n!Check Weight!");
             beep("done");
             delay(250);
             beep("done");
             delay(250);
             beep("done");
+            
+            serialFlush();
+            stopTrickler();
           }
 
           measurementCount = 0;
-          delay(250);
+          finished = true;
         }
 
-        if (weight < targetWeight)
+        if (weight < ((targetWeight - (targetWeight * config.tolerance))))
         {
           finished = false;
         }
-
-        targetWeightStr = String(targetWeight, 3);
       }
       if (!finished)
       {
@@ -680,7 +689,7 @@ void loop()
         if (String(config.mode).indexOf("logger") != -1)
         {
           logCounter++;
-          updateDisplayLog("Place next peace for measurment.", true);
+          updateDisplayLog("Place next peace...", true);
           beep("done");
         }
         else

@@ -70,12 +70,14 @@ void startTrickler()
   }
   updateDisplayLog(String("Profile: " + String(config.profile) + " selected!"));
 
+  serialFlush();
   startMeasurment();
 }
 
 void stopTrickler()
 {
   stopMeasurment();
+  serialFlush();
   lv_label_set_text(ui_LabelTricklerStart, "Start");
   lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_label_set_text(ui_LabelTricklerWeight, "-.-");
