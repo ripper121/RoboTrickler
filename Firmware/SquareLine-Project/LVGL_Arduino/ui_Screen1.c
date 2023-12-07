@@ -325,7 +325,10 @@ lv_obj_set_width( ui_LabelMessages, lv_pct(100));
 lv_obj_set_height( ui_LabelMessages, lv_pct(60));
 lv_obj_set_align( ui_LabelMessages, LV_ALIGN_TOP_MID );
 lv_label_set_text(ui_LabelMessages,"Test Info");
+lv_obj_set_style_text_color(ui_LabelMessages, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT );
+lv_obj_set_style_text_opa(ui_LabelMessages, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 lv_obj_set_style_text_align(ui_LabelMessages, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
+lv_obj_set_style_text_font(ui_LabelMessages, &lv_font_montserrat_32, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 lv_obj_add_event_cb(ui_ButtonTricklerStart, ui_event_ButtonTricklerStart, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonNNN, ui_event_ButtonNNN, LV_EVENT_ALL, NULL);

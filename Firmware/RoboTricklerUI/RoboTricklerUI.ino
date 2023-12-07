@@ -542,7 +542,7 @@ void loop()
           if ((weight >= (targetWeight + (targetWeight * config.alarmThreshold))) && (config.alarmThreshold > 0))
           {
             // Send Alarm
-            messageBox("!Overtrickel!\n!Check Weight!");
+            messageBox("!Over trickle!\n!Check Weight!");
             beep("done");
             delay(250);
             beep("done");
