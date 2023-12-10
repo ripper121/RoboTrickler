@@ -311,24 +311,6 @@ void setup()
     getProfileList();
   }
 
-  if (String(config.mode).indexOf("trickler") != -1)
-  {
-    DEBUG_PRINTLN("config.mode == trickler");
-    updateDisplayLog("Profile:" + String(config.profile));
-    measurementCount = config.profile_measurements[0];
-  }
-  else if (String(config.mode).indexOf("logger") != -1)
-  {
-    DEBUG_PRINTLN("config.mode == logger");
-    updateDisplayLog("Logger Mode");
-    measurementCount = config.log_measurements;
-  }
-  else
-  {
-    DEBUG_PRINTLN("config.mode == undefined");
-    updateDisplayLog("Mode undefined!");
-  }
-
   Serial1.begin(config.scale_baud, SERIAL_8N1, IIC_SCL, IIC_SDA);
 
   initUpdate();
