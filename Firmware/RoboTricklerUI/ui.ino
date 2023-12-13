@@ -239,7 +239,7 @@ void displayInit()
 
   tft.init();
   tft.setRotation(0);
-  tft.initDMA();
+  tft.initDMA(true);
 
   /*Set the touchscreen calibration data,
     the actual data for your display can be acquired using

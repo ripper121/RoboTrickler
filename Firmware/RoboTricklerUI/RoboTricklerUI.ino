@@ -62,8 +62,6 @@ struct Config
   int scale_baud;
   char profile[32];
   int log_measurements;
-  float tolerance;
-  float alarmThreshold;
   int microsteps;
 
   float pidThreshold;
@@ -72,6 +70,8 @@ struct Config
   int pidSpeed;
   int pidConMeasurements;
   int pidAggMeasurements;
+  float pidTolerance;
+  float pidAlarmThreshold;
   bool pidOscillate;
   bool pidReverse;
   byte pidConsNum;
@@ -85,9 +85,11 @@ struct Config
 
   byte profile_num[32];
   float profile_weight[32];
+  float profile_tolerance;
+  float profile_alarmThreshold;
+  int profile_measurements[32];
   long profile_steps[32];
   int profile_speed[32];
-  int profile_measurements[32];
   bool profile_oscillate[32];
   bool profile_reverse[32];
   int profile_count;
@@ -108,6 +110,8 @@ A4988 stepper2(MOTOR_STEPS, I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, I2S_Y_DISABLE_P
 
 #define MAX_TARGET_WEIGHT 100
 float weight = 0.0;
+float tolerance;
+float alarmThreshold;
 float targetWeight = 0.0;
 float lastTargetWeight = 0.0;
 float lastWeight = 0;
@@ -493,9 +497,9 @@ void loop()
       if (timeout)
       {
         updateDisplayLog("Scale Data Timeout!");
-        delay(1000);
+        delay(500);
         updateDisplayLog("Check RS232 Wiring & Settings!");
-        delay(1000);
+        delay(500);
         newData = false;
       }
     }
@@ -510,10 +514,10 @@ void loop()
         DEBUG_PRINT("Weight: ");
         DEBUG_PRINTLN(weight);
         DEBUG_PRINT("TargetWeight: ");
-        DEBUG_PRINTLN(String(((targetWeight - (targetWeight * config.tolerance))), 3));
+        DEBUG_PRINTLN(String((targetWeight - tolerance), 3));
         DEBUG_PRINT("alarmThreshold: ");
-        DEBUG_PRINTLN(String((targetWeight + (targetWeight * config.alarmThreshold)), 3));
-        if ((weight >= ((targetWeight - (targetWeight * config.tolerance)))) && (weight >= 0))
+        DEBUG_PRINTLN(String((targetWeight + alarmThreshold), 3));
+        if ((weight >= (targetWeight - tolerance)) && (weight >= 0))
         {
           if (!finished)
           {
@@ -521,16 +525,16 @@ void loop()
             updateDisplayLog("Done :)", true);
           }
 
-          if ((weight >= (targetWeight + (targetWeight * config.alarmThreshold))) && (config.alarmThreshold > 0))
+          if ((weight >= (targetWeight + alarmThreshold)) && (alarmThreshold > 0))
           {
             // Send Alarm
-            messageBox("!Over trickle!\n!Check Weight!");
+            messageBox("!Over trickle!\n!Check weight!");
             beep("done");
             delay(250);
             beep("done");
             delay(250);
             beep("done");
-            
+
             serialFlush();
             stopTrickler();
           }
@@ -539,7 +543,7 @@ void loop()
           finished = true;
         }
 
-        if (weight < ((targetWeight - (targetWeight * config.tolerance))))
+        if (weight < (targetWeight - tolerance))
         {
           finished = false;
         }
@@ -557,6 +561,9 @@ void loop()
             byte stepperNum = 1;
             int stepperSpeedOld = 0;
             Input = weight;
+
+            alarmThreshold = config.pidAlarmThreshold;
+            tolerance = config.pidTolerance;
 
             float gap = abs(targetWeight - Input); // distance away from setpoint
 
@@ -594,6 +601,8 @@ void loop()
             DEBUG_PRINTLN("Profile Running");
             int stepperSpeedOld = 0;
             int profileStep = 0;
+            alarmThreshold = config.profile_alarmThreshold;
+            tolerance = config.profile_tolerance;
             // Serial.print("abs: ");
             // Serial.println(abs(weight - targetWeight), 3);
             // Serial.print("profile_weight: ");

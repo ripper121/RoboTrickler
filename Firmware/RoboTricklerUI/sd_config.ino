@@ -34,6 +34,8 @@ bool readProfile(const char *filename, Config &config)
     config.pidSpeed = doc["speed"] | 200;
     config.pidConMeasurements = doc["conMeasurements"] | 2;
     config.pidAggMeasurements = doc["aggMeasurements"] | 25;
+    config.pidTolerance = doc["tolerance"] | 0.000;
+    config.pidAlarmThreshold = doc["alarmThreshold"] | 1.000;
     config.pidConsNum = doc["consNum"] | 1;
     config.pidConsKp = doc["consKp"] | 1.00;
     config.pidConsKi = doc["consKi"] | 0.05;
@@ -52,6 +54,11 @@ bool readProfile(const char *filename, Config &config)
     for (JsonPair item : doc.as<JsonObject>())
     {
       int item_key = ((String(item.key().c_str()).toInt()) - 1);
+      if (item_key == 0)
+      {
+        config.profile_tolerance = item.value()["tolerance"] | 0.000;
+        config.profile_alarmThreshold = item.value()["alarmThreshold"] | 1.000;
+      }
       config.profile_num[item_key] = item.value()["number"] | 1;
       config.profile_weight[item_key] = item.value()["weight"];
       config.profile_steps[item_key] = item.value()["steps"];
@@ -132,15 +139,11 @@ int loadConfiguration(const char *filename, Config &config)
 
   config.log_measurements = doc["log_Measurements"] | 20;
 
-  config.tolerance = doc["tolerance"] | 0.00;
-
-  config.alarmThreshold = doc["alarm_threshold"] | 0.00;
-
   config.microsteps = doc["microsteps"] | 1;
 
-  strlcpy(config.beeper,               // <- destination
-    doc["beeper"] | "done", // <- source
-    sizeof(config.beeper));      // <- destination's capacity
+  strlcpy(config.beeper,          // <- destination
+          doc["beeper"] | "done", // <- source
+          sizeof(config.beeper)); // <- destination's capacity
 
   config.debugLog = doc["debug_log"] | false;
 
@@ -202,8 +205,9 @@ void getProfileList()
   profileListCount = profileCounter;
   DEBUG_PRINT("  profileListCount: ");
   DEBUG_PRINTLN(profileListCount);
-  for(int i=0;i<profileListCount;i++){
-      DEBUG_PRINTLN(profileListBuff[i] );
+  for (int i = 0; i < profileListCount; i++)
+  {
+    DEBUG_PRINTLN(profileListBuff[i]);
   }
 }
 
@@ -234,8 +238,6 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
   doc["log_Measurements"] = config.log_measurements;
-  doc["tolerance"] = config.tolerance;
-  doc["alarm_threshold"] = config.alarmThreshold;
   doc["microsteps"] = config.microsteps;
   doc["beeper"] = config.beeper;
   doc["debug_log"] = config.debugLog;
