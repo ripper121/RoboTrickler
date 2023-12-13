@@ -46,7 +46,8 @@
          border: 1px solid #ccc;
       }
 
-      label {
+      label,
+      p {
          margin-bottom: 5px;
          font-weight: bold;
       }
@@ -70,43 +71,69 @@
          resize: none;
          /* Add this line to prevent resizing */
       }
+
+      div {
+         margin: auto;
+         text-align: center;
+      }
+
+      body {
+         background-color: #222;
+      }
    </style>
 </head>
 
 <body>
-   <center>
-      <div class="card">
-         <h1>Profile Generator</h1>
-         <form id="profileForm">
+   <div class="card">
+      <h1>Profile Generator</h1>
+      <form id="profileForm">
+         <fieldset>
+            <legend>Profile Settings</legend>
+            <label for="weightInput">Weight of Calibration run (3600 Steps):</label>
+            <input type="number" id="weightInput" step="0.0001" min="0" value="0.100"><br>
+
+            <label for="speedInput">Stepper Speed rpm:</label>
+            <input type="number" id="speedInput" step="1" min="5" value="200"><br>
+
+            <label for="calcToleranceInput">Calculation tolerance in %:</label>
+            <input type="number" id="calcToleranceInput" step="1" min="1" max="100" value="65"><br>
+
+            <label for="alarmThresholdInput">Threshold for over Trickle Alarm in Unit:</label>
+            <input type="number" id="alarmThresholdInput" step="0.0001" min="0" value="0.010"><br>
+
+            <label for="toleranceInput">Target weight tolerance in Unit:</label>
+            <input type="number" id="toleranceInput" step="0.0001" min="0" value="0.000"><br>
+
+            <label for="measurementsInput">Same measurements for next step:</label>
+            <input type="number" id="measurementsInput" step="1" min="1" value="5"><br>
+
             <fieldset>
-               <legend>Profile Settings</legend>
-               <label for="weightInput">Weight for 10 Rotations (3600 steps):</label>
-               <input type="number" id="weightInput" step="0.0001" min="0" value="0.1"><br>
-
-               <label for="speedInput">Stepper Speed:</label>
-               <input type="number" id="speedInput" step="1" min="5" value="200"><br>
-
-               <label for="oscillateCheckbox">Oscillate Trickler:</label>
+               <legend>Trickler</legend>
+               <label for="oscillateCheckbox">Oscillate:</label>
                <input type="checkbox" id="oscillateCheckbox"><br>
 
-               <label for="reverseCheckbox">Reverse Trickler:</label>
+               <label for="reverseCheckbox">Reverse:</label>
                <input type="checkbox" id="reverseCheckbox"><br>
+            </fieldset>
 
+            <fieldset>
+               <legend>Unit</legend>
                <label for="gramRadio">Gram:</label>
                <input type="radio" id="gramRadio" name="weightUnit" value="Gram" checked><br>
 
                <label for="grainRadio">Grain:</label>
                <input type="radio" id="grainRadio" name="weightUnit" value="Grain"><br>
             </fieldset>
-         </form>
+         </fieldset>
+      </form>
 
-         <button id="generateButton" class="button">Generate Profile</button><br><br>
-         <h2>Generated Profile:</h2>
-         <textarea id="profileOutput" rows="20" cols="40"></textarea><br>
-         <button id="download-btn" class="button">Download</button><br><br>
-         <button onClick='javascript:history.back()' class="button">Back</button>
-      </div>
-   </center>
+      <button id="generateButton" class="button">Generate Profile</button><br><br>
+      <h2>Generated Profile:</h2>
+      <textarea id="profileOutput" rows="20" cols="40"></textarea><br>
+      <button id="download-btn" class="button">Download</button><br><br>
+      <button onClick='javascript:history.back()' class="button">Back</button>
+   </div>
+
 
    <script>
       var profileJSON;
@@ -117,6 +144,13 @@
          const oscillate = document.getElementById("oscillateCheckbox").checked; // Get the checkbox value
          const reverse = document.getElementById("reverseCheckbox").checked; // Get the checkbox value
          const weightUnit = document.querySelector('input[name="weightUnit"]:checked').value;
+         const tolerance = parseFloat(document.getElementById("toleranceInput").value);
+         const alarmThreshold = parseFloat(document.getElementById("alarmThresholdInput").value);
+         const calcTolerance = parseFloat(document.getElementById("calcToleranceInput").value);
+         var measurement = parseFloat(document.getElementById("measurementsInput").value);
+
+
+
 
          if (!isNaN(measuredWeight)) {
             const profile = {};
@@ -134,26 +168,41 @@
 
             weights = weights.map(weight => parseFloat(weight.toFixed(3)));
 
-            var measurements = 5;
+            var measurements = measurement;
 
             // Loop through each weight value and calculate the profile
             for (let i = 0; i < weights.length; i++) {
                const weight = weights[i];
-               var steps = Math.round((weight / measuredWeight) * 1800);
-               if (steps < 5)
-                  steps = 5;
+               var steps = Math.round((weight / measuredWeight) * ((3600 / 100) * calcTolerance));
+               if (steps < 10)
+                  steps = 10;
+               if (i == weights.length - 3)
+                  measurements = measurement * 2;
                if (i == weights.length - 2)
-                  measurements = 15;
+                  measurements = measurement * 3;
                if (i == weights.length - 1)
-                  measurements = 20;
-               profile[i + 1] = {
-                  weight: weight,
-                  steps: steps,
-                  speed: speed,
-                  measurements: measurements,
-                  oscillate: oscillate,
-                  reverse: reverse
-               };
+                  measurements = measurement * 4;
+
+               if (i == 0)
+                  profile[i + 1] = {
+                     weight: weight,
+                     tolerance: tolerance,
+                     alarmThreshold: alarmThreshold,
+                     steps: steps,
+                     speed: speed,
+                     measurements: measurements,
+                     oscillate: oscillate,
+                     reverse: reverse
+                  };
+               else
+                  profile[i + 1] = {
+                     weight: weight,
+                     steps: steps,
+                     speed: speed,
+                     measurements: measurements,
+                     oscillate: oscillate,
+                     reverse: reverse
+                  };
             }
 
             // Convert the profile object to JSON format

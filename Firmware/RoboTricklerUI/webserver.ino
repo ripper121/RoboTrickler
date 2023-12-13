@@ -386,6 +386,10 @@ void makeHttpsGetRequest(String serverPath)
       DEBUG_PRINTLN(httpResponseCode);
       String payload = http.getString();
       DEBUG_PRINTLN(payload);
+      if (String(FW_VERSION).indexOf(payload) == -1)
+      {
+        messageBox(String("New firmware available:\n\nv" + payload + "\n\nCheck: https://robo-trickler.de").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFFFFFF));
+      }
     }
     else
     {

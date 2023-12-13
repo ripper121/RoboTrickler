@@ -15,6 +15,8 @@
 #include <Update.h>
 #include <esp_task_wdt.h>
 #include <soc/rtc_wdt.h>
+#define FW_VERSION 2.01
+
 // 3 seconds WDT
 #define WDT_TIMEOUT 10
 
@@ -40,7 +42,7 @@ static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[LV_HOR_RES_MAX * LV_VER_RES_MAX / 10];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 
-#define FW_VERSION 2.00
+
 
 SPIClass *SDspi = NULL;
 
@@ -137,72 +139,6 @@ String infoMessagBuff[14];
 String profileListBuff[32];
 byte profileListCount;
 
-void beep(String beepMode)
-{
-
-  if ((String(config.beeper).indexOf("done") != -1) && (String(beepMode).indexOf("done") != -1))
-    stepper1.beep(500);
-  if ((String(config.beeper).indexOf("button") != -1) && (String(beepMode).indexOf("button") != -1))
-    stepper1.beep(100);
-
-  if ((String(config.beeper).indexOf("both") != -1) && (String(beepMode).indexOf("done") != -1))
-    stepper1.beep(500);
-  if ((String(config.beeper).indexOf("both") != -1) && (String(beepMode).indexOf("button") != -1))
-    stepper1.beep(100);
-}
-
-bool serialWait()
-{
-  bool timeout = true;
-  for (int i = 0; i < 5000; i++)
-  {
-    if (Serial1.available())
-    {
-      timeout = false;
-      break;
-    }
-    else
-    {
-      delay(1);
-    }
-  }
-  return timeout;
-}
-
-IRAM_ATTR void lvgl_disp_task(void *parg)
-{
-  while (1)
-  {
-    lv_timer_handler();
-    // esp_task_wdt_reset();
-  }
-}
-
-IRAM_ATTR void disp_task_init(void)
-{
-  xTaskCreatePinnedToCore(lvgl_disp_task,  // task
-                          "lvglTask",      // name for task
-                          DISP_TASK_STACK, // size of task stack
-                          NULL,            // parameters
-                          DISP_TASK_PRO,   // priority
-                          // nullptr,
-                          &lv_disp_tcb,
-                          DISP_TASK_CORE // must run the task on same core
-                                         // core
-  );
-}
-
-void insertLine(String newLine)
-{
-  // Shift all lines up by one position
-  for (int i = 0; i < (sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1; i++)
-  {
-    infoMessagBuff[i] = infoMessagBuff[i + 1];
-  }
-  // Add new line at the bottom
-  infoMessagBuff[(sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1] = newLine;
-}
-
 void updateDisplayLog(String logOutput, bool noLog = false)
 {
   lv_label_set_text(ui_LabelInfo, logOutput.c_str());
@@ -223,133 +159,9 @@ void updateDisplayLog(String logOutput, bool noLog = false)
   DEBUG_PRINT(logOutput);
 }
 
-void serialFlush()
-{
-  // flush TX
-  Serial1.flush();
-  // flush RX
-  while (Serial1.available())
-  {
-    Serial1.read();
-  }
-}
-
 void setup()
 {
-  Serial.begin(115200); /* prepare for possible serial debug */
-
-  // esp_task_wdt_init(WDT_TIMEOUT, true); // enable panic so ESP32 restarts
-  // esp_task_wdt_add(NULL);               // add current thread to WDT watch
-  // esp_task_wdt_add(lv_disp_tcb);
-
-  rtc_wdt_protect_off();
-  rtc_wdt_disable();
-
-  displayInit();
-  ui_init();
-  disp_task_init();
-
-  DEBUG_PRINTLN("Display Init");
-
-  updateDisplayLog(String("Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com").c_str());
-
-  initStepper();
-
-  SDspi = new SPIClass(HSPI);
-  SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
-  if (!SD.begin(GRBL_SPI_SS, *SDspi))
-  {
-    updateDisplayLog("Card Mount Failed");
-    delay(5000);
-    ESP.restart();
-  }
-  else
-  {
-    uint8_t cardType = SD.cardType();
-
-    if (cardType == CARD_NONE)
-    {
-      updateDisplayLog("No SD card attached");
-      delay(5000);
-      ESP.restart();
-    }
-    else
-    {
-      DEBUG_PRINT("SD Card Type: ");
-      if (cardType == CARD_MMC)
-      {
-        DEBUG_PRINTLN("MMC");
-      }
-      else if (cardType == CARD_SD)
-      {
-        DEBUG_PRINTLN("SDSC");
-      }
-      else if (cardType == CARD_SDHC)
-      {
-        DEBUG_PRINTLN("SDHC");
-      }
-      else
-      {
-        DEBUG_PRINTLN("UNKNOWN");
-        updateDisplayLog("CardType UNKNOWN");
-      }
-
-      uint64_t cardSize = SD.cardSize() / (1024 * 1024);
-      DEBUG_PRINT("SD Card Size: ");
-      DEBUG_PRINT(cardSize);
-      DEBUG_PRINTLN("MB");
-    }
-  }
-
-  int configState = loadConfiguration("/config.txt", config);
-  if (configState == 1)
-  {
-    updateDisplayLog("config.txt deserializeJson() failed");
-  }
-  else if (configState == 2)
-  {
-    updateDisplayLog("profile.txt deserializeJson() failed");
-  }
-  else
-  {
-    getProfileList();
-  }
-
-  Serial1.begin(config.scale_baud, SERIAL_8N1, IIC_SCL, IIC_SDA);
-
-  initUpdate();
-
-  initWebServer();
-
-  if (WIFI_AKTIVE)
-  {
-    updateDisplayLog("WIFI:" + WiFi.localIP().toString());
-  }
-
-  preferences.begin("app-settings", false);
-  targetWeight = preferences.getFloat("targetWeight", 0.0);
-  if (targetWeight < 0)
-  {
-    targetWeight = 0.0;
-    preferences.putFloat("targetWeight", targetWeight);
-  }
-  if (targetWeight > MAX_TARGET_WEIGHT)
-  {
-    targetWeight = MAX_TARGET_WEIGHT;
-    preferences.putFloat("targetWeight", targetWeight);
-  }
-
-  // initialize the variables we're linked to
-  Input = 0;
-  roboPID.SetOutputLimits(config.pidStepMin, config.pidStepMax);
-  // turn the PID on
-  roboPID.SetMode(roboPID.Control::automatic);
-
-  lv_label_set_text(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com").c_str());
-  lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
-  lv_label_set_text(ui_LabelProfile, config.profile);
-
-  DEBUG_PRINTLN("Setup done.");
+  initSetup();
 }
 
 void loop()
@@ -517,7 +329,9 @@ void loop()
         DEBUG_PRINTLN(String((targetWeight - tolerance), 3));
         DEBUG_PRINT("alarmThreshold: ");
         DEBUG_PRINTLN(String((targetWeight + alarmThreshold), 3));
-        if ((weight >= (targetWeight - tolerance)) && (weight >= 0))
+
+        // adding 0.00001 to weight, otherwise it would always go over the targetWeight
+        if (((weight + 0.0001) >= (targetWeight - tolerance)) && (weight >= 0))
         {
           if (!finished)
           {
@@ -528,7 +342,7 @@ void loop()
           if ((weight >= (targetWeight + alarmThreshold)) && (alarmThreshold > 0))
           {
             // Send Alarm
-            messageBox("!Over trickle!\n!Check weight!");
+            messageBox("!Over trickle!\n!Check weight!", &lv_font_montserrat_32, lv_color_hex(0xFF0000));
             beep("done");
             delay(250);
             beep("done");
@@ -543,7 +357,7 @@ void loop()
           finished = true;
         }
 
-        if (weight < (targetWeight - tolerance))
+        if ((weight + 0.0001) < (targetWeight - tolerance))
         {
           finished = false;
         }

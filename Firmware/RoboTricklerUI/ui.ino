@@ -184,8 +184,10 @@ void message_event_cb(lv_event_t *e)
   lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
 }
 
-void messageBox(String message)
-{
+void messageBox(String message, const lv_font_t * font,lv_color_t color)
+{  
+  lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN| LV_STATE_DEFAULT);
+  lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN | LV_STATE_DEFAULT );
   lv_label_set_text(ui_LabelMessages, message.c_str());
   lv_obj_clear_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
 }
@@ -239,7 +241,7 @@ void displayInit()
 
   tft.init();
   tft.setRotation(0);
-  tft.initDMA(true);
+  tft.initDMA();
 
   /*Set the touchscreen calibration data,
     the actual data for your display can be acquired using
