@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <link rel="icon" type="image/x-icon" href="./resources/favicon.ico">
     <title>Configuration Page</title>
     <style>
         .card {
@@ -26,6 +27,7 @@
             font-size: 16px;
             margin: 10px 0;
             cursor: pointer;
+            width: 100%;
         }
 
         input[type="text"],
@@ -155,7 +157,8 @@
         </form>
         <h2>Generated config.txt:</h2>
         <textarea id="jsonOutput"></textarea>
-        <button id="downloadButton" class="button">Download</button><br><br>
+        <button id="downloadButton" class="button">Download</button>
+        <button id="saveButton" class="button">Save</button><br>
         <button onClick='javascript:history.back()' class="button">Back</button>
 
     </div>
@@ -244,6 +247,53 @@
 
             // Revoke the URL after the download
             URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('saveButton').addEventListener('click', function () {
+            var content = jsonOutput.value;
+            httpPost(content);
+        });
+
+        function httpGetProcessRequest() {
+            if (xmlHttp.readyState == 4) {
+                if (xmlHttp.status == 200) {
+                    document.getElementById('jsonOutput').value = xmlHttp.responseText;
+                    jsonToForm();
+                }
+            }
+        }
+        function httpGet(theUrl) {
+            xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = httpGetProcessRequest;
+            xmlHttp.open("GET", theUrl, true);
+            xmlHttp.send(null);
+        }
+
+        //post
+        function httpPostProcessRequest() {
+            if (xmlHttp.readyState == 4) {
+                if (xmlHttp.status == 200)
+                    alert("Config Saved!\nPlease reboot the Robo-Trickler to load new config.txt");
+                else
+                    alert("ERROR[" + xmlHttp.status + "]: " + xmlHttp.responseText);
+            }
+        }
+        function httpPost(data) {
+            xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = httpPostProcessRequest;
+            var formData = new FormData();
+            formData.append("data", new Blob([data], { type: "text/json" }), "/config.txt");
+            xmlHttp.open("POST", "/resources/edit");
+            xmlHttp.send(formData);
+        }
+
+        window.addEventListener("load", (event) => {
+            if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
+                document.getElementById("saveButton").style.display = "none";
+            }else{
+                httpGet("/config.txt");
+                document.getElementById("downloadButton").style.display = "none";
+            }
         });
     </script>
 </body>

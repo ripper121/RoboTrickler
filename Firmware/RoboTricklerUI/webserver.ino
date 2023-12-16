@@ -334,7 +334,7 @@ void handleSetValue()
   {
     if (server.argName(i) == "targetWeight")
     {
-      if (server.arg(i).toFloat() > 0 && server.arg(i).toFloat() < 100)
+      if (server.arg(i).toFloat() > 0 && server.arg(i).toFloat() < MAX_TARGET_WEIGHT)
       {
         targetWeight = server.arg(i).toFloat();
         // labelBanner.drawButton(false, String(targetWeight, 3));
