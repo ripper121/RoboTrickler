@@ -15,7 +15,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>
 #include <soc/rtc_wdt.h>
-#define FW_VERSION 2.01
+#define FW_VERSION 2.02
 
 // 3 seconds WDT
 #define WDT_TIMEOUT 10
@@ -515,12 +515,6 @@ void loop()
 
   if (WIFI_AKTIVE && !running)
   {
-
-    if (WiFi.status() == WL_CONNECTED)
-    {
-      server.handleClient();
-    }
-
     // if WiFi is down, try reconnecting every wifiInterval seconds
     if ((WiFi.status() != WL_CONNECTED) && (millis() - wifiPreviousMillis >= wifiInterval))
     {

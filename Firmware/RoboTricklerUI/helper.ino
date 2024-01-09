@@ -16,7 +16,11 @@ IRAM_ATTR void lvgl_disp_task(void *parg)
 {
     while (1)
     {
-        lv_timer_handler();
+        lv_timer_handler();        
+        if (WiFi.status() == WL_CONNECTED)
+        {
+            server.handleClient();
+        }
         // esp_task_wdt_reset();
     }
 }
