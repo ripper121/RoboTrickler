@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <link rel="icon" type="image/x-icon" href="./resources/favicon.ico">
+   <title>Profile Generator</title>
+   <style>
+      #card {
+         max-width: 550px;
+         min-height: 250px;
+         background: #02b875;
+         padding: 30px;
+         box-sizing: border-box;
+         color: #FFF;
+         margin: 20px auto;
+         box-shadow: 0px 2px 18px -4px rgba(0, 0, 0, 0.75);
+      }
+
+      .button {
+         background-color: #1c87c9;
+         border: none;
+         color: white;
+         padding: 20px 20px;
+         text-align: center;
+         text-decoration: none;
+         display: inline-block;
+         font-size: 16px;
+         margin: 10px 0;
+         cursor: pointer;
+         width: 100%;
+      }
+
+      .button:hover {
+         box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+      }
+
+      input[type="text"],
+      input[type="password"],
+      input[type="number"] {
+         padding: 10px;
+         margin: 5px 0 15px 0;
+         border-radius: 4px;
+         border: 1px solid #ccc;
+      }
+
+      input {
+         flex: 1;
+         /* Input takes up remaining space */
+      }
+
+      select {
+         width: 96%;
+         padding: 10px;
+         margin: 5px 0 15px 0;
+         border-radius: 4px;
+         border: 1px solid #ccc;
+      }
+
+      label,
+      p {
+         margin-bottom: 5px;
+         font-weight: bold;
+         flex: 0 0 50%;
+         /* Adjust as needed */
+         margin-right: 0px;
+         /* Spacing between label and input */
+         text-align: left;
+      }
+
+      fieldset {
+         background: #027353;
+         border-radius: 8px;
+         padding: 15px;
+         margin-bottom: 20px;
+      }
+
+      legend {
+         color: #FFD700;
+         font-weight: bold;
+         margin-bottom: 10px;
+      }
+
+      #jsonOutput {
+         width: 95%;
+         height: 270px;
+         resize: none;
+         /* Add this line to prevent resizing */
+      }
+
+      div {
+         margin: auto;
+         text-align: center;
+      }
+
+      body {
+         background-color: #222;
+      }
+
+      .data-group {
+         margin-bottom: 0px;
+      }
+
+      .label-input-pair {
+         display: flex;
+         align-items: center;
+         margin-bottom: 0px;
+      }
+   </style>
+</head>
+
+<body>
+   <div id="card">
+      <fieldset id="profileContainer" style="display: none;">
+         <legend>Profile</legend>
+         <div id="container"></div>
+      </fieldset>
+      <fieldset>
+         <legend>Profile</legend>
+         <textarea id="jsonInput" placeholder="Paste or Drag&Drop Profile here"
+            style="width: 100%; height: 250px;"></textarea>
+
+         <label for="profileName">Profile Name:</label>
+         <input type="text" id="profileName" value="my_profile_name" maxlength="16" required
+            title="Filename must not contain < > : \" / \\ | ? *"><br>
+         <button id="download-btn" class="button">Download</button><br><br>
+         <button onClick='javascript:history.back()' class="button">Back</button>
+      </fieldset>
+   </div>
+
+
+   <script>
+      function generateFormFromJSON(jsonData) {
+         var container = document.getElementById('container');
+         container.innerHTML = ''; // Clear existing content
+
+         Object.keys(jsonData).forEach(function (key) {
+            var dataObject = jsonData[key];
+            var fieldset = document.createElement('fieldset');
+            container.appendChild(fieldset);
+            var legend = document.createElement('legend');
+            legend.textContent = 'Profile-Step ' + key;
+            fieldset.appendChild(legend);
+
+            Object.keys(dataObject).forEach(function (property) {
+               var pairDiv = document.createElement('div');
+               pairDiv.className = 'label-input-pair';
+               fieldset.appendChild(pairDiv);
+
+               var label = document.createElement('label');
+               label.htmlFor = key + '-' + property;
+               label.textContent = property + ': ';
+               pairDiv.appendChild(label);
+
+               if (typeof dataObject[property] === 'boolean') {
+                  // Create a checkbox for boolean values
+                  var input = document.createElement('input');
+                  input.type = 'checkbox';
+                  input.checked = dataObject[property];
+               } else {
+                  // Create a number input for non-boolean values
+                  var input = document.createElement('input');
+                  input.type = 'number';
+                  input.value = dataObject[property];
+               }
+
+               input.id = key + '-' + property;
+               input.name = property;
+               pairDiv.appendChild(input);
+
+               // Add event listener to update JSON when input changes
+               input.addEventListener('input', updateJSON);
+            });
+         });
+         document.getElementById("profileContainer").style.display = "block";
+      }
+
+      function updateJSON() {
+         var inputs = document.querySelectorAll('#container input');
+         var newJSONData = {};
+         inputs.forEach(function (input) {
+            var [key, property] = input.id.split('-');
+            if (!newJSONData[key]) {
+               newJSONData[key] = {};
+            }
+            if (input.type === 'checkbox') {
+               newJSONData[key][property] = input.checked;
+            } else {
+               newJSONData[key][property] = parseFloat(input.value);
+            }
+         });
+         document.getElementById('jsonInput').value = JSON.stringify(newJSONData, null, 4);
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+         var textArea = document.getElementById('jsonInput');
+         textArea.addEventListener('input', function () {
+            try {
+               var jsonData = JSON.parse(this.value);
+               generateFormFromJSON(jsonData);
+            } catch (e) {
+               console.error('Invalid JSON:', e);
+            }
+         });
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+         var textArea = document.getElementById('jsonInput');
+
+         // Existing input event listener
+         textArea.addEventListener('input', function () {
+            try {
+               var jsonData = JSON.parse(this.value);
+               generateFormFromJSON(jsonData);
+            } catch (e) {
+               console.error('Invalid JSON:', e);
+            }
+         });
+
+         // Add dragover and drop event listeners
+         textArea.addEventListener('dragover', function (event) {
+            event.preventDefault(); // Necessary to allow drop
+         });
+
+         textArea.addEventListener('drop', function (event) {
+            event.preventDefault(); // Prevent default behavior (like opening the file)
+
+            var files = event.dataTransfer.files;
+            if (files.length > 0) {
+               var reader = new FileReader();
+               reader.onload = function (e) {
+                  textArea.value = e.target.result;
+                  try {
+                     var jsonData = JSON.parse(e.target.result);
+                     generateFormFromJSON(jsonData);
+                  } catch (e) {
+                     console.error('Invalid JSON:', e);
+                  }
+               };
+               reader.readAsText(files[0]);
+               document.getElementById("profileName").value = files[0].name.replace(".txt", "");
+
+            } else {
+               textArea.value = event.dataTransfer.getData('text');
+               try {
+                  var jsonData = JSON.parse(textArea.value);
+                  generateFormFromJSON(jsonData);
+               } catch (e) {
+                  console.error('Invalid JSON:', e);
+               }
+            }
+         });
+      });
+
+
+      function convertToLegalFAT32Filename(filename) {
+         // Truncate if length is more than 255 characters
+         let legalFilename = filename.slice(0, 255);
+
+         // Replace illegal characters
+         legalFilename = legalFilename.replace(/[<>:"/\\|?*]/g, '_');
+
+         // List of reserved names
+         const reservedNames = [
+            "CON", "PRN", "AUX", "NUL",
+            "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+            "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+         ];
+
+         // Check for reserved names
+         const upperFilename = legalFilename.toUpperCase();
+         if (reservedNames.includes(upperFilename) || /^COM\d$/.test(upperFilename) || /^LPT\d$/.test(upperFilename)) {
+            legalFilename += "_file";
+         }
+
+         return legalFilename;
+      }
+
+      document.getElementById("download-btn").addEventListener("click", function () {
+         const fileName = document.getElementById('profileName').value;
+         // Get the content from the textarea
+         var text = document.getElementById('jsonInput').value;
+
+         // Convert the content to a Blob
+         var blob = new Blob([text], { type: 'text/plain' });
+
+         // Create a download link
+         var downloadLink = document.createElement('a');
+         downloadLink.href = window.URL.createObjectURL(blob);
+         downloadLink.download = convertToLegalFAT32Filename(fileName.toLowerCase() + '.txt');
+
+         // Append the link to the body, click it, and then remove it
+         document.body.appendChild(downloadLink);
+         downloadLink.click();
+         document.body.removeChild(downloadLink);
+      }, false);
+   </script>
+</body>
+
+</html>

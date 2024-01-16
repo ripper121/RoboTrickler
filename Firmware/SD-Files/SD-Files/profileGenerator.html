@@ -137,6 +137,10 @@
       <button id="generateButton" class="button">Generate Profile</button><br><br>
       <h2>Generated Profile:</h2>
       <textarea id="profileOutput" rows="20" cols="40"></textarea><br>
+
+      <label for="profileName">Profile Name:</label>
+      <input type="text" id="profileName" value="my_profile_name" maxlength="16" required
+         title="Filename must not contain < > : \" / \\ | ? *"><br>
       <button id="download-btn" class="button">Download</button><br><br>
       <button onClick='javascript:history.back()' class="button">Back</button>
    </div>
@@ -213,14 +217,38 @@
             }
 
             // Convert the profile object to JSON format
-            profileJSON = JSON.stringify(profile, null, 3);
+            profileJSON = JSON.stringify(profile, null, 4);
 
 
             document.getElementById("profileOutput").value = profileJSON;
          }
       });
 
+      function convertToLegalFAT32Filename(filename) {
+         // Truncate if length is more than 255 characters
+         let legalFilename = filename.slice(0, 255);
+
+         // Replace illegal characters
+         legalFilename = legalFilename.replace(/[<>:"/\\|?*]/g, '_');
+
+         // List of reserved names
+         const reservedNames = [
+            "CON", "PRN", "AUX", "NUL",
+            "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+            "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+         ];
+
+         // Check for reserved names
+         const upperFilename = legalFilename.toUpperCase();
+         if (reservedNames.includes(upperFilename) || /^COM\d$/.test(upperFilename) || /^LPT\d$/.test(upperFilename)) {
+            legalFilename += "_file";
+         }
+
+         return legalFilename;
+      }
+
       document.getElementById("download-btn").addEventListener("click", function () {
+         const fileName = document.getElementById('profileName').value;
          // Get the content from the textarea
          var text = document.getElementById('profileOutput').value;
 
@@ -230,7 +258,7 @@
          // Create a download link
          var downloadLink = document.createElement('a');
          downloadLink.href = window.URL.createObjectURL(blob);
-         downloadLink.download = 'MyPowderName.txt';
+         downloadLink.download = convertToLegalFAT32Filename(fileName.toLowerCase() + '.txt');
 
          // Append the link to the body, click it, and then remove it
          document.body.appendChild(downloadLink);
