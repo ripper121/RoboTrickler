@@ -337,12 +337,23 @@ void handleSetValue()
       if (server.arg(i).toFloat() > 0 && server.arg(i).toFloat() < MAX_TARGET_WEIGHT)
       {
         targetWeight = server.arg(i).toFloat();
-        // labelBanner.drawButton(false, String(targetWeight, 3));
+        lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
         preferences.putFloat("targetWeight", targetWeight);
       }
     }
   }
   server.send(200, "text/html", "<h3>Value Set.</h3><br><button onClick='javascript:history.back()'>Back</button>");
+}
+
+void handleStart()
+{
+  startTrickler();
+  server.send(200, "text/html", "<h3>Running...</h3><br><button onClick='javascript:history.back()'>Back</button>");
+}
+void handleStop()
+{
+  stopTrickler();
+  server.send(200, "text/html", "<h3>Stopped...</h3><br><button onClick='javascript:history.back()'>Back</button>");
 }
 
 IPAddress stringToIPAddress(const String &ipAddressString)
@@ -469,6 +480,8 @@ void initWebServer()
       server.on("/fwlink", handleNotFound);
       server.on("/reboot", handleReboot);
       server.on("/setValue", handleSetValue);
+      server.on("/start", handleStart);
+      server.on("/stop", handleStop);
       server.on("/fwupdate", HTTP_GET, []()
                 {
         server.sendHeader("Connection", "close");

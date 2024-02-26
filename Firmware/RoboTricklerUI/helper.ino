@@ -1,3 +1,5 @@
+String tempProfile = "";
+
 IRAM_ATTR void disp_task_init(void)
 {
     xTaskCreatePinnedToCore(lvgl_disp_task,  // task
@@ -63,6 +65,52 @@ void insertLine(String newLine)
     }
     // Add new line at the bottom
     infoMessagBuff[(sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1] = newLine;
+}
+
+void startTrickler()
+{
+  strlcpy(config.mode,          // <- destination
+          "trickler",           // <- source
+          sizeof(config.mode)); // <- destination's capacity
+  lv_label_set_text(ui_LabelTricklerStart, "Stop");
+  lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+
+  if (tempProfile != String(config.profile))
+  {
+    readProfile(String("/" + String(config.profile) + ".txt").c_str(), config);
+    saveConfiguration("/config.txt", config);
+    tempProfile = String(config.profile);
+  }
+  updateDisplayLog(String("Profile: " + String(config.profile) + " selected!"));
+
+  serialFlush();
+  startMeasurment();
+}
+
+void stopTrickler()
+{
+  stopMeasurment();
+  serialFlush();
+  lv_label_set_text(ui_LabelTricklerStart, "Start");
+  lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_label_set_text(ui_LabelTricklerWeight, "-.-");
+  lv_label_set_text(ui_LabelInfo, "");
+  lv_label_set_text(ui_LabelLoggerInfo, "");
+}
+
+
+void startMeasurment()
+{
+  running = true;
+  finished = false;
+  beep("button");
+}
+
+void stopMeasurment()
+{
+  running = false;
+  finished = true;
+  beep("button");
 }
 
 void serialFlush()
