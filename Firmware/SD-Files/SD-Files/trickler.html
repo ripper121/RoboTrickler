@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robo-Trickler Interface</title>
+    <link rel="icon" type="image/x-icon" href="./resources/favicon.ico">
+    <link rel="stylesheet" href="./resources/style.css">
+    <style>
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .button {
+            margin: 0 5px;
+            padding: 10px 20px;
+            font-size: 1.5em;
+            flex: 1;
+        }
+
+        .display {
+            text-align: center !important;
+            font-size: 1.5em !important;
+            box-sizing: border-box !important;
+            margin: 0 5px !important;
+        }
+
+        .display-secondary {
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .button-start {
+            background: #28a745;
+            /* Green */
+        }
+
+        .button-stop {
+            background: #dc3545;
+            /* Red */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <fieldset>
+            <legend>Trickler</legend>
+            <fieldset>
+                <legend>Target Weight</legend>
+                <div class="button-row">
+                    <button class="button" onclick="decreaseValue()">-</button>
+                    <input type="number" class="display" id="targetValueDisplay" value="0.000" step="0.001" min="0" max="100">
+                    <button class="button" onclick="increaseValue()">+</button>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Weight</legend>
+                <div class="button-row">
+                    <input type="number" class="display-secondary" id="weightDisplay" value="0.000" readonly>
+                </div>
+            </fieldset>
+            <div class="button-row">
+                <button class="button button-start" id="start-stop-btn" onclick="toggleStartStop()">Start</button>
+            </div>
+        </fieldset>
+        <div class="button-row">
+            <button onClick='javascript:history.back()' class="button">Back</button>
+        </div>
+    </div>
+    <script>
+        targetValue = 0;
+        valueInterval = setInterval(loadValue, 1000);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            clearInterval(valueInterval);
+            
+            fetch("./getTarget")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('targetValueDisplay').innerText = data.value.toFixed(3);
+                })
+                .catch(error => document.getElementById('targetValueDisplay').innerText = (0.000).toFixed(3));
+        });
+
+        function increaseValue() {
+            var value = parseFloat(document.getElementById('targetValueDisplay').value);
+            value = (value + 0.001);
+            document.getElementById('targetValueDisplay').value = value.toFixed(3);
+        }
+
+        function decreaseValue() {
+            var value = parseFloat(document.getElementById('targetValueDisplay').value);
+            value = (value - 0.001);
+            if (value < 0) value = 0.000;
+            document.getElementById('targetValueDisplay').value = value.toFixed(3);
+        }
+
+
+        function toggleStartStop() {
+            var btn = document.getElementById('start-stop-btn');
+            if (btn.innerText === "Start") {
+                btn.innerText = "Stop";
+                btn.classList.remove("button-start");
+                btn.classList.add("button-stop");
+                setTarget();
+                fetch('./start').then(response => response.json());
+                valueInterval = setInterval(loadValue, 1000);
+            } else {
+                btn.innerText = "Start";
+                btn.classList.remove("button-stop");
+                btn.classList.add("button-start");
+                fetch('./stop').then(response => response.json());
+                clearInterval(valueInterval);
+            }
+        }
+
+        function loadValue() {
+            fetch("./getValue")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('weightDisplay').innerText = data.value.toFixed(3);
+                })
+                .catch(error => document.getElementById('weightDisplay').innerText = (0.000).toFixed(3));
+        }
+
+        function setTarget() {
+            fetch('./setValue?targetWeight=' + targetValue)
+                .then(response => response.json());
+        }
+
+    </script>
+</body>
+
+</html>
