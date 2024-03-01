@@ -113,6 +113,19 @@ void stopMeasurment()
   beep("button");
 }
 
+
+void setProfile(int num)
+{
+  strlcpy(config.profile,               // <- destination
+          profileListBuff[num].c_str(), // <- source
+          sizeof(config.profile));      // <- destination's capacity
+
+  DEBUG_PRINT("num: ");
+  DEBUG_PRINTLN(num);
+
+  lv_label_set_text(ui_LabelProfile, config.profile);
+}
+
 void serialFlush()
 {
     // flush TX

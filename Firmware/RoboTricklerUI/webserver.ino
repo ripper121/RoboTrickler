@@ -319,7 +319,7 @@ void handleNotFound()
 void handleAjaxRequest()
 {
   String message = "test";
-  server.send(200, "text/plane", message);
+  server.send(200, "text/plain", message);
 }
 
 void handleReboot()
@@ -328,21 +328,72 @@ void handleReboot()
   ESP.restart();
 }
 
-void handleSetValue()
+void handleGetWeight()
+{
+  server.send(200, "text/plain", String(weight, 3));
+}
+
+void handleGetTarget()
+{
+  server.send(200, "text/plain", String(targetWeight, 3));
+}
+
+void handleSetTarget()
 {
   for (uint8_t i = 0; i < server.args(); i++)
   {
     if (server.argName(i) == "targetWeight")
     {
-      if (server.arg(i).toFloat() > 0 && server.arg(i).toFloat() < MAX_TARGET_WEIGHT)
+      if ((server.arg(i).toFloat() > 0) && (server.arg(i).toFloat() < MAX_TARGET_WEIGHT))
       {
-        targetWeight = server.arg(i).toFloat();
-        lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
-        preferences.putFloat("targetWeight", targetWeight);
+        if (targetWeight != server.arg(i).toFloat())
+        {
+          targetWeight = server.arg(i).toFloat();
+          lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
+          preferences.putFloat("targetWeight", targetWeight);
+        }
       }
     }
   }
   server.send(200, "text/html", "<h3>Value Set.</h3><br><button onClick='javascript:history.back()'>Back</button>");
+}
+
+void handleSetProfile()
+{
+  for (uint8_t i = 0; i < server.args(); i++)
+  {
+    if (server.argName(i) == "profileNumber")
+    {
+      if (server.arg(i).toFloat() >= 0)
+      {
+        setProfile(server.arg(i).toInt());
+      }
+    }
+  }
+  server.send(200, "text/html", "<h3>Value Set.</h3><br><button onClick='javascript:history.back()'>Back</button>");
+}
+
+void handleGetProfile()
+{
+  server.send(200, "text/plain", String(config.profile));
+}
+
+void handleGetProfileList()
+{
+  String message = "{";
+  for (int i = 0; i < profileListCount; i++)
+  {
+    message += "\"";
+    message += String(i);
+    message += "\":\"";
+    message += String(profileListBuff[i]);
+    message += "\"";
+    if (i < profileListCount - 1)
+      message += ",";
+  }
+  message += "}";
+
+  server.send(200, "text/json", message);
 }
 
 void handleStart()
@@ -479,7 +530,12 @@ void initWebServer()
       server.on("/favicon.ico", handleNotFound);
       server.on("/fwlink", handleNotFound);
       server.on("/reboot", handleReboot);
-      server.on("/setValue", handleSetValue);
+      server.on("/getWeight", handleGetWeight);
+      server.on("/setProfile", handleSetProfile);
+      server.on("/getProfile", handleGetProfile);
+      server.on("/getProfileList", handleGetProfileList);
+      server.on("/getTarget", handleGetTarget);      
+      server.on("/setTarget", handleSetTarget);
       server.on("/start", handleStart);
       server.on("/stop", handleStop);
       server.on("/fwupdate", HTTP_GET, []()

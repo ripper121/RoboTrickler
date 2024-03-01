@@ -26,6 +26,7 @@
             font-size: 1.5em !important;
             box-sizing: border-box !important;
             margin: 0 5px !important;
+            min-width: 150px;
         }
 
         .display-secondary {
@@ -49,11 +50,17 @@
     <div class="card">
         <fieldset>
             <legend>Trickler</legend>
+          <fieldset>
+            <legend>Profile</legend>
+              <select id="dropdownMenu" class="dropdown" onchange="setProfile();">
+            </select>
+          </fieldset>
             <fieldset>
                 <legend>Target Weight</legend>
                 <div class="button-row">
                     <button class="button" onclick="decreaseValue()">-</button>
-                    <input type="number" class="display" id="targetValueDisplay" value="0.000" step="0.001" min="0" max="100">
+                    <input type="number" class="display" id="targetValueDisplay" value="0.000" step="0.001" min="0"
+                        max="100">
                     <button class="button" onclick="increaseValue()">+</button>
                 </div>
             </fieldset>
@@ -72,18 +79,54 @@
         </div>
     </div>
     <script>
-        targetValue = 0;
         valueInterval = setInterval(loadValue, 1000);
 
         document.addEventListener('DOMContentLoaded', function () {
             clearInterval(valueInterval);
-            
-            fetch("./getTarget")
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('targetValueDisplay').innerText = data.value.toFixed(3);
+            fetch('/getTarget')
+                .then(response => {
+                    // Check if the request was successful
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text(); // Parse the response body as JSON
                 })
-                .catch(error => document.getElementById('targetValueDisplay').innerText = (0.000).toFixed(3));
+                .then(data => {
+                    console.log(data); // Here you have your data
+                    document.getElementById('targetValueDisplay').value = data;
+                })
+                .catch(error => {
+                    console.error('There was a problem with your fetch operation:', error);
+                    document.getElementById('targetValueDisplay').value = (0.000).toFixed(3);
+                });
+                
+            addTxtFilesToDropdown();
+            fetch('/getProfile')
+                .then(response => {
+                    // Check if the request was successful
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text(); // Parse the response body as JSON
+                })
+                .then(data => {
+                    console.log(data); // Here you have your data
+                    
+                    var objSelect = document.getElementById("dropdownMenu");
+                  
+                    for (var i = 0; i < objSelect.options.length; i++) {
+                      console.log(objSelect.options[i].text);
+                        if (objSelect.options[i].text == data) {
+                            objSelect.options[i].selected = true;
+                            break;
+                        }
+                    }
+                    
+                })
+                .catch(error => {
+                    console.error('There was a problem with your fetch operation:', error);
+                });
+
         });
 
         function increaseValue() {
@@ -106,30 +149,77 @@
                 btn.innerText = "Stop";
                 btn.classList.remove("button-start");
                 btn.classList.add("button-stop");
+                setProfile();
                 setTarget();
-                fetch('./start').then(response => response.json());
+                fetch('./start').then(response => response.text());
                 valueInterval = setInterval(loadValue, 1000);
             } else {
                 btn.innerText = "Start";
                 btn.classList.remove("button-stop");
                 btn.classList.add("button-start");
-                fetch('./stop').then(response => response.json());
+                fetch('./stop').then(response => response.text());
                 clearInterval(valueInterval);
             }
         }
+        
+        function addTxtFilesToDropdown() {
+            fetch('/getProfileList')
+            .then(response => {
+                // Check if the request was successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Parse the response body as JSON
+            })
+            .then(data => {
+                console.log(data); // Here you have your data
+                
+                const dropdown = document.getElementById('dropdownMenu');
+                Object.values(data).forEach((name, index) => {
+                    const option = document.createElement('option');
+                    option.value = index; // Use index + 1 as option value to start counting from 1
+                    option.textContent = name; // The file name without '.txt' extension is already provided in JSON
+                    dropdown.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+            
+
+        }
+        
+        function setProfile() {
+            var profileNumber = parseFloat(document.getElementById('dropdownMenu').value);
+            var url = '/setProfile?profileNumber=' + profileNumber;
+            fetch(url).then(response => response.text());
+        }
+
 
         function loadValue() {
-            fetch("./getValue")
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('weightDisplay').innerText = data.value.toFixed(3);
+            fetch('/getWeight')
+                .then(response => {
+                    // Check if the request was successful
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text(); // Parse the response body as JSON
                 })
-                .catch(error => document.getElementById('weightDisplay').innerText = (0.000).toFixed(3));
+                .then(data => {
+                    console.log(data); // Here you have your data
+                    document.getElementById('weightDisplay').value = data;
+                })
+                .catch(error => {
+                    console.error('There was a problem with your fetch operation:', error);
+                    document.getElementById('weightDisplay').value = (0.000).toFixed(3);
+                    weight = (0.000).toFixed(3);
+                });
         }
 
         function setTarget() {
-            fetch('./setValue?targetWeight=' + targetValue)
-                .then(response => response.json());
+            var targetValue = parseFloat(document.getElementById('targetValueDisplay').value);
+            var url = '/setTarget?targetWeight=' + targetValue;
+            fetch(url).then(response => response.text());
         }
 
     </script>
