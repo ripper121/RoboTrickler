@@ -15,7 +15,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>
 #include <soc/rtc_wdt.h>
-#define FW_VERSION 2.02
+#define FW_VERSION 2.03
 
 // 3 seconds WDT
 #define WDT_TIMEOUT 10
@@ -41,8 +41,6 @@ TaskHandle_t lv_disp_tcb = NULL;
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[LV_HOR_RES_MAX * LV_VER_RES_MAX / 10];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
-
-
 
 SPIClass *SDspi = NULL;
 
@@ -112,6 +110,7 @@ A4988 stepper2(MOTOR_STEPS, I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, I2S_Y_DISABLE_P
 
 #define MAX_TARGET_WEIGHT 100
 float weight = 0.0;
+String unit = "";
 float tolerance;
 float alarmThreshold;
 float targetWeight = 0.0;
@@ -159,6 +158,137 @@ void updateDisplayLog(String logOutput, bool noLog = false)
   DEBUG_PRINT(logOutput);
 }
 
+void readWeight()
+{
+  if (Serial1.available())
+  {
+    char buff[64];
+    Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
+
+    DEBUG_PRINTLN(buff);
+
+    if (config.debugLog)
+    {
+      lv_label_set_text(ui_LabelTricklerWeight, String(buff).c_str());
+      logToFile(SD, String(buff) + "\n");
+    }
+
+    bool negative = false;
+    weight = 0.0;
+
+    int N10P3 = 0;
+    int N10P2 = 0;
+    int N10P1 = 0;
+    int N10N1 = 0;
+    int N10N2 = 0;
+    int N10N3 = 0;
+
+    int separator = String(buff).indexOf('.');
+    DEBUG_PRINT("separator: ");
+    DEBUG_PRINTLN(separator);
+
+    if (separator != -1)
+    {
+      N10P3 = (buff[separator - 3] > 0x30) ? (buff[separator - 3] - 0x30) : 0;
+      N10P2 = (buff[separator - 2] > 0x30) ? (buff[separator - 2] - 0x30) : 0;
+      N10P1 = (buff[separator - 1] > 0x30) ? (buff[separator - 1] - 0x30) : 0;
+      N10N1 = (buff[separator + 1] > 0x30) ? (buff[separator + 1] - 0x30) : 0;
+      N10N2 = (buff[separator + 2] > 0x30) ? (buff[separator + 2] - 0x30) : 0;
+      N10N3 = (buff[separator + 3] > 0x30) ? (buff[separator + 3] - 0x30) : 0;
+
+      weight = N10P3 * 100.0;
+      weight += N10P2 * 10.0;
+      weight += N10P1 * 1.0;
+      weight += (N10N1 == 0) ? (0.0) : (N10N1 / 10.0);
+      weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
+      weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
+
+      if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1)
+      {
+        unit = "g";
+        if (String(buff).indexOf("gn") != -1 || String(buff).indexOf("GN") != -1 || String(buff).indexOf("gr") != -1 || String(buff).indexOf("GR") != -1)
+        {
+          unit = "gn";
+        }
+      }
+
+      if (String(buff).indexOf('-') != -1)
+      {
+        weight = weight * (-1.0);
+      }
+
+      DEBUG_PRINT("Weight Counter: ");
+      DEBUG_PRINTLN(weightCounter);
+
+      if (lastWeight == weight)
+      {
+        if (weightCounter >= measurementCount)
+        {
+          newData = true;
+          weightCounter = 0;
+        }
+        weightCounter++;
+      }
+      else
+      {
+        weightCounter = 0;
+        if (!config.debugLog)
+        {
+          lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, 3) + unit).c_str());
+          lv_label_set_text(ui_LabelLoggerWeight, String(String(weight, 3) + unit).c_str());
+        }
+      }
+      lastWeight = weight;
+
+      DEBUG_PRINT("Scale Read: ");
+      DEBUG_PRINTLN(weight);
+    }
+
+    serialFlush();
+  }
+  else
+  {
+    bool timeout = false;
+    if ((String(config.scale_protocol) == "GUG") || (String(config.scale_protocol) == "GG"))
+    { // GUG only for backwards compatibility
+      Serial1.write(0x1B);
+      Serial1.write(0x70);
+      Serial1.write(0x0D);
+      Serial1.write(0x0A);
+      // The G&G PLC100BC dosent like to be asked to often via RS232, the Values get unstabel, so we wait little more
+      // delay(200);
+      timeout = serialWait();
+    }
+    else if (String(config.scale_protocol) == "AD")
+    {
+      Serial1.write("Q\r\n");
+      timeout = serialWait();
+    }
+    else if (String(config.scale_protocol) == "KERN")
+    {
+      Serial1.write("w");
+      timeout = serialWait();
+    }
+    else if (String(config.scale_protocol) == "SBI")
+    {
+      Serial1.write("P\r\n");
+      timeout = serialWait();
+    }
+    else
+    {
+      timeout = serialWait();
+    }
+    if (timeout)
+    {
+      updateDisplayLog("Scale Data Timeout!");
+      delay(500);
+      updateDisplayLog("Check RS232 Wiring & Settings!");
+      delay(500);
+      newData = false;
+    }
+  }
+}
+
 void setup()
 {
   initSetup();
@@ -167,6 +297,7 @@ void setup()
 void loop()
 {
   static uint32_t writeETime = millis();
+  static uint32_t readWeightTime = millis();
 
   if (millis() - writeETime >= 1000)
   {
@@ -187,134 +318,7 @@ void loop()
 
   if (running)
   {
-    if (Serial1.available())
-    {
-      char buff[64];
-      Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
-
-      DEBUG_PRINTLN(buff);
-
-      if (config.debugLog)
-      {
-        lv_label_set_text(ui_LabelTricklerWeight, String(buff).c_str());
-        logToFile(SD, String(buff) + "\n");
-      }
-
-      bool negative = false;
-      String unit = "";
-      weight = 0.0;
-
-      int N10P3 = 0;
-      int N10P2 = 0;
-      int N10P1 = 0;
-      int N10N1 = 0;
-      int N10N2 = 0;
-      int N10N3 = 0;
-
-      int separator = String(buff).indexOf('.');
-      DEBUG_PRINT("separator: ");
-      DEBUG_PRINTLN(separator);
-
-      if (separator != -1)
-      {
-        N10P3 = (buff[separator - 3] > 0x30) ? (buff[separator - 3] - 0x30) : 0;
-        N10P2 = (buff[separator - 2] > 0x30) ? (buff[separator - 2] - 0x30) : 0;
-        N10P1 = (buff[separator - 1] > 0x30) ? (buff[separator - 1] - 0x30) : 0;
-        N10N1 = (buff[separator + 1] > 0x30) ? (buff[separator + 1] - 0x30) : 0;
-        N10N2 = (buff[separator + 2] > 0x30) ? (buff[separator + 2] - 0x30) : 0;
-        N10N3 = (buff[separator + 3] > 0x30) ? (buff[separator + 3] - 0x30) : 0;
-
-        weight = N10P3 * 100.0;
-        weight += N10P2 * 10.0;
-        weight += N10P1 * 1.0;
-        weight += (N10N1 == 0) ? (0.0) : (N10N1 / 10.0);
-        weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
-        weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
-
-        if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1)
-        {
-          unit = "g";
-          if (String(buff).indexOf("gn") != -1 || String(buff).indexOf("GN") != -1 || String(buff).indexOf("gr") != -1 || String(buff).indexOf("GR") != -1)
-          {
-            unit = "gn";
-          }
-        }
-
-        if (String(buff).indexOf('-') != -1)
-        {
-          weight = weight * (-1.0);
-        }
-
-        DEBUG_PRINT("Weight Counter: ");
-        DEBUG_PRINTLN(weightCounter);
-
-        if (lastWeight == weight)
-        {
-          if (weightCounter >= measurementCount)
-          {
-            newData = true;
-            weightCounter = 0;
-          }
-          weightCounter++;
-        }
-        else
-        {
-          weightCounter = 0;
-          if (!config.debugLog)
-          {
-            lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, 3) + unit).c_str());
-            lv_label_set_text(ui_LabelLoggerWeight, String(String(weight, 3) + unit).c_str());
-          }
-        }
-        lastWeight = weight;
-
-        DEBUG_PRINT("Scale Read: ");
-        DEBUG_PRINTLN(weight);
-      }
-
-      serialFlush();
-    }
-    else
-    {
-      bool timeout = false;
-      if ((String(config.scale_protocol) == "GUG") || (String(config.scale_protocol) == "GG"))
-      { // GUG only for backwards compatibility
-        Serial1.write(0x1B);
-        Serial1.write(0x70);
-        Serial1.write(0x0D);
-        Serial1.write(0x0A);
-        // The G&G PLC100BC dosent like to be asked to often via RS232, the Values get unstabel, so we wait little more
-        // delay(200);
-        timeout = serialWait();
-      }
-      else if (String(config.scale_protocol) == "AD")
-      {
-        Serial1.write("Q\r\n");
-        timeout = serialWait();
-      }
-      else if (String(config.scale_protocol) == "KERN")
-      {
-        Serial1.write("w");
-        timeout = serialWait();
-      }
-      else if (String(config.scale_protocol) == "SBI")
-      {
-        Serial1.write("P\r\n");
-        timeout = serialWait();
-      }
-      else
-      {
-        timeout = serialWait();
-      }
-      if (timeout)
-      {
-        updateDisplayLog("Scale Data Timeout!");
-        delay(500);
-        updateDisplayLog("Check RS232 Wiring & Settings!");
-        delay(500);
-        newData = false;
-      }
-    }
+    readWeight();
 
     if (newData)
     {
@@ -511,6 +515,13 @@ void loop()
     stepper2.disable();
     path = "empty";
     logCounter = 1;
+    if (millis() - readWeightTime >= 1000)
+    {
+      readWeightTime = millis();
+      readWeight();
+      lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, 3) + unit).c_str());
+      lv_label_set_text(ui_LabelLoggerWeight, String(String(weight, 3) + unit).c_str());
+    }
   }
 
   if (WIFI_AKTIVE && !running)
