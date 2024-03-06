@@ -518,6 +518,7 @@ void loop()
     if (millis() - readWeightTime >= 1000)
     {
       readWeightTime = millis();
+      updateDisplayLog("Get Weight...");
       readWeight();
       lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, 3) + unit).c_str());
       lv_label_set_text(ui_LabelLoggerWeight, String(String(weight, 3) + unit).c_str());

@@ -1,5 +1,4 @@
 const char *host = "robo-trickler";
-const char *updatePage = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form><br><button onClick='javascript:history.back()'>Back</button>";
 
 File uploadFile;
 
@@ -534,13 +533,16 @@ void initWebServer()
       server.on("/setProfile", handleSetProfile);
       server.on("/getProfile", handleGetProfile);
       server.on("/getProfileList", handleGetProfileList);
-      server.on("/getTarget", handleGetTarget);      
+      server.on("/getTarget", handleGetTarget);
       server.on("/setTarget", handleSetTarget);
       server.on("/start", handleStart);
       server.on("/stop", handleStop);
       server.on("/fwupdate", HTTP_GET, []()
                 {
         server.sendHeader("Connection", "close");
+        String updatePage = "<form method='POST' action='/update' enctype='multipart/form-data'><p>FW-Version: ";
+               updatePage += String(FW_VERSION);
+               updatePage += "</p><br><input type='file' name='update'><input type='submit' value='Update'></form><br><button onClick='javascript:history.back()'>Back</button>";
         server.send(200, "text/html", updatePage); });
 
       server.on(
