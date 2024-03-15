@@ -182,7 +182,7 @@ void displayInit()
   digitalWrite(LCD_EN, LOW);
 
   tft.init();
-  tft.setRotation(0);
+  tft.setRotation(config.tft_rotation);
   tft.initDMA();
 
   /*Set the touchscreen calibration data,
