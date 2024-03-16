@@ -64,8 +64,6 @@ struct Config
   int log_measurements;
   int microsteps;
 
-  int tft_rotation;
-
   float pidThreshold;
   long pidStepMin;
   long pidStepMax;
