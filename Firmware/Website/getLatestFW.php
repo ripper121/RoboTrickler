@@ -1,6 +1,6 @@
 <?php
 // Database credentials
-$servername = "ripper121.com";
+$servername = "";
 $username = "";
 $password = "";
 $dbname = "";

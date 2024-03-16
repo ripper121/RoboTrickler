@@ -50,11 +50,11 @@
     <div class="card">
         <fieldset>
             <legend>Trickler</legend>
-          <fieldset>
-            <legend>Profile</legend>
-              <select id="dropdownMenu" class="dropdown" onchange="setProfile();">
-            </select>
-          </fieldset>
+            <fieldset>
+                <legend>Profile</legend>
+                <select id="dropdownMenu" class="dropdown" onchange="setProfile();">
+                </select>
+            </fieldset>
             <fieldset>
                 <legend>Target Weight</legend>
                 <div class="button-row">
@@ -82,7 +82,6 @@
         valueInterval = setInterval(loadValue, 1000);
 
         document.addEventListener('DOMContentLoaded', function () {
-            clearInterval(valueInterval);
             fetch('/getTarget')
                 .then(response => {
                     // Check if the request was successful
@@ -99,7 +98,7 @@
                     console.error('There was a problem with your fetch operation:', error);
                     document.getElementById('targetValueDisplay').value = (0.000).toFixed(3);
                 });
-                
+
             addTxtFilesToDropdown();
             fetch('/getProfile')
                 .then(response => {
@@ -111,17 +110,17 @@
                 })
                 .then(data => {
                     console.log(data); // Here you have your data
-                    
+
                     var objSelect = document.getElementById("dropdownMenu");
-                  
+
                     for (var i = 0; i < objSelect.options.length; i++) {
-                      console.log(objSelect.options[i].text);
+                        console.log(objSelect.options[i].text);
                         if (objSelect.options[i].text == data) {
                             objSelect.options[i].selected = true;
                             break;
                         }
                     }
-                    
+
                 })
                 .catch(error => {
                     console.error('There was a problem with your fetch operation:', error);
@@ -152,43 +151,41 @@
                 setProfile();
                 setTarget();
                 fetch('./start').then(response => response.text());
-                valueInterval = setInterval(loadValue, 1000);
             } else {
                 btn.innerText = "Start";
                 btn.classList.remove("button-stop");
                 btn.classList.add("button-start");
                 fetch('./stop').then(response => response.text());
-                clearInterval(valueInterval);
             }
         }
-        
+
         function addTxtFilesToDropdown() {
             fetch('/getProfileList')
-            .then(response => {
-                // Check if the request was successful
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json(); // Parse the response body as JSON
-            })
-            .then(data => {
-                console.log(data); // Here you have your data
-                
-                const dropdown = document.getElementById('dropdownMenu');
-                Object.values(data).forEach((name, index) => {
-                    const option = document.createElement('option');
-                    option.value = index; // Use index + 1 as option value to start counting from 1
-                    option.textContent = name; // The file name without '.txt' extension is already provided in JSON
-                    dropdown.appendChild(option);
+                .then(response => {
+                    // Check if the request was successful
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Parse the response body as JSON
+                })
+                .then(data => {
+                    console.log(data); // Here you have your data
+
+                    const dropdown = document.getElementById('dropdownMenu');
+                    Object.values(data).forEach((name, index) => {
+                        const option = document.createElement('option');
+                        option.value = index; // Use index + 1 as option value to start counting from 1
+                        option.textContent = name; // The file name without '.txt' extension is already provided in JSON
+                        dropdown.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('There was a problem with your fetch operation:', error);
                 });
-            })
-            .catch(error => {
-                console.error('There was a problem with your fetch operation:', error);
-            });
-            
+
 
         }
-        
+
         function setProfile() {
             var profileNumber = parseFloat(document.getElementById('dropdownMenu').value);
             var url = '/setProfile?profileNumber=' + profileNumber;
