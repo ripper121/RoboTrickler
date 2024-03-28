@@ -110,7 +110,7 @@ A4988 stepper2(MOTOR_STEPS, I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, I2S_Y_DISABLE_P
 
 #define MAX_TARGET_WEIGHT 100
 float weight = 0.0;
-int dec_places = 0;
+int dec_places = 3;
 String unit = "";
 float tolerance;
 float alarmThreshold;
@@ -183,34 +183,28 @@ void readWeight()
     DEBUG_PRINT("separator: ");
     DEBUG_PRINTLN(separator);
 
+    int N10P3 = 0;
+    int N10P2 = 0;
+    int N10P1 = 0;
+    int N10N1 = 0;
+    int N10N2 = 0;
+    int N10N3 = 0;
+
     if (separator != -1)
     {
-      for (int i = 0; i < 9; i++)
-      {
-        if (buff[separator + i - 4] > 0x2F && buff[separator + i - 4] < 0x3A)
-        {
-          readWeigt[i] = (buff[separator + i - 4] - 0x30);
-          dec_places = i - 7;
-        }
-        else
-        {
-          readWeigt[i] = 0.0;
-        }
-      }
+      N10P3 = (buff[separator - 3] > 0x30) ? (buff[separator - 3] - 0x30) : 0;
+      N10P2 = (buff[separator - 2] > 0x30) ? (buff[separator - 2] - 0x30) : 0;
+      N10P1 = (buff[separator - 1] > 0x30) ? (buff[separator - 1] - 0x30) : 0;
+      N10N1 = (buff[separator + 1] > 0x30) ? (buff[separator + 1] - 0x30) : 0;
+      N10N2 = (buff[separator + 2] > 0x30) ? (buff[separator + 2] - 0x30) : 0;
+      N10N3 = (buff[separator + 3] > 0x30) ? (buff[separator + 3] - 0x30) : 0;
 
-      for (int i = 0; i < 8; i++)
-      {
-        if (i < 4)
-        {
-          // For the first four digits, multiply by 10 raised to a power starting from 3 down to 0
-          weight += readWeigt[i] * pow(10, 3 - i);
-        }
-        else
-        {
-          // For the last four digits, divide by 10 raised to a power starting from 1 up to 4
-          weight += readWeigt[i] / pow(10, i - 3);
-        }
-      }
+      weight = N10P3 * 100.0;
+      weight += N10P2 * 10.0;
+      weight += N10P1 * 1.0;
+      weight += (N10N1 == 0) ? (0.0) : (N10N1 / 10.0);
+      weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
+      weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
 
       /*
         for (int i = 0; i < 9; i++) {
