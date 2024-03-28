@@ -110,6 +110,7 @@ A4988 stepper2(MOTOR_STEPS, I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, I2S_Y_DISABLE_P
 
 #define MAX_TARGET_WEIGHT 100
 float weight = 0.0;
+int dec_places = 0;
 String unit = "";
 float tolerance;
 float alarmThreshold;
@@ -176,12 +177,7 @@ void readWeight()
     bool negative = false;
     weight = 0.0;
 
-    int N10P3 = 0;
-    int N10P2 = 0;
-    int N10P1 = 0;
-    int N10N1 = 0;
-    int N10N2 = 0;
-    int N10N3 = 0;
+    int readWeigt[8];
 
     int separator = String(buff).indexOf('.');
     DEBUG_PRINT("separator: ");
@@ -189,19 +185,40 @@ void readWeight()
 
     if (separator != -1)
     {
-      N10P3 = (buff[separator - 3] > 0x30) ? (buff[separator - 3] - 0x30) : 0;
-      N10P2 = (buff[separator - 2] > 0x30) ? (buff[separator - 2] - 0x30) : 0;
-      N10P1 = (buff[separator - 1] > 0x30) ? (buff[separator - 1] - 0x30) : 0;
-      N10N1 = (buff[separator + 1] > 0x30) ? (buff[separator + 1] - 0x30) : 0;
-      N10N2 = (buff[separator + 2] > 0x30) ? (buff[separator + 2] - 0x30) : 0;
-      N10N3 = (buff[separator + 3] > 0x30) ? (buff[separator + 3] - 0x30) : 0;
+      for (int i = 0; i < 9; i++)
+      {
+        if (buff[separator + i - 4] > 0x2F && buff[separator + i - 4] < 0x3A)
+        {
+          readWeigt[i] = (buff[separator + i - 4] - 0x30);
+          dec_places = i - 7;
+        }
+        else
+        {
+          readWeigt[i] = 0.0;
+        }
+      }
 
-      weight = N10P3 * 100.0;
-      weight += N10P2 * 10.0;
-      weight += N10P1 * 1.0;
-      weight += (N10N1 == 0) ? (0.0) : (N10N1 / 10.0);
-      weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
-      weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
+      for (int i = 0; i < 8; i++)
+      {
+        if (i < 4)
+        {
+          // For the first four digits, multiply by 10 raised to a power starting from 3 down to 0
+          weight += readWeigt[i] * pow(10, 3 - i);
+        }
+        else
+        {
+          // For the last four digits, divide by 10 raised to a power starting from 1 up to 4
+          weight += readWeigt[i] / pow(10, i - 3);
+        }
+      }
+
+      /*
+        for (int i = 0; i < 9; i++) {
+            readWeigt[i] = (buff[separator + i - 4] > 0x2F && buff[separator + i - 4] < 0x3A) ? buff[separator + i - 4] - 0x30 : 0.0;
+            if (i < 8) weight += readWeigt[i] * (i < 4 ? pow(10, 3 - i) : 1 / pow(10, i - 3));
+            if (i >= 1 && i <= 7) dec_places = i - 7;
+        }
+      */
 
       if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1)
       {
@@ -234,8 +251,8 @@ void readWeight()
         weightCounter = 0;
         if (!config.debugLog)
         {
-          lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, 3) + unit).c_str());
-          lv_label_set_text(ui_LabelLoggerWeight, String(String(weight, 3) + unit).c_str());
+          lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
+          lv_label_set_text(ui_LabelLoggerWeight, String(String(weight, dec_places) + unit).c_str());
         }
       }
       lastWeight = weight;
@@ -520,8 +537,8 @@ void loop()
       readWeightTime = millis();
       updateDisplayLog("Get Weight...", true);
       readWeight();
-      lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, 3) + unit).c_str());
-      lv_label_set_text(ui_LabelLoggerWeight, String(String(weight, 3) + unit).c_str());
+      lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
+      lv_label_set_text(ui_LabelLoggerWeight, String(String(weight, dec_places) + unit).c_str());
     }
   }
 
