@@ -281,24 +281,9 @@ void readWeight()
       Serial1.write("w");
       timeout = serialWait();
     }
-    else if (String(config.scale_protocol) == "KERN-ABT0")
-    {
-      Serial1.write("D05");
-      timeout = serialWait();
-    }
-    else if (String(config.scale_protocol) == "KERN-ABT1")
-    {
-      Serial1.write("D05DL");
-      timeout = serialWait();
-    }
-    else if (String(config.scale_protocol) == "KERN-ABT2")
+    else if (String(config.scale_protocol) == "KERN-ABT")
     {
       Serial1.write("D05\r\n");
-      timeout = serialWait();
-    }
-    else if (String(config.scale_protocol) == "KERN-ABT3")
-    {
-      Serial1.write("D05DL\r\n");
       timeout = serialWait();
     }
     else if (String(config.scale_protocol) == "SBI")
