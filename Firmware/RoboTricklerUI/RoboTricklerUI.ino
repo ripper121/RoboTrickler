@@ -15,7 +15,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>
 #include <soc/rtc_wdt.h>
-#define FW_VERSION 2.03
+#define FW_VERSION 2.04
 
 // 3 seconds WDT
 #define WDT_TIMEOUT 10
@@ -58,8 +58,9 @@ struct Config
   char mode[9];
   char beeper[6];
   bool debugLog;
-  char scale_protocol[16];
-  int scale_baud;
+  char scale_protocol[32];
+  int scale_baud;  
+  char scale_customCode[32];
   char profile[32];
   int log_measurements;
   int microsteps;
@@ -280,9 +281,34 @@ void readWeight()
       Serial1.write("w");
       timeout = serialWait();
     }
+    else if (String(config.scale_protocol) == "KERN-ABT0")
+    {
+      Serial1.write("D05");
+      timeout = serialWait();
+    }
+    else if (String(config.scale_protocol) == "KERN-ABT1")
+    {
+      Serial1.write("D05DL");
+      timeout = serialWait();
+    }
+    else if (String(config.scale_protocol) == "KERN-ABT2")
+    {
+      Serial1.write("D05\r\n");
+      timeout = serialWait();
+    }
+    else if (String(config.scale_protocol) == "KERN-ABT3")
+    {
+      Serial1.write("D05DL\r\n");
+      timeout = serialWait();
+    }
     else if (String(config.scale_protocol) == "SBI")
     {
       Serial1.write("P\r\n");
+      timeout = serialWait();
+    }
+    else if (String(config.scale_protocol) == "CUSTOM")
+    {
+      Serial1.write(config.scale_customCode);
       timeout = serialWait();
     }
     else

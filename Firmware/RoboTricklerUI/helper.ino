@@ -154,7 +154,7 @@ void initSetup()
 
     DEBUG_PRINTLN("Display Init");
 
-    updateDisplayLog(String("Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com").c_str());
+    updateDisplayLog(String("Robo-Trickler v" + String(FW_VERSION, 2) + " // strenuous.dev").c_str());
 
     initStepper();
 
@@ -248,7 +248,7 @@ void initSetup()
     // turn the PID on
     roboPID.SetMode(roboPID.Control::automatic);
 
-    lv_label_set_text(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // ripper121.com").c_str());
+    lv_label_set_text(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // strenuous.dev").c_str());
     lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
     lv_label_set_text(ui_LabelProfile, config.profile);
 

@@ -179,7 +179,7 @@ ui_LabelInfo = lv_label_create(ui_PanelInfo);
 lv_obj_set_width( ui_LabelInfo, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelInfo, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelInfo, LV_ALIGN_CENTER );
-lv_label_set_text(ui_LabelInfo,"Robo-Trickler v2.0 // ripper121.com");
+lv_label_set_text(ui_LabelInfo,"Robo-Trickler // strenuous.dev");
 lv_obj_clear_flag( ui_LabelInfo, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_TabPageProfile = lv_tabview_add_tab(ui_TabView, "Profile");

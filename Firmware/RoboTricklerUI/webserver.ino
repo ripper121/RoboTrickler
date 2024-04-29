@@ -598,7 +598,7 @@ void initWebServer()
 
       updateDisplayLog(String(String("Open http://") + host + String(".local in your browser")));
 
-      String serverPath = "https://ripper121.com/roboTrickler/userTracker.php?mac=" + String(WiFi.macAddress());
+      String serverPath = "https://strenuous.dev/roboTrickler/userTracker.php?mac=" + String(WiFi.macAddress());
       makeHttpsGetRequest(serverPath);
 
       WIFI_AKTIVE = true;

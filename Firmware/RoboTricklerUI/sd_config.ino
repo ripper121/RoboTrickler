@@ -131,6 +131,10 @@ int loadConfiguration(const char *filename, Config &config)
           doc["scale"]["protocol"] | "GG", // <- source
           sizeof(config.scale_protocol));  // <- destination's capacity
 
+  strlcpy(config.scale_customCode,           // <- destination
+          doc["scale"]["customCode"] | "", // <- source
+          sizeof(config.scale_customCode));  // <- destination's capacity
+
   config.scale_baud = doc["scale"]["baud"] | 9600;
 
   strlcpy(config.profile,               // <- destination
@@ -235,6 +239,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["wifi"]["IPSubnet"] = config.IPSubnet;
   doc["wifi"]["IPDNS"] = config.IPDns;
   doc["scale"]["protocol"] = config.scale_protocol;
+  doc["scale"]["customCode"] = config.scale_customCode;
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
   doc["log_Measurements"] = config.log_measurements;
