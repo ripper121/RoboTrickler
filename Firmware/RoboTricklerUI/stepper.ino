@@ -19,12 +19,28 @@ void initStepper()
   setStepperSpeed(2, 100);
 }
 
-void step(int stepperNum, int steps, bool oscillate, bool reverse)
+void step(int stepperNum, int steps, bool oscillate, bool reverse, bool acceleration)
 {
   if (stepperNum == 1)
     stepper1.enable();
   if (stepperNum == 2)
     stepper2.enable();
+
+  if (stepperNum == 1)
+  {
+    if (acceleration)
+      stepper1.setSpeedProfile(stepper1.LINEAR_SPEED, 1000, 1000);
+    else
+      stepper1.setSpeedProfile(stepper1.CONSTANT_SPEED, 1000, 1000);
+  }
+
+  if (stepperNum == 2)
+  {
+    if (acceleration)
+      stepper2.setSpeedProfile(stepper2.LINEAR_SPEED, 1000, 1000);
+    else
+      stepper2.setSpeedProfile(stepper2.CONSTANT_SPEED, 1000, 1000);
+  }
 
   steps = steps * config.microsteps;
   if (steps > 10 && (oscillate))

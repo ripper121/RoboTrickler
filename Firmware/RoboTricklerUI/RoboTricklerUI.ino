@@ -59,7 +59,7 @@ struct Config
   char beeper[6];
   bool debugLog;
   char scale_protocol[32];
-  int scale_baud;  
+  int scale_baud;
   char scale_customCode[32];
   char profile[32];
   int log_measurements;
@@ -75,6 +75,7 @@ struct Config
   float pidAlarmThreshold;
   bool pidOscillate;
   bool pidReverse;
+  bool pidAcceleration;
   byte pidConsNum;
   float pidConsKp;
   float pidConsKi;
@@ -93,6 +94,7 @@ struct Config
   int profile_speed[32];
   bool profile_oscillate[32];
   bool profile_reverse[32];
+  bool profile_acceleration[32];
   int profile_count;
 };
 Config config; // <- global configuration object
@@ -105,7 +107,6 @@ unsigned long wifiPreviousMillis = 0;
 unsigned long wifiInterval = 10000;
 
 #define MOTOR_STEPS 200
-#define RPM 200
 A4988 stepper1(MOTOR_STEPS, I2S_X_DIRECTION_PIN, I2S_X_STEP_PIN, I2S_X_DISABLE_PIN);
 A4988 stepper2(MOTOR_STEPS, I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, I2S_Y_DISABLE_PIN);
 
@@ -434,7 +435,7 @@ void loop()
             if (stepperSpeedOld != config.pidSpeed)
               setStepperSpeed(stepperNum, config.pidSpeed); // only change if value changed
             stepperSpeedOld = config.pidSpeed;
-            step(stepperNum, steps, config.pidOscillate, config.pidReverse);
+            step(stepperNum, steps, config.pidOscillate, config.pidReverse, config.pidAcceleration);
           }
           else
           {
@@ -471,12 +472,12 @@ void loop()
             {
               // do full rotations
               for (int j = 0; j < int(config.profile_steps[profileStep] / 360); j++)
-                step(config.profile_num[profileStep], 360, config.profile_oscillate[profileStep], config.profile_reverse[profileStep]);
+                step(config.profile_num[profileStep], 360, config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
               // do remaining steps
-              step(config.profile_num[profileStep], (config.profile_steps[profileStep] % 360), config.profile_oscillate[profileStep], config.profile_reverse[profileStep]);
+              step(config.profile_num[profileStep], (config.profile_steps[profileStep] % 360), config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
             }
             else
-              step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_oscillate[profileStep], config.profile_reverse[profileStep]);
+              step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
 
             // Serial.print("Measurements: ");
             // Serial.println(config.profile_measurements[profileStep], DEC);

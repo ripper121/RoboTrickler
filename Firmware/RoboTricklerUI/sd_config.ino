@@ -46,6 +46,7 @@ bool readProfile(const char *filename, Config &config)
     config.pidAggKd = doc["aggKd"] | 1.00;
     config.pidOscillate = doc["oscillate"] | false;
     config.pidReverse = doc["reverse"] | false;
+    config.pidAcceleration = doc["acceleration"] | false;    
     DEBUG_PRINTLN("PID_AKTIVE");
     PID_AKTIVE = true;
   }
@@ -66,6 +67,7 @@ bool readProfile(const char *filename, Config &config)
       config.profile_measurements[item_key] = item.value()["measurements"];
       config.profile_oscillate[item_key] = item.value()["oscillate"] | true;
       config.profile_reverse[item_key] = item.value()["reverse"] | false;
+      config.profile_acceleration[item_key] = item.value()["acceleration"] | false;
       config.profile_count = item_key + 1;
     }
     DEBUG_PRINTLN("POWDER_AKTIVE");
