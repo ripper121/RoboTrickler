@@ -65,7 +65,7 @@ bool readProfile(const char *filename, Config &config)
       config.profile_steps[item_key] = item.value()["steps"];
       config.profile_speed[item_key] = item.value()["speed"];
       config.profile_measurements[item_key] = item.value()["measurements"];
-      config.profile_oscillate[item_key] = item.value()["oscillate"] | true;
+      config.profile_oscillate[item_key] = item.value()["oscillate"] | false;
       config.profile_reverse[item_key] = item.value()["reverse"] | false;
       config.profile_acceleration[item_key] = item.value()["acceleration"] | false;
       config.profile_count = item_key + 1;
@@ -152,6 +152,8 @@ int loadConfiguration(const char *filename, Config &config)
           sizeof(config.beeper)); // <- destination's capacity
 
   config.debugLog = doc["debug_log"] | false;
+
+  config.fwCheck = doc["fw_check"] | true;
 
   file.close();
 
@@ -248,6 +250,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["microsteps"] = config.microsteps;
   doc["beeper"] = config.beeper;
   doc["debug_log"] = config.debugLog;
+  doc["fw_check"] = config.fwCheck;
 
   // Serialize JSON to file
   if (serializeJsonPretty(doc, file) == 0)

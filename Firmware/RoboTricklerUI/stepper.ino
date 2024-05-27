@@ -29,17 +29,17 @@ void step(int stepperNum, int steps, bool oscillate, bool reverse, bool accelera
   if (stepperNum == 1)
   {
     if (acceleration)
-      stepper1.setSpeedProfile(stepper1.LINEAR_SPEED, 1000, 1000);
+      stepper1.setSpeedProfile(stepper1.LINEAR_SPEED, ACCEL, 32767);
     else
-      stepper1.setSpeedProfile(stepper1.CONSTANT_SPEED, 1000, 1000);
+      stepper1.setSpeedProfile(stepper1.CONSTANT_SPEED, ACCEL, 32767);
   }
 
   if (stepperNum == 2)
   {
     if (acceleration)
-      stepper2.setSpeedProfile(stepper2.LINEAR_SPEED, 1000, 1000);
+      stepper2.setSpeedProfile(stepper2.LINEAR_SPEED, ACCEL, 32767);
     else
-      stepper2.setSpeedProfile(stepper2.CONSTANT_SPEED, 1000, 1000);
+      stepper2.setSpeedProfile(stepper2.CONSTANT_SPEED, ACCEL, 32767);
   }
 
   steps = steps * config.microsteps;

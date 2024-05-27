@@ -58,6 +58,7 @@ struct Config
   char mode[9];
   char beeper[6];
   bool debugLog;
+  bool fwCheck;
   char scale_protocol[32];
   int scale_baud;
   char scale_customCode[32];
@@ -107,6 +108,7 @@ unsigned long wifiPreviousMillis = 0;
 unsigned long wifiInterval = 10000;
 
 #define MOTOR_STEPS 200
+#define ACCEL 1000
 A4988 stepper1(MOTOR_STEPS, I2S_X_DIRECTION_PIN, I2S_X_STEP_PIN, I2S_X_DISABLE_PIN);
 A4988 stepper2(MOTOR_STEPS, I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, I2S_Y_DISABLE_PIN);
 
@@ -207,14 +209,6 @@ void readWeight()
       weight += (N10N1 == 0) ? (0.0) : (N10N1 / 10.0);
       weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
       weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
-
-      /*
-        for (int i = 0; i < 9; i++) {
-            readWeigt[i] = (buff[separator + i - 4] > 0x2F && buff[separator + i - 4] < 0x3A) ? buff[separator + i - 4] - 0x30 : 0.0;
-            if (i < 8) weight += readWeigt[i] * (i < 4 ? pow(10, 3 - i) : 1 / pow(10, i - 3));
-            if (i >= 1 && i <= 7) dec_places = i - 7;
-        }
-      */
 
       if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1)
       {

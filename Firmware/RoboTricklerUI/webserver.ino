@@ -598,8 +598,11 @@ void initWebServer()
 
       updateDisplayLog(String(String("Open http://") + host + String(".local in your browser")));
 
-      String serverPath = "https://strenuous.dev/roboTrickler/userTracker.php?mac=" + String(WiFi.macAddress());
-      makeHttpsGetRequest(serverPath);
+      if (config.fwCheck)
+      {
+        String serverPath = "https://strenuous.dev/roboTrickler/userTracker.php?mac=" + String(WiFi.macAddress());
+        makeHttpsGetRequest(serverPath);
+      }
 
       WIFI_AKTIVE = true;
     }
