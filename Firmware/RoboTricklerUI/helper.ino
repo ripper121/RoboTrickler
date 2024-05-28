@@ -229,18 +229,7 @@ void initSetup()
         updateDisplayLog("WIFI:" + WiFi.localIP().toString());
     }
 
-    preferences.begin("app-settings", false);
-    targetWeight = preferences.getFloat("targetWeight", 0.0);
-    if (targetWeight < 0)
-    {
-        targetWeight = 0.0;
-        preferences.putFloat("targetWeight", targetWeight);
-    }
-    if (targetWeight > MAX_TARGET_WEIGHT)
-    {
-        targetWeight = MAX_TARGET_WEIGHT;
-        preferences.putFloat("targetWeight", targetWeight);
-    }
+    targetWeight = config.weight;
 
     // initialize the variables we're linked to
     Input = 0;

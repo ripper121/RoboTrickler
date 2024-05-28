@@ -349,7 +349,6 @@ void handleSetTarget()
         {
           targetWeight = server.arg(i).toFloat();
           lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
-          preferences.putFloat("targetWeight", targetWeight);
         }
       }
     }

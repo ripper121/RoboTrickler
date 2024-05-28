@@ -14,7 +14,7 @@ bool readProfile(const char *filename, Config &config)
   // Allocate a temporary JsonDocument
   // Don't forget to change the capacity to match your requirements.
   // Use https://arduinojson.org/v6/assistant to compute the capacity.
-  StaticJsonDocument<1536> doc;
+  StaticJsonDocument<3072> doc;
 
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(doc, file);
@@ -145,6 +145,8 @@ int loadConfiguration(const char *filename, Config &config)
 
   config.log_measurements = doc["log_Measurements"] | 20;
 
+  config.weight = doc["weight"] | 1.0;
+
   config.microsteps = doc["microsteps"] | 1;
 
   strlcpy(config.beeper,          // <- destination
@@ -235,7 +237,7 @@ void saveConfiguration(const char *filename, const Config &config)
   // Allocate a temporary JsonDocument
   // Don't forget to change the capacity to match your requirements.
   // Use https://arduinojson.org/assistant to compute the capacity.
-  StaticJsonDocument<512> doc;
+  StaticJsonDocument<768> doc;
   doc["wifi"]["ssid"] = config.wifi_ssid;
   doc["wifi"]["psk"] = config.wifi_psk;
   doc["wifi"]["IPStatic"] = config.IPStatic;
@@ -246,6 +248,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["customCode"] = config.scale_customCode;
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
+  doc["weight"] = serialized(String(config.weight,3));
   doc["log_Measurements"] = config.log_measurements;
   doc["microsteps"] = config.microsteps;
   doc["beeper"] = config.beeper;

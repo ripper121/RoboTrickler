@@ -1,5 +1,4 @@
 #include "pindef.h"
-#include <Preferences.h>
 #include <FS.h>
 #include <SD.h>
 #include <WiFi.h>
@@ -59,6 +58,7 @@ struct Config
   char beeper[6];
   bool debugLog;
   bool fwCheck;
+  float weight;
   char scale_protocol[32];
   int scale_baud;
   char scale_customCode[32];
@@ -86,21 +86,19 @@ struct Config
   float pidAggKi;
   float pidAggKd;
 
-  byte profile_num[32];
-  float profile_weight[32];
+  byte profile_num[16];
+  float profile_weight[16];
   float profile_tolerance;
   float profile_alarmThreshold;
-  int profile_measurements[32];
-  long profile_steps[32];
-  int profile_speed[32];
-  bool profile_oscillate[32];
-  bool profile_reverse[32];
-  bool profile_acceleration[32];
+  int profile_measurements[16];
+  long profile_steps[16];
+  int profile_speed[16];
+  bool profile_oscillate[16];
+  bool profile_reverse[16];
+  bool profile_acceleration[16];
   int profile_count;
 };
 Config config; // <- global configuration object
-
-Preferences preferences;
 
 bool WIFI_AKTIVE = false;
 WebServer server(80);
@@ -119,7 +117,6 @@ String unit = "";
 float tolerance;
 float alarmThreshold;
 float targetWeight = 0.0;
-float lastTargetWeight = 0.0;
 float lastWeight = 0;
 float addWeight = 0.1;
 int weightCounter = 0;
@@ -319,11 +316,7 @@ void loop()
   if (millis() - writeETime >= 1000)
   {
     writeETime = millis();
-    if (lastTargetWeight != targetWeight)
-    {
-      preferences.putFloat("targetWeight", targetWeight);
-    }
-    lastTargetWeight = targetWeight;
+    config.weight = targetWeight;
 
     char temp[300];
     sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());
@@ -484,6 +477,7 @@ void loop()
             infoText += "M" + String(config.profile_measurements[profileStep]);
             updateDisplayLog(infoText, true);
           }
+          serialFlush();
         }
         if (String(config.mode).indexOf("logger") != -1 && (weight > 0))
         {
