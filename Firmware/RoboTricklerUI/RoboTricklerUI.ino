@@ -161,7 +161,7 @@ void updateDisplayLog(String logOutput, bool noLog = false)
 }
 
 void readWeight()
-{
+{  
   if (Serial1.available())
   {
     char buff[64];
@@ -350,7 +350,8 @@ void loop()
           if (!finished)
           {
             beep("done");
-            updateDisplayLog("Done :)", true);
+            updateDisplayLog("Done :)", true);            
+            serialFlush();
           }
 
           if ((weight >= (targetWeight + alarmThreshold)) && (alarmThreshold > 0))
