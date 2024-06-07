@@ -103,6 +103,7 @@ void startMeasurment()
 {
   running = true;
   finished = false;
+  firstThrow = true;
   beep("button");
 }
 

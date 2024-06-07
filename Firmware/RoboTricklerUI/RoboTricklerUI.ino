@@ -88,6 +88,7 @@ struct Config
 
   byte profile_num[16];
   float profile_weight[16];
+  double profile_stepsPerUnit;
   float profile_tolerance;
   float profile_alarmThreshold;
   int profile_measurements[16];
@@ -124,14 +125,12 @@ int measurementCount = 0;
 float newData = false;
 bool running = false;
 bool finished = false;
+bool firstThrow = false;
 int logCounter = 1;
-bool stopLogCounter = false;
 String path = "empty";
 
 // Define the aggressive and conservative and POn Tuning Parameters
-float aggKp = 4, aggKi = 0.2, aggKd = 1;
-float consKp = 1, consKi = 0.05, consKd = 0.25;
-float Setpoint, Input, Output;
+float Input, Output;
 // Specify the links
 QuickPID roboPID(&Input, &Output, &targetWeight);
 bool PID_AKTIVE = false;
@@ -161,7 +160,7 @@ void updateDisplayLog(String logOutput, bool noLog = false)
 }
 
 void readWeight()
-{  
+{
   if (Serial1.available())
   {
     char buff[64];
@@ -175,7 +174,6 @@ void readWeight()
       logToFile(SD, String(buff) + "\n");
     }
 
-    bool negative = false;
     weight = 0.0;
 
     int readWeigt[8];
@@ -350,7 +348,7 @@ void loop()
           if (!finished)
           {
             beep("done");
-            updateDisplayLog("Done :)", true);            
+            updateDisplayLog("Done :)", true);
             serialFlush();
           }
 
@@ -370,11 +368,13 @@ void loop()
 
           measurementCount = 0;
           finished = true;
+          firstThrow = true;
         }
 
         if ((weight + 0.0001) < (targetWeight - tolerance))
         {
           finished = false;
+          firstThrow = false;
         }
       }
       if (!finished)
@@ -428,54 +428,64 @@ void loop()
           else
           {
             DEBUG_PRINTLN("Profile Running");
-            int stepperSpeedOld = 0;
-            int profileStep = 0;
-            alarmThreshold = config.profile_alarmThreshold;
-            tolerance = config.profile_tolerance;
-            // Serial.print("abs: ");
-            // Serial.println(abs(weight - targetWeight), 3);
-            // Serial.print("profile_weight: ");
-            // Serial.println(config.profile_weight[i], 3);
-
-            for (int i = 0; i < config.profile_count; i++)
+            String infoText = "";
+            if (firstThrow && config.profile_stepsPerUnit > 0)
             {
-
-              if ((weight) <= (targetWeight - config.profile_weight[i]))
-              {
-                profileStep = i;
-                break;
-              }
-            }
-
-            // Serial.print("Speed: ");
-            // Serial.println(config.profile_speed[profileStep], DEC);
-            if (stepperSpeedOld != config.profile_speed[profileStep])
-              setStepperSpeed(config.profile_num[profileStep], config.profile_speed[profileStep]); // only change if value changed
-            stepperSpeedOld = config.profile_speed[profileStep];
-
-            // Serial.print("Stepp: ");
-            // Serial.println(config.profile_steps[profileStep], DEC);
-
-            if (config.profile_steps[profileStep] > 360 && config.profile_oscillate[profileStep])
-            {
-              // do full rotations
-              for (int j = 0; j < int(config.profile_steps[profileStep] / 360); j++)
-                step(config.profile_num[profileStep], 360, config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
-              // do remaining steps
-              step(config.profile_num[profileStep], (config.profile_steps[profileStep] % 360), config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
+              double steps = (targetWeight - weight) * config.profile_stepsPerUnit;
+              setStepperSpeed(1, config.profile_speed[0]);
+              step(1, steps, config.profile_oscillate[0], config.profile_reverse[0], config.profile_acceleration[0]);
+              infoText += "FirstThrow steps:" + String(steps);
             }
             else
-              step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
+            {
+              int stepperSpeedOld = 0;
+              int profileStep = 0;
+              alarmThreshold = config.profile_alarmThreshold;
+              tolerance = config.profile_tolerance;
+              // Serial.print("abs: ");
+              // Serial.println(abs(weight - targetWeight), 3);
+              // Serial.print("profile_weight: ");
+              // Serial.println(config.profile_weight[i], 3);
 
-            // Serial.print("Measurements: ");
-            // Serial.println(config.profile_measurements[profileStep], DEC);
-            measurementCount = config.profile_measurements[profileStep];
+              for (int i = 0; i < config.profile_count; i++)
+              {
 
-            String infoText = "";
-            infoText += "W" + String(config.profile_weight[profileStep], 3) + " ";
-            infoText += "ST" + String(config.profile_steps[profileStep]) + " ";
-            infoText += "SP" + String(config.profile_speed[profileStep]) + " ";
-            infoText += "M" + String(config.profile_measurements[profileStep]);
+                if ((weight) <= (targetWeight - config.profile_weight[i]))
+                {
+                  profileStep = i;
+                  break;
+                }
+              }
+
+              // Serial.print("Speed: ");
+              // Serial.println(config.profile_speed[profileStep], DEC);
+              if (stepperSpeedOld != config.profile_speed[profileStep])
+                setStepperSpeed(config.profile_num[profileStep], config.profile_speed[profileStep]); // only change if value changed
+              stepperSpeedOld = config.profile_speed[profileStep];
+
+              // Serial.print("Stepp: ");
+              // Serial.println(config.profile_steps[profileStep], DEC);
+
+              if (config.profile_steps[profileStep] > 360 && config.profile_oscillate[profileStep])
+              {
+                // do full rotations
+                for (int j = 0; j < int(config.profile_steps[profileStep] / 360); j++)
+                  step(config.profile_num[profileStep], 360, config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
+                // do remaining steps
+                step(config.profile_num[profileStep], (config.profile_steps[profileStep] % 360), config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
+              }
+              else
+                step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
+
+              // Serial.print("Measurements: ");
+              // Serial.println(config.profile_measurements[profileStep], DEC);
+              measurementCount = config.profile_measurements[profileStep];
+
+              infoText += "W" + String(config.profile_weight[profileStep], 3) + " ";
+              infoText += "ST" + String(config.profile_steps[profileStep]) + " ";
+              infoText += "SP" + String(config.profile_speed[profileStep]) + " ";
+              infoText += "M" + String(config.profile_measurements[profileStep]);
+            }
             updateDisplayLog(infoText, true);
           }
           serialFlush();

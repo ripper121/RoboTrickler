@@ -46,7 +46,7 @@ bool readProfile(const char *filename, Config &config)
     config.pidAggKd = doc["aggKd"] | 1.00;
     config.pidOscillate = doc["oscillate"] | false;
     config.pidReverse = doc["reverse"] | false;
-    config.pidAcceleration = doc["acceleration"] | false;    
+    config.pidAcceleration = doc["acceleration"] | false;
     DEBUG_PRINTLN("PID_AKTIVE");
     PID_AKTIVE = true;
   }
@@ -57,6 +57,7 @@ bool readProfile(const char *filename, Config &config)
       int item_key = ((String(item.key().c_str()).toInt()) - 1);
       if (item_key == 0)
       {
+        config.profile_stepsPerUnit = item.value()["stepsPerUnit"] | 0;
         config.profile_tolerance = item.value()["tolerance"] | 0.000;
         config.profile_alarmThreshold = item.value()["alarmThreshold"] | 1.000;
       }
@@ -133,9 +134,9 @@ int loadConfiguration(const char *filename, Config &config)
           doc["scale"]["protocol"] | "GG", // <- source
           sizeof(config.scale_protocol));  // <- destination's capacity
 
-  strlcpy(config.scale_customCode,           // <- destination
-          doc["scale"]["customCode"] | "", // <- source
-          sizeof(config.scale_customCode));  // <- destination's capacity
+  strlcpy(config.scale_customCode,          // <- destination
+          doc["scale"]["customCode"] | "",  // <- source
+          sizeof(config.scale_customCode)); // <- destination's capacity
 
   config.scale_baud = doc["scale"]["baud"] | 9600;
 
@@ -248,7 +249,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["customCode"] = config.scale_customCode;
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
-  doc["weight"] = serialized(String(config.weight,3));
+  doc["weight"] = serialized(String(config.weight, 3));
   doc["log_Measurements"] = config.log_measurements;
   doc["microsteps"] = config.microsteps;
   doc["beeper"] = config.beeper;

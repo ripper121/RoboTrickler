@@ -27,6 +27,9 @@
 
             <fieldset>
                <legend>Trickler</legend>
+               <label for="stepsPerUnitCheckbox">Auto calc of first throw:</label>
+               <input type="checkbox" id="stepsPerUnitCheckbox" checked><br>
+
                <label for="oscillateCheckbox">Oscillate:</label>
                <input type="checkbox" id="oscillateCheckbox"><br>
 
@@ -76,6 +79,7 @@
          const oscillate = document.getElementById("oscillateCheckbox").checked; // Get the checkbox value
          const reverse = document.getElementById("reverseCheckbox").checked; // Get the checkbox value
          const acceleration = document.getElementById("accelerationCheckbox").checked; // Get the checkbox value
+         const stepsPerUnitOn = document.getElementById("stepsPerUnitCheckbox").checked; // Get the checkbox value
          
          const weightUnit = document.querySelector('input[name="weightUnit"]:checked').value;
          const tolerance = parseFloat(document.getElementById("toleranceInput").value);
@@ -117,11 +121,16 @@
                if (i == weights.length - 1)
                   measurements = measurement * 3;
 
-               if (i == 0)
+               if (i == 0){
+                  stepsPerUnit = 0;
+                  if(stepsPerUnitOn)
+                     stepsPerUnit = Math.round((1 / measuredWeight) * ((20000 / 100) * calcTolerance));
+
                   profile[i + 1] = {
                      weight: weight,
                      tolerance: tolerance,
                      alarmThreshold: alarmThreshold,
+                     stepsPerUnit: stepsPerUnit,
                      steps: steps,
                      speed: speed,
                      measurements: measurements,
@@ -129,6 +138,7 @@
                      reverse: reverse,
                      acceleration: acceleration
                   };
+               }
                else
                   profile[i + 1] = {
                      weight: weight,
