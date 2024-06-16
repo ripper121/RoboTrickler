@@ -125,7 +125,7 @@ int measurementCount = 0;
 float newData = false;
 bool running = false;
 bool finished = false;
-bool firstThrow = false;
+bool firstThrow = true;
 int logCounter = 1;
 String path = "empty";
 
@@ -165,8 +165,8 @@ void readWeight()
   {
     char buff[64];
     Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
-
-    DEBUG_PRINTLN(buff);
+    
+    DEBUG_PRINTLN(String(buff));
 
     if (config.debugLog)
     {
@@ -179,8 +179,8 @@ void readWeight()
     int readWeigt[8];
 
     int separator = String(buff).indexOf('.');
-    DEBUG_PRINT("separator: ");
-    DEBUG_PRINTLN(separator);
+    // DEBUG_PRINT("separator: ");
+    // DEBUG_PRINTLN(separator);
 
     int N10P3 = 0;
     int N10P2 = 0;
@@ -219,8 +219,8 @@ void readWeight()
         weight = weight * (-1.0);
       }
 
-      DEBUG_PRINT("Weight Counter: ");
-      DEBUG_PRINTLN(weightCounter);
+      // DEBUG_PRINT("Weight Counter: ");
+      // DEBUG_PRINTLN(weightCounter);
 
       if (lastWeight == weight)
       {
@@ -242,8 +242,8 @@ void readWeight()
       }
       lastWeight = weight;
 
-      DEBUG_PRINT("Scale Read: ");
-      DEBUG_PRINTLN(weight);
+      // DEBUG_PRINT("Scale Read: ");
+      // DEBUG_PRINTLN(weight);
     }
 
     serialFlush();
@@ -350,6 +350,7 @@ void loop()
             beep("done");
             updateDisplayLog("Done :)", true);
             serialFlush();
+            firstThrow = true;
           }
 
           if ((weight >= (targetWeight + alarmThreshold)) && (alarmThreshold > 0))
@@ -368,13 +369,11 @@ void loop()
 
           measurementCount = 0;
           finished = true;
-          firstThrow = true;
         }
 
         if ((weight + 0.0001) < (targetWeight - tolerance))
         {
           finished = false;
-          firstThrow = false;
         }
       }
       if (!finished)
@@ -429,12 +428,17 @@ void loop()
           {
             DEBUG_PRINTLN("Profile Running");
             String infoText = "";
+            DEBUG_PRINT("firstThrow: ");
+            DEBUG_PRINTLN(firstThrow);
             if (firstThrow && config.profile_stepsPerUnit > 0)
             {
               double steps = (targetWeight - weight) * config.profile_stepsPerUnit;
+              DEBUG_PRINT("FirstThrow steps: ");
+              DEBUG_PRINTLN(steps);
               setStepperSpeed(1, config.profile_speed[0]);
               step(1, steps, config.profile_oscillate[0], config.profile_reverse[0], config.profile_acceleration[0]);
               infoText += "FirstThrow steps:" + String(steps);
+              firstThrow = false;
             }
             else
             {
