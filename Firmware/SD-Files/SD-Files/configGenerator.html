@@ -46,6 +46,7 @@
                     <option value="KERN">Kern</option>
                     <option value="STE">Steingerg</option>
                     <option value="AD">A&D</option>
+                    <option value="CUSTOM">Custom</option>
                     <option value="">None</option>
                 </select><br>
                 Baud: <input type="number" name="scale_baud" value="9600"><br>
@@ -76,6 +77,9 @@
             <label for="debug_log">Debug Log:</label>
             <input type="checkbox" name="debug_log"><br><br>
 
+            <label for="fw_check">Check for new Firmware:</label>
+            <input type="checkbox" name="fw_check" checked><br><br>
+
 
         </form>
         <h2>Generated config.txt:</h2>
@@ -104,12 +108,16 @@
                 },
                 scale: {
                     protocol: formData.get('scale_protocol'),
-                    baud: parseInt(formData.get('scale_baud'), 10)
+                    baud: parseInt(formData.get('scale_baud'), 10),
+                    customCode: ""
                 },
+                profile: "calibrate",
+                weight: 2.540,
                 log_measurements: parseInt(formData.get('log_measurements'), 10),
                 microsteps: parseInt(formData.get('microsteps'), 10),
                 beeper: formData.get('beeper'),
-                debug_log: formData.get('debug_log') === 'on'
+                debug_log: formData.get('debug_log') === 'on',
+                fw_check:  formData.get('fw_check') === 'on',
             };
             jsonOutput.value = JSON.stringify(jsonObject, null, 4);
         }
@@ -140,6 +148,7 @@
 
                 // Update boolean fields
                 configForm.debug_log.checked = jsonObject.debug_log || false;
+                configForm.fw_check.checked = jsonObject.fw_check || false;
             } catch (e) {
                 console.error('Invalid JSON');
             }
@@ -211,7 +220,7 @@
         }
 
         window.addEventListener("load", (event) => {
-            if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
+            if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "" || location.hostname === "strenuous.dev") {
                 document.getElementById("saveButton").style.display = "none";
             } else {
                 httpGet("/config.txt");
