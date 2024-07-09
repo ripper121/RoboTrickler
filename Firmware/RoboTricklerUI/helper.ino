@@ -44,7 +44,7 @@ void beep(String beepMode)
 bool serialWait()
 {
     bool timeout = true;
-    for (int i = 0; i < 5000; i++)
+    for (int i = 0; i < 2000; i++)
     {
         if (Serial1.available())
         {
