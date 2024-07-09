@@ -76,6 +76,8 @@ bool readProfile(const char *filename, Config &config)
   }
   file.close();
 
+  doc.garbageCollect();
+
   infoText = "Profile Loaded:";
   infoText += filename;
   // labelInfo.drawButton(false, infoText);
@@ -159,6 +161,8 @@ int loadConfiguration(const char *filename, Config &config)
   config.fwCheck = doc["fw_check"] | true;
 
   file.close();
+
+  doc.garbageCollect();
 
   String profile_filename = "/" + String(config.profile) + ".txt";
   if (!readProfile(profile_filename.c_str(), config))

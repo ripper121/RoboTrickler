@@ -292,10 +292,10 @@ void readWeight()
     }
     if (timeout)
     {
-      updateDisplayLog("Scale Data Timeout!");
-      delay(500);
-      updateDisplayLog("Check RS232 Wiring & Settings!");
-      delay(500);
+      updateDisplayLog("Scale Data Timeout!", true);
+      delay(250);
+      updateDisplayLog("Check RS232 Wiring & Settings!", true);
+      delay(250);
       newData = false;
     }
   }
