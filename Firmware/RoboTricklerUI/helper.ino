@@ -67,6 +67,11 @@ void insertLine(String newLine)
     infoMessagBuff[(sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1] = newLine;
 }
 
+void setLabelTextColor(lv_obj_t* label, uint32_t colorHex) {
+    lv_color_t color = lv_color_hex(colorHex); // Convert hex color to LVGL color type
+    lv_obj_set_style_text_color(label, color, LV_PART_MAIN | LV_STATE_DEFAULT);
+}
+
 void startTrickler()
 {
   strlcpy(config.mode,          // <- destination

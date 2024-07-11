@@ -17,6 +17,8 @@ void initStepper()
   DEBUG_PRINTLN("initStepper()");
   setStepperSpeed(1, 100);
   setStepperSpeed(2, 100);
+  stepper1.disable();
+  stepper2.disable();
 }
 
 void step(int stepperNum, int steps, bool oscillate, bool reverse, bool acceleration)

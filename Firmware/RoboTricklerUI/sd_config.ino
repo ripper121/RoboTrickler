@@ -76,7 +76,7 @@ bool readProfile(const char *filename, Config &config)
   }
   file.close();
 
-  doc.garbageCollect();
+  //doc.garbageCollect();
 
   infoText = "Profile Loaded:";
   infoText += filename;
@@ -162,7 +162,7 @@ int loadConfiguration(const char *filename, Config &config)
 
   file.close();
 
-  doc.garbageCollect();
+  //doc.garbageCollect();
 
   String profile_filename = "/" + String(config.profile) + ".txt";
   if (!readProfile(profile_filename.c_str(), config))

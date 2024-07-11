@@ -14,10 +14,10 @@
 #include <Update.h>
 #include <esp_task_wdt.h>
 #include <soc/rtc_wdt.h>
-#define FW_VERSION 2.04
+#define FW_VERSION 2.05
 
 // 3 seconds WDT
-#define WDT_TIMEOUT 10
+//#define WDT_TIMEOUT 10
 
 #include <lvgl.h>
 #include "ui.h"
@@ -165,7 +165,7 @@ void readWeight()
   {
     char buff[64];
     Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
-    
+
     DEBUG_PRINTLN(String(buff));
 
     if (config.debugLog)
@@ -174,7 +174,7 @@ void readWeight()
       logToFile(SD, String(buff) + "\n");
     }
 
-    weight = 0.0;
+    weight = 0;
 
     int readWeigt[8];
 
@@ -342,20 +342,24 @@ void loop()
         DEBUG_PRINT("alarmThreshold: ");
         DEBUG_PRINTLN(String((targetWeight + alarmThreshold), 3));
 
-        // adding 0.00001 to weight, otherwise it would always go over the targetWeight
-        if (((weight + 0.0001) >= (targetWeight - tolerance)) && (weight >= 0))
-        {
-          if (!finished)
-          {
-            beep("done");
-            updateDisplayLog("Done :)", true);
-            serialFlush();
-            firstThrow = true;
-          }
+        weight = round(weight * 1000) / 1000.0;
+        targetWeight = round(targetWeight * 1000) / 1000.0;
+        tolerance = round(tolerance * 1000) / 1000.0;
 
+        if ((weight >= (targetWeight - tolerance)) && (weight >= 0))
+        {
+          if (weight <= (targetWeight + tolerance))
+          {
+            setLabelTextColor(ui_LabelTricklerWeight, 0x00FF00);
+          }
+          else
+          {
+            setLabelTextColor(ui_LabelTricklerWeight, 0xFFFF00);
+          }
           if ((weight >= (targetWeight + alarmThreshold)) && (alarmThreshold > 0))
           {
             // Send Alarm
+            setLabelTextColor(ui_LabelTricklerWeight, 0xFF0000);
             messageBox("!Over trickle!\n!Check weight!", &lv_font_montserrat_32, lv_color_hex(0xFF0000));
             beep("done");
             delay(250);
@@ -367,20 +371,27 @@ void loop()
             stopTrickler();
           }
 
+          if (!finished)
+          {
+            beep("done");
+            updateDisplayLog("Done :)", true);
+            serialFlush();
+            firstThrow = true;
+          }
           measurementCount = 0;
           finished = true;
         }
-
-        if ((weight + 0.0001) < (targetWeight - tolerance))
+        else
         {
           finished = false;
         }
       }
       if (!finished)
       {
-        if ((String(config.mode).indexOf("trickler") != -1) && (weight < targetWeight) && (weight >= 0))
+        if ((String(config.mode).indexOf("trickler") != -1) && (weight >= 0))
         {
           updateDisplayLog("Running...", true);
+          setLabelTextColor(ui_LabelTricklerWeight, 0xFFFFFF);
 
           if (PID_AKTIVE)
           {
@@ -510,15 +521,7 @@ void loop()
           beep("done");
         }
       }
-      else
-      {
-        if (String(config.mode).indexOf("trickler") != -1)
-        {
-          stepper1.disable();
-          stepper2.disable();
-        }
-      }
-
+      
       if ((weight <= 0) && finished)
       {
         if (String(config.mode).indexOf("logger") != -1)
@@ -537,8 +540,7 @@ void loop()
   }
   else
   {
-    stepper1.disable();
-    stepper2.disable();
+
     path = "empty";
     logCounter = 1;
     if (millis() - readWeightTime >= 1000)
