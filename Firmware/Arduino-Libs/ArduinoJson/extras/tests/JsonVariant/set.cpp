@@ -1,14 +1,19 @@
 // ArduinoJson - https://arduinojson.org
-// Copyright © 2014-2023, Benoit BLANCHON
+// Copyright © 2014-2024, Benoit BLANCHON
 // MIT License
 
 #include <ArduinoJson.h>
 #include <catch.hpp>
 
+#include "Allocators.hpp"
+#include "Literals.hpp"
+
+using ArduinoJson::detail::sizeofObject;
+
 enum ErrorCode { ERROR_01 = 1, ERROR_10 = 10 };
 
 TEST_CASE("JsonVariant::set() when there is enough memory") {
-  DynamicJsonDocument doc(4096);
+  JsonDocument doc;
   JsonVariant variant = doc.to<JsonVariant>();
 
   SECTION("const char*") {
@@ -128,19 +133,19 @@ TEST_CASE("JsonVariant::set() when there is enough memory") {
 }
 
 TEST_CASE("JsonVariant::set() with not enough memory") {
-  StaticJsonDocument<1> doc;
+  JsonDocument doc(FailingAllocator::instance());
 
   JsonVariant v = doc.to<JsonVariant>();
 
   SECTION("std::string") {
-    bool result = v.set(std::string("hello world!!"));
+    bool result = v.set("hello world!!"_s);
 
     REQUIRE(result == false);
     REQUIRE(v.isNull());
   }
 
   SECTION("Serialized<std::string>") {
-    bool result = v.set(serialized(std::string("hello world!!")));
+    bool result = v.set(serialized("hello world!!"_s));
 
     REQUIRE(result == false);
     REQUIRE(v.isNull());
@@ -155,11 +160,11 @@ TEST_CASE("JsonVariant::set() with not enough memory") {
   }
 }
 
-TEST_CASE("JsonVariant::set(DynamicJsonDocument)") {
-  DynamicJsonDocument doc1(1024);
+TEST_CASE("JsonVariant::set(JsonDocument)") {
+  JsonDocument doc1;
   doc1["hello"] = "world";
 
-  DynamicJsonDocument doc2(1024);
+  JsonDocument doc2;
   JsonVariant v = doc2.to<JsonVariant>();
 
   // Should copy the doc
@@ -169,4 +174,49 @@ TEST_CASE("JsonVariant::set(DynamicJsonDocument)") {
   std::string json;
   serializeJson(doc2, json);
   REQUIRE(json == "{\"hello\":\"world\"}");
+}
+
+TEST_CASE("JsonVariant::set() releases the previous value") {
+  SpyingAllocator spy;
+  JsonDocument doc(&spy);
+  doc["hello"] = "world"_s;
+  spy.clearLog();
+
+  JsonVariant v = doc["hello"];
+
+  SECTION("int") {
+    v.set(42);
+    REQUIRE(spy.log() == AllocatorLog{
+                             Deallocate(sizeofString("world")),
+                         });
+  }
+
+  SECTION("bool") {
+    v.set(false);
+    REQUIRE(spy.log() == AllocatorLog{
+                             Deallocate(sizeofString("world")),
+                         });
+  }
+
+  SECTION("const char*") {
+    v.set("hello");
+    REQUIRE(spy.log() == AllocatorLog{
+                             Deallocate(sizeofString("world")),
+                         });
+  }
+
+  SECTION("float") {
+    v.set(1.2);
+    REQUIRE(spy.log() == AllocatorLog{
+                             Deallocate(sizeofString("world")),
+                         });
+  }
+
+  SECTION("Serialized<const char*>") {
+    v.set(serialized("[]"));
+    REQUIRE(spy.log() == AllocatorLog{
+                             Deallocate(sizeofString("world")),
+                             Allocate(sizeofString("[]")),
+                         });
+  }
 }
