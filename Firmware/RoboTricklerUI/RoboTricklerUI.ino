@@ -292,10 +292,8 @@ void readWeight()
     }
     if (timeout)
     {
-      updateDisplayLog("Scale Data Timeout!", true);
-      delay(250);
-      updateDisplayLog("Check RS232 Wiring & Settings!", true);
-      delay(250);
+      updateDisplayLog("Timeout! Check RS232 Wiring & Settings!", true);
+      delay(500);
       newData = false;
     }
   }
@@ -447,7 +445,7 @@ void loop()
               DEBUG_PRINT("FirstThrow steps: ");
               DEBUG_PRINTLN(steps);
               setStepperSpeed(1, config.profile_speed[0]);
-              step(1, steps, config.profile_oscillate[0], config.profile_reverse[0], config.profile_acceleration[0]);
+              step(config.profile_num[0], steps, config.profile_oscillate[0], config.profile_reverse[0], config.profile_acceleration[0]);
               infoText += "FirstThrow steps:" + String(steps);
               firstThrow = false;
             }
