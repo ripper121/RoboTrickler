@@ -17,7 +17,7 @@ bool loadFromSdCard(String path)
   String dataType = "text/plain";
   if (path.endsWith("/"))
   {
-    path += "index.html";
+    path += "system/index.html";
   }
 
   if (path.endsWith(".src"))
@@ -118,7 +118,7 @@ bool loadFromSdCard(String path)
 
 void handleFileUpload()
 {
-  if (server.uri() != "/resources/edit")
+  if (server.uri() != "/system/resources/edit")
   {
     return;
   }
@@ -446,7 +446,7 @@ void makeHttpsGetRequest(String serverPath)
       DEBUG_PRINTLN(httpResponseCode);
       String payload = http.getString();
       DEBUG_PRINTLN(payload);
-      if (String(FW_VERSION).indexOf(payload) == -1)
+      if (FW_VERSION < payload.toFloat())
       {
         messageBox(String("New firmware available:\n\nv" + payload + "\n\nCheck: https://robo-trickler.de").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFFFFFF));
       }
@@ -516,12 +516,10 @@ void initWebServer()
       MDNS.begin(host);
 
       server.on("/list", HTTP_GET, printDirectory);
-      server.on("/resources/edit", HTTP_DELETE, handleDelete);
-      server.on("/resources/edit", HTTP_PUT, handleCreate);
-      server.on(
-          "/resources/edit", HTTP_POST, []()
-          { returnOK(); },
-          handleFileUpload);
+      server.on("/system/resources/edit", HTTP_DELETE, handleDelete);
+      server.on("/system/resources/edit", HTTP_PUT, handleCreate);
+      server.on("/system/resources/edit", HTTP_POST, []()
+                { returnOK(); }, handleFileUpload);
       // server.on("/ajaxRequest", handleAjaxRequest);//To get update of ADC Value only
       server.onNotFound(handleNotFound);
       server.on("/generate_204", handleNotFound);
@@ -534,15 +532,15 @@ void initWebServer()
       server.on("/getProfileList", handleGetProfileList);
       server.on("/getTarget", handleGetTarget);
       server.on("/setTarget", handleSetTarget);
-      server.on("/start", handleStart);
-      server.on("/stop", handleStop);
+      server.on("/system/start", handleStart);
+      server.on("/system/stop", handleStop);
       server.on("/fwupdate", HTTP_GET, []()
                 {
-        server.sendHeader("Connection", "close");
-        String updatePage = "<form method='POST' action='/update' enctype='multipart/form-data'><p>FW-Version: ";
-               updatePage += String(FW_VERSION);
-               updatePage += "</p><br><input type='file' name='update'><input type='submit' value='Update'></form><br><button onClick='javascript:history.back()'>Back</button>";
-        server.send(200, "text/html", updatePage); });
+                server.sendHeader("Connection", "close");
+                String updatePage = "<form method='POST' action='/update' enctype='multipart/form-data'><p>FW-Version: ";
+                      updatePage += String(FW_VERSION);
+                      updatePage += "</p><br><input type='file' name='update'><input type='submit' value='Update'></form><br><button onClick='javascript:history.back()'>Back</button>";
+                server.send(200, "text/html", updatePage); });
 
       server.on(
           "/update", HTTP_POST, []()
