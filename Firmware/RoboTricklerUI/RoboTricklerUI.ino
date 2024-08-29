@@ -14,7 +14,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>
 #include <soc/rtc_wdt.h>
-#define FW_VERSION 2.05
+#define FW_VERSION 2.06
 
 // 3 seconds WDT
 //#define WDT_TIMEOUT 10
@@ -113,7 +113,7 @@ A4988 stepper2(MOTOR_STEPS, I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, I2S_Y_DISABLE_P
 
 #define MAX_TARGET_WEIGHT 999
 float weight = 0.0;
-int dec_places = 3;
+int dec_places = 4;
 String unit = "";
 float tolerance;
 float alarmThreshold;
@@ -176,7 +176,7 @@ void readWeight()
 
     weight = 0;
 
-    int readWeigt[8];
+    int readWeigt[32];
 
     int separator = String(buff).indexOf('.');
     // DEBUG_PRINT("separator: ");
@@ -188,6 +188,7 @@ void readWeight()
     int N10N1 = 0;
     int N10N2 = 0;
     int N10N3 = 0;
+    int N10N4 = 0;
 
     if (separator != -1)
     {
@@ -197,6 +198,7 @@ void readWeight()
       N10N1 = (buff[separator + 1] > 0x30) ? (buff[separator + 1] - 0x30) : 0;
       N10N2 = (buff[separator + 2] > 0x30) ? (buff[separator + 2] - 0x30) : 0;
       N10N3 = (buff[separator + 3] > 0x30) ? (buff[separator + 3] - 0x30) : 0;
+      N10N4 = (buff[separator + 4] > 0x30) ? (buff[separator + 4] - 0x30) : 0;
 
       weight = N10P3 * 100.0;
       weight += N10P2 * 10.0;
@@ -204,6 +206,7 @@ void readWeight()
       weight += (N10N1 == 0) ? (0.0) : (N10N1 / 10.0);
       weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
       weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
+      weight += (N10N4 == 0) ? (0.0) : (N10N4 / 10000.0);
 
       if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1)
       {
@@ -519,7 +522,7 @@ void loop()
           beep("done");
         }
       }
-      
+
       if ((weight <= 0) && finished)
       {
         if (String(config.mode).indexOf("logger") != -1)
