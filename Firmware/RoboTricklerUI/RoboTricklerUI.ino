@@ -17,7 +17,7 @@
 #define FW_VERSION 2.06
 
 // 3 seconds WDT
-//#define WDT_TIMEOUT 10
+// #define WDT_TIMEOUT 10
 
 #include <lvgl.h>
 #include "ui.h"
@@ -315,7 +315,6 @@ void loop()
   if (millis() - writeETime >= 1000)
   {
     writeETime = millis();
-    config.weight = targetWeight;
 
     char temp[300];
     sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());

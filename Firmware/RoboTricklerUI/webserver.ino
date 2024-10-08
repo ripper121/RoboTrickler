@@ -345,10 +345,10 @@ void handleSetTarget()
     {
       if ((server.arg(i).toFloat() > 0) && (server.arg(i).toFloat() < MAX_TARGET_WEIGHT))
       {
-        if (targetWeight != server.arg(i).toFloat())
+        if (config.weight != server.arg(i).toFloat())
         {
-          targetWeight = server.arg(i).toFloat();
-          lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
+          config.weight = server.arg(i).toFloat();
+          lv_label_set_text(ui_LabelTarget, String(config.weight, 3).c_str());
         }
       }
     }

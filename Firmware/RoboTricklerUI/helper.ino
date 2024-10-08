@@ -1,4 +1,5 @@
 String tempProfile = "";
+float tempTargetWeight = 0.0;	
 
 IRAM_ATTR void disp_task_init(void)
 {
@@ -18,7 +19,7 @@ IRAM_ATTR void lvgl_disp_task(void *parg)
 {
     while (1)
     {
-        lv_timer_handler();        
+        lv_timer_handler();
         if (WiFi.status() == WL_CONNECTED)
         {
             server.handleClient();
@@ -67,69 +68,75 @@ void insertLine(String newLine)
     infoMessagBuff[(sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1] = newLine;
 }
 
-void setLabelTextColor(lv_obj_t* label, uint32_t colorHex) {
+void setLabelTextColor(lv_obj_t *label, uint32_t colorHex)
+{
     lv_color_t color = lv_color_hex(colorHex); // Convert hex color to LVGL color type
     lv_obj_set_style_text_color(label, color, LV_PART_MAIN | LV_STATE_DEFAULT);
 }
 
 void startTrickler()
 {
-  strlcpy(config.mode,          // <- destination
-          "trickler",           // <- source
-          sizeof(config.mode)); // <- destination's capacity
-  lv_label_set_text(ui_LabelTricklerStart, "Stop");
-  lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    strlcpy(config.mode,          // <- destination
+            "trickler",           // <- source
+            sizeof(config.mode)); // <- destination's capacity
+    lv_label_set_text(ui_LabelTricklerStart, "Stop");
+    lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
 
-  if (tempProfile != String(config.profile))
-  {
-    readProfile(String("/" + String(config.profile) + ".txt").c_str(), config);
-    saveConfiguration("/config.txt", config);
-    tempProfile = String(config.profile);
-  }
-  updateDisplayLog(String("Profile: " + String(config.profile) + " selected!"));
+    if (tempProfile != String(config.profile))
+    {
+        readProfile(String("/" + String(config.profile) + ".txt").c_str(), config);
+        saveConfiguration("/config.txt", config);
+        tempProfile = String(config.profile);
+    }
+    updateDisplayLog(String("Profile: " + String(config.profile) + " selected!"));
 
-  serialFlush();
-  startMeasurment();
+    if (config.weight != tempTargetWeight)
+    {
+        targetWeight = config.weight;
+        saveConfiguration("/config.txt", config);
+        tempTargetWeight = config.weight;
+    }
+
+    serialFlush();
+    startMeasurment();
 }
 
 void stopTrickler()
 {
-  stopMeasurment();
-  serialFlush();
-  lv_label_set_text(ui_LabelTricklerStart, "Start");
-  lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_label_set_text(ui_LabelTricklerWeight, "-.-");
-  lv_label_set_text(ui_LabelInfo, "");
-  lv_label_set_text(ui_LabelLoggerInfo, "");
+    stopMeasurment();
+    serialFlush();
+    lv_label_set_text(ui_LabelTricklerStart, "Start");
+    lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_text(ui_LabelTricklerWeight, "-.-");
+    lv_label_set_text(ui_LabelInfo, "");
+    lv_label_set_text(ui_LabelLoggerInfo, "");
 }
-
 
 void startMeasurment()
 {
-  running = true;
-  finished = false;
-  firstThrow = true;
-  beep("button");
+    running = true;
+    finished = false;
+    firstThrow = true;
+    beep("button");
 }
 
 void stopMeasurment()
 {
-  running = false;
-  finished = true;
-  beep("button");
+    running = false;
+    finished = true;
+    beep("button");
 }
-
 
 void setProfile(int num)
 {
-  strlcpy(config.profile,               // <- destination
-          profileListBuff[num].c_str(), // <- source
-          sizeof(config.profile));      // <- destination's capacity
+    strlcpy(config.profile,               // <- destination
+            profileListBuff[num].c_str(), // <- source
+            sizeof(config.profile));      // <- destination's capacity
 
-  DEBUG_PRINT("num: ");
-  DEBUG_PRINTLN(num);
+    DEBUG_PRINT("num: ");
+    DEBUG_PRINTLN(num);
 
-  lv_label_set_text(ui_LabelProfile, config.profile);
+    lv_label_set_text(ui_LabelProfile, config.profile);
 }
 
 void serialFlush()
