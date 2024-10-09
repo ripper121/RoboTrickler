@@ -14,7 +14,7 @@ bool readProfile(const char *filename, Config &config)
   // Allocate a temporary JsonDocument
   // Don't forget to change the capacity to match your requirements.
   // Use https://arduinojson.org/v6/assistant to compute the capacity.
-  StaticJsonDocument<3072> doc;
+  JsonDocument doc;
 
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(doc, file);
@@ -60,6 +60,7 @@ bool readProfile(const char *filename, Config &config)
         config.profile_stepsPerUnit = item.value()["stepsPerUnit"] | 0;
         config.profile_tolerance = item.value()["tolerance"] | 0.000;
         config.profile_alarmThreshold = item.value()["alarmThreshold"] | 1.000;
+        config.profile_powderMeasure = item.value()["powderMeasure"] | false;
       }
       config.profile_num[item_key] = item.value()["number"] | 1;
       config.profile_weight[item_key] = item.value()["weight"];
@@ -96,7 +97,7 @@ int loadConfiguration(const char *filename, Config &config)
   // Allocate a temporary JsonDocument
   // Don't forget to change the capacity to match your requirements.
   // Use https://arduinojson.org/v6/assistant to compute the capacity.
-  StaticJsonDocument<768> doc;
+  JsonDocument doc;
 
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(doc, file);
@@ -242,7 +243,7 @@ void saveConfiguration(const char *filename, const Config &config)
   // Allocate a temporary JsonDocument
   // Don't forget to change the capacity to match your requirements.
   // Use https://arduinojson.org/assistant to compute the capacity.
-  StaticJsonDocument<768> doc;
+  JsonDocument doc;
   doc["wifi"]["ssid"] = config.wifi_ssid;
   doc["wifi"]["psk"] = config.wifi_psk;
   doc["wifi"]["IPStatic"] = config.IPStatic;

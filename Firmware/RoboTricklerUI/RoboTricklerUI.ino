@@ -88,6 +88,7 @@ struct Config
 
   byte profile_num[16];
   float profile_weight[16];
+  bool profile_powderMeasure;
   double profile_stepsPerUnit;
   float profile_tolerance;
   float profile_alarmThreshold;
@@ -439,16 +440,36 @@ void loop()
           {
             DEBUG_PRINTLN("Profile Running");
             String infoText = "";
-            DEBUG_PRINT("firstThrow: ");
-            DEBUG_PRINTLN(firstThrow);
-            if (firstThrow && config.profile_stepsPerUnit > 0)
+            DEBUG_PRINT("First Throw");
+            if (firstThrow)
             {
-              double steps = (targetWeight - weight) * config.profile_stepsPerUnit;
-              DEBUG_PRINT("FirstThrow steps: ");
-              DEBUG_PRINTLN(steps);
               setStepperSpeed(1, config.profile_speed[0]);
-              step(config.profile_num[0], steps, config.profile_oscillate[0], config.profile_reverse[0], config.profile_acceleration[0]);
-              infoText += "FirstThrow steps:" + String(steps);
+              if (config.profile_powderMeasure)
+              {
+                DEBUG_PRINT("Powder Measure");
+                if (!config.profile_reverse[0])
+                {
+                  step(config.profile_num[0], config.profile_steps[0], config.profile_oscillate[0], false, config.profile_acceleration[0]);
+                  step(config.profile_num[0], config.profile_steps[0], config.profile_oscillate[0], true, config.profile_acceleration[0]);
+                }
+                else
+                {
+                  step(config.profile_num[0], config.profile_steps[0], config.profile_oscillate[0], true, config.profile_acceleration[0]);
+                  step(config.profile_num[0], config.profile_steps[0], config.profile_oscillate[0], false, config.profile_acceleration[0]);
+                }
+                infoText += "FirstThrow Powder Measure";
+              }
+              else
+              {
+                if (config.profile_stepsPerUnit > 0)
+                {
+                  double steps = (targetWeight - weight) * config.profile_stepsPerUnit;
+                  DEBUG_PRINT("FirstThrow steps: ");
+                  DEBUG_PRINTLN(steps);
+                  step(config.profile_num[0], steps, config.profile_oscillate[0], config.profile_reverse[0], config.profile_acceleration[0]);
+                  infoText += "FirstThrow steps:" + String(steps);
+                }
+              }
               firstThrow = false;
             }
             else
