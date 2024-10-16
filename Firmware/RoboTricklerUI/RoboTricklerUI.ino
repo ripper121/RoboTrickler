@@ -114,7 +114,8 @@ A4988 stepper2(MOTOR_STEPS, I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, I2S_Y_DISABLE_P
 
 #define MAX_TARGET_WEIGHT 999
 float weight = 0.0;
-int dec_places = 4;
+const float EPSILON = 0.0001; // Define a small epsilon value
+int dec_places = 3;
 String unit = "";
 float tolerance;
 float alarmThreshold;
@@ -177,8 +178,6 @@ void readWeight()
 
     weight = 0;
 
-    int readWeigt[32];
-
     int separator = String(buff).indexOf('.');
     // DEBUG_PRINT("separator: ");
     // DEBUG_PRINTLN(separator);
@@ -201,6 +200,7 @@ void readWeight()
       N10N3 = (buff[separator + 3] > 0x30) ? (buff[separator + 3] - 0x30) : 0;
       N10N4 = (buff[separator + 4] > 0x30) ? (buff[separator + 4] - 0x30) : 0;
 
+      weight = 0;
       weight = N10P3 * 100.0;
       weight += N10P2 * 10.0;
       weight += N10P1 * 1.0;
@@ -209,12 +209,15 @@ void readWeight()
       weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
       weight += (N10N4 == 0) ? (0.0) : (N10N4 / 10000.0);
 
+      dec_places = 3;
       if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1)
       {
-        unit = "g";
+        unit = " g";
+        dec_places = 3;
         if (String(buff).indexOf("gn") != -1 || String(buff).indexOf("GN") != -1 || String(buff).indexOf("gr") != -1 || String(buff).indexOf("GR") != -1)
         {
-          unit = "gn";
+          unit = " gn";
+          dec_places = 2;
         }
       }
 
@@ -339,17 +342,14 @@ void loop()
         DEBUG_PRINT("Weight: ");
         DEBUG_PRINTLN(weight);
         DEBUG_PRINT("TargetWeight: ");
-        DEBUG_PRINTLN(String((targetWeight - tolerance), 3));
+        DEBUG_PRINTLN(String((targetWeight - tolerance - EPSILON), 5));
+        DEBUG_PRINTLN(String((targetWeight + tolerance + EPSILON), 5));
         DEBUG_PRINT("alarmThreshold: ");
-        DEBUG_PRINTLN(String((targetWeight + alarmThreshold), 3));
+        DEBUG_PRINTLN(String((targetWeight + alarmThreshold + EPSILON), 5));
 
-        weight = round(weight * 1000) / 1000.0;
-        targetWeight = round(targetWeight * 1000) / 1000.0;
-        tolerance = round(tolerance * 1000) / 1000.0;
-
-        if ((weight >= (targetWeight - tolerance)) && (weight >= 0))
+        if ((weight >= (targetWeight - tolerance - EPSILON)) && (weight >= 0))
         {
-          if (weight <= (targetWeight + tolerance))
+          if (weight <= (targetWeight + tolerance + EPSILON))
           {
             setLabelTextColor(ui_LabelTricklerWeight, 0x00FF00);
           }
@@ -357,7 +357,7 @@ void loop()
           {
             setLabelTextColor(ui_LabelTricklerWeight, 0xFFFF00);
           }
-          if ((weight >= (targetWeight + alarmThreshold)) && (alarmThreshold > 0))
+          if ((weight >= (targetWeight + alarmThreshold + EPSILON)) && (alarmThreshold > 0))
           {
             // Send Alarm
             setLabelTextColor(ui_LabelTricklerWeight, 0xFF0000);
@@ -377,7 +377,6 @@ void loop()
             beep("done");
             updateDisplayLog("Done :)", true);
             serialFlush();
-            firstThrow = true;
           }
           measurementCount = 0;
           finished = true;
@@ -555,6 +554,8 @@ void loop()
         {
           updateDisplayLog("Ready", true);
         }
+
+        firstThrow = true;
         finished = false;
       }
     }
