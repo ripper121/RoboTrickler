@@ -114,7 +114,7 @@ A4988 stepper2(MOTOR_STEPS, I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, I2S_Y_DISABLE_P
 
 #define MAX_TARGET_WEIGHT 999
 float weight = 0.0;
-const float EPSILON = 0.0001; // Define a small epsilon value
+const float EPSILON = 0.00001; // Define a small epsilon value
 int dec_places = 3;
 String unit = "";
 float tolerance;
@@ -205,9 +205,12 @@ void readWeight()
       weight += N10P2 * 10.0;
       weight += N10P1 * 1.0;
       weight += (N10N1 == 0) ? (0.0) : (N10N1 / 10.0);
-      weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
-      weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
-      weight += (N10N4 == 0) ? (0.0) : (N10N4 / 10000.0);
+      if (dec_places >= 2)
+        weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
+      if (dec_places >= 3)
+        weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
+      if (dec_places >= 4)
+        weight += (N10N4 == 0) ? (0.0) : (N10N4 / 10000.0);
 
       dec_places = 3;
       if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1)
@@ -342,10 +345,10 @@ void loop()
         DEBUG_PRINT("Weight: ");
         DEBUG_PRINTLN(weight);
         DEBUG_PRINT("TargetWeight: ");
-        DEBUG_PRINTLN(String((targetWeight - tolerance - EPSILON), 5));
-        DEBUG_PRINTLN(String((targetWeight + tolerance + EPSILON), 5));
+        DEBUG_PRINTLN(String((targetWeight - tolerance), 5));
+        DEBUG_PRINTLN(String((targetWeight + tolerance), 5));
         DEBUG_PRINT("alarmThreshold: ");
-        DEBUG_PRINTLN(String((targetWeight + alarmThreshold + EPSILON), 5));
+        DEBUG_PRINTLN(String((targetWeight + alarmThreshold), 5));
 
         if ((weight >= (targetWeight - tolerance - EPSILON)) && (weight >= 0))
         {
