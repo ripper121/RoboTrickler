@@ -35,7 +35,9 @@ bool readProfile(const char *filename, Config &config)
 
   if (error)
   {
-    DEBUG_PRINT("deserializeJson() failed: ");
+    DEBUG_PRINT("deserializeJson() failed on : ");
+    DEBUG_PRINT(filename);
+    DEBUG_PRINT(" /");
     DEBUG_PRINTLN(error.c_str());
     return false;
   }
@@ -118,7 +120,7 @@ int loadConfiguration(const char *filename, Config &config)
 
   if (error)
   {
-    DEBUG_PRINT("deserializeJson() failed: ");
+    DEBUG_PRINT("deserializeJson() failed on config.txt: ");
     DEBUG_PRINTLN(error.c_str());
     return 1;
   }
