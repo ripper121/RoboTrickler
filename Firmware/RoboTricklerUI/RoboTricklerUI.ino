@@ -229,8 +229,8 @@ void readWeight()
         weight = weight * (-1.0);
       }
 
-      // DEBUG_PRINT("Weight Counter: ");
-      // DEBUG_PRINTLN(weightCounter);
+      DEBUG_PRINT("Weight Counter: ");
+      DEBUG_PRINTLN(weightCounter);
 
       if (lastWeight == weight)
       {

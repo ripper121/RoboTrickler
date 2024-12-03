@@ -5,6 +5,20 @@ bool readProfile(const char *filename, Config &config)
 
   delay(500);
 
+  if (!SD.exists(filename))
+  {
+    DEBUG_PRINTLN("Profile not found:");
+    DEBUG_PRINTLN(filename);
+    DEBUG_PRINTLN("Set to calibrate.txt as default");
+    filename = "/calibrate.txt";
+
+    strlcpy(config.profile,          // <- destination
+            "calibrate",             // <- source
+            sizeof(config.profile)); // <- destination's capacity
+
+    saveConfiguration("/config.txt", config);
+  }
+
   // Dump config file
   printFile(filename);
 
@@ -77,7 +91,7 @@ bool readProfile(const char *filename, Config &config)
   }
   file.close();
 
-  //doc.garbageCollect();
+  // doc.garbageCollect();
 
   infoText = "Profile Loaded:";
   infoText += filename;
@@ -163,7 +177,7 @@ int loadConfiguration(const char *filename, Config &config)
 
   file.close();
 
-  //doc.garbageCollect();
+  // doc.garbageCollect();
 
   String profile_filename = "/" + String(config.profile) + ".txt";
   if (!readProfile(profile_filename.c_str(), config))
