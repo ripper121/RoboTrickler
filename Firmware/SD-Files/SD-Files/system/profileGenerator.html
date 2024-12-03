@@ -13,13 +13,13 @@
       <form id="profileForm">
          <fieldset>
             <legend>Profile Settings</legend>
-            <label for="weightInput">Weight of Calibration run (20000 Steps):</label>
+            <label for="weightInput">Weight of calibration run:</label>
             <input type="number" id="weightInput" step="0.0001" min="0" value="0.100"><br>
 
-            <label for="speedInput">Stepper Speed rpm:</label>
+            <label for="speedInput">Stepper speed rpm:</label>
             <input type="number" id="speedInput" step="1" min="5" value="200"><br>
 
-            <label for="measurementsInput">Same measurements for next step:</label>
+            <label for="measurementsInput">Measurements (with PLC 100-BC use 5):</label>
             <input type="number" id="measurementsInput" step="1" min="1" value="2"><br>
 
             <label for="calcToleranceInput">Calculation tolerance in %:</label>
@@ -27,7 +27,7 @@
 
             <fieldset>
                <legend>Trickler</legend>
-               <label for="stepsPerUnitCheckbox">Auto calc of first throw:</label>
+               <label for="stepsPerUnitCheckbox">Auto calc first throw:</label>
                <input type="checkbox" id="stepsPerUnitCheckbox" checked><br>
 
                <label for="oscillateCheckbox">Oscillate:</label>
@@ -43,16 +43,16 @@
             <fieldset>
                <legend>Unit</legend>
                <label for="gramRadio">Gram:</label>
-               <input type="radio" id="gramRadio" name="weightUnit" value="Gram" checked><br>
+               <input type="radio" id="gramRadio" name="weightUnit" value="Gram"><br>
 
                <label for="grainRadio">Grain:</label>
-               <input type="radio" id="grainRadio" name="weightUnit" value="Grain"><br>
+               <input type="radio" id="grainRadio" name="weightUnit" value="Grain" checked><br>
             </fieldset>
 
-            <label for="alarmThresholdInput">Threshold for over Trickle Alarm in Gram:</label>
+            <label for="alarmThresholdInput">Threshold for alarm in Grain:</label>
             <input type="number" id="alarmThresholdInput" step="0.001" min="0" value="0.1"><br>
 
-            <label for="toleranceInput">Target weight tolerance in Gram:</label>
+            <label for="toleranceInput">Tolerance in Grain:</label>
             <input type="number" id="toleranceInput" step="0.001" min="0" value="0.0"><br>
 
          </fieldset>
@@ -63,7 +63,7 @@
       <textarea id="profileOutput" rows="20" cols="40"></textarea><br>
 
       <label for="profileName">Profile Name:</label>
-      <input type="text" id="profileName" value="my_profile_name" maxlength="16" required
+      <input type="text" id="profileName" value="powder" maxlength="16" required
          title="Filename must not contain < > : \" / \\ | ? *"><br>
       <button id="download-btn" class="button">Download</button><br><br>
       <button onClick='javascript:history.back()' class="button">Back</button>
@@ -73,6 +73,12 @@
    <script>
       var profileJSON;
 
+      function conditionalAdd(obj, key, value, condition) {
+         if (condition) {
+            obj[key] = value;
+         }
+      }
+
       document.getElementById("generateButton").addEventListener("click", function () {
          const measuredWeight = parseFloat(document.getElementById("weightInput").value);
          const speed = parseFloat(document.getElementById("speedInput").value);
@@ -80,7 +86,7 @@
          const reverse = document.getElementById("reverseCheckbox").checked; // Get the checkbox value
          const acceleration = document.getElementById("accelerationCheckbox").checked; // Get the checkbox value
          const stepsPerUnitOn = document.getElementById("stepsPerUnitCheckbox").checked; // Get the checkbox value
-         
+
          const weightUnit = document.querySelector('input[name="weightUnit"]:checked').value;
          const tolerance = parseFloat(document.getElementById("toleranceInput").value);
          const alarmThreshold = parseFloat(document.getElementById("alarmThresholdInput").value);
@@ -114,41 +120,39 @@
                var steps = Math.round((weight / measuredWeight) * ((20000 / 100) * calcTolerance));
                if (steps < 10)
                   steps = 10;
+
+               if (i == 0)
+                  measurements = 10;
+               else
+                  measurements = measurement;
                if (i == weights.length - 3)
                   measurements = 10;
                if (i == weights.length - 2)
-                  measurements = 10;
-               if (i == weights.length - 1)
                   measurements = 15;
+               if (i == weights.length - 1)
+                  measurements = 20;
 
-               if (i == 0){
+               profile[i + 1] = {
+                  weight: weight,
+                  steps: steps,
+                  speed: speed,
+                  measurements: measurements
+               };
+
+               if (i == 0) {
                   stepsPerUnit = 0;
-                  if(stepsPerUnitOn)
+                  if (stepsPerUnitOn) {
                      stepsPerUnit = Math.round((1 / measuredWeight) * ((20000 / 100) * calcTolerance));
+                     conditionalAdd(profile[i + 1], "stepsPerUnit", stepsPerUnit, true);
+                  }
 
-                  profile[i + 1] = {
-                     weight: weight,
-                     tolerance: tolerance,
-                     alarmThreshold: alarmThreshold,
-                     stepsPerUnit: stepsPerUnit,
-                     steps: steps,
-                     speed: speed,
-                     measurements: measurements,
-                     oscillate: oscillate,
-                     reverse: reverse,
-                     acceleration: acceleration
-                  };
+                  conditionalAdd(profile[i + 1], "tolerance", tolerance, true);
+                  conditionalAdd(profile[i + 1], "alarmThreshold", alarmThreshold, true);
                }
-               else
-                  profile[i + 1] = {
-                     weight: weight,
-                     steps: steps,
-                     speed: speed,
-                     measurements: measurements,
-                     oscillate: oscillate,
-                     reverse: reverse,
-                     acceleration: acceleration
-                  };
+
+               conditionalAdd(profile[i + 1], "oscillate", oscillate, oscillate);
+               conditionalAdd(profile[i + 1], "reverse", reverse, reverse);
+               conditionalAdd(profile[i + 1], "acceleration", acceleration, acceleration);
             }
 
             // Convert the profile object to JSON format
@@ -202,15 +206,15 @@
       }, false);
 
       document.getElementById("gramRadio").addEventListener("click", function () {
-         document.querySelector("label[for=alarmThresholdInput]").innerHTML = "Threshold for over Trickle Alarm in Gram:";
+         document.querySelector("label[for=alarmThresholdInput]").innerHTML = "Threshold for alarm in Gram:";
          document.getElementById("alarmThresholdInput").value = 0.100;
-         document.querySelector("label[for=toleranceInput]").innerHTML = "Target weight tolerance in Gram:";
+         document.querySelector("label[for=toleranceInput]").innerHTML = "Tolerance in Gram:";
       });
 
       document.getElementById("grainRadio").addEventListener("click", function () {
-         document.querySelector("label[for=alarmThresholdInput]").innerHTML = "Threshold for over Trickle Alarm in Grain:";
+         document.querySelector("label[for=alarmThresholdInput]").innerHTML = "Threshold for alarm in Grain:";
          document.getElementById("alarmThresholdInput").value = 1.000;
-         document.querySelector("label[for=toleranceInput]").innerHTML = "Target weight tolerance in Grain:";
+         document.querySelector("label[for=toleranceInput]").innerHTML = "Tolerance in Grain:";
       });
 
 
