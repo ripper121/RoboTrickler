@@ -136,28 +136,33 @@ class JsonVariantConst : public detail::VariantTag,
     if (key.template is<size_t>())
       return operator[](key.template as<size_t>());
     else
-      return operator[](key.template as<const char*>());
+      return operator[](key.template as<JsonString>());
   }
 
-  // Returns true if tge object contains the specified key.
+  // DEPRECATED: use obj[key].is<T>() instead
   // https://arduinojson.org/v7/api/jsonvariantconst/containskey/
   template <typename TString>
+  ARDUINOJSON_DEPRECATED("use var[key].is<T>() instead")
   detail::enable_if_t<detail::IsString<TString>::value, bool> containsKey(
       const TString& key) const {
     return detail::VariantData::getMember(getData(), detail::adaptString(key),
                                           resources_) != 0;
   }
 
-  // Returns true if tge object contains the specified key.
+  // DEPRECATED: use obj["key"].is<T>() instead
   // https://arduinojson.org/v7/api/jsonvariantconst/containskey/
   template <typename TChar>
+  ARDUINOJSON_DEPRECATED("use obj[\"key\"].is<T>() instead")
   detail::enable_if_t<detail::IsString<TChar*>::value, bool> containsKey(
       TChar* key) const {
     return detail::VariantData::getMember(getData(), detail::adaptString(key),
                                           resources_) != 0;
   }
 
+  // DEPRECATED: use obj[key].is<T>() instead
+  // https://arduinojson.org/v7/api/jsonvariantconst/containskey/
   template <typename TVariant>
+  ARDUINOJSON_DEPRECATED("use var[key].is<T>() instead")
   detail::enable_if_t<detail::IsVariant<TVariant>::value, bool> containsKey(
       const TVariant& key) const {
     return containsKey(key.template as<const char*>());

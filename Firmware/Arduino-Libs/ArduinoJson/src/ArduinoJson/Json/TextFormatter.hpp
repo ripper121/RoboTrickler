@@ -66,6 +66,10 @@ class TextFormatter {
 
   template <typename T>
   void writeFloat(T value) {
+    writeFloat(JsonFloat(value), sizeof(T) >= 8 ? 9 : 6);
+  }
+
+  void writeFloat(JsonFloat value, int8_t decimalPlaces) {
     if (isnan(value))
       return writeRaw(ARDUINOJSON_ENABLE_NAN ? "NaN" : "null");
 
@@ -87,7 +91,7 @@ class TextFormatter {
     }
 #endif
 
-    FloatParts<T> parts(value);
+    auto parts = decomposeFloat(value, decimalPlaces);
 
     writeInteger(parts.integral);
     if (parts.decimalPlaces)
@@ -101,7 +105,7 @@ class TextFormatter {
 
   template <typename T>
   enable_if_t<is_signed<T>::value> writeInteger(T value) {
-    typedef make_unsigned_t<T> unsigned_type;
+    using unsigned_type = make_unsigned_t<T>;
     unsigned_type unsigned_value;
     if (value < 0) {
       writeRaw('-');

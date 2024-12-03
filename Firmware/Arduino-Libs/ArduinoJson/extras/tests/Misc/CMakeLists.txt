@@ -5,8 +5,8 @@
 add_executable(MiscTests
 	arithmeticCompare.cpp
 	conflicts.cpp
-	FloatParts.cpp
 	issue1967.cpp
+	issue2129.cpp
 	JsonString.cpp
 	NoArduinoHeader.cpp
 	printable.cpp

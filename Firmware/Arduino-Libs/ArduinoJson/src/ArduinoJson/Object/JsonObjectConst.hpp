@@ -16,7 +16,7 @@ class JsonObjectConst : public detail::VariantOperators<JsonObjectConst> {
   friend class detail::VariantAttorney;
 
  public:
-  typedef JsonObjectConstIterator iterator;
+  using iterator = JsonObjectConstIterator;
 
   // Creates an unbound reference.
   JsonObjectConst() : data_(0), resources_(0) {}
@@ -68,26 +68,29 @@ class JsonObjectConst : public detail::VariantOperators<JsonObjectConst> {
     return iterator();
   }
 
-  // Returns true if the object contains the specified key.
+  // DEPRECATED: use obj[key].is<T>() instead
   // https://arduinojson.org/v7/api/jsonobjectconst/containskey/
   template <typename TString>
+  ARDUINOJSON_DEPRECATED("use obj[key].is<T>() instead")
   detail::enable_if_t<detail::IsString<TString>::value, bool> containsKey(
       const TString& key) const {
     return detail::ObjectData::getMember(data_, detail::adaptString(key),
                                          resources_) != 0;
   }
 
-  // Returns true if the object contains the specified key.
+  // DEPRECATED: use obj["key"].is<T>() instead
   // https://arduinojson.org/v7/api/jsonobjectconst/containskey/
   template <typename TChar>
+  ARDUINOJSON_DEPRECATED("use obj[\"key\"].is<T>() instead")
   bool containsKey(TChar* key) const {
     return detail::ObjectData::getMember(data_, detail::adaptString(key),
                                          resources_) != 0;
   }
 
-  // Returns true if the object contains the specified key.
+  // DEPRECATED: use obj[key].is<T>() instead
   // https://arduinojson.org/v7/api/jsonobjectconst/containskey/
   template <typename TVariant>
+  ARDUINOJSON_DEPRECATED("use obj[key].is<T>() instead")
   detail::enable_if_t<detail::IsVariant<TVariant>::value, bool> containsKey(
       const TVariant& key) const {
     return containsKey(key.template as<const char*>());
@@ -118,8 +121,8 @@ class JsonObjectConst : public detail::VariantOperators<JsonObjectConst> {
   template <typename TVariant>
   detail::enable_if_t<detail::IsVariant<TVariant>::value, JsonVariantConst>
   operator[](const TVariant& key) const {
-    if (key.template is<const char*>())
-      return operator[](key.template as<const char*>());
+    if (key.template is<JsonString>())
+      return operator[](key.template as<JsonString>());
     else
       return JsonVariantConst();
   }

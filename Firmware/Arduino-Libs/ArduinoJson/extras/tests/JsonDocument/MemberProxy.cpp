@@ -14,8 +14,8 @@
 using ArduinoJson::detail::sizeofArray;
 using ArduinoJson::detail::sizeofObject;
 
-typedef ArduinoJson::detail::MemberProxy<JsonDocument&, const char*>
-    MemberProxy;
+using MemberProxy =
+    ArduinoJson::detail::MemberProxy<JsonDocument&, const char*>;
 
 TEST_CASE("MemberProxy::add()") {
   JsonDocument doc;
@@ -32,6 +32,18 @@ TEST_CASE("MemberProxy::add()") {
 
     REQUIRE(doc.as<std::string>() == "{\"hello\":[\"world\"]}");
   }
+
+#ifdef HAS_VARIABLE_LENGTH_ARRAY
+  SECTION("add(vla)") {
+    size_t i = 16;
+    char vla[i];
+    strcpy(vla, "world");
+
+    mp.add(vla);
+
+    REQUIRE(doc.as<std::string>() == "{\"hello\":[\"world\"]}");
+  }
+#endif
 }
 
 TEST_CASE("MemberProxy::clear()") {
@@ -90,25 +102,6 @@ TEST_CASE("MemberProxy::operator==()") {
     REQUIRE_FALSE(doc["a"] == doc["b"]);
     REQUIRE_FALSE(doc["a"] > doc["b"]);
     REQUIRE_FALSE(doc["a"] >= doc["b"]);
-  }
-}
-
-TEST_CASE("MemberProxy::containsKey()") {
-  JsonDocument doc;
-  MemberProxy mp = doc["hello"];
-
-  SECTION("containsKey(const char*)") {
-    mp["key"] = "value";
-
-    REQUIRE(mp.containsKey("key") == true);
-    REQUIRE(mp.containsKey("key") == true);
-  }
-
-  SECTION("containsKey(std::string)") {
-    mp["key"] = "value";
-
-    REQUIRE(mp.containsKey("key"_s) == true);
-    REQUIRE(mp.containsKey("key"_s) == true);
   }
 }
 
@@ -214,6 +207,18 @@ TEST_CASE("MemberProxy::set()") {
 
     REQUIRE(doc.as<std::string>() == "{\"hello\":\"world\"}");
   }
+
+#ifdef HAS_VARIABLE_LENGTH_ARRAY
+  SECTION("set(vla)") {
+    size_t i = 8;
+    char vla[i];
+    strcpy(vla, "world");
+
+    mp.set(vla);
+
+    REQUIRE(doc.as<std::string>() == "{\"hello\":\"world\"}");
+  }
+#endif
 }
 
 TEST_CASE("MemberProxy::size()") {
@@ -345,12 +350,12 @@ TEST_CASE("Deduplicate keys") {
 }
 
 TEST_CASE("MemberProxy under memory constraints") {
-  KillswitchAllocator killswitch;
-  SpyingAllocator spy(&killswitch);
+  TimebombAllocator timebomb(1);
+  SpyingAllocator spy(&timebomb);
   JsonDocument doc(&spy);
 
-  SECTION("key allocation fails") {
-    killswitch.on();
+  SECTION("key slot allocation fails") {
+    timebomb.setCountdown(0);
 
     doc["hello"_s] = "world";
 
@@ -358,6 +363,38 @@ TEST_CASE("MemberProxy under memory constraints") {
     REQUIRE(doc.size() == 0);
     REQUIRE(doc.overflowed() == true);
     REQUIRE(spy.log() == AllocatorLog{
+                             AllocateFail(sizeofPool()),
+                         });
+  }
+
+  SECTION("value slot allocation fails") {
+    timebomb.setCountdown(1);
+
+    // fill the pool entirely, but leave one slot for the key
+    doc["foo"][ARDUINOJSON_POOL_CAPACITY - 4] = 1;
+    REQUIRE(doc.overflowed() == false);
+
+    doc["hello"_s] = "world";
+
+    REQUIRE(doc.is<JsonObject>());
+    REQUIRE(doc.size() == 1);
+    REQUIRE(doc.overflowed() == true);
+    REQUIRE(spy.log() == AllocatorLog{
+                             Allocate(sizeofPool()),
+                             AllocateFail(sizeofPool()),
+                         });
+  }
+
+  SECTION("key string allocation fails") {
+    timebomb.setCountdown(1);
+
+    doc["hello"_s] = "world";
+
+    REQUIRE(doc.is<JsonObject>());
+    REQUIRE(doc.size() == 0);
+    REQUIRE(doc.overflowed() == true);
+    REQUIRE(spy.log() == AllocatorLog{
+                             Allocate(sizeofPool()),
                              AllocateFail(sizeofString("hello")),
                          });
   }

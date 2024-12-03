@@ -142,6 +142,13 @@ class JsonDocument : public detail::VariantOperators<const JsonDocument&> {
     return to<JsonVariant>().set(src);
   }
 
+  // Replaces the root with the specified value.
+  // https://arduinojson.org/v7/api/jsondocument/set/
+  template <typename TChar>
+  bool set(TChar* src) {
+    return to<JsonVariant>().set(src);
+  }
+
   // Clears the document and converts it to the specified type.
   // https://arduinojson.org/v7/api/jsondocument/to/
   template <typename T>
@@ -150,24 +157,27 @@ class JsonDocument : public detail::VariantOperators<const JsonDocument&> {
     return getVariant().template to<T>();
   }
 
-  // Returns true if the root object contains the specified key.
+  // DEPRECATED: use obj["key"].is<T>() instead
   // https://arduinojson.org/v7/api/jsondocument/containskey/
   template <typename TChar>
+  ARDUINOJSON_DEPRECATED("use doc[\"key\"].is<T>() instead")
   bool containsKey(TChar* key) const {
     return data_.getMember(detail::adaptString(key), &resources_) != 0;
   }
 
-  // Returns true if the root object contains the specified key.
+  // DEPRECATED: use obj[key].is<T>() instead
   // https://arduinojson.org/v7/api/jsondocument/containskey/
   template <typename TString>
+  ARDUINOJSON_DEPRECATED("use doc[key].is<T>() instead")
   detail::enable_if_t<detail::IsString<TString>::value, bool> containsKey(
       const TString& key) const {
     return data_.getMember(detail::adaptString(key), &resources_) != 0;
   }
 
-  // Returns true if the root object contains the specified key.
+  // DEPRECATED: use obj[key].is<T>() instead
   // https://arduinojson.org/v7/api/jsondocument/containskey/
   template <typename TVariant>
+  ARDUINOJSON_DEPRECATED("use doc[key].is<T>() instead")
   detail::enable_if_t<detail::IsVariant<TVariant>::value, bool> containsKey(
       const TVariant& key) const {
     return containsKey(key.template as<const char*>());
@@ -229,8 +239,8 @@ class JsonDocument : public detail::VariantOperators<const JsonDocument&> {
   template <typename TVariant>
   detail::enable_if_t<detail::IsVariant<TVariant>::value, JsonVariantConst>
   operator[](const TVariant& key) const {
-    if (key.template is<const char*>())
-      return operator[](key.template as<const char*>());
+    if (key.template is<JsonString>())
+      return operator[](key.template as<JsonString>());
     if (key.template is<size_t>())
       return operator[](key.template as<size_t>());
     return {};
