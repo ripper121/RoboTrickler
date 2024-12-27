@@ -96,9 +96,7 @@ void startTrickler()
         saveConfiguration("/config.txt", config);
         tempTargetWeight = config.weight;
     }
-
-    firstThrow = true;
-
+    
     serialFlush();
     startMeasurment();
 }

@@ -88,7 +88,6 @@ struct Config
 
   byte profile_num[16];
   float profile_weight[16];
-  bool profile_powderMeasure;
   double profile_stepsPerUnit;
   float profile_tolerance;
   float profile_alarmThreshold;
@@ -161,6 +160,38 @@ void updateDisplayLog(String logOutput, bool noLog = false)
   DEBUG_PRINT(logOutput);
 }
 
+// Function to clean the input buffer, return a float, and count decimal places
+void stringToWeight(const char *input, float *value, int *decimalPlaces)
+{
+  char filteredBuffer[64]; // Make sure this is large enough to hold the filtered result
+  int j = 0;
+  bool dotFound = false;
+  int decimals = 0;
+
+  for (int i = 0; input[i] != '\0'; i++)
+  {
+    if ((input[i] >= '0' && input[i] <= '9') || input[i] == '.')
+    {
+      if (input[i] == '.')
+      {
+        dotFound = true;
+      }
+      else if (dotFound)
+      {
+        decimals++;
+      }
+      filteredBuffer[j++] = input[i];
+    }
+  }
+  filteredBuffer[j] = '\0'; // Null-terminate the string
+
+  // Set the decimal places count
+  *decimalPlaces = decimals;
+
+  // Convert the cleaned buffer to a float
+  *value = atof(filteredBuffer);
+}
+
 void readWeight()
 {
   if (Serial1.available())
@@ -176,58 +207,33 @@ void readWeight()
       logToFile(SD, String(buff) + "\n");
     }
 
-    weight = 0;
-
     int separator = String(buff).indexOf('.');
-    // DEBUG_PRINT("separator: ");
-    // DEBUG_PRINTLN(separator);
-
-    int N10P3 = 0;
-    int N10P2 = 0;
-    int N10P1 = 0;
-    int N10N1 = 0;
-    int N10N2 = 0;
-    int N10N3 = 0;
-    int N10N4 = 0;
 
     if (separator != -1)
     {
-      N10P3 = (buff[separator - 3] > 0x30) ? (buff[separator - 3] - 0x30) : 0;
-      N10P2 = (buff[separator - 2] > 0x30) ? (buff[separator - 2] - 0x30) : 0;
-      N10P1 = (buff[separator - 1] > 0x30) ? (buff[separator - 1] - 0x30) : 0;
-      N10N1 = (buff[separator + 1] > 0x30) ? (buff[separator + 1] - 0x30) : 0;
-      N10N2 = (buff[separator + 2] > 0x30) ? (buff[separator + 2] - 0x30) : 0;
-      N10N3 = (buff[separator + 3] > 0x30) ? (buff[separator + 3] - 0x30) : 0;
-      N10N4 = (buff[separator + 4] > 0x30) ? (buff[separator + 4] - 0x30) : 0;
-
       weight = 0;
-      weight = N10P3 * 100.0;
-      weight += N10P2 * 10.0;
-      weight += N10P1 * 1.0;
-      weight += (N10N1 == 0) ? (0.0) : (N10N1 / 10.0);
-      if (dec_places >= 2)
-        weight += (N10N2 == 0) ? (0.0) : (N10N2 / 100.0);
-      if (dec_places >= 3)
-        weight += (N10N3 == 0) ? (0.0) : (N10N3 / 1000.0);
-      if (dec_places >= 4)
-        weight += (N10N4 == 0) ? (0.0) : (N10N4 / 10000.0);
+      dec_places = 0;
+      stringToWeight(buff, &weight, &dec_places);
 
-      dec_places = 3;
-      if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1)
-      {
-        unit = " g";
-        dec_places = 3;
-        if (String(buff).indexOf("gn") != -1 || String(buff).indexOf("GN") != -1 || String(buff).indexOf("gr") != -1 || String(buff).indexOf("GR") != -1)
-        {
-          unit = " gn";
-          dec_places = 2;
-        }
-      }
-
-      if (String(buff).indexOf('-') != -1)
+      if (String(buff).indexOf('-') != -1) // Check if the weight is negative
       {
         weight = weight * (-1.0);
       }
+
+      if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1)
+      {
+        unit = " g";
+        if (String(buff).indexOf("gn") != -1 || String(buff).indexOf("GN") != -1 || String(buff).indexOf("gr") != -1 || String(buff).indexOf("GR") != -1)
+        {
+          unit = " gn";
+        }
+      }
+
+      DEBUG_PRINT("Weight: ");
+      DEBUG_PRINTLN(weight);
+
+      DEBUG_PRINT("dec_places: ");
+      DEBUG_PRINTLN(dec_places);
 
       DEBUG_PRINT("Weight Counter: ");
       DEBUG_PRINTLN(weightCounter);
@@ -340,6 +346,12 @@ void loop()
       newData = false;
       weightCounter = 0;
 
+      if (weight <= 0.0000)
+      {
+        firstThrow = true;
+        measurementCount = 0;
+      }
+
       if (String(config.mode).indexOf("trickler") != -1)
       {
         DEBUG_PRINT("Weight: ");
@@ -442,37 +454,22 @@ void loop()
           {
             DEBUG_PRINTLN("Profile Running");
             String infoText = "";
-            DEBUG_PRINT("First Throw");
-            if (firstThrow)
+            if (firstThrow && (config.profile_stepsPerUnit > 0))
             {
-              setStepperSpeed(1, config.profile_speed[0]);
-              if (config.profile_powderMeasure)
-              {
-                DEBUG_PRINT("Powder Measure");
-                if (!config.profile_reverse[0])
-                {
-                  step(config.profile_num[0], config.profile_steps[0], config.profile_oscillate[0], false, config.profile_acceleration[0]);
-                  step(config.profile_num[0], config.profile_steps[0], config.profile_oscillate[0], true, config.profile_acceleration[0]);
-                }
-                else
-                {
-                  step(config.profile_num[0], config.profile_steps[0], config.profile_oscillate[0], true, config.profile_acceleration[0]);
-                  step(config.profile_num[0], config.profile_steps[0], config.profile_oscillate[0], false, config.profile_acceleration[0]);
-                }
-                infoText += "FirstThrow Powder Measure";
-              }
-              else
-              {
-                if (config.profile_stepsPerUnit > 0)
-                {
-                  double steps = (targetWeight - weight) * config.profile_stepsPerUnit;
-                  DEBUG_PRINT("FirstThrow steps: ");
-                  DEBUG_PRINTLN(steps);
-                  step(config.profile_num[0], steps, config.profile_oscillate[0], config.profile_reverse[0], config.profile_acceleration[0]);
-                  infoText += "FirstThrow steps:" + String(steps);
-                }
-              }
               firstThrow = false;
+
+              DEBUG_PRINTLN("FirstThrow Start...");
+
+              double steps = (targetWeight - weight) * config.profile_stepsPerUnit;
+              DEBUG_PRINT("FirstThrow steps: ");
+              DEBUG_PRINTLN(steps);
+              setStepperSpeed(1, config.profile_speed[0]);
+              step(config.profile_num[0], steps, config.profile_oscillate[0], config.profile_reverse[0], config.profile_acceleration[0]);
+              infoText += "FirstThrow steps:" + String(steps);
+
+              DEBUG_PRINTLN("FirstThrow finished!");
+              serialFlush();
+              return;
             }
             else
             {
@@ -523,6 +520,11 @@ void loop()
               infoText += "ST" + String(config.profile_steps[profileStep]) + " ";
               infoText += "SP" + String(config.profile_speed[profileStep]) + " ";
               infoText += "M" + String(config.profile_measurements[profileStep]);
+
+              if (String(config.profile) == "calibrate") // only do one Run for calibration
+              {
+                stopTrickler();
+              }
             }
             updateDisplayLog(infoText, true);
           }
@@ -545,21 +547,22 @@ void loop()
         }
       }
 
-      if ((weight <= 0) && finished)
+      if (weight <= 0.0000)
       {
-        if (String(config.mode).indexOf("logger") != -1)
+        if (finished)
         {
-          logCounter++;
-          updateDisplayLog("Place next peace...", true);
-          beep("done");
+          if (String(config.mode).indexOf("logger") != -1)
+          {
+            logCounter++;
+            updateDisplayLog("Place next peace...", true);
+            beep("done");
+          }
+          else
+          {
+            updateDisplayLog("Ready", true);
+          }
+          finished = false;
         }
-        else
-        {
-          updateDisplayLog("Ready", true);
-        }
-
-        firstThrow = true;
-        finished = false;
       }
     }
   }

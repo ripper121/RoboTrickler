@@ -76,7 +76,6 @@ bool readProfile(const char *filename, Config &config)
         config.profile_stepsPerUnit = item.value()["stepsPerUnit"] | 0;
         config.profile_tolerance = item.value()["tolerance"] | 0.000;
         config.profile_alarmThreshold = item.value()["alarmThreshold"] | 1.000;
-        config.profile_powderMeasure = item.value()["powderMeasure"] | false;
       }
       config.profile_num[item_key] = item.value()["number"] | 1;
       config.profile_weight[item_key] = item.value()["weight"];
