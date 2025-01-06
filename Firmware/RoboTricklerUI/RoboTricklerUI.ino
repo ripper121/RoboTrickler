@@ -14,7 +14,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>
 #include <soc/rtc_wdt.h>
-#define FW_VERSION 2.06
+#define FW_VERSION 2.07
 
 // 3 seconds WDT
 // #define WDT_TIMEOUT 10
