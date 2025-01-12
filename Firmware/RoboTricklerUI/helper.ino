@@ -1,5 +1,5 @@
 String tempProfile = "";
-float tempTargetWeight = 0.0;	
+float tempTargetWeight = 0.0;
 
 IRAM_ATTR void disp_task_init(void)
 {
@@ -90,13 +90,12 @@ void startTrickler()
     }
     updateDisplayLog(String("Profile: " + String(config.profile) + " selected!"));
 
-    if (config.weight != tempTargetWeight)
+    if (tempTargetWeight != config.targetWeight)
     {
-        targetWeight = config.weight;
-        saveConfiguration("/config.txt", config);
-        tempTargetWeight = config.weight;
+        saveTargetWeight(config.targetWeight);
     }
-    
+    tempTargetWeight = config.targetWeight;
+
     serialFlush();
     startMeasurment();
 }
@@ -242,8 +241,6 @@ void initSetup()
         updateDisplayLog("WIFI:" + WiFi.localIP().toString());
     }
 
-    targetWeight = config.weight;
-
     // initialize the variables we're linked to
     Input = 0;
     roboPID.SetOutputLimits(config.pidStepMin, config.pidStepMax);
@@ -251,8 +248,17 @@ void initSetup()
     roboPID.SetMode(roboPID.Control::automatic);
 
     lv_label_set_text(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // strenuous.dev").c_str());
-    lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
+    lv_label_set_text(ui_LabelTarget, String(config.targetWeight, 3).c_str());
     lv_label_set_text(ui_LabelProfile, config.profile);
 
+    tempTargetWeight = config.targetWeight;
+
     DEBUG_PRINTLN("Setup done.");
+}
+
+void saveTargetWeight(float weight)
+{
+    config.targetWeight = weight;
+    lv_label_set_text(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+    saveConfiguration("/config.txt", config);
 }

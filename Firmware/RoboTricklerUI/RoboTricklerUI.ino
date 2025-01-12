@@ -58,7 +58,7 @@ struct Config
   char beeper[6];
   bool debugLog;
   bool fwCheck;
-  float weight;
+  float targetWeight;
   char scale_protocol[32];
   int scale_baud;
   char scale_customCode[32];
@@ -118,7 +118,6 @@ int dec_places = 3;
 String unit = "";
 float tolerance;
 float alarmThreshold;
-float targetWeight = 0.0;
 float lastWeight = 0;
 float addWeight = 0.1;
 int weightCounter = 0;
@@ -133,7 +132,7 @@ String path = "empty";
 // Define the aggressive and conservative and POn Tuning Parameters
 float Input, Output;
 // Specify the links
-QuickPID roboPID(&Input, &Output, &targetWeight);
+QuickPID roboPID(&Input, &Output, &config.targetWeight);
 bool PID_AKTIVE = false;
 
 String infoMessagBuff[14];
@@ -357,14 +356,14 @@ void loop()
         DEBUG_PRINT("Weight: ");
         DEBUG_PRINTLN(weight);
         DEBUG_PRINT("TargetWeight: ");
-        DEBUG_PRINTLN(String((targetWeight - tolerance), 5));
-        DEBUG_PRINTLN(String((targetWeight + tolerance), 5));
+        DEBUG_PRINTLN(String((config.targetWeight - tolerance), 5));
+        DEBUG_PRINTLN(String((config.targetWeight + tolerance), 5));
         DEBUG_PRINT("alarmThreshold: ");
-        DEBUG_PRINTLN(String((targetWeight + alarmThreshold), 5));
+        DEBUG_PRINTLN(String((config.targetWeight + alarmThreshold), 5));
 
-        if ((weight >= (targetWeight - tolerance - EPSILON)) && (weight >= 0))
+        if ((weight >= (config.targetWeight - tolerance - EPSILON)) && (weight >= 0))
         {
-          if (weight <= (targetWeight + tolerance + EPSILON))
+          if (weight <= (config.targetWeight + tolerance + EPSILON))
           {
             setLabelTextColor(ui_LabelTricklerWeight, 0x00FF00);
           }
@@ -372,7 +371,7 @@ void loop()
           {
             setLabelTextColor(ui_LabelTricklerWeight, 0xFFFF00);
           }
-          if ((weight >= (targetWeight + alarmThreshold + EPSILON)) && (alarmThreshold > 0))
+          if ((weight >= (config.targetWeight + alarmThreshold + EPSILON)) && (alarmThreshold > 0))
           {
             // Send Alarm
             setLabelTextColor(ui_LabelTricklerWeight, 0xFF0000);
@@ -419,7 +418,7 @@ void loop()
             alarmThreshold = config.pidAlarmThreshold;
             tolerance = config.pidTolerance;
 
-            float gap = abs(targetWeight - Input); // distance away from setpoint
+            float gap = abs(config.targetWeight - Input); // distance away from setpoint
 
             if (gap <= config.pidThreshold)
             { // we're close to setpoint, use conservative tuning parameters
@@ -460,7 +459,7 @@ void loop()
 
               DEBUG_PRINTLN("FirstThrow Start...");
 
-              double steps = (targetWeight - weight) * config.profile_stepsPerUnit;
+              double steps = (config.targetWeight - weight) * config.profile_stepsPerUnit;
               DEBUG_PRINT("FirstThrow steps: ");
               DEBUG_PRINTLN(steps);
               setStepperSpeed(1, config.profile_speed[0]);
@@ -478,14 +477,14 @@ void loop()
               alarmThreshold = config.profile_alarmThreshold;
               tolerance = config.profile_tolerance;
               // Serial.print("abs: ");
-              // Serial.println(abs(weight - targetWeight), 3);
+              // Serial.println(abs(weight - config.targetWeight), 3);
               // Serial.print("profile_weight: ");
               // Serial.println(config.profile_weight[i], 3);
 
               for (int i = 0; i < config.profile_count; i++)
               {
 
-                if ((weight) <= (targetWeight - config.profile_weight[i]))
+                if ((weight) <= (config.targetWeight - config.profile_weight[i]))
                 {
                   profileStep = i;
                   break;

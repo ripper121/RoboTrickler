@@ -164,7 +164,7 @@ int loadConfiguration(const char *filename, Config &config)
 
   config.log_measurements = doc["log_Measurements"] | 20;
 
-  config.weight = doc["weight"] | 1.0;
+  config.targetWeight = doc["weight"] | 1.0;
 
   config.microsteps = doc["microsteps"] | 1;
 
@@ -269,7 +269,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["customCode"] = config.scale_customCode;
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
-  doc["weight"] = serialized(String(config.weight, 3));
+  doc["weight"] = serialized(String(config.targetWeight, 3));
   doc["log_Measurements"] = config.log_measurements;
   doc["microsteps"] = config.microsteps;
   doc["beeper"] = config.beeper;

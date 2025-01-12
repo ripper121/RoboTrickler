@@ -85,24 +85,24 @@ void p_event_cb(lv_event_t *e)
 
 void add_event_cb(lv_event_t *e)
 {
-  targetWeight += addWeight;
-  if (targetWeight > MAX_TARGET_WEIGHT)
+  config.targetWeight += addWeight;
+  if (config.targetWeight > MAX_TARGET_WEIGHT)
   {
-    targetWeight = MAX_TARGET_WEIGHT;
+    config.targetWeight = MAX_TARGET_WEIGHT;
   }
   beep("button");
-  lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
+  lv_label_set_text(ui_LabelTarget, String(config.targetWeight, 3).c_str());
 }
 
 void sub_event_cb(lv_event_t *e)
 {
-  targetWeight -= addWeight;
-  if (targetWeight < 0)
+  config.targetWeight -= addWeight;
+  if (config.targetWeight < 0)
   {
-    targetWeight = 0.0;
+    config.targetWeight = 0.0;
   }
   beep("button");
-  lv_label_set_text(ui_LabelTarget, String(targetWeight, 3).c_str());
+  lv_label_set_text(ui_LabelTarget, String(config.targetWeight, 3).c_str());
 }
 
 void prev_event_cb(lv_event_t *e)

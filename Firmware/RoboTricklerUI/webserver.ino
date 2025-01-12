@@ -334,7 +334,7 @@ void handleGetWeight()
 
 void handleGetTarget()
 {
-  server.send(200, "text/plain", String(targetWeight, 3));
+  server.send(200, "text/plain", String(config.targetWeight, 3));
 }
 
 void handleSetTarget()
@@ -345,10 +345,9 @@ void handleSetTarget()
     {
       if ((server.arg(i).toFloat() > 0) && (server.arg(i).toFloat() < MAX_TARGET_WEIGHT))
       {
-        if (config.weight != server.arg(i).toFloat())
+        if (config.targetWeight != server.arg(i).toFloat())
         {
-          config.weight = server.arg(i).toFloat();
-          lv_label_set_text(ui_LabelTarget, String(config.weight, 3).c_str());
+          saveTargetWeight(server.arg(i).toFloat());
         }
       }
     }
