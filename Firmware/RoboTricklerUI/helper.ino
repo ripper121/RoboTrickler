@@ -74,6 +74,32 @@ void setLabelTextColor(lv_obj_t *label, uint32_t colorHex)
     lv_obj_set_style_text_color(label, color, LV_PART_MAIN | LV_STATE_DEFAULT);
 }
 
+
+void corruptProfile(String profile_filename)
+{
+    messageBox(String("Profile Corrupted / Not Found:\n\n" + profile_filename + "\n\nCalibration Profile Loaded.").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+
+    // Rename file to indicate corruption
+    String corruptedName = String(profile_filename);
+    corruptedName.replace(".txt", ".cor.txt");
+    if (SD.rename(profile_filename, corruptedName.c_str()))
+    {
+        DEBUG_PRINT("Corrupted file renamed to: ");
+        DEBUG_PRINTLN(corruptedName);
+    }
+    else
+    {
+        DEBUG_PRINTLN("Failed to rename corrupted file");
+    }
+
+    strlcpy(config.profile,          // <- destination
+            "calibrate",             // <- source
+            sizeof(config.profile)); // <- destination's capacity
+    saveConfiguration("/config.txt", config);
+    delay(100);
+    restart_now = true;
+}
+
 void startTrickler()
 {
     strlcpy(config.mode,          // <- destination
@@ -84,9 +110,12 @@ void startTrickler()
 
     if (tempProfile != String(config.profile))
     {
-        readProfile(String("/" + String(config.profile) + ".txt").c_str(), config);
-        saveConfiguration("/config.txt", config);
-        tempProfile = String(config.profile);
+        String profile_filename = "/" + String(config.profile) + ".txt";
+        if (!readProfile(profile_filename.c_str(), config))
+        {
+            corruptProfile(profile_filename);
+            return;
+        }
     }
     updateDisplayLog(String("Profile: " + String(config.profile) + " selected!"));
 
@@ -174,9 +203,9 @@ void initSetup()
     SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
     if (!SD.begin(GRBL_SPI_SS, *SDspi))
     {
-        updateDisplayLog("Card Mount Failed");
-        delay(5000);
-        ESP.restart();
+        messageBox(String("Card Mount Failed!\n").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+        restart_now = true;
+        return;
     }
     else
     {
@@ -184,9 +213,9 @@ void initSetup()
 
         if (cardType == CARD_NONE)
         {
-            updateDisplayLog("No SD card attached");
-            delay(5000);
-            ESP.restart();
+            messageBox(String("No SD card attached!\n").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+            restart_now = true;
+            return;
         }
         else
         {
@@ -216,18 +245,62 @@ void initSetup()
         }
     }
 
-    int configState = loadConfiguration("/config.txt", config);
-    if (configState == 1)
+    if (!loadConfiguration("/config.txt", config))
     {
         updateDisplayLog("config.txt deserializeJson() failed");
+
+        strlcpy(config.wifi_ssid,                 // <- destination
+                "",                               // <- source
+                sizeof(config.wifi_ssid));        // <- destination's capacity
+        strlcpy(config.wifi_psk,                  // <- destination
+                "",                               // <- source
+                sizeof(config.wifi_psk));         // <- destination's capacity
+        strlcpy(config.IPStatic,                  // <- destination
+                "",                               // <- source
+                sizeof(config.IPStatic));         // <- destination's capacity
+        strlcpy(config.IPGateway,                 // <- destination
+                "",                               // <- source
+                sizeof(config.IPGateway));        // <- destination's capacity
+        strlcpy(config.IPSubnet,                  // <- destination
+                "",                               // <- source
+                sizeof(config.IPSubnet));         // <- destination's capacity
+        strlcpy(config.IPDns,                     // <- destination
+                "",                               // <- source
+                sizeof(config.IPDns));            // <- destination's capacity
+        strlcpy(config.scale_protocol,            // <- destination
+                "GG",                             // <- source
+                sizeof(config.scale_protocol));   // <- destination's capacity
+        strlcpy(config.scale_customCode,          // <- destination
+                "",                               // <- source
+                sizeof(config.scale_customCode)); // <- destination's capacity
+        config.scale_baud = 9600;
+        strlcpy(config.profile,          // <- destination
+                "calibrate",             // <- source
+                sizeof(config.profile)); // <- destination's capacity
+        config.log_measurements = 20;
+        config.targetWeight = 40.0;
+        config.microsteps = 1;
+        strlcpy(config.beeper,          // <- destination
+                "done",                 // <- source
+                sizeof(config.beeper)); // <- destination's capacity
+        config.debugLog = false;
+        config.fwCheck = true;
+
+        saveConfiguration("/config.txt", config);
+        delay(100);
+
+        messageBox(String("Config File Corrupted / Not Found!\nDefault Config generated.").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+        restart_now = true;
+        return;
     }
-    else if (configState == 2)
+
+    getProfileList();
+
+    String profile_filename = "/" + String(config.profile) + ".txt";
+    if (!readProfile(profile_filename.c_str(), config))
     {
-        updateDisplayLog("profile.txt deserializeJson() failed");
-    }
-    else
-    {
-        getProfileList();
+        corruptProfile(profile_filename);
+        return;
     }
 
     Serial1.begin(config.scale_baud, SERIAL_8N1, IIC_SCL, IIC_SDA);

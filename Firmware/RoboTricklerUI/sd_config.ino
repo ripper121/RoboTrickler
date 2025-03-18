@@ -1,3 +1,5 @@
+
+
 bool readProfile(const char *filename, Config &config)
 {
   String infoText = "Loading Profile...";
@@ -11,12 +13,7 @@ bool readProfile(const char *filename, Config &config)
     DEBUG_PRINTLN(filename);
     DEBUG_PRINTLN("Set to calibrate.txt as default");
     filename = "/calibrate.txt";
-
-    strlcpy(config.profile,          // <- destination
-            "calibrate",             // <- source
-            sizeof(config.profile)); // <- destination's capacity
-
-    saveConfiguration("/config.txt", config);
+    return false;
   }
 
   // Dump config file
@@ -39,6 +36,7 @@ bool readProfile(const char *filename, Config &config)
     DEBUG_PRINT(filename);
     DEBUG_PRINT(" /");
     DEBUG_PRINTLN(error.c_str());
+    file.close();
     return false;
   }
 
@@ -101,7 +99,7 @@ bool readProfile(const char *filename, Config &config)
 }
 
 // Loads the configuration from a file
-int loadConfiguration(const char *filename, Config &config)
+bool loadConfiguration(const char *filename, Config &config)
 {
   // Dump config file
   printFile(filename);
@@ -121,7 +119,7 @@ int loadConfiguration(const char *filename, Config &config)
   {
     DEBUG_PRINT("deserializeJson() failed on config.txt: ");
     DEBUG_PRINTLN(error.c_str());
-    return 1;
+    return 0;
   }
 
   strlcpy(config.wifi_ssid,          // <- destination
@@ -179,12 +177,7 @@ int loadConfiguration(const char *filename, Config &config)
   file.close();
 
   // doc.garbageCollect();
-
-  String profile_filename = "/" + String(config.profile) + ".txt";
-  if (!readProfile(profile_filename.c_str(), config))
-    return 2;
-
-  return 0;
+  return 1;
 }
 
 void getProfileList()
@@ -217,7 +210,7 @@ void getProfileList()
     }
     else
     {
-      if ((String(file.name()).indexOf(".txt") != -1) && (String(file.name()).indexOf("config.txt") == -1))
+      if ((String(file.name()).indexOf(".txt") != -1) && (String(file.name()).indexOf("config.txt") == -1) && (String(file.name()).indexOf(".cor") == -1))
       {
         String filename = String(file.name());
         filename.replace(".txt", "");

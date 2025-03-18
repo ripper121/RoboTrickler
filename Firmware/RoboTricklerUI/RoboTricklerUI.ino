@@ -14,7 +14,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>
 #include <soc/rtc_wdt.h>
-#define FW_VERSION 2.07
+#define FW_VERSION 2.08
 
 // 3 seconds WDT
 // #define WDT_TIMEOUT 10
@@ -116,8 +116,6 @@ float weight = 0.0;
 const float EPSILON = 0.00001; // Define a small epsilon value
 int dec_places = 3;
 String unit = "";
-float tolerance;
-float alarmThreshold;
 float lastWeight = 0;
 float addWeight = 0.1;
 int weightCounter = 0;
@@ -128,6 +126,7 @@ bool finished = false;
 bool firstThrow = true;
 int logCounter = 1;
 String path = "empty";
+bool restart_now = false;
 
 // Define the aggressive and conservative and POn Tuning Parameters
 float Input, Output;
@@ -353,12 +352,20 @@ void loop()
 
       if (String(config.mode).indexOf("trickler") != -1)
       {
+        float tolerance = config.profile_tolerance;
+        float alarmThreshold = config.profile_alarmThreshold;
+        if (PID_AKTIVE)
+        {
+          tolerance = config.pidTolerance;
+          alarmThreshold = config.pidAlarmThreshold;
+        }
+
         DEBUG_PRINT("Weight: ");
         DEBUG_PRINTLN(weight);
         DEBUG_PRINT("TargetWeight: ");
         DEBUG_PRINTLN(String((config.targetWeight - tolerance), 5));
         DEBUG_PRINTLN(String((config.targetWeight + tolerance), 5));
-        DEBUG_PRINT("alarmThreshold: ");
+        DEBUG_PRINT("profile_alarmThreshold: ");
         DEBUG_PRINTLN(String((config.targetWeight + alarmThreshold), 5));
 
         if ((weight >= (config.targetWeight - tolerance - EPSILON)) && (weight >= 0))
@@ -371,19 +378,20 @@ void loop()
           {
             setLabelTextColor(ui_LabelTricklerWeight, 0xFFFF00);
           }
+
           if ((weight >= (config.targetWeight + alarmThreshold + EPSILON)) && (alarmThreshold > 0))
           {
             // Send Alarm
             setLabelTextColor(ui_LabelTricklerWeight, 0xFF0000);
-            messageBox("!Over trickle!\n!Check weight!", &lv_font_montserrat_32, lv_color_hex(0xFF0000));
+            updateDisplayLog("!Over trickle!", true);
             beep("done");
             delay(250);
             beep("done");
             delay(250);
-            beep("done");
-
+            beep("done");            
             serialFlush();
-            stopTrickler();
+            stopTrickler();            
+            messageBox("!Over trickle!\n!Check weight!", &lv_font_montserrat_32, lv_color_hex(0xFF0000), true);
           }
 
           if (!finished)
@@ -413,12 +421,8 @@ void loop()
             String infoText = "";
             byte stepperNum = 1;
             int stepperSpeedOld = 0;
-            Input = weight;
 
-            alarmThreshold = config.pidAlarmThreshold;
-            tolerance = config.pidTolerance;
-
-            float gap = abs(config.targetWeight - Input); // distance away from setpoint
+            float gap = abs(config.targetWeight - weight); // distance away from setpoint
 
             if (gap <= config.pidThreshold)
             { // we're close to setpoint, use conservative tuning parameters
@@ -474,8 +478,6 @@ void loop()
             {
               int stepperSpeedOld = 0;
               int profileStep = 0;
-              alarmThreshold = config.profile_alarmThreshold;
-              tolerance = config.profile_tolerance;
               // Serial.print("abs: ");
               // Serial.println(abs(weight - config.targetWeight), 3);
               // Serial.print("profile_weight: ");

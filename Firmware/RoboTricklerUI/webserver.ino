@@ -150,10 +150,6 @@ void handleFileUpload()
     }
     DEBUG_PRINT("Upload: END, Size: ");
     DEBUG_PRINTLN(upload.totalSize);
-    if ((String(upload.filename).indexOf(".txt")) != -1 && (String(upload.filename).indexOf("conf") == -1))
-    {
-      readProfile(upload.filename.c_str(), config);
-    }
   }
 }
 
@@ -447,7 +443,7 @@ void makeHttpsGetRequest(String serverPath)
       DEBUG_PRINTLN(payload);
       if (FW_VERSION < payload.toFloat())
       {
-        messageBox(String("New firmware available:\n\nv" + payload + "\n\nCheck: https://robo-trickler.de").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFFFFFF));
+        messageBox(String("New firmware available:\n\nv" + payload + "\n\nCheck: https://robo-trickler.de").c_str(), &lv_font_montserrat_14, lv_color_hex(0x00FF00), true);
       }
     }
     else
@@ -508,6 +504,9 @@ void initWebServer()
 
     WiFi.mode(WIFI_STA);
     WiFi.begin(config.wifi_ssid, config.wifi_psk);
+
+
+    messageBox(String("Connect to Wifi: " + String(config.wifi_ssid) + "\n\nPlease wait...").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFFFFFF), false);
 
     if (WiFi.waitForConnectResult() == WL_CONNECTED)
     {
@@ -598,17 +597,15 @@ void initWebServer()
       {
         String serverPath = "https://strenuous.dev/roboTrickler/userTracker.php?mac=" + String(WiFi.macAddress());
         makeHttpsGetRequest(serverPath);
-      }
+      }    
 
-      WIFI_AKTIVE = true;
+      WIFI_AKTIVE = true;      
+      lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
     }
     else
     {
       updateDisplayLog("No Wifi");
+      messageBox(String("No Wifi").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFFFF00), true);
     }
-  }
-  else
-  {
-    updateDisplayLog("No Wifi");
   }
 }
