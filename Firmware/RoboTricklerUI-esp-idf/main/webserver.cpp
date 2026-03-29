@@ -46,12 +46,44 @@ static EventGroupHandle_t s_wifi_event_group = NULL;
 
 static httpd_handle_t s_httpd = NULL;
 
+static void delayed_restart_task(void *arg) {
+    const TickType_t delay_ticks = (TickType_t)(uintptr_t)arg;
+    vTaskDelay(delay_ticks);
+    esp_restart();
+}
+
+static void schedule_restart(TickType_t delay_ticks) {
+    xTaskCreate(delayed_restart_task, "http_restart", 2048, (void *)delay_ticks, 5, NULL);
+}
+
 // ============================================================
 // SD path helper
 // ============================================================
 static std::string sd_path(const std::string &rel) {
     if (!rel.empty() && rel[0] == '/') return std::string(SD_MOUNT_POINT) + rel;
     return std::string(SD_MOUNT_POINT) + "/" + rel;
+}
+
+static bool normalize_editor_path(const char *raw_path, std::string *normalized_path) {
+    if (raw_path == NULL || normalized_path == NULL) {
+        return false;
+    }
+
+    std::string path(raw_path);
+    if (path.empty()) {
+        return false;
+    }
+
+    if (path[0] != '/') {
+        path.insert(path.begin(), '/');
+    }
+
+    if (path == "/") {
+        return false;
+    }
+
+    *normalized_path = path;
+    return true;
 }
 
 // ============================================================
@@ -113,9 +145,24 @@ static bool get_query_param(httpd_req_t *req, const char *key, char *val, size_t
 // Stream a file from SD card to the HTTP response
 // ============================================================
 static esp_err_t send_file(httpd_req_t *req, const std::string &rel_path) {
-    std::string full = sd_path(rel_path);
+    std::string path = rel_path;
+    if (!path.empty() && path.back() == '/') {
+        path += "system/index.html";
+    }
+    if (str_ends_with(path, ".src")) {
+        path.resize(path.size() - 4);
+    }
 
-    // Try .gz version first
+    std::string full = sd_path(path);
+    struct stat st = {};
+    if (stat(full.c_str(), &st) == 0 && S_ISDIR(st.st_mode)) {
+        if (!path.empty() && path.back() != '/') {
+            path += "/";
+        }
+        path += "index.html";
+        full = sd_path(path);
+    }
+
     std::string gz = full + ".gz";
     bool is_gz = (access(gz.c_str(), F_OK) == 0);
     std::string actual = is_gz ? gz : full;
@@ -144,12 +191,18 @@ static esp_err_t send_file(httpd_req_t *req, const std::string &rel_path) {
 
     char buf[512];
     size_t n;
+    esp_err_t result = ESP_OK;
     while ((n = fread(buf, 1, sizeof(buf), f)) > 0) {
-        if (httpd_resp_send_chunk(req, buf, (ssize_t)n) != ESP_OK) break;
+        result = httpd_resp_send_chunk(req, buf, (ssize_t)n);
+        if (result != ESP_OK) {
+            break;
+        }
     }
     fclose(f);
-    httpd_resp_send_chunk(req, NULL, 0);
-    return ESP_OK;
+    if (result != ESP_OK) {
+        return result;
+    }
+    return httpd_resp_send_chunk(req, NULL, 0);
 }
 
 // ============================================================
@@ -215,9 +268,20 @@ static esp_err_t handle_list(httpd_req_t *req) {
         std::string name(entry->d_name);
         if (name == "css") continue;
 
+        std::string entry_path;
+        if (std::string(dir_arg) == "/") {
+            entry_path = "/" + name;
+        } else {
+            entry_path = std::string(dir_arg);
+            if (!entry_path.empty() && entry_path.back() != '/') {
+                entry_path += "/";
+            }
+            entry_path += name;
+        }
+
         std::string item = std::string(first ? "" : ",") +
             "{\"type\":\"" + (entry->d_type == DT_DIR ? "dir" : "file") +
-            "\",\"name\":\"/" + name + "\"}";
+            "\",\"name\":\"" + entry_path + "\"}";
         httpd_resp_sendstr_chunk(req, item.c_str());
         first = false;
     }
@@ -246,11 +310,12 @@ static esp_err_t handle_delete(httpd_req_t *req) {
         }
     }
 
-    if (strlen(path_arg) == 0 || strcmp(path_arg, "/") == 0) {
+    std::string normalized_path;
+    if (!normalize_editor_path(path_arg, &normalized_path)) {
         httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "BAD PATH");
         return ESP_OK;
     }
-    std::string full = sd_path(path_arg);
+    std::string full = sd_path(normalized_path);
     delete_recursive(full);
     httpd_resp_set_status(req, "200 OK");
     httpd_resp_sendstr(req, "");
@@ -260,13 +325,14 @@ static esp_err_t handle_delete(httpd_req_t *req) {
 static esp_err_t handle_create(httpd_req_t *req) {
     char path_arg[128] = {};
     get_query_param(req, "path", path_arg, sizeof(path_arg));
-    if (strlen(path_arg) == 0 || strcmp(path_arg, "/") == 0) {
+    std::string normalized_path;
+    if (!normalize_editor_path(path_arg, &normalized_path)) {
         httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "BAD PATH");
         return ESP_OK;
     }
-    std::string full = sd_path(path_arg);
+    std::string full = sd_path(normalized_path);
     // If it has a dot → create file, else mkdir
-    if (strchr(path_arg, '.') != NULL) {
+    if (normalized_path.find('.') != std::string::npos) {
         FILE *f = fopen(full.c_str(), "w");
         if (f) { fputc(0, f); fclose(f); }
     } else {
@@ -308,8 +374,9 @@ static esp_err_t handle_upload(httpd_req_t *req) {
 
 static esp_err_t handle_reboot(httpd_req_t *req) {
     httpd_resp_set_type(req, "text/html");
+    httpd_resp_set_hdr(req, "Connection", "close");
     httpd_resp_sendstr(req, "<h3>Reboot now.</h3><br><button onClick='javascript:history.back()'>Back</button>");
-    esp_restart();
+    schedule_restart(pdMS_TO_TICKS(250));
     return ESP_OK;
 }
 
@@ -392,6 +459,80 @@ static esp_err_t handle_fw_update_page(httpd_req_t *req) {
     return ESP_OK;
 }
 
+static esp_err_t handle_edit_page(httpd_req_t *req) {
+    if (send_file(req, "/system/resources/edit") == ESP_OK) {
+        return ESP_OK;
+    }
+
+    static const char page[] =
+        "<!DOCTYPE html>"
+        "<html><head><meta charset='utf-8'><title>SD Editor</title>"
+        "<style>"
+        "body{font-family:sans-serif;max-width:900px;margin:24px auto;padding:0 16px;}"
+        "button,input{font:inherit;margin:4px 0;padding:8px 10px;}"
+        "code,pre{background:#f3f3f3;padding:2px 4px;border-radius:4px;}"
+        "#files{margin-top:16px;padding-left:20px;}"
+        ".row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0;}"
+        "</style></head><body>"
+        "<h2>SD Card Editor</h2>"
+        "<p>Browse with <code>?dir=/</code>, create files or folders, upload files, and delete entries.</p>"
+        "<div class='row'><label for='dir'>Directory</label><input id='dir' value='/'><button onclick='loadList()'>Load</button></div>"
+        "<div class='row'><label for='createPath'>Create path</label><input id='createPath' placeholder='/new.txt'><button onclick='createPath()'>Create</button></div>"
+        "<div class='row'><label for='deletePath'>Delete path</label><input id='deletePath' placeholder='/old.txt'><button onclick='deletePath()'>Delete</button></div>"
+        "<div class='row'><input id='uploadFile' type='file'><button onclick='uploadFile()'>Upload</button></div>"
+        "<pre id='status'>Ready</pre><ul id='files'></ul>"
+        "<script>"
+        "const statusEl=document.getElementById('status');"
+        "const filesEl=document.getElementById('files');"
+        "function setStatus(msg){statusEl.textContent=msg;}"
+        "async function loadList(){"
+        " const dir=document.getElementById('dir').value||'/';"
+        " setStatus('Loading '+dir+' ...');"
+        " const res=await fetch('/list?dir='+encodeURIComponent(dir));"
+        " const text=await res.text();"
+        " if(!res.ok){setStatus(text);return;}"
+        " const items=JSON.parse(text);"
+        " filesEl.innerHTML='';"
+        " for(const item of items){"
+        "  const li=document.createElement('li');"
+        "  li.textContent=item.type+': '+item.name;"
+        "  filesEl.appendChild(li);"
+        " }"
+        " setStatus('Loaded '+items.length+' entries from '+dir);"
+        "}"
+        "function normalizePath(value){"
+        " let path=(value||'').trim();"
+        " if(!path){return '';}"
+        " if(!path.startsWith('/')){path='/'+path;}"
+        " return path;"
+        "}"
+        "async function createPath(){"
+        " const path=normalizePath(document.getElementById('createPath').value);"
+        " if(!path || path==='/'){setStatus('Enter a valid path to create');return;}"
+        " const res=await fetch('/system/resources/edit?path='+encodeURIComponent(path),{method:'PUT'});"
+        " setStatus(res.ok?'Created '+path:await res.text());"
+        "}"
+        "async function deletePath(){"
+        " const path=normalizePath(document.getElementById('deletePath').value);"
+        " if(!path || path==='/'){setStatus('Enter a valid path to delete');return;}"
+        " const res=await fetch('/system/resources/edit?path='+encodeURIComponent(path),{method:'DELETE'});"
+        " setStatus(res.ok?'Deleted '+path:await res.text());"
+        "}"
+        "async function uploadFile(){"
+        " const fileInput=document.getElementById('uploadFile');"
+        " if(!fileInput.files.length){setStatus('Choose a file first');return;}"
+        " const file=fileInput.files[0];"
+        " const res=await fetch('/system/resources/edit',{method:'POST',headers:{'Content-Disposition': file.name},body:file});"
+        " setStatus(res.ok?'Uploaded '+file.name:await res.text());"
+        "}"
+        "loadList();"
+        "</script></body></html>";
+
+    httpd_resp_set_type(req, "text/html");
+    httpd_resp_send(req, page, HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
+
 // OTA upload handler — receives the firmware binary
 #include "esp_ota_ops.h"
 static esp_err_t handle_fw_update_post(httpd_req_t *req) {
@@ -427,8 +568,9 @@ static esp_err_t handle_fw_update_post(httpd_req_t *req) {
 
     esp_ota_set_boot_partition(update_part);
     httpd_resp_set_type(req, "text/html");
+    httpd_resp_set_hdr(req, "Connection", "close");
     httpd_resp_sendstr(req, "<h3>OK</h3><br><input type='button' value='Back' onClick='javascript:history.back()'>");
-    esp_restart();
+    schedule_restart(pdMS_TO_TICKS(500));
     return ESP_OK;
 }
 
@@ -480,6 +622,7 @@ static void makeHttpsGetRequest(const std::string &url) {
 
 static void register_handlers(httpd_handle_t svr) {
     REGISTER_URI(svr, "/list",                      HTTP_GET,    handle_list);
+    REGISTER_URI(svr, "/system/resources/edit",     HTTP_GET,    handle_edit_page);
     REGISTER_URI(svr, "/system/resources/edit",     HTTP_DELETE, handle_delete);
     REGISTER_URI(svr, "/system/resources/edit",     HTTP_PUT,    handle_create);
     REGISTER_URI(svr, "/system/resources/edit",     HTTP_POST,   handle_upload);

@@ -203,6 +203,8 @@ void initSetup() {
 
     display_init();
     ui_init();
+    lv_obj_clear_flag(lv_tabview_get_content(ui_TabView), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scroll_dir(lv_tabview_get_content(ui_TabView), LV_DIR_NONE);
 
     updateDisplayLog("Robo-Trickler v" + str_float(FW_VERSION, 2) + " // strenuous.dev", false);
 

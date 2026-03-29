@@ -79,8 +79,28 @@ void StepperDriver::disable() {
 void StepperDriver::_delay_micros(uint32_t us, uint32_t start_us) {
     if (us == 0) return;
     if (!start_us) start_us = micros();
-    if (us > MIN_YIELD_MICROS) taskYIELD();
-    while (micros() - start_us < us) {}
+
+    // Let lower-priority tasks (including the idle task watched by the TWDT)
+    // run during long inter-step gaps, then busy-wait the final sub-millisecond tail.
+    while (true) {
+        const uint32_t elapsed = micros() - start_us;
+        if (elapsed >= us) {
+            break;
+        }
+
+        const uint32_t remaining = us - elapsed;
+        if (remaining >= 2000U) {
+            const TickType_t ticks = pdMS_TO_TICKS((remaining - 500U) / 1000U);
+            if (ticks > 0) {
+                vTaskDelay(ticks);
+                continue;
+            }
+        }
+
+        if (remaining > MIN_YIELD_MICROS) {
+            taskYIELD();
+        }
+    }
 }
 
 // ============================================================
