@@ -34,6 +34,7 @@ extern void saveConfiguration(const char *filename, const Config &cfg);
 extern void getProfileList();
 extern StepperDriver stepper1;
 extern StepperDriver stepper2;
+extern void stopStepperMotion();
 
 // ============================================================
 // Temporary state for profile change detection
@@ -115,6 +116,7 @@ void startMeasurment() {
 }
 
 void stopMeasurment() {
+    stopStepperMotion();
     running  = false;
     finished = true;
     beep("button");

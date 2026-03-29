@@ -83,6 +83,10 @@ void StepperDriver::_delay_micros(uint32_t us, uint32_t start_us) {
     // Let lower-priority tasks (including the idle task watched by the TWDT)
     // run during long inter-step gaps, then busy-wait the final sub-millisecond tail.
     while (true) {
+        if (_stop_requested) {
+            break;
+        }
+
         const uint32_t elapsed = micros() - start_us;
         if (elapsed >= us) {
             break;
@@ -108,7 +112,16 @@ void StepperDriver::_delay_micros(uint32_t us, uint32_t start_us) {
 // ============================================================
 void StepperDriver::move(long steps) {
     startMove(steps);
-    while (nextAction()) {}
+    uint32_t last_cooperative_pause = micros();
+
+    while (!_stop_requested && nextAction()) {
+        // This driver is still synchronous, so force an occasional real RTOS
+        // sleep to let the idle task run and satisfy the task watchdog.
+        if ((micros() - last_cooperative_pause) >= 2000U) {
+            vTaskDelay(1);
+            last_cooperative_pause = micros();
+        }
+    }
 }
 
 void StepperDriver::rotate(long deg) {
@@ -124,6 +137,7 @@ void StepperDriver::rotate(double deg) {
 // ============================================================
 void StepperDriver::startMove(long steps, long time_us) {
     float speed;
+    _stop_requested = false;
     _dir_state = (steps >= 0) ? 1 : 0;
     _last_action_end = 0;
     _steps_remaining = labs(steps);
@@ -177,6 +191,7 @@ void StepperDriver::startBrake() {
 
 long StepperDriver::stop() {
     long rem = _steps_remaining;
+    _stop_requested = true;
     _steps_remaining = 0;
     return rem;
 }
@@ -215,8 +230,20 @@ void StepperDriver::_calc_step_pulse() {
 // nextAction — toggle STEP pin and return time to next action
 // ============================================================
 long StepperDriver::nextAction() {
+    if (_stop_requested) {
+        _last_action_end = 0;
+        _next_action_interval = 0;
+        return 0;
+    }
+
     if (_steps_remaining > 0) {
         _delay_micros(_next_action_interval, _last_action_end);
+
+        if (_stop_requested) {
+            _last_action_end = 0;
+            _next_action_interval = 0;
+            return 0;
+        }
 
         sr_set(_dir_pin,  _dir_state);
         sr_set(_step_pin, 1);

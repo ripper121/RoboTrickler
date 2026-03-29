@@ -98,7 +98,7 @@ extern std::string profileListBuff[32];
 extern uint8_t     profileListCount;
 
 #define MAX_TARGET_WEIGHT 999
-#define FW_VERSION 2.08f
+#define FW_VERSION 3.00f
 
 // PID I/O floats (defined in main.cpp)
 extern float pid_input;

@@ -59,6 +59,8 @@ public:
     long  nextAction();
     void  startBrake();
     long  stop();
+    void  clearStopRequest() { _stop_requested = false; }
+    bool  stopRequested() const { return _stop_requested; }
 
     State getCurrentState() const;
     long  getStepsCompleted()  const { return _step_count; }
@@ -101,6 +103,7 @@ private:
 
     uint32_t _last_action_end     = 0;
     uint32_t _next_action_interval = 0;
+    volatile bool _stop_requested = false;
 
     void _calc_step_pulse();
     void _delay_micros(uint32_t us, uint32_t start_us = 0);
