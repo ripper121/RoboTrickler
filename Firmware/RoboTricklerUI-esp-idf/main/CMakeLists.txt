@@ -1,6 +1,7 @@
 idf_component_register(
     SRCS
         "main.cpp"
+        "scale.cpp"
         "helper.cpp"
         "stepper.cpp"
         "csv.cpp"

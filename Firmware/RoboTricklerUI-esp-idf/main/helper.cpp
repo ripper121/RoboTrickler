@@ -3,6 +3,7 @@
 #include "display.h"
 #include "pindef.h"
 #include "stepper_driver.h"
+#include "scale.h"
 #include "QuickPID.h"
 extern QuickPID roboPID;
 
@@ -23,9 +24,7 @@ static const char *TAG = "helper";
 // ============================================================
 // Forward declarations (defined in other modules / main.cpp)
 // ============================================================
-extern void updateDisplayLog(const std::string &msg, bool noLog);
 extern void serialFlush();
-extern void serial1_begin(int baud, gpio_num_t rx, gpio_num_t tx);
 extern void initWebServer();
 extern void initUpdate();
 extern bool loadConfiguration(const char *filename, Config &cfg);
@@ -86,12 +85,29 @@ void beep(const std::string &beepMode) {
 }
 
 // ============================================================
-// serialWait — wait up to 2 s for scale data to arrive
+// updateDisplayLog — update LVGL info labels
 // ============================================================
-extern int serial1_available();
+void updateDisplayLog(const std::string &logOutput, bool noLog) {
+    lv_label_set_text(ui_LabelInfo,       logOutput.c_str());
+    lv_label_set_text(ui_LabelLoggerInfo, logOutput.c_str());
+
+    if (!noLog) {
+        insertLine(logOutput + "\n");
+        std::string temp;
+        for (auto &line : infoMessagBuff) temp += line;
+        lv_label_set_text(ui_LabelLog, temp.c_str());
+    }
+
+    ESP_LOGD(TAG, "%s", logOutput.c_str());
+}
+
+// ============================================================
+// serialWait — wait up to 2 s for scale data to arrive
+// (yields to FreeRTOS every 1 ms via vTaskDelay inside delay())
+// ============================================================
 bool serialWait() {
-    for (int i = 0; i < 2000; i++) {
-        if (serial1_available()) return false;  // data available → no timeout
+    for (int i = 0; i < CONFIG_ROBOTRICKLER_SCALE_TIMEOUT_MS; i++) {
+        if (serial1_available()) return false;  // data available — no timeout
         delay(1);
     }
     return true;  // timeout
@@ -100,7 +116,6 @@ bool serialWait() {
 // ============================================================
 // serialFlush
 // ============================================================
-extern void serial1_flush();
 void serialFlush() {
     serial1_flush();
 }

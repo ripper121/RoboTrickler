@@ -77,18 +77,10 @@ extern Config config;
 
 extern float weight;
 extern float addWeight;
-extern int   weightCounter;
-extern int   measurementCount;
-extern bool  newData;
 extern bool  running;
 extern bool  finished;
 extern bool  firstThrow;
-extern int   logCounter;
-extern std::string path;
 extern bool  restart_now;
-extern std::string unit;
-extern int   dec_places;
-extern float lastWeight;
 
 extern bool  WIFI_AKTIVE;
 extern bool  PID_AKTIVE;

@@ -13,8 +13,8 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 #include "esp_system.h"
-#include "driver/uart.h"
 #include "nvs_flash.h"
+#include "scale.h"
 
 // LVGL UI
 #include "ui.h"
@@ -29,23 +29,25 @@ static const char *TAG = "main";
 // ============================================================
 Config config;
 
+// Shared with other modules (extern'd in config.h)
 float weight       = 0.0f;
 float addWeight    = 0.1f;
-int   weightCounter  = 0;
-int   measurementCount = 0;
-bool  newData      = false;
 bool  running      = false;
 bool  finished     = false;
 bool  firstThrow   = true;
-int   logCounter   = 1;
-std::string path   = "empty";
 bool  restart_now  = false;
-std::string unit   = "";
-int   dec_places   = 3;
-float lastWeight   = 0;
-
 bool  WIFI_AKTIVE  = false;
 bool  PID_AKTIVE   = false;
+
+// Internal to main loop — not shared with other modules
+static int         weightCounter    = 0;
+static int         measurementCount = 0;
+static bool        newData          = false;
+static int         logCounter       = 1;
+static std::string path             = "empty";
+static std::string unit             = "";
+static int         dec_places       = 3;
+static float       lastWeight       = 0;
 
 std::string infoMessagBuff[14];
 std::string profileListBuff[32];
@@ -59,16 +61,12 @@ QuickPID roboPID(&pid_input, &pid_output, &config.targetWeight);
 // LVGL task handle
 static TaskHandle_t lv_disp_tcb = NULL;
 
-#define DISP_TASK_STACK  CONFIG_ROBOTRICKLER_DISP_STACK_SIZE
+#define DISP_TASK_STACK CONFIG_ROBOTRICKLER_DISP_STACK_SIZE
 #define DISP_TASK_CORE   0
 #define DISP_TASK_PRIO   1
 #define MAIN_LOOP_STACK  CONFIG_ROBOTRICKLER_MAIN_STACK_SIZE
 #define MAIN_LOOP_CORE   1
 #define MAIN_LOOP_PRIO   1
-
-// UART1 — scale serial
-#define SCALE_UART       UART_NUM_1
-#define SCALE_BUF_SIZE   256
 
 // ============================================================
 // Forward declarations (functions defined in other modules)
@@ -97,56 +95,7 @@ void initUpdate();
 void saveTargetWeight(float w);
 
 // ============================================================
-// UART1 helpers (Serial1 replacement)
-// ============================================================
-void serial1_begin(int baud, gpio_num_t rx_pin, gpio_num_t tx_pin) {
-    uart_config_t cfg = {};
-    cfg.baud_rate  = baud;
-    cfg.data_bits  = UART_DATA_8_BITS;
-    cfg.parity     = UART_PARITY_DISABLE;
-    cfg.stop_bits  = UART_STOP_BITS_1;
-    cfg.flow_ctrl  = UART_HW_FLOWCTRL_DISABLE;
-    cfg.source_clk = UART_SCLK_APB;
-    ESP_ERROR_CHECK(uart_driver_install(SCALE_UART, SCALE_BUF_SIZE * 2, 0, 0, NULL, 0));
-    ESP_ERROR_CHECK(uart_param_config(SCALE_UART, &cfg));
-    ESP_ERROR_CHECK(uart_set_pin(SCALE_UART, tx_pin, rx_pin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
-}
-
-int serial1_available() {
-    size_t len = 0;
-    uart_get_buffered_data_len(SCALE_UART, &len);
-    return (int)len;
-}
-
-// Read bytes until terminator character or buffer full; returns bytes read (excluding terminator)
-int serial1_read_until(uint8_t terminator, char *buf, int max_len) {
-    int idx = 0;
-    while (idx < max_len - 1) {
-        uint8_t c;
-        int r = uart_read_bytes(SCALE_UART, &c, 1, pdMS_TO_TICKS(10));
-        if (r <= 0) break;
-        if (c == terminator) break;
-        buf[idx++] = (char)c;
-    }
-    buf[idx] = '\0';
-    return idx;
-}
-
-void serial1_write(const uint8_t *data, size_t len) {
-    uart_write_bytes(SCALE_UART, (const char *)data, len);
-}
-
-void serial1_write_str(const char *s) {
-    uart_write_bytes(SCALE_UART, s, strlen(s));
-}
-
-void serial1_flush() {
-    uart_flush(SCALE_UART);
-    uart_flush_input(SCALE_UART);
-}
-
-// ============================================================
-// Weight string parser (identical logic to Arduino version)
+// Weight string parser
 // ============================================================
 static void stringToWeight(const char *input, float *value, int *decimalPlaces) {
     char filtered[64];
@@ -251,23 +200,6 @@ static void readWeight() {
             newData = false;
         }
     }
-}
-
-// ============================================================
-// updateDisplayLog — update LVGL info labels
-// ============================================================
-void updateDisplayLog(const std::string &logOutput, bool noLog) {
-    lv_label_set_text(ui_LabelInfo,       logOutput.c_str());
-    lv_label_set_text(ui_LabelLoggerInfo, logOutput.c_str());
-
-    if (!noLog) {
-        insertLine(logOutput + "\n");
-        std::string temp;
-        for (auto &line : infoMessagBuff) temp += line;
-        lv_label_set_text(ui_LabelLog, temp.c_str());
-    }
-
-    ESP_LOGD(TAG, "%s", logOutput.c_str());
 }
 
 // ============================================================
