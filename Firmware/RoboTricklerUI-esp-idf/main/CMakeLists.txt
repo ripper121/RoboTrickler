@@ -19,7 +19,7 @@ idf_component_register(
         "ui"
     REQUIRES
         lvgl
-        ArduinoJson
+        espressif__cjson
         QuickPID
         driver
         esp_driver_uart

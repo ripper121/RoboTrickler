@@ -1,13 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
-get_filename_component(QUICKPID_SRC
-    "${CMAKE_CURRENT_LIST_DIR}/../../../Arduino-Libs/QuickPID/src"
-    ABSOLUTE)
-
 idf_component_register(
-    SRCS        "${QUICKPID_SRC}/QuickPID.cpp"
+    SRCS        "${CMAKE_CURRENT_LIST_DIR}/src/QuickPID.cpp"
     INCLUDE_DIRS
-        "${QUICKPID_SRC}"
+        "${CMAKE_CURRENT_LIST_DIR}/src"
         "${CMAKE_CURRENT_LIST_DIR}"   # provides our Arduino.h stub
     REQUIRES    esp_timer freertos
 )

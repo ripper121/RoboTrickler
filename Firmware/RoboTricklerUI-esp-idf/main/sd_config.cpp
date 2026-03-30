@@ -18,10 +18,42 @@
 #include "driver/sdspi_host.h"
 #include "esp_log.h"
 
-// ArduinoJson
-#include <ArduinoJson.h>
+#include "cJSON.h"
 
 static const char *TAG = "sd_config";
+
+// ============================================================
+// cJSON helpers — typed access with default values
+// ============================================================
+static float cj_float(const cJSON *obj, const char *key, float def) {
+    const cJSON *it = cJSON_GetObjectItemCaseSensitive(obj, key);
+    return cJSON_IsNumber(it) ? (float)it->valuedouble : def;
+}
+
+static int cj_int(const cJSON *obj, const char *key, int def) {
+    const cJSON *it = cJSON_GetObjectItemCaseSensitive(obj, key);
+    return cJSON_IsNumber(it) ? it->valueint : def;
+}
+
+static double cj_double(const cJSON *obj, const char *key, double def) {
+    const cJSON *it = cJSON_GetObjectItemCaseSensitive(obj, key);
+    return cJSON_IsNumber(it) ? it->valuedouble : def;
+}
+
+static bool cj_bool(const cJSON *obj, const char *key, bool def) {
+    const cJSON *it = cJSON_GetObjectItemCaseSensitive(obj, key);
+    if (cJSON_IsTrue(it))  return true;
+    if (cJSON_IsFalse(it)) return false;
+    return def;
+}
+
+static void cj_str(const cJSON *obj, const char *key,
+                   char *dst, size_t dst_sz, const char *def) {
+    const cJSON *it = cJSON_GetObjectItemCaseSensitive(obj, key);
+    strlcpy(dst,
+            (cJSON_IsString(it) && it->valuestring) ? it->valuestring : def,
+            dst_sz);
+}
 
 // ============================================================
 // SD path helper
@@ -130,56 +162,56 @@ bool readProfile(const char *rel_path, Config &cfg) {
     std::string json;
     if (!read_file_to_string(full, json)) return false;
 
-    JsonDocument doc;
-    DeserializationError err = deserializeJson(doc, json);
-
-    if (err) {
-        ESP_LOGE(TAG, "deserializeJson failed on %s: %s", rel_path, err.c_str());
+    cJSON *doc = cJSON_Parse(json.c_str());
+    if (!doc) {
+        ESP_LOGE(TAG, "cJSON_Parse failed on %s", rel_path);
         return false;
     }
 
     if (std::string(rel_path).find("pid") != std::string::npos) {
-        cfg.pidThreshold        = doc["threshold"]      | 0.10f;
-        cfg.pidStepMin          = doc["stepMin"]        | 5;
-        cfg.pidStepMax          = doc["stepMax"]        | 36000;
-        cfg.pidSpeed            = doc["speed"]          | 200;
-        cfg.pidConMeasurements  = doc["conMeasurements"]| 2;
-        cfg.pidAggMeasurements  = doc["aggMeasurements"]| 25;
-        cfg.pidTolerance        = doc["tolerance"]      | 0.0f;
-        cfg.pidAlarmThreshold   = doc["alarmThreshold"] | 1.0f;
-        cfg.pidConsNum          = doc["consNum"]        | 1;
-        cfg.pidConsKp           = doc["consKp"]         | 1.0f;
-        cfg.pidConsKi           = doc["consKi"]         | 0.05f;
-        cfg.pidConsKd           = doc["consKd"]         | 0.25f;
-        cfg.pidAggNum           = doc["aggNum"]         | 1;
-        cfg.pidAggKp            = doc["aggKp"]          | 4.0f;
-        cfg.pidAggKi            = doc["aggKi"]          | 0.2f;
-        cfg.pidAggKd            = doc["aggKd"]          | 1.0f;
-        cfg.pidOscillate        = doc["oscillate"]      | false;
-        cfg.pidReverse          = doc["reverse"]        | false;
-        cfg.pidAcceleration     = doc["acceleration"]   | false;
+        cfg.pidThreshold        = cj_float (doc, "threshold",       0.10f);
+        cfg.pidStepMin          = cj_int   (doc, "stepMin",         5);
+        cfg.pidStepMax          = cj_int   (doc, "stepMax",         36000);
+        cfg.pidSpeed            = cj_int   (doc, "speed",           200);
+        cfg.pidConMeasurements  = cj_int   (doc, "conMeasurements", 2);
+        cfg.pidAggMeasurements  = cj_int   (doc, "aggMeasurements", 25);
+        cfg.pidTolerance        = cj_float (doc, "tolerance",       0.0f);
+        cfg.pidAlarmThreshold   = cj_float (doc, "alarmThreshold",  1.0f);
+        cfg.pidConsNum          = (uint8_t)cj_int(doc, "consNum",   1);
+        cfg.pidConsKp           = cj_float (doc, "consKp",          1.0f);
+        cfg.pidConsKi           = cj_float (doc, "consKi",          0.05f);
+        cfg.pidConsKd           = cj_float (doc, "consKd",          0.25f);
+        cfg.pidAggNum           = (uint8_t)cj_int(doc, "aggNum",    1);
+        cfg.pidAggKp            = cj_float (doc, "aggKp",           4.0f);
+        cfg.pidAggKi            = cj_float (doc, "aggKi",           0.2f);
+        cfg.pidAggKd            = cj_float (doc, "aggKd",           1.0f);
+        cfg.pidOscillate        = cj_bool  (doc, "oscillate",       false);
+        cfg.pidReverse          = cj_bool  (doc, "reverse",         false);
+        cfg.pidAcceleration     = cj_bool  (doc, "acceleration",    false);
         PID_AKTIVE = true;
     } else {
-        for (JsonPair item : doc.as<JsonObject>()) {
-            int key = (int)(strtol(item.key().c_str(), nullptr, 10) - 1);
+        cJSON *item = NULL;
+        cJSON_ArrayForEach(item, doc) {
+            int key = (int)(strtol(item->string, nullptr, 10) - 1);
             if (key == 0) {
-                cfg.profile_stepsPerUnit   = item.value()["stepsPerUnit"]   | 0.0;
-                cfg.profile_tolerance      = item.value()["tolerance"]      | 0.0f;
-                cfg.profile_alarmThreshold = item.value()["alarmThreshold"] | 1.0f;
+                cfg.profile_stepsPerUnit   = cj_double(item, "stepsPerUnit",   0.0);
+                cfg.profile_tolerance      = cj_float (item, "tolerance",      0.0f);
+                cfg.profile_alarmThreshold = cj_float (item, "alarmThreshold", 1.0f);
             }
-            cfg.profile_num[key]         = item.value()["number"]       | 1;
-            cfg.profile_weight[key]      = item.value()["weight"];
-            cfg.profile_steps[key]       = item.value()["steps"];
-            cfg.profile_speed[key]       = item.value()["speed"];
-            cfg.profile_measurements[key]= item.value()["measurements"];
-            cfg.profile_oscillate[key]   = item.value()["oscillate"]    | false;
-            cfg.profile_reverse[key]     = item.value()["reverse"]      | false;
-            cfg.profile_acceleration[key]= item.value()["acceleration"] | false;
+            cfg.profile_num[key]          = cj_int  (item, "number",       1);
+            cfg.profile_weight[key]       = cj_float(item, "weight",       0.0f);
+            cfg.profile_steps[key]        = cj_int  (item, "steps",        0);
+            cfg.profile_speed[key]        = cj_int  (item, "speed",        0);
+            cfg.profile_measurements[key] = cj_int  (item, "measurements", 0);
+            cfg.profile_oscillate[key]    = cj_bool (item, "oscillate",    false);
+            cfg.profile_reverse[key]      = cj_bool (item, "reverse",      false);
+            cfg.profile_acceleration[key] = cj_bool (item, "acceleration", false);
             cfg.profile_count = key + 1;
         }
         PID_AKTIVE = false;
     }
 
+    cJSON_Delete(doc);
     return true;
 }
 
@@ -196,31 +228,33 @@ bool loadConfiguration(const char *rel_path, Config &cfg) {
         return false;
     }
 
-    JsonDocument doc;
-    DeserializationError err = deserializeJson(doc, json);
-
-    if (err) {
-        ESP_LOGE(TAG, "Config deserializeJson failed: %s", err.c_str());
+    cJSON *doc = cJSON_Parse(json.c_str());
+    if (!doc) {
+        ESP_LOGE(TAG, "Config cJSON_Parse failed");
         return false;
     }
 
-    strlcpy(cfg.wifi_ssid,       doc["wifi"]["ssid"]       | "", sizeof(cfg.wifi_ssid));
-    strlcpy(cfg.wifi_psk,        doc["wifi"]["psk"]        | "", sizeof(cfg.wifi_psk));
-    strlcpy(cfg.IPStatic,        doc["wifi"]["IPStatic"]   | "", sizeof(cfg.IPStatic));
-    strlcpy(cfg.IPGateway,       doc["wifi"]["IPGateway"]  | "", sizeof(cfg.IPGateway));
-    strlcpy(cfg.IPSubnet,        doc["wifi"]["IPSubnet"]   | "", sizeof(cfg.IPSubnet));
-    strlcpy(cfg.IPDns,           doc["wifi"]["IPDNS"]      | "", sizeof(cfg.IPDns));
-    strlcpy(cfg.scale_protocol,  doc["scale"]["protocol"]  | "GG", sizeof(cfg.scale_protocol));
-    strlcpy(cfg.scale_customCode,doc["scale"]["customCode"]| "", sizeof(cfg.scale_customCode));
-    cfg.scale_baud        = doc["scale"]["baud"]            | 9600;
-    strlcpy(cfg.profile,         doc["profile"]            | "calibrate", sizeof(cfg.profile));
-    cfg.log_measurements  = doc["log_Measurements"]         | 20;
-    cfg.targetWeight      = doc["weight"]                   | 1.0f;
-    cfg.microsteps        = doc["microsteps"]               | 1;
-    strlcpy(cfg.beeper,          doc["beeper"]             | "done", sizeof(cfg.beeper));
-    cfg.debugLog          = doc["debug_log"]                | false;
-    cfg.fwCheck           = doc["fw_check"]                 | true;
+    const cJSON *wifi  = cJSON_GetObjectItemCaseSensitive(doc, "wifi");
+    const cJSON *scale = cJSON_GetObjectItemCaseSensitive(doc, "scale");
 
+    cj_str(wifi,  "ssid",       cfg.wifi_ssid,        sizeof(cfg.wifi_ssid),        "");
+    cj_str(wifi,  "psk",        cfg.wifi_psk,         sizeof(cfg.wifi_psk),         "");
+    cj_str(wifi,  "IPStatic",   cfg.IPStatic,         sizeof(cfg.IPStatic),         "");
+    cj_str(wifi,  "IPGateway",  cfg.IPGateway,        sizeof(cfg.IPGateway),        "");
+    cj_str(wifi,  "IPSubnet",   cfg.IPSubnet,         sizeof(cfg.IPSubnet),         "");
+    cj_str(wifi,  "IPDNS",      cfg.IPDns,            sizeof(cfg.IPDns),            "");
+    cj_str(scale, "protocol",   cfg.scale_protocol,   sizeof(cfg.scale_protocol),   "GG");
+    cj_str(scale, "customCode", cfg.scale_customCode, sizeof(cfg.scale_customCode), "");
+    cfg.scale_baud       = cj_int  (scale, "baud",             9600);
+    cj_str(doc,   "profile",    cfg.profile,          sizeof(cfg.profile),          "calibrate");
+    cfg.log_measurements = cj_int  (doc,   "log_Measurements", 20);
+    cfg.targetWeight     = cj_float(doc,   "weight",           1.0f);
+    cfg.microsteps       = cj_int  (doc,   "microsteps",       1);
+    cj_str(doc,   "beeper",     cfg.beeper,           sizeof(cfg.beeper),           "done");
+    cfg.debugLog         = cj_bool (doc,   "debug_log",        false);
+    cfg.fwCheck          = cj_bool (doc,   "fw_check",         true);
+
+    cJSON_Delete(doc);
     return true;
 }
 
@@ -267,26 +301,38 @@ void saveConfiguration(const char *rel_path, const Config &cfg) {
     FILE *f = fopen(full.c_str(), "w");
     if (!f) { ESP_LOGE(TAG, "Failed to create %s", full.c_str()); return; }
 
-    JsonDocument doc;
-    doc["wifi"]["ssid"]      = cfg.wifi_ssid;
-    doc["wifi"]["psk"]       = cfg.wifi_psk;
-    doc["wifi"]["IPStatic"]  = cfg.IPStatic;
-    doc["wifi"]["IPGateway"] = cfg.IPGateway;
-    doc["wifi"]["IPSubnet"]  = cfg.IPSubnet;
-    doc["wifi"]["IPDNS"]     = cfg.IPDns;
-    doc["scale"]["protocol"] = cfg.scale_protocol;
-    doc["scale"]["customCode"]= cfg.scale_customCode;
-    doc["scale"]["baud"]     = cfg.scale_baud;
-    doc["profile"]           = cfg.profile;
-    doc["weight"]            = serialized(str_float(cfg.targetWeight, 3).c_str());
-    doc["log_Measurements"]  = cfg.log_measurements;
-    doc["microsteps"]        = cfg.microsteps;
-    doc["beeper"]            = cfg.beeper;
-    doc["debug_log"]         = cfg.debugLog;
-    doc["fw_check"]          = cfg.fwCheck;
+    cJSON *doc   = cJSON_CreateObject();
+    cJSON *wifi  = cJSON_CreateObject();
+    cJSON *scale = cJSON_CreateObject();
 
-    std::string json;
-    serializeJsonPretty(doc, json);
-    fputs(json.c_str(), f);
+    cJSON_AddStringToObject(wifi,  "ssid",        cfg.wifi_ssid);
+    cJSON_AddStringToObject(wifi,  "psk",         cfg.wifi_psk);
+    cJSON_AddStringToObject(wifi,  "IPStatic",    cfg.IPStatic);
+    cJSON_AddStringToObject(wifi,  "IPGateway",   cfg.IPGateway);
+    cJSON_AddStringToObject(wifi,  "IPSubnet",    cfg.IPSubnet);
+    cJSON_AddStringToObject(wifi,  "IPDNS",       cfg.IPDns);
+    cJSON_AddItemToObject(doc, "wifi", wifi);
+
+    cJSON_AddStringToObject(scale, "protocol",    cfg.scale_protocol);
+    cJSON_AddStringToObject(scale, "customCode",  cfg.scale_customCode);
+    cJSON_AddNumberToObject(scale, "baud",        cfg.scale_baud);
+    cJSON_AddItemToObject(doc, "scale", scale);
+
+    cJSON_AddStringToObject(doc, "profile",         cfg.profile);
+    cJSON_AddItemToObject   (doc, "weight",
+        cJSON_CreateRaw(str_float(cfg.targetWeight, 3).c_str()));
+    cJSON_AddNumberToObject(doc, "log_Measurements", cfg.log_measurements);
+    cJSON_AddNumberToObject(doc, "microsteps",       cfg.microsteps);
+    cJSON_AddStringToObject(doc, "beeper",           cfg.beeper);
+    cJSON_AddBoolToObject  (doc, "debug_log",        cfg.debugLog);
+    cJSON_AddBoolToObject  (doc, "fw_check",         cfg.fwCheck);
+
+    char *json = cJSON_Print(doc);
+    cJSON_Delete(doc);
+
+    if (json) {
+        fputs(json, f);
+        free(json);
+    }
     fclose(f);
 }
