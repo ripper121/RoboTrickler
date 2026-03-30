@@ -7,6 +7,7 @@
 #include "esp_log.h"
 #include "freertos/queue.h"
 #include "freertos/task.h"
+#include <atomic>
 
 static const char *TAG = "stepper";
 
@@ -40,7 +41,7 @@ typedef struct {
 
 static QueueHandle_t s_stepper_queue = NULL;
 static TaskHandle_t s_stepper_task_handle = NULL;
-static volatile bool s_stepper_stop_requested = false;
+static std::atomic<bool> s_stepper_stop_requested(false);
 
 static StepperDriver *get_stepper(int stepperNum) {
     if (stepperNum == 1) return &stepper1;

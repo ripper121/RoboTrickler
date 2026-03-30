@@ -79,7 +79,7 @@ extern float weight;
 extern float addWeight;
 extern int   weightCounter;
 extern int   measurementCount;
-extern float newData;
+extern bool  newData;
 extern bool  running;
 extern bool  finished;
 extern bool  firstThrow;

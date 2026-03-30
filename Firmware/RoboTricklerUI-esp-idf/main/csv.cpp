@@ -70,9 +70,12 @@ void writeCSVFile(const char *rel_path, float w, int count) {
         ceateCSVFile("/log", "log");
         return;
     }
-    fprintf(f, "%d,%.4f\r\n", count, w);
+    if (fprintf(f, "%d,%.4f\r\n", count, w) < 0) {
+        ESP_LOGE(TAG, "CSV write failed: %s", full_path.c_str());
+    } else {
+        ESP_LOGD(TAG, "CSV row appended: %d %.4f", count, w);
+    }
     fclose(f);
-    ESP_LOGD(TAG, "CSV row appended: %d %.4f", count, w);
 }
 
 // ============================================================

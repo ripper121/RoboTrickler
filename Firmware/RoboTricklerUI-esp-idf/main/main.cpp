@@ -33,7 +33,7 @@ float weight       = 0.0f;
 float addWeight    = 0.1f;
 int   weightCounter  = 0;
 int   measurementCount = 0;
-float newData      = false;
+bool  newData      = false;
 bool  running      = false;
 bool  finished     = false;
 bool  firstThrow   = true;
@@ -59,10 +59,10 @@ QuickPID roboPID(&pid_input, &pid_output, &config.targetWeight);
 // LVGL task handle
 static TaskHandle_t lv_disp_tcb = NULL;
 
-#define DISP_TASK_STACK  (4096 * 2)
+#define DISP_TASK_STACK  CONFIG_ROBOTRICKLER_DISP_STACK_SIZE
 #define DISP_TASK_CORE   0
 #define DISP_TASK_PRIO   1
-#define MAIN_LOOP_STACK  (8192)
+#define MAIN_LOOP_STACK  CONFIG_ROBOTRICKLER_MAIN_STACK_SIZE
 #define MAIN_LOOP_CORE   1
 #define MAIN_LOOP_PRIO   1
 
@@ -107,9 +107,9 @@ void serial1_begin(int baud, gpio_num_t rx_pin, gpio_num_t tx_pin) {
     cfg.stop_bits  = UART_STOP_BITS_1;
     cfg.flow_ctrl  = UART_HW_FLOWCTRL_DISABLE;
     cfg.source_clk = UART_SCLK_APB;
-    uart_driver_install(SCALE_UART, SCALE_BUF_SIZE * 2, 0, 0, NULL, 0);
-    uart_param_config(SCALE_UART, &cfg);
-    uart_set_pin(SCALE_UART, tx_pin, rx_pin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    ESP_ERROR_CHECK(uart_driver_install(SCALE_UART, SCALE_BUF_SIZE * 2, 0, 0, NULL, 0));
+    ESP_ERROR_CHECK(uart_param_config(SCALE_UART, &cfg));
+    ESP_ERROR_CHECK(uart_set_pin(SCALE_UART, tx_pin, rx_pin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
 }
 
 int serial1_available() {
@@ -274,9 +274,14 @@ void updateDisplayLog(const std::string &logOutput, bool noLog) {
 // LVGL task — runs on core 0
 // ============================================================
 static void lvgl_disp_task(void *) {
+    static uint32_t hwm_time = 0;
     while (1) {
         lv_timer_handler();
-        // Web server runs its own tasks in ESP-IDF (no handleClient needed)
+        if (millis() - hwm_time >= 10000) {
+            hwm_time = millis();
+            ESP_LOGD(TAG, "lvglTask stack HWM: %u bytes",
+                     (unsigned)uxTaskGetStackHighWaterMark(NULL) * sizeof(StackType_t));
+        }
         vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
@@ -289,11 +294,12 @@ static void main_loop_task(void *) {
     static uint32_t readWeightTime = millis();
 
     while (1) {
-        // Periodic heap info (debug)
+        // Periodic heap and stack info (debug)
         if (millis() - writeETime >= 1000) {
             writeETime = millis();
-            ESP_LOGD(TAG, "Heap free=%u min=%u",
-                     (unsigned)ESP_FREE_HEAP(), (unsigned)ESP_MIN_FREE_HEAP());
+            ESP_LOGD(TAG, "Heap free=%u min=%u stack HWM=%u",
+                     (unsigned)ESP_FREE_HEAP(), (unsigned)ESP_MIN_FREE_HEAP(),
+                     (unsigned)uxTaskGetStackHighWaterMark(NULL) * sizeof(StackType_t));
         }
 
         if (running) {

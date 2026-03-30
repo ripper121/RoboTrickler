@@ -130,15 +130,10 @@ static const char *content_type(const std::string &path) {
 // ============================================================
 static bool get_query_param(httpd_req_t *req, const char *key, char *val, size_t val_len) {
     size_t qlen = httpd_req_get_url_query_len(req) + 1;
-    if (qlen <= 1) return false;
-    char *qs = (char *)malloc(qlen);
-    if (!qs) return false;
-    bool found = false;
-    if (httpd_req_get_url_query_str(req, qs, qlen) == ESP_OK) {
-        found = (httpd_query_key_value(qs, key, val, val_len) == ESP_OK);
-    }
-    free(qs);
-    return found;
+    if (qlen <= 1 || qlen > 256) return false;
+    char qs[256];
+    if (httpd_req_get_url_query_str(req, qs, sizeof(qs)) != ESP_OK) return false;
+    return (httpd_query_key_value(qs, key, val, val_len) == ESP_OK);
 }
 
 // ============================================================
@@ -174,13 +169,11 @@ static esp_err_t send_file(httpd_req_t *req, const std::string &rel_path) {
     // Check if download was requested
     size_t qlen = httpd_req_get_url_query_len(req) + 1;
     bool download = false;
-    if (qlen > 1) {
-        char *qs = (char *)malloc(qlen);
-        if (qs) {
-            httpd_req_get_url_query_str(req, qs, qlen);
+    if (qlen > 1 && qlen <= 64) {
+        char qs[64];
+        if (httpd_req_get_url_query_str(req, qs, sizeof(qs)) == ESP_OK) {
             char dl[8] = {};
             download = (httpd_query_key_value(qs, "download", dl, sizeof(dl)) == ESP_OK);
-            free(qs);
         }
     }
 
@@ -294,20 +287,15 @@ static esp_err_t handle_list(httpd_req_t *req) {
 static esp_err_t handle_delete(httpd_req_t *req) {
     size_t qlen = httpd_req_get_url_query_len(req) + 1;
     if (qlen <= 1) { httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "BAD ARGS"); return ESP_OK; }
-    char *qs = (char *)malloc(qlen);
+    char qs[256] = {};
     char path_arg[128] = {};
-    if (qs) {
-        httpd_req_get_url_query_str(req, qs, qlen);
-        // First arg (index 0) is the path
+    if (qlen <= sizeof(qs) &&
+        httpd_req_get_url_query_str(req, qs, sizeof(qs)) == ESP_OK) {
         httpd_query_key_value(qs, "path", path_arg, sizeof(path_arg));
-        free(qs);
     }
     if (strlen(path_arg) == 0) {
-        // Fall back to raw query as path
-        char tmp[128] = {};
-        if (httpd_req_get_url_query_str(req, tmp, sizeof(tmp)) == ESP_OK) {
-            strlcpy(path_arg, tmp, sizeof(path_arg));
-        }
+        // Fall back: raw query string is the path
+        strlcpy(path_arg, qs, sizeof(path_arg));
     }
 
     std::string normalized_path;
@@ -715,7 +703,7 @@ void initWebServer() {
         // HTTP server
         httpd_config_t httpd_cfg = HTTPD_DEFAULT_CONFIG();
         httpd_cfg.max_uri_handlers  = 20;
-        httpd_cfg.stack_size        = 8192;
+        httpd_cfg.stack_size        = CONFIG_ROBOTRICKLER_HTTP_STACK_SIZE;
         httpd_cfg.uri_match_fn      = httpd_uri_match_wildcard;
 
         if (httpd_start(&s_httpd, &httpd_cfg) == ESP_OK) {
