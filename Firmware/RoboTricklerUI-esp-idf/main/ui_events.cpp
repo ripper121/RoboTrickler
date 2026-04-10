@@ -25,13 +25,13 @@ void startLogger() {
     strlcpy(config.mode, "logger", sizeof(config.mode));
     lv_label_set_text(ui_LabelLoggerStart, "Stop");
     lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    extern void startMeasurment();
-    startMeasurment();
+    extern void startMeasurement();
+    startMeasurement();
 }
 
 void stopLogger() {
-    extern void stopMeasurment();
-    stopMeasurment();
+    extern void stopMeasurement();
+    stopMeasurement();
     lv_label_set_text(ui_LabelLoggerStart, "Start");
     lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text(ui_LabelLoggerWeight, "-.-");

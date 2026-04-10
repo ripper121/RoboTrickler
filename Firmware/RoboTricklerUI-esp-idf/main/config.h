@@ -91,6 +91,7 @@ extern uint8_t     profileListCount;
 
 #define MAX_TARGET_WEIGHT 999
 #define FW_VERSION 3.00f
+#define INFO_LOG_LINES 14
 
 // PID I/O floats (defined in main.cpp)
 extern float pid_input;

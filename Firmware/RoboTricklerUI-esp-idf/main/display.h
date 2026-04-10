@@ -19,6 +19,10 @@ extern "C" {
 // Initialise display (ST7796) and touch (XPT2046), register LVGL drivers
 void display_init(void);
 
+// LVGL mutex — must be held around all LVGL API calls from non-display tasks
+void lvgl_lock(void);
+void lvgl_unlock(void);
+
 // LVGL flush callback — registered internally
 void display_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p);
 

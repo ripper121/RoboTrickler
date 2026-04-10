@@ -5,6 +5,7 @@
 #include "pindef.h"
 
 #include "esp_log.h"
+#include "esp_task_wdt.h"
 #include "freertos/queue.h"
 #include "freertos/task.h"
 #include <atomic>
@@ -14,7 +15,7 @@ static const char *TAG = "stepper";
 #define MOTOR_STEPS 200
 #define ACCEL       1000
 #define STEPPER_TASK_STACK 4096
-#define STEPPER_TASK_PRIO  2
+#define STEPPER_TASK_PRIO  4
 #define STEPPER_QUEUE_LEN  1
 
 // Two StepperDriver instances — match Arduino A4988 instantiation
@@ -89,10 +90,14 @@ static void step_execute_request(const StepperRequest &req) {
 
 static void stepper_task(void *arg) {
     (void)arg;
-    StepperRequest req = {};
+    // Subscribe this task to the TWDT so real hangs are still caught,
+    // even though IDLE1 monitoring is disabled (stepper legitimately holds core 1).
+    esp_task_wdt_add(NULL);
 
+    StepperRequest req = {};
     while (true) {
-        if (xQueueReceive(s_stepper_queue, &req, portMAX_DELAY) == pdTRUE) {
+        esp_task_wdt_reset();
+        if (xQueueReceive(s_stepper_queue, &req, pdMS_TO_TICKS(1000)) == pdTRUE) {
             s_stepper_stop_requested = false;
             step_execute_request(req);
             if (req.requester != NULL) {

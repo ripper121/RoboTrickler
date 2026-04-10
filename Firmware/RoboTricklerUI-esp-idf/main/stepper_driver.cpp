@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_task_wdt.h"
 
 // ============================================================
 // Constructor
@@ -76,9 +77,9 @@ void StepperDriver::disable() {
 // ============================================================
 // Busy-wait delay in microseconds
 // ============================================================
-void StepperDriver::_delay_micros(uint32_t us, uint32_t start_us) {
+void StepperDriver::_delay_micros(uint32_t us, uint32_t start_us, bool has_start) {
     if (us == 0) return;
-    if (!start_us) start_us = micros();
+    if (!has_start) start_us = micros();
 
     // Let lower-priority tasks (including the idle task watched by the TWDT)
     // run during long inter-step gaps, then busy-wait the final sub-millisecond tail.
@@ -112,15 +113,8 @@ void StepperDriver::_delay_micros(uint32_t us, uint32_t start_us) {
 // ============================================================
 void StepperDriver::move(long steps) {
     startMove(steps);
-    uint32_t last_cooperative_pause = micros();
-
     while (!_stop_requested && nextAction()) {
-        // This driver is still synchronous, so force an occasional real RTOS
-        // sleep to let the idle task run and satisfy the task watchdog.
-        if ((micros() - last_cooperative_pause) >= 2000U) {
-            vTaskDelay(1);
-            last_cooperative_pause = micros();
-        }
+        esp_task_wdt_reset();
     }
 }
 
@@ -237,7 +231,7 @@ long StepperDriver::nextAction() {
     }
 
     if (_steps_remaining > 0) {
-        _delay_micros(_next_action_interval, _last_action_end);
+        _delay_micros(_next_action_interval, _last_action_end, true);
 
         if (_stop_requested) {
             _last_action_end = 0;

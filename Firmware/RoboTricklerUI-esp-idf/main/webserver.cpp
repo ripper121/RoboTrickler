@@ -43,6 +43,8 @@ extern float weight;
 static EventGroupHandle_t s_wifi_event_group = NULL;
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
+#define WIFI_RETRY_MAX     5
+static int s_wifi_retry_num = 0;
 
 static httpd_handle_t s_httpd = NULL;
 
@@ -93,14 +95,21 @@ static void wifi_event_handler(void *arg, esp_event_base_t base,
                                 int32_t id, void *data) {
     if (base == WIFI_EVENT && id == WIFI_EVENT_STA_DISCONNECTED) {
         WIFI_AKTIVE = false;
-        ESP_LOGW(TAG, "WiFi disconnected");
-        xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
         xEventGroupClearBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+        if (s_wifi_retry_num < WIFI_RETRY_MAX) {
+            s_wifi_retry_num++;
+            ESP_LOGW(TAG, "WiFi disconnected, retry %d/%d", s_wifi_retry_num, WIFI_RETRY_MAX);
+            esp_wifi_connect();
+        } else {
+            ESP_LOGW(TAG, "WiFi connection failed after %d retries", WIFI_RETRY_MAX);
+            xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
+        }
     } else if (base == IP_EVENT && id == IP_EVENT_STA_GOT_IP) {
         ip_event_got_ip_t *event = (ip_event_got_ip_t *)data;
         char ip_str[16];
         snprintf(ip_str, sizeof(ip_str), IPSTR, IP2STR(&event->ip_info.ip));
         ESP_LOGI(TAG, "Got IP: %s", ip_str);
+        s_wifi_retry_num = 0;
         WIFI_AKTIVE = true;
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
         xEventGroupClearBits(s_wifi_event_group, WIFI_FAIL_BIT);
@@ -139,6 +148,17 @@ static bool get_query_param(httpd_req_t *req, const char *key, char *val, size_t
 // ============================================================
 // Stream a file from SD card to the HTTP response
 // ============================================================
+// Try to open a file from the SD card, checking .gz first.
+// Returns the open FILE* and sets *out_is_gz. No stat/access pre-checks —
+// fopen failure is the definitive "file not found" signal.
+static FILE *try_open_file(const std::string &full_path, bool *out_is_gz) {
+    std::string gz = full_path + ".gz";
+    FILE *f = fopen(gz.c_str(), "rb");
+    if (f) { *out_is_gz = true; return f; }
+    *out_is_gz = false;
+    return fopen(full_path.c_str(), "rb");
+}
+
 static esp_err_t send_file(httpd_req_t *req, const std::string &rel_path) {
     std::string path = rel_path;
     if (!path.empty() && path.back() == '/') {
@@ -148,23 +168,21 @@ static esp_err_t send_file(httpd_req_t *req, const std::string &rel_path) {
         path.resize(path.size() - 4);
     }
 
-    std::string full = sd_path(path);
-    struct stat st = {};
-    if (stat(full.c_str(), &st) == 0 && S_ISDIR(st.st_mode)) {
-        if (!path.empty() && path.back() != '/') {
-            path += "/";
-        }
+    // Try the path directly, then fall back to <path>/index.html.
+    // Using fopen instead of stat+access+fopen cuts SD accesses from 4 → 1-2.
+    bool is_gz = false;
+    FILE *f = try_open_file(sd_path(path), &is_gz);
+    if (!f) {
+        if (!path.empty() && path.back() != '/') path += "/";
         path += "index.html";
-        full = sd_path(path);
+        f = try_open_file(sd_path(path), &is_gz);
+        if (!f) return ESP_FAIL;
     }
 
-    std::string gz = full + ".gz";
-    bool is_gz = (access(gz.c_str(), F_OK) == 0);
-    std::string actual = is_gz ? gz : full;
-
-    if (access(actual.c_str(), F_OK) != 0) return ESP_FAIL;
-
     if (is_gz) httpd_resp_set_hdr(req, "Content-Encoding", "gzip");
+
+    // Static assets can be cached by the browser — avoids re-fetching on every load.
+    httpd_resp_set_hdr(req, "Cache-Control", "max-age=86400");
 
     // Check if download was requested
     size_t qlen = httpd_req_get_url_query_len(req) + 1;
@@ -177,24 +195,20 @@ static esp_err_t send_file(httpd_req_t *req, const std::string &rel_path) {
         }
     }
 
-    httpd_resp_set_type(req, download ? "application/octet-stream" : content_type(rel_path));
+    httpd_resp_set_type(req, download ? "application/octet-stream" : content_type(path));
 
-    FILE *f = fopen(actual.c_str(), "rb");
-    if (!f) return ESP_FAIL;
-
-    char buf[512];
+    // 2 KB buffer: 4× fewer SD transactions and TCP writes vs 512 B
+    char buf[2048];
     size_t n;
-    esp_err_t result = ESP_OK;
     while ((n = fread(buf, 1, sizeof(buf), f)) > 0) {
-        result = httpd_resp_send_chunk(req, buf, (ssize_t)n);
-        if (result != ESP_OK) {
-            break;
+        if (httpd_resp_send_chunk(req, buf, (ssize_t)n) != ESP_OK) {
+            fclose(f);
+            httpd_resp_sendstr_chunk(req, NULL);
+            httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to send file");
+            return ESP_FAIL;
         }
     }
     fclose(f);
-    if (result != ESP_OK) {
-        return result;
-    }
     return httpd_resp_send_chunk(req, NULL, 0);
 }
 
@@ -349,8 +363,17 @@ static esp_err_t handle_upload(httpd_req_t *req) {
     while (remaining > 0) {
         int to_recv = (remaining > (int)sizeof(buf)) ? (int)sizeof(buf) : remaining;
         received = httpd_req_recv(req, buf, to_recv);
-        if (received <= 0) break;
-        fwrite(buf, 1, received, f);
+        if (received <= 0) {
+            if (received == HTTPD_SOCK_ERR_TIMEOUT) { continue; }
+            fclose(f);
+            httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Receive failed");
+            return ESP_FAIL;
+        }
+        if ((int)fwrite(buf, 1, received, f) != received) {
+            fclose(f);
+            httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Write failed");
+            return ESP_FAIL;
+        }
         remaining -= received;
     }
     fclose(f);
@@ -543,12 +566,22 @@ static esp_err_t handle_fw_update_post(httpd_req_t *req) {
     while (remaining > 0) {
         int to_recv = (remaining > (int)sizeof(buf)) ? (int)sizeof(buf) : remaining;
         int received = httpd_req_recv(req, buf, to_recv);
-        if (received <= 0) { ok = false; break; }
+        if (received <= 0) {
+            if (received == HTTPD_SOCK_ERR_TIMEOUT) { continue; }
+            ok = false; break;
+        }
         if (esp_ota_write(ota_handle, buf, received) != ESP_OK) { ok = false; break; }
         remaining -= received;
+        vTaskDelay(pdMS_TO_TICKS(1));  // yield between flash writes to keep IDLE0 alive
     }
 
-    if (!ok || esp_ota_end(ota_handle) != ESP_OK) {
+    if (!ok) {
+        esp_ota_abort(ota_handle);
+        httpd_resp_set_type(req, "text/html");
+        httpd_resp_sendstr(req, "<h3>FAIL</h3><br><input type='button' value='Back' onClick='javascript:history.back()'>");
+        return ESP_OK;
+    }
+    if (esp_ota_end(ota_handle) != ESP_OK) {
         httpd_resp_set_type(req, "text/html");
         httpd_resp_sendstr(req, "<h3>FAIL</h3><br><input type='button' value='Back' onClick='javascript:history.back()'>");
         return ESP_OK;
@@ -632,6 +665,7 @@ static void register_handlers(httpd_handle_t svr) {
 // ============================================================
 void initWebServer() {
     WIFI_AKTIVE = false;
+    s_wifi_retry_num = 0;
     if (strlen(config.wifi_ssid) == 0) return;
 
     updateDisplayLog("Connect to Wifi: ", false);
@@ -705,6 +739,8 @@ void initWebServer() {
         httpd_cfg.max_uri_handlers  = 20;
         httpd_cfg.stack_size        = CONFIG_ROBOTRICKLER_HTTP_STACK_SIZE;
         httpd_cfg.uri_match_fn      = httpd_uri_match_wildcard;
+        httpd_cfg.core_id           = 0;    // Keep HTTP off core 1 — stepper & main loop live there
+        httpd_cfg.lru_purge_enable  = true; // Drop oldest idle socket when all slots are full
 
         if (httpd_start(&s_httpd, &httpd_cfg) == ESP_OK) {
             register_handlers(s_httpd);

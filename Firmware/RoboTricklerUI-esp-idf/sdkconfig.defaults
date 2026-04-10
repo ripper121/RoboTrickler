@@ -7,6 +7,16 @@ CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
 CONFIG_FREERTOS_HZ=1000
 CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
 
+# Task watchdog
+# IDLE0: httpd legitimately blocks core 0 during SD card reads (SDSPI poll_busy
+#        uses spi_device_polling_transmit with no yield).
+# IDLE1: stepper_task (priority 4) legitimately holds core 1 during moves;
+#        taskYIELD() never reaches IDLE1 (priority 0).
+#        stepper_task subscribes to the TWDT directly and resets it each step,
+#        so real hangs are still caught.
+CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU0=n
+CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU1=n
+
 # FAT filesystem (SD card)
 CONFIG_FATFS_LFN_HEAP=y
 CONFIG_FATFS_MAX_LFN=255

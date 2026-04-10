@@ -49,7 +49,7 @@ static std::string unit             = "";
 static int         dec_places       = 3;
 static float       lastWeight       = 0;
 
-std::string infoMessagBuff[14];
+std::string infoMessagBuff[INFO_LOG_LINES];
 std::string profileListBuff[32];
 uint8_t     profileListCount = 0;
 
@@ -83,8 +83,8 @@ void serialFlush();
 bool serialWait();
 void messageBox(const std::string &msg, const lv_font_t *font, lv_color_t color, bool wait);
 void insertLine(const std::string &newLine);
-std::string ceateCSVFile(const char *folderName, const char *fileName);
-void writeCSVFile(const char *path, float w, int count);
+std::string createCSVFile(const char *folderName, const char *fileName);
+bool writeCSVFile(const char *path, float w, int count);
 void logToFile(const std::string &msg);
 bool loadConfiguration(const char *filename, Config &cfg);
 bool readProfile(const char *filename, Config &cfg);
@@ -126,7 +126,9 @@ static void readWeight() {
         ESP_LOGD(TAG, "Scale raw: %s", buff);
 
         if (config.debugLog) {
+            lvgl_lock();
             lv_label_set_text(ui_LabelTricklerWeight, buff);
+            lvgl_unlock();
             std::string logMsg = std::string(buff) + "\n";
             logToFile(logMsg);
         }
@@ -159,8 +161,10 @@ static void readWeight() {
                 weightCounter = 0;
                 if (!config.debugLog) {
                     std::string w_str = str_float(weight, dec_places) + unit;
+                    lvgl_lock();
                     lv_label_set_text(ui_LabelTricklerWeight, w_str.c_str());
                     lv_label_set_text(ui_LabelLoggerWeight,   w_str.c_str());
+                    lvgl_unlock();
                 }
             }
             lastWeight = weight;
@@ -208,7 +212,9 @@ static void readWeight() {
 static void lvgl_disp_task(void *) {
     static uint32_t hwm_time = 0;
     while (1) {
+        lvgl_lock();
         lv_timer_handler();
+        lvgl_unlock();
         if (millis() - hwm_time >= 10000) {
             hwm_time = millis();
             ESP_LOGD(TAG, "lvglTask stack HWM: %u bytes",
@@ -241,12 +247,16 @@ static void main_loop_task(void *) {
                 newData = false;
                 weightCounter = 0;
 
+                const std::string mode(config.mode);
+                const bool isTrickler = mode.find("trickler") != std::string::npos;
+                const bool isLogger   = mode.find("logger")   != std::string::npos;
+
                 if (weight <= 0.0f) {
                     firstThrow = true;
                     measurementCount = 0;
                 }
 
-                if (std::string(config.mode).find("trickler") != std::string::npos) {
+                if (isTrickler) {
                     float tolerance      = config.profile_tolerance;
                     float alarmThreshold = config.profile_alarmThreshold;
                     if (PID_AKTIVE) {
@@ -287,7 +297,7 @@ static void main_loop_task(void *) {
                 }
 
                 if (!finished) {
-                    if (std::string(config.mode).find("trickler") != std::string::npos && weight >= 0) {
+                    if (isTrickler && weight >= 0) {
                         updateDisplayLog("Running...", true);
                         setLabelTextColor(ui_LabelTricklerWeight, 0xFFFFFF);
 
@@ -352,7 +362,8 @@ static void main_loop_task(void *) {
                                 if (ps > 360 && osc) {
                                     for (int j = 0; j < (int)(ps / 360); j++)
                                         step(config.profile_num[profileStep], 360, osc, config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
-                                    step(config.profile_num[profileStep], (int)(ps % 360), osc, config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
+                                    if ((int)(ps % 360) > 0)
+                                        step(config.profile_num[profileStep], (int)(ps % 360), osc, config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
                                 } else {
                                     step(config.profile_num[profileStep], (int)ps, osc, config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
                                 }
@@ -370,11 +381,13 @@ static void main_loop_task(void *) {
                         serialFlush();
                     }
 
-                    if (std::string(config.mode).find("logger") != std::string::npos && weight > 0) {
+                    if (isLogger && weight > 0) {
                         if (path == "empty") {
-                            path = ceateCSVFile("/log", "log");
+                            path = createCSVFile("/log", "log");
                         }
-                        writeCSVFile(path.c_str(), weight, logCounter);
+                        if (!writeCSVFile(path.c_str(), weight, logCounter)) {
+                            path = "empty";  // recreate on next measurement
+                        }
                         measurementCount = config.log_measurements;
                         std::string infoText = "Count: " + std::to_string(logCounter) + " Saved :)";
                         updateDisplayLog(infoText, true);
@@ -385,7 +398,7 @@ static void main_loop_task(void *) {
 
                 if (weight <= 0.0f) {
                     if (finished) {
-                        if (std::string(config.mode).find("logger") != std::string::npos) {
+                        if (isLogger) {
                             logCounter++;
                             updateDisplayLog("Place next peace...", true);
                             beep("done");
@@ -404,8 +417,10 @@ static void main_loop_task(void *) {
                 updateDisplayLog("Get Weight...", true);
                 readWeight();
                 std::string w_str = str_float(weight, dec_places) + unit;
+                lvgl_lock();
                 lv_label_set_text(ui_LabelTricklerWeight, w_str.c_str());
                 lv_label_set_text(ui_LabelLoggerWeight,   w_str.c_str());
+                lvgl_unlock();
             }
         }
 

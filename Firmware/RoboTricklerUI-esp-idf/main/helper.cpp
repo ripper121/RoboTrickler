@@ -46,25 +46,29 @@ static float       tempTargetWeight = 0.0f;
 // ============================================================
 void setLabelTextColor(lv_obj_t *label, uint32_t colorHex) {
     lv_color_t color = lv_color_hex(colorHex);
+    lvgl_lock();
     lv_obj_set_style_text_color(label, color, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lvgl_unlock();
 }
 
 // ============================================================
 // insertLine — scroll the info log buffer up and append
 // ============================================================
 void insertLine(const std::string &newLine) {
-    for (int i = 0; i < 13; i++) infoMessagBuff[i] = infoMessagBuff[i + 1];
-    infoMessagBuff[13] = newLine;
+    for (int i = 0; i < INFO_LOG_LINES - 1; i++) infoMessagBuff[i] = infoMessagBuff[i + 1];
+    infoMessagBuff[INFO_LOG_LINES - 1] = newLine;
 }
 
 // ============================================================
 // messageBox — show the overlay panel with a message
 // ============================================================
 void messageBox(const std::string &message, const lv_font_t *font, lv_color_t color, bool wait) {
+    lvgl_lock();
     lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text(ui_LabelMessages, message.c_str());
     lv_obj_clear_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+    lvgl_unlock();
     (void)wait;   // In ESP-IDF the panel is dismissed by the button callback
 }
 
@@ -88,6 +92,7 @@ void beep(const std::string &beepMode) {
 // updateDisplayLog — update LVGL info labels
 // ============================================================
 void updateDisplayLog(const std::string &logOutput, bool noLog) {
+    lvgl_lock();
     lv_label_set_text(ui_LabelInfo,       logOutput.c_str());
     lv_label_set_text(ui_LabelLoggerInfo, logOutput.c_str());
 
@@ -97,6 +102,7 @@ void updateDisplayLog(const std::string &logOutput, bool noLog) {
         for (auto &line : infoMessagBuff) temp += line;
         lv_label_set_text(ui_LabelLog, temp.c_str());
     }
+    lvgl_unlock();
 
     ESP_LOGD(TAG, "%s", logOutput.c_str());
 }
@@ -121,16 +127,16 @@ void serialFlush() {
 }
 
 // ============================================================
-// startMeasurment / stopMeasurment
+// startMeasurement / stopMeasurement
 // ============================================================
-void startMeasurment() {
+void startMeasurement() {
     running  = true;
     finished = false;
     firstThrow = true;
     beep("button");
 }
 
-void stopMeasurment() {
+void stopMeasurement() {
     stopStepperMotion();
     running  = false;
     finished = true;
@@ -142,7 +148,9 @@ void stopMeasurment() {
 // ============================================================
 void setProfile(int num) {
     strlcpy(config.profile, profileListBuff[num].c_str(), sizeof(config.profile));
+    lvgl_lock();
     lv_label_set_text(ui_LabelProfile, config.profile);
+    lvgl_unlock();
 }
 
 // ============================================================
@@ -150,7 +158,9 @@ void setProfile(int num) {
 // ============================================================
 void saveTargetWeight(float w) {
     config.targetWeight = w;
+    lvgl_lock();
     lv_label_set_text(ui_LabelTarget, str_float(config.targetWeight, 3).c_str());
+    lvgl_unlock();
     saveConfiguration("/config.txt", config);
 }
 
@@ -179,8 +189,10 @@ static void corruptProfile(const std::string &profile_filename) {
 // ============================================================
 void startTrickler() {
     strlcpy(config.mode, "trickler", sizeof(config.mode));
+    lvgl_lock();
     lv_label_set_text(ui_LabelTricklerStart, "Stop");
     lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lvgl_unlock();
 
     if (tempProfile != std::string(config.profile)) {
         std::string profile_filename = "/" + std::string(config.profile) + ".txt";
@@ -195,20 +207,22 @@ void startTrickler() {
     tempTargetWeight = config.targetWeight;
 
     serialFlush();
-    startMeasurment();
+    startMeasurement();
 }
 
 // ============================================================
 // stopTrickler
 // ============================================================
 void stopTrickler() {
-    stopMeasurment();
+    stopMeasurement();
     serialFlush();
+    lvgl_lock();
     lv_label_set_text(ui_LabelTricklerStart, "Start");
     lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text(ui_LabelTricklerWeight, "-.-");
     lv_label_set_text(ui_LabelInfo, "");
     lv_label_set_text(ui_LabelLoggerInfo, "");
+    lvgl_unlock();
 }
 
 // ============================================================

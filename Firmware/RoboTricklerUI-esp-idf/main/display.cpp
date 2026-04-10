@@ -13,6 +13,7 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "freertos/semphr.h"
 
 static const char *TAG = "display";
 
@@ -32,6 +33,7 @@ static const char *TAG = "display";
 
 static esp_lcd_panel_io_handle_t s_lcd_io = NULL;
 static esp_lcd_touch_handle_t s_touch = NULL;
+static SemaphoreHandle_t s_lvgl_mutex = NULL;
 static lv_disp_drv_t *s_pending_flush_drv = NULL;
 
 static lv_disp_draw_buf_t s_draw_buf;
@@ -266,6 +268,8 @@ extern "C" void display_init(void)
     st7796_init();
     gpio_set_level(LCD_BL, LCD_BL_ON_LEVEL);
 
+    s_lvgl_mutex = xSemaphoreCreateRecursiveMutex();
+
     lv_init();
     lv_disp_draw_buf_init(&s_draw_buf, s_lv_buf, NULL, LCD_DRAW_BUF_PIXELS);
 
@@ -284,4 +288,12 @@ extern "C" void display_init(void)
     lv_indev_drv_register(&indev_drv);
 
     ESP_LOGI(TAG, "Display init OK (%dx%d)", LV_HOR_RES_MAX, LV_VER_RES_MAX);
+}
+
+extern "C" void lvgl_lock(void) {
+    xSemaphoreTakeRecursive(s_lvgl_mutex, portMAX_DELAY);
+}
+
+extern "C" void lvgl_unlock(void) {
+    xSemaphoreGiveRecursive(s_lvgl_mutex);
 }

@@ -23,9 +23,9 @@ static std::string sd_path(const char *rel) {
 }
 
 // ============================================================
-// ceateCSVFile — create a new numbered CSV file in folderName
+// createCSVFile — create a new numbered CSV file in folderName
 // ============================================================
-std::string ceateCSVFile(const char *folderName, const char *fileName) {
+std::string createCSVFile(const char *folderName, const char *fileName) {
     std::string folder_path = sd_path(folderName);
 
     // Create folder if it doesn't exist
@@ -61,21 +61,21 @@ std::string ceateCSVFile(const char *folderName, const char *fileName) {
 // ============================================================
 // writeCSVFile — append one row to an existing CSV
 // ============================================================
-void writeCSVFile(const char *rel_path, float w, int count) {
+bool writeCSVFile(const char *rel_path, float w, int count) {
     std::string full_path = sd_path(rel_path);
     FILE *f = fopen(full_path.c_str(), "a");
     if (!f) {
         ESP_LOGE(TAG, "Failed to open CSV for append: %s", full_path.c_str());
-        // Recreate
-        ceateCSVFile("/log", "log");
-        return;
+        return false;
     }
-    if (fprintf(f, "%d,%.4f\r\n", count, w) < 0) {
+    bool ok = (fprintf(f, "%d,%.4f\r\n", count, w) >= 0);
+    if (!ok) {
         ESP_LOGE(TAG, "CSV write failed: %s", full_path.c_str());
     } else {
         ESP_LOGD(TAG, "CSV row appended: %d %.4f", count, w);
     }
     fclose(f);
+    return ok;
 }
 
 // ============================================================

@@ -106,7 +106,7 @@ private:
     volatile bool _stop_requested = false;
 
     void _calc_step_pulse();
-    void _delay_micros(uint32_t us, uint32_t start_us = 0);
+    void _delay_micros(uint32_t us, uint32_t start_us = 0, bool has_start = false);
 
     short _get_max_microstep() const { return 16; } // A4988 max
 };
