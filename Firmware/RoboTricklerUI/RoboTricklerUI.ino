@@ -13,8 +13,27 @@
 #include <HTTPClient.h>
 #include <Update.h>
 #include <esp_task_wdt.h>
-#include <soc/rtc_wdt.h>
+#include <rtc_wdt.h>
 #define FW_VERSION 2.08
+
+/*
+Legacy Arduino IDE 1.8.19
+
+Boards-Manager esp32 - Espressif Systems version 3.1.3
+
+Tools
+Board: "ESP32 Dev Module"
+Upload Speed: "921600"
+CPU Frequency: "240MHz (WiFi/BT)"
+Flash Frequency: "80MHz"
+Flash Mode: "DIO"
+Flash Size: "4MB (32Mb)"
+Partition Scheme: "Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)"
+Core Debug Level: "None"
+PSRAM: "Disabled"
+Arduino Runs On: "Core 1"
+Events Run On: "Core 0"
+*/
 
 // 3 seconds WDT
 // #define WDT_TIMEOUT 10
