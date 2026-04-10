@@ -74,6 +74,14 @@ void setLabelTextColor(lv_obj_t *label, uint32_t colorHex)
     lv_obj_set_style_text_color(label, color, LV_PART_MAIN | LV_STATE_DEFAULT);
 }
 
+void disableTouchGestures()
+{
+    lv_obj_t *tabViewContent = lv_tabview_get_content(ui_TabView);
+    lv_obj_clear_flag(tabViewContent, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scroll_dir(tabViewContent, LV_DIR_NONE);
+    lv_obj_set_scrollbar_mode(tabViewContent, LV_SCROLLBAR_MODE_OFF);
+}
+
 
 void corruptProfile(String profile_filename)
 {
@@ -191,6 +199,7 @@ void initSetup()
 
     displayInit();
     ui_init();
+    disableTouchGestures();
     disp_task_init();
 
     DEBUG_PRINTLN("Display Init");
