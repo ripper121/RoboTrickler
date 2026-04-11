@@ -14,7 +14,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>
 #include <rtc_wdt.h>
-#define FW_VERSION 2.08
+#define FW_VERSION 2.09
 
 /*
 Legacy Arduino IDE 1.8.19
