@@ -5,15 +5,12 @@
 Mandatory rules for any agent working on this firmware.
 
 **Target:** ESP32 firmware using **ESP-IDF**  
-**Chip:** ESP32-WROOM-32E-N8  no RMT Support!
+**Chip:** ESP32-WROOM-32E-N4  no RMT Support!
 **Primary goal:** robust, maintainable, ESP-IDF-aligned firmware with minimal practical **flash**, **IRAM**, and **RAM** usage.
 
 ---
 
 ## Core rules
-
-1. **Read project documentation first**  
-   Review the `DOC` folder before making assumptions or writing code. If `DOC` is more specific or newer than anything else, `DOC` is the source of truth.
 
 2. **Check for an existing ESP-IDF solution before writing new code**  
    Review these paths first:
@@ -34,7 +31,6 @@ Mandatory rules for any agent working on this firmware.
 
 5. **Report what was checked and what was done**  
    For each relevant change, briefly document:
-   - which `DOC` files were checked
    - which ESP-IDF examples/components were checked
    - whether reuse was possible
    - why a new implementation was needed
@@ -47,7 +43,6 @@ Mandatory rules for any agent working on this firmware.
 
 Use this order for all relevant implementation work:
 
-1. Review `DOC`
 2. Check ESP-IDF examples and components
 3. Define the smallest working scope
 4. Keep board mapping and hardware assumptions centralized
@@ -155,94 +150,9 @@ Avoid unnecessary Kconfig complexity.
 
 ---
 
-## Hardware mapping
-
-Use this pin mapping as the starting point. Always verify it against `DOC` and hardware documentation before final implementation.
-
-### OLED SSD1306
-```c
-#define OLED_SDA_GPIO GPIO_NUM_21
-#define OLED_SCL_GPIO GPIO_NUM_22
-#define OLED_I2C_ADDRESS 0x3C
-```
-
-### SD card 4-bit SD_MMC
-```c
-#define clk 14
-#define cmd 15
-#define d0 2
-#define d1 4
-#define d2 12
-#define d3 13
-```
-
-### AW9523 connections P0-P15
-```c
-#define AW_I2C_ADDRESS 0x58
-#define AW_CON      0
-#define AW_PSH      1
-#define AW_BAK      2
-#define AW_ST2_DIR  8
-#define AW_ST2_EN   9
-#define AW_ST1_EN   10
-#define AW_ST1_DIR  11
-#define AW_LED_R    12
-#define AW_LED_G    13
-#define AW_LED_B    14
-#define AW_BUZZER   15
-```
-
-### ESP32 direct connections
-```c
-#define PHOTO_INTERRUPTER 34
-#define ST1_STEP  18
-#define ST2_STEP  19
-#define SERVO     23
-#define TTL_TXD   25
-#define TTL_RXD   26
-#define AW_INT    27
-#define TRA       32
-#define TRB       33
-```
-
----
-
-## Device guidance
-
-### OLED SSD1306
-- First check for a suitable ESP-IDF-style solution
-- Keep the implementation small
-- Avoid large graphics frameworks unless truly required
-- Prefer simple text/bitmap support and partial/page-wise updates where practical
-
-### SD card via SD_MMC
-- Prefer existing ESP-IDF `sdmmc`, `sdmmc_host`, and FATFS support
-- Do not implement a custom low-level SD protocol if IDF already covers the need
-- Align initialization and error handling with IDF examples
-
-### AW9523
-- First check whether an existing driver or similar I2C expander pattern already exists
-- If implementing from scratch:
-  - keep register access simple
-  - avoid unnecessary generic abstraction
-  - separate register access from board-level function mapping
-- Use `AW_INT` only if the use case really requires it
-
-### Stepper / Servo / Encoder / TTL
-- Prefer existing IDF mechanisms and examples
-- Use IDF APIs for PWM, timers, GPIO, PCNT, UART, and related functions
-- Keep realtime paths small
-- Implement only the required encoder functionality
-
-### Stepper implementation note
-- On this board, STEP should come from ESP32 hardware, while DIR and EN can be controlled through the AW9523
-
----
-
 ## Definition of done
 
 Work is done only when:
-- `DOC` was checked
 - ESP-IDF examples/components were checked
 - the implementation follows ESP-IDF style
 - resource usage was kept reasonable
@@ -259,18 +169,12 @@ Work is done only when:
 
 If requirements conflict, follow this order:
 
-1. `DOC`
 2. actual hardware / board reality
 3. existing suitable ESP-IDF examples or components
 4. this `AGENTS.md`
 5. personal implementation preference
 
----
-
-## UI / MUI
-- read the /docs/MUI Examples/agents.md
-
 
 ## Working rule
 
-**Read `DOC`, check existing ESP-IDF solutions, implement the smallest practical solution in ESP-IDF style, then build and fix resulting issues.**
+**Check existing ESP-IDF solutions, implement the smallest practical solution in ESP-IDF style, then build and fix resulting issues.**
