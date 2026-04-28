@@ -1,0 +1,22 @@
+idf_component_register(
+    SRCS
+        "ui.c"
+        "generated/ui_generated.c"
+        "generated/ui_screen1_generated.c"
+        "generated/ui_helpers.c"
+        "generated/ui_comp_hook.c"
+    INCLUDE_DIRS
+        "."
+        "generated"
+    REQUIRES
+        actuator
+        config
+        display
+        esp_timer
+        freertos
+        log
+        lvgl__lvgl
+        profile
+        scale
+        trickle
+)

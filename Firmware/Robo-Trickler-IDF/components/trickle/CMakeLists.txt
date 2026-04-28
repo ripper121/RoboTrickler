@@ -1,0 +1,14 @@
+idf_component_register(
+    SRCS
+        "trickle.c"
+    INCLUDE_DIRS
+        "."
+    REQUIRES
+        actuator
+        esp_driver_uart
+        freertos
+        log
+        profile
+        rs232
+        scale
+)

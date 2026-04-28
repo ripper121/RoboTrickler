@@ -12,6 +12,8 @@ Mandatory rules for any agent working on this firmware.
 
 ## Core rules
 
+1. Check C:\Users\ripper121\Documents\GitHub\RoboTrickler\Firmware\MKS-DLC32-Firmware and C:\Users\ripper121\Documents\GitHub\RoboTrickler\Firmware\RoboTricklerUI how it was already done for this Board and it contains also the Pinout
+
 2. **Check for an existing ESP-IDF solution before writing new code**  
    Review these paths first:
    - `C:\esp\v6.0\esp-idf\examples`
