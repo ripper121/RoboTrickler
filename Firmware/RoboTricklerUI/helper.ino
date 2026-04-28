@@ -110,9 +110,6 @@ void corruptProfile(String profile_filename)
 
 void startTrickler()
 {
-    strlcpy(config.mode,          // <- destination
-            "trickler",           // <- source
-            sizeof(config.mode)); // <- destination's capacity
     lv_label_set_text(ui_LabelTricklerStart, "Stop");
     lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -145,7 +142,6 @@ void stopTrickler()
     lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text(ui_LabelTricklerWeight, "-.-");
     lv_label_set_text(ui_LabelInfo, "");
-    lv_label_set_text(ui_LabelLoggerInfo, "");
 }
 
 void startMeasurment()
@@ -286,13 +282,11 @@ void initSetup()
         strlcpy(config.profile,          // <- destination
                 "calibrate",             // <- source
                 sizeof(config.profile)); // <- destination's capacity
-        config.log_measurements = 20;
         config.targetWeight = 40.0;
         config.microsteps = 1;
         strlcpy(config.beeper,          // <- destination
                 "done",                 // <- source
                 sizeof(config.beeper)); // <- destination's capacity
-        config.debugLog = false;
         config.fwCheck = true;
 
         saveConfiguration("/config.txt", config);
@@ -304,6 +298,23 @@ void initSetup()
     }
 
     getProfileList();
+
+    bool selectedProfileFound = false;
+    for (int i = 0; i < profileListCount; i++)
+    {
+        if (String(config.profile) == profileListBuff[i])
+        {
+            selectedProfileFound = true;
+            break;
+        }
+    }
+    if (!selectedProfileFound)
+    {
+        strlcpy(config.profile,          // <- destination
+                "calibrate",             // <- source
+                sizeof(config.profile)); // <- destination's capacity
+        saveConfiguration("/config.txt", config);
+    }
 
     String profile_filename = "/" + String(config.profile) + ".txt";
     if (!readProfile(profile_filename.c_str(), config))
@@ -322,12 +333,6 @@ void initSetup()
     {
         updateDisplayLog("WIFI:" + WiFi.localIP().toString());
     }
-
-    // initialize the variables we're linked to
-    Input = 0;
-    roboPID.SetOutputLimits(config.pidStepMin, config.pidStepMax);
-    // turn the PID on
-    roboPID.SetMode(roboPID.Control::automatic);
 
     lv_label_set_text(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // strenuous.dev").c_str());
     lv_label_set_text(ui_LabelTarget, String(config.targetWeight, 3).c_str());

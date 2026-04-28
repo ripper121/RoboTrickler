@@ -40,54 +40,33 @@ bool readProfile(const char *filename, Config &config)
     return false;
   }
 
-  if (String(filename).indexOf("pid") != -1)
+  for (JsonPair item : doc.as<JsonObject>())
   {
-    config.pidThreshold = doc["threshold"] | 0.10;
-    config.pidStepMin = doc["stepMin"] | 5;
-    config.pidStepMax = doc["stepMax"] | 36000;
-    config.pidSpeed = doc["speed"] | 200;
-    config.pidConMeasurements = doc["conMeasurements"] | 2;
-    config.pidAggMeasurements = doc["aggMeasurements"] | 25;
-    config.pidTolerance = doc["tolerance"] | 0.000;
-    config.pidAlarmThreshold = doc["alarmThreshold"] | 1.000;
-    config.pidConsNum = doc["consNum"] | 1;
-    config.pidConsKp = doc["consKp"] | 1.00;
-    config.pidConsKi = doc["consKi"] | 0.05;
-    config.pidConsKd = doc["consKd"] | 0.25;
-    config.pidAggNum = doc["aggNum"] | 1;
-    config.pidAggKp = doc["aggKp"] | 4.00;
-    config.pidAggKi = doc["aggKi"] | 0.2;
-    config.pidAggKd = doc["aggKd"] | 1.00;
-    config.pidOscillate = doc["oscillate"] | false;
-    config.pidReverse = doc["reverse"] | false;
-    config.pidAcceleration = doc["acceleration"] | false;
-    DEBUG_PRINTLN("PID_AKTIVE");
-    PID_AKTIVE = true;
-  }
-  else
-  {
-    for (JsonPair item : doc.as<JsonObject>())
+    int item_key = ((String(item.key().c_str()).toInt()) - 1);
+    if ((item_key < 0) || (item_key >= 16))
     {
-      int item_key = ((String(item.key().c_str()).toInt()) - 1);
-      if (item_key == 0)
-      {
-        config.profile_stepsPerUnit = item.value()["stepsPerUnit"] | 0;
-        config.profile_tolerance = item.value()["tolerance"] | 0.000;
-        config.profile_alarmThreshold = item.value()["alarmThreshold"] | 1.000;
-      }
-      config.profile_num[item_key] = item.value()["number"] | 1;
-      config.profile_weight[item_key] = item.value()["weight"];
-      config.profile_steps[item_key] = item.value()["steps"];
-      config.profile_speed[item_key] = item.value()["speed"];
-      config.profile_measurements[item_key] = item.value()["measurements"];
-      config.profile_oscillate[item_key] = item.value()["oscillate"] | false;
-      config.profile_reverse[item_key] = item.value()["reverse"] | false;
-      config.profile_acceleration[item_key] = item.value()["acceleration"] | false;
-      config.profile_count = item_key + 1;
+      DEBUG_PRINT("Invalid profile entry: ");
+      DEBUG_PRINTLN(item.key().c_str());
+      file.close();
+      return false;
     }
-    DEBUG_PRINTLN("POWDER_AKTIVE");
-    PID_AKTIVE = false;
+    if (item_key == 0)
+    {
+      config.profile_stepsPerUnit = item.value()["stepsPerUnit"] | 0;
+      config.profile_tolerance = item.value()["tolerance"] | 0.000;
+      config.profile_alarmThreshold = item.value()["alarmThreshold"] | 1.000;
+    }
+    config.profile_num[item_key] = item.value()["number"] | 1;
+    config.profile_weight[item_key] = item.value()["weight"];
+    config.profile_steps[item_key] = item.value()["steps"];
+    config.profile_speed[item_key] = item.value()["speed"];
+    config.profile_measurements[item_key] = item.value()["measurements"];
+    config.profile_oscillate[item_key] = item.value()["oscillate"] | false;
+    config.profile_reverse[item_key] = item.value()["reverse"] | false;
+    config.profile_acceleration[item_key] = item.value()["acceleration"] | false;
+    config.profile_count = item_key + 1;
   }
+  DEBUG_PRINTLN("POWDER_AKTIVE");
   file.close();
 
   // doc.garbageCollect();
@@ -160,8 +139,6 @@ bool loadConfiguration(const char *filename, Config &config)
           doc["profile"] | "calibrate", // <- source
           sizeof(config.profile));      // <- destination's capacity
 
-  config.log_measurements = doc["log_Measurements"] | 20;
-
   config.targetWeight = doc["weight"] | 1.0;
 
   config.microsteps = doc["microsteps"] | 1;
@@ -170,14 +147,47 @@ bool loadConfiguration(const char *filename, Config &config)
           doc["beeper"] | "done", // <- source
           sizeof(config.beeper)); // <- destination's capacity
 
-  config.debugLog = doc["debug_log"] | false;
-
   config.fwCheck = doc["fw_check"] | true;
 
   file.close();
 
   // doc.garbageCollect();
   return 1;
+}
+
+bool isValidProfileFile(const char *filename)
+{
+  File file = SD.open(filename);
+  if (!file)
+  {
+    return false;
+  }
+  if (file.isDirectory())
+  {
+    file.close();
+    return false;
+  }
+
+  JsonDocument doc;
+  DeserializationError error = deserializeJson(doc, file);
+  file.close();
+  if (error || !doc.is<JsonObject>())
+  {
+    return false;
+  }
+
+  bool hasProfileEntries = false;
+  for (JsonPair item : doc.as<JsonObject>())
+  {
+    int item_key = String(item.key().c_str()).toInt();
+    if ((item_key < 1) || (item_key > 16))
+    {
+      return false;
+    }
+    hasProfileEntries = true;
+  }
+
+  return hasProfileEntries;
 }
 
 void getProfileList()
@@ -210,7 +220,7 @@ void getProfileList()
     }
     else
     {
-      if ((String(file.name()).indexOf(".txt") != -1) && (String(file.name()).indexOf("config.txt") == -1) && (String(file.name()).indexOf(".cor") == -1))
+      if ((String(file.name()).indexOf(".txt") != -1) && (String(file.name()).indexOf("config.txt") == -1) && (String(file.name()).indexOf(".cor") == -1) && isValidProfileFile(file.path()))
       {
         String filename = String(file.name());
         filename.replace(".txt", "");
@@ -263,10 +273,8 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
   doc["weight"] = serialized(String(config.targetWeight, 3));
-  doc["log_Measurements"] = config.log_measurements;
   doc["microsteps"] = config.microsteps;
   doc["beeper"] = config.beeper;
-  doc["debug_log"] = config.debugLog;
   doc["fw_check"] = config.fwCheck;
 
   // Serialize JSON to file

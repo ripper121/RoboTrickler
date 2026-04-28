@@ -9,7 +9,6 @@
 #include <SPI.h>
 #include <A4988.h>
 #include <ArduinoJson.h>
-#include <QuickPID.h>
 #include <HTTPClient.h>
 #include <Update.h>
 #include <esp_task_wdt.h>
@@ -62,8 +61,6 @@ TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 
 SPIClass *SDspi = NULL;
 
-String fullLogOutput = "";
-
 struct Config
 {
   char wifi_ssid[64];
@@ -73,37 +70,14 @@ struct Config
   char IPSubnet[15];
   char IPDns[15];
 
-  char mode[9];
   char beeper[6];
-  bool debugLog;
   bool fwCheck;
   float targetWeight;
   char scale_protocol[32];
   int scale_baud;
   char scale_customCode[32];
   char profile[32];
-  int log_measurements;
   int microsteps;
-
-  float pidThreshold;
-  long pidStepMin;
-  long pidStepMax;
-  int pidSpeed;
-  int pidConMeasurements;
-  int pidAggMeasurements;
-  float pidTolerance;
-  float pidAlarmThreshold;
-  bool pidOscillate;
-  bool pidReverse;
-  bool pidAcceleration;
-  byte pidConsNum;
-  float pidConsKp;
-  float pidConsKi;
-  float pidConsKd;
-  byte pidAggNum;
-  float pidAggKp;
-  float pidAggKi;
-  float pidAggKd;
 
   byte profile_num[16];
   float profile_weight[16];
@@ -143,15 +117,7 @@ float newData = false;
 bool running = false;
 bool finished = false;
 bool firstThrow = true;
-int logCounter = 1;
-String path = "empty";
 bool restart_now = false;
-
-// Define the aggressive and conservative and POn Tuning Parameters
-float Input, Output;
-// Specify the links
-QuickPID roboPID(&Input, &Output, &config.targetWeight);
-bool PID_AKTIVE = false;
 
 String infoMessagBuff[14];
 String profileListBuff[32];
@@ -160,7 +126,6 @@ byte profileListCount;
 void updateDisplayLog(String logOutput, bool noLog = false)
 {
   lv_label_set_text(ui_LabelInfo, logOutput.c_str());
-  lv_label_set_text(ui_LabelLoggerInfo, logOutput.c_str());
   logOutput += "\n";
 
   if (!noLog)
@@ -218,12 +183,6 @@ void readWeight()
 
     DEBUG_PRINTLN(String(buff));
 
-    if (config.debugLog)
-    {
-      lv_label_set_text(ui_LabelTricklerWeight, String(buff).c_str());
-      logToFile(SD, String(buff) + "\n");
-    }
-
     int separator = String(buff).indexOf('.');
 
     if (separator != -1)
@@ -267,11 +226,7 @@ void readWeight()
       else
       {
         weightCounter = 0;
-        if (!config.debugLog)
-        {
-          lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
-          lv_label_set_text(ui_LabelLoggerWeight, String(String(weight, dec_places) + unit).c_str());
-        }
+        lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
       }
       lastWeight = weight;
 
@@ -369,201 +324,137 @@ void loop()
         measurementCount = 0;
       }
 
-      if (String(config.mode).indexOf("trickler") != -1)
+      float tolerance = config.profile_tolerance;
+      float alarmThreshold = config.profile_alarmThreshold;
+
+      DEBUG_PRINT("Weight: ");
+      DEBUG_PRINTLN(weight);
+      DEBUG_PRINT("TargetWeight: ");
+      DEBUG_PRINTLN(String((config.targetWeight - tolerance), 5));
+      DEBUG_PRINTLN(String((config.targetWeight + tolerance), 5));
+      DEBUG_PRINT("profile_alarmThreshold: ");
+      DEBUG_PRINTLN(String((config.targetWeight + alarmThreshold), 5));
+
+      if ((weight >= (config.targetWeight - tolerance - EPSILON)) && (weight >= 0))
       {
-        float tolerance = config.profile_tolerance;
-        float alarmThreshold = config.profile_alarmThreshold;
-        if (PID_AKTIVE)
+        if (weight <= (config.targetWeight + tolerance + EPSILON))
         {
-          tolerance = config.pidTolerance;
-          alarmThreshold = config.pidAlarmThreshold;
-        }
-
-        DEBUG_PRINT("Weight: ");
-        DEBUG_PRINTLN(weight);
-        DEBUG_PRINT("TargetWeight: ");
-        DEBUG_PRINTLN(String((config.targetWeight - tolerance), 5));
-        DEBUG_PRINTLN(String((config.targetWeight + tolerance), 5));
-        DEBUG_PRINT("profile_alarmThreshold: ");
-        DEBUG_PRINTLN(String((config.targetWeight + alarmThreshold), 5));
-
-        if ((weight >= (config.targetWeight - tolerance - EPSILON)) && (weight >= 0))
-        {
-          if (weight <= (config.targetWeight + tolerance + EPSILON))
-          {
-            setLabelTextColor(ui_LabelTricklerWeight, 0x00FF00);
-          }
-          else
-          {
-            setLabelTextColor(ui_LabelTricklerWeight, 0xFFFF00);
-          }
-
-          if ((weight >= (config.targetWeight + alarmThreshold + EPSILON)) && (alarmThreshold > 0))
-          {
-            // Send Alarm
-            setLabelTextColor(ui_LabelTricklerWeight, 0xFF0000);
-            updateDisplayLog("!Over trickle!", true);
-            beep("done");
-            delay(250);
-            beep("done");
-            delay(250);
-            beep("done");            
-            serialFlush();
-            stopTrickler();            
-            messageBox("!Over trickle!\n!Check weight!", &lv_font_montserrat_32, lv_color_hex(0xFF0000), true);
-          }
-
-          if (!finished)
-          {
-            beep("done");
-            updateDisplayLog("Done :)", true);
-            serialFlush();
-          }
-          measurementCount = 0;
-          finished = true;
+          setLabelTextColor(ui_LabelTricklerWeight, 0x00FF00);
         }
         else
         {
-          finished = false;
+          setLabelTextColor(ui_LabelTricklerWeight, 0xFFFF00);
         }
+
+        if ((weight >= (config.targetWeight + alarmThreshold + EPSILON)) && (alarmThreshold > 0))
+        {
+          // Send Alarm
+          setLabelTextColor(ui_LabelTricklerWeight, 0xFF0000);
+          updateDisplayLog("!Over trickle!", true);
+          beep("done");
+          delay(250);
+          beep("done");
+          delay(250);
+          beep("done");
+          serialFlush();
+          stopTrickler();
+          messageBox("!Over trickle!\n!Check weight!", &lv_font_montserrat_32, lv_color_hex(0xFF0000), true);
+        }
+
+        if (!finished)
+        {
+          beep("done");
+          updateDisplayLog("Done :)", true);
+          serialFlush();
+        }
+        measurementCount = 0;
+        finished = true;
+      }
+      else
+      {
+        finished = false;
       }
       if (!finished)
       {
-        if ((String(config.mode).indexOf("trickler") != -1) && (weight >= 0))
+        if (weight >= 0)
         {
           updateDisplayLog("Running...", true);
           setLabelTextColor(ui_LabelTricklerWeight, 0xFFFFFF);
 
-          if (PID_AKTIVE)
+          DEBUG_PRINTLN("Profile Running");
+          String infoText = "";
+          if (firstThrow && (config.profile_stepsPerUnit > 0))
           {
-            DEBUG_PRINTLN("PID Running");
-            String infoText = "";
-            byte stepperNum = 1;
-            int stepperSpeedOld = 0;
+            firstThrow = false;
 
-            float gap = abs(config.targetWeight - weight); // distance away from setpoint
+            DEBUG_PRINTLN("FirstThrow Start...");
 
-            if (gap <= config.pidThreshold)
-            { // we're close to setpoint, use conservative tuning parameters
-              roboPID.SetTunings(config.pidConsKp, config.pidConsKi, config.pidConsKd);
-              measurementCount = config.pidConMeasurements;
-              stepperNum = config.pidConsNum;
-              infoText += "GOV:CON ";
-            }
-            else
-            {
-              // we're far from setpoint, use aggressive tuning parameters
-              roboPID.SetTunings(config.pidAggKp, config.pidAggKi, config.pidAggKd);
-              measurementCount = config.pidAggMeasurements;
-              stepperNum = config.pidAggNum;
-              infoText += "GOV:AGG ";
-            }
-            roboPID.Compute();
+            double steps = (config.targetWeight - weight) * config.profile_stepsPerUnit;
+            DEBUG_PRINT("FirstThrow steps: ");
+            DEBUG_PRINTLN(steps);
+            setStepperSpeed(1, config.profile_speed[0]);
+            step(config.profile_num[0], steps, config.profile_oscillate[0], config.profile_reverse[0], config.profile_acceleration[0]);
+            infoText += "FirstThrow steps:" + String(steps);
 
-            long steps = (long)Output;
-
-            infoText += "GAP:" + String(gap, 3) + " ";
-            infoText += "STP:" + String(steps) + " ";
-            infoText += "MES:" + String(measurementCount);
-            updateDisplayLog(infoText, true);
-
-            if (stepperSpeedOld != config.pidSpeed)
-              setStepperSpeed(stepperNum, config.pidSpeed); // only change if value changed
-            stepperSpeedOld = config.pidSpeed;
-            step(stepperNum, steps, config.pidOscillate, config.pidReverse, config.pidAcceleration);
+            DEBUG_PRINTLN("FirstThrow finished!");
+            serialFlush();
+            return;
           }
           else
           {
-            DEBUG_PRINTLN("Profile Running");
-            String infoText = "";
-            if (firstThrow && (config.profile_stepsPerUnit > 0))
+            int stepperSpeedOld = 0;
+            int profileStep = 0;
+            // Serial.print("abs: ");
+            // Serial.println(abs(weight - config.targetWeight), 3);
+            // Serial.print("profile_weight: ");
+            // Serial.println(config.profile_weight[i], 3);
+
+            for (int i = 0; i < config.profile_count; i++)
             {
-              firstThrow = false;
 
-              DEBUG_PRINTLN("FirstThrow Start...");
+              if ((weight) <= (config.targetWeight - config.profile_weight[i]))
+              {
+                profileStep = i;
+                break;
+              }
+            }
 
-              double steps = (config.targetWeight - weight) * config.profile_stepsPerUnit;
-              DEBUG_PRINT("FirstThrow steps: ");
-              DEBUG_PRINTLN(steps);
-              setStepperSpeed(1, config.profile_speed[0]);
-              step(config.profile_num[0], steps, config.profile_oscillate[0], config.profile_reverse[0], config.profile_acceleration[0]);
-              infoText += "FirstThrow steps:" + String(steps);
+            // Serial.print("Speed: ");
+            // Serial.println(config.profile_speed[profileStep], DEC);
+            if (stepperSpeedOld != config.profile_speed[profileStep])
+              setStepperSpeed(config.profile_num[profileStep], config.profile_speed[profileStep]); // only change if value changed
+            stepperSpeedOld = config.profile_speed[profileStep];
 
-              DEBUG_PRINTLN("FirstThrow finished!");
-              serialFlush();
-              return;
+            // Serial.print("Stepp: ");
+            // Serial.println(config.profile_steps[profileStep], DEC);
+
+            if (config.profile_steps[profileStep] > 360 && config.profile_oscillate[profileStep])
+            {
+              // do full rotations
+              for (int j = 0; j < int(config.profile_steps[profileStep] / 360); j++)
+                step(config.profile_num[profileStep], 360, config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
+              // do remaining steps
+              step(config.profile_num[profileStep], (config.profile_steps[profileStep] % 360), config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
             }
             else
+              step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
+
+            // Serial.print("Measurements: ");
+            // Serial.println(config.profile_measurements[profileStep], DEC);
+            measurementCount = config.profile_measurements[profileStep];
+
+            infoText += "W" + String(config.profile_weight[profileStep], 3) + " ";
+            infoText += "ST" + String(config.profile_steps[profileStep]) + " ";
+            infoText += "SP" + String(config.profile_speed[profileStep]) + " ";
+            infoText += "M" + String(config.profile_measurements[profileStep]);
+
+            if (String(config.profile) == "calibrate") // only do one Run for calibration
             {
-              int stepperSpeedOld = 0;
-              int profileStep = 0;
-              // Serial.print("abs: ");
-              // Serial.println(abs(weight - config.targetWeight), 3);
-              // Serial.print("profile_weight: ");
-              // Serial.println(config.profile_weight[i], 3);
-
-              for (int i = 0; i < config.profile_count; i++)
-              {
-
-                if ((weight) <= (config.targetWeight - config.profile_weight[i]))
-                {
-                  profileStep = i;
-                  break;
-                }
-              }
-
-              // Serial.print("Speed: ");
-              // Serial.println(config.profile_speed[profileStep], DEC);
-              if (stepperSpeedOld != config.profile_speed[profileStep])
-                setStepperSpeed(config.profile_num[profileStep], config.profile_speed[profileStep]); // only change if value changed
-              stepperSpeedOld = config.profile_speed[profileStep];
-
-              // Serial.print("Stepp: ");
-              // Serial.println(config.profile_steps[profileStep], DEC);
-
-              if (config.profile_steps[profileStep] > 360 && config.profile_oscillate[profileStep])
-              {
-                // do full rotations
-                for (int j = 0; j < int(config.profile_steps[profileStep] / 360); j++)
-                  step(config.profile_num[profileStep], 360, config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
-                // do remaining steps
-                step(config.profile_num[profileStep], (config.profile_steps[profileStep] % 360), config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
-              }
-              else
-                step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
-
-              // Serial.print("Measurements: ");
-              // Serial.println(config.profile_measurements[profileStep], DEC);
-              measurementCount = config.profile_measurements[profileStep];
-
-              infoText += "W" + String(config.profile_weight[profileStep], 3) + " ";
-              infoText += "ST" + String(config.profile_steps[profileStep]) + " ";
-              infoText += "SP" + String(config.profile_speed[profileStep]) + " ";
-              infoText += "M" + String(config.profile_measurements[profileStep]);
-
-              if (String(config.profile) == "calibrate") // only do one Run for calibration
-              {
-                stopTrickler();
-              }
+              stopTrickler();
             }
-            updateDisplayLog(infoText, true);
           }
-          serialFlush();
-        }
-        if (String(config.mode).indexOf("logger") != -1 && (weight > 0))
-        {
-          DEBUG_PRINTLN("Log to File");
-          if (path == "empty")
-          {
-            path = ceateCSVFile(SD, "/log", "log");
-          }
-          String infoText = "";
-          writeCSVFile(SD, path.c_str(), weight, logCounter);
-          measurementCount = config.log_measurements;
-          infoText += "Count: " + String(logCounter) + " Saved :)";
           updateDisplayLog(infoText, true);
-          finished = true;
-          beep("done");
+          serialFlush();
         }
       }
 
@@ -571,16 +462,7 @@ void loop()
       {
         if (finished)
         {
-          if (String(config.mode).indexOf("logger") != -1)
-          {
-            logCounter++;
-            updateDisplayLog("Place next peace...", true);
-            beep("done");
-          }
-          else
-          {
-            updateDisplayLog("Ready", true);
-          }
+          updateDisplayLog("Ready", true);
           finished = false;
         }
       }
@@ -588,16 +470,12 @@ void loop()
   }
   else
   {
-
-    path = "empty";
-    logCounter = 1;
     if (millis() - readWeightTime >= 1000)
     {
       readWeightTime = millis();
       updateDisplayLog("Get Weight...", true);
       readWeight();
       lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
-      lv_label_set_text(ui_LabelLoggerWeight, String(String(weight, dec_places) + unit).c_str());
     }
   }
 

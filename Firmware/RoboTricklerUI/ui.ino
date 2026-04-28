@@ -14,7 +14,6 @@ void trickler_start_event_cb(lv_event_t *e)
   if (String(lv_label_get_text(ui_LabelTricklerStart)) == "Start")
   {
     DEBUG_PRINTLN("TricklerStart");
-    stopLogger();
     startTrickler();
   }
   else
@@ -22,41 +21,6 @@ void trickler_start_event_cb(lv_event_t *e)
     DEBUG_PRINTLN("TricklerStop");
     stopTrickler();
   }
-}
-
-void logger_start_event_cb(lv_event_t *e)
-{
-  if (String(lv_label_get_text(ui_LabelLoggerStart)) == "Start")
-  {
-    DEBUG_PRINTLN("LoggerStart");
-    stopTrickler();
-    startLogger();
-  }
-  else
-  {
-    DEBUG_PRINTLN("LoggerStop");
-    stopLogger();
-  }
-}
-
-void startLogger()
-{
-  strlcpy(config.mode,          // <- destination
-          "logger",             // <- source
-          sizeof(config.mode)); // <- destination's capacity
-  lv_label_set_text(ui_LabelLoggerStart, "Stop");
-  lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-  startMeasurment();
-}
-
-void stopLogger()
-{
-  stopMeasurment();
-  lv_label_set_text(ui_LabelLoggerStart, "Start");
-  lv_obj_set_style_bg_color(ui_ButtonLoggerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_label_set_text(ui_LabelLoggerWeight, "-.-");
-  lv_label_set_text(ui_LabelInfo, "");
-  lv_label_set_text(ui_LabelLoggerInfo, "");
 }
 
 void nnn_event_cb(lv_event_t *e)

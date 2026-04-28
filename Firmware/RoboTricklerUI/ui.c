@@ -50,14 +50,6 @@ lv_obj_t *ui_LabelProfilePrev;
 void ui_event_ButtonProfileNext( lv_event_t * e);
 lv_obj_t *ui_ButtonProfileNext;
 lv_obj_t *ui_LabelProfileNext;
-lv_obj_t *ui_TabPageLogger;
-lv_obj_t *ui_PanelLoggerWeight;
-lv_obj_t *ui_LabelLoggerWeight;
-void ui_event_ButtonLoggerStart( lv_event_t * e);
-lv_obj_t *ui_ButtonLoggerStart;
-lv_obj_t *ui_LabelLoggerStart;
-lv_obj_t *ui_PanelLoggerInfo;
-lv_obj_t *ui_LabelLoggerInfo;
 lv_obj_t *ui_TabPageInfo;
 lv_obj_t *ui_PanelPageInfo;
 lv_obj_t *ui_LabelLog;
@@ -131,12 +123,6 @@ void ui_event_ButtonProfileNext( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
 if ( event_code == LV_EVENT_CLICKED) {
       next_event_cb( e );
-}
-}
-void ui_event_ButtonLoggerStart( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      logger_start_event_cb( e );
 }
 }
 void ui_event_ButtonMessage( lv_event_t * e) {
