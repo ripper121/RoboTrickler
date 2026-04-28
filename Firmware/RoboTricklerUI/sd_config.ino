@@ -61,9 +61,7 @@ bool readProfile(const char *filename, Config &config)
     config.profile_steps[item_key] = item.value()["steps"];
     config.profile_speed[item_key] = item.value()["speed"];
     config.profile_measurements[item_key] = item.value()["measurements"];
-    config.profile_oscillate[item_key] = item.value()["oscillate"] | false;
     config.profile_reverse[item_key] = item.value()["reverse"] | false;
-    config.profile_acceleration[item_key] = item.value()["acceleration"] | false;
     config.profile_count = item_key + 1;
   }
   DEBUG_PRINTLN("POWDER_AKTIVE");

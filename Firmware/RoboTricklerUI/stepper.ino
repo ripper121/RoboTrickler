@@ -21,7 +21,7 @@ void initStepper()
   stepper2.disable();
 }
 
-void step(int stepperNum, int steps, bool oscillate, bool reverse, bool acceleration)
+void step(int stepperNum, int steps, bool reverse)
 {
   if (stepperNum == 1)
     stepper1.enable();
@@ -30,50 +30,26 @@ void step(int stepperNum, int steps, bool oscillate, bool reverse, bool accelera
 
   if (stepperNum == 1)
   {
-    if (acceleration)
-      stepper1.setSpeedProfile(stepper1.LINEAR_SPEED, ACCEL, 32767);
-    else
-      stepper1.setSpeedProfile(stepper1.CONSTANT_SPEED, ACCEL, 32767);
+    stepper1.setSpeedProfile(stepper1.CONSTANT_SPEED, ACCEL, 32767);
   }
 
   if (stepperNum == 2)
   {
-    if (acceleration)
-      stepper2.setSpeedProfile(stepper2.LINEAR_SPEED, ACCEL, 32767);
-    else
-      stepper2.setSpeedProfile(stepper2.CONSTANT_SPEED, ACCEL, 32767);
+    stepper2.setSpeedProfile(stepper2.CONSTANT_SPEED, ACCEL, 32767);
   }
 
   steps = steps * config.microsteps;
-  if (steps > 10 && (oscillate))
+  if (reverse)
   {
-    int forward = steps / 2;
-    int backward = -(steps / 2);
-    if (stepperNum == 1)
-    {
-      stepper1.rotate(forward);
-      stepper1.rotate(backward);
-    }
-    if (stepperNum == 2)
-    {
-      stepper2.rotate(forward);
-      stepper2.rotate(backward);
-    }
+    steps = steps * (-1);
   }
-  else
+  if (stepperNum == 1)
   {
-    if (reverse)
-    {
-      steps = steps * (-1);
-    }
-    if (stepperNum == 1)
-    {
-      stepper1.rotate(steps);
-    }
-    if (stepperNum == 2)
-    {
-      stepper2.rotate(steps);
-    }
+    stepper1.rotate(steps);
+  }
+  if (stepperNum == 2)
+  {
+    stepper2.rotate(steps);
   }
 
   stepper1.disable();

@@ -13,7 +13,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>
 #include <rtc_wdt.h>
-#define FW_VERSION 2.09
+#define FW_VERSION 2.10
 
 /*
 Legacy Arduino IDE 1.8.19
@@ -87,9 +87,7 @@ struct Config
   int profile_measurements[16];
   long profile_steps[16];
   int profile_speed[16];
-  bool profile_oscillate[16];
   bool profile_reverse[16];
-  bool profile_acceleration[16];
   int profile_count;
 };
 Config config; // <- global configuration object
@@ -393,7 +391,7 @@ void loop()
             DEBUG_PRINT("FirstThrow steps: ");
             DEBUG_PRINTLN(steps);
             setStepperSpeed(1, config.profile_speed[0]);
-            step(config.profile_num[0], steps, config.profile_oscillate[0], config.profile_reverse[0], config.profile_acceleration[0]);
+            step(config.profile_num[0], steps, config.profile_reverse[0]);
             infoText += "FirstThrow steps:" + String(steps);
 
             DEBUG_PRINTLN("FirstThrow finished!");
@@ -428,16 +426,7 @@ void loop()
             // Serial.print("Stepp: ");
             // Serial.println(config.profile_steps[profileStep], DEC);
 
-            if (config.profile_steps[profileStep] > 360 && config.profile_oscillate[profileStep])
-            {
-              // do full rotations
-              for (int j = 0; j < int(config.profile_steps[profileStep] / 360); j++)
-                step(config.profile_num[profileStep], 360, config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
-              // do remaining steps
-              step(config.profile_num[profileStep], (config.profile_steps[profileStep] % 360), config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
-            }
-            else
-              step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_oscillate[profileStep], config.profile_reverse[profileStep], config.profile_acceleration[profileStep]);
+            step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_reverse[profileStep]);
 
             // Serial.print("Measurements: ");
             // Serial.println(config.profile_measurements[profileStep], DEC);
