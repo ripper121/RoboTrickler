@@ -55,7 +55,7 @@ void add_event_cb(lv_event_t *e)
     config.targetWeight = MAX_TARGET_WEIGHT;
   }
   beep("button");
-  lv_label_set_text(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+  setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
 }
 
 void sub_event_cb(lv_event_t *e)
@@ -66,7 +66,7 @@ void sub_event_cb(lv_event_t *e)
     config.targetWeight = 0.0;
   }
   beep("button");
-  lv_label_set_text(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+  setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
 }
 
 void prev_event_cb(lv_event_t *e)
@@ -87,7 +87,11 @@ void next_event_cb(lv_event_t *e)
 
 void message_event_cb(lv_event_t *e)
 {
-  lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+  if (lvglLock())
+  {
+    lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+    lvglUnlock();
+  }
   if (restart_now)
   {
     delay(1000);
@@ -97,10 +101,14 @@ void message_event_cb(lv_event_t *e)
 
 void messageBox(String message, const lv_font_t *font, lv_color_t color, bool wait)
 {
-  lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_label_set_text(ui_LabelMessages, message.c_str());
-  lv_obj_clear_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);   
+  if (lvglLock())
+  {
+    lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_text(ui_LabelMessages, message.c_str());
+    lv_obj_clear_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+    lvglUnlock();
+  }
 }
 
 /* Display flushing */

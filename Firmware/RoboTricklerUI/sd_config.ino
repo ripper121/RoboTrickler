@@ -85,7 +85,8 @@ bool readProfile(const char *filename, Config &config)
     int stepperSpeed = profileEntry["speed"] | 0;
     int measurements = profileEntry["measurements"] | -1;
     float profileWeight = profileEntry["weight"] | -1.0;
-    if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0))
+    long profileSteps = profileEntry["steps"] | 0;
+    if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
     {
       DEBUG_PRINT("Invalid profile values in entry: ");
       DEBUG_PRINTLN(item.key().c_str());
@@ -101,7 +102,7 @@ bool readProfile(const char *filename, Config &config)
     }
     config.profile_num[item_key] = stepperNumber;
     config.profile_weight[item_key] = profileWeight;
-    config.profile_steps[item_key] = profileEntry["steps"];
+    config.profile_steps[item_key] = profileSteps;
     config.profile_speed[item_key] = stepperSpeed;
     config.profile_measurements[item_key] = measurements;
     config.profile_reverse[item_key] = profileEntry["reverse"] | false;
@@ -257,7 +258,8 @@ bool isValidProfileFile(const char *filename)
     int stepperSpeed = profileEntry["speed"] | 0;
     int measurements = profileEntry["measurements"] | -1;
     float profileWeight = profileEntry["weight"] | -1.0;
-    if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0))
+    long profileSteps = profileEntry["steps"] | 0;
+    if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
     {
       return false;
     }

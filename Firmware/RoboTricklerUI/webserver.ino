@@ -602,7 +602,11 @@ void initWebServer()
       }    
 
       WIFI_AKTIVE = true;      
-      lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+      if (lvglLock())
+      {
+        lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+        lvglUnlock();
+      }
     }
     else
     {

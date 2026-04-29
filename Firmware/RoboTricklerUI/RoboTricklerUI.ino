@@ -13,6 +13,10 @@
 #include <Update.h>
 #include <esp_task_wdt.h>
 #include <rtc_wdt.h>
+#include <freertos/semphr.h>
+#include <ctype.h>
+#include <string.h>
+#include <math.h>
 #define FW_VERSION 2.10
 
 /*
@@ -54,6 +58,7 @@ Events Run On: "Core 0"
 #define DISP_TASK_PRO 1
 #define DISP_TASK_CORE 0
 TaskHandle_t lv_disp_tcb = NULL;
+SemaphoreHandle_t lvglMutex = NULL;
 /*Change to your screen resolution*/
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[LV_HOR_RES_MAX * LV_VER_RES_MAX / 10];
@@ -70,7 +75,7 @@ struct Config
   char IPSubnet[16];
   char IPDns[16];
 
-  char beeper[6];
+  char beeper[16];
   bool fwCheck;
   float targetWeight;
   char scale_protocol[32];
@@ -120,9 +125,44 @@ String infoMessagBuff[14];
 String profileListBuff[32];
 byte profileListCount;
 
+bool lvglLock()
+{
+  if (lvglMutex == NULL)
+  {
+    return true;
+  }
+  return xSemaphoreTakeRecursive(lvglMutex, portMAX_DELAY) == pdTRUE;
+}
+
+void lvglUnlock()
+{
+  if (lvglMutex != NULL)
+  {
+    xSemaphoreGiveRecursive(lvglMutex);
+  }
+}
+
+void setLabelText(lv_obj_t *label, const char *text)
+{
+  if (lvglLock())
+  {
+    lv_label_set_text(label, text);
+    lvglUnlock();
+  }
+}
+
+void setObjBgColor(lv_obj_t *obj, uint32_t colorHex)
+{
+  if (lvglLock())
+  {
+    lv_obj_set_style_bg_color(obj, lv_color_hex(colorHex), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lvglUnlock();
+  }
+}
+
 void updateDisplayLog(String logOutput, bool noLog = false)
 {
-  lv_label_set_text(ui_LabelInfo, logOutput.c_str());
+  setLabelText(ui_LabelInfo, logOutput.c_str());
   logOutput += "\n";
 
   if (!noLog)
@@ -133,7 +173,7 @@ void updateDisplayLog(String logOutput, bool noLog = false)
     {
       temp += infoMessagBuff[i];
     }
-    lv_label_set_text(ui_LabelLog, temp.c_str());
+    setLabelText(ui_LabelLog, temp.c_str());
   }
 
   DEBUG_PRINT(logOutput);
@@ -149,13 +189,22 @@ void stringToWeight(const char *input, float *value, int *decimalPlaces)
 
   for (int i = 0; input[i] != '\0'; i++)
   {
-    if ((input[i] >= '0' && input[i] <= '9') || input[i] == '.')
+    if ((input[i] >= '0' && input[i] <= '9') || input[i] == '.' || input[i] == ',')
     {
-      if (input[i] == '.')
+      if (input[i] == '.' || input[i] == ',')
       {
+        if (dotFound)
+        {
+          break;
+        }
         dotFound = true;
+        if (j < (int)sizeof(filteredBuffer) - 1)
+        {
+          filteredBuffer[j++] = '.';
+        }
+        continue;
       }
-      else if (dotFound)
+      if (dotFound)
       {
         decimals++;
       }
@@ -174,6 +223,30 @@ void stringToWeight(const char *input, float *value, int *decimalPlaces)
   *value = atof(filteredBuffer);
 }
 
+bool containsIgnoreCase(const char *text, const char *needle)
+{
+  if ((text == NULL) || (needle == NULL) || (*needle == '\0'))
+  {
+    return false;
+  }
+
+  for (; *text != '\0'; text++)
+  {
+    const char *h = text;
+    const char *n = needle;
+    while ((*h != '\0') && (*n != '\0') && (tolower((unsigned char)*h) == tolower((unsigned char)*n)))
+    {
+      h++;
+      n++;
+    }
+    if (*n == '\0')
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 void readWeight()
 {
   if (Serial1.available())
@@ -182,25 +255,23 @@ void readWeight()
     size_t bytesRead = Serial1.readBytesUntil(0x0A, buff, sizeof(buff) - 1);
     buff[bytesRead] = '\0';
 
-    DEBUG_PRINTLN(String(buff));
+    DEBUG_PRINTLN(buff);
 
-    int separator = String(buff).indexOf('.');
-
-    if (separator != -1)
+    if ((strchr(buff, '.') != NULL) || (strchr(buff, ',') != NULL))
     {
       weight = 0;
       dec_places = 0;
       stringToWeight(buff, &weight, &dec_places);
 
-      if (String(buff).indexOf('-') != -1) // Check if the weight is negative
+      if (strchr(buff, '-') != NULL) // Check if the weight is negative
       {
         weight = weight * (-1.0);
       }
 
-      if (String(buff).indexOf("g") != -1 || String(buff).indexOf("G") != -1)
+      if (containsIgnoreCase(buff, "g"))
       {
         unit = " g";
-        if (String(buff).indexOf("gn") != -1 || String(buff).indexOf("GN") != -1 || String(buff).indexOf("gr") != -1 || String(buff).indexOf("GR") != -1)
+        if (containsIgnoreCase(buff, "gn") || containsIgnoreCase(buff, "gr"))
         {
           unit = " gn";
         }
@@ -215,19 +286,28 @@ void readWeight()
       DEBUG_PRINT("Weight Counter: ");
       DEBUG_PRINTLN(weightCounter);
 
-      if (lastWeight == weight)
+      float stableTolerance = 0.5;
+      for (int i = 0; (i < dec_places) && (i < 6); i++)
       {
-        if (weightCounter >= measurementCount)
+        stableTolerance *= 0.1;
+      }
+
+      if (fabs(weight - lastWeight) <= stableTolerance)
+      {
+        if (running)
         {
-          newData = true;
-          weightCounter = 0;
+          if (weightCounter >= measurementCount)
+          {
+            newData = true;
+            weightCounter = 0;
+          }
+          weightCounter++;
         }
-        weightCounter++;
       }
       else
       {
         weightCounter = 0;
-        lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
+        setLabelText(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
       }
       lastWeight = weight;
 
@@ -235,12 +315,11 @@ void readWeight()
       // DEBUG_PRINTLN(weight);
     }
 
-    serialFlush();
   }
   else
   {
     bool timeout = false;
-    if ((String(config.scale_protocol) == "GUG") || (String(config.scale_protocol) == "GG"))
+    if ((strcmp(config.scale_protocol, "GUG") == 0) || (strcmp(config.scale_protocol, "GG") == 0))
     { // GUG only for backwards compatibility
       Serial1.write(0x1B);
       Serial1.write(0x70);
@@ -250,27 +329,27 @@ void readWeight()
       // delay(200);
       timeout = serialWait();
     }
-    else if (String(config.scale_protocol) == "AD")
+    else if (strcmp(config.scale_protocol, "AD") == 0)
     {
       Serial1.write("Q\r\n");
       timeout = serialWait();
     }
-    else if (String(config.scale_protocol) == "KERN")
+    else if (strcmp(config.scale_protocol, "KERN") == 0)
     {
       Serial1.write("w");
       timeout = serialWait();
     }
-    else if (String(config.scale_protocol) == "KERN-ABT")
+    else if (strcmp(config.scale_protocol, "KERN-ABT") == 0)
     {
       Serial1.write("D05\r\n");
       timeout = serialWait();
     }
-    else if (String(config.scale_protocol) == "SBI")
+    else if (strcmp(config.scale_protocol, "SBI") == 0)
     {
       Serial1.write("P\r\n");
       timeout = serialWait();
     }
-    else if (String(config.scale_protocol) == "CUSTOM")
+    else if (strcmp(config.scale_protocol, "CUSTOM") == 0)
     {
       Serial1.write(config.scale_customCode);
       timeout = serialWait();
@@ -373,10 +452,7 @@ void loop()
         measurementCount = 0;
         finished = true;
       }
-      else
-      {
-        finished = false;
-      }
+
       if (!finished)
       {
         if (weight >= 0)
@@ -493,7 +569,7 @@ void loop()
       readWeightTime = millis();
       updateDisplayLog("Get Weight...", true);
       readWeight();
-      lv_label_set_text(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
+      setLabelText(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
     }
   }
 

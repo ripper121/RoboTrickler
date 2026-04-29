@@ -4,6 +4,11 @@ extern int profileListCounter;
 
 IRAM_ATTR void disp_task_init(void)
 {
+    if (lvglMutex == NULL)
+    {
+        lvglMutex = xSemaphoreCreateRecursiveMutex();
+    }
+
     xTaskCreatePinnedToCore(lvgl_disp_task,  // task
                             "lvglTask",      // name for task
                             DISP_TASK_STACK, // size of task stack
@@ -20,11 +25,16 @@ IRAM_ATTR void lvgl_disp_task(void *parg)
 {
     while (1)
     {
-        lv_timer_handler();
+        if (lvglLock())
+        {
+            lv_timer_handler();
+            lvglUnlock();
+        }
         if (WiFi.status() == WL_CONNECTED)
         {
             server.handleClient();
         }
+        vTaskDelay(pdMS_TO_TICKS(5));
         // esp_task_wdt_reset();
     }
 }
@@ -71,16 +81,23 @@ void insertLine(String newLine)
 
 void setLabelTextColor(lv_obj_t *label, uint32_t colorHex)
 {
-    lv_color_t color = lv_color_hex(colorHex); // Convert hex color to LVGL color type
-    lv_obj_set_style_text_color(label, color, LV_PART_MAIN | LV_STATE_DEFAULT);
+    if (lvglLock())
+    {
+        lv_obj_set_style_text_color(label, lv_color_hex(colorHex), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lvglUnlock();
+    }
 }
 
 void disableTouchGestures()
 {
-    lv_obj_t *tabViewContent = lv_tabview_get_content(ui_TabView);
-    lv_obj_clear_flag(tabViewContent, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_set_scroll_dir(tabViewContent, LV_DIR_NONE);
-    lv_obj_set_scrollbar_mode(tabViewContent, LV_SCROLLBAR_MODE_OFF);
+    if (lvglLock())
+    {
+        lv_obj_t *tabViewContent = lv_tabview_get_content(ui_TabView);
+        lv_obj_clear_flag(tabViewContent, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_set_scroll_dir(tabViewContent, LV_DIR_NONE);
+        lv_obj_set_scrollbar_mode(tabViewContent, LV_SCROLLBAR_MODE_OFF);
+        lvglUnlock();
+    }
 }
 
 
@@ -114,8 +131,8 @@ void corruptProfile(String profile_filename)
 
 void startTrickler()
 {
-    lv_label_set_text(ui_LabelTricklerStart, "Stop");
-    lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    setLabelText(ui_LabelTricklerStart, "Stop");
+    setObjBgColor(ui_ButtonTricklerStart, 0xFF0000);
 
     if (tempProfile != String(config.profile))
     {
@@ -143,14 +160,18 @@ void stopTrickler()
 {
     stopMeasurment();
     serialFlush();
-    lv_label_set_text(ui_LabelTricklerStart, "Start");
-    lv_obj_set_style_bg_color(ui_ButtonTricklerStart, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_label_set_text(ui_LabelTricklerWeight, "-.-");
-    lv_label_set_text(ui_LabelInfo, "");
+    setLabelText(ui_LabelTricklerStart, "Start");
+    setObjBgColor(ui_ButtonTricklerStart, 0x00FF00);
+    setLabelText(ui_LabelTricklerWeight, "-.-");
+    setLabelText(ui_LabelInfo, "");
 }
 
 void startMeasurment()
 {
+    newData = false;
+    weightCounter = 0;
+    measurementCount = 0;
+    lastWeight = weight;
     running = true;
     finished = false;
     firstThrow = true;
@@ -182,7 +203,7 @@ void setProfile(int num)
     DEBUG_PRINT("num: ");
     DEBUG_PRINTLN(num);
 
-    lv_label_set_text(ui_LabelProfile, config.profile);
+    setLabelText(ui_LabelProfile, config.profile);
 }
 
 void serialFlush()
@@ -367,9 +388,9 @@ void initSetup()
         updateDisplayLog("WIFI:" + WiFi.localIP().toString());
     }
 
-    lv_label_set_text(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // strenuous.dev").c_str());
-    lv_label_set_text(ui_LabelTarget, String(config.targetWeight, 3).c_str());
-    lv_label_set_text(ui_LabelProfile, config.profile);
+    setLabelText(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // strenuous.dev").c_str());
+    setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+    setLabelText(ui_LabelProfile, config.profile);
 
     tempTargetWeight = config.targetWeight;
 
@@ -379,6 +400,6 @@ void initSetup()
 void saveTargetWeight(float weight)
 {
     config.targetWeight = weight;
-    lv_label_set_text(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+    setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
     saveConfiguration("/config.txt", config);
 }
