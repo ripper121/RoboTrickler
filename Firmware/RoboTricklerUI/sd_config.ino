@@ -322,6 +322,121 @@ bool isValidProfileFile(const char *filename)
   return hasProfileEntries;
 }
 
+String nextCalibrationProfileName()
+{
+  for (int i = 0; i <= 999; i++)
+  {
+    char profileName[16];
+    snprintf(profileName, sizeof(profileName), "powder_%03d", i);
+    String filename = "/" + String(profileName) + ".txt";
+    if (!SD.exists(filename.c_str()))
+    {
+      return String(profileName);
+    }
+  }
+
+  return "";
+}
+
+bool createProfileFromCalibration(float calibrationWeight, String &profileName)
+{
+  if (calibrationWeight <= 0.0)
+  {
+    updateDisplayLog("Calibration weight invalid!", true);
+    return false;
+  }
+
+  profileName = nextCalibrationProfileName();
+  if (profileName.length() <= 0)
+  {
+    updateDisplayLog("No free powder profile name!", true);
+    return false;
+  }
+
+  const float grainWeights[10] = {
+      15.432, 7.716, 3.858, 1.929, 0.965,
+      0.482, 0.241, 0.121, 0.060, 0.000};
+  const float calcTolerance = 65.0;
+  const float stepsForCalibration = (20000.0 / 100.0) * calcTolerance;
+  const int measurementsInput = 5;
+  int profileSpeed = config.profile_speed[0];
+  if (profileSpeed <= 0)
+  {
+    profileSpeed = 200;
+  }
+
+  JsonDocument doc;
+  for (int i = 0; i < 10; i++)
+  {
+    int measurements = measurementsInput;
+    if (i == 0)
+    {
+      measurements = 10;
+    }
+    if (i == 7)
+    {
+      measurements = 10;
+    }
+    if (i == 8)
+    {
+      measurements = 15;
+    }
+    if (i == 9)
+    {
+      measurements = 20;
+    }
+
+    long steps = lround((grainWeights[i] / calibrationWeight) * stepsForCalibration);
+    if (steps < 10)
+    {
+      steps = 10;
+    }
+
+    JsonObject profileEntry = doc[String(i + 1)].to<JsonObject>();
+    profileEntry["weight"] = serialized(String(grainWeights[i], 3));
+    profileEntry["steps"] = steps;
+    profileEntry["speed"] = profileSpeed;
+    profileEntry["measurements"] = measurements;
+
+    if (i == 0)
+    {
+      profileEntry["stepsPerUnit"] = lround((1.0 / calibrationWeight) * stepsForCalibration);
+      profileEntry["tolerance"] = serialized(String(0.0, 3));
+      profileEntry["alarmThreshold"] = serialized(String(0.1, 3));
+    }
+  }
+
+  String filename = "/" + profileName + ".txt";
+  File file = SD.open(filename.c_str(), FILE_WRITE);
+  if (!file)
+  {
+    updateDisplayLog("Failed to create profile!", true);
+    return false;
+  }
+
+  bool written = serializeJsonPretty(doc, file) > 0;
+  file.close();
+  if (!written)
+  {
+    SD.remove(filename.c_str());
+    updateDisplayLog("Failed to write profile!", true);
+    return false;
+  }
+
+  getProfileList();
+  for (int i = 0; i < profileListCount; i++)
+  {
+    if (profileListBuff[i] == profileName)
+    {
+      setProfile(i);
+      break;
+    }
+  }
+
+  updateDisplayLog(String("Profile created: ") + profileName, true);
+  return true;
+}
+
 void getProfileList()
 {
   File root = SD.open("/");

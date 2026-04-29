@@ -124,6 +124,9 @@ bool running = false;
 bool finished = false;
 bool firstThrow = true;
 bool restart_now = false;
+bool calibrationProfilePromptPending = false;
+unsigned long calibrationProfilePromptTime = 0;
+unsigned long lastScaleWeightReadTime = 0;
 
 String infoMessagBuff[14];
 String profileListBuff[32];
@@ -283,6 +286,7 @@ void readWeight()
 
       DEBUG_PRINT("Weight: ");
       DEBUG_PRINTLN(weight);
+      lastScaleWeightReadTime = millis();
 
       DEBUG_PRINT("dec_places: ");
       DEBUG_PRINTLN(dec_places);
@@ -298,7 +302,7 @@ void readWeight()
 
       if (fabs(weight - lastWeight) <= stableTolerance)
       {
-        if (running)
+        if (running || calibrationProfilePromptPending)
         {
           if (weightCounter >= measurementCount)
           {
@@ -367,6 +371,36 @@ void readWeight()
       updateDisplayLog("Timeout! Check RS232 Wiring & Settings!", true);
       delay(500);
       newData = false;
+    }
+  }
+}
+
+void handleCalibrationProfilePrompt()
+{
+  if (!calibrationProfilePromptPending)
+  {
+    return;
+  }
+
+  readWeight();
+  setLabelText(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
+
+  if (newData && (lastScaleWeightReadTime > calibrationProfilePromptTime))
+  {
+    calibrationProfilePromptPending = false;
+    newData = false;
+    weightCounter = 0;
+    if (confirmBox(String("Create profile from calibration?\n\nWeight: ") + String(weight, 3) + " gn", &lv_font_montserrat_14, lv_color_hex(0xFFFFFF)))
+    {
+      String profileName = "";
+      if (createProfileFromCalibration(weight, profileName))
+      {
+        messageBox(String("Profile created:\n\n") + profileName + ".txt", &lv_font_montserrat_14, lv_color_hex(0x00FF00), true);
+      }
+      else
+      {
+        messageBox("Could not create profile!", &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+      }
     }
   }
 }
@@ -549,6 +583,11 @@ void loop()
             if (String(config.profile) == "calibrate") // only do one Run for calibration
             {
               stopTrickler();
+              calibrationProfilePromptPending = true;
+              calibrationProfilePromptTime = millis();
+              measurementCount = 20;
+              weightCounter = 0;
+              newData = false;
             }
           }
           updateDisplayLog(infoText, true);
@@ -568,6 +607,8 @@ void loop()
   }
   else
   {
+    handleCalibrationProfilePrompt();
+
     if (millis() - readWeightTime >= 1000)
     {
       readWeightTime = millis();
