@@ -27,6 +27,32 @@
 
 
    <script>
+      const allowedProfileProperties = [
+         'number',
+         'weight',
+         'tolerance',
+         'alarmThreshold',
+         'stepsPerUnit',
+         'steps',
+         'speed',
+         'measurements',
+         'reverse'
+      ];
+
+      function cleanProfileJSON(jsonData) {
+         var cleanedData = {};
+         Object.keys(jsonData).forEach(function (key) {
+            var dataObject = jsonData[key];
+            cleanedData[key] = {};
+            allowedProfileProperties.forEach(function (property) {
+               if (Object.prototype.hasOwnProperty.call(dataObject, property)) {
+                  cleanedData[key][property] = dataObject[property];
+               }
+            });
+         });
+         return cleanedData;
+      }
+
       function generateFormFromJSON(jsonData) {
          var container = document.getElementById('container');
          container.innerHTML = ''; // Clear existing content
@@ -39,7 +65,10 @@
             legend.textContent = 'Profile-Step ' + key;
             fieldset.appendChild(legend);
 
-            Object.keys(dataObject).forEach(function (property) {
+            allowedProfileProperties.forEach(function (property) {
+               if (!Object.prototype.hasOwnProperty.call(dataObject, property)) {
+                  return;
+               }
                var pairDiv = document.createElement('div');
                pairDiv.className = 'label-input-pair';
                fieldset.appendChild(pairDiv);
@@ -89,26 +118,19 @@
          document.getElementById('jsonInput').value = JSON.stringify(newJSONData, null, 4);
       }
 
-      document.addEventListener('DOMContentLoaded', function () {
-         var textArea = document.getElementById('jsonInput');
-         textArea.addEventListener('input', function () {
-            try {
-               var jsonData = JSON.parse(this.value);
-               generateFormFromJSON(jsonData);
-            } catch (e) {
-               console.error('Invalid JSON:', e);
-            }
-         });
-      });
+      function loadProfileText(textArea, text) {
+         textArea.value = text;
+         var jsonData = cleanProfileJSON(JSON.parse(text));
+         textArea.value = JSON.stringify(jsonData, null, 4);
+         generateFormFromJSON(jsonData);
+      }
 
       document.addEventListener('DOMContentLoaded', function () {
          var textArea = document.getElementById('jsonInput');
 
-         // Existing input event listener
          textArea.addEventListener('input', function () {
             try {
-               var jsonData = JSON.parse(this.value);
-               generateFormFromJSON(jsonData);
+               loadProfileText(this, this.value);
             } catch (e) {
                console.error('Invalid JSON:', e);
             }
@@ -126,10 +148,8 @@
             if (files.length > 0) {
                var reader = new FileReader();
                reader.onload = function (e) {
-                  textArea.value = e.target.result;
                   try {
-                     var jsonData = JSON.parse(e.target.result);
-                     generateFormFromJSON(jsonData);
+                     loadProfileText(textArea, e.target.result);
                   } catch (e) {
                      console.error('Invalid JSON:', e);
                   }
@@ -138,10 +158,8 @@
                document.getElementById("profileName").value = files[0].name.replace(".txt", "");
 
             } else {
-               textArea.value = event.dataTransfer.getData('text');
                try {
-                  var jsonData = JSON.parse(textArea.value);
-                  generateFormFromJSON(jsonData);
+                  loadProfileText(textArea, event.dataTransfer.getData('text'));
                } catch (e) {
                   console.error('Invalid JSON:', e);
                }

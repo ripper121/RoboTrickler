@@ -44,27 +44,13 @@
                     <option value="GG" selected>G&G</option>
                     <option value="SBI">Sartorius</option>
                     <option value="KERN">Kern</option>
-                    <option value="STE">Steingerg</option>
+                    <option value="KERN-ABT">Kern ABT</option>
                     <option value="AD">A&D</option>
                     <option value="CUSTOM">Custom</option>
                     <option value="">None</option>
                 </select><br>
                 Baud: <input type="number" name="scale_baud" value="9600"><br>
             </fieldset>
-
-            <label for="log_measurements">Log Measurements:</label>
-            <input type="number" name="log_measurements" value="20"><br>
-
-            <label for="microsteps">Microsteps:</label>
-            <select name="microsteps">
-                <option value="1" selected>1/1</option>
-                <option value="2">1/2</option>
-                <option value="4">1/4</option>
-                <option value="8">1/8</option>
-                <option value="16">1/16</option>
-                <option value="32">1/32</option>
-                <option value="64">1/64</option>
-            </select><br>
 
             <label for="beeper">Beeper:</label>
             <select name="beeper">
@@ -73,9 +59,6 @@
                 <option value="both">Both</option>
                 <option value="off">Off</option>
             </select><br>
-
-            <label for="debug_log">Debug Log:</label>
-            <input type="checkbox" name="debug_log"><br><br>
 
             <label for="fw_check">Check for new Firmware:</label>
             <input type="checkbox" name="fw_check" checked><br><br>
@@ -93,6 +76,33 @@
     <script>
         const configForm = document.getElementById('configForm');
         const jsonOutput = document.getElementById('jsonOutput');
+        const allowedScaleProtocols = ['GG', 'SBI', 'KERN', 'KERN-ABT', 'AD', 'CUSTOM', ''];
+
+        function cleanConfigJSON(jsonObject) {
+            var scaleProtocol = (jsonObject.scale && jsonObject.scale.protocol) || 'GG';
+            if (!allowedScaleProtocols.includes(scaleProtocol)) {
+                scaleProtocol = 'GG';
+            }
+            return {
+                wifi: {
+                    ssid: (jsonObject.wifi && jsonObject.wifi.ssid) || '',
+                    psk: (jsonObject.wifi && jsonObject.wifi.psk) || '',
+                    IPStatic: (jsonObject.wifi && jsonObject.wifi.IPStatic) || '',
+                    IPGateway: (jsonObject.wifi && jsonObject.wifi.IPGateway) || '',
+                    IPSubnet: (jsonObject.wifi && jsonObject.wifi.IPSubnet) || '',
+                    IPDNS: (jsonObject.wifi && jsonObject.wifi.IPDNS) || ''
+                },
+                scale: {
+                    protocol: scaleProtocol,
+                    customCode: (jsonObject.scale && jsonObject.scale.customCode) || '',
+                    baud: (jsonObject.scale && jsonObject.scale.baud) || 9600
+                },
+                profile: jsonObject.profile || 'calibrate',
+                weight: jsonObject.weight || 2.540,
+                beeper: jsonObject.beeper || 'done',
+                fw_check: jsonObject.fw_check !== undefined ? jsonObject.fw_check : true
+            };
+        }
 
         // Function to update JSON based on form data
         function formToJSON() {
@@ -113,10 +123,7 @@
                 },
                 profile: "calibrate",
                 weight: 2.540,
-                log_measurements: parseInt(formData.get('log_measurements'), 10),
-                microsteps: parseInt(formData.get('microsteps'), 10),
                 beeper: formData.get('beeper'),
-                debug_log: formData.get('debug_log') === 'on',
                 fw_check:  formData.get('fw_check') === 'on',
             };
             jsonOutput.value = JSON.stringify(jsonObject, null, 4);
@@ -125,7 +132,8 @@
         // Function to update form based on JSON data
         function jsonToForm() {
             try {
-                var jsonObject = JSON.parse(jsonOutput.value);
+                var jsonObject = cleanConfigJSON(JSON.parse(jsonOutput.value));
+                jsonOutput.value = JSON.stringify(jsonObject, null, 4);
 
                 // Update WiFi settings
                 configForm.wifi_ssid.value = jsonObject.wifi.ssid || '';
@@ -139,15 +147,9 @@
                 configForm.scale_protocol.value = jsonObject.scale.protocol || 'GG';
                 configForm.scale_baud.value = jsonObject.scale.baud || 9600;
 
-                // Update other settings
-                configForm.log_measurements.value = jsonObject.log_measurements || 20;
-
-                // Update microsteps
-                configForm.microsteps.value = jsonObject.microsteps || 1;
                 configForm.beeper.value = jsonObject.beeper || 'done';
 
                 // Update boolean fields
-                configForm.debug_log.checked = jsonObject.debug_log || false;
                 configForm.fw_check.checked = jsonObject.fw_check || false;
             } catch (e) {
                 console.error('Invalid JSON');
