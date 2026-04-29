@@ -77,7 +77,6 @@ struct Config
   int scale_baud;
   char scale_customCode[32];
   char profile[32];
-  int microsteps;
 
   byte profile_num[16];
   float profile_weight[16];

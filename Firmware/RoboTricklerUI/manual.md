@@ -367,7 +367,6 @@ Video Anleitung:
   },
   "profile": "calibrate",
   "weight": 2.540,
-  "microsteps": 1,
   "beeper": "done",
   "fw_check": true
 }
@@ -387,7 +386,6 @@ Video Anleitung:
 * profile: Der Name des Pulverprofils. Wenn der Dateiname "MeinPulver.txt" ist, muss hier "MeinPulver" eingetragen werden.
 * weight: Das zuletzt eingestellte Gewicht zum Trickeln.
 * beeper: Es gibt drei Modi: 1. Bei Abschluss des Trickelns piepen ("done"), 2. Beim Drücken auf den Touchscreen ("button"), 3. Beides ("both").
-* microsteps: Microsteps-Einstellung des Schrittmotors 1/1 = 1, 1/2 = 2, ..., 1/64 = 64.
 * fw_check: true prüft, ob eine neue Firmware verfügbar ist und zeigt dies im Display an. Standard-Einstellung ist true.
 
 Nicht mehr verwendete Felder wie "log_measurements" oder "debug_log" können aus alten config.txt-Dateien entfernt werden. Firmware 2.10 liest diese Werte nicht ein.
@@ -436,7 +434,6 @@ Um den Wifi-Modus zu aktivieren, trage SSID (Wifi-Name) und PSK (Wifi-Passwort) 
   },
   "profile": "n135",
   "weight": 40.000,
-  "microsteps": 1,
   "beeper": "done",
   "fw_check": true
 }

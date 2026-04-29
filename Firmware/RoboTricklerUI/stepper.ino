@@ -2,12 +2,12 @@ void setStepperSpeed(int stepperNum, int _stepperSpeed)
 {
   if (stepperNum == 1)
   {
-    stepper1.begin(_stepperSpeed, config.microsteps);
+    stepper1.begin(_stepperSpeed, 1);
     stepper1.setEnableActiveState(LOW);
   }
   if (stepperNum == 2)
   {
-    stepper2.begin(_stepperSpeed, config.microsteps);
+    stepper2.begin(_stepperSpeed, 1);
     stepper2.setEnableActiveState(LOW);
   }
 }
@@ -38,7 +38,6 @@ void step(int stepperNum, int steps, bool reverse)
     stepper2.setSpeedProfile(stepper2.CONSTANT_SPEED, ACCEL, 32767);
   }
 
-  steps = steps * config.microsteps;
   if (reverse)
   {
     steps = steps * (-1);

@@ -139,8 +139,6 @@ bool loadConfiguration(const char *filename, Config &config)
 
   config.targetWeight = doc["weight"] | 1.0;
 
-  config.microsteps = doc["microsteps"] | 1;
-
   strlcpy(config.beeper,          // <- destination
           doc["beeper"] | "done", // <- source
           sizeof(config.beeper)); // <- destination's capacity
@@ -271,7 +269,6 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
   doc["weight"] = serialized(String(config.targetWeight, 3));
-  doc["microsteps"] = config.microsteps;
   doc["beeper"] = config.beeper;
   doc["fw_check"] = config.fwCheck;
 

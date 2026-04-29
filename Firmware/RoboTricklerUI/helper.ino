@@ -1,5 +1,6 @@
 String tempProfile = "";
 float tempTargetWeight = 0.0;
+extern int profileListCounter;
 
 IRAM_ATTR void disp_task_init(void)
 {
@@ -161,9 +162,18 @@ void stopMeasurment()
 
 void setProfile(int num)
 {
+    if ((num < 0) || (num >= profileListCount))
+    {
+        DEBUG_PRINT("Invalid profile number: ");
+        DEBUG_PRINTLN(num);
+        return;
+    }
+
     strlcpy(config.profile,               // <- destination
             profileListBuff[num].c_str(), // <- source
             sizeof(config.profile));      // <- destination's capacity
+    profileListCounter = num;
+    saveConfiguration("/config.txt", config);
 
     DEBUG_PRINT("num: ");
     DEBUG_PRINTLN(num);
@@ -283,7 +293,6 @@ void initSetup()
                 "calibrate",             // <- source
                 sizeof(config.profile)); // <- destination's capacity
         config.targetWeight = 40.0;
-        config.microsteps = 1;
         strlcpy(config.beeper,          // <- destination
                 "done",                 // <- source
                 sizeof(config.beeper)); // <- destination's capacity
@@ -305,6 +314,7 @@ void initSetup()
         if (String(config.profile) == profileListBuff[i])
         {
             selectedProfileFound = true;
+            profileListCounter = i;
             break;
         }
     }
@@ -314,6 +324,14 @@ void initSetup()
                 "calibrate",             // <- source
                 sizeof(config.profile)); // <- destination's capacity
         saveConfiguration("/config.txt", config);
+        for (int i = 0; i < profileListCount; i++)
+        {
+            if (String(config.profile) == profileListBuff[i])
+            {
+                profileListCounter = i;
+                break;
+            }
+        }
     }
 
     String profile_filename = "/" + String(config.profile) + ".txt";
