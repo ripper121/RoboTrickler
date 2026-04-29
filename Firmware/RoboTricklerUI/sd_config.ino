@@ -403,6 +403,7 @@ void saveConfiguration(const char *filename, const Config &config)
 // Prints the content of a file to the Serial
 void printFile(const char *filename)
 {
+#if DEBUG
   // Open file for reading
   File file = SD.open(filename);
 
@@ -423,4 +424,7 @@ void printFile(const char *filename)
 
   // Close the file
   file.close();
+#else
+  (void)filename;
+#endif
 }

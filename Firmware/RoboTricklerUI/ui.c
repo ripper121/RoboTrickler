@@ -72,61 +72,61 @@ lv_obj_t *ui____initial_actions0;
 
 ///////////////////// FUNCTIONS ////////////////////
 void ui_event_ButtonTricklerStart( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+    lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
       trickler_start_event_cb( e );
 }
 }
 void ui_event_ButtonNNN( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+    lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
       nnn_event_cb( e );
 }
 }
 void ui_event_ButtonNN( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+    lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
       nn_event_cb( e );
 }
 }
 void ui_event_ButtonN( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+    lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
       n_event_cb( e );
 }
 }
 void ui_event_ButtonP( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+    lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
       p_event_cb( e );
 }
 }
 void ui_event_ButtonAdd( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+    lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
       add_event_cb( e );
 }
 }
 void ui_event_ButtonSub( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+    lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
       sub_event_cb( e );
 }
 }
 void ui_event_ButtonProfilePrev( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+    lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
       prev_event_cb( e );
 }
 }
 void ui_event_ButtonProfileNext( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+    lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
       next_event_cb( e );
 }
 }
 void ui_event_ButtonMessage( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+    lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
       message_event_cb( e );
 }

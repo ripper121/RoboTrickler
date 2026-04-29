@@ -7,8 +7,14 @@
 
 void _ui_bar_set_property( lv_obj_t *target, int id, int val) 
 {
+#if LV_USE_BAR
    if (id == _UI_BAR_PROPERTY_VALUE_WITH_ANIM) lv_bar_set_value(target, val, LV_ANIM_ON);
    if (id == _UI_BAR_PROPERTY_VALUE) lv_bar_set_value(target, val, LV_ANIM_OFF);
+#else
+   LV_UNUSED(target);
+   LV_UNUSED(id);
+   LV_UNUSED(val);
+#endif
 }
 
 void _ui_basic_set_property( lv_obj_t *target, int id, int val) 
@@ -21,7 +27,13 @@ void _ui_basic_set_property( lv_obj_t *target, int id, int val)
 
 void _ui_image_set_property( lv_obj_t *target, int id, uint8_t *val) 
 {
+#if LV_USE_IMG
    if (id == _UI_IMAGE_PROPERTY_IMAGE) lv_img_set_src(target, val);
+#else
+   LV_UNUSED(target);
+   LV_UNUSED(id);
+   LV_UNUSED(val);
+#endif
 }
 
 void _ui_label_set_property( lv_obj_t *target, int id, const char *val) 
@@ -31,8 +43,14 @@ void _ui_label_set_property( lv_obj_t *target, int id, const char *val)
 
 void _ui_slider_set_property( lv_obj_t *target, int id, int val) 
 {
+#if LV_USE_SLIDER
    if (id == _UI_SLIDER_PROPERTY_VALUE_WITH_ANIM) lv_slider_set_value(target, val, LV_ANIM_ON);
    if (id == _UI_SLIDER_PROPERTY_VALUE) lv_slider_set_value(target, val, LV_ANIM_OFF);
+#else
+   LV_UNUSED(target);
+   LV_UNUSED(id);
+   LV_UNUSED(val);
+#endif
 }
 
 void _ui_screen_change( lv_obj_t ** target, lv_scr_load_anim_t fademode, int spd, int delay, void (*target_init)(void)) 
@@ -53,27 +71,49 @@ void _ui_screen_delete( lv_obj_t ** target )
 
 void _ui_arc_increment( lv_obj_t *target, int val) 
 {
+#if LV_USE_ARC
    int old = lv_arc_get_value(target);
    lv_arc_set_value(target, old+val);
    lv_event_send(target,LV_EVENT_VALUE_CHANGED, 0);
+#else
+   LV_UNUSED(target);
+   LV_UNUSED(val);
+#endif
 }
 
 void _ui_bar_increment( lv_obj_t *target, int val, int anm) 
 {
+#if LV_USE_BAR
    int old = lv_bar_get_value(target);
    lv_bar_set_value(target, old+val, anm);
+#else
+   LV_UNUSED(target);
+   LV_UNUSED(val);
+   LV_UNUSED(anm);
+#endif
 }
 
 void _ui_slider_increment( lv_obj_t *target, int val, int anm) 
 {
+#if LV_USE_SLIDER
    int old = lv_slider_get_value(target);
    lv_slider_set_value(target, old+val, anm);
    lv_event_send(target,LV_EVENT_VALUE_CHANGED, 0);
+#else
+   LV_UNUSED(target);
+   LV_UNUSED(val);
+   LV_UNUSED(anm);
+#endif
 }
 
 void _ui_keyboard_set_target( lv_obj_t *keyboard, lv_obj_t *textarea) 
 {
+#if LV_USE_KEYBOARD
    lv_keyboard_set_textarea(keyboard, textarea);
+#else
+   LV_UNUSED(keyboard);
+   LV_UNUSED(textarea);
+#endif
 }
 
 void _ui_flag_modify( lv_obj_t *target, int32_t flag, int value)
@@ -104,16 +144,30 @@ void _ui_opacity_set( lv_obj_t *target, int val)
 
 void _ui_arc_set_text_value( lv_obj_t *trg, lv_obj_t *src, const char *prefix, const char *postfix) 
 {
+#if LV_USE_ARC
    char buf[_UI_TEMPORARY_STRING_BUFFER_SIZE];
    lv_snprintf(buf, sizeof(buf), "%s%d%s", prefix, (int)lv_arc_get_value(src), postfix);
    lv_label_set_text(trg, buf);
+#else
+   LV_UNUSED(trg);
+   LV_UNUSED(src);
+   LV_UNUSED(prefix);
+   LV_UNUSED(postfix);
+#endif
 }
 
 void _ui_slider_set_text_value( lv_obj_t *trg, lv_obj_t *src, const char *prefix, const char *postfix) 
 {
+#if LV_USE_SLIDER
    char buf[_UI_TEMPORARY_STRING_BUFFER_SIZE];
    lv_snprintf(buf, sizeof(buf), "%s%d%s", prefix, (int)lv_slider_get_value(src), postfix);
    lv_label_set_text(trg, buf);
+#else
+   LV_UNUSED(trg);
+   LV_UNUSED(src);
+   LV_UNUSED(prefix);
+   LV_UNUSED(postfix);
+#endif
 }
 void _ui_checked_set_text_value( lv_obj_t *trg, lv_obj_t *src, const char *txt_on, const char *txt_off) 
 {
@@ -123,8 +177,13 @@ void _ui_checked_set_text_value( lv_obj_t *trg, lv_obj_t *src, const char *txt_o
 
 void _ui_spinbox_step(lv_obj_t * target, int val)
 {
+#if LV_USE_SPINBOX
 	if(val > 0) lv_spinbox_increment(target);
 	else lv_spinbox_decrement(target);
 
 	lv_event_send(target,LV_EVENT_VALUE_CHANGED, 0);
+#else
+   LV_UNUSED(target);
+   LV_UNUSED(val);
+#endif
 }
