@@ -65,10 +65,10 @@ struct Config
 {
   char wifi_ssid[64];
   char wifi_psk[64];
-  char IPStatic[15];
-  char IPGateway[15];
-  char IPSubnet[15];
-  char IPDns[15];
+  char IPStatic[16];
+  char IPGateway[16];
+  char IPSubnet[16];
+  char IPDns[16];
 
   char beeper[6];
   bool fwCheck;
@@ -159,7 +159,10 @@ void stringToWeight(const char *input, float *value, int *decimalPlaces)
       {
         decimals++;
       }
-      filteredBuffer[j++] = input[i];
+      if (j < (int)sizeof(filteredBuffer) - 1)
+      {
+        filteredBuffer[j++] = input[i];
+      }
     }
   }
   filteredBuffer[j] = '\0'; // Null-terminate the string
@@ -392,8 +395,15 @@ void loop()
             double steps = (config.targetWeight - weight) * config.profile_stepsPerUnit;
             DEBUG_PRINT("FirstThrow steps: ");
             DEBUG_PRINTLN(steps);
-            setStepperSpeed(1, config.profile_speed[0]);
-            step(config.profile_num[0], steps, config.profile_reverse[0]);
+            byte firstStepperNum = config.profile_num[0];
+            if ((firstStepperNum < 1) || (firstStepperNum > 2))
+            {
+              updateDisplayLog("Invalid stepper number!", true);
+              stopTrickler();
+              return;
+            }
+            setStepperSpeed(firstStepperNum, config.profile_speed[0]);
+            step(firstStepperNum, (long)(steps + 0.5), config.profile_reverse[0]);
             infoText += "FirstThrow steps:" + String(steps);
 
             DEBUG_PRINTLN("FirstThrow finished!");
@@ -402,8 +412,15 @@ void loop()
           }
           else
           {
+            if (config.profile_count <= 0)
+            {
+              updateDisplayLog("Invalid profile!", true);
+              stopTrickler();
+              return;
+            }
+
             static int stepperSpeedOld[3] = {0, 0, 0};
-            int profileStep = 0;
+            int profileStep = config.profile_count - 1;
             // Serial.print("abs: ");
             // Serial.println(abs(weight - config.targetWeight), 3);
             // Serial.print("profile_weight: ");
@@ -430,6 +447,13 @@ void loop()
 
             // Serial.print("Stepp: ");
             // Serial.println(config.profile_steps[profileStep], DEC);
+
+            if ((config.profile_num[profileStep] < 1) || (config.profile_num[profileStep] > 2))
+            {
+              updateDisplayLog("Invalid stepper number!", true);
+              stopTrickler();
+              return;
+            }
 
             step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_reverse[profileStep]);
 

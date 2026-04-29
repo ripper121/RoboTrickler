@@ -21,6 +21,12 @@ bool readProfile(const char *filename, Config &config)
 
   // Open file for reading
   File file = SD.open(filename);
+  if (!file)
+  {
+    DEBUG_PRINT("Failed to open profile: ");
+    DEBUG_PRINTLN(filename);
+    return false;
+  }
 
   // Allocate a temporary JsonDocument
   // Don't forget to change the capacity to match your requirements.
@@ -30,7 +36,7 @@ bool readProfile(const char *filename, Config &config)
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(doc, file);
 
-  if (error)
+  if (error || !doc.is<JsonObject>())
   {
     DEBUG_PRINT("deserializeJson() failed on : ");
     DEBUG_PRINT(filename);
@@ -54,6 +60,7 @@ bool readProfile(const char *filename, Config &config)
     config.profile_reverse[i] = false;
   }
 
+  bool profileSeen[16] = {false};
   for (JsonPair item : doc.as<JsonObject>())
   {
     int item_key = ((String(item.key().c_str()).toInt()) - 1);
@@ -64,21 +71,60 @@ bool readProfile(const char *filename, Config &config)
       file.close();
       return false;
     }
+
+    JsonObject profileEntry = item.value().as<JsonObject>();
+    if (profileEntry.isNull() || !profileEntry.containsKey("weight") || !profileEntry.containsKey("steps") || !profileEntry.containsKey("speed") || !profileEntry.containsKey("measurements"))
+    {
+      DEBUG_PRINT("Incomplete profile entry: ");
+      DEBUG_PRINTLN(item.key().c_str());
+      file.close();
+      return false;
+    }
+
+    int stepperNumber = profileEntry["number"] | 1;
+    int stepperSpeed = profileEntry["speed"] | 0;
+    int measurements = profileEntry["measurements"] | -1;
+    float profileWeight = profileEntry["weight"] | -1.0;
+    if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0))
+    {
+      DEBUG_PRINT("Invalid profile values in entry: ");
+      DEBUG_PRINTLN(item.key().c_str());
+      file.close();
+      return false;
+    }
+
     if (item_key == 0)
     {
-      config.profile_stepsPerUnit = item.value()["stepsPerUnit"] | 0;
-      config.profile_tolerance = item.value()["tolerance"] | 0.000;
-      config.profile_alarmThreshold = item.value()["alarmThreshold"] | 1.000;
+      config.profile_stepsPerUnit = profileEntry["stepsPerUnit"] | 0;
+      config.profile_tolerance = profileEntry["tolerance"] | 0.000;
+      config.profile_alarmThreshold = profileEntry["alarmThreshold"] | 1.000;
     }
-    config.profile_num[item_key] = item.value()["number"] | 1;
-    config.profile_weight[item_key] = item.value()["weight"];
-    config.profile_steps[item_key] = item.value()["steps"];
-    config.profile_speed[item_key] = item.value()["speed"];
-    config.profile_measurements[item_key] = item.value()["measurements"];
-    config.profile_reverse[item_key] = item.value()["reverse"] | false;
+    config.profile_num[item_key] = stepperNumber;
+    config.profile_weight[item_key] = profileWeight;
+    config.profile_steps[item_key] = profileEntry["steps"];
+    config.profile_speed[item_key] = stepperSpeed;
+    config.profile_measurements[item_key] = measurements;
+    config.profile_reverse[item_key] = profileEntry["reverse"] | false;
+    profileSeen[item_key] = true;
     if ((item_key + 1) > config.profile_count)
     {
       config.profile_count = item_key + 1;
+    }
+  }
+  if (config.profile_count <= 0)
+  {
+    DEBUG_PRINTLN("Profile has no entries");
+    file.close();
+    return false;
+  }
+  for (int i = 0; i < config.profile_count; i++)
+  {
+    if (!profileSeen[i])
+    {
+      DEBUG_PRINT("Profile entries must be contiguous. Missing entry: ");
+      DEBUG_PRINTLN(i + 1);
+      file.close();
+      return false;
     }
   }
   DEBUG_PRINTLN("POWDER_AKTIVE");
@@ -191,6 +237,8 @@ bool isValidProfileFile(const char *filename)
   }
 
   bool hasProfileEntries = false;
+  bool profileSeen[16] = {false};
+  int profileCount = 0;
   for (JsonPair item : doc.as<JsonObject>())
   {
     int item_key = String(item.key().c_str()).toInt();
@@ -198,7 +246,36 @@ bool isValidProfileFile(const char *filename)
     {
       return false;
     }
+
+    JsonObject profileEntry = item.value().as<JsonObject>();
+    if (profileEntry.isNull() || !profileEntry.containsKey("weight") || !profileEntry.containsKey("steps") || !profileEntry.containsKey("speed") || !profileEntry.containsKey("measurements"))
+    {
+      return false;
+    }
+
+    int stepperNumber = profileEntry["number"] | 1;
+    int stepperSpeed = profileEntry["speed"] | 0;
+    int measurements = profileEntry["measurements"] | -1;
+    float profileWeight = profileEntry["weight"] | -1.0;
+    if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0))
+    {
+      return false;
+    }
+
+    profileSeen[item_key - 1] = true;
+    if (item_key > profileCount)
+    {
+      profileCount = item_key;
+    }
     hasProfileEntries = true;
+  }
+
+  for (int i = 0; i < profileCount; i++)
+  {
+    if (!profileSeen[i])
+    {
+      return false;
+    }
   }
 
   return hasProfileEntries;
@@ -207,6 +284,7 @@ bool isValidProfileFile(const char *filename)
 void getProfileList()
 {
   File root = SD.open("/");
+  profileListCount = 0;
   if (!root)
   {
     DEBUG_PRINTLN("Failed to open directory");
@@ -238,9 +316,15 @@ void getProfileList()
     }
     else
     {
-      if ((String(file.name()).indexOf(".txt") != -1) && (String(file.name()).indexOf("config.txt") == -1) && (String(file.name()).indexOf(".cor") == -1) && isValidProfileFile(file.path()))
+      String fileName = String(file.name());
+      int slashIndex = fileName.lastIndexOf('/');
+      if (slashIndex >= 0)
       {
-        String filename = String(file.name());
+        fileName = fileName.substring(slashIndex + 1);
+      }
+      if (fileName.endsWith(".txt") && !fileName.endsWith("config.txt") && (fileName.indexOf(".cor") == -1) && isValidProfileFile(file.path()))
+      {
+        String filename = fileName;
         filename.replace(".txt", "");
         profileListBuff[profileCounter] = filename;
         profileCounter++;
@@ -251,6 +335,7 @@ void getProfileList()
       DEBUG_PRINT("  SIZE: ");
       DEBUG_PRINTLN(file.size());
     }
+    file.close();
     file = root.openNextFile();
   }
 

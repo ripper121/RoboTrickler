@@ -23,7 +23,7 @@ void initStepper()
   stepper2.disable();
 }
 
-void step(int stepperNum, int steps, bool reverse)
+void step(int stepperNum, long steps, bool reverse)
 {
   if (stepperNum == 1)
     stepper1.enable();

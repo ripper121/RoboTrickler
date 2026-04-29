@@ -89,16 +89,19 @@ void corruptProfile(String profile_filename)
     messageBox(String("Profile Corrupted / Not Found:\n\n" + profile_filename + "\n\nCalibration Profile Loaded.").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
 
     // Rename file to indicate corruption
-    String corruptedName = String(profile_filename);
-    corruptedName.replace(".txt", ".cor.txt");
-    if (SD.rename(profile_filename, corruptedName.c_str()))
+    if (SD.exists(profile_filename))
     {
-        DEBUG_PRINT("Corrupted file renamed to: ");
-        DEBUG_PRINTLN(corruptedName);
-    }
-    else
-    {
-        DEBUG_PRINTLN("Failed to rename corrupted file");
+        String corruptedName = String(profile_filename);
+        corruptedName.replace(".txt", ".cor.txt");
+        if (SD.rename(profile_filename, corruptedName.c_str()))
+        {
+            DEBUG_PRINT("Corrupted file renamed to: ");
+            DEBUG_PRINTLN(corruptedName);
+        }
+        else
+        {
+            DEBUG_PRINTLN("Failed to rename corrupted file");
+        }
     }
 
     strlcpy(config.profile,          // <- destination
@@ -122,6 +125,7 @@ void startTrickler()
             corruptProfile(profile_filename);
             return;
         }
+        tempProfile = config.profile;
     }
     updateDisplayLog(String("Profile: " + String(config.profile) + " selected!"));
 
@@ -320,9 +324,19 @@ void initSetup()
     }
     if (!selectedProfileFound)
     {
-        strlcpy(config.profile,          // <- destination
-                "calibrate",             // <- source
-                sizeof(config.profile)); // <- destination's capacity
+        if (profileListCount > 0)
+        {
+            strlcpy(config.profile,               // <- destination
+                    profileListBuff[0].c_str(),   // <- source
+                    sizeof(config.profile));      // <- destination's capacity
+            profileListCounter = 0;
+        }
+        else
+        {
+            strlcpy(config.profile,          // <- destination
+                    "calibrate",             // <- source
+                    sizeof(config.profile)); // <- destination's capacity
+        }
         saveConfiguration("/config.txt", config);
         for (int i = 0; i < profileListCount; i++)
         {
@@ -340,6 +354,7 @@ void initSetup()
         corruptProfile(profile_filename);
         return;
     }
+    tempProfile = config.profile;
 
     Serial1.begin(config.scale_baud, SERIAL_8N1, IIC_SCL, IIC_SDA);
 

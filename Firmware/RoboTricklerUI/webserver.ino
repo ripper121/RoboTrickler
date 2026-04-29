@@ -12,6 +12,22 @@ void returnFail(String msg)
   server.send(500, "text/plain", msg + "\r\n");
 }
 
+String jsonEscape(const String &input)
+{
+  String output;
+  output.reserve(input.length() + 4);
+  for (uint16_t i = 0; i < input.length(); i++)
+  {
+    char c = input.charAt(i);
+    if ((c == '"') || (c == '\\'))
+    {
+      output += '\\';
+    }
+    output += c;
+  }
+  return output;
+}
+
 bool loadFromSdCard(String path)
 {
   String dataType = "text/plain";
@@ -257,9 +273,10 @@ void printDirectory()
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
   server.send(200, "text/json", "");
   WiFiClient client = server.client();
+  bool firstEntry = true;
 
   server.sendContent("[");
-  for (int cnt = 0; true; ++cnt)
+  while (true)
   {
     File entry = dir.openNextFile();
     if (!entry)
@@ -271,15 +288,16 @@ void printDirectory()
     {
 
       String output;
-      if (cnt > 0)
+      if (!firstEntry)
       {
         output = ',';
       }
+      firstEntry = false;
 
       output += "{\"type\":\"";
       output += (entry.isDirectory()) ? "dir" : "file";
       output += "\",\"name\":\"";
-      output += entry.path();
+      output += jsonEscape(String(entry.path()));
       output += "\"";
       output += "}";
       server.sendContent(output);
@@ -380,7 +398,7 @@ void handleGetProfileList()
     message += "\"";
     message += String(i);
     message += "\":\"";
-    message += String(profileListBuff[i]);
+    message += jsonEscape(String(profileListBuff[i]));
     message += "\"";
     if (i < profileListCount - 1)
       message += ",";
@@ -404,26 +422,7 @@ void handleStop()
 IPAddress stringToIPAddress(const String &ipAddressString)
 {
   IPAddress ipAddress;
-  int parts[4] = {0}; // Initialize the parts array with zeros
-  int partCount = 0;
-  char ipBuffer[16];
-
-  // Split the string into four parts using '.' as the delimiter
-  strlcpy(ipBuffer, ipAddressString.c_str(), sizeof(ipBuffer));
-  char *token = strtok(ipBuffer, ".");
-  while (token != NULL && partCount < 4)
-  {
-    parts[partCount] = atoi(token);
-    partCount++;
-    token = strtok(NULL, ".");
-  }
-
-  // Check if we successfully parsed four parts
-  if (partCount == 4)
-  {
-    ipAddress = IPAddress(parts[0], parts[1], parts[2], parts[3]);
-  }
-  else
+  if (!ipAddress.fromString(ipAddressString))
   {
     DEBUG_PRINTLN("Invalid IP Address format.");
   }
