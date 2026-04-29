@@ -284,7 +284,7 @@ void printDirectory()
       break;
     }
 
-    if (entry.path() != "/resources/css")
+    if (strcmp(entry.path(), "/resources/css") != 0)
     {
 
       String output;

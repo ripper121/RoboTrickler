@@ -282,6 +282,7 @@ void initSetup()
             DEBUG_PRINT("SD Card Size: ");
             DEBUG_PRINT(cardSize);
             DEBUG_PRINTLN("MB");
+            (void)cardSize;
         }
     }
 

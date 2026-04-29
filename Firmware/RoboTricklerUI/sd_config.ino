@@ -1,4 +1,11 @@
-
+static bool hasRequiredProfileFields(JsonObject profileEntry)
+{
+  return !profileEntry.isNull() &&
+         !profileEntry["weight"].isNull() &&
+         !profileEntry["steps"].isNull() &&
+         !profileEntry["speed"].isNull() &&
+         !profileEntry["measurements"].isNull();
+}
 
 bool readProfile(const char *filename, Config &config)
 {
@@ -73,7 +80,7 @@ bool readProfile(const char *filename, Config &config)
     }
 
     JsonObject profileEntry = item.value().as<JsonObject>();
-    if (profileEntry.isNull() || !profileEntry.containsKey("weight") || !profileEntry.containsKey("steps") || !profileEntry.containsKey("speed") || !profileEntry.containsKey("measurements"))
+    if (!hasRequiredProfileFields(profileEntry))
     {
       DEBUG_PRINT("Incomplete profile entry: ");
       DEBUG_PRINTLN(item.key().c_str());
@@ -249,7 +256,7 @@ bool isValidProfileFile(const char *filename)
     }
 
     JsonObject profileEntry = item.value().as<JsonObject>();
-    if (profileEntry.isNull() || !profileEntry.containsKey("weight") || !profileEntry.containsKey("steps") || !profileEntry.containsKey("speed") || !profileEntry.containsKey("measurements"))
+    if (!hasRequiredProfileFields(profileEntry))
     {
       return false;
     }
