@@ -49,7 +49,7 @@ Events Run On: "Core 0"
 #endif
 #include <TFT_eSPI.h>
 
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
@@ -387,7 +387,7 @@ void loop()
 
 #if DEBUG
     char temp[300];
-    sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());
+    snprintf(temp, sizeof(temp), "Heap: Free:%lu, Min:%lu, Size:%lu, Alloc:%lu", (unsigned long)ESP.getFreeHeap(), (unsigned long)ESP.getMinFreeHeap(), (unsigned long)ESP.getHeapSize(), (unsigned long)ESP.getMaxAllocHeap());
     DEBUG_PRINTLN(temp);
 
     printf("lv_disp_tcb stackHWM: %d / %d\n", (DISP_TASK_STACK - uxTaskGetStackHighWaterMark(lv_disp_tcb)), DISP_TASK_STACK);

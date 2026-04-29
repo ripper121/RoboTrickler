@@ -103,7 +103,15 @@ void disableTouchGestures()
 
 void corruptProfile(String profile_filename)
 {
-    messageBox(String("Profile Corrupted / Not Found:\n\n" + profile_filename + "\n\nCalibration Profile Loaded.").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+    String readError = getSdReadError();
+    String message = String("Profile Corrupted / Not Found:\n\n") + profile_filename;
+    if (readError.length() > 0)
+    {
+        updateDisplayLog(readError);
+        message += "\n\n";
+        message += readError;
+    }
+    message += "\n\nCalibration Profile Loaded.";
 
     // Rename file to indicate corruption
     if (SD.exists(profile_filename))
@@ -127,6 +135,7 @@ void corruptProfile(String profile_filename)
     saveConfiguration("/config.txt", config);
     delay(100);
     restart_now = true;
+    messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
 }
 
 void startTrickler()
@@ -243,8 +252,8 @@ void initSetup()
     SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
     if (!SD.begin(GRBL_SPI_SS, *SDspi))
     {
-        messageBox(String("Card Mount Failed!\n").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
         restart_now = true;
+        messageBox(String("Card Mount Failed!\n").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
         return;
     }
     else
@@ -253,8 +262,8 @@ void initSetup()
 
         if (cardType == CARD_NONE)
         {
-            messageBox(String("No SD card attached!\n").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
             restart_now = true;
+            messageBox(String("No SD card attached!\n").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
             return;
         }
         else
@@ -288,7 +297,12 @@ void initSetup()
 
     if (!loadConfiguration("/config.txt", config))
     {
-        updateDisplayLog("config.txt deserializeJson() failed");
+        String readError = getSdReadError();
+        if (readError.length() <= 0)
+        {
+            readError = "Unknown config read error";
+        }
+        updateDisplayLog(readError);
 
         strlcpy(config.wifi_ssid,                 // <- destination
                 "",                               // <- source
@@ -327,8 +341,9 @@ void initSetup()
         saveConfiguration("/config.txt", config);
         delay(100);
 
-        messageBox(String("Config File Corrupted / Not Found!\nDefault Config generated.").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+        String message = String("Config File Corrupted / Not Found!\n\n") + readError + "\n\nDefault Config generated.";
         restart_now = true;
+        messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
         return;
     }
 
@@ -346,19 +361,13 @@ void initSetup()
     }
     if (!selectedProfileFound)
     {
-        if (profileListCount > 0)
+        String profile_filename = "/" + String(config.profile) + ".txt";
+        if (!readProfile(profile_filename.c_str(), config))
         {
-            strlcpy(config.profile,               // <- destination
-                    profileListBuff[0].c_str(),   // <- source
-                    sizeof(config.profile));      // <- destination's capacity
-            profileListCounter = 0;
+            corruptProfile(profile_filename);
+            return;
         }
-        else
-        {
-            strlcpy(config.profile,          // <- destination
-                    "calibrate",             // <- source
-                    sizeof(config.profile)); // <- destination's capacity
-        }
+        tempProfile = config.profile;
         saveConfiguration("/config.txt", config);
         for (int i = 0; i < profileListCount; i++)
         {

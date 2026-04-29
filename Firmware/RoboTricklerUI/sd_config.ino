@@ -7,8 +7,21 @@ static bool hasRequiredProfileFields(JsonObject profileEntry)
          !profileEntry["measurements"].isNull();
 }
 
+String sdReadError = "";
+
+void setSdReadError(const String &message)
+{
+  sdReadError = message;
+}
+
+String getSdReadError()
+{
+  return sdReadError;
+}
+
 bool readProfile(const char *filename, Config &config)
 {
+  setSdReadError("");
   String infoText = "Loading Profile...";
   // labelInfo.drawButton(false, infoText);
 
@@ -16,6 +29,7 @@ bool readProfile(const char *filename, Config &config)
 
   if (!SD.exists(filename))
   {
+    setSdReadError(String("Profile file not found:\n") + filename);
     DEBUG_PRINTLN("Profile not found:");
     DEBUG_PRINTLN(filename);
     DEBUG_PRINTLN("Set to calibrate.txt as default");
@@ -30,6 +44,7 @@ bool readProfile(const char *filename, Config &config)
   File file = SD.open(filename);
   if (!file)
   {
+    setSdReadError(String("Could not open profile file:\n") + filename);
     DEBUG_PRINT("Failed to open profile: ");
     DEBUG_PRINTLN(filename);
     return false;
@@ -45,10 +60,12 @@ bool readProfile(const char *filename, Config &config)
 
   if (error || !doc.is<JsonObject>())
   {
+    String errorText = error ? String(error.c_str()) : String("Root is not a JSON object");
+    setSdReadError(String("Profile JSON parse failed:\n") + filename + "\n" + errorText);
     DEBUG_PRINT("deserializeJson() failed on : ");
     DEBUG_PRINT(filename);
     DEBUG_PRINT(" /");
-    DEBUG_PRINTLN(error.c_str());
+    DEBUG_PRINTLN(errorText);
     file.close();
     return false;
   }
@@ -73,6 +90,7 @@ bool readProfile(const char *filename, Config &config)
     int item_key = ((String(item.key().c_str()).toInt()) - 1);
     if ((item_key < 0) || (item_key >= 16))
     {
+      setSdReadError(String("Invalid profile entry number:\n") + filename + "\nEntry: " + item.key().c_str());
       DEBUG_PRINT("Invalid profile entry: ");
       DEBUG_PRINTLN(item.key().c_str());
       file.close();
@@ -82,6 +100,7 @@ bool readProfile(const char *filename, Config &config)
     JsonObject profileEntry = item.value().as<JsonObject>();
     if (!hasRequiredProfileFields(profileEntry))
     {
+      setSdReadError(String("Incomplete profile entry:\n") + filename + "\nEntry: " + item.key().c_str() + "\nRequired: weight, steps, speed, measurements");
       DEBUG_PRINT("Incomplete profile entry: ");
       DEBUG_PRINTLN(item.key().c_str());
       file.close();
@@ -89,12 +108,13 @@ bool readProfile(const char *filename, Config &config)
     }
 
     int stepperNumber = profileEntry["number"] | 1;
-    int stepperSpeed = profileEntry["speed"] | 0;
-    int measurements = profileEntry["measurements"] | -1;
-    float profileWeight = profileEntry["weight"] | -1.0;
+    int stepperSpeed = profileEntry["speed"] | 200;
+    int measurements = profileEntry["measurements"] | 5;
+    float profileWeight = profileEntry["weight"] | 0.0;
     long profileSteps = profileEntry["steps"] | 0;
     if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
     {
+      setSdReadError(String("Invalid profile values:\n") + filename + "\nEntry: " + item.key().c_str());
       DEBUG_PRINT("Invalid profile values in entry: ");
       DEBUG_PRINTLN(item.key().c_str());
       file.close();
@@ -121,6 +141,7 @@ bool readProfile(const char *filename, Config &config)
   }
   if (config.profile_count <= 0)
   {
+    setSdReadError(String("Profile has no entries:\n") + filename);
     DEBUG_PRINTLN("Profile has no entries");
     file.close();
     return false;
@@ -129,6 +150,7 @@ bool readProfile(const char *filename, Config &config)
   {
     if (!profileSeen[i])
     {
+      setSdReadError(String("Profile entries must be contiguous:\n") + filename + "\nMissing entry: " + String(i + 1));
       DEBUG_PRINT("Profile entries must be contiguous. Missing entry: ");
       DEBUG_PRINTLN(i + 1);
       file.close();
@@ -149,11 +171,19 @@ bool readProfile(const char *filename, Config &config)
 // Loads the configuration from a file
 bool loadConfiguration(const char *filename, Config &config)
 {
+  setSdReadError("");
   // Dump config file
   printFile(filename);
 
   // Open file for reading
   File file = SD.open(filename);
+  if (!file)
+  {
+    setSdReadError(String("Could not open config file:\n") + filename);
+    DEBUG_PRINT("Failed to open config: ");
+    DEBUG_PRINTLN(filename);
+    return 0;
+  }
 
   // Allocate a temporary JsonDocument
   // Don't forget to change the capacity to match your requirements.
@@ -163,10 +193,12 @@ bool loadConfiguration(const char *filename, Config &config)
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(doc, file);
 
-  if (error)
+  if (error || !doc.is<JsonObject>())
   {
+    String errorText = error ? String(error.c_str()) : String("Root is not a JSON object");
+    setSdReadError(String("Config JSON parse failed:\n") + filename + "\n" + errorText);
     DEBUG_PRINT("deserializeJson() failed on config.txt: ");
-    DEBUG_PRINTLN(error.c_str());
+    DEBUG_PRINTLN(errorText);
     file.close();
     return 0;
   }
@@ -311,6 +343,8 @@ void getProfileList()
   updateDisplayLog("Search Profiles...");
 
   byte profileCounter = 0;
+  byte invalidProfileCounter = 0;
+  String invalidProfiles = "";
   while (file)
   {
     if (profileCounter > 31)
@@ -331,12 +365,23 @@ void getProfileList()
       {
         fileName = fileName.substring(slashIndex + 1);
       }
-      if (fileName.endsWith(".txt") && !fileName.endsWith("config.txt") && (fileName.indexOf(".cor") == -1) && isValidProfileFile(file.path()))
+      bool isProfileCandidate = fileName.endsWith(".txt") && !fileName.endsWith("config.txt") && (fileName.indexOf(".cor") == -1);
+      if (isProfileCandidate && isValidProfileFile(file.path()))
       {
         String filename = fileName;
         filename.replace(".txt", "");
         profileListBuff[profileCounter] = filename;
         profileCounter++;
+      }
+      else if (isProfileCandidate)
+      {
+        updateDisplayLog(String("Invalid profile ignored: ") + fileName);
+        invalidProfileCounter++;
+        if (invalidProfileCounter <= 8)
+        {
+          invalidProfiles += "\n";
+          invalidProfiles += fileName;
+        }
       }
 
       DEBUG_PRINT("  FILE: ");
@@ -356,6 +401,17 @@ void getProfileList()
   for (int i = 0; i < profileListCount; i++)
   {
     DEBUG_PRINTLN(profileListBuff[i]);
+  }
+  if (invalidProfileCounter > 0)
+  {
+    String message = "Invalid profiles found:";
+    message += invalidProfiles;
+    if (invalidProfileCounter > 8)
+    {
+      message += "\n...";
+    }
+    message += "\n\nThey were ignored.";
+    messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
   }
 }
 

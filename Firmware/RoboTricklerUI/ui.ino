@@ -1,4 +1,5 @@
 int profileListCounter;
+volatile bool messageBoxOpen = false;
 
 #if LV_USE_LOG != 0
 /* Serial debugging */
@@ -90,6 +91,7 @@ void message_event_cb(lv_event_t *e)
   if (lvglLock())
   {
     lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+    messageBoxOpen = false;
     lvglUnlock();
   }
   if (restart_now)
@@ -103,11 +105,24 @@ void messageBox(String message, const lv_font_t *font, lv_color_t color, bool wa
 {
   if (lvglLock())
   {
+    messageBoxOpen = true;
     lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text(ui_LabelMessages, message.c_str());
     lv_obj_clear_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
     lvglUnlock();
+  }
+  if (wait)
+  {
+    while (messageBoxOpen)
+    {
+      if (lvglLock())
+      {
+        lv_timer_handler();
+        lvglUnlock();
+      }
+      delay(10);
+    }
   }
 }
 
