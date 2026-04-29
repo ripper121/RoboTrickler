@@ -40,6 +40,20 @@ bool readProfile(const char *filename, Config &config)
     return false;
   }
 
+  config.profile_stepsPerUnit = 0;
+  config.profile_tolerance = 0.000;
+  config.profile_alarmThreshold = 1.000;
+  config.profile_count = 0;
+  for (int i = 0; i < 16; i++)
+  {
+    config.profile_num[i] = 1;
+    config.profile_weight[i] = 0;
+    config.profile_steps[i] = 0;
+    config.profile_speed[i] = 0;
+    config.profile_measurements[i] = 0;
+    config.profile_reverse[i] = false;
+  }
+
   for (JsonPair item : doc.as<JsonObject>())
   {
     int item_key = ((String(item.key().c_str()).toInt()) - 1);
@@ -62,7 +76,10 @@ bool readProfile(const char *filename, Config &config)
     config.profile_speed[item_key] = item.value()["speed"];
     config.profile_measurements[item_key] = item.value()["measurements"];
     config.profile_reverse[item_key] = item.value()["reverse"] | false;
-    config.profile_count = item_key + 1;
+    if ((item_key + 1) > config.profile_count)
+    {
+      config.profile_count = item_key + 1;
+    }
   }
   DEBUG_PRINTLN("POWDER_AKTIVE");
   file.close();
@@ -96,6 +113,7 @@ bool loadConfiguration(const char *filename, Config &config)
   {
     DEBUG_PRINT("deserializeJson() failed on config.txt: ");
     DEBUG_PRINTLN(error.c_str());
+    file.close();
     return 0;
   }
 
@@ -197,6 +215,7 @@ void getProfileList()
   if (!root.isDirectory())
   {
     DEBUG_PRINTLN("Not a directory");
+    root.close();
     return;
   }
 
@@ -208,7 +227,10 @@ void getProfileList()
   while (file)
   {
     if (profileCounter > 31)
+    {
+      file.close();
       break;
+    }
     if (file.isDirectory())
     {
       DEBUG_PRINT("  DIR : ");
@@ -231,6 +253,8 @@ void getProfileList()
     }
     file = root.openNextFile();
   }
+
+  root.close();
 
   profileListCount = profileCounter;
   DEBUG_PRINT("  profileListCount: ");

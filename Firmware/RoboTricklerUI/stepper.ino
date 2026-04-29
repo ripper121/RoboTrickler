@@ -1,13 +1,15 @@
+#define FULL_STEP 1
+
 void setStepperSpeed(int stepperNum, int _stepperSpeed)
 {
   if (stepperNum == 1)
   {
-    stepper1.begin(_stepperSpeed, 1);
+    stepper1.begin(_stepperSpeed, FULL_STEP);
     stepper1.setEnableActiveState(LOW);
   }
   if (stepperNum == 2)
   {
-    stepper2.begin(_stepperSpeed, 1);
+    stepper2.begin(_stepperSpeed, FULL_STEP);
     stepper2.setEnableActiveState(LOW);
   }
 }

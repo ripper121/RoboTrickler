@@ -67,7 +67,6 @@ bool loadFromSdCard(String path)
   else if (path.endsWith(".gz"))
   {
     dataType = "application/x-gzip";
-    server.sendHeader("Content-Encoding", "gzip");
   }
   else
   {
@@ -88,31 +87,33 @@ bool loadFromSdCard(String path)
   dataFile.close();
 
   String pathWithGz = path + ".gz";
-  if (SD.exists(pathWithGz) || SD.exists(path))
-  {                            // If the file exists, either as a compressed archive, or normal
-    if (SD.exists(pathWithGz)) // If there's a compressed version available{
-      path += ".gz";           // Use the compressed version
-    dataFile = SD.open(path.c_str());
-    if (dataFile.isDirectory())
-    {
-      path += "/index.html";
-      if (SD.exists(pathWithGz)) // If there's a compressed version available{
-        path += ".gz";           // Use the compressed version
-      dataType = "text/html";
-    }
-
-    if (!dataFile)
-    {
-      return false;
-    }
-
-    DEBUG_PRINTLN(String("\tSent file: ") + path);
-    if (server.streamFile(dataFile, dataType) != dataFile.size())
-    {
-      DEBUG_PRINTLN("Sent less data than expected!");
-    }
-    dataFile.close();
+  if (SD.exists(pathWithGz))
+  {
+    path = pathWithGz;
   }
+  else if (!SD.exists(path))
+  {
+    return false;
+  }
+
+  dataFile = SD.open(path.c_str());
+  if (!dataFile)
+  {
+    return false;
+  }
+
+  if (dataFile.isDirectory())
+  {
+    dataFile.close();
+    return false;
+  }
+
+  DEBUG_PRINTLN(String("\tSent file: ") + path);
+  if (server.streamFile(dataFile, dataType) != dataFile.size())
+  {
+    DEBUG_PRINTLN("Sent less data than expected!");
+  }
+  dataFile.close();
   return true;
 }
 
@@ -405,9 +406,11 @@ IPAddress stringToIPAddress(const String &ipAddressString)
   IPAddress ipAddress;
   int parts[4] = {0}; // Initialize the parts array with zeros
   int partCount = 0;
+  char ipBuffer[16];
 
   // Split the string into four parts using '.' as the delimiter
-  char *token = strtok((char *)ipAddressString.c_str(), ".");
+  strlcpy(ipBuffer, ipAddressString.c_str(), sizeof(ipBuffer));
+  char *token = strtok(ipBuffer, ".");
   while (token != NULL && partCount < 4)
   {
     parts[partCount] = atoi(token);
@@ -476,7 +479,7 @@ void initWebServer()
     IPAddress ipDNS = IPAddress(8, 8, 8, 8);
     if (String(config.IPDns).length() > 0)
     {
-      IPAddress ipDNS = stringToIPAddress(String(config.IPDns));
+      ipDNS = stringToIPAddress(String(config.IPDns));
     }
 
     if (String(config.IPStatic).length() > 0)

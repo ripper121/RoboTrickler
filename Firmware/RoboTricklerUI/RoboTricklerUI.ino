@@ -41,13 +41,13 @@ Events Run On: "Core 0"
 #include "ui.h"
 #include <TFT_eSPI.h>
 
-#define DEBUG 0
-#ifdef DEBUG
+#define DEBUG 1
+#if DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
 #else
-#define DEBUG_PRINT(x)
-#define DEBUG_PRINTLN(x)
+#define DEBUG_PRINT(...)
+#define DEBUG_PRINTLN(...)
 #endif
 
 #define DISP_TASK_STACK 4096 * 2
@@ -110,7 +110,7 @@ float lastWeight = 0;
 float addWeight = 0.1;
 int weightCounter = 0;
 int measurementCount = 0;
-float newData = false;
+bool newData = false;
 bool running = false;
 bool finished = false;
 bool firstThrow = true;
@@ -176,7 +176,8 @@ void readWeight()
   if (Serial1.available())
   {
     char buff[64];
-    Serial1.readBytesUntil(0x0A, buff, sizeof(buff));
+    size_t bytesRead = Serial1.readBytesUntil(0x0A, buff, sizeof(buff) - 1);
+    buff[bytesRead] = '\0';
 
     DEBUG_PRINTLN(String(buff));
 
@@ -298,12 +299,14 @@ void loop()
   {
     writeETime = millis();
 
+#if DEBUG
     char temp[300];
     sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());
     DEBUG_PRINTLN(temp);
 
     printf("lv_disp_tcb stackHWM: %d / %d\n", (DISP_TASK_STACK - uxTaskGetStackHighWaterMark(lv_disp_tcb)), DISP_TASK_STACK);
     printf("loop stackHWM: %d / %d\n", (getArduinoLoopTaskStackSize() - uxTaskGetStackHighWaterMark(NULL)), getArduinoLoopTaskStackSize());
+#endif
   }
 
   if (running)
@@ -399,7 +402,7 @@ void loop()
           }
           else
           {
-            int stepperSpeedOld = 0;
+            static int stepperSpeedOld[3] = {0, 0, 0};
             int profileStep = 0;
             // Serial.print("abs: ");
             // Serial.println(abs(weight - config.targetWeight), 3);
@@ -418,9 +421,12 @@ void loop()
 
             // Serial.print("Speed: ");
             // Serial.println(config.profile_speed[profileStep], DEC);
-            if (stepperSpeedOld != config.profile_speed[profileStep])
-              setStepperSpeed(config.profile_num[profileStep], config.profile_speed[profileStep]); // only change if value changed
-            stepperSpeedOld = config.profile_speed[profileStep];
+            byte stepperNum = config.profile_num[profileStep];
+            if ((stepperNum >= 1) && (stepperNum <= 2) && (stepperSpeedOld[stepperNum] != config.profile_speed[profileStep]))
+            {
+              setStepperSpeed(stepperNum, config.profile_speed[profileStep]);
+              stepperSpeedOld[stepperNum] = config.profile_speed[profileStep];
+            }
 
             // Serial.print("Stepp: ");
             // Serial.println(config.profile_steps[profileStep], DEC);
