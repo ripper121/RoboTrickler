@@ -4,7 +4,7 @@ Stand: Firmware 2.10.
 
 ## Erste Schritte
 
-1. Verbinde die Steuereinheit mit der Waage via RS-232 Stecker.
+1. Verbinde die Steuereinheit mit der Waage über den RS-232-Stecker.
 2. Verbinde die Steuereinheit mit dem Trickler.
 3. Stelle sicher, dass sich die SD-Karte in der Steuereinheit befindet.
 4. Schalte die Waage an und nulle diese mit leerer Pulverpfanne (TARE).
@@ -18,7 +18,7 @@ Der Robo-Trickler startet mit dem in `config.txt` eingetragenen Profil. Auf der 
 
 Wähle im Profil-Tab ein passendes Pulver aus. Falls das gewünschte Pulver nicht vorhanden ist, kann zum Testen das `avg` Pulverprofil genommen werden. `avg` ist ein Durchschnittsprofil und funktioniert mit vielen Pulvern, ist aber nicht optimal. Für gutes und schnelles Trickeln sollte jedes Pulver ein eigenes Profil bekommen.
 
-**Für jedes Pulver sollte ein eigenes Profil angelegt werden, um ein optimales Trickeln zu gewährleisten.**
+**Für jedes Pulver muss ein eigenes Profil angelegt werden, um ein optimales Trickeln zu gewährleisten.**
 
 **Jede Waage muss vor dem Gebrauch warm laufen, je nach Modell bis zu 1 Stunde. Sonst kann der angezeigte Wert driften und die Waage geht nach dem Leeren der Pulverpfanne nicht sauber auf 0 zurück.**
 
@@ -51,7 +51,7 @@ dazu gehört die Datei:
 /profiles/avg.txt
 ```
 
-Die Profilliste im Display und über die Web API enthält nur gültige Profile. Ungültige Profile werden beim Scannen ignoriert und im Display gemeldet. Wenn das aktuell ausgewählte Profil beim Start oder beim Starten des Trickelns nicht geladen werden kann, benennt die Firmware die Datei nach `.cor.txt` um, stellt auf `calibrate` um und startet neu.
+Die Profilliste im Display und über die Web-API enthält nur gültige Profile. Ungültige Profile werden beim Scannen ignoriert und im Display gemeldet. Wenn das aktuell ausgewählte Profil beim Start oder beim Starten des Trickelns nicht geladen werden kann, benennt die Firmware die Datei nach `.cor.txt` um, stellt auf `calibrate` um und startet neu.
 
 ## Automatisches Profil aus Kalibrierlauf erstellen
 
@@ -68,20 +68,20 @@ Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte:
 
 Dieses Profil dreht den Trickler 100 Umdrehungen, weil 200 Schritte einer Umdrehung entsprechen.
 
-**Die Waage muss fuer den Kalibrierlauf auf GRAIN gestellt sein.**
+**Die Waage muss für den automatischen Kalibrierlauf auf Grain gestellt sein.** Die Firmware übernimmt den gemessenen Wert direkt als Grain und zeigt die Bestätigung als `gn` an.
 
 Vorgehen:
 
 1. Wähle im Profil-Tab `calibrate`.
-2. Stelle ein ausreichend hohes Zielgewicht ein, z.B. mehr als 3 g oder mehr als 40 gn.
+2. Stelle ein ausreichend hohes Zielgewicht ein, z.B. mehr als 40 gn.
 3. Drücke Start.
-4. Lasse den Kalibrierlauf bei frisch gefülltem Trickler am besten 3-mal laufen, damit das Rohr gleichmäßig gefüllt ist. Hier einfach bei `Create profile from calibration?` auf `NO` Klicken, damit kein neues Profil erstellt wird.
+4. Lasse den Kalibrierlauf bei frisch gefülltem Trickler am besten 3-mal laufen, damit das Rohr gleichmäßig gefüllt ist. Klicke dabei bei `Create profile from calibration?` auf `No`, damit noch kein neues Profil erstellt wird.
 5. Nach dem Kalibrierlauf liest die Firmware das stabile Gewicht von der Waage.
-6. Bestätige am Display `Create profile from calibration?` mit `YES`.
+6. Bestätige am Display `Create profile from calibration?` mit `Yes`.
 
 Die Firmware erstellt dann automatisch ein neues Profil in `/profiles` mit dem Namen `powder_000.txt`, `powder_001.txt` usw., wählt dieses Profil aus und speichert es in `config.txt`.
 
-Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `unitsPerThrow` wird aus `Kalibriergewicht / 100` berechnet.
+Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `unitsPerThrow` wird aus `Kalibriergewicht / 100` berechnet. Die Firmware legt fünf Feinschritte an (`1.929`, `0.965`, `0.482`, `0.241`, `0.000` gn) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten Schrittzahlen.
 
 ## Profil Generator
 
@@ -92,6 +92,10 @@ Alternativ kann ein Profil mit `profileGenerator.html` erzeugt werden. Die Datei
 ```
 
 Wenn WLAN aktiv ist, ist der Generator auch im Webbrowser erreichbar.
+
+Video Anleitung:
+
+[![youtube video](https://img.youtube.com/vi/Y3HOAB9iIfA/0.jpg)](https://www.youtube.com/watch?v=Y3HOAB9iIfA)
 
 1. Öffne den Profile Generator.
 2. Trage bei `Weight of calibration run` die Pulvermenge des Kalibrierlaufs ein.
@@ -195,7 +199,7 @@ Beispiel für das neue Profilformat:
 
 ### `general`
 
-* `targetWeight`: Wird beim Laden des Profils übernommen.
+* `targetWeight`: Wird beim Laden des Profils übernommen. Änderungen am Display werden beim Starten des Trickelns wieder in dieses Profil geschrieben; Änderungen über `/setTarget` werden sofort geschrieben.
 * `tolerance`: erlaubte Abweichung zum Zielgewicht. Bei `0.000` muss der Zielwert ohne Toleranz erreicht werden.
 * `alarmThreshold`: Überwurf-Grenze. Wenn `targetWeight + alarmThreshold` erreicht oder überschritten wird, stoppt die Firmware, piept mehrfach und zeigt eine Warnung an. Bei `0` ist der Alarm deaktiviert.
 * `weightGap`: Abstand zum Zielgewicht, bei dem der automatische erste Grobwurf enden soll.
@@ -335,7 +339,7 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 * `scale.protocol`: unterstützte Werte sind `GG`, `SBI`, `KERN`, `KERN-ABT`, `AD`, `CUSTOM` und leer für kein aktives Anfragekommando.
 * `scale.customCode`: nur bei `CUSTOM`; Kommando, mit dem Messwerte von der Waage angefordert werden.
 * `scale.baud`: Baudrate der Waage, meistens `9600`.
-* `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewaehlten Profil.
+* `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil.
 * `beeper`: `done`, `button`, `both` oder `off`.
 * `fw_check`: `true` prüft beim WLAN-Start, ob eine neue Firmware verfügbar ist.
 
@@ -355,8 +359,8 @@ Prüfe `config.txt` und das verwendete Pulverprofil mit [dieser Seite](https://j
 
 Es gibt zwei Möglichkeiten, ein Firmware-Update durchzuführen:
 
-1. Kopiere `update.bin` auf die SD-Karte.
-2. Führe das Update via Webbrowser über `FW Update` oder `http://robo-trickler.local/fwupdate` durch.
+1. Kopiere `update.bin` in das Hauptverzeichnis der SD-Karte und starte den Trickler neu. Nach erfolgreichem Update löscht die Firmware die Datei und startet erneut.
+2. Führe das Update über den Webbrowser mit `FW Update` oder `http://robo-trickler.local/fwupdate` durch.
 
 Die neueste Firmware findest du [hier](https://github.com/ripper121/RoboTrickler/releases).
 
@@ -404,13 +408,13 @@ Mit dem File Browser kannst du Dateien auf der SD-Karte über den Webbrowser bea
 
 ![image](https://github.com/ripper121/RoboTrickler/assets/11836272/e3c420b0-bd87-42ac-ae9b-8e6ad72f0107)
 
-## Web API
+## Web-API
 
 Diese Endpunkte können im Browser oder aus einer eigenen Steuerung aufgerufen werden:
 
 * `GET /getWeight`: aktuelles Gewicht lesen.
 * `GET /getTarget`: Zielgewicht lesen.
-* `GET /setTarget?targetWeight=WERT`: Zielgewicht setzen. Beispiel: `/setTarget?targetWeight=40`.
+* `GET /setTarget?targetWeight=WERT`: Zielgewicht setzen und im aktuellen Profil speichern. Erlaubt sind Werte größer `0` und kleiner `999`. Beispiel: `/setTarget?targetWeight=40`.
 * `GET /getProfile`: aktuelles Profil lesen.
 * `GET /getProfileList`: Liste der erkannten Profile als JSON lesen.
 * `GET /setProfile?profileNumber=NUMMER`: Profil über die Nummer aus der Profilliste wählen.
@@ -567,9 +571,9 @@ Jumper: RXD rechts, TXD links
 
 ```text
 1 rot   RXD
-2 weiss GND
+2 weiß  GND
 3 gelb
-4 gruen TXD
+4 grün  TXD
 5 blau
 ```
 
