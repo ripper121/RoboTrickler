@@ -146,6 +146,8 @@ void startTrickler()
     if (tempProfile != String(config.profile))
     {
         String profile_filename = profileFilename(config.profile);
+        String infoText = String("Loading profile: ") + config.profile;
+        updateDisplayLog(infoText, true);
         if (!readProfile(profile_filename.c_str(), config))
         {
             corruptProfile(profile_filename);
@@ -159,10 +161,14 @@ void startTrickler()
 
     if (tempTargetWeight != config.targetWeight)
     {
+        String infoText = "Saving target weight...";
+        updateDisplayLog(infoText, true);
         saveTargetWeight(config.targetWeight);
     }
     tempTargetWeight = config.targetWeight;
 
+    String infoText = "Starting trickler...";
+    updateDisplayLog(infoText, true);
     startMeasurment();
 }
 
@@ -172,7 +178,8 @@ void stopTrickler()
     setLabelText(ui_LabelTricklerStart, "Start");
     setObjBgColor(ui_ButtonTricklerStart, 0x00FF00);
     setLabelText(ui_LabelTricklerWeight, "-.-");
-    setLabelText(ui_LabelInfo, "");
+    String infoText = "Stopped";
+    updateDisplayLog(infoText, true);
 }
 
 void startMeasurment()
@@ -207,9 +214,15 @@ void setProfile(int num)
             profileListBuff[num].c_str(), // <- source
             sizeof(config.profile));      // <- destination's capacity
     profileListCounter = num;
+
+    String infoText = String("Selecting profile: ") + config.profile;
+    updateDisplayLog(infoText, true);
+
     saveConfiguration("/config.txt", config);
 
     String profile_filename = profileFilename(config.profile);
+    infoText = String("Loading profile: ") + config.profile;
+    updateDisplayLog(infoText, true);
     if (!readProfile(profile_filename.c_str(), config))
     {
         corruptProfile(profile_filename);
@@ -223,6 +236,8 @@ void setProfile(int num)
 
     setLabelText(ui_LabelProfile, config.profile);
     setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+    infoText = String("Profile ready: ") + config.profile;
+    updateDisplayLog(infoText, true);
 }
 
 void serialFlush()
@@ -256,8 +271,12 @@ void initSetup()
 
     updateDisplayLog(String("Robo-Trickler v" + String(FW_VERSION, 2) + " // strenuous.dev").c_str());
 
+    String infoText = "Init steppers...";
+    updateDisplayLog(infoText, true);
     initStepper();
 
+    infoText = "Mounting SD card...";
+    updateDisplayLog(infoText, true);
     SDspi = new SPIClass(HSPI);
     SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
     if (!SD.begin(GRBL_SPI_SS, *SDspi, SD_SPI_FREQ, "/sd", 10))
@@ -305,6 +324,8 @@ void initSetup()
         }
     }
 
+    infoText = "Loading config...";
+    updateDisplayLog(infoText, true);
     if (!loadConfiguration("/config.txt", config))
     {
         String readError = getSdReadError();
@@ -357,6 +378,8 @@ void initSetup()
         return;
     }
 
+    infoText = "Reading profiles...";
+    updateDisplayLog(infoText, true);
     getProfileList();
 
     bool selectedProfileFound = false;
@@ -390,6 +413,8 @@ void initSetup()
     }
 
     String profile_filename = profileFilename(config.profile);
+    infoText = String("Loading profile: ") + config.profile;
+    updateDisplayLog(infoText, true);
     if (!readProfile(profile_filename.c_str(), config))
     {
         corruptProfile(profile_filename);
@@ -397,6 +422,8 @@ void initSetup()
     }
     tempProfile = config.profile;
 
+    infoText = "Starting scale serial...";
+    updateDisplayLog(infoText, true);
     Serial1.begin(config.scale_baud, SERIAL_8N1, SCALE_RX_PIN, SCALE_TX_PIN);
 
     initUpdate();
@@ -414,6 +441,8 @@ void initSetup()
 
     tempTargetWeight = config.targetWeight;
 
+    infoText = "Ready";
+    updateDisplayLog(infoText, true);
     DEBUG_PRINTLN("Setup done.");
 }
 
@@ -421,10 +450,17 @@ void saveTargetWeight(float weight)
 {
     config.targetWeight = weight;
     setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+    String infoText = "Writing target to profile...";
+    updateDisplayLog(infoText, true);
     if (!saveProfileTargetWeight(config.profile, config.targetWeight))
     {
         String readError = getSdReadError();
         updateDisplayLog(readError.length() > 0 ? readError : "Target weight save failed!", true);
+    }
+    else
+    {
+        infoText = "Target saved";
+        updateDisplayLog(infoText, true);
     }
     tempTargetWeight = config.targetWeight;
 }

@@ -202,6 +202,8 @@ String getSdReadError()
 bool readProfile(const char *filename, Config &config)
 {
   setSdReadError("");
+  String infoText = String("Reading ") + filename;
+  updateDisplayLog(infoText, true);
 
   if (!SD.exists(filename))
   {
@@ -315,6 +317,8 @@ bool readProfile(const char *filename, Config &config)
 
   // doc.garbageCollect();
 
+  infoText = String("Loaded ") + config.profile;
+  updateDisplayLog(infoText, true);
   return true;
 }
 
@@ -527,6 +531,9 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
     return false;
   }
 
+  String infoText = String("Creating profile: ") + profileName;
+  updateDisplayLog(infoText, true);
+
   const float diffWeights[5] = {1.929, 0.965, 0.482, 0.241, 0.000};
   const int measurements[5] = {2, 2, 5, 10, 15};
   const float rs232LimitFactor = 0.65;
@@ -580,6 +587,8 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   }
 
   String filename = "/profiles/" + profileName + ".txt";
+  infoText = String("Writing profile: ") + profileName;
+  updateDisplayLog(infoText, true);
   File file = SD.open(filename.c_str(), FILE_WRITE);
   if (!file)
   {
@@ -596,6 +605,8 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
     return false;
   }
 
+  infoText = "Refreshing profile list...";
+  updateDisplayLog(infoText, true);
   getProfileList();
   for (int i = 0; i < profileListCount; i++)
   {

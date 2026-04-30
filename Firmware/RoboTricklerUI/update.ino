@@ -76,7 +76,7 @@ void updateFromFS(fs::FS &fs)
   }
   else
   {
-    updateDisplayLog("Could not load update.bin from sd root");
+    updateDisplayLog("No new firmware found");
   }
 }
 
