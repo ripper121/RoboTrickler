@@ -22,7 +22,7 @@
 /*
 Legacy Arduino IDE 1.8.19
 
-Boards-Manager esp32 - Espressif Systems version 3.1.3
+Boards-Manager esp32 - Espressif Systems version 3.3.8
 
 Tools
 Board: "ESP32 Dev Module"
@@ -41,6 +41,7 @@ Events Run On: "Core 0"
 // 3 seconds WDT
 // #define WDT_TIMEOUT 10
 
+#include <lv_conf.h>
 #include <lvgl.h>
 #include "ui.h"
 
@@ -63,8 +64,6 @@ Events Run On: "Core 0"
 #define DISP_TASK_CORE 0
 TaskHandle_t lv_disp_tcb = NULL;
 SemaphoreHandle_t lvglMutex = NULL;
-/*Change to your screen resolution*/
-static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[LV_HOR_RES_MAX * LV_VER_RES_MAX / 10];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 

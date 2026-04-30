@@ -10,7 +10,9 @@ void ui_Screen1_screen_init(void)
 ui_Screen1 = lv_obj_create(NULL);
 lv_obj_clear_flag( ui_Screen1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
-ui_TabView = lv_tabview_create(ui_Screen1, LV_DIR_TOP, 35);
+ui_TabView = lv_tabview_create(ui_Screen1);
+lv_tabview_set_tab_bar_position(ui_TabView, LV_DIR_TOP);
+lv_tabview_set_tab_bar_size(ui_TabView, 35);
 lv_obj_set_width( ui_TabView, lv_pct(100));
 lv_obj_set_height( ui_TabView, lv_pct(100));
 lv_obj_set_align( ui_TabView, LV_ALIGN_CENTER );

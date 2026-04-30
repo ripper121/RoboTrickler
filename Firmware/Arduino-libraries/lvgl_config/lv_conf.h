@@ -17,7 +17,9 @@
 #ifndef LV_CONF_H
 #define LV_CONF_H
 
+#ifndef __ASSEMBLY__
 #include <stdint.h>
+#endif
 
 #define LV_HOR_RES_MAX          (480)
 #define LV_VER_RES_MAX          (320)
@@ -83,22 +85,8 @@
    HAL SETTINGS
  *====================*/
 
-/*Default display refresh period. LVG will redraw changed areas with this period time*/
-#define LV_DISP_DEF_REFR_PERIOD 10      /*[ms]*/
-
-/*Input device read period in milliseconds*/
-#define LV_INDEV_DEF_READ_PERIOD 10     /*[ms]*/
-
-/*Use a custom tick source that tells the elapsed time in milliseconds.
- *It removes the need to manually update the tick with `lv_tick_inc()`)*/
-#define LV_TICK_CUSTOM 1
-#if LV_TICK_CUSTOM
-    #define LV_TICK_CUSTOM_INCLUDE "Arduino.h"         /*Header for the system time function*/
-    #define LV_TICK_CUSTOM_SYS_TIME_EXPR (millis())    /*Expression evaluating to current system time in ms*/
-    /*If using lvgl as ESP32 component*/
-    #define LV_TICK_CUSTOM_INCLUDE "esp_timer.h"
-    #define LV_TICK_CUSTOM_SYS_TIME_EXPR ((esp_timer_get_time() / 1000LL))
-#endif   /*LV_TICK_CUSTOM*/
+/*Default display refresh, input device read and animation step period.*/
+#define LV_DEF_REFR_PERIOD 10      /*[ms]*/
 
 /*Default Dot Per Inch. Used to initialize default sizes such as widgets sized, style paddings.
  *(Not so important, you can adjust it to modify default sizes and spaces)*/
@@ -110,9 +98,6 @@
 
 /* Input device default settings.
  * Can be changed in the Input device driver (`lv_indev_drv_t`)*/
-
-/* Input device read period in milliseconds */
-#define LV_INDEV_DEF_READ_PERIOD          10
 
 /*=======================
  * FEATURE CONFIGURATION
@@ -493,7 +478,7 @@
 
 #define LV_USE_BTN        1
 
-#define LV_USE_BTNMATRIX  1
+#define LV_USE_BTNMATRIX  0
 
 #define LV_USE_CANVAS     0
 
@@ -578,6 +563,8 @@
 
 #define LV_USE_SPINNER    0
 
+#define LV_USE_SCALE      0
+
 #define LV_USE_TABVIEW    1
 
 #define LV_USE_TILEVIEW   0
@@ -603,7 +590,7 @@
 #endif /*LV_USE_THEME_DEFAULT*/
 
 /*A very simple theme that is a good starting point for a custom theme*/
-#define LV_USE_THEME_BASIC 1
+#define LV_USE_THEME_BASIC 0
 
 /*A theme designed for monochrome displays*/
 #define LV_USE_THEME_MONO 0
