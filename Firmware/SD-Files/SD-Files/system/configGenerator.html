@@ -2,44 +2,46 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="./resources/favicon.ico">
     <title>Configuration Page</title>
     <link rel="stylesheet" href="./resources/style.css">
+    <script src="./lang.js"></script>
 </head>
 
 <body>
     <div class="card">
-        <h2>Configuration Settings</h2>
+        <h2 data-i18n="config.title">Configuration Settings</h2>
         <form id="configForm">
             <fieldset>
-                <legend>WiFi Settings</legend>
-                <label for="wifi_ssid">Name / SSID:</label>
+                <legend data-i18n="config.wifi">WiFi Settings</legend>
+                <label for="wifi_ssid" data-i18n="config.ssid">Name / SSID:</label>
                 <input type="text" id="wifi_ssid" name="wifi_ssid" maxlength="32" placeholder="MyWifiName"><br>
 
-                <label for="wifi_psk">Password / PSK:</label>
+                <label for="wifi_psk" data-i18n="config.password">Password / PSK:</label>
                 <input type="text" id="wifi_psk" name="wifi_psk" maxlength="64" placeholder="MyWifiPassword"><br>
                 <fieldset>
-                    <legend>IP Settings (optional)</legend>
-                    <label for="IPStatic">Static IP:</label>
+                    <legend data-i18n="config.ipSettings">IP Settings (optional)</legend>
+                    <label for="IPStatic" data-i18n="config.staticIp">Static IP:</label>
                     <input type="text" id="IPStatic" name="IPStatic" maxlength="15" size="15"
                         placeholder="192.168.178.100"><br>
 
-                    <label for="IPGateway">Gateway:</label>
+                    <label for="IPGateway" data-i18n="config.gateway">Gateway:</label>
                     <input type="text" id="IPGateway" name="IPGateway" maxlength="15" size="15"
                         placeholder="192.168.178.1"><br>
 
-                    <label for="IPSubnet">Subnet:</label>
+                    <label for="IPSubnet" data-i18n="config.subnet">Subnet:</label>
                     <input type="text" id="IPSubnet" name="IPSubnet" maxlength="15" size="15"
                         placeholder="255.255.255.0"><br>
 
-                    <label for="IPDNS">DNS:</label>
+                    <label for="IPDNS" data-i18n="config.dns">DNS:</label>
                     <input type="text" id="IPDNS" name="IPDNS" maxlength="15" size="15" placeholder="8.8.8.8"><br>
                 </fieldset>
             </fieldset>
 
             <fieldset>
-                <legend>Scale Settings</legend>
-                Protocol:
+                <legend data-i18n="config.scale">Scale Settings</legend>
+                <span data-i18n="config.protocol">Protocol:</span>
                 <select name="scale_protocol">
                     <option value="GG" selected>G&G</option>
                     <option value="SBI">Sartorius</option>
@@ -49,27 +51,33 @@
                     <option value="CUSTOM">Custom</option>
                     <option value="">None</option>
                 </select><br>
-                Baud: <input type="number" name="scale_baud" value="9600"><br>
+                <span data-i18n="config.baud">Baud:</span> <input type="number" name="scale_baud" value="9600"><br>
             </fieldset>
 
-            <label for="beeper">Beeper:</label>
+            <label for="beeper" data-i18n="config.beeper">Beeper:</label>
             <select name="beeper">
-                <option value="done" selected>Done</option>
-                <option value="button">Button</option>
-                <option value="both">Both</option>
-                <option value="off">Off</option>
+                <option value="done" selected data-i18n="config.done">Done</option>
+                <option value="button" data-i18n="config.button">Button</option>
+                <option value="both" data-i18n="config.both">Both</option>
+                <option value="off" data-i18n="config.off">Off</option>
             </select><br>
 
-            <label for="fw_check">Check for new Firmware:</label>
+            <label for="language" data-i18n="config.language">Language:</label>
+            <select name="language">
+                <option value="en" data-i18n="config.english">English</option>
+                <option value="de" selected data-i18n="config.german">Deutsch</option>
+            </select><br>
+
+            <label for="fw_check" data-i18n="config.fwCheck">Check for new Firmware:</label>
             <input type="checkbox" name="fw_check" checked><br><br>
 
 
         </form>
-        <h2>Generated config.txt:</h2>
+        <h2 data-i18n="config.generated">Generated config.txt:</h2>
         <textarea id="jsonOutput"></textarea>
-        <button id="downloadButton" class="button">Download</button>
-        <button id="saveButton" class="button">Save</button><br>
-        <button onClick='javascript:history.back()' class="button">Back</button>
+        <button id="downloadButton" class="button" data-i18n="config.download">Download</button>
+        <button id="saveButton" class="button" data-i18n="config.save">Save</button><br>
+        <button onClick='javascript:history.back()' class="button" data-i18n="nav.back">Back</button>
 
     </div>
 
@@ -99,6 +107,7 @@
                 },
                 profile: jsonObject.profile || 'calibrate',
                 beeper: jsonObject.beeper || 'done',
+                language: jsonObject.language || 'en',
                 fw_check: jsonObject.fw_check !== undefined ? jsonObject.fw_check : true
             };
         }
@@ -122,6 +131,7 @@
                 },
                 profile: "calibrate",
                 beeper: formData.get('beeper'),
+                language: formData.get('language'),
                 fw_check:  formData.get('fw_check') === 'on',
             };
             jsonOutput.value = JSON.stringify(jsonObject, null, 4);
@@ -146,6 +156,7 @@
                 configForm.scale_baud.value = jsonObject.scale.baud || 9600;
 
                 configForm.beeper.value = jsonObject.beeper || 'done';
+                configForm.language.value = jsonObject.language || 'en';
 
                 // Update boolean fields
                 configForm.fw_check.checked = jsonObject.fw_check || false;
@@ -205,7 +216,7 @@
         function httpPostProcessRequest() {
             if (xmlHttp.readyState == 4) {
                 if (xmlHttp.status == 200)
-                    alert("Config Saved!\nPlease reboot the Robo-Trickler to load new config.txt");
+                    alert(window.rtT ? rtT('alerts.configSaved', "Config Saved!\nPlease reboot the Robo-Trickler to load new config.txt") : "Config Saved!\nPlease reboot the Robo-Trickler to load new config.txt");
                 else
                     alert("ERROR[" + xmlHttp.status + "]: " + xmlHttp.responseText);
             }

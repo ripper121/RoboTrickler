@@ -76,6 +76,7 @@ struct Config
   char IPDns[16];
 
   char beeper[16];
+  char language[8];
   bool fwCheck;
   float targetWeight;
   char scale_protocol[32];
@@ -451,7 +452,7 @@ void readWeight()
     }
     if (timeout)
     {
-      updateDisplayLog("Timeout! Check RS232 Wiring & Settings!", true);
+      updateDisplayLog(langText("status_timeout"), true);
       delay(500);
       newData = false;
     }
@@ -483,16 +484,16 @@ void handleCalibrationProfilePrompt()
     calibrationProfilePromptPending = false;
     newData = false;
     weightCounter = 0;
-    if (confirmBox(String("Create profile from calibration?\n\nWeight: ") + String(weight, 3) + " gn", &lv_font_montserrat_14, lv_color_hex(0xFFFFFF)))
+    if (confirmBox(String(langText("msg_create_profile_prompt")) + String(weight, 3) + " gn", &lv_font_montserrat_14, lv_color_hex(0xFFFFFF)))
     {
       String profileName = "";
       if (createProfileFromCalibration(weight, profileName))
       {
-        messageBox(String("Profile created:\n\n") + profileName + ".txt", &lv_font_montserrat_14, lv_color_hex(0x00FF00), true);
+        messageBox(String(langText("msg_profile_created")) + profileName + ".txt", &lv_font_montserrat_14, lv_color_hex(0x00FF00), true);
       }
       else
       {
-        messageBox("Could not create profile!", &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+        messageBox(langText("msg_create_profile_failed"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
       }
     }
   }
@@ -563,20 +564,20 @@ void loop()
         {
           // Send Alarm
           setLabelTextColor(ui_LabelTricklerWeight, 0xFF0000);
-          updateDisplayLog("!Over trickle!", true);
+          updateDisplayLog(langText("status_over_trickle"), true);
           beep("done");
           delay(250);
           beep("done");
           delay(250);
           beep("done");
           stopTrickler();
-          messageBox("!Over trickle!\n!Check weight!", &lv_font_montserrat_32, lv_color_hex(0xFF0000), true);
+          messageBox(langText("msg_over_trickle"), &lv_font_montserrat_32, lv_color_hex(0xFF0000), true);
         }
 
         if (!finished)
         {
           beep("done");
-          updateDisplayLog("Done :)", true);
+          updateDisplayLog(langText("status_done"), true);
         }
         measurementCount = 0;
         finished = true;
@@ -586,7 +587,7 @@ void loop()
       {
         if (weight >= 0)
         {
-          updateDisplayLog("Running...", true);
+          updateDisplayLog(langText("status_running"), true);
           setLabelTextColor(ui_LabelTricklerWeight, 0xFFFFFF);
 
           DEBUG_PRINTLN("Profile Running");
@@ -597,7 +598,7 @@ void loop()
             firstThrow = false;
             if (!runBulkStepperMove(infoText))
             {
-              updateDisplayLog("Bulk trickle failed!", true);
+              updateDisplayLog(langText("status_bulk_failed"), true);
               stopTrickler();
               return;
             }
@@ -616,7 +617,7 @@ void loop()
 
           if (config.profile_count <= 0)
           {
-            updateDisplayLog("Invalid profile!", true);
+            updateDisplayLog(langText("status_invalid_profile"), true);
             stopTrickler();
             return;
           }
@@ -642,7 +643,7 @@ void loop()
 
           if ((config.profile_num[profileStep] < 1) || (config.profile_num[profileStep] > 2))
           {
-            updateDisplayLog("Invalid stepper number!", true);
+            updateDisplayLog(langText("status_invalid_stepper"), true);
             stopTrickler();
             return;
           }
@@ -675,7 +676,7 @@ void loop()
       {
         if (finished)
         {
-          updateDisplayLog("Ready", true);
+          updateDisplayLog(langText("status_ready"), true);
           finished = false;
         }
       }
@@ -688,7 +689,7 @@ void loop()
     if (millis() - readWeightTime >= 1000)
     {
       readWeightTime = millis();
-      updateDisplayLog("Get Weight...", true);
+      updateDisplayLog(langText("status_get_weight"), true);
       readWeight();
       setWeightLabel(ui_LabelTricklerWeight);
     }
@@ -699,7 +700,7 @@ void loop()
     // if WiFi is down, try reconnecting every wifiInterval seconds
     if ((WiFi.status() != WL_CONNECTED) && (millis() - wifiPreviousMillis >= wifiInterval))
     {
-      updateDisplayLog("Reconnecting to WiFi...");
+      updateDisplayLog(langText("status_reconnecting_wifi"));
       WiFi.disconnect();
       WiFi.reconnect();
       wifiPreviousMillis = millis();

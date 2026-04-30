@@ -139,13 +139,13 @@ void corruptProfile(String profile_filename)
 
 void startTrickler()
 {
-    setLabelText(ui_LabelTricklerStart, "Stop");
+    setLabelText(ui_LabelTricklerStart, langText("button_stop"));
     setObjBgColor(ui_ButtonTricklerStart, 0xFF0000);
 
     if (tempProfile != String(config.profile))
     {
         String profile_filename = profileFilename(config.profile);
-        String infoText = String("Loading profile: ") + config.profile;
+        String infoText = String(langText("status_loading_profile")) + config.profile;
         updateDisplayLog(infoText, true);
         if (!readProfile(profile_filename.c_str(), config))
         {
@@ -154,19 +154,18 @@ void startTrickler()
         }
         tempProfile = config.profile;
     }
-    char message[64];
-    snprintf(message, sizeof(message), "Profile: %s selected!", config.profile);
-    updateDisplayLog(message);
+    String selectedText = String(langText("placeholder_profile")) + ": " + config.profile + langText("status_profile_selected_suffix");
+    updateDisplayLog(selectedText);
 
     if (tempTargetWeight != config.targetWeight)
     {
-        String infoText = "Saving target weight...";
+        String infoText = langText("status_saving_target");
         updateDisplayLog(infoText, true);
         saveTargetWeight(config.targetWeight);
     }
     tempTargetWeight = config.targetWeight;
 
-    String infoText = "Starting trickler...";
+    String infoText = langText("status_starting_trickler");
     updateDisplayLog(infoText, true);
     startMeasurment();
 }
@@ -174,10 +173,10 @@ void startTrickler()
 void stopTrickler()
 {
     stopMeasurment();
-    setLabelText(ui_LabelTricklerStart, "Start");
+    setLabelText(ui_LabelTricklerStart, langText("button_start"));
     setObjBgColor(ui_ButtonTricklerStart, 0x00FF00);
     setLabelText(ui_LabelTricklerWeight, "-.-");
-    String infoText = "Stopped";
+    String infoText = langText("status_stopped");
     updateDisplayLog(infoText, true);
 }
 
@@ -214,13 +213,13 @@ void setProfile(int num)
             sizeof(config.profile));      // <- destination's capacity
     profileListCounter = num;
 
-    String infoText = String("Selecting profile: ") + config.profile;
+    String infoText = String(langText("status_selecting_profile")) + config.profile;
     updateDisplayLog(infoText, true);
 
     saveConfiguration("/config.txt", config);
 
     String profile_filename = profileFilename(config.profile);
-    infoText = String("Loading profile: ") + config.profile;
+    infoText = String(langText("status_loading_profile")) + config.profile;
     updateDisplayLog(infoText, true);
     if (!readProfile(profile_filename.c_str(), config))
     {
@@ -235,7 +234,7 @@ void setProfile(int num)
 
     setLabelText(ui_LabelProfile, config.profile);
     setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
-    infoText = String("Profile ready: ") + config.profile;
+    infoText = String(langText("status_profile_ready")) + config.profile;
     updateDisplayLog(infoText, true);
 }
 
@@ -263,18 +262,18 @@ void initSetup()
 
     updateDisplayLog(String("Robo-Trickler v" + String(FW_VERSION, 2) + " // strenuous.dev").c_str());
 
-    String infoText = "Init steppers...";
+    String infoText = langText("status_init_steppers");
     updateDisplayLog(infoText, true);
     initStepper();
 
-    infoText = "Mounting SD card...";
+    infoText = langText("status_mount_sd");
     updateDisplayLog(infoText, true);
     SDspi = new SPIClass(HSPI);
     SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
     if (!SD.begin(GRBL_SPI_SS, *SDspi, SD_SPI_FREQ, "/sd", 10))
     {
         restart_now = true;
-        messageBox(String("Card Mount Failed!\n").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+        messageBox(langText("msg_card_mount_failed"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
         return;
     }
     else
@@ -284,7 +283,7 @@ void initSetup()
         if (cardType == CARD_NONE)
         {
             restart_now = true;
-            messageBox(String("No SD card attached!\n").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+            messageBox(langText("msg_no_sd_card"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
             return;
         }
         else
@@ -305,7 +304,7 @@ void initSetup()
             else
             {
                 DEBUG_PRINTLN("UNKNOWN");
-                updateDisplayLog("CardType UNKNOWN");
+                updateDisplayLog(langText("status_card_unknown"));
             }
 
             uint64_t cardSize = SD.cardSize() / (1024 * 1024);
@@ -316,7 +315,7 @@ void initSetup()
         }
     }
 
-    infoText = "Loading config...";
+    infoText = langText("status_loading_config");
     updateDisplayLog(infoText, true);
     if (!loadConfiguration("/config.txt", config))
     {
@@ -359,18 +358,23 @@ void initSetup()
         strlcpy(config.beeper,          // <- destination
                 "done",                 // <- source
                 sizeof(config.beeper)); // <- destination's capacity
+        strlcpy(config.language,          // <- destination
+                "en",                    // <- source
+                sizeof(config.language)); // <- destination's capacity
         config.fwCheck = true;
 
         saveConfiguration("/config.txt", config);
         delay(100);
 
-        String message = String("Config File Corrupted / Not Found!\n\n") + readError + "\n\nDefault Config generated.";
+        String message = String("Config File Corrupted / Not Found!\n\n") + readError + "\n\n" + langText("msg_config_default");
         restart_now = true;
         messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
         return;
     }
 
-    infoText = "Reading profiles...";
+    applyLanguage();
+
+    infoText = langText("status_reading_profiles");
     updateDisplayLog(infoText, true);
     getProfileList();
 
@@ -405,7 +409,7 @@ void initSetup()
     }
 
     String profile_filename = profileFilename(config.profile);
-    infoText = String("Loading profile: ") + config.profile;
+    infoText = String(langText("status_loading_profile")) + config.profile;
     updateDisplayLog(infoText, true);
     if (!readProfile(profile_filename.c_str(), config))
     {
@@ -414,7 +418,9 @@ void initSetup()
     }
     tempProfile = config.profile;
 
-    infoText = "Starting scale serial...";
+    applyLanguage();
+
+    infoText = langText("status_starting_scale");
     updateDisplayLog(infoText, true);
     Serial1.begin(config.scale_baud, SERIAL_8N1, SCALE_RX_PIN, SCALE_TX_PIN);
 
@@ -433,7 +439,7 @@ void initSetup()
 
     tempTargetWeight = config.targetWeight;
 
-    infoText = "Ready";
+    infoText = langText("status_ready");
     updateDisplayLog(infoText, true);
     DEBUG_PRINTLN("Setup done.");
 }
@@ -442,16 +448,16 @@ void saveTargetWeight(float weight)
 {
     config.targetWeight = weight;
     setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
-    String infoText = "Writing target to profile...";
+    String infoText = langText("status_saving_target");
     updateDisplayLog(infoText, true);
     if (!saveProfileTargetWeight(config.profile, config.targetWeight))
     {
         String readError = getSdReadError();
-        updateDisplayLog(readError.length() > 0 ? readError : "Target weight save failed!", true);
+        updateDisplayLog(readError.length() > 0 ? readError : langText("status_saving_target_failed"), true);
     }
     else
     {
-        infoText = "Target saved";
+        infoText = langText("status_target_saved");
         updateDisplayLog(infoText, true);
     }
     tempTargetWeight = config.targetWeight;

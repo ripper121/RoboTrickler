@@ -74,6 +74,10 @@ bool loadFromSdCard(String path)
   {
     dataType = "application/javascript";
   }
+  else if (path.endsWith(".json"))
+  {
+    dataType = "application/json";
+  }
   else if (path.endsWith(".png"))
   {
     dataType = "image/png";
@@ -416,6 +420,11 @@ void handleGetProfile()
   server.send(200, "text/plain", String(config.profile));
 }
 
+void handleGetLanguage()
+{
+  server.send(200, "text/plain", String(config.language));
+}
+
 void handleGetProfileList()
 {
   String message = "{";
@@ -475,7 +484,7 @@ void makeHttpsGetRequest(String serverPath)
       DEBUG_PRINTLN(payload);
       if (FW_VERSION < payload.toFloat())
       {
-        messageBox(String("New firmware available:\n\nv" + payload + "\n\nCheck: https://robo-trickler.de").c_str(), &lv_font_montserrat_14, lv_color_hex(0x00FF00), true);
+        messageBox((String(langText("msg_new_firmware")) + payload + langText("msg_check_url")).c_str(), &lv_font_montserrat_14, lv_color_hex(0x00FF00), true);
       }
     }
     else
@@ -498,7 +507,7 @@ void initWebServer()
   WIFI_AKTIVE = false;
   if (String(config.wifi_ssid).length() > 0)
   {
-    updateDisplayLog("Connect to Wifi: ");
+    updateDisplayLog(langText("status_connect_wifi"));
     updateDisplayLog(config.wifi_ssid);
 
     WiFi.disconnect();           // added to start with the wifi off, avoid crashing
@@ -522,7 +531,7 @@ void initWebServer()
       if (!WiFi.config(staticIP, gateway, subnet, ipDNS))
       {
         // labelInfo.drawButton(false, "Static IP Failed to configure!");
-        updateDisplayLog("Static IP Failed to configure!");
+        updateDisplayLog(langText("status_static_ip_failed"));
         delay(3000);
       }
     }
@@ -531,7 +540,7 @@ void initWebServer()
       if (!WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, ipDNS))
       {
         // labelInfo.drawButton(false, "DNS Failed to configure!");
-        updateDisplayLog("DNS Failed to configure!");
+        updateDisplayLog(langText("status_dns_failed"));
         delay(3000);
       }
     }
@@ -540,11 +549,11 @@ void initWebServer()
     WiFi.begin(config.wifi_ssid, config.wifi_psk);
 
 
-    messageBox(String("Connect to Wifi: " + String(config.wifi_ssid) + "\n\nPlease wait...").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFFFFFF), false);
+    messageBox(String(langText("status_connect_wifi")) + String(config.wifi_ssid) + langText("msg_connect_wifi_wait"), &lv_font_montserrat_14, lv_color_hex(0xFFFFFF), false);
 
     if (WiFi.waitForConnectResult() == WL_CONNECTED)
     {
-      updateDisplayLog("Wifi Connected");
+      updateDisplayLog(langText("status_wifi_connected"));
       MDNS.begin(host);
 
       server.on("/list", HTTP_GET, printDirectory);
@@ -561,6 +570,7 @@ void initWebServer()
       server.on("/getWeight", handleGetWeight);
       server.on("/setProfile", handleSetProfile);
       server.on("/getProfile", handleGetProfile);
+      server.on("/getLanguage", handleGetLanguage);
       server.on("/getProfileList", handleGetProfileList);
       server.on("/getTarget", handleGetTarget);
       server.on("/setTarget", handleSetTarget);
@@ -587,12 +597,12 @@ void initWebServer()
             {
               Serial.setDebugOutput(true);
               Serial.printf("Update: %s\n", upload.filename.c_str());
-              String infoText = "Update: " + String(upload.filename);
+              String infoText = String(langText("status_update_upload")) + String(upload.filename);
               updateDisplayLog(infoText);
               if (!Update.begin(UPDATE_SIZE_UNKNOWN))
               { // start with max available size
                 Update.printError(Serial);
-                updateDisplayLog(String("Update begin failed: ") + Update.errorString());
+                updateDisplayLog(String(langText("status_update_failed")) + Update.errorString());
               }
             }
             else if (upload.status == UPLOAD_FILE_WRITE)
@@ -600,7 +610,7 @@ void initWebServer()
               if (Update.write(upload.buf, upload.currentSize) != upload.currentSize)
               {
                 Update.printError(Serial);
-                updateDisplayLog(String("Update write failed: ") + Update.errorString());
+                updateDisplayLog(String(langText("status_update_write_failed")) + Update.errorString());
               }
             }
             else if (upload.status == UPLOAD_FILE_END)
@@ -608,27 +618,27 @@ void initWebServer()
               if (Update.end(true))
               { // true to set the size to the current progress
                 Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
-                String infoText = "Update Success: " + String(upload.totalSize);
+                String infoText = String(langText("status_update_success")) + String(upload.totalSize);
                 updateDisplayLog(infoText);
               }
               else
               {
                 Update.printError(Serial);
-                updateDisplayLog(String("Update end failed: ") + Update.errorString());
+                updateDisplayLog(String(langText("status_update_end_failed")) + Update.errorString());
               }
               Serial.setDebugOutput(false);
             }
             else
             {
               Serial.printf("Update Failed Unexpectedly (likely broken connection): status=%d\n", upload.status);
-              updateDisplayLog("Update Failed Unexpectedly (likely broken connection)");
+              updateDisplayLog(langText("status_update_unexpected"));
             }
           });
 
       server.begin();
       MDNS.addService("http", "tcp", 80);
 
-      updateDisplayLog(String(String("Open http://") + host + String(".local in your browser")));
+      updateDisplayLog(String(langText("status_open_browser_prefix")) + host + langText("status_open_browser_suffix"));
 
       if (config.fwCheck)
       {
@@ -645,8 +655,8 @@ void initWebServer()
     }
     else
     {
-      updateDisplayLog("No Wifi");
-      messageBox(String("No Wifi").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFFFF00), true);
+      updateDisplayLog(langText("status_no_wifi"));
+      messageBox(langText("status_no_wifi"), &lv_font_montserrat_14, lv_color_hex(0xFFFF00), true);
     }
   }
 }

@@ -202,7 +202,7 @@ String getSdReadError()
 bool readProfile(const char *filename, Config &config)
 {
   setSdReadError("");
-  String infoText = String("Reading ") + filename;
+  String infoText = String(langText("status_loading_profile")) + filename;
   updateDisplayLog(infoText, true);
 
   if (!SD.exists(filename))
@@ -317,7 +317,7 @@ bool readProfile(const char *filename, Config &config)
 
   // doc.garbageCollect();
 
-  infoText = String("Loaded ") + config.profile;
+  infoText = String(langText("status_profile_ready")) + config.profile;
   updateDisplayLog(infoText, true);
   return true;
 }
@@ -400,6 +400,10 @@ bool loadConfiguration(const char *filename, Config &config)
   strlcpy(config.beeper,          // <- destination
           doc["beeper"] | "done", // <- source
           sizeof(config.beeper)); // <- destination's capacity
+
+  strlcpy(config.language,          // <- destination
+          doc["language"] | "en",   // <- source
+          sizeof(config.language)); // <- destination's capacity
 
   config.fwCheck = doc["fw_check"] | true;
 
@@ -520,18 +524,18 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
 {
   if (calibrationWeight <= 0.0)
   {
-    updateDisplayLog("Calibration weight invalid!", true);
+    updateDisplayLog(langText("msg_calibration_weight_invalid"), true);
     return false;
   }
 
   profileName = nextCalibrationProfileName();
   if (profileName.length() <= 0)
   {
-    updateDisplayLog("No free powder profile name!", true);
+    updateDisplayLog(langText("msg_no_free_profile_name"), true);
     return false;
   }
 
-  String infoText = String("Creating profile: ") + profileName;
+  String infoText = String(langText("status_creating_profile")) + profileName;
   updateDisplayLog(infoText, true);
 
   const float diffWeights[5] = {1.929, 0.965, 0.482, 0.241, 0.000};
@@ -582,17 +586,17 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
 
   if (!SD.exists("/profiles") && !SD.mkdir("/profiles"))
   {
-    updateDisplayLog("Failed to create profiles folder!", true);
+    updateDisplayLog(langText("msg_profiles_folder_failed"), true);
     return false;
   }
 
   String filename = "/profiles/" + profileName + ".txt";
-  infoText = String("Writing profile: ") + profileName;
+  infoText = String(langText("status_writing_profile")) + profileName;
   updateDisplayLog(infoText, true);
   File file = SD.open(filename.c_str(), FILE_WRITE);
   if (!file)
   {
-    updateDisplayLog("Failed to create profile!", true);
+    updateDisplayLog(langText("msg_profile_file_create_failed"), true);
     return false;
   }
 
@@ -601,11 +605,11 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   if (!written)
   {
     SD.remove(filename.c_str());
-    updateDisplayLog("Failed to write profile!", true);
+    updateDisplayLog(langText("msg_profile_file_write_failed"), true);
     return false;
   }
 
-  infoText = "Refreshing profile list...";
+  infoText = langText("status_refresh_profile_list");
   updateDisplayLog(infoText, true);
   getProfileList();
   for (int i = 0; i < profileListCount; i++)
@@ -617,7 +621,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
     }
   }
 
-  updateDisplayLog(String("Profile created: ") + profileName, true);
+  updateDisplayLog(String(langText("status_profile_created")) + profileName, true);
   return true;
 }
 
@@ -680,7 +684,7 @@ void scanProfileDirectory(const char *directory, byte &profileCounter, byte &inv
       }
       else if (isProfileCandidate)
       {
-        updateDisplayLog(String("Invalid profile ignored: ") + fileName);
+        updateDisplayLog(String(langText("status_invalid_profile_ignored")) + fileName);
         invalidProfileCounter++;
         if (invalidProfileCounter <= 8)
         {
@@ -705,7 +709,7 @@ void getProfileList()
 {
   profileListCount = 0;
 
-  updateDisplayLog("Search Profiles...");
+  updateDisplayLog(langText("status_search_profiles"));
 
   byte profileCounter = 0;
   byte invalidProfileCounter = 0;
@@ -725,13 +729,13 @@ void getProfileList()
   }
   if (invalidProfileCounter > 0)
   {
-    String message = "Invalid profiles found:";
+    String message = langText("msg_invalid_profiles_found");
     message += invalidProfiles;
     if (invalidProfileCounter > 8)
     {
       message += "\n...";
     }
-    message += "\n\nThey were ignored.";
+    message += langText("msg_invalid_profiles_ignored");
     messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
   }
 }
@@ -764,6 +768,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
   doc["beeper"] = config.beeper;
+  doc["language"] = config.language;
   doc["fw_check"] = config.fwCheck;
 
   // Serialize JSON to file

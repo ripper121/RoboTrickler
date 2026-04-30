@@ -2,66 +2,68 @@
 <html>
 
 <head>
+   <meta charset="UTF-8">
    <link rel="icon" type="image/x-icon" href="./resources/favicon.ico">
    <title>Profile Generator</title>
    <link rel="stylesheet" href="./resources/style.css">
+   <script src="./lang.js"></script>
 </head>
 
 <body>
    <div class="card">
-      <h1>Profile Generator</h1>
+      <h1 data-i18n="profileGenerator.title">Profile Generator</h1>
       <form id="profileForm">
          <fieldset>
-            <legend>Profile Settings</legend>
-            <label for="weightInput">Weight of calibration run:</label>
+            <legend data-i18n="profileGenerator.settings">Profile Settings</legend>
+            <label for="weightInput" data-i18n="profileGenerator.calibrationWeight">Weight of calibration run:</label>
             <input type="number" id="weightInput" step="0.0001" min="0" value="40.000"><br>
 
-            <label for="weightGapInput">Weight gap:</label>
+            <label for="weightGapInput" data-i18n="profileGenerator.weightGap">Weight gap:</label>
             <input type="number" id="weightGapInput" step="0.001" min="0" value="1.000"><br>
 
-            <label for="speedInput">Stepper speed rpm:</label>
+            <label for="speedInput" data-i18n="profileGenerator.stepperSpeed">Stepper speed rpm:</label>
             <input type="number" id="speedInput" step="1" min="5" value="200"><br>
 
-            <label for="measurementsInput">General measurements (with PLC 100-BC use 5):</label>
+            <label for="measurementsInput" data-i18n="profileGenerator.measurements">General measurements (with PLC 100-BC use 5):</label>
             <input type="number" id="measurementsInput" step="1" min="1" value="2"><br>
 
-            <label for="calcToleranceInput">Calculation tolerance in %:</label>
+            <label for="calcToleranceInput" data-i18n="profileGenerator.calcTolerance">Calculation tolerance in %:</label>
             <input type="number" id="calcToleranceInput" step="1" min="1" max="100" value="65"><br>
 
             <fieldset>
-               <legend>Trickler</legend>
-               <label for="reverseCheckbox">Reverse:</label>
+               <legend data-i18n="profileGenerator.trickler">Trickler</legend>
+               <label for="reverseCheckbox" data-i18n="profileGenerator.reverse">Reverse:</label>
                <input type="checkbox" id="reverseCheckbox"><br>
             </fieldset>
 
             <fieldset>
-               <legend>Unit</legend>
-               <label for="gramRadio">Gram:</label>
+               <legend data-i18n="profileGenerator.unit">Unit</legend>
+               <label for="gramRadio" data-i18n="profileGenerator.gram">Gram:</label>
                <input type="radio" id="gramRadio" name="weightUnit" value="Gram"><br>
 
-               <label for="grainRadio">Grain:</label>
+               <label for="grainRadio" data-i18n="profileGenerator.grain">Grain:</label>
                <input type="radio" id="grainRadio" name="weightUnit" value="Grain" checked><br>
             </fieldset>
 
-            <label for="alarmThresholdInput">Threshold for alarm:</label>
+            <label for="alarmThresholdInput" data-i18n="profileGenerator.alarmThreshold">Threshold for alarm:</label>
             <input type="number" id="alarmThresholdInput" step="0.001" min="0" value="1.000"><br>
 
-            <label for="toleranceInput">Tolerance:</label>
+            <label for="toleranceInput" data-i18n="profileGenerator.tolerance">Tolerance:</label>
             <input type="number" id="toleranceInput" step="0.001" min="0" value="0.0"><br>
 
          </fieldset>
       </form>
 
-      <button id="generateButton" class="button">Generate Profile</button><br><br>
-      <h2>Generated Profile:</h2>
+      <button id="generateButton" class="button" data-i18n="profileGenerator.generate">Generate Profile</button><br><br>
+      <h2 data-i18n="profileGenerator.generated">Generated Profile:</h2>
       <textarea id="profileOutput" rows="20" cols="40"></textarea><br>
 
-      <label for="profileName">Profile Name:</label>
+      <label for="profileName" data-i18n="profileGenerator.profileName">Profile Name:</label>
       <input type="text" id="profileName" value="powder" maxlength="16" required
          title="Filename must not contain < > : \" / \\ | ? *"><br>
-      <button id="download-btn" class="button">Download</button><br><br>
-      <button id="save-btn" class="button">Save</button><br><br>
-      <button onClick='javascript:history.back()' class="button">Back</button>
+      <button id="download-btn" class="button" data-i18n="profileGenerator.download">Download</button><br><br>
+      <button id="save-btn" class="button" data-i18n="profileGenerator.save">Save</button><br><br>
+      <button onClick='javascript:history.back()' class="button" data-i18n="nav.back">Back</button>
    </div>
 
 
@@ -209,7 +211,7 @@
       function httpPostProcessRequest() {
          if (xmlHttp.readyState == 4) {
             if (xmlHttp.status == 200)
-               alert("Profile saved!");
+               alert(window.rtT ? rtT('alerts.profileSaved', 'Profile saved!') : "Profile saved!");
             else
                alert("ERROR[" + xmlHttp.status + "]: " + xmlHttp.responseText);
          }

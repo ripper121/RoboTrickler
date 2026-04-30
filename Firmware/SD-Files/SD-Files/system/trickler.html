@@ -7,6 +7,7 @@
     <title>Robo-Trickler Interface</title>
     <link rel="icon" type="image/x-icon" href="./resources/favicon.ico">
     <link rel="stylesheet" href="./resources/style.css">
+    <script src="./lang.js"></script>
     <style>
         .button-row {
             display: flex;
@@ -49,14 +50,14 @@
 <body>
     <div class="card">
         <fieldset>
-            <legend>Trickler</legend>
+            <legend data-i18n="trickler.title">Trickler</legend>
             <fieldset>
-                <legend>Profile</legend>
+                <legend data-i18n="trickler.profile">Profile</legend>
                 <select id="dropdownMenu" class="dropdown" onchange="setProfile();">
                 </select>
             </fieldset>
             <fieldset>
-                <legend>Target Weight</legend>
+                <legend data-i18n="trickler.targetWeight">Target Weight</legend>
                 <div class="button-row">
                     <button class="button" onclick="decreaseValue()">-</button>
                     <input type="number" class="display" id="targetValueDisplay" value="0.000" step="0.001" min="0"
@@ -65,17 +66,17 @@
                 </div>
             </fieldset>
             <fieldset>
-                <legend>Weight</legend>
+                <legend data-i18n="trickler.weight">Weight</legend>
                 <div class="button-row">
                     <input type="number" class="display-secondary" id="weightDisplay" value="0.000" readonly>
                 </div>
             </fieldset>
             <div class="button-row">
-                <button class="button button-start" id="start-stop-btn" onclick="toggleStartStop()">Start</button>
+                <button class="button button-start" id="start-stop-btn" data-i18n="trickler.start" onclick="toggleStartStop()">Start</button>
             </div>
         </fieldset>
         <div class="button-row">
-            <button onClick='javascript:history.back()' class="button">Back</button>
+            <button onClick='javascript:history.back()' class="button" data-i18n="nav.back">Back</button>
         </div>
     </div>
     <script>
@@ -144,15 +145,15 @@
 
         function toggleStartStop() {
             var btn = document.getElementById('start-stop-btn');
-            if (btn.innerText === "Start") {
-                btn.innerText = "Stop";
+            if (btn.innerText === (window.rtT ? rtT('trickler.start', 'Start') : "Start")) {
+                btn.innerText = window.rtT ? rtT('trickler.stop', 'Stop') : "Stop";
                 btn.classList.remove("button-start");
                 btn.classList.add("button-stop");
                 setProfile();
                 setTarget();
                 fetch('./start').then(response => response.text());
             } else {
-                btn.innerText = "Start";
+                btn.innerText = window.rtT ? rtT('trickler.start', 'Start') : "Start";
                 btn.classList.remove("button-stop");
                 btn.classList.add("button-start");
                 fetch('./stop').then(response => response.text());

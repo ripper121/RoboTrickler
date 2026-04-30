@@ -14,26 +14,26 @@ bool performUpdate(Stream &updateSource, size_t updateSize)
     }
     if (Update.end())
     {
-      updateDisplayLog("FW Update done!");
+      updateDisplayLog(langText("status_fw_update_done"));
       if (Update.isFinished())
       {
-        updateDisplayLog("Update successfully completed. Rebooting.");
+        updateDisplayLog(langText("status_update_completed"));
         return true;
       }
       else
       {
-        updateDisplayLog("Update not finished? Something went wrong!");
+        updateDisplayLog(langText("status_update_not_finished"));
       }
     }
     else
     {
       DEBUG_PRINTLN("Error Occurred. Error #: " + String(Update.getError()));
-      updateDisplayLog(String("Update failed: ") + Update.errorString());
+      updateDisplayLog(String(langText("status_update_failed")) + Update.errorString());
     }
   }
   else
   {
-    updateDisplayLog(String("FW Update begin failed: ") + Update.errorString());
+    updateDisplayLog(String(langText("status_fw_update_begin_failed")) + Update.errorString());
   }
   return false;
 }
@@ -47,7 +47,7 @@ void updateFromFS(fs::FS &fs)
   {
     if (updateBin.isDirectory())
     {
-      updateDisplayLog("Error, update.bin is not a file");
+      updateDisplayLog(langText("status_update_not_file"));
       updateBin.close();
       return;
     }
@@ -56,12 +56,12 @@ void updateFromFS(fs::FS &fs)
 
     if (updateSize > 0)
     {
-      updateDisplayLog("Try to start update");
+      updateDisplayLog(langText("status_update_start"));
       successfully = performUpdate(updateBin, updateSize);
     }
     else
     {
-      updateDisplayLog("Error, file is empty");
+      updateDisplayLog(langText("status_update_empty"));
     }
 
     updateBin.close();
@@ -76,12 +76,12 @@ void updateFromFS(fs::FS &fs)
   }
   else
   {
-    updateDisplayLog("No new firmware found");
+    updateDisplayLog(langText("status_no_new_firmware"));
   }
 }
 
 void initUpdate()
 {
-  updateDisplayLog("Check for Firmware Update...");
+  updateDisplayLog(langText("status_check_fw_update"));
   updateFromFS(SD);
 }

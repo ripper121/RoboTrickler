@@ -136,7 +136,7 @@ void messageBox(String message, const lv_font_t *font, lv_color_t color, bool wa
       lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     }
     lv_obj_set_x(ui_ButtonMessage, 0);
-    lv_label_set_text(ui_LabelButtonMessage, "OK");
+    lv_label_set_text(ui_LabelButtonMessage, langText("button_ok"));
     messageBoxOpen = true;
     lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN);
     lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN);
@@ -178,12 +178,12 @@ bool confirmBox(String message, const lv_font_t *font, lv_color_t color)
       lv_obj_set_width(ui_LabelButtonMessageNo, LV_SIZE_CONTENT);
       lv_obj_set_height(ui_LabelButtonMessageNo, LV_SIZE_CONTENT);
       lv_obj_set_align(ui_LabelButtonMessageNo, LV_ALIGN_CENTER);
-      lv_label_set_text(ui_LabelButtonMessageNo, "No");
+      lv_label_set_text(ui_LabelButtonMessageNo, langText("button_no"));
       lv_obj_add_event_cb(ui_ButtonMessageNo, confirm_no_event_cb, LV_EVENT_CLICKED, NULL);
     }
 
     lv_obj_set_x(ui_ButtonMessage, -70);
-    lv_label_set_text(ui_LabelButtonMessage, "Yes");
+    lv_label_set_text(ui_LabelButtonMessage, langText("button_yes"));
     lv_obj_clear_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     messageBoxOpen = true;
     confirmBoxOpen = true;
@@ -211,7 +211,7 @@ bool confirmBox(String message, const lv_font_t *font, lv_color_t color)
       lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     }
     lv_obj_set_x(ui_ButtonMessage, 0);
-    lv_label_set_text(ui_LabelButtonMessage, "OK");
+    lv_label_set_text(ui_LabelButtonMessage, langText("button_ok"));
     lvglUnlock();
   }
 
