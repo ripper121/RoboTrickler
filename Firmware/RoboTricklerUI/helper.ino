@@ -35,7 +35,6 @@ IRAM_ATTR void lvgl_disp_task(void *parg)
             server.handleClient();
         }
         vTaskDelay(pdMS_TO_TICKS(5));
-        // esp_task_wdt_reset();
     }
 }
 
@@ -254,10 +253,6 @@ void serialFlush()
 void initSetup()
 {
     Serial.begin(115200); /* prepare for possible serial debug */
-
-    // esp_task_wdt_init(WDT_TIMEOUT, true); // enable panic so ESP32 restarts
-    // esp_task_wdt_add(NULL);               // add current thread to WDT watch
-    // esp_task_wdt_add(lv_disp_tcb);
 
     rtc_wdt_protect_off();
     rtc_wdt_disable();

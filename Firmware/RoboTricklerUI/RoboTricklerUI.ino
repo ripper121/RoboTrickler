@@ -38,8 +38,6 @@ Arduino Runs On: "Core 1"
 Events Run On: "Core 0"
 */
 
-// 3 seconds WDT
-// #define WDT_TIMEOUT 10
 
 #include <lv_conf.h>
 #include <lvgl.h>
@@ -64,7 +62,8 @@ Events Run On: "Core 0"
 #define DISP_TASK_CORE 0
 TaskHandle_t lv_disp_tcb = NULL;
 SemaphoreHandle_t lvglMutex = NULL;
-static lv_color_t buf[LV_HOR_RES_MAX * LV_VER_RES_MAX / 10];
+#define LV_DRAW_BUF_ROWS 10
+static lv_color_t buf[LV_HOR_RES_MAX * LV_DRAW_BUF_ROWS];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 
 SPIClass *SDspi = NULL;
@@ -708,5 +707,4 @@ void loop()
       wifiPreviousMillis = millis();
     }
   }
-  // esp_task_wdt_reset();
 }

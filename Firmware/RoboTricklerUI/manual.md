@@ -12,7 +12,7 @@ Stand: Firmware 2.10.
 
 Im Display der Steuerung sollte nun das gleiche Gewicht wie auf der Waage angezeigt werden.
 
-Falls dies nicht der Fall ist, überprüfe die [Einstellungen der Waage](https://github.com/ripper121/RoboTrickler/wiki/Anleitung#waagen) und die [Konfiguration](https://github.com/ripper121/RoboTrickler/wiki/Anleitung#konfiguration), besonders `scale.protocol` und `scale.baud`.
+Falls dies nicht der Fall ist, überprüfe die [Einstellungen der Waage](https://github.com/ripper121/RoboTrickler/wiki/Anleitung-Firmware-2.10#waagen) und die [Konfiguration](https://github.com/ripper121/RoboTrickler/wiki/Anleitung-Firmware-2.10#konfiguration), besonders `scale.protocol` und `scale.baud`.
 
 Der Robo-Trickler startet mit dem in `config.txt` eingetragenen Profil. Auf der SD-Karte ist standardmäßig `avg` vorhanden. Stelle das Zielgewicht im Display ein und drücke auf Start. Starte erst, wenn die Waage mit leerer Pulverpfanne genullt ist.
 
