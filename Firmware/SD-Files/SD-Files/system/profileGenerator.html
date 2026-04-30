@@ -14,12 +14,15 @@
          <fieldset>
             <legend>Profile Settings</legend>
             <label for="weightInput">Weight of calibration run:</label>
-            <input type="number" id="weightInput" step="0.0001" min="0" value="0.100"><br>
+            <input type="number" id="weightInput" step="0.0001" min="0" value="40.000"><br>
+
+            <label for="weightGapInput">Weight gap:</label>
+            <input type="number" id="weightGapInput" step="0.001" min="0" value="1.000"><br>
 
             <label for="speedInput">Stepper speed rpm:</label>
             <input type="number" id="speedInput" step="1" min="5" value="200"><br>
 
-            <label for="measurementsInput">Measurements (with PLC 100-BC use 5):</label>
+            <label for="measurementsInput">General measurements (with PLC 100-BC use 5):</label>
             <input type="number" id="measurementsInput" step="1" min="1" value="2"><br>
 
             <label for="calcToleranceInput">Calculation tolerance in %:</label>
@@ -27,9 +30,6 @@
 
             <fieldset>
                <legend>Trickler</legend>
-               <label for="stepsPerUnitCheckbox">Auto calc first throw:</label>
-               <input type="checkbox" id="stepsPerUnitCheckbox" checked><br>
-
                <label for="reverseCheckbox">Reverse:</label>
                <input type="checkbox" id="reverseCheckbox"><br>
             </fieldset>
@@ -43,10 +43,10 @@
                <input type="radio" id="grainRadio" name="weightUnit" value="Grain" checked><br>
             </fieldset>
 
-            <label for="alarmThresholdInput">Threshold for alarm in Grain:</label>
-            <input type="number" id="alarmThresholdInput" step="0.001" min="0" value="0.1"><br>
+            <label for="alarmThresholdInput">Threshold for alarm:</label>
+            <input type="number" id="alarmThresholdInput" step="0.001" min="0" value="1.000"><br>
 
-            <label for="toleranceInput">Tolerance in Grain:</label>
+            <label for="toleranceInput">Tolerance:</label>
             <input type="number" id="toleranceInput" step="0.001" min="0" value="0.0"><br>
 
          </fieldset>
@@ -60,6 +60,7 @@
       <input type="text" id="profileName" value="powder" maxlength="16" required
          title="Filename must not contain < > : \" / \\ | ? *"><br>
       <button id="download-btn" class="button">Download</button><br><br>
+      <button id="save-btn" class="button">Save</button><br><br>
       <button onClick='javascript:history.back()' class="button">Back</button>
    </div>
 
@@ -67,35 +68,56 @@
    <script>
       var profileJSON;
 
-      function conditionalAdd(obj, key, value, condition) {
-         if (condition) {
-            obj[key] = value;
-         }
+      function numberValue(id, fallback) {
+         const value = parseFloat(document.getElementById(id).value);
+         return isNaN(value) ? fallback : value;
       }
 
       document.getElementById("generateButton").addEventListener("click", function () {
-         const measuredWeight = parseFloat(document.getElementById("weightInput").value);
-         const speed = parseFloat(document.getElementById("speedInput").value);
+         const measuredWeight = numberValue("weightInput", 0);
+         const targetWeight = 40.000;
+         const speed = numberValue("speedInput", 200);
          const reverse = document.getElementById("reverseCheckbox").checked; // Get the checkbox value
-         const stepsPerUnitOn = document.getElementById("stepsPerUnitCheckbox").checked; // Get the checkbox value
 
          const weightUnit = document.querySelector('input[name="weightUnit"]:checked').value;
-         const tolerance = parseFloat(document.getElementById("toleranceInput").value);
-         const alarmThreshold = parseFloat(document.getElementById("alarmThresholdInput").value);
-         const calcTolerance = parseFloat(document.getElementById("calcToleranceInput").value);
-         var measurement = parseFloat(document.getElementById("measurementsInput").value);
+         const tolerance = numberValue("toleranceInput", 0);
+         const alarmThreshold = numberValue("alarmThresholdInput", weightUnit === "Grain" ? 1 : 0.1);
+         const weightGap = numberValue("weightGapInput", weightUnit === "Grain" ? 1 : 0.1);
+         const calcTolerance = numberValue("calcToleranceInput", 65);
+         var measurement = Math.round(numberValue("measurementsInput", 5));
 
 
 
 
-         if (!isNaN(measuredWeight)) {
-            const profile = {};
+         if (!isNaN(measuredWeight) && measuredWeight > 0) {
+            const profile = {
+               general: {
+                  targetWeight: parseFloat(targetWeight.toFixed(3)),
+                  tolerance: parseFloat(tolerance.toFixed(3)),
+                  alarmThreshold: parseFloat(alarmThreshold.toFixed(3)),
+                  weightGap: parseFloat(weightGap.toFixed(3)),
+                  measurements: 20
+               },
+               actuator: {
+                  stepper1: {
+                     enabled: true,
+                     unitsPerThrow: parseFloat((measuredWeight / 100).toFixed(3)),
+                     unitsPerThrowSpeed: speed
+                  },
+                  stepper2: {
+                     enabled: false,
+                     unitsPerThrow: 10.000,
+                     unitsPerThrowSpeed: 200
+                  }
+               },
+               rs232TrickleMap: []
+            };
 
             // Define the conversion factor from grams to grains
             const gramToGrain = 15.4323583529;
 
-            // Define the weight values in grams
-            let weights = [1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625, 0.0078125, 0.00390625, 0.000];
+            // Define the diff-weight map in grams.
+            let weights = [0.125, 0.0625, 0.03125, 0.015625, 0.000];
 
             // Convert weights to grains if Grain is selected
             if (weightUnit === "Grain") {
@@ -105,44 +127,27 @@
             weights = weights.map(weight => parseFloat(weight.toFixed(3)));
 
             var measurements = measurement;
+            const mapMeasurements = [2, 2, 5, 10, 15];
 
             // Loop through each weight value and calculate the profile
             for (let i = 0; i < weights.length; i++) {
                const weight = weights[i];
                var steps = Math.round((weight / measuredWeight) * ((20000 / 100) * calcTolerance));
-               if (steps < 10)
-                  steps = 10;
+               if (steps < 5)
+                  steps = 5;
 
-               if (i == 0)
-                  measurements = 10;
-               else
-                  measurements = measurement;
-               if (i == weights.length - 3)
-                  measurements = 10;
-               if (i == weights.length - 2)
-                  measurements = 15;
-               if (i == weights.length - 1)
-                  measurements = 20;
+               measurements = mapMeasurements[i] || measurement;
 
-               profile[i + 1] = {
-                  weight: weight,
+               const profileEntry = {
+                  diffWeight: weight,
+                  actuator: "stepper1",
                   steps: steps,
                   speed: speed,
+                  reverse: reverse,
                   measurements: measurements
                };
 
-               if (i == 0) {
-                  stepsPerUnit = 0;
-                  if (stepsPerUnitOn) {
-                     stepsPerUnit = Math.round((1 / measuredWeight) * ((20000 / 100) * calcTolerance));
-                     conditionalAdd(profile[i + 1], "stepsPerUnit", stepsPerUnit, true);
-                  }
-
-                  conditionalAdd(profile[i + 1], "tolerance", tolerance, true);
-                  conditionalAdd(profile[i + 1], "alarmThreshold", alarmThreshold, true);
-               }
-
-               conditionalAdd(profile[i + 1], "reverse", reverse, reverse);
+               profile.rs232TrickleMap.push(profileEntry);
             }
 
             // Convert the profile object to JSON format
@@ -195,15 +200,51 @@
          document.body.removeChild(downloadLink);
       }, false);
 
+      document.getElementById("save-btn").addEventListener("click", function () {
+         const fileName = convertToLegalFAT32Filename(document.getElementById('profileName').value.toLowerCase() + '.txt');
+         const text = document.getElementById('profileOutput').value;
+         httpPost("/profiles/" + fileName, text);
+      }, false);
+
+      function httpPostProcessRequest() {
+         if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200)
+               alert("Profile saved!");
+            else
+               alert("ERROR[" + xmlHttp.status + "]: " + xmlHttp.responseText);
+         }
+      }
+
+      function httpPost(filename, data) {
+         xmlHttp = new XMLHttpRequest();
+         xmlHttp.onreadystatechange = httpPostProcessRequest;
+         var formData = new FormData();
+         formData.append("data", new Blob([data], { type: "text/json" }), filename);
+         xmlHttp.open("POST", "/system/resources/edit");
+         xmlHttp.send(formData);
+      }
+
+      window.addEventListener("load", (event) => {
+         if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "" || location.hostname === "strenuous.dev") {
+            document.getElementById("save-btn").style.display = "none";
+         } else {
+            document.getElementById("download-btn").style.display = "none";
+         }
+      });
+
       document.getElementById("gramRadio").addEventListener("click", function () {
          document.querySelector("label[for=alarmThresholdInput]").innerHTML = "Threshold for alarm in Gram:";
          document.getElementById("alarmThresholdInput").value = 0.100;
+         document.querySelector("label[for=weightGapInput]").innerHTML = "Weight gap in Gram:";
+         document.getElementById("weightGapInput").value = 0.100;
          document.querySelector("label[for=toleranceInput]").innerHTML = "Tolerance in Gram:";
       });
 
       document.getElementById("grainRadio").addEventListener("click", function () {
          document.querySelector("label[for=alarmThresholdInput]").innerHTML = "Threshold for alarm in Grain:";
          document.getElementById("alarmThresholdInput").value = 1.000;
+         document.querySelector("label[for=weightGapInput]").innerHTML = "Weight gap in Grain:";
+         document.getElementById("weightGapInput").value = 1.000;
          document.querySelector("label[for=toleranceInput]").innerHTML = "Tolerance in Grain:";
       });
 

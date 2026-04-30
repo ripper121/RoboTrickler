@@ -1,10 +1,190 @@
+static byte profileActuatorNumber(const char *actuatorName)
+{
+  if ((actuatorName == NULL) || (strcmp(actuatorName, "stepper1") == 0))
+  {
+    return 1;
+  }
+  if (strcmp(actuatorName, "stepper2") == 0)
+  {
+    return 2;
+  }
+  return 0;
+}
+
+static const char *profileActuatorName(byte stepperNumber)
+{
+  return stepperNumber == 2 ? "stepper2" : "stepper1";
+}
+
 static bool hasRequiredProfileFields(JsonObject profileEntry)
 {
   return !profileEntry.isNull() &&
-         !profileEntry["weight"].isNull() &&
+         !profileEntry["diffWeight"].isNull() &&
+         !profileEntry["actuator"].isNull() &&
          !profileEntry["steps"].isNull() &&
          !profileEntry["speed"].isNull() &&
          !profileEntry["measurements"].isNull();
+}
+
+static bool hasCalibrationProfileFields(JsonObject profileEntry)
+{
+  return !profileEntry.isNull() &&
+         !profileEntry["actuator"].isNull() &&
+         !profileEntry["steps"].isNull() &&
+         !profileEntry["speed"].isNull();
+}
+
+static bool isCalibrationProfileFile(const char *filename)
+{
+  String normalized = String(filename);
+  normalized.replace("\\", "/");
+  normalized.toLowerCase();
+  return (normalized == "calibrate.txt") ||
+         (normalized == "calibration.txt") ||
+         normalized.endsWith("/calibrate.txt") ||
+         normalized.endsWith("/calibration.txt");
+}
+
+static bool isProfileMetadataKey(const char *key)
+{
+  return (strcmp(key, "general") == 0) ||
+         (strcmp(key, "actuator") == 0) ||
+         (strcmp(key, "rs232TrickleMap") == 0);
+}
+
+static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char *filename, Config &config, bool showErrors, bool allowCalibrationDefaults)
+{
+  bool hasRequiredFields = hasRequiredProfileFields(profileEntry);
+  if (!hasRequiredFields && (!allowCalibrationDefaults || !hasCalibrationProfileFields(profileEntry)))
+  {
+    if (showErrors)
+    {
+      setSdReadError(String("Incomplete profile entry:\n") + filename + "\nEntry: " + String(itemNumber) + "\nRequired: diffWeight, actuator, steps, speed, measurements");
+      DEBUG_PRINT("Incomplete profile entry: ");
+      DEBUG_PRINTLN(itemNumber);
+    }
+    return false;
+  }
+
+  byte stepperNumber = profileEntry["number"].isNull()
+                           ? profileActuatorNumber(profileEntry["actuator"] | "stepper1")
+                           : (byte)(profileEntry["number"] | 1);
+  int stepperSpeed = profileEntry["speed"] | 200;
+  int measurements = profileEntry["measurements"] | 5;
+  float profileWeight = profileEntry["diffWeight"] | 0.0;
+  if (profileEntry["diffWeight"].isNull())
+  {
+    profileWeight = profileEntry["weight"] | 0.0;
+  }
+  long profileSteps = profileEntry["steps"] | 0;
+  if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
+  {
+    if (showErrors)
+    {
+      setSdReadError(String("Invalid profile values:\n") + filename + "\nEntry: " + String(itemNumber));
+      DEBUG_PRINT("Invalid profile values in entry: ");
+      DEBUG_PRINTLN(itemNumber);
+    }
+    return false;
+  }
+
+  if (config.profile_count >= 16)
+  {
+    return true;
+  }
+
+  int item_key = config.profile_count;
+  if (item_key == 0)
+  {
+    config.profile_tolerance = profileEntry["tolerance"] | config.profile_tolerance;
+    config.profile_alarmThreshold = profileEntry["alarmThreshold"] | config.profile_alarmThreshold;
+  }
+  config.profile_num[item_key] = stepperNumber;
+  config.profile_weight[item_key] = profileWeight;
+  config.profile_steps[item_key] = profileSteps;
+  config.profile_speed[item_key] = stepperSpeed;
+  config.profile_measurements[item_key] = measurements;
+  config.profile_reverse[item_key] = profileEntry["reverse"] | false;
+  config.profile_count++;
+  return true;
+}
+
+static bool loadProfileEntries(JsonObject doc, const char *filename, Config &config, bool showErrors)
+{
+  bool allowCalibrationDefaults = isCalibrationProfileFile(filename);
+  JsonArray rs232TrickleMap = doc["rs232TrickleMap"].as<JsonArray>();
+  if (!rs232TrickleMap.isNull())
+  {
+    int itemNumber = 1;
+    for (JsonVariant item : rs232TrickleMap)
+    {
+      if (!loadProfileEntry(item.as<JsonObject>(), itemNumber, filename, config, showErrors, allowCalibrationDefaults))
+      {
+        return false;
+      }
+      itemNumber++;
+    }
+    return config.profile_count > 0;
+  }
+
+  if (!allowCalibrationDefaults)
+  {
+    if (showErrors)
+    {
+      setSdReadError(String("Profile has no rs232TrickleMap:\n") + filename);
+      DEBUG_PRINTLN("Profile has no rs232TrickleMap");
+    }
+    return false;
+  }
+
+  if (hasCalibrationProfileFields(doc))
+  {
+    return loadProfileEntry(doc, 1, filename, config, showErrors, true);
+  }
+
+  for (JsonPair item : doc)
+  {
+    const char *key = item.key().c_str();
+    if (isProfileMetadataKey(key))
+    {
+      continue;
+    }
+
+    int itemNumber = String(key).toInt();
+    if ((itemNumber < 1) || (itemNumber > 16))
+    {
+      if (showErrors)
+      {
+        setSdReadError(String("Invalid profile entry number:\n") + filename + "\nEntry: " + key);
+        DEBUG_PRINT("Invalid profile entry: ");
+        DEBUG_PRINTLN(key);
+      }
+      return false;
+    }
+
+    if (!loadProfileEntry(item.value().as<JsonObject>(), itemNumber, filename, config, showErrors, true))
+    {
+      return false;
+    }
+  }
+
+  return config.profile_count > 0;
+}
+
+String profileFilename(const char *profileName)
+{
+  const char *directories[] = {"/profiles/"};
+
+  for (int dirIndex = 0; dirIndex < (int)(sizeof(directories) / sizeof(directories[0])); dirIndex++)
+  {
+    String candidate = String(directories[dirIndex]) + String(profileName) + ".txt";
+    if (SD.exists(candidate.c_str()))
+    {
+      return candidate;
+    }
+  }
+
+  return "/profiles/" + String(profileName) + ".txt";
 }
 
 String sdReadError = "";
@@ -32,8 +212,6 @@ bool readProfile(const char *filename, Config &config)
     setSdReadError(String("Profile file not found:\n") + filename);
     DEBUG_PRINTLN("Profile not found:");
     DEBUG_PRINTLN(filename);
-    DEBUG_PRINTLN("Set to calibrate.txt as default");
-    filename = "/calibrate.txt";
     return false;
   }
 
@@ -70,10 +248,17 @@ bool readProfile(const char *filename, Config &config)
     return false;
   }
 
-  config.profile_stepsPerUnit = 0;
   config.profile_tolerance = 0.000;
-  config.profile_alarmThreshold = 1.000;
+  config.profile_alarmThreshold = 0.000;
+  config.profile_weightGap = 1.000;
+  config.profile_generalMeasurements = 20;
   config.profile_count = 0;
+  for (int i = 0; i < 3; i++)
+  {
+    config.profile_stepperEnabled[i] = false;
+    config.profile_stepperUnitsPerThrow[i] = 0.0;
+    config.profile_stepperUnitsPerThrowSpeed[i] = 0;
+  }
   for (int i = 0; i < 16; i++)
   {
     config.profile_num[i] = 1;
@@ -84,78 +269,50 @@ bool readProfile(const char *filename, Config &config)
     config.profile_reverse[i] = false;
   }
 
-  bool profileSeen[16] = {false};
-  for (JsonPair item : doc.as<JsonObject>())
+  JsonObject general = doc["general"].as<JsonObject>();
+  bool hasGeneralMeasurements = false;
+  if (!general.isNull())
   {
-    int item_key = ((String(item.key().c_str()).toInt()) - 1);
-    if ((item_key < 0) || (item_key >= 16))
+    config.targetWeight = general["targetWeight"] | config.targetWeight;
+    config.profile_tolerance = general["tolerance"] | 0.000;
+    config.profile_alarmThreshold = general["alarmThreshold"] | 0.000;
+    config.profile_weightGap = general["weightGap"] | 1.000;
+    hasGeneralMeasurements = !general["measurements"].isNull();
+    config.profile_generalMeasurements = general["measurements"] | 20;
+    if (config.profile_generalMeasurements < 0)
     {
-      setSdReadError(String("Invalid profile entry number:\n") + filename + "\nEntry: " + item.key().c_str());
-      DEBUG_PRINT("Invalid profile entry: ");
-      DEBUG_PRINTLN(item.key().c_str());
-      file.close();
-      return false;
-    }
-
-    JsonObject profileEntry = item.value().as<JsonObject>();
-    if (!hasRequiredProfileFields(profileEntry))
-    {
-      setSdReadError(String("Incomplete profile entry:\n") + filename + "\nEntry: " + item.key().c_str() + "\nRequired: weight, steps, speed, measurements");
-      DEBUG_PRINT("Incomplete profile entry: ");
-      DEBUG_PRINTLN(item.key().c_str());
-      file.close();
-      return false;
-    }
-
-    int stepperNumber = profileEntry["number"] | 1;
-    int stepperSpeed = profileEntry["speed"] | 200;
-    int measurements = profileEntry["measurements"] | 5;
-    float profileWeight = profileEntry["weight"] | 0.0;
-    long profileSteps = profileEntry["steps"] | 0;
-    if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
-    {
-      setSdReadError(String("Invalid profile values:\n") + filename + "\nEntry: " + item.key().c_str());
-      DEBUG_PRINT("Invalid profile values in entry: ");
-      DEBUG_PRINTLN(item.key().c_str());
-      file.close();
-      return false;
-    }
-
-    if (item_key == 0)
-    {
-      config.profile_stepsPerUnit = profileEntry["stepsPerUnit"] | 0;
-      config.profile_tolerance = profileEntry["tolerance"] | 0.000;
-      config.profile_alarmThreshold = profileEntry["alarmThreshold"] | 1.000;
-    }
-    config.profile_num[item_key] = stepperNumber;
-    config.profile_weight[item_key] = profileWeight;
-    config.profile_steps[item_key] = profileSteps;
-    config.profile_speed[item_key] = stepperSpeed;
-    config.profile_measurements[item_key] = measurements;
-    config.profile_reverse[item_key] = profileEntry["reverse"] | false;
-    profileSeen[item_key] = true;
-    if ((item_key + 1) > config.profile_count)
-    {
-      config.profile_count = item_key + 1;
+      config.profile_generalMeasurements = 20;
     }
   }
-  if (config.profile_count <= 0)
+
+  JsonObject actuator = doc["actuator"].as<JsonObject>();
+  if (!actuator.isNull())
   {
-    setSdReadError(String("Profile has no entries:\n") + filename);
-    DEBUG_PRINTLN("Profile has no entries");
+    for (int stepperNumber = 1; stepperNumber <= 2; stepperNumber++)
+    {
+      JsonObject stepper = actuator[profileActuatorName(stepperNumber)].as<JsonObject>();
+      if (!stepper.isNull())
+      {
+        config.profile_stepperEnabled[stepperNumber] = stepper["enabled"] | true;
+        config.profile_stepperUnitsPerThrow[stepperNumber] = stepper["unitsPerThrow"] | 0.0;
+        config.profile_stepperUnitsPerThrowSpeed[stepperNumber] = stepper["unitsPerThrowSpeed"] | 0;
+      }
+    }
+  }
+
+  if (!loadProfileEntries(doc.as<JsonObject>(), filename, config, true))
+  {
+    if (getSdReadError().length() <= 0)
+    {
+      setSdReadError(String("Profile has no entries:\n") + filename);
+      DEBUG_PRINTLN("Profile has no entries");
+    }
     file.close();
     return false;
   }
-  for (int i = 0; i < config.profile_count; i++)
+  if (!hasGeneralMeasurements && isCalibrationProfileFile(filename) && (config.profile_count > 0))
   {
-    if (!profileSeen[i])
-    {
-      setSdReadError(String("Profile entries must be contiguous:\n") + filename + "\nMissing entry: " + String(i + 1));
-      DEBUG_PRINT("Profile entries must be contiguous. Missing entry: ");
-      DEBUG_PRINTLN(i + 1);
-      file.close();
-      return false;
-    }
+    config.profile_generalMeasurements = config.profile_measurements[0];
   }
   DEBUG_PRINTLN("POWDER_AKTIVE");
   file.close();
@@ -238,10 +395,10 @@ bool loadConfiguration(const char *filename, Config &config)
   config.scale_baud = doc["scale"]["baud"] | 9600;
 
   strlcpy(config.profile,               // <- destination
-          doc["profile"] | "calibrate", // <- source
+          doc["profile"] | "calibrate",    // <- source
           sizeof(config.profile));      // <- destination's capacity
 
-  config.targetWeight = doc["weight"] | 1.0;
+  config.targetWeight = 1.0;
 
   strlcpy(config.beeper,          // <- destination
           doc["beeper"] | "done", // <- source
@@ -253,6 +410,71 @@ bool loadConfiguration(const char *filename, Config &config)
 
   // doc.garbageCollect();
   return 1;
+}
+
+bool saveProfileTargetWeight(const char *profileName, float targetWeight)
+{
+  String filename = profileFilename(profileName);
+  File file = SD.open(filename.c_str());
+  if (!file)
+  {
+    setSdReadError(String("Could not open profile file:\n") + filename);
+    DEBUG_PRINT("Failed to open profile: ");
+    DEBUG_PRINTLN(filename);
+    return false;
+  }
+
+  JsonDocument doc;
+  DeserializationError error = deserializeJson(doc, file);
+  file.close();
+  if (error || !doc.is<JsonObject>())
+  {
+    String errorText = error ? String(error.c_str()) : String("Root is not a JSON object");
+    setSdReadError(String("Profile JSON parse failed:\n") + filename + "\n" + errorText);
+    DEBUG_PRINT("deserializeJson() failed on profile target save: ");
+    DEBUG_PRINTLN(errorText);
+    return false;
+  }
+
+  JsonObject general = doc["general"].as<JsonObject>();
+  if (general.isNull())
+  {
+    general = doc["general"].to<JsonObject>();
+  }
+  general["targetWeight"] = serialized(String(targetWeight, 3));
+
+  String tempFilename = filename + ".tmp";
+  SD.remove(tempFilename.c_str());
+  file = SD.open(tempFilename.c_str(), FILE_WRITE);
+  if (!file)
+  {
+    setSdReadError(String("Could not write profile file:\n") + tempFilename);
+    DEBUG_PRINT("Failed to create profile temp file: ");
+    DEBUG_PRINTLN(tempFilename);
+    return false;
+  }
+
+  bool written = serializeJsonPretty(doc, file) > 0;
+  file.close();
+  if (!written)
+  {
+    SD.remove(tempFilename.c_str());
+    setSdReadError(String("Could not write profile file:\n") + filename);
+    DEBUG_PRINTLN("Failed to write profile target weight");
+    return false;
+  }
+
+  SD.remove(filename.c_str());
+  if (!SD.rename(tempFilename.c_str(), filename.c_str()))
+  {
+    SD.remove(tempFilename.c_str());
+    setSdReadError(String("Could not replace profile file:\n") + filename);
+    DEBUG_PRINT("Failed to replace profile file: ");
+    DEBUG_PRINTLN(filename);
+    return false;
+  }
+
+  return true;
 }
 
 bool isValidProfileFile(const char *filename)
@@ -276,50 +498,9 @@ bool isValidProfileFile(const char *filename)
     return false;
   }
 
-  bool hasProfileEntries = false;
-  bool profileSeen[16] = {false};
-  int profileCount = 0;
-  for (JsonPair item : doc.as<JsonObject>())
-  {
-    int item_key = String(item.key().c_str()).toInt();
-    if ((item_key < 1) || (item_key > 16))
-    {
-      return false;
-    }
-
-    JsonObject profileEntry = item.value().as<JsonObject>();
-    if (!hasRequiredProfileFields(profileEntry))
-    {
-      return false;
-    }
-
-    int stepperNumber = profileEntry["number"] | 1;
-    int stepperSpeed = profileEntry["speed"] | 0;
-    int measurements = profileEntry["measurements"] | -1;
-    float profileWeight = profileEntry["weight"] | -1.0;
-    long profileSteps = profileEntry["steps"] | 0;
-    if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
-    {
-      return false;
-    }
-
-    profileSeen[item_key - 1] = true;
-    if (item_key > profileCount)
-    {
-      profileCount = item_key;
-    }
-    hasProfileEntries = true;
-  }
-
-  for (int i = 0; i < profileCount; i++)
-  {
-    if (!profileSeen[i])
-    {
-      return false;
-    }
-  }
-
-  return hasProfileEntries;
+  Config validationConfig = config;
+  validationConfig.profile_count = 0;
+  return loadProfileEntries(doc.as<JsonObject>(), filename, validationConfig, false);
 }
 
 String nextCalibrationProfileName()
@@ -328,7 +509,7 @@ String nextCalibrationProfileName()
   {
     char profileName[16];
     snprintf(profileName, sizeof(profileName), "powder_%03d", i);
-    String filename = "/" + String(profileName) + ".txt";
+    String filename = "/profiles/" + String(profileName) + ".txt";
     if (!SD.exists(filename.c_str()))
     {
       return String(profileName);
@@ -353,12 +534,10 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
     return false;
   }
 
-  const float grainWeights[10] = {
-      15.432, 7.716, 3.858, 1.929, 0.965,
-      0.482, 0.241, 0.121, 0.060, 0.000};
-  const float calcTolerance = 65.0;
-  const float stepsForCalibration = (20000.0 / 100.0) * calcTolerance;
-  const int measurementsInput = 5;
+  const float diffWeights[5] = {1.929, 0.965, 0.482, 0.241, 0.000};
+  const int measurements[5] = {2, 2, 5, 10, 15};
+  const float rs232LimitFactor = 0.65;
+  const float unitsPerThrow = calibrationWeight / 100.0;
   int profileSpeed = config.profile_speed[0];
   if (profileSpeed <= 0)
   {
@@ -366,47 +545,48 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   }
 
   JsonDocument doc;
-  for (int i = 0; i < 10; i++)
+  JsonObject general = doc["general"].to<JsonObject>();
+  general["targetWeight"] = serialized(String(config.targetWeight, 3));
+  general["tolerance"] = serialized(String(0.0, 3));
+  general["alarmThreshold"] = serialized(String(1.0, 3));
+  general["weightGap"] = serialized(String(1.0, 3));
+  general["measurements"] = config.profile_generalMeasurements > 0 ? config.profile_generalMeasurements : 20;
+
+  JsonObject actuator = doc["actuator"].to<JsonObject>();
+  JsonObject stepper1 = actuator["stepper1"].to<JsonObject>();
+  stepper1["enabled"] = true;
+  stepper1["unitsPerThrow"] = serialized(String(unitsPerThrow, 3));
+  stepper1["unitsPerThrowSpeed"] = profileSpeed;
+  JsonObject stepper2 = actuator["stepper2"].to<JsonObject>();
+  stepper2["enabled"] = config.profile_stepperEnabled[2];
+  stepper2["unitsPerThrow"] = serialized(String(config.profile_stepperUnitsPerThrow[2] > 0.0 ? config.profile_stepperUnitsPerThrow[2] : 10.0, 3));
+  stepper2["unitsPerThrowSpeed"] = config.profile_stepperUnitsPerThrowSpeed[2] > 0 ? config.profile_stepperUnitsPerThrowSpeed[2] : 200;
+
+  JsonArray rs232TrickleMap = doc["rs232TrickleMap"].to<JsonArray>();
+  for (int i = 0; i < 5; i++)
   {
-    int measurements = measurementsInput;
-    if (i == 0)
+    long steps = lround(((diffWeights[i] * 200.0) / unitsPerThrow) * rs232LimitFactor);
+    if (steps < 5)
     {
-      measurements = 10;
-    }
-    if (i == 7)
-    {
-      measurements = 10;
-    }
-    if (i == 8)
-    {
-      measurements = 15;
-    }
-    if (i == 9)
-    {
-      measurements = 20;
+      steps = 5;
     }
 
-    long steps = lround((grainWeights[i] / calibrationWeight) * stepsForCalibration);
-    if (steps < 10)
-    {
-      steps = 10;
-    }
-
-    JsonObject profileEntry = doc[String(i + 1)].to<JsonObject>();
-    profileEntry["weight"] = serialized(String(grainWeights[i], 3));
+    JsonObject profileEntry = rs232TrickleMap.add<JsonObject>();
+    profileEntry["diffWeight"] = serialized(String(diffWeights[i], 3));
+    profileEntry["actuator"] = "stepper1";
     profileEntry["steps"] = steps;
     profileEntry["speed"] = profileSpeed;
-    profileEntry["measurements"] = measurements;
-
-    if (i == 0)
-    {
-      profileEntry["stepsPerUnit"] = lround((1.0 / calibrationWeight) * stepsForCalibration);
-      profileEntry["tolerance"] = serialized(String(0.0, 3));
-      profileEntry["alarmThreshold"] = serialized(String(0.1, 3));
-    }
+    profileEntry["reverse"] = false;
+    profileEntry["measurements"] = measurements[i];
   }
 
-  String filename = "/" + profileName + ".txt";
+  if (!SD.exists("/profiles") && !SD.mkdir("/profiles"))
+  {
+    updateDisplayLog("Failed to create profiles folder!", true);
+    return false;
+  }
+
+  String filename = "/profiles/" + profileName + ".txt";
   File file = SD.open(filename.c_str(), FILE_WRITE);
   if (!file)
   {
@@ -437,10 +617,9 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   return true;
 }
 
-void getProfileList()
+void scanProfileDirectory(const char *directory, byte &profileCounter, byte &invalidProfileCounter, String &invalidProfiles)
 {
-  File root = SD.open("/");
-  profileListCount = 0;
+  File root = SD.open(directory);
   if (!root)
   {
     DEBUG_PRINTLN("Failed to open directory");
@@ -455,11 +634,6 @@ void getProfileList()
 
   File file = root.openNextFile();
 
-  updateDisplayLog("Search Profiles...");
-
-  byte profileCounter = 0;
-  byte invalidProfileCounter = 0;
-  String invalidProfiles = "";
   while (file)
   {
     if (profileCounter > 31)
@@ -485,8 +659,20 @@ void getProfileList()
       {
         String filename = fileName;
         filename.replace(".txt", "");
-        profileListBuff[profileCounter] = filename;
-        profileCounter++;
+        bool duplicate = false;
+        for (int i = 0; i < profileCounter; i++)
+        {
+          if (profileListBuff[i] == filename)
+          {
+            duplicate = true;
+            break;
+          }
+        }
+        if (!duplicate)
+        {
+          profileListBuff[profileCounter] = filename;
+          profileCounter++;
+        }
       }
       else if (isProfileCandidate)
       {
@@ -509,6 +695,22 @@ void getProfileList()
   }
 
   root.close();
+}
+
+void getProfileList()
+{
+  profileListCount = 0;
+
+  updateDisplayLog("Search Profiles...");
+
+  byte profileCounter = 0;
+  byte invalidProfileCounter = 0;
+  String invalidProfiles = "";
+
+  if (SD.exists("/profiles"))
+  {
+    scanProfileDirectory("/profiles", profileCounter, invalidProfileCounter, invalidProfiles);
+  }
 
   profileListCount = profileCounter;
   DEBUG_PRINT("  profileListCount: ");
@@ -557,7 +759,6 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["customCode"] = config.scale_customCode;
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
-  doc["weight"] = serialized(String(config.targetWeight, 3));
   doc["beeper"] = config.beeper;
   doc["fw_check"] = config.fwCheck;
 

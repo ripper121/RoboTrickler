@@ -145,7 +145,7 @@ void startTrickler()
 
     if (tempProfile != String(config.profile))
     {
-        String profile_filename = "/" + String(config.profile) + ".txt";
+        String profile_filename = profileFilename(config.profile);
         if (!readProfile(profile_filename.c_str(), config))
         {
             corruptProfile(profile_filename);
@@ -161,14 +161,12 @@ void startTrickler()
     }
     tempTargetWeight = config.targetWeight;
 
-    serialFlush();
     startMeasurment();
 }
 
 void stopTrickler()
 {
     stopMeasurment();
-    serialFlush();
     setLabelText(ui_LabelTricklerStart, "Start");
     setObjBgColor(ui_ButtonTricklerStart, 0x00FF00);
     setLabelText(ui_LabelTricklerWeight, "-.-");
@@ -179,7 +177,7 @@ void startMeasurment()
 {
     newData = false;
     weightCounter = 0;
-    measurementCount = 0;
+    measurementCount = config.profile_generalMeasurements;
     lastWeight = weight;
     running = true;
     finished = false;
@@ -209,10 +207,20 @@ void setProfile(int num)
     profileListCounter = num;
     saveConfiguration("/config.txt", config);
 
+    String profile_filename = profileFilename(config.profile);
+    if (!readProfile(profile_filename.c_str(), config))
+    {
+        corruptProfile(profile_filename);
+        return;
+    }
+    tempProfile = config.profile;
+    tempTargetWeight = config.targetWeight;
+
     DEBUG_PRINT("num: ");
     DEBUG_PRINTLN(num);
 
     setLabelText(ui_LabelProfile, config.profile);
+    setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
 }
 
 void serialFlush()
@@ -361,7 +369,7 @@ void initSetup()
     }
     if (!selectedProfileFound)
     {
-        String profile_filename = "/" + String(config.profile) + ".txt";
+        String profile_filename = profileFilename(config.profile);
         if (!readProfile(profile_filename.c_str(), config))
         {
             corruptProfile(profile_filename);
@@ -379,7 +387,7 @@ void initSetup()
         }
     }
 
-    String profile_filename = "/" + String(config.profile) + ".txt";
+    String profile_filename = profileFilename(config.profile);
     if (!readProfile(profile_filename.c_str(), config))
     {
         corruptProfile(profile_filename);
@@ -411,5 +419,10 @@ void saveTargetWeight(float weight)
 {
     config.targetWeight = weight;
     setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
-    saveConfiguration("/config.txt", config);
+    if (!saveProfileTargetWeight(config.profile, config.targetWeight))
+    {
+        String readError = getSdReadError();
+        updateDisplayLog(readError.length() > 0 ? readError : "Target weight save failed!", true);
+    }
+    tempTargetWeight = config.targetWeight;
 }

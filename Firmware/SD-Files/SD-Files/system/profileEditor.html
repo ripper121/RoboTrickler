@@ -17,6 +17,7 @@
          <input type="text" id="profileName" value="my_profile_name" maxlength="16" required
             title="Filename must not contain < > : \" / \\ | ? *"><br>
          <button id="download-btn" class="button">Download</button><br><br>
+         <button id="save-btn" class="button">Save</button><br><br>
          <button onClick='javascript:history.back()' class="button">Back</button>
       </fieldset>
       <fieldset id="profileContainer" style="display: none;">
@@ -27,29 +28,146 @@
 
 
    <script>
-      const allowedProfileProperties = [
-         'number',
-         'weight',
+      const generalProperties = [
+         'targetWeight',
          'tolerance',
          'alarmThreshold',
-         'stepsPerUnit',
+         'weightGap',
+         'measurements'
+      ];
+      const stepperProperties = [
+         'enabled',
+         'unitsPerThrow',
+         'unitsPerThrowSpeed'
+      ];
+      const profileStepProperties = [
+         'diffWeight',
+         'actuator',
          'steps',
          'speed',
-         'measurements',
-         'reverse'
+         'reverse',
+         'measurements'
       ];
 
+      function actuatorName(number) {
+         return Number(number) === 2 ? 'stepper2' : 'stepper1';
+      }
+
+      function cleanNumber(value, fallback) {
+         const number = parseFloat(value);
+         return isNaN(number) ? fallback : number;
+      }
+
+      function cleanBoolean(value, fallback) {
+         if (typeof value === 'boolean') {
+            return value;
+         }
+         return fallback;
+      }
+
       function cleanProfileJSON(jsonData) {
-         var cleanedData = {};
-         Object.keys(jsonData).forEach(function (key) {
-            var dataObject = jsonData[key];
-            cleanedData[key] = {};
-            allowedProfileProperties.forEach(function (property) {
-               if (Object.prototype.hasOwnProperty.call(dataObject, property)) {
-                  cleanedData[key][property] = dataObject[property];
-               }
-            });
+         if (jsonData.rs232TrickleMap) {
+            return cleanNewProfileJSON(jsonData);
+         }
+
+         return convertLegacyProfileJSON(jsonData);
+      }
+
+      function cleanNewProfileJSON(jsonData) {
+         var cleanedData = {
+            general: {},
+            actuator: {
+               stepper1: {},
+               stepper2: {}
+            },
+            rs232TrickleMap: []
+         };
+
+         const general = jsonData.general || {};
+         cleanedData.general.targetWeight = cleanNumber(general.targetWeight, 40.000);
+         cleanedData.general.tolerance = cleanNumber(general.tolerance, 0.000);
+         cleanedData.general.alarmThreshold = cleanNumber(general.alarmThreshold, 1.000);
+         cleanedData.general.weightGap = cleanNumber(general.weightGap, 1.000);
+         cleanedData.general.measurements = Math.round(cleanNumber(general.measurements, 5));
+
+         const actuator = jsonData.actuator || {};
+         ['stepper1', 'stepper2'].forEach(function (stepperName) {
+            const stepper = actuator[stepperName] || {};
+            const defaults = stepperName === 'stepper1'
+               ? { enabled: true, unitsPerThrow: 0.000, unitsPerThrowSpeed: 200 }
+               : { enabled: false, unitsPerThrow: 10.000, unitsPerThrowSpeed: 200 };
+            cleanedData.actuator[stepperName].enabled = cleanBoolean(stepper.enabled, defaults.enabled);
+            cleanedData.actuator[stepperName].unitsPerThrow = cleanNumber(stepper.unitsPerThrow, defaults.unitsPerThrow);
+            cleanedData.actuator[stepperName].unitsPerThrowSpeed = Math.round(cleanNumber(stepper.unitsPerThrowSpeed, defaults.unitsPerThrowSpeed));
          });
+
+         if (Array.isArray(jsonData.rs232TrickleMap)) {
+            jsonData.rs232TrickleMap.forEach(function (entry) {
+               cleanedData.rs232TrickleMap.push(cleanProfileStep(entry || {}));
+            });
+         }
+
+         return cleanedData;
+      }
+
+      function cleanProfileStep(entry) {
+         return {
+            diffWeight: cleanNumber(entry.diffWeight !== undefined ? entry.diffWeight : entry.weight, 0.000),
+            actuator: entry.actuator === 'stepper2' ? 'stepper2' : 'stepper1',
+            steps: Math.round(cleanNumber(entry.steps, 5)),
+            speed: Math.round(cleanNumber(entry.speed, 200)),
+            reverse: cleanBoolean(entry.reverse, false),
+            measurements: Math.round(cleanNumber(entry.measurements, 5))
+         };
+      }
+
+      function convertLegacyProfileJSON(jsonData) {
+         var cleanedData = {
+            general: {
+               targetWeight: 40.000,
+               tolerance: 0.000,
+               alarmThreshold: 1.000,
+               weightGap: 1.000,
+               measurements: 5
+            },
+            actuator: {
+               stepper1: {
+                  enabled: true,
+                  unitsPerThrow: 0.000,
+                  unitsPerThrowSpeed: 200
+               },
+               stepper2: {
+                  enabled: false,
+                  unitsPerThrow: 10.000,
+                  unitsPerThrowSpeed: 200
+               }
+            },
+            rs232TrickleMap: []
+         };
+
+         Object.keys(jsonData).sort(function (left, right) {
+            return parseInt(left) - parseInt(right);
+         }).forEach(function (key) {
+            const entry = jsonData[key] || {};
+            if (cleanedData.rs232TrickleMap.length === 0) {
+               cleanedData.general.tolerance = cleanNumber(entry.tolerance, cleanedData.general.tolerance);
+               cleanedData.general.alarmThreshold = cleanNumber(entry.alarmThreshold, cleanedData.general.alarmThreshold);
+               cleanedData.actuator.stepper1.unitsPerThrowSpeed = Math.round(cleanNumber(entry.speed, 200));
+               if (entry.stepsPerUnit) {
+                  cleanedData.actuator.stepper1.unitsPerThrow = parseFloat((200 / cleanNumber(entry.stepsPerUnit, 1)).toFixed(3));
+               }
+            }
+
+            cleanedData.rs232TrickleMap.push(cleanProfileStep({
+               diffWeight: entry.diffWeight !== undefined ? entry.diffWeight : entry.weight,
+               actuator: entry.actuator || actuatorName(entry.number),
+               steps: entry.steps,
+               speed: entry.speed,
+               reverse: entry.reverse,
+               measurements: entry.measurements
+            }));
+         });
+
          return cleanedData;
       }
 
@@ -57,65 +175,104 @@
          var container = document.getElementById('container');
          container.innerHTML = ''; // Clear existing content
 
-         Object.keys(jsonData).forEach(function (key) {
-            var dataObject = jsonData[key];
-            var fieldset = document.createElement('fieldset');
-            container.appendChild(fieldset);
-            var legend = document.createElement('legend');
-            legend.textContent = 'Profile-Step ' + key;
-            fieldset.appendChild(legend);
+         addObjectFieldset(container, 'General', 'general', jsonData.general, generalProperties);
 
-            allowedProfileProperties.forEach(function (property) {
-               if (!Object.prototype.hasOwnProperty.call(dataObject, property)) {
-                  return;
-               }
-               var pairDiv = document.createElement('div');
-               pairDiv.className = 'label-input-pair';
-               fieldset.appendChild(pairDiv);
+         var actuatorFieldset = document.createElement('fieldset');
+         container.appendChild(actuatorFieldset);
+         var actuatorLegend = document.createElement('legend');
+         actuatorLegend.textContent = 'Actuator';
+         actuatorFieldset.appendChild(actuatorLegend);
+         addObjectFieldset(actuatorFieldset, 'Stepper 1', 'actuator.stepper1', jsonData.actuator.stepper1, stepperProperties);
+         addObjectFieldset(actuatorFieldset, 'Stepper 2', 'actuator.stepper2', jsonData.actuator.stepper2, stepperProperties);
 
-               var label = document.createElement('label');
-               label.htmlFor = key + '-' + property;
-               label.textContent = property + ': ';
-               pairDiv.appendChild(label);
-
-               if (typeof dataObject[property] === 'boolean') {
-                  // Create a checkbox for boolean values
-                  var input = document.createElement('input');
-                  input.type = 'checkbox';
-                  input.checked = dataObject[property];
-               } else {
-                  // Create a number input for non-boolean values
-                  var input = document.createElement('input');
-                  input.type = 'number';
-                  input.value = dataObject[property];
-               }
-
-               input.id = key + '-' + property;
-               input.name = property;
-               pairDiv.appendChild(input);
-
-               // Add event listener to update JSON when input changes
-               input.addEventListener('input', updateJSON);
-            });
+         jsonData.rs232TrickleMap.forEach(function (entry, index) {
+            addObjectFieldset(container, 'Profile-Step ' + (index + 1), 'rs232TrickleMap.' + index, entry, profileStepProperties);
          });
          document.getElementById("profileContainer").style.display = "block";
       }
 
-      function updateJSON() {
-         var inputs = document.querySelectorAll('#container input');
-         var newJSONData = {};
-         inputs.forEach(function (input) {
-            var [key, property] = input.id.split('-');
-            if (!newJSONData[key]) {
-               newJSONData[key] = {};
-            }
-            if (input.type === 'checkbox') {
-               newJSONData[key][property] = input.checked;
+      function addObjectFieldset(parent, legendText, path, dataObject, properties) {
+         var fieldset = document.createElement('fieldset');
+         parent.appendChild(fieldset);
+         var legend = document.createElement('legend');
+         legend.textContent = legendText;
+         fieldset.appendChild(legend);
+
+         properties.forEach(function (property) {
+            var pairDiv = document.createElement('div');
+            pairDiv.className = 'label-input-pair';
+            fieldset.appendChild(pairDiv);
+
+            var label = document.createElement('label');
+            label.htmlFor = path + '-' + property;
+            label.textContent = property + ': ';
+            pairDiv.appendChild(label);
+
+            var input;
+            if (typeof dataObject[property] === 'boolean') {
+               input = document.createElement('input');
+               input.type = 'checkbox';
+               input.checked = dataObject[property];
+            } else if (property === 'actuator') {
+               input = document.createElement('select');
+               ['stepper1', 'stepper2'].forEach(function (optionValue) {
+                  var option = document.createElement('option');
+                  option.value = optionValue;
+                  option.textContent = optionValue;
+                  option.selected = dataObject[property] === optionValue;
+                  input.appendChild(option);
+               });
             } else {
-               newJSONData[key][property] = parseFloat(input.value);
+               input = document.createElement('input');
+               input.type = 'number';
+               input.step = property === 'measurements' || property === 'steps' || property === 'speed' || property === 'unitsPerThrowSpeed' ? '1' : '0.001';
+               input.value = dataObject[property];
+            }
+
+            input.id = path + '-' + property;
+            input.name = property;
+            input.dataset.path = path;
+            input.dataset.property = property;
+            pairDiv.appendChild(input);
+            input.addEventListener('input', updateJSON);
+            input.addEventListener('change', updateJSON);
+         });
+      }
+
+      function updateJSON() {
+         var inputs = document.querySelectorAll('#container input, #container select');
+         var newJSONData = {
+            general: {},
+            actuator: {
+               stepper1: {},
+               stepper2: {}
+            },
+            rs232TrickleMap: []
+         };
+
+         inputs.forEach(function (input) {
+            var path = input.dataset.path;
+            var property = input.dataset.property;
+            var target = newJSONData;
+            path.split('.').forEach(function (pathPart) {
+               if (/^\d+$/.test(pathPart)) {
+                  pathPart = parseInt(pathPart);
+               }
+               if (target[pathPart] === undefined) {
+                  target[pathPart] = {};
+               }
+               target = target[pathPart];
+            });
+
+            if (input.type === 'checkbox') {
+               target[property] = input.checked;
+            } else if (input.tagName === 'SELECT') {
+               target[property] = input.value;
+            } else {
+               target[property] = parseFloat(input.value);
             }
          });
-         document.getElementById('jsonInput').value = JSON.stringify(newJSONData, null, 4);
+         document.getElementById('jsonInput').value = JSON.stringify(cleanNewProfileJSON(newJSONData), null, 4);
       }
 
       function loadProfileText(textArea, text) {
@@ -209,6 +366,38 @@
          downloadLink.click();
          document.body.removeChild(downloadLink);
       }, false);
+
+      document.getElementById("save-btn").addEventListener("click", function () {
+         const fileName = convertToLegalFAT32Filename(document.getElementById('profileName').value.toLowerCase() + '.txt');
+         const text = document.getElementById('jsonInput').value;
+         httpPost("/profiles/" + fileName, text);
+      }, false);
+
+      function httpPostProcessRequest() {
+         if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200)
+               alert("Profile saved!");
+            else
+               alert("ERROR[" + xmlHttp.status + "]: " + xmlHttp.responseText);
+         }
+      }
+
+      function httpPost(filename, data) {
+         xmlHttp = new XMLHttpRequest();
+         xmlHttp.onreadystatechange = httpPostProcessRequest;
+         var formData = new FormData();
+         formData.append("data", new Blob([data], { type: "text/json" }), filename);
+         xmlHttp.open("POST", "/system/resources/edit");
+         xmlHttp.send(formData);
+      }
+
+      window.addEventListener("load", (event) => {
+         if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "" || location.hostname === "strenuous.dev") {
+            document.getElementById("save-btn").style.display = "none";
+         } else {
+            document.getElementById("download-btn").style.display = "none";
+         }
+      });
    </script>
 </body>
 

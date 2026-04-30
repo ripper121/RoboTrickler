@@ -89,9 +89,13 @@ struct Config
 
   byte profile_num[16];
   float profile_weight[16];
-  double profile_stepsPerUnit;
   float profile_tolerance;
   float profile_alarmThreshold;
+  float profile_weightGap;
+  int profile_generalMeasurements;
+  double profile_stepperUnitsPerThrow[3];
+  int profile_stepperUnitsPerThrowSpeed[3];
+  bool profile_stepperEnabled[3];
   int profile_measurements[16];
   long profile_steps[16];
   int profile_speed[16];
@@ -131,6 +135,77 @@ unsigned long lastScaleWeightReadTime = 0;
 String infoMessagBuff[14];
 String profileListBuff[32];
 byte profileListCount;
+
+static long calculateStepperStepsForUnits(double remainingUnits, double unitsPerThrow, double *outUnits)
+{
+  if (outUnits != NULL)
+  {
+    *outUnits = 0.0;
+  }
+  if ((remainingUnits <= 0.0) || (unitsPerThrow <= 0.0))
+  {
+    return 0;
+  }
+
+  double exactSteps = remainingUnits * (200.0 / unitsPerThrow);
+  if ((exactSteps <= 0.0) || (exactSteps > 2147483647.0))
+  {
+    return 0;
+  }
+
+  long steps = (long)exactSteps;
+  if (outUnits != NULL)
+  {
+    *outUnits = ((double)steps * unitsPerThrow) / 200.0;
+  }
+  return steps;
+}
+
+static bool runBulkStepperMove(String &infoText)
+{
+  double remainingUnits = (double)config.targetWeight - (double)weight - (double)config.profile_weightGap;
+  if (remainingUnits <= 0.0)
+  {
+    return true;
+  }
+
+  for (int stepperNum = 2; stepperNum >= 1; stepperNum--)
+  {
+    if (!config.profile_stepperEnabled[stepperNum])
+    {
+      continue;
+    }
+
+    int speed = config.profile_stepperUnitsPerThrowSpeed[stepperNum];
+    if (speed <= 0)
+    {
+      speed = 200;
+    }
+
+    double units = 0.0;
+    long stepsToMove = calculateStepperStepsForUnits(remainingUnits, config.profile_stepperUnitsPerThrow[stepperNum], &units);
+    if (stepsToMove <= 0)
+    {
+      continue;
+    }
+
+    setStepperSpeed(stepperNum, speed);
+    step(stepperNum, stepsToMove, false);
+    remainingUnits -= units;
+    if (remainingUnits < 0.0)
+    {
+      remainingUnits = 0.0;
+    }
+
+    infoText += "B";
+    infoText += String(stepperNum);
+    infoText += " ST";
+    infoText += String(stepsToMove);
+    infoText += " ";
+  }
+
+  return true;
+}
 
 bool lvglLock()
 {
@@ -287,7 +362,6 @@ void readWeight()
       DEBUG_PRINT("Weight: ");
       DEBUG_PRINTLN(weight);
       lastScaleWeightReadTime = millis();
-
       DEBUG_PRINT("dec_places: ");
       DEBUG_PRINTLN(dec_places);
 
@@ -327,14 +401,13 @@ void readWeight()
   else
   {
     bool timeout = false;
-    if ((strcmp(config.scale_protocol, "GUG") == 0) || (strcmp(config.scale_protocol, "GG") == 0))
-    { // GUG only for backwards compatibility
+    if (strcmp(config.scale_protocol, "GG") == 0)
+    {
       Serial1.write(0x1B);
       Serial1.write(0x70);
       Serial1.write(0x0D);
       Serial1.write(0x0A);
-      // The G&G PLC100BC dosent like to be asked to often via RS232, the Values get unstabel, so we wait little more
-      // delay(200);
+
       timeout = serialWait();
     }
     else if (strcmp(config.scale_protocol, "AD") == 0)
@@ -373,6 +446,16 @@ void readWeight()
       newData = false;
     }
   }
+}
+
+void startCalibrationProfilePrompt()
+{
+  stopTrickler();
+  calibrationProfilePromptPending = true;
+  calibrationProfilePromptTime = millis();
+  measurementCount = config.profile_generalMeasurements;
+  weightCounter = 0;
+  newData = false;
 }
 
 void handleCalibrationProfilePrompt()
@@ -441,7 +524,7 @@ void loop()
       if (weight <= 0.0000)
       {
         firstThrow = true;
-        measurementCount = 0;
+        measurementCount = config.profile_generalMeasurements;
       }
 
       float tolerance = config.profile_tolerance;
@@ -476,7 +559,6 @@ void loop()
           beep("done");
           delay(250);
           beep("done");
-          serialFlush();
           stopTrickler();
           messageBox("!Over trickle!\n!Check weight!", &lv_font_montserrat_32, lv_color_hex(0xFF0000), true);
         }
@@ -485,7 +567,6 @@ void loop()
         {
           beep("done");
           updateDisplayLog("Done :)", true);
-          serialFlush();
         }
         measurementCount = 0;
         finished = true;
@@ -500,98 +581,77 @@ void loop()
 
           DEBUG_PRINTLN("Profile Running");
           String infoText = "";
-          if (firstThrow && (config.profile_stepsPerUnit > 0))
+          if (firstThrow)
           {
             firstThrow = false;
-
-            DEBUG_PRINTLN("FirstThrow Start...");
-
-            double steps = (config.targetWeight - weight) * config.profile_stepsPerUnit;
-            DEBUG_PRINT("FirstThrow steps: ");
-            DEBUG_PRINTLN(steps);
-            byte firstStepperNum = config.profile_num[0];
-            if ((firstStepperNum < 1) || (firstStepperNum > 2))
+            if (!runBulkStepperMove(infoText))
             {
-              updateDisplayLog("Invalid stepper number!", true);
+              updateDisplayLog("Bulk trickle failed!", true);
               stopTrickler();
               return;
             }
-            setStepperSpeed(firstStepperNum, config.profile_speed[0]);
-            step(firstStepperNum, (long)(steps + 0.5), config.profile_reverse[0]);
-            infoText += "FirstThrow steps:" + String(steps);
+            if (infoText.length() > 0)
+            {
+              if (String(config.profile) == "calibrate")
+              {
+                startCalibrationProfilePrompt();
+                return;
+              }
+              measurementCount = config.profile_generalMeasurements;
+              updateDisplayLog(infoText, true);
+              return;
+            }
+          }
 
-            DEBUG_PRINTLN("FirstThrow finished!");
-            serialFlush();
+          if (config.profile_count <= 0)
+          {
+            updateDisplayLog("Invalid profile!", true);
+            stopTrickler();
             return;
           }
-          else
+
+          static int stepperSpeedOld[3] = {0, 0, 0};
+          int profileStep = config.profile_count - 1;
+
+          for (int i = 0; i < config.profile_count; i++)
           {
-            if (config.profile_count <= 0)
+            if ((weight) <= (config.targetWeight - config.profile_weight[i]))
             {
-              updateDisplayLog("Invalid profile!", true);
-              stopTrickler();
-              return;
-            }
-
-            static int stepperSpeedOld[3] = {0, 0, 0};
-            int profileStep = config.profile_count - 1;
-            // Serial.print("abs: ");
-            // Serial.println(abs(weight - config.targetWeight), 3);
-            // Serial.print("profile_weight: ");
-            // Serial.println(config.profile_weight[i], 3);
-
-            for (int i = 0; i < config.profile_count; i++)
-            {
-
-              if ((weight) <= (config.targetWeight - config.profile_weight[i]))
-              {
-                profileStep = i;
-                break;
-              }
-            }
-
-            // Serial.print("Speed: ");
-            // Serial.println(config.profile_speed[profileStep], DEC);
-            byte stepperNum = config.profile_num[profileStep];
-            if ((stepperNum >= 1) && (stepperNum <= 2) && (stepperSpeedOld[stepperNum] != config.profile_speed[profileStep]))
-            {
-              setStepperSpeed(stepperNum, config.profile_speed[profileStep]);
-              stepperSpeedOld[stepperNum] = config.profile_speed[profileStep];
-            }
-
-            // Serial.print("Stepp: ");
-            // Serial.println(config.profile_steps[profileStep], DEC);
-
-            if ((config.profile_num[profileStep] < 1) || (config.profile_num[profileStep] > 2))
-            {
-              updateDisplayLog("Invalid stepper number!", true);
-              stopTrickler();
-              return;
-            }
-
-            step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_reverse[profileStep]);
-
-            // Serial.print("Measurements: ");
-            // Serial.println(config.profile_measurements[profileStep], DEC);
-            measurementCount = config.profile_measurements[profileStep];
-
-            infoText += "W" + String(config.profile_weight[profileStep], 3) + " ";
-            infoText += "ST" + String(config.profile_steps[profileStep]) + " ";
-            infoText += "SP" + String(config.profile_speed[profileStep]) + " ";
-            infoText += "M" + String(config.profile_measurements[profileStep]);
-
-            if (String(config.profile) == "calibrate") // only do one Run for calibration
-            {
-              stopTrickler();
-              calibrationProfilePromptPending = true;
-              calibrationProfilePromptTime = millis();
-              measurementCount = 20;
-              weightCounter = 0;
-              newData = false;
+              profileStep = i;
+              break;
             }
           }
+
+          byte stepperNum = config.profile_num[profileStep];
+          if ((stepperNum >= 1) && (stepperNum <= 2) && (stepperSpeedOld[stepperNum] != config.profile_speed[profileStep]))
+          {
+            setStepperSpeed(stepperNum, config.profile_speed[profileStep]);
+            stepperSpeedOld[stepperNum] = config.profile_speed[profileStep];
+          }
+
+          if ((config.profile_num[profileStep] < 1) || (config.profile_num[profileStep] > 2))
+          {
+            updateDisplayLog("Invalid stepper number!", true);
+            stopTrickler();
+            return;
+          }
+
+          step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_reverse[profileStep]);
+
+          measurementCount = config.profile_measurements[profileStep];
+
+          infoText += "W" + String(config.profile_weight[profileStep], 3) + " ";
+          infoText += "ST" + String(config.profile_steps[profileStep]) + " ";
+          infoText += "SP" + String(config.profile_speed[profileStep]) + " ";
+          infoText += "M" + String(config.profile_measurements[profileStep]);
+
+          if (String(config.profile) == "calibrate")
+          {
+            startCalibrationProfilePrompt();
+            return;
+          }
+
           updateDisplayLog(infoText, true);
-          serialFlush();
         }
       }
 

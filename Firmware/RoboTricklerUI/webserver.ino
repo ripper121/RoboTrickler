@@ -142,6 +142,10 @@ void handleFileUpload()
   HTTPUpload &upload = server.upload();
   if (upload.status == UPLOAD_FILE_START)
   {
+    if (upload.filename.startsWith("/profiles/") && !SD.exists("/profiles"))
+    {
+      SD.mkdir("/profiles");
+    }
     if (SD.exists((char *)upload.filename.c_str()))
     {
       SD.remove((char *)upload.filename.c_str());
