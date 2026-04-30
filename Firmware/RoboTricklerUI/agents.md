@@ -16,3 +16,31 @@ Use this order for all relevant implementation work:
 1. Check ESP-IDF examples and components
 2. Define the smallest working scope
 3. Keep board mapping and hardware assumptions centralized
+
+## Compile check
+
+This workspace uses Arduino IDE 1.8.x with Espressif ESP32 core `3.1.3`.
+
+Preferred command-line verify from this folder:
+
+```powershell
+$build = Join-Path $env:TEMP 'rtui-build-check'
+New-Item -ItemType Directory -Force -Path $build | Out-Null
+& 'C:\Program Files (x86)\Arduino\arduino-builder.exe' `
+  -compile `
+  -logger=machine `
+  -hardware 'C:\Program Files (x86)\Arduino\hardware' `
+  -hardware 'C:\Users\ripper121\AppData\Local\Arduino15\packages' `
+  -tools 'C:\Program Files (x86)\Arduino\tools-builder' `
+  -tools 'C:\Program Files (x86)\Arduino\hardware\tools\avr' `
+  -tools 'C:\Users\ripper121\AppData\Local\Arduino15\packages' `
+  -built-in-libraries 'C:\Program Files (x86)\Arduino\libraries' `
+  -libraries 'C:\Users\ripper121\Documents\Arduino\libraries' `
+  -fqbn 'esp32:esp32:esp32:JTAGAdapter=default,PSRAM=disabled,PartitionScheme=min_spiffs,CPUFreq=240,FlashMode=dio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,LoopCore=1,EventsCore=0,DebugLevel=none,EraseFlash=all,ZigbeeMode=default' `
+  -ide-version=10819 `
+  -build-path $build `
+  -warnings=none `
+  'C:\Users\ripper121\Documents\GitHub\RoboTrickler\Firmware\RoboTricklerUI\RoboTricklerUI.ino'
+```
+
+The same board settings are mirrored in `.vscode/arduino.json`.

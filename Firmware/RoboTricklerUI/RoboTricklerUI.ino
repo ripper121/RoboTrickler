@@ -7,7 +7,6 @@
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
 #include <SPI.h>
-#include <A4988.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <NetworkClientSecure.h>
@@ -112,8 +111,6 @@ unsigned long wifiInterval = 10000;
 
 #define MOTOR_STEPS 200
 #define ACCEL 1000
-A4988 stepper1(MOTOR_STEPS, I2S_X_DIRECTION_PIN, I2S_X_STEP_PIN, I2S_X_DISABLE_PIN);
-A4988 stepper2(MOTOR_STEPS, I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, I2S_Y_DISABLE_PIN);
 
 #define MAX_TARGET_WEIGHT 999
 float weight = 0.0;

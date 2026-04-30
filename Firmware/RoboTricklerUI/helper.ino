@@ -48,9 +48,9 @@ void beep(const char *beepMode)
     bool enableBoth = strstr(config.beeper, "both") != NULL;
 
     if (requestDone && (enableDone || enableBoth))
-        stepper1.beep(500);
+        stepperBeep(500);
     if (requestButton && (enableButton || enableBoth))
-        stepper1.beep(100);
+        stepperBeep(100);
 }
 
 bool serialWait()
