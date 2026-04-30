@@ -16,7 +16,7 @@ void my_print(const char *buf)
 
 void trickler_start_event_cb(lv_event_t *e)
 {
-  if (String(lv_label_get_text(ui_LabelTricklerStart)) == "Start")
+  if (!running)
   {
     DEBUG_PRINTLN("TricklerStart");
     startTrickler();

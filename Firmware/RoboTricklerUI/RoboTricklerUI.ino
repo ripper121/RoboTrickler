@@ -234,6 +234,22 @@ void setLabelText(lv_obj_t *label, const char *text)
   }
 }
 
+void setWeightLabel(lv_obj_t *label)
+{
+  char text[32];
+  int decimals = dec_places;
+  if (decimals < 0)
+  {
+    decimals = 0;
+  }
+  else if (decimals > 6)
+  {
+    decimals = 6;
+  }
+  snprintf(text, sizeof(text), "%.*f%s", decimals, weight, unit.c_str());
+  setLabelText(label, text);
+}
+
 void setObjBgColor(lv_obj_t *obj, uint32_t colorHex)
 {
   if (lvglLock())
@@ -390,7 +406,7 @@ void readWeight()
       else
       {
         weightCounter = 0;
-        setLabelText(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
+        setWeightLabel(ui_LabelTricklerWeight);
       }
       lastWeight = weight;
 
@@ -467,7 +483,7 @@ void handleCalibrationProfilePrompt()
   }
 
   readWeight();
-  setLabelText(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
+  setWeightLabel(ui_LabelTricklerWeight);
 
   if (newData && (lastScaleWeightReadTime > calibrationProfilePromptTime))
   {
@@ -582,6 +598,7 @@ void loop()
 
           DEBUG_PRINTLN("Profile Running");
           String infoText = "";
+          infoText.reserve(48);
           if (firstThrow)
           {
             firstThrow = false;
@@ -593,7 +610,7 @@ void loop()
             }
             if (infoText.length() > 0)
             {
-              if (String(config.profile) == "calibrate")
+              if (strcmp(config.profile, "calibrate") == 0)
               {
                 startCalibrationProfilePrompt();
                 return;
@@ -641,12 +658,17 @@ void loop()
 
           measurementCount = config.profile_measurements[profileStep];
 
-          infoText += "W" + String(config.profile_weight[profileStep], 3) + " ";
-          infoText += "ST" + String(config.profile_steps[profileStep]) + " ";
-          infoText += "SP" + String(config.profile_speed[profileStep]) + " ";
-          infoText += "M" + String(config.profile_measurements[profileStep]);
+          char infoLine[64];
+          snprintf(infoLine,
+                   sizeof(infoLine),
+                   "W%.3f ST%ld SP%d M%d",
+                   config.profile_weight[profileStep],
+                   config.profile_steps[profileStep],
+                   config.profile_speed[profileStep],
+                   config.profile_measurements[profileStep]);
+          infoText = infoLine;
 
-          if (String(config.profile) == "calibrate")
+          if (strcmp(config.profile, "calibrate") == 0)
           {
             startCalibrationProfilePrompt();
             return;
@@ -675,7 +697,7 @@ void loop()
       readWeightTime = millis();
       updateDisplayLog("Get Weight...", true);
       readWeight();
-      setLabelText(ui_LabelTricklerWeight, String(String(weight, dec_places) + unit).c_str());
+      setWeightLabel(ui_LabelTricklerWeight);
     }
   }
 

@@ -202,10 +202,6 @@ String getSdReadError()
 bool readProfile(const char *filename, Config &config)
 {
   setSdReadError("");
-  String infoText = "Loading Profile...";
-  // labelInfo.drawButton(false, infoText);
-
-  delay(500);
 
   if (!SD.exists(filename))
   {
@@ -319,9 +315,6 @@ bool readProfile(const char *filename, Config &config)
 
   // doc.garbageCollect();
 
-  infoText = "Profile Loaded:";
-  infoText += filename;
-  // labelInfo.drawButton(false, infoText);
   return true;
 }
 

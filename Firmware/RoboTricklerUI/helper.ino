@@ -39,17 +39,17 @@ IRAM_ATTR void lvgl_disp_task(void *parg)
     }
 }
 
-void beep(String beepMode)
+void beep(const char *beepMode)
 {
+    bool requestDone = strstr(beepMode, "done") != NULL;
+    bool requestButton = strstr(beepMode, "button") != NULL;
+    bool enableDone = strstr(config.beeper, "done") != NULL;
+    bool enableButton = strstr(config.beeper, "button") != NULL;
+    bool enableBoth = strstr(config.beeper, "both") != NULL;
 
-    if ((String(config.beeper).indexOf("done") != -1) && (String(beepMode).indexOf("done") != -1))
+    if (requestDone && (enableDone || enableBoth))
         stepper1.beep(500);
-    if ((String(config.beeper).indexOf("button") != -1) && (String(beepMode).indexOf("button") != -1))
-        stepper1.beep(100);
-
-    if ((String(config.beeper).indexOf("both") != -1) && (String(beepMode).indexOf("done") != -1))
-        stepper1.beep(500);
-    if ((String(config.beeper).indexOf("both") != -1) && (String(beepMode).indexOf("button") != -1))
+    if (requestButton && (enableButton || enableBoth))
         stepper1.beep(100);
 }
 
@@ -153,7 +153,9 @@ void startTrickler()
         }
         tempProfile = config.profile;
     }
-    updateDisplayLog(String("Profile: " + String(config.profile) + " selected!"));
+    char message[64];
+    snprintf(message, sizeof(message), "Profile: %s selected!", config.profile);
+    updateDisplayLog(message);
 
     if (tempTargetWeight != config.targetWeight)
     {
