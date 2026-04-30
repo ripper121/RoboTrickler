@@ -175,3 +175,8 @@ If requirements conflict, follow this order:
 5. personal implementation preference
 
 ---
+
+The code was ported from: 
+`C:\Users\ripper121\Documents\GitHub\RoboTrickler\Firmware\RoboTricklerUI`
+`C:\Users\ripper121\Documents\GitHub\RoboTrickler\Firmware\Arduino-libraries`
+So if something dosent work check the pinout and setup there.

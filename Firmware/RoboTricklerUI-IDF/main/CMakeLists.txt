@@ -1,2 +1,36 @@
-idf_component_register(SRCS "main.c"
-                    INCLUDE_DIRS ".")
+idf_component_register(
+    SRCS
+        "app_config.c"
+        "display.c"
+        "esp_lcd_st7796.c"
+        "lvgl_compat.c"
+        "main.c"
+        "ota.c"
+        "scale.c"
+        "stepper.c"
+        "storage.c"
+        "ui.c"
+        "ui_Screen1.c"
+        "ui_comp_hook.c"
+        "ui_helpers.c"
+        "web_server.c"
+    INCLUDE_DIRS "."
+    REQUIRES
+        app_update
+        esp_event
+        esp_http_client
+        esp_http_server
+        esp_lcd
+        esp_netif
+        esp_wifi
+        nvs_flash
+        esp_driver_gpio
+        esp_driver_sdspi
+        esp_driver_spi
+        esp_driver_uart
+        esp_timer
+        fatfs
+        lvgl
+        mdns
+        sdmmc
+)
