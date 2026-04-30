@@ -1,6 +1,6 @@
 /**
  * @file lv_conf.h
- * Configuration file for v8.3.9
+ * Configuration file for v9.5.0
  */
 
 /*
@@ -16,6 +16,8 @@
 
 #ifndef LV_CONF_H
 #define LV_CONF_H
+
+#define LV_KCONFIG_IGNORE
 
 #ifndef __ASSEMBLY__
 #include <stdint.h>
@@ -474,10 +476,14 @@
 
 #define LV_USE_ARC        0
 
+#define LV_USE_ARCLABEL   0
+
 #define LV_USE_BAR        0
 
+#define LV_USE_BUTTON     1
 #define LV_USE_BTN        1
 
+#define LV_USE_BUTTONMATRIX 0
 #define LV_USE_BTNMATRIX  0
 
 #define LV_USE_CANVAS     0
@@ -486,6 +492,7 @@
 
 #define LV_USE_DROPDOWN   0   /*Requires: lv_label*/
 
+#define LV_USE_IMAGE      0   /*Requires: lv_label*/
 #define LV_USE_IMG        0   /*Requires: lv_label*/
 
 #define LV_USE_LABEL      1
@@ -495,6 +502,8 @@
 #endif
 
 #define LV_USE_LINE       0
+
+#define LV_USE_LOTTIE     0
 
 #define LV_USE_ROLLER     0   /*Requires: lv_label*/
 #if LV_USE_ROLLER
@@ -541,6 +550,8 @@
 
 #define LV_USE_IMGBTN     0
 
+#define LV_USE_IMAGEBUTTON 0
+
 #define LV_USE_KEYBOARD   0
 
 #define LV_USE_LED        0
@@ -571,6 +582,8 @@
 
 #define LV_USE_WIN        0
 
+#define LV_USE_3DTEXTURE  0
+
 /*-----------
  * Themes
  *----------*/
@@ -590,6 +603,7 @@
 #endif /*LV_USE_THEME_DEFAULT*/
 
 /*A very simple theme that is a good starting point for a custom theme*/
+#define LV_USE_THEME_SIMPLE 0
 #define LV_USE_THEME_BASIC 0
 
 /*A theme designed for monochrome displays*/
@@ -642,6 +656,29 @@
     #define LV_FS_FATFS_CACHE_SIZE 0    /*>0 to cache this number of bytes in lv_fs_read()*/
 #endif
 
+/*API for memory-mapped file access*/
+#define LV_USE_FS_MEMFS 0
+
+/*API for LittleFS*/
+#define LV_USE_FS_LITTLEFS 0
+
+/*API for Arduino LittleFS*/
+#define LV_USE_FS_ARDUINO_ESP_LITTLEFS 0
+
+/*API for Arduino SD*/
+#define LV_USE_FS_ARDUINO_SD 0
+
+/*API for UEFI*/
+#define LV_USE_FS_UEFI 0
+
+#define LV_USE_FS_FROGFS 0
+
+/*LODEPNG decoder library*/
+#define LV_USE_LODEPNG 0
+
+/*libpng decoder library*/
+#define LV_USE_LIBPNG 0
+
 /*PNG decoder library*/
 #define LV_USE_PNG 0
 
@@ -652,11 +689,31 @@
  * Split JPG is a custom format optimized for embedded systems. */
 #define LV_USE_SJPG 0
 
+#define LV_USE_TJPGD 0
+
+/*libjpeg-turbo decoder library*/
+#define LV_USE_LIBJPEG_TURBO 0
+
+/*WebP decoder library*/
+#define LV_USE_LIBWEBP 0
+
 /*GIF decoder library*/
 #define LV_USE_GIF 0
 
+/*GStreamer library*/
+#define LV_USE_GSTREAMER 0
+
+/*Decode bin images to RAM*/
+#define LV_BIN_DECODER_RAM_LOAD 0
+
+/*RLE decompress library*/
+#define LV_USE_RLE 0
+
 /*QR code library*/
 #define LV_USE_QRCODE 0
+
+/*Barcode library*/
+#define LV_USE_BARCODE 0
 
 /*FreeType library*/
 #define LV_USE_FREETYPE 0
@@ -675,8 +732,33 @@
     #endif
 #endif
 
+/*Built-in TTF decoder*/
+#define LV_USE_TINY_TTF 0
+
 /*Rlottie library*/
 #define LV_USE_RLOTTIE 0
+
+/*GLTF library*/
+#define LV_USE_GLTF 0
+
+/*Vector graphics APIs*/
+#define LV_USE_VECTOR_GRAPHIC 0
+
+/*ThorVG vector graphics library*/
+#define LV_USE_THORVG_INTERNAL 0
+#define LV_USE_THORVG_EXTERNAL 0
+
+/*NanoVG vector graphics library*/
+#define LV_USE_NANOVG 0
+
+/*LZ4 compression library*/
+#define LV_USE_LZ4_INTERNAL 0
+#define LV_USE_LZ4_EXTERNAL 0
+
+/*SVG library*/
+#define LV_USE_SVG 0
+#define LV_USE_SVG_ANIMATION 0
+#define LV_USE_SVG_DEBUG 0
 
 /*FFmpeg library for image decoding and playing videos
  *Supports all major image formats so do not enable other image decoder with it*/
