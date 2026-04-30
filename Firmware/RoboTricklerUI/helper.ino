@@ -254,9 +254,6 @@ void initSetup()
 {
     Serial.begin(115200); /* prepare for possible serial debug */
 
-    rtc_wdt_protect_off();
-    rtc_wdt_disable();
-
     displayInit();
     ui_init();
     disableTouchGestures();

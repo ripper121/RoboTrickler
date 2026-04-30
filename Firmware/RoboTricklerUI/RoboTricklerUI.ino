@@ -11,8 +11,6 @@
 #include <HTTPClient.h>
 #include <NetworkClientSecure.h>
 #include <Update.h>
-#include <esp_task_wdt.h>
-#include <rtc_wdt.h>
 #include <freertos/semphr.h>
 #include <ctype.h>
 #include <string.h>
