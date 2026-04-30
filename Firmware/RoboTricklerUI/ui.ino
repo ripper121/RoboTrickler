@@ -261,13 +261,13 @@ void displayInit()
   digitalWrite(LCD_EN, LOW);
 
   tft.init();
-  tft.setRotation(0);
+  tft.setRotation(DISPLAY_ROTATION);
   tft.initDMA();
 
   /*Set the touchscreen calibration data,
     the actual data for your display can be acquired using
     the Generic -> Touch_calibrate example from the TFT_eSPI library*/
-  uint16_t calData[5] = {248, 3571, 202, 3647, 5};
+  uint16_t calData[5] = TOUCH_CAL_DATA;
   tft.setTouch(calData);
 
   lv_disp_draw_buf_init(&draw_buf, buf, NULL, LV_HOR_RES_MAX * LV_VER_RES_MAX / 10);

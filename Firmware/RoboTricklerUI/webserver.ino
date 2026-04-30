@@ -22,8 +22,30 @@ String jsonEscape(const String &input)
     if ((c == '"') || (c == '\\'))
     {
       output += '\\';
+      output += c;
     }
-    output += c;
+    else if (c == '\n')
+    {
+      output += "\\n";
+    }
+    else if (c == '\r')
+    {
+      output += "\\r";
+    }
+    else if (c == '\t')
+    {
+      output += "\\t";
+    }
+    else if ((uint8_t)c < 0x20)
+    {
+      char escaped[7];
+      snprintf(escaped, sizeof(escaped), "\\u%04x", (unsigned char)c);
+      output += escaped;
+    }
+    else
+    {
+      output += c;
+    }
   }
   return output;
 }
@@ -436,8 +458,12 @@ IPAddress stringToIPAddress(const String &ipAddressString)
 
 void makeHttpsGetRequest(String serverPath)
 {
+  NetworkClientSecure client;
+  client.setInsecure();
+
   HTTPClient http;
-  if (http.begin(serverPath))
+  http.setTimeout(5000);
+  if (http.begin(client, serverPath))
   {
     int httpResponseCode = http.GET();
 
@@ -456,6 +482,8 @@ void makeHttpsGetRequest(String serverPath)
     {
       DEBUG_PRINT("Error code: ");
       DEBUG_PRINTLN(httpResponseCode);
+      DEBUG_PRINT("HTTP error: ");
+      DEBUG_PRINTLN(HTTPClient::errorToString(httpResponseCode));
     }
     http.end();
   }
@@ -561,9 +589,10 @@ void initWebServer()
               Serial.printf("Update: %s\n", upload.filename.c_str());
               String infoText = "Update: " + String(upload.filename);
               updateDisplayLog(infoText);
-              if (!Update.begin())
+              if (!Update.begin(UPDATE_SIZE_UNKNOWN))
               { // start with max available size
                 Update.printError(Serial);
+                updateDisplayLog(String("Update begin failed: ") + Update.errorString());
               }
             }
             else if (upload.status == UPLOAD_FILE_WRITE)
@@ -571,6 +600,7 @@ void initWebServer()
               if (Update.write(upload.buf, upload.currentSize) != upload.currentSize)
               {
                 Update.printError(Serial);
+                updateDisplayLog(String("Update write failed: ") + Update.errorString());
               }
             }
             else if (upload.status == UPLOAD_FILE_END)
@@ -584,6 +614,7 @@ void initWebServer()
               else
               {
                 Update.printError(Serial);
+                updateDisplayLog(String("Update end failed: ") + Update.errorString());
               }
               Serial.setDebugOutput(false);
             }

@@ -33,10 +33,14 @@
 #define LCD_CS					    GPIO_NUM_25
 
 #define TOUCH_CS				    GPIO_NUM_26
+#define DISPLAY_ROTATION            0
+#define TOUCH_CAL_DATA              {248, 3571, 202, 3647, 5}
 #define I2S_BEEPER					    7
 
 #define IIC_SCL                     GPIO_NUM_4
 #define IIC_SDA                     GPIO_NUM_0
+#define SCALE_RX_PIN                IIC_SCL
+#define SCALE_TX_PIN                IIC_SDA
 
 #define BLTOUCH_PWM                 GPIO_NUM_2
 #define BLTOUCH_READ                GPIO_NUM_34
@@ -47,4 +51,4 @@
 #define GRBL_SPI_MOSI 			    GPIO_NUM_13
 #define GRBL_SPI_SS 			    GPIO_NUM_15
 #define SDCARD_DET_PIN 			    GPIO_NUM_39
-#define GRBL_SPI_FREQ 			    40000000   
+#define SD_SPI_FREQ 			      4000000

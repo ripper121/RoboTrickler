@@ -70,14 +70,13 @@ Dieses Profil dreht den Trickler 100 Umdrehungen, weil 200 Schritte einer Umdreh
 
 **Die Waage muss für den automatischen Kalibrierlauf auf Grain gestellt sein.** Die Firmware übernimmt den gemessenen Wert direkt als Grain und zeigt die Bestätigung als `gn` an.
 
-Vorgehen:
+**Vorgehen:**
 
 1. Wähle im Profil-Tab `calibrate`.
-2. Stelle ein ausreichend hohes Zielgewicht ein, z.B. mehr als 40 gn.
-3. Drücke Start.
-4. Lasse den Kalibrierlauf bei frisch gefülltem Trickler am besten 3-mal laufen, damit das Rohr gleichmäßig gefüllt ist. Klicke dabei bei `Create profile from calibration?` auf `No`, damit noch kein neues Profil erstellt wird.
+2. Drücke Start.
+3. Lasse den Kalibrierlauf bei frisch gefülltem Trickler am besten 3-mal laufen, damit das Rohr gleichmäßig gefüllt ist. Klicke dabei bei `Create profile from calibration?` auf `No`, damit noch kein neues Profil erstellt wird.
+4. Bestätige am Display `Create profile from calibration?` mit `Yes`.
 5. Nach dem Kalibrierlauf liest die Firmware das stabile Gewicht von der Waage.
-6. Bestätige am Display `Create profile from calibration?` mit `Yes`.
 
 Die Firmware erstellt dann automatisch ein neues Profil in `/profiles` mit dem Namen `powder_000.txt`, `powder_001.txt` usw., wählt dieses Profil aus und speichert es in `config.txt`.
 

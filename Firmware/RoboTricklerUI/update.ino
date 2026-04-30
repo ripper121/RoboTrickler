@@ -28,12 +28,12 @@ bool performUpdate(Stream &updateSource, size_t updateSize)
     else
     {
       DEBUG_PRINTLN("Error Occurred. Error #: " + String(Update.getError()));
-      updateDisplayLog("Error Occurred.");
+      updateDisplayLog(String("Update failed: ") + Update.errorString());
     }
   }
   else
   {
-    updateDisplayLog("Not enough space to begin FW Update");
+    updateDisplayLog(String("FW Update begin failed: ") + Update.errorString());
   }
   return false;
 }

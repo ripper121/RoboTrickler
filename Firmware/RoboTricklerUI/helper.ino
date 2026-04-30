@@ -258,7 +258,7 @@ void initSetup()
 
     SDspi = new SPIClass(HSPI);
     SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
-    if (!SD.begin(GRBL_SPI_SS, *SDspi))
+    if (!SD.begin(GRBL_SPI_SS, *SDspi, SD_SPI_FREQ, "/sd", 10))
     {
         restart_now = true;
         messageBox(String("Card Mount Failed!\n").c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
@@ -395,7 +395,7 @@ void initSetup()
     }
     tempProfile = config.profile;
 
-    Serial1.begin(config.scale_baud, SERIAL_8N1, IIC_SCL, IIC_SDA);
+    Serial1.begin(config.scale_baud, SERIAL_8N1, SCALE_RX_PIN, SCALE_TX_PIN);
 
     initUpdate();
 

@@ -10,6 +10,7 @@
 #include <A4988.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
+#include <NetworkClientSecure.h>
 #include <Update.h>
 #include <esp_task_wdt.h>
 #include <rtc_wdt.h>
