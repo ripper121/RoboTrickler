@@ -82,7 +82,7 @@ void setLabelTextColor(lv_obj_t *label, uint32_t colorHex)
 {
     if (lvglLock())
     {
-        lv_obj_set_style_text_color(label, lv_color_hex(colorHex), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_text_color(label, lv_color_hex(colorHex), LV_PART_MAIN);
         lvglUnlock();
     }
 }
