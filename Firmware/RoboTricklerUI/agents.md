@@ -1,7 +1,7 @@
 
 1. **Check for an existing ESP-IDF solution before writing new code**  
    Review the example code of these paths first:
-   - `C:\Users\ripper121\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.1.3\libraries`
+   - `C:\Users\ripper121\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.8\libraries`
    - `C:\Users\ripper121\Documents\Arduino\libraries`
 
       Reuse existing solutions when possible. If no suitable solution exists, implement new code in the style and structure of the examples.
@@ -15,7 +15,7 @@ Use this order for all relevant implementation work:
 
 ## Compile check
 
-This workspace uses Arduino IDE 1.8.x with Espressif ESP32 core `3.1.3`.
+This workspace uses Arduino IDE 1.8.x with Espressif ESP32 core `3.3.8`.
 
 Preferred command-line verify from this folder:
 
