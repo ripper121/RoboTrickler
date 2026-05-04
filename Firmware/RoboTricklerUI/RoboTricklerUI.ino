@@ -16,6 +16,7 @@
 #include <string.h>
 #include <math.h>
 #define FW_VERSION 2.10
+#define DEFAULT_FW_UPDATE_URL "https://strenuous.dev/roboTrickler/userTracker.php"
 
 /*
 Legacy Arduino IDE 1.8.19
@@ -78,6 +79,7 @@ struct Config
   char beeper[16];
   char language[8];
   bool fwCheck;
+  char fwUpdateUrl[128];
   float targetWeight;
   char scale_protocol[32];
   int scale_baud;

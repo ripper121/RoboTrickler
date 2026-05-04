@@ -324,8 +324,7 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
     "baud": 9600
   },
   "profile": "avg",
-  "beeper": "done",
-  "fw_check": true
+  "beeper": "done"
 }
 ```
 
@@ -340,7 +339,6 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 * `scale.baud`: Baudrate der Waage, meistens `9600`.
 * `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil.
 * `beeper`: `done`, `button`, `both` oder `off`.
-* `fw_check`: `true` prüft beim WLAN-Start, ob eine neue Firmware verfügbar ist.
 
 Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu.
 

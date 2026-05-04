@@ -362,6 +362,9 @@ void initSetup()
                 "en",                    // <- source
                 sizeof(config.language)); // <- destination's capacity
         config.fwCheck = true;
+        strlcpy(config.fwUpdateUrl,          // <- destination
+                DEFAULT_FW_UPDATE_URL,       // <- source
+                sizeof(config.fwUpdateUrl)); // <- destination's capacity
 
         saveConfiguration("/config.txt", config);
         delay(100);

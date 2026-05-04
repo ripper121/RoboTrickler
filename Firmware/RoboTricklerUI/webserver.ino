@@ -465,14 +465,38 @@ IPAddress stringToIPAddress(const String &ipAddressString)
   return ipAddress;
 }
 
-void makeHttpsGetRequest(String serverPath)
+String firmwareCheckUrl()
 {
-  NetworkClientSecure client;
-  client.setInsecure();
+  String serverPath = String(config.fwUpdateUrl);
+  if (serverPath.length() == 0)
+  {
+    serverPath = DEFAULT_FW_UPDATE_URL;
+  }
+  if (serverPath == DEFAULT_FW_UPDATE_URL)
+  {
+    serverPath += "?mac=" + String(WiFi.macAddress());
+  }
+  return serverPath;
+}
 
+void makeHttpGetRequest(String serverPath)
+{
   HTTPClient http;
   http.setTimeout(5000);
-  if (http.begin(client, serverPath))
+
+  NetworkClientSecure secureClient;
+  bool connected = false;
+  if (serverPath.startsWith("https://"))
+  {
+    secureClient.setInsecure();
+    connected = http.begin(secureClient, serverPath);
+  }
+  else
+  {
+    connected = http.begin(serverPath);
+  }
+
+  if (connected)
   {
     int httpResponseCode = http.GET();
 
@@ -642,8 +666,7 @@ void initWebServer()
 
       if (config.fwCheck)
       {
-        String serverPath = "https://strenuous.dev/roboTrickler/userTracker.php?mac=" + String(WiFi.macAddress());
-        makeHttpsGetRequest(serverPath);
+        makeHttpGetRequest(firmwareCheckUrl());
       }    
 
       WIFI_AKTIVE = true;      

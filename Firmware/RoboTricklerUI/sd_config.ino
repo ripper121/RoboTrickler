@@ -405,7 +405,11 @@ bool loadConfiguration(const char *filename, Config &config)
           doc["language"] | "en",   // <- source
           sizeof(config.language)); // <- destination's capacity
 
-  config.fwCheck = doc["fw_check"] | true;
+  JsonObject fwUpdate = doc["fw_update"].as<JsonObject>();
+  config.fwCheck = fwUpdate["check"] | (doc["fw_check"] | true);
+  strlcpy(config.fwUpdateUrl,                      // <- destination
+          fwUpdate["url"] | DEFAULT_FW_UPDATE_URL, // <- source
+          sizeof(config.fwUpdateUrl));             // <- destination's capacity
 
   file.close();
 
@@ -769,7 +773,8 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["profile"] = config.profile;
   doc["beeper"] = config.beeper;
   doc["language"] = config.language;
-  doc["fw_check"] = config.fwCheck;
+  doc["fw_update"]["check"] = config.fwCheck;
+  doc["fw_update"]["url"] = config.fwUpdateUrl;
 
   // Serialize JSON to file
   if (serializeJsonPretty(doc, file) == 0)
