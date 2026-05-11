@@ -381,13 +381,10 @@ void readWeight()
       DEBUG_PRINT("Weight Counter: ");
       DEBUG_PRINTLN(weightCounter);
 
-      float stableTolerance = 0.5;
-      for (int i = 0; (i < dec_places) && (i < 6); i++)
-      {
-        stableTolerance *= 0.1;
-      }
+      long weightRounded = lround(weight * 1000.0f);
+      long lastWeightRounded = lround(lastWeight * 1000.0f);
 
-      if (fabs(weight - lastWeight) <= stableTolerance)
+      if (weightRounded == lastWeightRounded)
       {
         if (running || calibrationProfilePromptPending)
         {
@@ -416,37 +413,27 @@ void readWeight()
     bool timeout = false;
     if (strcmp(config.scale_protocol, "GG") == 0)
     {
-      Serial1.write(0x1B);
-      Serial1.write(0x70);
-      Serial1.write(0x0D);
-      Serial1.write(0x0A);
-
-      timeout = serialWait();
+      timeout = serialReq("0x1B 0x70 0x0D 0x0A", false);
     }
     else if (strcmp(config.scale_protocol, "AD") == 0)
     {
-      Serial1.write("Q\r\n");
-      timeout = serialWait();
+      timeout = serialReq("0x51 0x0D 0x0A", true);
     }
     else if (strcmp(config.scale_protocol, "KERN") == 0)
     {
-      Serial1.write("w");
-      timeout = serialWait();
+      timeout = serialReq("0x77", true);
     }
     else if (strcmp(config.scale_protocol, "KERN-ABT") == 0)
     {
-      Serial1.write("D05\r\n");
-      timeout = serialWait();
+      timeout = serialReq("0x44 0x30 0x35 0x0D 0x0A", true);
     }
     else if (strcmp(config.scale_protocol, "SBI") == 0)
     {
-      Serial1.write("P\r\n");
-      timeout = serialWait();
+      timeout = serialReq("0x50 0x0D 0x0A", true);
     }
     else if (strcmp(config.scale_protocol, "CUSTOM") == 0)
     {
-      Serial1.write(config.scale_customCode);
-      timeout = serialWait();
+      timeout = serialReq(config.scale_customCode, true);
     }
     else
     {

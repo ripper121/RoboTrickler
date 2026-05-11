@@ -335,7 +335,7 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 * `wifi.IPSubnet`: Subnetzmaske, nötig bei statischer IP.
 * `wifi.IPDNS`: optionaler DNS-Server. Wenn leer, nutzt die Firmware `8.8.8.8`.
 * `scale.protocol`: unterstützte Werte sind `GG`, `SBI`, `KERN`, `KERN-ABT`, `AD`, `CUSTOM` und leer für kein aktives Anfragekommando.
-* `scale.customCode`: nur bei `CUSTOM`; Kommando, mit dem Messwerte von der Waage angefordert werden.
+* `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden.
 * `scale.baud`: Baudrate der Waage, meistens `9600`.
 * `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil.
 * `beeper`: `done`, `button`, `both` oder `off`.
@@ -436,7 +436,7 @@ Die Firmware fragt die Waage je nach `scale.protocol` so ab:
 * `KERN`: Kern Kommando `w`.
 * `KERN-ABT`: Kern ABT Kommando `D05 CR LF`.
 * `SBI`: Sartorius Balance Interface Kommando `P CR LF`.
-* `CUSTOM`: sendet `scale.customCode`.
+* `CUSTOM`: sendet `scale.customCode` als Hex-Bytefolge, z. B. `0x51 0x0D 0x0A`.
 * leer oder unbekannt: wartet nur auf eingehende Daten.
 
 Die Firmware liest die Antwort bis `LF`, extrahiert die Zahl und erkennt `g`, `gn` oder `gr` aus dem Text der Waagenantwort.

@@ -249,6 +249,54 @@ void serialFlush()
     }
 }
 
+bool serialReq(String req, bool flush)
+{
+    char request[128];
+    req.toCharArray(request, sizeof(request));
+
+    uint8_t bytes[64];
+    int byteCount = 0;
+    bool hexRequest = true;
+    bool hasToken = false;
+
+    char *token = strtok(request, " ,\t\r\n");
+    while (token != NULL)
+    {
+        hasToken = true;
+        if ((strlen(token) < 3) || (token[0] != '0') || ((token[1] != 'x') && (token[1] != 'X')) || (byteCount >= (int)sizeof(bytes)))
+        {
+            hexRequest = false;
+            break;
+        }
+
+        char *end = NULL;
+        unsigned long value = strtoul(token + 2, &end, 16);
+        if ((*end != '\0') || (value > 0xFF))
+        {
+            hexRequest = false;
+            break;
+        }
+
+        bytes[byteCount++] = (uint8_t)value;
+        token = strtok(NULL, " ,\t\r\n");
+    }
+
+    if (!hexRequest || !hasToken)
+    {
+        DEBUG_PRINT("Invalid serial request hex string: ");
+        DEBUG_PRINTLN(req);
+        return true;
+    }
+
+    if (flush)
+    {
+        serialFlush();
+    }
+    Serial1.write(bytes, byteCount);
+
+    return serialWait();
+}
+
 void initSetup()
 {
     Serial.begin(115200); /* prepare for possible serial debug */
