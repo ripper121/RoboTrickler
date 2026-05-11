@@ -10,7 +10,7 @@
 
 - Added SD-card language support with `language` in `config.txt`.
 - Added English and German language JSON files for firmware messages and web UI.
-- Added `lang.ino` with fallback strings and runtime UI text loading.
+- Added `language.ino` with fallback strings and runtime UI text loading.
 - Added automatic powder profile creation from the calibration run.
 - Added new profile format using `general`, `actuator`, and `rs232TrickleMap`.
 - Added `/profiles/avg.txt` and `/profiles/calibrate.txt` as the default SD profiles.

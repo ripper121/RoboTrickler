@@ -367,7 +367,7 @@ Um den WLAN-Modus zu aktivieren, trage `ssid` und `psk` in `config.txt` ein.
 
 **Nur 2.4 GHz WLAN wird unterstützt.**
 
-Beim Start zeigt der Trickler `Connect to Wifi...` an. Bei erfolgreicher Verbindung steht im Info-Tab die IP-Adresse.
+Beim Start zeigt der Trickler `Connect to WiFi...` an. Bei erfolgreicher Verbindung steht im Info-Tab die IP-Adresse.
 
 Je nach Router erreichst du den Trickler über:
 

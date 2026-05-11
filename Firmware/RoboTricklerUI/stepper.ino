@@ -86,18 +86,90 @@ static unsigned long stepperPulseIntervalUs(int rpm)
   return (unsigned long)(60000000UL / ((unsigned long)MOTOR_STEPS * (unsigned long)FULL_STEP * (unsigned long)rpm));
 }
 
-void setStepperSpeed(int stepperNum, int _stepperSpeed)
+static long calculateStepperStepsForUnits(double remainingUnits, double unitsPerThrow, double *outUnits)
+{
+  if (outUnits != NULL)
+  {
+    *outUnits = 0.0;
+  }
+  if ((remainingUnits <= 0.0) || (unitsPerThrow <= 0.0))
+  {
+    return 0;
+  }
+
+  double exactSteps = remainingUnits * (200.0 / unitsPerThrow);
+  if ((exactSteps <= 0.0) || (exactSteps > 2147483647.0))
+  {
+    return 0;
+  }
+
+  long steps = (long)exactSteps;
+  if (outUnits != NULL)
+  {
+    *outUnits = ((double)steps * unitsPerThrow) / 200.0;
+  }
+  return steps;
+}
+
+bool runBulkStepperMove(String &infoText)
+{
+  double remainingUnits = (double)config.targetWeight - (double)weight - (double)config.profile_weightGap;
+  if (remainingUnits <= 0.0)
+  {
+    return true;
+  }
+
+  for (int stepperNum = 2; stepperNum >= 1; stepperNum--)
+  {
+    ProfileActuator &actuator = config.profile_actuator[stepperNum];
+    if (!actuator.enabled)
+    {
+      continue;
+    }
+
+    int speed = actuator.unitsPerThrowSpeed;
+    if (speed <= 0)
+    {
+      speed = 200;
+    }
+
+    double units = 0.0;
+    long stepsToMove = calculateStepperStepsForUnits(remainingUnits, actuator.unitsPerThrow, &units);
+    if (stepsToMove <= 0)
+    {
+      continue;
+    }
+
+    setStepperSpeed(stepperNum, speed);
+    step(stepperNum, stepsToMove, false);
+    remainingUnits -= units;
+    if (remainingUnits < 0.0)
+    {
+      remainingUnits = 0.0;
+    }
+
+    infoText += "B";
+    infoText += String(stepperNum);
+    infoText += " ST";
+    infoText += String(stepsToMove);
+    infoText += " ";
+  }
+
+  return true;
+}
+
+void setStepperSpeed(int stepperNum, int stepperSpeed)
 {
   if ((stepperNum < 1) || (stepperNum > 2))
   {
     return;
   }
 
-  if (_stepperSpeed <= 0)
+  if (stepperSpeed <= 0)
   {
-    _stepperSpeed = 100;
+    stepperSpeed = 100;
   }
-  steppers[stepperNum].rpm = _stepperSpeed;
+  steppers[stepperNum].rpm = stepperSpeed;
 }
 
 void initStepper()
