@@ -15,7 +15,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <math.h>
-#define FW_VERSION 2.10
+#define FW_VERSION 2.11
 #define DEFAULT_FW_UPDATE_URL "https://strenuous.dev/roboTrickler/userTracker.php"
 
 /*
