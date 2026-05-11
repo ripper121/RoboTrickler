@@ -137,6 +137,19 @@ void corruptProfile(String profile_filename)
     messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
 }
 
+bool loadSelectedProfile()
+{
+    String profile_filename = profileFilename(config.profile);
+    if (!readProfile(profile_filename.c_str(), config))
+    {
+        corruptProfile(profile_filename);
+        return false;
+    }
+    tempProfile = config.profile;
+    tempTargetWeight = config.targetWeight;
+    return true;
+}
+
 void startTrickler()
 {
     setLabelText(ui_LabelTricklerStart, langText("button_stop"));
@@ -144,15 +157,10 @@ void startTrickler()
 
     if (tempProfile != String(config.profile))
     {
-        String profile_filename = profileFilename(config.profile);
-        String infoText = String(langText("status_loading_profile")) + config.profile;
-        updateDisplayLog(infoText, true);
-        if (!readProfile(profile_filename.c_str(), config))
+        if (!loadSelectedProfile())
         {
-            corruptProfile(profile_filename);
             return;
         }
-        tempProfile = config.profile;
     }
     String selectedText = String(langText("placeholder_profile")) + ": " + config.profile + langText("status_profile_selected_suffix");
     updateDisplayLog(selectedText);
@@ -218,16 +226,10 @@ void setProfile(int num)
 
     saveConfiguration("/config.txt", config);
 
-    String profile_filename = profileFilename(config.profile);
-    infoText = String(langText("status_loading_profile")) + config.profile;
-    updateDisplayLog(infoText, true);
-    if (!readProfile(profile_filename.c_str(), config))
+    if (!loadSelectedProfile())
     {
-        corruptProfile(profile_filename);
         return;
     }
-    tempProfile = config.profile;
-    tempTargetWeight = config.targetWeight;
 
     DEBUG_PRINT("num: ");
     DEBUG_PRINTLN(num);
@@ -374,46 +376,7 @@ void initSetup()
         }
         updateDisplayLog(readError);
 
-        strlcpy(config.wifi_ssid,                 // <- destination
-                "",                               // <- source
-                sizeof(config.wifi_ssid));        // <- destination's capacity
-        strlcpy(config.wifi_psk,                  // <- destination
-                "",                               // <- source
-                sizeof(config.wifi_psk));         // <- destination's capacity
-        strlcpy(config.IPStatic,                  // <- destination
-                "",                               // <- source
-                sizeof(config.IPStatic));         // <- destination's capacity
-        strlcpy(config.IPGateway,                 // <- destination
-                "",                               // <- source
-                sizeof(config.IPGateway));        // <- destination's capacity
-        strlcpy(config.IPSubnet,                  // <- destination
-                "",                               // <- source
-                sizeof(config.IPSubnet));         // <- destination's capacity
-        strlcpy(config.IPDns,                     // <- destination
-                "",                               // <- source
-                sizeof(config.IPDns));            // <- destination's capacity
-        strlcpy(config.scale_protocol,            // <- destination
-                "GG",                             // <- source
-                sizeof(config.scale_protocol));   // <- destination's capacity
-        strlcpy(config.scale_customCode,          // <- destination
-                "",                               // <- source
-                sizeof(config.scale_customCode)); // <- destination's capacity
-        config.scale_baud = 9600;
-        strlcpy(config.profile,          // <- destination
-                "calibrate",             // <- source
-                sizeof(config.profile)); // <- destination's capacity
-        config.targetWeight = 40.0;
-        strlcpy(config.beeper,          // <- destination
-                "done",                 // <- source
-                sizeof(config.beeper)); // <- destination's capacity
-        strlcpy(config.language,          // <- destination
-                "en",                    // <- source
-                sizeof(config.language)); // <- destination's capacity
-        config.fwCheck = true;
-        strlcpy(config.fwUpdateUrl,          // <- destination
-                DEFAULT_FW_UPDATE_URL,       // <- source
-                sizeof(config.fwUpdateUrl)); // <- destination's capacity
-
+        setDefaultConfiguration(config);
         saveConfiguration("/config.txt", config);
         delay(100);
 
@@ -441,13 +404,10 @@ void initSetup()
     }
     if (!selectedProfileFound)
     {
-        String profile_filename = profileFilename(config.profile);
-        if (!readProfile(profile_filename.c_str(), config))
+        if (!loadSelectedProfile())
         {
-            corruptProfile(profile_filename);
             return;
         }
-        tempProfile = config.profile;
         saveConfiguration("/config.txt", config);
         for (int i = 0; i < profileListCount; i++)
         {
@@ -459,15 +419,10 @@ void initSetup()
         }
     }
 
-    String profile_filename = profileFilename(config.profile);
-    infoText = String(langText("status_loading_profile")) + config.profile;
-    updateDisplayLog(infoText, true);
-    if (!readProfile(profile_filename.c_str(), config))
+    if ((tempProfile != String(config.profile)) && !loadSelectedProfile())
     {
-        corruptProfile(profile_filename);
         return;
     }
-    tempProfile = config.profile;
 
     applyLanguage();
 

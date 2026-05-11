@@ -302,7 +302,6 @@ void printDirectory()
   dir.rewindDirectory();
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
   server.send(200, "text/json", "");
-  WiFiClient client = server.client();
   bool firstEntry = true;
 
   server.sendContent("[");
@@ -358,12 +357,6 @@ void handleNotFound()
   }
   server.send(404, "text/plain", message);
   DEBUG_PRINT(message);
-}
-
-void handleAjaxRequest()
-{
-  String message = "test";
-  server.send(200, "text/plain", message);
 }
 
 void handleReboot()
@@ -585,7 +578,6 @@ void initWebServer()
       server.on("/system/resources/edit", HTTP_PUT, handleCreate);
       server.on("/system/resources/edit", HTTP_POST, []()
                 { returnOK(); }, handleFileUpload);
-      // server.on("/ajaxRequest", handleAjaxRequest);//To get update of ADC Value only
       server.onNotFound(handleNotFound);
       server.on("/generate_204", handleNotFound);
       server.on("/favicon.ico", handleNotFound);

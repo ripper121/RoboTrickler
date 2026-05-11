@@ -199,6 +199,25 @@ String getSdReadError()
   return sdReadError;
 }
 
+void setDefaultConfiguration(Config &config)
+{
+  strlcpy(config.wifi_ssid, "", sizeof(config.wifi_ssid));
+  strlcpy(config.wifi_psk, "", sizeof(config.wifi_psk));
+  strlcpy(config.IPStatic, "", sizeof(config.IPStatic));
+  strlcpy(config.IPGateway, "", sizeof(config.IPGateway));
+  strlcpy(config.IPSubnet, "", sizeof(config.IPSubnet));
+  strlcpy(config.IPDns, "", sizeof(config.IPDns));
+  strlcpy(config.scale_protocol, "GG", sizeof(config.scale_protocol));
+  strlcpy(config.scale_customCode, "", sizeof(config.scale_customCode));
+  config.scale_baud = 9600;
+  strlcpy(config.profile, "calibrate", sizeof(config.profile));
+  config.targetWeight = 40.0;
+  strlcpy(config.beeper, "done", sizeof(config.beeper));
+  strlcpy(config.language, "en", sizeof(config.language));
+  config.fwCheck = true;
+  strlcpy(config.fwUpdateUrl, DEFAULT_FW_UPDATE_URL, sizeof(config.fwUpdateUrl));
+}
+
 bool readProfile(const char *filename, Config &config)
 {
   setSdReadError("");
@@ -326,6 +345,7 @@ bool readProfile(const char *filename, Config &config)
 bool loadConfiguration(const char *filename, Config &config)
 {
   setSdReadError("");
+  setDefaultConfiguration(config);
   // Dump config file
   printFile(filename);
 
@@ -357,59 +377,22 @@ bool loadConfiguration(const char *filename, Config &config)
     return 0;
   }
 
-  strlcpy(config.wifi_ssid,          // <- destination
-          doc["wifi"]["ssid"] | "",  // <- source
-          sizeof(config.wifi_ssid)); // <- destination's capacity
-
-  strlcpy(config.wifi_psk,          // <- destination
-          doc["wifi"]["psk"] | "",  // <- source
-          sizeof(config.wifi_psk)); // <- destination's capacity
-
-  strlcpy(config.IPStatic,              // <- destination
-          doc["wifi"]["IPStatic"] | "", // <- source
-          sizeof(config.IPStatic));     // <- destination's capacity
-
-  strlcpy(config.IPGateway,              // <- destination
-          doc["wifi"]["IPGateway"] | "", // <- source
-          sizeof(config.IPGateway));     // <- destination's capacity
-
-  strlcpy(config.IPSubnet,              // <- destination
-          doc["wifi"]["IPSubnet"] | "", // <- source
-          sizeof(config.IPSubnet));     // <- destination's capacity
-
-  strlcpy(config.IPDns,              // <- destination
-          doc["wifi"]["IPDNS"] | "", // <- source
-          sizeof(config.IPDns));     // <- destination's capacity
-
-  strlcpy(config.scale_protocol,           // <- destination
-          doc["scale"]["protocol"] | "GG", // <- source
-          sizeof(config.scale_protocol));  // <- destination's capacity
-
-  strlcpy(config.scale_customCode,          // <- destination
-          doc["scale"]["customCode"] | "",  // <- source
-          sizeof(config.scale_customCode)); // <- destination's capacity
-
-  config.scale_baud = doc["scale"]["baud"] | 9600;
-
-  strlcpy(config.profile,               // <- destination
-          doc["profile"] | "calibrate",    // <- source
-          sizeof(config.profile));      // <- destination's capacity
-
-  config.targetWeight = 1.0;
-
-  strlcpy(config.beeper,          // <- destination
-          doc["beeper"] | "done", // <- source
-          sizeof(config.beeper)); // <- destination's capacity
-
-  strlcpy(config.language,          // <- destination
-          doc["language"] | "en",   // <- source
-          sizeof(config.language)); // <- destination's capacity
+  strlcpy(config.wifi_ssid, doc["wifi"]["ssid"] | config.wifi_ssid, sizeof(config.wifi_ssid));
+  strlcpy(config.wifi_psk, doc["wifi"]["psk"] | config.wifi_psk, sizeof(config.wifi_psk));
+  strlcpy(config.IPStatic, doc["wifi"]["IPStatic"] | config.IPStatic, sizeof(config.IPStatic));
+  strlcpy(config.IPGateway, doc["wifi"]["IPGateway"] | config.IPGateway, sizeof(config.IPGateway));
+  strlcpy(config.IPSubnet, doc["wifi"]["IPSubnet"] | config.IPSubnet, sizeof(config.IPSubnet));
+  strlcpy(config.IPDns, doc["wifi"]["IPDNS"] | config.IPDns, sizeof(config.IPDns));
+  strlcpy(config.scale_protocol, doc["scale"]["protocol"] | config.scale_protocol, sizeof(config.scale_protocol));
+  strlcpy(config.scale_customCode, doc["scale"]["customCode"] | config.scale_customCode, sizeof(config.scale_customCode));
+  config.scale_baud = doc["scale"]["baud"] | config.scale_baud;
+  strlcpy(config.profile, doc["profile"] | config.profile, sizeof(config.profile));
+  strlcpy(config.beeper, doc["beeper"] | config.beeper, sizeof(config.beeper));
+  strlcpy(config.language, doc["language"] | config.language, sizeof(config.language));
 
   JsonObject fwUpdate = doc["fw_update"].as<JsonObject>();
-  config.fwCheck = fwUpdate["check"] | (doc["fw_check"] | true);
-  strlcpy(config.fwUpdateUrl,                      // <- destination
-          fwUpdate["url"] | DEFAULT_FW_UPDATE_URL, // <- source
-          sizeof(config.fwUpdateUrl));             // <- destination's capacity
+  config.fwCheck = fwUpdate["check"] | (doc["fw_check"] | config.fwCheck);
+  strlcpy(config.fwUpdateUrl, fwUpdate["url"] | config.fwUpdateUrl, sizeof(config.fwUpdateUrl));
 
   file.close();
 

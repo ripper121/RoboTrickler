@@ -109,7 +109,6 @@ unsigned long wifiPreviousMillis = 0;
 unsigned long wifiInterval = 10000;
 
 #define MOTOR_STEPS 200
-#define ACCEL 1000
 
 #define MAX_TARGET_WEIGHT 999
 float weight = 0.0;
