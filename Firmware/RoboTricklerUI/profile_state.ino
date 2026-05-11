@@ -26,13 +26,11 @@ void handleCorruptProfile(String profile_filename)
         }
     }
 
-    strlcpy(config.profile,          // <- destination
-            "calibrate",             // <- source
-            sizeof(config.profile)); // <- destination's capacity
+    strlcpy(config.profile, "calibrate", sizeof(config.profile));
     saveConfiguration("/config.txt", config);
-    delay(100);
+    delay(CONFIG_SAVE_SETTLE_DELAY_MS);
     restart_now = true;
-    messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+    messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(UI_COLOR_ERROR), true);
 }
 
 bool loadSelectedProfile()
@@ -57,9 +55,7 @@ void selectProfile(int num)
         return;
     }
 
-    strlcpy(config.profile,               // <- destination
-            profileListBuff[num].c_str(), // <- source
-            sizeof(config.profile));      // <- destination's capacity
+    strlcpy(config.profile, profileListBuff[num].c_str(), sizeof(config.profile));
     profileListCounter = num;
 
     String infoText = String(languageText("status_selecting_profile")) + config.profile;
@@ -85,8 +81,7 @@ void saveTargetWeight(float weight)
 {
     config.targetWeight = weight;
     setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
-    String infoText = languageText("status_saving_target");
-    updateDisplayLog(infoText, true);
+    updateDisplayLog(languageText("status_saving_target"), true);
     if (!saveProfileTargetWeight(config.profile, config.targetWeight))
     {
         String readError = getSdReadError();
@@ -94,8 +89,7 @@ void saveTargetWeight(float weight)
     }
     else
     {
-        infoText = languageText("status_target_saved");
-        updateDisplayLog(infoText, true);
+        updateDisplayLog(languageText("status_target_saved"), true);
     }
     tempTargetWeight = config.targetWeight;
 }

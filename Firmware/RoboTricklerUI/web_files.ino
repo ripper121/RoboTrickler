@@ -22,9 +22,23 @@ static const MimeType mimeTypes[] = {
     {".gz", "application/x-gzip"},
 };
 
+static String contentTypeForPath(const String &path)
+{
+  for (size_t i = 0; i < ARRAY_COUNT(mimeTypes); i++)
+  {
+    if (path.endsWith(mimeTypes[i].extension))
+    {
+      return mimeTypes[i].contentType;
+    }
+  }
+  return "text/plain";
+}
+
 void sendHtmlBackPage(const char *message)
 {
-  server.send(200, "text/html", String("<h3>") + message + "</h3><br><button onClick='javascript:history.back()'>Back</button>");
+  String html = String("<h3>") + message;
+  html += "</h3><br><button onClick='javascript:history.back()'>Back</button>";
+  server.send(200, "text/html", html);
 }
 
 void sendOkResponse()
@@ -32,14 +46,60 @@ void sendOkResponse()
   server.send(200, "text/plain", "");
 }
 
-void sendFailResponse(String msg)
+void sendFailResponse(const String &msg)
 {
   server.send(500, "text/plain", msg + "\r\n");
 }
 
+static bool sdPathExists(const String &path)
+{
+  return SD.exists((char *)path.c_str());
+}
+
+static bool failRequest(const char *message)
+{
+  sendFailResponse(message);
+  return false;
+}
+
+static bool readEditPath(String &path, bool mustExist)
+{
+  if (server.args() == 0)
+  {
+    return failRequest("BAD ARGS");
+  }
+
+  path = server.arg(0);
+  if (path == "/")
+  {
+    return failRequest("BAD PATH");
+  }
+
+  bool exists = sdPathExists(path);
+  if ((mustExist && !exists) || (!mustExist && exists))
+  {
+    return failRequest("BAD PATH");
+  }
+  return true;
+}
+
+static bool readDirectoryPath(String &path)
+{
+  if (!server.hasArg("dir"))
+  {
+    return failRequest("BAD ARGS");
+  }
+
+  path = server.arg("dir");
+  if (path != "/" && !sdPathExists(path))
+  {
+    return failRequest("BAD PATH");
+  }
+  return true;
+}
+
 bool serveFileFromSdCard(String path)
 {
-  String dataType = "text/plain";
   if (path.endsWith("/"))
   {
     path += "system/index.html";
@@ -50,15 +110,7 @@ bool serveFileFromSdCard(String path)
     path = path.substring(0, path.lastIndexOf("."));
   }
 
-  for (size_t i = 0; i < ARRAY_COUNT(mimeTypes); i++)
-  {
-    if (path.endsWith(mimeTypes[i].extension))
-    {
-      dataType = mimeTypes[i].contentType;
-      break;
-    }
-  }
-
+  String dataType = contentTypeForPath(path);
   if (server.hasArg("download"))
   {
     dataType = "application/octet-stream";
@@ -73,11 +125,11 @@ bool serveFileFromSdCard(String path)
   dataFile.close();
 
   String pathWithGz = path + ".gz";
-  if (SD.exists(pathWithGz))
+  if (sdPathExists(pathWithGz))
   {
     path = pathWithGz;
   }
-  else if (!SD.exists(path))
+  else if (!sdPathExists(path))
   {
     return false;
   }
@@ -103,6 +155,41 @@ bool serveFileFromSdCard(String path)
   return true;
 }
 
+static void handleUploadStart(HTTPUpload &upload)
+{
+  if (upload.filename.startsWith("/profiles/") && !SD.exists("/profiles"))
+  {
+    SD.mkdir("/profiles");
+  }
+  if (SD.exists((char *)upload.filename.c_str()))
+  {
+    SD.remove((char *)upload.filename.c_str());
+  }
+  uploadFile = SD.open(upload.filename.c_str(), FILE_WRITE);
+  DEBUG_PRINT("Upload: START, filename: ");
+  DEBUG_PRINTLN(upload.filename);
+}
+
+static void handleUploadWrite(HTTPUpload &upload)
+{
+  if (uploadFile)
+  {
+    uploadFile.write(upload.buf, upload.currentSize);
+  }
+  DEBUG_PRINT("Upload: WRITE, Bytes: ");
+  DEBUG_PRINTLN(upload.currentSize);
+}
+
+static void handleUploadEnd(HTTPUpload &upload)
+{
+  if (uploadFile)
+  {
+    uploadFile.close();
+  }
+  DEBUG_PRINT("Upload: END, Size: ");
+  DEBUG_PRINTLN(upload.totalSize);
+}
+
 void handleFileUpload()
 {
   if (server.uri() != "/system/resources/edit")
@@ -110,37 +197,19 @@ void handleFileUpload()
     return;
   }
   HTTPUpload &upload = server.upload();
-  if (upload.status == UPLOAD_FILE_START)
+  switch (upload.status)
   {
-    if (upload.filename.startsWith("/profiles/") && !SD.exists("/profiles"))
-    {
-      SD.mkdir("/profiles");
-    }
-    if (SD.exists((char *)upload.filename.c_str()))
-    {
-      SD.remove((char *)upload.filename.c_str());
-    }
-    uploadFile = SD.open(upload.filename.c_str(), FILE_WRITE);
-    DEBUG_PRINT("Upload: START, filename: ");
-    DEBUG_PRINTLN(upload.filename);
-  }
-  else if (upload.status == UPLOAD_FILE_WRITE)
-  {
-    if (uploadFile)
-    {
-      uploadFile.write(upload.buf, upload.currentSize);
-    }
-    DEBUG_PRINT("Upload: WRITE, Bytes: ");
-    DEBUG_PRINTLN(upload.currentSize);
-  }
-  else if (upload.status == UPLOAD_FILE_END)
-  {
-    if (uploadFile)
-    {
-      uploadFile.close();
-    }
-    DEBUG_PRINT("Upload: END, Size: ");
-    DEBUG_PRINTLN(upload.totalSize);
+  case UPLOAD_FILE_START:
+    handleUploadStart(upload);
+    break;
+  case UPLOAD_FILE_WRITE:
+    handleUploadWrite(upload);
+    break;
+  case UPLOAD_FILE_END:
+    handleUploadEnd(upload);
+    break;
+  default:
+    break;
   }
 }
 
@@ -182,14 +251,9 @@ void deleteRecursive(String path)
 
 void handleDelete()
 {
-  if (server.args() == 0)
+  String path;
+  if (!readEditPath(path, true))
   {
-    return sendFailResponse("BAD ARGS");
-  }
-  String path = server.arg(0);
-  if (path == "/" || !SD.exists((char *)path.c_str()))
-  {
-    sendFailResponse("BAD PATH");
     return;
   }
   deleteRecursive(path);
@@ -198,14 +262,9 @@ void handleDelete()
 
 void handleCreate()
 {
-  if (server.args() == 0)
+  String path;
+  if (!readEditPath(path, false))
   {
-    return sendFailResponse("BAD ARGS");
-  }
-  String path = server.arg(0);
-  if (path == "/" || SD.exists((char *)path.c_str()))
-  {
-    sendFailResponse("BAD PATH");
     return;
   }
 
@@ -225,23 +284,38 @@ void handleCreate()
   sendOkResponse();
 }
 
+static bool shouldListDirectoryEntry(File &entry)
+{
+  return strcmp(entry.path(), "/resources/css") != 0;
+}
+
+static void sendDirectoryEntry(File &entry, bool &firstEntry)
+{
+  String output = firstEntry ? "" : ",";
+  firstEntry = false;
+
+  output += "{\"type\":\"";
+  output += entry.isDirectory() ? "dir" : "file";
+  output += "\",\"name\":\"";
+  output += jsonEscape(String(entry.path()));
+  output += "\"}";
+  server.sendContent(output);
+}
+
 void handleListDirectory()
 {
-  if (!server.hasArg("dir"))
+  String path;
+  if (!readDirectoryPath(path))
   {
-    return sendFailResponse("BAD ARGS");
-  }
-  String path = server.arg("dir");
-  if (path != "/" && !SD.exists((char *)path.c_str()))
-  {
-    return sendFailResponse("BAD PATH");
+    return;
   }
   File dir = SD.open((char *)path.c_str());
   path = String();
   if (!dir.isDirectory())
   {
     dir.close();
-    return sendFailResponse("NOT DIR");
+    sendFailResponse("NOT DIR");
+    return;
   }
   dir.rewindDirectory();
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
@@ -257,23 +331,9 @@ void handleListDirectory()
       break;
     }
 
-    if (strcmp(entry.path(), "/resources/css") != 0)
+    if (shouldListDirectoryEntry(entry))
     {
-
-      String output;
-      if (!firstEntry)
-      {
-        output = ',';
-      }
-      firstEntry = false;
-
-      output += "{\"type\":\"";
-      output += (entry.isDirectory()) ? "dir" : "file";
-      output += "\",\"name\":\"";
-      output += jsonEscape(String(entry.path()));
-      output += "\"";
-      output += "}";
-      server.sendContent(output);
+      sendDirectoryEntry(entry, firstEntry);
     }
     entry.close();
   }

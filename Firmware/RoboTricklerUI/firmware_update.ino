@@ -70,7 +70,7 @@ void updateFirmwareFromFileSystem(fs::FS &fs)
     {
       // whe finished remove the binary from sd card to indicate end of the process
       fs.remove("/update.bin");
-      delay(1000);
+      delay(RESTART_DELAY_MS);
       ESP.restart();
     }
   }
@@ -104,7 +104,7 @@ void checkFirmwareUpdate()
 {
   String serverPath = firmwareCheckUrl();
   HTTPClient http;
-  http.setTimeout(5000);
+  http.setTimeout(FIRMWARE_HTTP_TIMEOUT_MS);
 
   NetworkClientSecure secureClient;
   bool connected = false;
@@ -130,7 +130,8 @@ void checkFirmwareUpdate()
       DEBUG_PRINTLN(payload);
       if (FW_VERSION < payload.toFloat())
       {
-        messageBox((String(languageText("msg_new_firmware")) + payload + languageText("msg_check_url")).c_str(), &lv_font_montserrat_14, lv_color_hex(0x00FF00), true);
+        String message = String(languageText("msg_new_firmware")) + payload + languageText("msg_check_url");
+        messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(UI_COLOR_OK), true);
       }
     }
     else

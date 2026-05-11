@@ -1,8 +1,8 @@
 String nextCalibrationProfileName()
 {
-  for (int i = 0; i <= 999; i++)
+  for (int i = 0; i <= CALIBRATION_MAX_PROFILE_INDEX; i++)
   {
-    char profileName[16];
+    char profileName[CALIBRATION_PROFILE_NAME_SIZE];
     snprintf(profileName, sizeof(profileName), "powder_%03d", i);
     String filename = "/profiles/" + String(profileName) + ".txt";
     if (!SD.exists(filename.c_str()))
@@ -32,14 +32,13 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   String infoText = String(languageText("status_creating_profile")) + profileName;
   updateDisplayLog(infoText, true);
 
-  const float diffWeights[5] = {1.929, 0.965, 0.482, 0.241, 0.000};
-  const int measurements[5] = {2, 2, 5, 10, 15};
-  const float rs232LimitFactor = 0.65;
-  const float unitsPerThrow = calibrationWeight / 100.0;
+  const float diffWeights[CALIBRATION_PROFILE_STEP_COUNT] = {1.929, 0.965, 0.482, 0.241, 0.000};
+  const int measurements[CALIBRATION_PROFILE_STEP_COUNT] = {2, 2, 5, 10, 15};
+  const float unitsPerThrow = calibrationWeight / CALIBRATION_UNITS_PER_THROW_DIVISOR;
   int profileSpeed = config.profile_step[0].speed;
   if (profileSpeed <= 0)
   {
-    profileSpeed = 200;
+    profileSpeed = DEFAULT_PROFILE_SPEED;
   }
 
   JsonDocument doc;
@@ -48,7 +47,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   general["tolerance"] = serialized(String(0.0, 3));
   general["alarmThreshold"] = serialized(String(1.0, 3));
   general["weightGap"] = serialized(String(1.0, 3));
-  general["measurements"] = config.profile_generalMeasurements > 0 ? config.profile_generalMeasurements : 20;
+  general["measurements"] = config.profile_generalMeasurements > 0 ? config.profile_generalMeasurements : DEFAULT_PROFILE_GENERAL_MEASUREMENTS;
 
   JsonObject actuator = doc["actuator"].to<JsonObject>();
   JsonObject stepper1 = actuator["stepper1"].to<JsonObject>();
@@ -56,18 +55,18 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   stepper1["unitsPerThrow"] = serialized(String(unitsPerThrow, 3));
   stepper1["unitsPerThrowSpeed"] = profileSpeed;
   JsonObject stepper2 = actuator["stepper2"].to<JsonObject>();
-  ProfileActuator &profileActuator2 = config.profile_actuator[2];
+  ProfileActuator &profileActuator2 = config.profile_actuator[PROFILE_ACTUATOR_MAX];
   stepper2["enabled"] = profileActuator2.enabled;
-  stepper2["unitsPerThrow"] = serialized(String(profileActuator2.unitsPerThrow > 0.0 ? profileActuator2.unitsPerThrow : 10.0, 3));
-  stepper2["unitsPerThrowSpeed"] = profileActuator2.unitsPerThrowSpeed > 0 ? profileActuator2.unitsPerThrowSpeed : 200;
+  stepper2["unitsPerThrow"] = serialized(String(profileActuator2.unitsPerThrow > 0.0 ? profileActuator2.unitsPerThrow : DEFAULT_SECONDARY_UNITS_PER_THROW, 3));
+  stepper2["unitsPerThrowSpeed"] = profileActuator2.unitsPerThrowSpeed > 0 ? profileActuator2.unitsPerThrowSpeed : DEFAULT_PROFILE_SPEED;
 
   JsonArray rs232TrickleMap = doc["rs232TrickleMap"].to<JsonArray>();
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < CALIBRATION_PROFILE_STEP_COUNT; i++)
   {
-    long steps = lround(((diffWeights[i] * 200.0) / unitsPerThrow) * rs232LimitFactor);
-    if (steps < 5)
+    long steps = lround(((diffWeights[i] * (float)MOTOR_STEPS) / unitsPerThrow) * CALIBRATION_RS232_LIMIT_FACTOR);
+    if (steps < CALIBRATION_MIN_STEPS)
     {
-      steps = 5;
+      steps = CALIBRATION_MIN_STEPS;
     }
 
     JsonObject profileEntry = rs232TrickleMap.add<JsonObject>();

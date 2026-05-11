@@ -2,18 +2,18 @@ static byte profileActuatorNumber(const char *actuatorName)
 {
   if ((actuatorName == NULL) || (strcmp(actuatorName, "stepper1") == 0))
   {
-    return 1;
+    return PROFILE_ACTUATOR_MIN;
   }
   if (strcmp(actuatorName, "stepper2") == 0)
   {
-    return 2;
+    return PROFILE_ACTUATOR_MAX;
   }
   return 0;
 }
 
 static const char *profileActuatorName(byte stepperNumber)
 {
-  return stepperNumber == 2 ? "stepper2" : "stepper1";
+  return stepperNumber == PROFILE_ACTUATOR_MAX ? "stepper2" : "stepper1";
 }
 
 static bool hasRequiredProfileFields(JsonObject profileEntry)
@@ -52,14 +52,22 @@ static bool isProfileMetadataKey(const char *key)
          (strcmp(key, "rs232TrickleMap") == 0);
 }
 
-static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char *filename, Config &config, bool showErrors, bool allowCalibrationDefaults)
+static bool loadProfileEntry(JsonObject profileEntry,
+                             int itemNumber,
+                             const char *filename,
+                             Config &cfg,
+                             bool showErrors,
+                             bool allowCalibrationDefaults)
 {
   bool hasRequiredFields = hasRequiredProfileFields(profileEntry);
   if (!hasRequiredFields && (!allowCalibrationDefaults || !hasCalibrationProfileFields(profileEntry)))
   {
     if (showErrors)
     {
-      setSdReadError(String("Incomplete profile entry:\n") + filename + "\nEntry: " + String(itemNumber) + "\nRequired: diffWeight, actuator, steps, speed, measurements");
+      String message = String("Incomplete profile entry:\n") + filename +
+                       "\nEntry: " + String(itemNumber) +
+                       "\nRequired: diffWeight, actuator, steps, speed, measurements";
+      setSdReadError(message);
       DEBUG_PRINT("Incomplete profile entry: ");
       DEBUG_PRINTLN(itemNumber);
     }
@@ -69,15 +77,20 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   byte stepperNumber = profileEntry["number"].isNull()
                            ? profileActuatorNumber(profileEntry["actuator"] | "stepper1")
                            : (byte)(profileEntry["number"] | 1);
-  int stepperSpeed = profileEntry["speed"] | 200;
-  int measurements = profileEntry["measurements"] | 5;
+  int stepperSpeed = profileEntry["speed"] | DEFAULT_PROFILE_SPEED;
+  int measurements = profileEntry["measurements"] | DEFAULT_PROFILE_STEP_MEASUREMENTS;
   float profileWeight = profileEntry["diffWeight"] | 0.0;
   if (profileEntry["diffWeight"].isNull())
   {
     profileWeight = profileEntry["weight"] | 0.0;
   }
   long profileSteps = profileEntry["steps"] | 0;
-  if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
+  if ((stepperNumber < PROFILE_ACTUATOR_MIN) ||
+      (stepperNumber > PROFILE_ACTUATOR_MAX) ||
+      (stepperSpeed <= 0) ||
+      (measurements < 0) ||
+      (profileWeight < 0) ||
+      (profileSteps <= 0))
   {
     if (showErrors)
     {
@@ -88,17 +101,17 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
     return false;
   }
 
-  if (config.profile_count >= 16)
+  if (cfg.profile_count >= MAX_PROFILE_STEPS)
   {
     return true;
   }
 
-  int item_key = config.profile_count;
-  ProfileStep &step = config.profile_step[item_key];
+  int item_key = cfg.profile_count;
+  ProfileStep &step = cfg.profile_step[item_key];
   if (item_key == 0)
   {
-    config.profile_tolerance = profileEntry["tolerance"] | config.profile_tolerance;
-    config.profile_alarmThreshold = profileEntry["alarmThreshold"] | config.profile_alarmThreshold;
+    cfg.profile_tolerance = profileEntry["tolerance"] | cfg.profile_tolerance;
+    cfg.profile_alarmThreshold = profileEntry["alarmThreshold"] | cfg.profile_alarmThreshold;
   }
   step.actuator = stepperNumber;
   step.weight = profileWeight;
@@ -106,11 +119,11 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   step.speed = stepperSpeed;
   step.measurements = measurements;
   step.reverse = profileEntry["reverse"] | false;
-  config.profile_count++;
+  cfg.profile_count++;
   return true;
 }
 
-static bool loadProfileEntries(JsonObject doc, const char *filename, Config &config, bool showErrors)
+static bool loadProfileEntries(JsonObject doc, const char *filename, Config &cfg, bool showErrors)
 {
   bool allowCalibrationDefaults = isCalibrationProfileFile(filename);
   JsonArray rs232TrickleMap = doc["rs232TrickleMap"].as<JsonArray>();
@@ -119,13 +132,13 @@ static bool loadProfileEntries(JsonObject doc, const char *filename, Config &con
     int itemNumber = 1;
     for (JsonVariant item : rs232TrickleMap)
     {
-      if (!loadProfileEntry(item.as<JsonObject>(), itemNumber, filename, config, showErrors, allowCalibrationDefaults))
+      if (!loadProfileEntry(item.as<JsonObject>(), itemNumber, filename, cfg, showErrors, allowCalibrationDefaults))
       {
         return false;
       }
       itemNumber++;
     }
-    return config.profile_count > 0;
+    return cfg.profile_count > 0;
   }
 
   if (!allowCalibrationDefaults)
@@ -140,7 +153,7 @@ static bool loadProfileEntries(JsonObject doc, const char *filename, Config &con
 
   if (hasCalibrationProfileFields(doc))
   {
-    return loadProfileEntry(doc, 1, filename, config, showErrors, true);
+    return loadProfileEntry(doc, 1, filename, cfg, showErrors, true);
   }
 
   for (JsonPair item : doc)
@@ -152,7 +165,7 @@ static bool loadProfileEntries(JsonObject doc, const char *filename, Config &con
     }
 
     int itemNumber = String(key).toInt();
-    if ((itemNumber < 1) || (itemNumber > 16))
+    if ((itemNumber < 1) || (itemNumber > MAX_PROFILE_STEPS))
     {
       if (showErrors)
       {
@@ -163,13 +176,73 @@ static bool loadProfileEntries(JsonObject doc, const char *filename, Config &con
       return false;
     }
 
-    if (!loadProfileEntry(item.value().as<JsonObject>(), itemNumber, filename, config, showErrors, true))
+    if (!loadProfileEntry(item.value().as<JsonObject>(), itemNumber, filename, cfg, showErrors, true))
     {
       return false;
     }
   }
 
-  return config.profile_count > 0;
+  return cfg.profile_count > 0;
+}
+
+static void resetProfileRuntimeConfig(Config &cfg)
+{
+  cfg.profile_tolerance = 0.000;
+  cfg.profile_alarmThreshold = 0.000;
+  cfg.profile_weightGap = 1.000;
+  cfg.profile_generalMeasurements = DEFAULT_PROFILE_GENERAL_MEASUREMENTS;
+  cfg.profile_count = 0;
+
+  for (int i = 0; i < PROFILE_ACTUATOR_SLOTS; i++)
+  {
+    cfg.profile_actuator[i] = {false, 0.0, 0};
+  }
+  for (int i = 0; i < MAX_PROFILE_STEPS; i++)
+  {
+    cfg.profile_step[i] = {PROFILE_ACTUATOR_MIN, 0.0, 0, 0, 0, false};
+  }
+}
+
+static bool loadProfileGeneralSettings(JsonObject general, Config &cfg)
+{
+  if (general.isNull())
+  {
+    return false;
+  }
+
+  cfg.targetWeight = general["targetWeight"] | cfg.targetWeight;
+  cfg.profile_tolerance = general["tolerance"] | 0.000;
+  cfg.profile_alarmThreshold = general["alarmThreshold"] | 0.000;
+  cfg.profile_weightGap = general["weightGap"] | 1.000;
+  bool hasGeneralMeasurements = !general["measurements"].isNull();
+  cfg.profile_generalMeasurements = general["measurements"] | DEFAULT_PROFILE_GENERAL_MEASUREMENTS;
+  if (cfg.profile_generalMeasurements < 0)
+  {
+    cfg.profile_generalMeasurements = DEFAULT_PROFILE_GENERAL_MEASUREMENTS;
+  }
+  return hasGeneralMeasurements;
+}
+
+static void loadProfileActuatorSettings(JsonObject actuator, Config &cfg)
+{
+  if (actuator.isNull())
+  {
+    return;
+  }
+
+  for (int stepperNumber = PROFILE_ACTUATOR_MIN; stepperNumber <= PROFILE_ACTUATOR_MAX; stepperNumber++)
+  {
+    JsonObject stepper = actuator[profileActuatorName(stepperNumber)].as<JsonObject>();
+    if (stepper.isNull())
+    {
+      continue;
+    }
+
+    ProfileActuator &profileActuator = cfg.profile_actuator[stepperNumber];
+    profileActuator.enabled = stepper["enabled"] | true;
+    profileActuator.unitsPerThrow = stepper["unitsPerThrow"] | 0.0;
+    profileActuator.unitsPerThrowSpeed = stepper["unitsPerThrowSpeed"] | 0;
+  }
 }
 
 String profileFilename(const char *profileName)
@@ -177,7 +250,7 @@ String profileFilename(const char *profileName)
   return "/profiles/" + String(profileName) + ".txt";
 }
 
-bool readProfile(const char *filename, Config &config)
+bool readProfile(const char *filename, Config &cfg)
 {
   setSdReadError("");
   String infoText = String(languageText("status_loading_profile")) + filename;
@@ -200,53 +273,11 @@ bool readProfile(const char *filename, Config &config)
     return false;
   }
 
-  config.profile_tolerance = 0.000;
-  config.profile_alarmThreshold = 0.000;
-  config.profile_weightGap = 1.000;
-  config.profile_generalMeasurements = 20;
-  config.profile_count = 0;
-  for (int i = 0; i < 3; i++)
-  {
-    config.profile_actuator[i] = {false, 0.0, 0};
-  }
-  for (int i = 0; i < 16; i++)
-  {
-    config.profile_step[i] = {1, 0.0, 0, 0, 0, false};
-  }
+  resetProfileRuntimeConfig(cfg);
+  bool hasGeneralMeasurements = loadProfileGeneralSettings(doc["general"].as<JsonObject>(), cfg);
+  loadProfileActuatorSettings(doc["actuator"].as<JsonObject>(), cfg);
 
-  JsonObject general = doc["general"].as<JsonObject>();
-  bool hasGeneralMeasurements = false;
-  if (!general.isNull())
-  {
-    config.targetWeight = general["targetWeight"] | config.targetWeight;
-    config.profile_tolerance = general["tolerance"] | 0.000;
-    config.profile_alarmThreshold = general["alarmThreshold"] | 0.000;
-    config.profile_weightGap = general["weightGap"] | 1.000;
-    hasGeneralMeasurements = !general["measurements"].isNull();
-    config.profile_generalMeasurements = general["measurements"] | 20;
-    if (config.profile_generalMeasurements < 0)
-    {
-      config.profile_generalMeasurements = 20;
-    }
-  }
-
-  JsonObject actuator = doc["actuator"].as<JsonObject>();
-  if (!actuator.isNull())
-  {
-    for (int stepperNumber = 1; stepperNumber <= 2; stepperNumber++)
-    {
-      JsonObject stepper = actuator[profileActuatorName(stepperNumber)].as<JsonObject>();
-      if (!stepper.isNull())
-      {
-        ProfileActuator &profileActuator = config.profile_actuator[stepperNumber];
-        profileActuator.enabled = stepper["enabled"] | true;
-        profileActuator.unitsPerThrow = stepper["unitsPerThrow"] | 0.0;
-        profileActuator.unitsPerThrowSpeed = stepper["unitsPerThrowSpeed"] | 0;
-      }
-    }
-  }
-
-  if (!loadProfileEntries(doc.as<JsonObject>(), filename, config, true))
+  if (!loadProfileEntries(doc.as<JsonObject>(), filename, cfg, true))
   {
     if (getSdReadError().length() <= 0)
     {
@@ -255,13 +286,13 @@ bool readProfile(const char *filename, Config &config)
     }
     return false;
   }
-  if (!hasGeneralMeasurements && isCalibrationProfileFile(filename) && (config.profile_count > 0))
+  if (!hasGeneralMeasurements && isCalibrationProfileFile(filename) && (cfg.profile_count > 0))
   {
-    config.profile_generalMeasurements = config.profile_step[0].measurements;
+    cfg.profile_generalMeasurements = cfg.profile_step[0].measurements;
   }
   DEBUG_PRINTLN("PROFILE_ACTIVE");
 
-  infoText = String(languageText("status_profile_ready")) + config.profile;
+  infoText = String(languageText("status_profile_ready")) + cfg.profile;
   updateDisplayLog(infoText, true);
   return true;
 }

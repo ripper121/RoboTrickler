@@ -1,8 +1,5 @@
 void startTrickler()
 {
-    setLabelText(ui_LabelTricklerStart, languageText("button_stop"));
-    setObjBgColor(ui_ButtonTricklerStart, 0xFF0000);
-
     if (tempProfile != String(config.profile))
     {
         if (!loadSelectedProfile())
@@ -15,14 +12,14 @@ void startTrickler()
 
     if (tempTargetWeight != config.targetWeight)
     {
-        String infoText = languageText("status_saving_target");
-        updateDisplayLog(infoText, true);
+        updateDisplayLog(languageText("status_saving_target"), true);
         saveTargetWeight(config.targetWeight);
     }
     tempTargetWeight = config.targetWeight;
 
-    String infoText = languageText("status_starting_trickler");
-    updateDisplayLog(infoText, true);
+    setLabelText(ui_LabelTricklerStart, languageText("button_stop"));
+    setObjBgColor(ui_ButtonTricklerStart, UI_COLOR_ERROR);
+    updateDisplayLog(languageText("status_starting_trickler"), true);
     startMeasurement();
 }
 
@@ -30,10 +27,9 @@ void stopTrickler()
 {
     stopMeasurement();
     setLabelText(ui_LabelTricklerStart, languageText("button_start"));
-    setObjBgColor(ui_ButtonTricklerStart, 0x00FF00);
+    setObjBgColor(ui_ButtonTricklerStart, UI_COLOR_OK);
     setLabelText(ui_LabelTricklerWeight, "-.-");
-    String infoText = languageText("status_stopped");
-    updateDisplayLog(infoText, true);
+    updateDisplayLog(languageText("status_stopped"), true);
 }
 
 void startMeasurement()
@@ -55,28 +51,30 @@ void stopMeasurement()
     playConfiguredBeep("button");
 }
 
+static void playDoneBeeps(byte count)
+{
+    for (byte i = 0; i < count; i++)
+    {
+        playConfiguredBeep("done");
+        if ((i + 1) < count)
+        {
+            delay(DONE_BEEP_GAP_MS);
+        }
+    }
+}
+
 static void handleTargetReached(float tolerance, float alarmThreshold)
 {
-    if (weight <= (config.targetWeight + tolerance + EPSILON))
-    {
-        setLabelTextColor(ui_LabelTricklerWeight, 0x00FF00);
-    }
-    else
-    {
-        setLabelTextColor(ui_LabelTricklerWeight, 0xFFFF00);
-    }
+    uint32_t weightColor = weight <= (config.targetWeight + tolerance + EPSILON) ? UI_COLOR_OK : UI_COLOR_WARN;
+    setLabelTextColor(ui_LabelTricklerWeight, weightColor);
 
-    if ((weight >= (config.targetWeight + alarmThreshold + EPSILON)) && (alarmThreshold > 0))
+    if ((alarmThreshold > 0) && (weight >= (config.targetWeight + alarmThreshold + EPSILON)))
     {
-        setLabelTextColor(ui_LabelTricklerWeight, 0xFF0000);
+        setLabelTextColor(ui_LabelTricklerWeight, UI_COLOR_ERROR);
         updateDisplayLog(languageText("status_over_trickle"), true);
-        playConfiguredBeep("done");
-        delay(250);
-        playConfiguredBeep("done");
-        delay(250);
-        playConfiguredBeep("done");
+        playDoneBeeps(3);
         stopTrickler();
-        messageBox(languageText("msg_over_trickle"), &lv_font_montserrat_32, lv_color_hex(0xFF0000), true);
+        messageBox(languageText("msg_over_trickle"), &lv_font_montserrat_32, lv_color_hex(UI_COLOR_ERROR), true);
     }
 
     if (!finished)
@@ -103,19 +101,19 @@ static bool handleFirstThrow(String &infoText)
         return false;
     }
 
-    if (infoText.length() > 0)
+    if (infoText.length() <= 0)
     {
-        if (strcmp(config.profile, "calibrate") == 0)
-        {
-            startCalibrationProfilePrompt();
-            return false;
-        }
-        measurementCount = config.profile_generalMeasurements;
-        updateDisplayLog(infoText, true);
-        return false;
+        return true;
     }
 
-    return true;
+    if (strcmp(config.profile, "calibrate") == 0)
+    {
+        startCalibrationProfilePrompt();
+        return false;
+    }
+    measurementCount = config.profile_generalMeasurements;
+    updateDisplayLog(infoText, true);
+    return false;
 }
 
 static bool selectProfileStep(int *profileStep)
@@ -141,27 +139,27 @@ static bool selectProfileStep(int *profileStep)
 
 static bool runProfileStep(int profileStep, String &infoText)
 {
-    static int stepperSpeedOld[3] = {0, 0, 0};
+    static int stepperSpeedOld[PROFILE_ACTUATOR_SLOTS] = {0, 0, 0};
     ProfileStep &stepConfig = config.profile_step[profileStep];
     byte stepperNum = stepConfig.actuator;
-    if ((stepperNum >= 1) && (stepperNum <= 2) && (stepperSpeedOld[stepperNum] != stepConfig.speed))
-    {
-        setStepperSpeed(stepperNum, stepConfig.speed);
-        stepperSpeedOld[stepperNum] = stepConfig.speed;
-    }
-
-    if ((stepperNum < 1) || (stepperNum > 2))
+    if ((stepperNum < PROFILE_ACTUATOR_MIN) || (stepperNum > PROFILE_ACTUATOR_MAX))
     {
         updateDisplayLog(languageText("status_invalid_stepper"), true);
         stopTrickler();
         return false;
     }
 
+    if (stepperSpeedOld[stepperNum] != stepConfig.speed)
+    {
+        setStepperSpeed(stepperNum, stepConfig.speed);
+        stepperSpeedOld[stepperNum] = stepConfig.speed;
+    }
+
     step(stepperNum, stepConfig.steps, stepConfig.reverse);
 
     measurementCount = stepConfig.measurements;
 
-    char infoLine[64];
+    char infoLine[TRICKLER_INFO_LINE_SIZE];
     snprintf(infoLine,
              sizeof(infoLine),
              "W%.3f ST%ld SP%d M%d",
@@ -211,11 +209,11 @@ static void processTricklerMeasurement()
     if (!finished && (weight >= 0))
     {
         updateDisplayLog(languageText("status_running"), true);
-        setLabelTextColor(ui_LabelTricklerWeight, 0xFFFFFF);
+        setLabelTextColor(ui_LabelTricklerWeight, UI_COLOR_TEXT);
 
         DEBUG_PRINTLN("Profile Running");
         String infoText = "";
-        infoText.reserve(48);
+        infoText.reserve(TRICKLER_INFO_TEXT_RESERVE);
         if (!handleFirstThrow(infoText))
         {
             return;
@@ -246,27 +244,29 @@ static void handleIdleScaleRead()
 
     handleCalibrationProfilePrompt();
 
-    if (millis() - scaleReadTime >= 1000)
+    uint32_t now = millis();
+    if (now - scaleReadTime < IDLE_SCALE_READ_INTERVAL_MS)
     {
-        scaleReadTime = millis();
-        updateDisplayLog(languageText("status_get_weight"), true);
-        readScaleWeight();
-        updateWeightLabel(ui_LabelTricklerWeight);
+        return;
     }
+
+    scaleReadTime = now;
+    updateDisplayLog(languageText("status_get_weight"), true);
+    readScaleWeight();
+    updateWeightLabel(ui_LabelTricklerWeight);
 }
 
 void handleTricklerLoop()
 {
-    if (running)
-    {
-        readScaleWeight();
-        if (newData)
-        {
-            processTricklerMeasurement();
-        }
-    }
-    else
+    if (!running)
     {
         handleIdleScaleRead();
+        return;
+    }
+
+    readScaleWeight();
+    if (newData)
+    {
+        processTricklerMeasurement();
     }
 }

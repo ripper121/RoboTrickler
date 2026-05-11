@@ -57,13 +57,15 @@ void handleGetProfileList()
   String message = "{";
   for (int i = 0; i < profileListCount; i++)
   {
+    if (i > 0)
+    {
+      message += ",";
+    }
     message += "\"";
     message += String(i);
     message += "\":\"";
     message += jsonEscape(String(profileListBuff[i]));
     message += "\"";
-    if (i < profileListCount - 1)
-      message += ",";
   }
   message += "}";
 
@@ -117,102 +119,119 @@ IPAddress stringToIPAddress(const String &ipAddressString)
   return ipAddress;
 }
 
+static void prepareWifiForStationMode()
+{
+  // Reset WiFi state before STA mode; this avoids crashes on some reconnect paths.
+  WiFi.disconnect();
+  WiFi.softAPdisconnect(true);
+  WiFi.mode(WIFI_OFF);
+  delay(WIFI_RESET_DELAY_MS);
+}
+
+static IPAddress configuredDnsAddress()
+{
+  if (String(config.IPDns).length() > 0)
+  {
+    return stringToIPAddress(String(config.IPDns));
+  }
+  return IPAddress(8, 8, 8, 8);
+}
+
+static void applyWifiIpConfig(IPAddress ipDNS)
+{
+  if (String(config.IPStatic).length() > 0)
+  {
+    IPAddress staticIP = stringToIPAddress(String(config.IPStatic));
+    IPAddress gateway = stringToIPAddress(String(config.IPGateway));
+    IPAddress subnet = stringToIPAddress(String(config.IPSubnet));
+
+    if (!WiFi.config(staticIP, gateway, subnet, ipDNS))
+    {
+      updateDisplayLog(languageText("status_static_ip_failed"));
+      delay(WIFI_CONFIG_ERROR_DELAY_MS);
+    }
+    return;
+  }
+
+  if (!WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, ipDNS))
+  {
+    updateDisplayLog(languageText("status_dns_failed"));
+    delay(WIFI_CONFIG_ERROR_DELAY_MS);
+  }
+}
+
+static void registerWebRoutes()
+{
+  server.on("/list", HTTP_GET, handleListDirectory);
+  server.on("/system/resources/edit", HTTP_DELETE, handleDelete);
+  server.on("/system/resources/edit", HTTP_PUT, handleCreate);
+  server.on("/system/resources/edit", HTTP_POST, []()
+            { sendOkResponse(); }, handleFileUpload);
+  server.onNotFound(handleNotFound);
+  server.on("/generate_204", handleNotFound);
+  server.on("/favicon.ico", handleNotFound);
+  server.on("/fwlink", handleNotFound);
+  server.on("/reboot", handleReboot);
+  server.on("/getWeight", handleGetWeight);
+  server.on("/setProfile", handleSetProfile);
+  server.on("/getProfile", handleGetProfile);
+  server.on("/getLanguage", handleGetLanguage);
+  server.on("/getProfileList", handleGetProfileList);
+  server.on("/getTarget", handleGetTarget);
+  server.on("/setTarget", handleSetTarget);
+  server.on("/system/start", handleStart);
+  server.on("/system/stop", handleStop);
+  server.on("/fwupdate", HTTP_GET, handleFirmwareUpdatePage);
+  server.on("/update", HTTP_POST, handleFirmwareUpdatePostResult, handleFirmwareUpdateUpload);
+}
+
 void initWebServer()
 {
   wifiActive = false;
-  if (String(config.wifi_ssid).length() > 0)
+  if (String(config.wifi_ssid).length() <= 0)
   {
-    updateDisplayLog(languageText("status_connect_wifi"));
-    updateDisplayLog(config.wifi_ssid);
+    return;
+  }
 
-    WiFi.disconnect();           // added to start with the wifi off, avoid crashing
-    WiFi.softAPdisconnect(true); // Function will set currently configured SSID and password of the soft-AP to null values. The parameter  is optional. If set to true it will switch the soft-AP mode off.
-    WiFi.mode(WIFI_OFF);         // added to start with the wifi off, avoid crashing
+  updateDisplayLog(languageText("status_connect_wifi"));
+  updateDisplayLog(config.wifi_ssid);
 
-    delay(500);
+  prepareWifiForStationMode();
+  applyWifiIpConfig(configuredDnsAddress());
 
-    IPAddress ipDNS = IPAddress(8, 8, 8, 8);
-    if (String(config.IPDns).length() > 0)
-    {
-      ipDNS = stringToIPAddress(String(config.IPDns));
-    }
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(config.wifi_ssid, config.wifi_psk);
 
-    if (String(config.IPStatic).length() > 0)
-    {
-      IPAddress staticIP = stringToIPAddress(String(config.IPStatic)); // Example IP
-      IPAddress gateway = stringToIPAddress(String(config.IPGateway)); // Gateway of your network
-      IPAddress subnet = stringToIPAddress(String(config.IPSubnet));   // Subnet mask
+  String message = String(languageText("status_connect_wifi")) +
+                   String(config.wifi_ssid) +
+                   languageText("msg_connect_wifi_wait");
+  messageBox(message, &lv_font_montserrat_14, lv_color_hex(UI_COLOR_TEXT), false);
 
-      if (!WiFi.config(staticIP, gateway, subnet, ipDNS))
-      {
-        // labelInfo.drawButton(false, "Static IP Failed to configure!");
-        updateDisplayLog(languageText("status_static_ip_failed"));
-        delay(3000);
-      }
-    }
-    else
-    {
-      if (!WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, ipDNS))
-      {
-        // labelInfo.drawButton(false, "DNS Failed to configure!");
-        updateDisplayLog(languageText("status_dns_failed"));
-        delay(3000);
-      }
-    }
+  if (WiFi.waitForConnectResult() != WL_CONNECTED)
+  {
+    updateDisplayLog(languageText("status_no_wifi"));
+    messageBox(languageText("status_no_wifi"), &lv_font_montserrat_14, lv_color_hex(UI_COLOR_WARN), true);
+    return;
+  }
 
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(config.wifi_ssid, config.wifi_psk);
+  updateDisplayLog(languageText("status_wifi_connected"));
+  MDNS.begin(host);
 
-    messageBox(String(languageText("status_connect_wifi")) + String(config.wifi_ssid) + languageText("msg_connect_wifi_wait"), &lv_font_montserrat_14, lv_color_hex(0xFFFFFF), false);
+  registerWebRoutes();
+  server.begin();
+  MDNS.addService("http", "tcp", 80);
 
-    if (WiFi.waitForConnectResult() == WL_CONNECTED)
-    {
-      updateDisplayLog(languageText("status_wifi_connected"));
-      MDNS.begin(host);
+  updateDisplayLog(String(languageText("status_open_browser_prefix")) + host + languageText("status_open_browser_suffix"));
 
-      server.on("/list", HTTP_GET, handleListDirectory);
-      server.on("/system/resources/edit", HTTP_DELETE, handleDelete);
-      server.on("/system/resources/edit", HTTP_PUT, handleCreate);
-      server.on("/system/resources/edit", HTTP_POST, []()
-                { sendOkResponse(); }, handleFileUpload);
-      server.onNotFound(handleNotFound);
-      server.on("/generate_204", handleNotFound);
-      server.on("/favicon.ico", handleNotFound);
-      server.on("/fwlink", handleNotFound);
-      server.on("/reboot", handleReboot);
-      server.on("/getWeight", handleGetWeight);
-      server.on("/setProfile", handleSetProfile);
-      server.on("/getProfile", handleGetProfile);
-      server.on("/getLanguage", handleGetLanguage);
-      server.on("/getProfileList", handleGetProfileList);
-      server.on("/getTarget", handleGetTarget);
-      server.on("/setTarget", handleSetTarget);
-      server.on("/system/start", handleStart);
-      server.on("/system/stop", handleStop);
-      server.on("/fwupdate", HTTP_GET, handleFirmwareUpdatePage);
-      server.on("/update", HTTP_POST, handleFirmwareUpdatePostResult, handleFirmwareUpdateUpload);
+  if (config.fwCheck)
+  {
+    checkFirmwareUpdate();
+  }
 
-      server.begin();
-      MDNS.addService("http", "tcp", 80);
-
-      updateDisplayLog(String(languageText("status_open_browser_prefix")) + host + languageText("status_open_browser_suffix"));
-
-      if (config.fwCheck)
-      {
-        checkFirmwareUpdate();
-      }
-
-      wifiActive = true;
-      if (lvglLock())
-      {
-        lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
-        lvglUnlock();
-      }
-    }
-    else
-    {
-      updateDisplayLog(languageText("status_no_wifi"));
-      messageBox(languageText("status_no_wifi"), &lv_font_montserrat_14, lv_color_hex(0xFFFF00), true);
-    }
+  wifiActive = true;
+  if (lvglLock())
+  {
+    lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+    lvglUnlock();
   }
 }

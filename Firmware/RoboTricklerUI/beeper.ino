@@ -7,7 +7,7 @@ void playConfiguredBeep(const char *beepMode)
     bool enableBoth = strstr(config.beeper, "both") != NULL;
 
     if (requestDone && (enableDone || enableBoth))
-        stepperBeep(500);
+        stepperBeep(BEEP_DONE_DURATION_MS);
     if (requestButton && (enableButton || enableBoth))
-        stepperBeep(100);
+        stepperBeep(BEEP_BUTTON_DURATION_MS);
 }

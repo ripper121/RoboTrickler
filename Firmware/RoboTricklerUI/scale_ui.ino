@@ -1,6 +1,6 @@
 void updateWeightLabel(lv_obj_t *label)
 {
-  char text[32];
+  char text[WEIGHT_LABEL_BUFFER_SIZE];
   int decimals = decimalPlaces;
   if (decimals < 0)
   {

@@ -5,7 +5,7 @@ bool mountSdCard()
   if (!SD.begin(GRBL_SPI_SS, *SDspi, SD_SPI_FREQ, "/sd", 10))
   {
     restart_now = true;
-    messageBox(languageText("msg_card_mount_failed"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+    messageBox(languageText("msg_card_mount_failed"), &lv_font_montserrat_14, lv_color_hex(UI_COLOR_ERROR), true);
     return false;
   }
 
@@ -13,7 +13,7 @@ bool mountSdCard()
   if (cardType == CARD_NONE)
   {
     restart_now = true;
-    messageBox(languageText("msg_no_sd_card"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+    messageBox(languageText("msg_no_sd_card"), &lv_font_montserrat_14, lv_color_hex(UI_COLOR_ERROR), true);
     return false;
   }
 

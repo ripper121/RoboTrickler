@@ -1,3 +1,55 @@
+static String fileNameFromPath(const char *path)
+{
+  String fileName = String(path);
+  int slashIndex = fileName.lastIndexOf('/');
+  if (slashIndex >= 0)
+  {
+    fileName = fileName.substring(slashIndex + 1);
+  }
+  return fileName;
+}
+
+static bool isProfileCandidateFile(const String &fileName)
+{
+  return fileName.endsWith(".txt") &&
+         !fileName.endsWith("config.txt") &&
+         (fileName.indexOf(".cor") == -1);
+}
+
+static bool profileListContains(const String &profileName, byte profileCounter)
+{
+  for (int i = 0; i < profileCounter; i++)
+  {
+    if (profileListBuff[i] == profileName)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+static void addProfileName(const String &fileName, byte &profileCounter)
+{
+  String profileName = fileName;
+  profileName.replace(".txt", "");
+  if (!profileListContains(profileName, profileCounter))
+  {
+    profileListBuff[profileCounter] = profileName;
+    profileCounter++;
+  }
+}
+
+static void rememberInvalidProfile(const String &fileName, byte &invalidProfileCounter, String &invalidProfiles)
+{
+  updateDisplayLog(String(languageText("status_invalid_profile_ignored")) + fileName);
+  invalidProfileCounter++;
+  if (invalidProfileCounter <= MAX_INVALID_PROFILES_SHOWN)
+  {
+    invalidProfiles += "\n";
+    invalidProfiles += fileName;
+  }
+}
+
 void scanProfileDirectory(const char *directory, byte &profileCounter, byte &invalidProfileCounter, String &invalidProfiles)
 {
   File root = SD.open(directory);
@@ -17,7 +69,7 @@ void scanProfileDirectory(const char *directory, byte &profileCounter, byte &inv
 
   while (file)
   {
-    if (profileCounter > 31)
+    if (profileCounter >= MAX_PROFILE_LIST_ITEMS)
     {
       file.close();
       break;
@@ -29,41 +81,15 @@ void scanProfileDirectory(const char *directory, byte &profileCounter, byte &inv
     }
     else
     {
-      String fileName = String(file.name());
-      int slashIndex = fileName.lastIndexOf('/');
-      if (slashIndex >= 0)
-      {
-        fileName = fileName.substring(slashIndex + 1);
-      }
-      bool isProfileCandidate = fileName.endsWith(".txt") && !fileName.endsWith("config.txt") && (fileName.indexOf(".cor") == -1);
+      String fileName = fileNameFromPath(file.name());
+      bool isProfileCandidate = isProfileCandidateFile(fileName);
       if (isProfileCandidate && isValidProfileFile(file.path()))
       {
-        String filename = fileName;
-        filename.replace(".txt", "");
-        bool duplicate = false;
-        for (int i = 0; i < profileCounter; i++)
-        {
-          if (profileListBuff[i] == filename)
-          {
-            duplicate = true;
-            break;
-          }
-        }
-        if (!duplicate)
-        {
-          profileListBuff[profileCounter] = filename;
-          profileCounter++;
-        }
+        addProfileName(fileName, profileCounter);
       }
       else if (isProfileCandidate)
       {
-        updateDisplayLog(String(languageText("status_invalid_profile_ignored")) + fileName);
-        invalidProfileCounter++;
-        if (invalidProfileCounter <= 8)
-        {
-          invalidProfiles += "\n";
-          invalidProfiles += fileName;
-        }
+        rememberInvalidProfile(fileName, invalidProfileCounter, invalidProfiles);
       }
 
       DEBUG_PRINT("  FILE: ");
@@ -117,11 +143,11 @@ void refreshProfileList()
   {
     String message = languageText("msg_invalid_profiles_found");
     message += invalidProfiles;
-    if (invalidProfileCounter > 8)
+    if (invalidProfileCounter > MAX_INVALID_PROFILES_SHOWN)
     {
       message += "\n...";
     }
     message += languageText("msg_invalid_profiles_ignored");
-    messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+    messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(UI_COLOR_ERROR), true);
   }
 }

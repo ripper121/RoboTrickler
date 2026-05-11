@@ -3,7 +3,9 @@ void handleFirmwareUpdatePage()
   server.sendHeader("Connection", "close");
   String updatePage = "<form method='POST' action='/update' enctype='multipart/form-data'><p>FW-Version: ";
   updatePage += String(FW_VERSION);
-  updatePage += "</p><br><input type='file' name='update'><input type='submit' value='Update'></form><br><button onClick='javascript:history.back()'>Back</button>";
+  updatePage += "</p><br><input type='file' name='update'>";
+  updatePage += "<input type='submit' value='Update'></form><br>";
+  updatePage += "<button onClick='javascript:history.back()'>Back</button>";
   server.send(200, "text/html", updatePage);
 }
 

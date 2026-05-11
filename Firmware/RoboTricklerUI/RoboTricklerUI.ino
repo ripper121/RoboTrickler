@@ -15,9 +15,11 @@
 #include <ctype.h>
 #include <string.h>
 #include <math.h>
+#include "constants.h"
+#include "config_types.h"
+
 #define FW_VERSION 2.11
 #define DEFAULT_FW_UPDATE_URL "https://strenuous.dev/roboTrickler/userTracker.php"
-#define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
 
 /*
 Legacy Arduino IDE 1.8.19
@@ -67,63 +69,14 @@ static lv_color_t buf[LV_HOR_RES_MAX * LV_DRAW_BUF_ROWS];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 
 SPIClass *SDspi = NULL;
-
-struct ProfileActuator
-{
-  bool enabled;
-  double unitsPerThrow;
-  int unitsPerThrowSpeed;
-};
-
-struct ProfileStep
-{
-  byte actuator;
-  float weight;
-  int measurements;
-  long steps;
-  int speed;
-  bool reverse;
-};
-
-struct Config
-{
-  char wifi_ssid[64];
-  char wifi_psk[64];
-  char IPStatic[16];
-  char IPGateway[16];
-  char IPSubnet[16];
-  char IPDns[16];
-
-  char beeper[16];
-  char language[8];
-  bool fwCheck;
-  char fwUpdateUrl[128];
-  float targetWeight;
-  char scale_protocol[32];
-  int scale_baud;
-  char scale_customCode[32];
-  char profile[32];
-
-  float profile_tolerance;
-  float profile_alarmThreshold;
-  float profile_weightGap;
-  int profile_generalMeasurements;
-  ProfileActuator profile_actuator[3];
-  ProfileStep profile_step[16];
-  int profile_count;
-};
-Config config; // <- global configuration object
+Config config;
 
 bool wifiActive = false;
 WebServer server(80);
 unsigned long wifiPreviousMillis = 0;
-unsigned long wifiInterval = 10000;
+unsigned long wifiInterval = WIFI_RECONNECT_INTERVAL_MS;
 
-#define MOTOR_STEPS 200
-
-#define MAX_TARGET_WEIGHT 999
 float weight = 0.0;
-const float EPSILON = 0.00001; // Define a small epsilon value
 int decimalPlaces = 3;
 String unit = "";
 float lastWeight = 0;
@@ -139,8 +92,8 @@ bool calibrationProfilePromptPending = false;
 unsigned long calibrationProfilePromptTime = 0;
 unsigned long lastScaleWeightReadTime = 0;
 
-String infoMessageBuffer[14];
-String profileListBuff[32];
+String infoMessageBuffer[INFO_MESSAGE_LINES];
+String profileListBuff[MAX_PROFILE_LIST_ITEMS];
 byte profileListCount;
 int profileListCounter;
 String tempProfile = "";

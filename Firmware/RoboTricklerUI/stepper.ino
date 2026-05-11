@@ -7,10 +7,10 @@ struct StepperPins
   int rpm;
 };
 
-static StepperPins steppers[3] = {
+static StepperPins steppers[PROFILE_ACTUATOR_SLOTS] = {
     {0, 0, 0},
-    {I2S_X_DIRECTION_PIN, I2S_X_STEP_PIN, 100},
-    {I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, 100},
+    {I2S_X_DIRECTION_PIN, I2S_X_STEP_PIN, DEFAULT_STEPPER_RPM},
+    {I2S_Y_DIRECTION_PIN, I2S_Y_STEP_PIN, DEFAULT_STEPPER_RPM},
 };
 
 static uint32_t shiftRegisterState = 0;
@@ -81,7 +81,7 @@ static unsigned long stepperPulseIntervalUs(int rpm)
 {
   if (rpm <= 0)
   {
-    rpm = 100;
+    rpm = DEFAULT_STEPPER_RPM;
   }
   return (unsigned long)(60000000UL / ((unsigned long)MOTOR_STEPS * (unsigned long)FULL_STEP * (unsigned long)rpm));
 }
@@ -97,7 +97,7 @@ static long calculateStepperStepsForUnits(double remainingUnits, double unitsPer
     return 0;
   }
 
-  double exactSteps = remainingUnits * (200.0 / unitsPerThrow);
+  double exactSteps = remainingUnits * ((double)MOTOR_STEPS / unitsPerThrow);
   if ((exactSteps <= 0.0) || (exactSteps > 2147483647.0))
   {
     return 0;
@@ -106,7 +106,7 @@ static long calculateStepperStepsForUnits(double remainingUnits, double unitsPer
   long steps = (long)exactSteps;
   if (outUnits != NULL)
   {
-    *outUnits = ((double)steps * unitsPerThrow) / 200.0;
+    *outUnits = ((double)steps * unitsPerThrow) / (double)MOTOR_STEPS;
   }
   return steps;
 }
@@ -119,7 +119,7 @@ bool runBulkStepperMove(String &infoText)
     return true;
   }
 
-  for (int stepperNum = 2; stepperNum >= 1; stepperNum--)
+  for (int stepperNum = PROFILE_ACTUATOR_MAX; stepperNum >= PROFILE_ACTUATOR_MIN; stepperNum--)
   {
     ProfileActuator &actuator = config.profile_actuator[stepperNum];
     if (!actuator.enabled)
@@ -130,7 +130,7 @@ bool runBulkStepperMove(String &infoText)
     int speed = actuator.unitsPerThrowSpeed;
     if (speed <= 0)
     {
-      speed = 200;
+      speed = DEFAULT_PROFILE_SPEED;
     }
 
     double units = 0.0;
@@ -160,14 +160,14 @@ bool runBulkStepperMove(String &infoText)
 
 void setStepperSpeed(int stepperNum, int stepperSpeed)
 {
-  if ((stepperNum < 1) || (stepperNum > 2))
+  if ((stepperNum < PROFILE_ACTUATOR_MIN) || (stepperNum > PROFILE_ACTUATOR_MAX))
   {
     return;
   }
 
   if (stepperSpeed <= 0)
   {
-    stepperSpeed = 100;
+    stepperSpeed = DEFAULT_STEPPER_RPM;
   }
   steppers[stepperNum].rpm = stepperSpeed;
 }
@@ -176,14 +176,16 @@ void initStepper()
 {
   DEBUG_PRINTLN("initStepper()");
   shiftRegisterInit();
-  setStepperSpeed(1, 100);
-  setStepperSpeed(2, 100);
+  for (int stepperNum = PROFILE_ACTUATOR_MIN; stepperNum <= PROFILE_ACTUATOR_MAX; stepperNum++)
+  {
+    setStepperSpeed(stepperNum, DEFAULT_STEPPER_RPM);
+  }
   stepperEnableAll(false);
 }
 
 void step(int stepperNum, long steps, bool reverse)
 {
-  if ((stepperNum < 1) || (stepperNum > 2) || (steps == 0))
+  if ((stepperNum < PROFILE_ACTUATOR_MIN) || (stepperNum > PROFILE_ACTUATOR_MAX) || (steps == 0))
   {
     return;
   }

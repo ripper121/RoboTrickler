@@ -1,21 +1,19 @@
-bool serialWait()
+bool waitForScaleResponseTimedOut()
 {
-    bool timeout = true;
-    for (int i = 0; i < 2000; i++)
+    for (int i = 0; i < SCALE_REQUEST_TIMEOUT_MS; i++)
     {
         if (Serial1.available())
         {
-            timeout = false;
-            break;
+            return false;
         }
         delay(1);
     }
-    return timeout;
+    return true;
 }
 
 void parseWeightString(const char *input, float *value, int *decimalPlaces)
 {
-    char filteredBuffer[64];
+    char filteredBuffer[SCALE_LINE_BUFFER_SIZE];
     int j = 0;
     bool dotFound = false;
     int decimals = 0;
@@ -86,12 +84,12 @@ void serialFlush()
     }
 }
 
-bool sendScaleRequest(String req, bool flush)
+bool sendScaleRequest(const char *req, bool flush)
 {
-    char request[128];
-    req.toCharArray(request, sizeof(request));
+    char request[SCALE_REQUEST_BUFFER_SIZE];
+    strlcpy(request, req, sizeof(request));
 
-    uint8_t bytes[64];
+    uint8_t bytes[SCALE_REQUEST_MAX_BYTES];
     int byteCount = 0;
     bool hexRequest = true;
     bool hasToken = false;
@@ -131,7 +129,7 @@ bool sendScaleRequest(String req, bool flush)
     }
     Serial1.write(bytes, byteCount);
 
-    return serialWait();
+    return waitForScaleResponseTimedOut();
 }
 
 struct ScaleProtocolRequest
@@ -164,79 +162,105 @@ static bool requestScaleWeight()
         return sendScaleRequest(config.scale_customCode, true);
     }
 
-    return serialWait();
+    return waitForScaleResponseTimedOut();
+}
+
+static bool readScaleLine(char *buff, size_t buffSize)
+{
+    if (!Serial1.available())
+    {
+        return false;
+    }
+
+    size_t bytesRead = Serial1.readBytesUntil(0x0A, buff, buffSize - 1);
+    buff[bytesRead] = '\0';
+    DEBUG_PRINTLN(buff);
+    return true;
+}
+
+static bool isScaleWeightLine(const char *buff)
+{
+    return (strchr(buff, '.') != NULL) || (strchr(buff, ',') != NULL);
+}
+
+static void updateScaleUnit(const char *buff)
+{
+    if (containsIgnoreCase(buff, "g"))
+    {
+        unit = (containsIgnoreCase(buff, "gn") || containsIgnoreCase(buff, "gr")) ? " gn" : " g";
+    }
+}
+
+static void parseScaleWeightLine(const char *buff)
+{
+    weight = 0;
+    decimalPlaces = 0;
+    parseWeightString(buff, &weight, &decimalPlaces);
+
+    if (strchr(buff, '-') != NULL)
+    {
+        weight *= -1.0;
+    }
+
+    updateScaleUnit(buff);
+}
+
+static void logScaleWeight()
+{
+    DEBUG_PRINT("Weight: ");
+    DEBUG_PRINTLN(weight);
+    lastScaleWeightReadTime = millis();
+    DEBUG_PRINT("decimalPlaces: ");
+    DEBUG_PRINTLN(decimalPlaces);
+
+    DEBUG_PRINT("Weight Counter: ");
+    DEBUG_PRINTLN(weightCounter);
+}
+
+static void updateStableWeightState()
+{
+    long weightRounded = lround(weight * SCALE_WEIGHT_STABILITY_FACTOR);
+    long lastWeightRounded = lround(lastWeight * SCALE_WEIGHT_STABILITY_FACTOR);
+    if (weightRounded != lastWeightRounded)
+    {
+        weightCounter = 0;
+        updateWeightLabel(ui_LabelTricklerWeight);
+        lastWeight = weight;
+        return;
+    }
+
+    if (running || calibrationProfilePromptPending)
+    {
+        if (weightCounter >= measurementCount)
+        {
+            newData = true;
+            weightCounter = 0;
+        }
+        weightCounter++;
+    }
+    lastWeight = weight;
 }
 
 void readScaleWeight()
 {
-    if (Serial1.available())
+    char buff[SCALE_LINE_BUFFER_SIZE];
+    if (!readScaleLine(buff, sizeof(buff)))
     {
-        char buff[64];
-        size_t bytesRead = Serial1.readBytesUntil(0x0A, buff, sizeof(buff) - 1);
-        buff[bytesRead] = '\0';
-
-        DEBUG_PRINTLN(buff);
-
-        if ((strchr(buff, '.') != NULL) || (strchr(buff, ',') != NULL))
-        {
-            weight = 0;
-            decimalPlaces = 0;
-            parseWeightString(buff, &weight, &decimalPlaces);
-
-            if (strchr(buff, '-') != NULL)
-            {
-                weight = weight * (-1.0);
-            }
-
-            if (containsIgnoreCase(buff, "g"))
-            {
-                unit = " g";
-                if (containsIgnoreCase(buff, "gn") || containsIgnoreCase(buff, "gr"))
-                {
-                    unit = " gn";
-                }
-            }
-
-            DEBUG_PRINT("Weight: ");
-            DEBUG_PRINTLN(weight);
-            lastScaleWeightReadTime = millis();
-            DEBUG_PRINT("decimalPlaces: ");
-            DEBUG_PRINTLN(decimalPlaces);
-
-            DEBUG_PRINT("Weight Counter: ");
-            DEBUG_PRINTLN(weightCounter);
-
-            long weightRounded = lround(weight * 1000.0f);
-            long lastWeightRounded = lround(lastWeight * 1000.0f);
-
-            if (weightRounded == lastWeightRounded)
-            {
-                if (running || calibrationProfilePromptPending)
-                {
-                    if (weightCounter >= measurementCount)
-                    {
-                        newData = true;
-                        weightCounter = 0;
-                    }
-                    weightCounter++;
-                }
-            }
-            else
-            {
-                weightCounter = 0;
-                updateWeightLabel(ui_LabelTricklerWeight);
-            }
-            lastWeight = weight;
-        }
-    }
-    else
-    {
-        bool timeout = requestScaleWeight();
-        if (timeout)
+        if (requestScaleWeight())
         {
             updateDisplayLog(languageText("status_timeout"), true);
-            delay(500);
+            delay(SCALE_TIMEOUT_DISPLAY_DELAY_MS);
             newData = false;
         }
+        return;
     }
+
+    if (!isScaleWeightLine(buff))
+    {
+        return;
+    }
+
+    parseScaleWeightLine(buff);
+    logScaleWeight();
+    updateStableWeightState();
 }
