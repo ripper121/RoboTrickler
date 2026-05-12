@@ -1,6 +1,6 @@
 # Robo-Trickler Anleitung
 
-Stand: Firmware 2.10.
+Stand: Firmware 2.11.
 
 ## Erste Schritte
 
@@ -12,9 +12,9 @@ Stand: Firmware 2.10.
 
 Im Display der Steuerung sollte nun das gleiche Gewicht wie auf der Waage angezeigt werden.
 
-Falls dies nicht der Fall ist, überprüfe die [Einstellungen der Waage](https://github.com/ripper121/RoboTrickler/wiki/Anleitung-Firmware-2.10#waagen) und die [Konfiguration](https://github.com/ripper121/RoboTrickler/wiki/Anleitung-Firmware-2.10#konfiguration), besonders `scale.protocol` und `scale.baud`.
+Falls dies nicht der Fall ist, überprüfe die [Einstellungen der Waage](#waagen) und die [Konfiguration](#konfiguration), besonders `scale.protocol` und `scale.baud`.
 
-Der Robo-Trickler startet mit dem in `config.txt` eingetragenen Profil. Auf der SD-Karte ist standardmäßig `avg` vorhanden. Stelle das Zielgewicht im Display ein und drücke auf Start. Starte erst, wenn die Waage mit leerer Pulverpfanne genullt ist.
+Der Robo-Trickler startet mit dem in `config.txt` eingetragenen Profil. Auf der vollständigen SD-Karte ist standardmäßig `avg` vorhanden. Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration mit dem Profil `calibrate`. Stelle das Zielgewicht im Display ein und drücke auf Start. Starte erst, wenn die Waage mit leerer Pulverpfanne genullt ist.
 
 Wähle im Profil-Tab ein passendes Pulver aus. Falls das gewünschte Pulver nicht vorhanden ist, kann zum Testen das `avg` Pulverprofil genommen werden. `avg` ist ein Durchschnittsprofil und funktioniert mit vielen Pulvern, ist aber nicht optimal. Für gutes und schnelles Trickeln sollte jedes Pulver ein eigenes Profil bekommen.
 
@@ -33,7 +33,7 @@ Weitere Informationen:
 
 ## Speicherort
 
-Pulverprofile liegen ab Firmware 2.10 in diesen Ordnern auf der SD-Karte:
+Pulverprofile liegen in diesem Ordner auf der SD-Karte:
 
 * `/profiles`
 
@@ -51,11 +51,11 @@ dazu gehört die Datei:
 /profiles/avg.txt
 ```
 
-Die Profilliste im Display und über die Web-API enthält nur gültige Profile. Ungültige Profile werden beim Scannen ignoriert und im Display gemeldet. Wenn das aktuell ausgewählte Profil beim Start oder beim Starten des Trickelns nicht geladen werden kann, benennt die Firmware die Datei nach `.cor.txt` um, stellt auf `calibrate` um und startet neu.
+Die Profilliste im Display und über die Web-API enthält nur gültige Profile. Es werden bis zu 32 gültige `.txt`-Profile angezeigt; Dateien mit `.cor.txt` im Namen werden ignoriert. Ungültige Profile werden beim Scannen ignoriert und im Display gemeldet. Wenn das aktuell ausgewählte Profil beim Start oder beim Starten des Trickelns nicht geladen werden kann, benennt die Firmware die Datei nach `.cor.txt` um, stellt auf `calibrate` um und startet neu.
 
 ## Automatisches Profil aus Kalibrierlauf erstellen
 
-Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte:
+Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte.
 
 ```json
 {
@@ -66,7 +66,7 @@ Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte:
 }
 ```
 
-Dieses Profil dreht den Trickler 100 Umdrehungen, weil 200 Schritte einer Umdrehung entsprechen.
+Dieses Profil nutzt `steps: 20000`. Generator und automatische Profilerstellung rechnen dabei mit 100 Umdrehungen, weil 200 Profil-Schritte einer Umdrehung entsprechen.
 
 **Die Waage muss für den automatischen Kalibrierlauf auf Grain gestellt sein.** Die Firmware übernimmt den gemessenen Wert direkt als Grain und zeigt die Bestätigung als `gn` an.
 
@@ -99,14 +99,14 @@ Video Anleitung:
 1. Öffne den Profile Generator.
 2. Trage bei `Weight of calibration run` die Pulvermenge des Kalibrierlaufs ein.
 3. Wähle die Einheit `Gram` oder `Grain`.
-4. Stelle bei Bedarf `Weight gap`, `Stepper speed rpm`, `Calculation tolerance`, `Threshold for alarm`, `Tolerance` und `Reverse` ein.
+4. Stelle bei Bedarf `Weight gap`, `Stepper speed rpm`, `Bulk actuator`, `Calculation tolerance`, `Threshold for alarm`, `Tolerance` und `Reverse` ein. `General measurements` ist in der Oberfläche sichtbar, wird im aktuellen Generator aber durch feste Messwerte überschrieben.
 5. Klicke auf `Generate Profile`.
 6. Trage einen Profilnamen ein, z.B. `n140`.
 7. Klicke auf `Download` oder, wenn du über den Webserver arbeitest, auf `Save`.
 8. Speichere das Profil als `.txt` in `/profiles`.
 9. Starte den Trickler neu, damit die neue Profilliste geladen wird.
 
-Der Generator erzeugt aktuell `general.measurements` mit `20` und die fünf Feinschritte mit `2`, `2`, `5`, `10` und `15` Messungen.
+Der Generator erzeugt aktuell `general.measurements` fest mit `20` und die fünf Feinschritte mit `2`, `2`, `5`, `10` und `15` Messungen. Das Feld `Bulk actuator` wird als `general.actuator` gespeichert und bestimmt den Stepper für den automatischen ersten Grobwurf.
 
 ![image](https://github.com/ripper121/RoboTrickler/assets/11836272/67fcc33f-f18f-44a9-9f25-5ea08cc997fe)
 
@@ -206,6 +206,8 @@ Beispiel für das neue Profilformat:
 * `actuator`: optionaler Bulk-Actuator für den automatischen ersten Grobwurf. Erlaubt sind `stepper1` und `stepper2`. Wenn das Feld fehlt, leer oder ungültig ist, verwendet die Firmware `stepper1`.
 * `measurements`: Anzahl stabiler Messwerte, die vor dem ersten Wurf und nach dem automatischen Grobwurf abgewartet werden.
 
+Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `actuator = stepper1` und `measurements = 20`.
+
 ### `actuator`
 
 * `stepper1` und `stepper2`: Einstellungen für Trickler 1 und Trickler 2.
@@ -213,7 +215,7 @@ Beispiel für das neue Profilformat:
 * `unitsPerThrow`: Pulvermenge pro Umdrehung bei `unitsPerThrowSpeed`. Die Einheit muss zur Waage passen.
 * `unitsPerThrowSpeed`: Geschwindigkeit für den automatischen ersten Grobwurf.
 
-Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `unitsPerThrow` die benötigten Schritte. Es wird genau der in `general.actuator` eingetragene Bulk-Actuator verwendet; ohne gültigen Eintrag ist das `stepper1`.
+Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `unitsPerThrow` die benötigten Schritte. Es wird genau der in `general.actuator` eingetragene Bulk-Actuator verwendet; ohne gültigen Eintrag ist das `stepper1`. Wenn der gewählte Stepper nicht aktiviert ist oder `unitsPerThrow` fehlt bzw. `0` ist, wird der automatische Grobwurf übersprungen.
 
 ### `rs232TrickleMap`
 
@@ -221,7 +223,7 @@ Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet au
 
 * `diffWeight`: Abstand zum Zielgewicht, ab dem dieser Schritt verwendet wird.
 * `actuator`: `stepper1` oder `stepper2`.
-* `steps`: Motorschritte für diesen Wurf. 200 Schritte entsprechen einer Umdrehung.
+* `steps`: Schrittwert für diesen Wurf. Profile und Generatoren rechnen mit 200 Profil-Schritten pro Umdrehung.
 * `speed`: Motorgeschwindigkeit in U/min. Sinnvolle Werte liegen meist zwischen 10 und 200.
 * `reverse`: `true` kehrt die Drehrichtung um, Standard ist `false`.
 * `measurements`: Anzahl stabiler Messwerte, die nach diesem Wurf abgewartet werden.
@@ -314,24 +316,23 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 ```json
 {
   "wifi": {
-    "ssid": "MeinWlanName",
-    "psk": "MeinWlanPasswort",
-    "IPStatic": "192.168.178.50",
-    "IPGateway": "192.168.178.1",
-    "IPSubnet": "255.255.255.0",
-    "IPDNS": "8.8.8.8"
+    "ssid": "",
+    "psk": "",
+    "IPStatic": "",
+    "IPGateway": "",
+    "IPSubnet": "",
+    "IPDNS": ""
   },
   "scale": {
     "protocol": "GG",
     "customCode": "",
     "baud": 9600
   },
-  "profile": "profil",
+  "profile": "avg",
   "language": "de",
-  "beeper": "both",
+  "beeper": "done",
   "fw_update": {
-    "check": true,
-    "url": "https://strenuous.dev/roboTrickler/userTracker.php"
+    "check": true
   }
 }
 ```
@@ -347,10 +348,12 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 * `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden.
 * `scale.baud`: Baudrate der Waage, meistens `9600`.
 * `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil.
-* `language`: Sprache der Oberfläche. Unterstützt werden die JSON-Dateien im Ordner `/lang`, z. B. `de` oder `en`.
+* `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Unterstützt werden JSON-Dateien in `/lang` und `/system/lang`, z. B. `de` oder `en`; falls keine Datei geladen werden kann, nutzt die Firmware eingebaute englische Fallback-Texte.
 * `beeper`: `done`, `button`, `both` oder `off`.
 * `fw_update.check`: aktiviert die automatische Prüfung auf neue Firmware.
-* `fw_update.url`: URL, über die die Firmware die aktuelle Version abfragt.
+* `fw_update.url`: optionale URL, über die die Firmware die aktuelle Version abfragt. Wenn das Feld fehlt oder leer ist, nutzt die Firmware die Standard-URL `https://strenuous.dev/roboTrickler/userTracker.php`.
+
+Das ältere Feld `fw_check` wird beim Lesen weiterhin akzeptiert, neue Konfigurationen werden aber als `fw_update.check` gespeichert.
 
 Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu.
 
@@ -415,6 +418,8 @@ Mit dem File Browser kannst du Dateien auf der SD-Karte über den Webbrowser bea
 
 **Jede Änderung an einer Konfigurationsdatei oder einem Pulverprofil wird erst nach einem Neustart des Tricklers übernommen.**
 
+Ausnahmen sind die Web-API-Funktionen `/setTarget` und `/setProfile`: Sie speichern das Zielgewicht bzw. Profil sofort über die Firmware-Logik.
+
 ![image](https://github.com/ripper121/RoboTrickler/assets/11836272/e3c420b0-bd87-42ac-ae9b-8e6ad72f0107)
 
 ## Web-API
@@ -425,6 +430,7 @@ Diese Endpunkte können im Browser oder aus einer eigenen Steuerung aufgerufen w
 * `GET /getTarget`: Zielgewicht lesen.
 * `GET /setTarget?targetWeight=WERT`: Zielgewicht setzen und im aktuellen Profil speichern. Erlaubt sind Werte größer `0` und kleiner `999`. Beispiel: `/setTarget?targetWeight=40`.
 * `GET /getProfile`: aktuelles Profil lesen.
+* `GET /getLanguage`: aktuell geladene Sprache lesen.
 * `GET /getProfileList`: Liste der erkannten Profile als JSON lesen.
 * `GET /setProfile?profileNumber=NUMMER`: Profil über die Nummer aus der Profilliste wählen.
 * `GET /system/start`: Trickeln starten.
@@ -651,7 +657,7 @@ SBS-LW-200A
 * 2COM
 * 9600 brt
 
-Da Firmware 2.10 kein eigenes `STE` Protokoll mehr auswertet, nutze für streamende Steinberg-Waagen ein leeres `scale.protocol` oder `CUSTOM`, falls deine Waage ein Anfragekommando benötigt.
+Da Firmware 2.11 kein eigenes `STE` Protokoll auswertet, nutze für streamende Steinberg-Waagen ein leeres `scale.protocol` oder `CUSTOM`, falls deine Waage ein Anfragekommando benötigt.
 
 ![image](https://github.com/ripper121/RoboTrickler/assets/11836272/ad7d7a08-e925-4a65-bd4b-26a1941fcecf)
 
@@ -736,7 +742,7 @@ Hier sieht man, wie der Motor-Treiber richtig herum gesteckt ist:
 
 ## Motor Treiber Einstellungen
 
-Standard-Treiber ist der A4988 mit Full Step. Die Firmware 2.10 initialisiert beide Stepper mit Full Step.
+Standard-Treiber ist der A4988 mit Full Step. Die Firmware 2.11 initialisiert beide Stepper mit Full Step.
 
 ![image](https://github.com/user-attachments/assets/1453375b-e0a7-45d3-9df5-898fa958f221)
 

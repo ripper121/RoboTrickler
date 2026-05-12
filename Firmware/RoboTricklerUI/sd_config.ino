@@ -40,9 +40,7 @@ static bool isCalibrationProfileFile(const char *filename)
   normalized.replace("\\", "/");
   normalized.toLowerCase();
   return (normalized == "calibrate.txt") ||
-         (normalized == "calibration.txt") ||
-         normalized.endsWith("/calibrate.txt") ||
-         normalized.endsWith("/calibration.txt");
+         normalized.endsWith("/calibrate.txt");
 }
 
 static bool isProfileMetadataKey(const char *key)
