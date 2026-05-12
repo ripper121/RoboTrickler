@@ -268,6 +268,7 @@ bool readProfile(const char *filename, Config &config)
   config.profile_tolerance = 0.000;
   config.profile_alarmThreshold = 0.000;
   config.profile_weightGap = 1.000;
+  config.profile_bulkActuator = 1;
   config.profile_generalMeasurements = 20;
   config.profile_count = 0;
   for (int i = 0; i < 3; i++)
@@ -294,6 +295,11 @@ bool readProfile(const char *filename, Config &config)
     config.profile_tolerance = general["tolerance"] | 0.000;
     config.profile_alarmThreshold = general["alarmThreshold"] | 0.000;
     config.profile_weightGap = general["weightGap"] | 1.000;
+    config.profile_bulkActuator = profileActuatorNumber(general["actuator"] | "stepper1");
+    if (config.profile_bulkActuator == 0)
+    {
+      config.profile_bulkActuator = 1;
+    }
     hasGeneralMeasurements = !general["measurements"].isNull();
     config.profile_generalMeasurements = general["measurements"] | 20;
     if (config.profile_generalMeasurements < 0)
@@ -541,6 +547,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   general["tolerance"] = serialized(String(0.0, 3));
   general["alarmThreshold"] = serialized(String(1.0, 3));
   general["weightGap"] = serialized(String(1.0, 3));
+  general["actuator"] = "stepper1";
   general["measurements"] = config.profile_generalMeasurements > 0 ? config.profile_generalMeasurements : 20;
 
   JsonObject actuator = doc["actuator"].to<JsonObject>();

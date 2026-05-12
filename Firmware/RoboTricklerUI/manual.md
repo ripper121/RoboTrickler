@@ -137,6 +137,7 @@ Beispiel für das neue Profilformat:
     "tolerance": 0.000,
     "alarmThreshold": 1.000,
     "weightGap": 1.000,
+    "actuator": "stepper1",
     "measurements": 5
   },
   "actuator": {
@@ -202,6 +203,7 @@ Beispiel für das neue Profilformat:
 * `tolerance`: erlaubte Abweichung zum Zielgewicht. Bei `0.000` muss der Zielwert ohne Toleranz erreicht werden.
 * `alarmThreshold`: Überwurf-Grenze. Wenn `targetWeight + alarmThreshold` erreicht oder überschritten wird, stoppt die Firmware, piept mehrfach und zeigt eine Warnung an. Bei `0` ist der Alarm deaktiviert.
 * `weightGap`: Abstand zum Zielgewicht, bei dem der automatische erste Grobwurf enden soll.
+* `actuator`: optionaler Bulk-Actuator für den automatischen ersten Grobwurf. Erlaubt sind `stepper1` und `stepper2`. Wenn das Feld fehlt, leer oder ungültig ist, verwendet die Firmware `stepper1`.
 * `measurements`: Anzahl stabiler Messwerte, die vor dem ersten Wurf und nach dem automatischen Grobwurf abgewartet werden.
 
 ### `actuator`
@@ -211,7 +213,7 @@ Beispiel für das neue Profilformat:
 * `unitsPerThrow`: Pulvermenge pro Umdrehung bei `unitsPerThrowSpeed`. Die Einheit muss zur Waage passen.
 * `unitsPerThrowSpeed`: Geschwindigkeit für den automatischen ersten Grobwurf.
 
-Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `unitsPerThrow` die benötigten Schritte. Dabei wird erst `stepper2`, danach `stepper1` verwendet, wenn beide aktiviert sind.
+Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `unitsPerThrow` die benötigten Schritte. Es wird genau der in `general.actuator` eingetragene Bulk-Actuator verwendet; ohne gültigen Eintrag ist das `stepper1`.
 
 ### `rs232TrickleMap`
 
@@ -243,6 +245,7 @@ Für mehrere Trickler wird `actuator` verwendet:
     "tolerance": 0.000,
     "alarmThreshold": 1.000,
     "weightGap": 1.000,
+    "actuator": "stepper2",
     "measurements": 5
   },
   "actuator": {
@@ -312,19 +315,24 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 {
   "wifi": {
     "ssid": "MeinWlanName",
-    "psk": "MeinWlanPassword",
-    "IPStatic": "",
-    "IPGateway": "",
-    "IPSubnet": "",
-    "IPDNS": ""
+    "psk": "MeinWlanPasswort",
+    "IPStatic": "192.168.178.50",
+    "IPGateway": "192.168.178.1",
+    "IPSubnet": "255.255.255.0",
+    "IPDNS": "8.8.8.8"
   },
   "scale": {
     "protocol": "GG",
     "customCode": "",
     "baud": 9600
   },
-  "profile": "avg",
-  "beeper": "done"
+  "profile": "profil",
+  "language": "de",
+  "beeper": "both",
+  "fw_update": {
+    "check": true,
+    "url": "https://strenuous.dev/roboTrickler/userTracker.php"
+  }
 }
 ```
 
@@ -334,11 +342,15 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 * `wifi.IPGateway`: Gateway-IP, nötig bei statischer IP.
 * `wifi.IPSubnet`: Subnetzmaske, nötig bei statischer IP.
 * `wifi.IPDNS`: optionaler DNS-Server. Wenn leer, nutzt die Firmware `8.8.8.8`.
+* Falls DHCP verwendet werden soll, lasse `wifi.IPStatic`, `wifi.IPGateway`, `wifi.IPSubnet` und `wifi.IPDNS` leer.
 * `scale.protocol`: unterstützte Werte sind `GG`, `SBI`, `KERN`, `KERN-ABT`, `AD`, `CUSTOM` und leer für kein aktives Anfragekommando.
 * `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden.
 * `scale.baud`: Baudrate der Waage, meistens `9600`.
 * `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil.
+* `language`: Sprache der Oberfläche. Unterstützt werden die JSON-Dateien im Ordner `/lang`, z. B. `de` oder `en`.
 * `beeper`: `done`, `button`, `both` oder `off`.
+* `fw_update.check`: aktiviert die automatische Prüfung auf neue Firmware.
+* `fw_update.url`: URL, über die die Firmware die aktuelle Version abfragt.
 
 Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu.
 

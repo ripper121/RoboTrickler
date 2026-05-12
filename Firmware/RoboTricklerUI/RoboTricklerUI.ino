@@ -91,6 +91,7 @@ struct Config
   float profile_tolerance;
   float profile_alarmThreshold;
   float profile_weightGap;
+  byte profile_bulkActuator;
   int profile_generalMeasurements;
   double profile_stepperUnitsPerThrow[3];
   int profile_stepperUnitsPerThrowSpeed[3];
@@ -165,40 +166,43 @@ static bool runBulkStepperMove(String &infoText)
     return true;
   }
 
-  for (int stepperNum = 2; stepperNum >= 1; stepperNum--)
+  int stepperNum = config.profile_bulkActuator;
+  if ((stepperNum < 1) || (stepperNum > 2))
   {
-    if (!config.profile_stepperEnabled[stepperNum])
-    {
-      continue;
-    }
-
-    int speed = config.profile_stepperUnitsPerThrowSpeed[stepperNum];
-    if (speed <= 0)
-    {
-      speed = 200;
-    }
-
-    double units = 0.0;
-    long stepsToMove = calculateStepperStepsForUnits(remainingUnits, config.profile_stepperUnitsPerThrow[stepperNum], &units);
-    if (stepsToMove <= 0)
-    {
-      continue;
-    }
-
-    setStepperSpeed(stepperNum, speed);
-    step(stepperNum, stepsToMove, false);
-    remainingUnits -= units;
-    if (remainingUnits < 0.0)
-    {
-      remainingUnits = 0.0;
-    }
-
-    infoText += "B";
-    infoText += String(stepperNum);
-    infoText += " ST";
-    infoText += String(stepsToMove);
-    infoText += " ";
+    stepperNum = 1;
   }
+
+  if (!config.profile_stepperEnabled[stepperNum])
+  {
+    return true;
+  }
+
+  int speed = config.profile_stepperUnitsPerThrowSpeed[stepperNum];
+  if (speed <= 0)
+  {
+    speed = 200;
+  }
+
+  double units = 0.0;
+  long stepsToMove = calculateStepperStepsForUnits(remainingUnits, config.profile_stepperUnitsPerThrow[stepperNum], &units);
+  if (stepsToMove <= 0)
+  {
+    return true;
+  }
+
+  setStepperSpeed(stepperNum, speed);
+  step(stepperNum, stepsToMove, false);
+  remainingUnits -= units;
+  if (remainingUnits < 0.0)
+  {
+    remainingUnits = 0.0;
+  }
+
+  infoText += "B";
+  infoText += String(stepperNum);
+  infoText += " ST";
+  infoText += String(stepsToMove);
+  infoText += " ";
 
   return true;
 }
