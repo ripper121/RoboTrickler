@@ -43,13 +43,6 @@ static bool isCalibrationProfileFile(const char *filename)
          normalized.endsWith("/calibrate.txt");
 }
 
-static bool isProfileMetadataKey(const char *key)
-{
-  return (strcmp(key, "general") == 0) ||
-         (strcmp(key, "actuator") == 0) ||
-         (strcmp(key, "rs232TrickleMap") == 0);
-}
-
 static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char *filename, Config &config, bool showErrors, bool allowCalibrationDefaults)
 {
   bool hasRequiredFields = hasRequiredProfileFields(profileEntry);
@@ -64,16 +57,10 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
     return false;
   }
 
-  byte stepperNumber = profileEntry["number"].isNull()
-                           ? profileActuatorNumber(profileEntry["actuator"] | "stepper1")
-                           : (byte)(profileEntry["number"] | 1);
+  byte stepperNumber = profileActuatorNumber(profileEntry["actuator"] | "stepper1");
   int stepperSpeed = profileEntry["speed"] | 200;
   int measurements = profileEntry["measurements"] | 5;
   float profileWeight = profileEntry["diffWeight"] | 0.0;
-  if (profileEntry["diffWeight"].isNull())
-  {
-    profileWeight = profileEntry["weight"] | 0.0;
-  }
   long profileSteps = profileEntry["steps"] | 0;
   if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
   {
@@ -92,11 +79,6 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   }
 
   int item_key = config.profile_count;
-  if (item_key == 0)
-  {
-    config.profile_tolerance = profileEntry["tolerance"] | config.profile_tolerance;
-    config.profile_alarmThreshold = profileEntry["alarmThreshold"] | config.profile_alarmThreshold;
-  }
   config.profile_num[item_key] = stepperNumber;
   config.profile_weight[item_key] = profileWeight;
   config.profile_steps[item_key] = profileSteps;
@@ -125,48 +107,27 @@ static bool loadProfileEntries(JsonObject doc, const char *filename, Config &con
     return config.profile_count > 0;
   }
 
-  if (!allowCalibrationDefaults)
+  if (allowCalibrationDefaults)
   {
+    if (hasCalibrationProfileFields(doc))
+    {
+      return loadProfileEntry(doc, 1, filename, config, showErrors, true);
+    }
+
     if (showErrors)
     {
-      setSdReadError(String("Profile has no rs232TrickleMap:\n") + filename);
-      DEBUG_PRINTLN("Profile has no rs232TrickleMap");
+      setSdReadError(String("Calibration profile is incomplete:\n") + filename + "\nRequired: actuator, steps, speed");
+      DEBUG_PRINTLN("Calibration profile is incomplete");
     }
     return false;
   }
 
-  if (hasCalibrationProfileFields(doc))
+  if (showErrors)
   {
-    return loadProfileEntry(doc, 1, filename, config, showErrors, true);
+    setSdReadError(String("Profile has no rs232TrickleMap:\n") + filename);
+    DEBUG_PRINTLN("Profile has no rs232TrickleMap");
   }
-
-  for (JsonPair item : doc)
-  {
-    const char *key = item.key().c_str();
-    if (isProfileMetadataKey(key))
-    {
-      continue;
-    }
-
-    int itemNumber = String(key).toInt();
-    if ((itemNumber < 1) || (itemNumber > 16))
-    {
-      if (showErrors)
-      {
-        setSdReadError(String("Invalid profile entry number:\n") + filename + "\nEntry: " + key);
-        DEBUG_PRINT("Invalid profile entry: ");
-        DEBUG_PRINTLN(key);
-      }
-      return false;
-    }
-
-    if (!loadProfileEntry(item.value().as<JsonObject>(), itemNumber, filename, config, showErrors, true))
-    {
-      return false;
-    }
-  }
-
-  return config.profile_count > 0;
+  return false;
 }
 
 String profileFilename(const char *profileName)
@@ -395,7 +356,7 @@ bool loadConfiguration(const char *filename, Config &config)
   strlcpy(config.language, doc["language"] | config.language, sizeof(config.language));
 
   JsonObject fwUpdate = doc["fw_update"].as<JsonObject>();
-  config.fwCheck = fwUpdate["check"] | (doc["fw_check"] | config.fwCheck);
+  config.fwCheck = fwUpdate["check"] | config.fwCheck;
   strlcpy(config.fwUpdateUrl, fwUpdate["url"] | config.fwUpdateUrl, sizeof(config.fwUpdateUrl));
 
   file.close();

@@ -14,9 +14,9 @@ Im Display der Steuerung sollte nun das gleiche Gewicht wie auf der Waage angeze
 
 Falls dies nicht der Fall ist, überprüfe die [Einstellungen der Waage](#waagen) und die [Konfiguration](#konfiguration), besonders `scale.protocol` und `scale.baud`.
 
-Der Robo-Trickler startet mit dem in `config.txt` eingetragenen Profil. Auf der vollständigen SD-Karte ist standardmäßig `avg` vorhanden. Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration mit dem Profil `calibrate`. Stelle das Zielgewicht im Display ein und drücke auf Start. Starte erst, wenn die Waage mit leerer Pulverpfanne genullt ist.
+Der Robo-Trickler startet mit dem in `config.txt` eingetragenen Profil. Auf der vollständigen SD-Karte ist standardmäßig `avg` vorhanden. Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration mit dem Profil `calibrate`. Stelle das Zielgewicht im Display ein und drücke `Start`. Starte erst, wenn die Waage mit leerer Pulverpfanne genullt ist.
 
-Wähle im Profil-Tab ein passendes Pulver aus. Falls das gewünschte Pulver nicht vorhanden ist, kann zum Testen das `avg` Pulverprofil genommen werden. `avg` ist ein Durchschnittsprofil und funktioniert mit vielen Pulvern, ist aber nicht optimal. Für gutes und schnelles Trickeln sollte jedes Pulver ein eigenes Profil bekommen.
+Wähle im Tab `Profil` ein passendes Pulver aus. Falls das gewünschte Pulver nicht vorhanden ist, kann zum Testen das `avg` Pulverprofil genommen werden. `avg` ist ein Durchschnittsprofil und funktioniert mit vielen Pulvern, ist aber nicht optimal. Für gutes und schnelles Trickeln sollte jedes Pulver ein eigenes Profil bekommen.
 
 **Für jedes Pulver muss ein eigenes Profil angelegt werden, um ein optimales Trickeln zu gewährleisten.**
 
@@ -25,7 +25,7 @@ Wähle im Profil-Tab ein passendes Pulver aus. Falls das gewünschte Pulver nich
 Weitere Informationen:
 
 * [Automatisches Profil aus Kalibrierlauf erstellen](#automatisches-profil-aus-kalibrierlauf-erstellen)
-* [Profil Generator](#profil-generator)
+* [Profilgenerator](#profilgenerator)
 
 ![screen](https://github.com/ripper121/RoboTrickler/assets/11836272/988fc66b-6269-4b3c-8205-689d55ea32a8)
 
@@ -72,17 +72,17 @@ Dieses Profil nutzt `steps: 20000`. Generator und automatische Profilerstellung 
 
 **Vorgehen:**
 
-1. Wähle im Profil-Tab `calibrate`.
-2. Drücke Start.
-3. Lasse den Kalibrierlauf bei frisch gefülltem Trickler am besten 3-mal laufen, damit das Rohr gleichmäßig gefüllt ist. Klicke dabei bei `Create profile from calibration?` auf `No`, damit noch kein neues Profil erstellt wird.
-4. Bestätige am Display `Create profile from calibration?` mit `Yes`.
+1. Wähle im Tab `Profil` `calibrate`.
+2. Drücke `Start`.
+3. Lasse den Kalibrierlauf bei frisch gefülltem Trickler am besten 3-mal laufen, damit das Rohr gleichmäßig gefüllt ist. Klicke dabei bei `Profil aus Kalibrierung erstellen?` auf `Nein`, damit noch kein neues Profil erstellt wird.
+4. Bestätige am Display `Profil aus Kalibrierung erstellen?` mit `Ja`.
 5. Nach dem Kalibrierlauf liest die Firmware das stabile Gewicht von der Waage.
 
 Die Firmware erstellt dann automatisch ein neues Profil in `/profiles` mit dem Namen `powder_000.txt`, `powder_001.txt` usw., wählt dieses Profil aus und speichert es in `config.txt`.
 
 Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `unitsPerThrow` wird aus `Kalibriergewicht / 100` berechnet. Die Firmware legt fünf Feinschritte an (`1.929`, `0.965`, `0.482`, `0.241`, `0.000` gn) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten Schrittzahlen.
 
-## Profil Generator
+## Profilgenerator
 
 Alternativ kann ein Profil mit `profileGenerator.html` erzeugt werden. Die Datei liegt auf der SD-Karte unter:
 
@@ -96,23 +96,23 @@ Video Anleitung:
 
 [![youtube video](https://img.youtube.com/vi/Y3HOAB9iIfA/0.jpg)](https://www.youtube.com/watch?v=Y3HOAB9iIfA)
 
-1. Öffne den Profile Generator.
-2. Trage bei `Weight of calibration run` die Pulvermenge des Kalibrierlaufs ein.
-3. Wähle die Einheit `Gram` oder `Grain`.
-4. Stelle bei Bedarf `Weight gap`, `Stepper speed rpm`, `Bulk actuator`, `Calculation tolerance`, `Threshold for alarm`, `Tolerance` und `Reverse` ein. `General measurements` ist in der Oberfläche sichtbar, wird im aktuellen Generator aber durch feste Messwerte überschrieben.
-5. Klicke auf `Generate Profile`.
-6. Trage einen Profilnamen ein, z.B. `n140`.
-7. Klicke auf `Download` oder, wenn du über den Webserver arbeitest, auf `Save`.
+1. Öffne den `Pulverprofil-Generator`.
+2. Trage bei `Gewicht des Kalibrierlaufs:` die Pulvermenge des Kalibrierlaufs ein.
+3. Wähle unter `Einheit` `Gramm:` oder `Grain:`.
+4. Stelle bei Bedarf `Gewichtsabstand:`, `Stepper-Drehzahl rpm:`, `Berechnungstoleranz in %:`, `Alarmgrenze:`, `Toleranz:` und `Rückwärts:` ein. `Allgemeine Messungen (mit PLC 100-BC 5 nutzen):` ist in der Oberfläche sichtbar, wird im aktuellen Generator aber durch feste Messwerte überschrieben. `general.actuator` speichert den Stepper.
+5. Klicke auf `Profil erzeugen`.
+6. Trage bei `Profilname:` einen Profilnamen ein, z.B. `n140`.
+7. Klicke auf `Download` oder, wenn du über den Webserver arbeitest, auf `Speichern`.
 8. Speichere das Profil als `.txt` in `/profiles`.
 9. Starte den Trickler neu, damit die neue Profilliste geladen wird.
 
-Der Generator erzeugt aktuell `general.measurements` fest mit `20` und die fünf Feinschritte mit `2`, `2`, `5`, `10` und `15` Messungen. Das Feld `Bulk actuator` wird als `general.actuator` gespeichert und bestimmt den Stepper für den automatischen ersten Grobwurf.
+Der Generator erzeugt aktuell `general.measurements` fest mit `20` und die fünf Feinschritte mit `2`, `2`, `5`, `10` und `15` Messungen. `general.actuator` bestimmt den Stepper für den automatischen ersten Grobwurf.
 
 ![image](https://github.com/ripper121/RoboTrickler/assets/11836272/67fcc33f-f18f-44a9-9f25-5ea08cc997fe)
 
-## Profile Editor
+## Pulverprofil-Editor
 
-Der Webserver enthält zusätzlich `profileEditor.html`. Damit können Profile im neuen Format bearbeitet und alte Profile in das neue Format übernommen werden. Alte Felder wie `weight` und `stepsPerUnit` werden vom Editor in `diffWeight` und `unitsPerThrow` umgerechnet.
+Der Webserver enthält zusätzlich `profileEditor.html` als `Pulverprofil-Editor`. Damit können Profile im aktuellen Format bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` gespeichert werden.
 
 ## Gramm / Grain
 
@@ -353,8 +353,6 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 * `fw_update.check`: aktiviert die automatische Prüfung auf neue Firmware.
 * `fw_update.url`: optionale URL, über die die Firmware die aktuelle Version abfragt. Wenn das Feld fehlt oder leer ist, nutzt die Firmware die Standard-URL `https://strenuous.dev/roboTrickler/userTracker.php`.
 
-Das ältere Feld `fw_check` wird beim Lesen weiterhin akzeptiert, neue Konfigurationen werden aber als `fw_update.check` gespeichert.
-
 Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu.
 
 Auf der SD-Karte befindet sich `system/configGenerator.html`, welcher das Erstellen einer Konfiguration erleichtert. Der Generator wird auch über den Webserver bereitgestellt.
@@ -367,12 +365,12 @@ Prüfe `config.txt` und das verwendete Pulverprofil mit [dieser Seite](https://j
 
 * Pulverprofile müssen gültiges JSON sein.
 
-## Firmware Update
+## Firmware-Update
 
 Es gibt zwei Möglichkeiten, ein Firmware-Update durchzuführen:
 
 1. Kopiere `update.bin` in das Hauptverzeichnis der SD-Karte und starte den Trickler neu. Nach erfolgreichem Update löscht die Firmware die Datei und startet erneut.
-2. Führe das Update über den Webbrowser mit `FW Update` oder `http://robo-trickler.local/fwupdate` durch.
+2. Führe das Update über den Webbrowser mit `Firmware-Update` oder `http://robo-trickler.local/fwupdate` durch.
 
 Die neueste Firmware findest du [hier](https://github.com/ripper121/RoboTrickler/releases).
 
@@ -382,7 +380,7 @@ Um den WLAN-Modus zu aktivieren, trage `ssid` und `psk` in `config.txt` ein.
 
 **Nur 2.4 GHz WLAN wird unterstützt.**
 
-Beim Start zeigt der Trickler `Connect to Wifi...` an. Bei erfolgreicher Verbindung steht im Info-Tab die IP-Adresse.
+Beim Start zeigt der Trickler `Mit WLAN verbinden:` an. Bei erfolgreicher Verbindung steht im Tab `Info` die IP-Adresse.
 
 Je nach Router erreichst du den Trickler über:
 
@@ -404,17 +402,17 @@ http://192.168.178.22
 
 Die Startseite lädt `/system/index.html` von der SD-Karte. Von dort erreichst du:
 
-* Trickler-Steuerung
-* File Browser
-* Profile Generator
-* Profile Editor
-* Configuration Generator
-* Firmware Update
-* Reboot
+* Trickler
+* Dateibrowser
+* Pulverprofil-Generator
+* Pulverprofil-Editor
+* Konfigurationsgenerator
+* Firmware-Update
+* Neustart
 
-## File Browser
+## Dateibrowser
 
-Mit dem File Browser kannst du Dateien auf der SD-Karte über den Webbrowser bearbeiten. Änderungen an `config.txt` oder Pulverprofilen werden erst nach einem Neustart übernommen.
+Mit dem `Dateibrowser` kannst du Dateien auf der SD-Karte über den Webbrowser bearbeiten. Änderungen an `config.txt` oder Pulverprofilen werden erst nach einem Neustart übernommen.
 
 **Jede Änderung an einer Konfigurationsdatei oder einem Pulverprofil wird erst nach einem Neustart des Tricklers übernommen.**
 

@@ -52,10 +52,6 @@
          'measurements'
       ];
 
-      function actuatorName(number) {
-         return Number(number) === 2 ? 'stepper2' : 'stepper1';
-      }
-
       function cleanNumber(value, fallback) {
          const number = parseFloat(value);
          return isNaN(number) ? fallback : number;
@@ -69,11 +65,10 @@
       }
 
       function cleanProfileJSON(jsonData) {
-         if (jsonData.rs232TrickleMap) {
-            return cleanNewProfileJSON(jsonData);
+         if (!jsonData || !Array.isArray(jsonData.rs232TrickleMap)) {
+            throw new Error('Profile must contain rs232TrickleMap array');
          }
-
-         return convertLegacyProfileJSON(jsonData);
+         return cleanNewProfileJSON(jsonData);
       }
 
       function cleanNewProfileJSON(jsonData) {
@@ -116,64 +111,13 @@
 
       function cleanProfileStep(entry) {
          return {
-            diffWeight: cleanNumber(entry.diffWeight !== undefined ? entry.diffWeight : entry.weight, 0.000),
+            diffWeight: cleanNumber(entry.diffWeight, 0.000),
             actuator: entry.actuator === 'stepper2' ? 'stepper2' : 'stepper1',
             steps: Math.round(cleanNumber(entry.steps, 5)),
             speed: Math.round(cleanNumber(entry.speed, 200)),
             reverse: cleanBoolean(entry.reverse, false),
             measurements: Math.round(cleanNumber(entry.measurements, 5))
          };
-      }
-
-      function convertLegacyProfileJSON(jsonData) {
-         var cleanedData = {
-            general: {
-               targetWeight: 40.000,
-               tolerance: 0.000,
-               alarmThreshold: 1.000,
-               weightGap: 1.000,
-               actuator: 'stepper1',
-               measurements: 5
-            },
-            actuator: {
-               stepper1: {
-                  enabled: true,
-                  unitsPerThrow: 0.000,
-                  unitsPerThrowSpeed: 200
-               },
-               stepper2: {
-                  enabled: false,
-                  unitsPerThrow: 10.000,
-                  unitsPerThrowSpeed: 200
-               }
-            },
-            rs232TrickleMap: []
-         };
-
-         Object.keys(jsonData).sort(function (left, right) {
-            return parseInt(left) - parseInt(right);
-         }).forEach(function (key) {
-            const entry = jsonData[key] || {};
-            if (cleanedData.rs232TrickleMap.length === 0) {
-               cleanedData.general.tolerance = cleanNumber(entry.tolerance, cleanedData.general.tolerance);
-               cleanedData.general.alarmThreshold = cleanNumber(entry.alarmThreshold, cleanedData.general.alarmThreshold);
-               cleanedData.actuator.stepper1.unitsPerThrowSpeed = Math.round(cleanNumber(entry.speed, 200));
-               if (entry.stepsPerUnit) {
-                  cleanedData.actuator.stepper1.unitsPerThrow = parseFloat((200 / cleanNumber(entry.stepsPerUnit, 1)).toFixed(3));
-               }
-            }
-
-            cleanedData.rs232TrickleMap.push(cleanProfileStep({
-               diffWeight: entry.diffWeight !== undefined ? entry.diffWeight : entry.weight,
-               actuator: entry.actuator || actuatorName(entry.number),
-               steps: entry.steps,
-               speed: entry.speed,
-               reverse: entry.reverse,
-               measurements: entry.measurements
-            }));
-         });
-
-         return cleanedData;
       }
 
       function generateFormFromJSON(jsonData) {
