@@ -460,11 +460,7 @@ IPAddress stringToIPAddress(const String &ipAddressString)
 
 String firmwareCheckUrl()
 {
-  String serverPath = String(config.fwUpdateUrl);
-  if (serverPath.length() == 0)
-  {
-    serverPath = DEFAULT_FW_UPDATE_URL;
-  }
+  String serverPath = DEFAULT_FW_UPDATE_URL;
   if (serverPath == DEFAULT_FW_UPDATE_URL)
   {
     serverPath += "?mac=" + String(WiFi.macAddress());

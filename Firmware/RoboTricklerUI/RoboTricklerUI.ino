@@ -79,7 +79,6 @@ struct Config
   char beeper[16];
   char language[8];
   bool fwCheck;
-  char fwUpdateUrl[128];
   float targetWeight;
   char scale_protocol[32];
   int scale_baud;

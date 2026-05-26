@@ -60,8 +60,8 @@
                 <legend data-i18n="trickler.targetWeight">Target Weight</legend>
                 <div class="button-row">
                     <button class="button" onclick="decreaseValue()">-</button>
-                    <input type="number" class="display" id="targetValueDisplay" value="0.000" step="0.001" min="0"
-                        max="100">
+                    <input type="number" class="display" id="targetValueDisplay" value="0.001" step="0.001" min="0.001"
+                        max="998.999">
                     <button class="button" onclick="increaseValue()">+</button>
                 </div>
             </fieldset>
@@ -80,7 +80,19 @@
         </div>
     </div>
     <script>
+        const minTargetWeight = 0.001;
+        const maxTargetWeight = 998.999;
         valueInterval = setInterval(loadValue, 1000);
+
+        function clampTargetValue(value) {
+            if (isNaN(value) || value < minTargetWeight) {
+                return minTargetWeight;
+            }
+            if (value > maxTargetWeight) {
+                return maxTargetWeight;
+            }
+            return value;
+        }
 
         document.addEventListener('DOMContentLoaded', function () {
             fetch('/getTarget')
@@ -97,11 +109,14 @@
                 })
                 .catch(error => {
                     console.error('There was a problem with your fetch operation:', error);
-                    document.getElementById('targetValueDisplay').value = (0.000).toFixed(3);
+                    document.getElementById('targetValueDisplay').value = minTargetWeight.toFixed(3);
                 });
 
-            addTxtFilesToDropdown();
-            fetch('/getProfile')
+            addTxtFilesToDropdown().then(selectActiveProfile);
+        });
+
+        function selectActiveProfile() {
+            return fetch('/getProfile')
                 .then(response => {
                     // Check if the request was successful
                     if (!response.ok) {
@@ -126,19 +141,17 @@
                 .catch(error => {
                     console.error('There was a problem with your fetch operation:', error);
                 });
-
-        });
+        }
 
         function increaseValue() {
             var value = parseFloat(document.getElementById('targetValueDisplay').value);
-            value = (value + 0.001);
+            value = clampTargetValue(value + 0.001);
             document.getElementById('targetValueDisplay').value = value.toFixed(3);
         }
 
         function decreaseValue() {
             var value = parseFloat(document.getElementById('targetValueDisplay').value);
-            value = (value - 0.001);
-            if (value < 0) value = 0.000;
+            value = clampTargetValue(value - 0.001);
             document.getElementById('targetValueDisplay').value = value.toFixed(3);
         }
 
@@ -161,7 +174,7 @@
         }
 
         function addTxtFilesToDropdown() {
-            fetch('/getProfileList')
+            return fetch('/getProfileList')
                 .then(response => {
                     // Check if the request was successful
                     if (!response.ok) {
@@ -173,6 +186,7 @@
                     console.log(data); // Here you have your data
 
                     const dropdown = document.getElementById('dropdownMenu');
+                    dropdown.innerHTML = '';
                     Object.values(data).forEach((name, index) => {
                         const option = document.createElement('option');
                         option.value = index; // Use index + 1 as option value to start counting from 1
@@ -189,6 +203,9 @@
 
         function setProfile() {
             var profileNumber = parseFloat(document.getElementById('dropdownMenu').value);
+            if (isNaN(profileNumber)) {
+                return;
+            }
             var url = '/setProfile?profileNumber=' + profileNumber;
             fetch(url).then(response => response.text());
         }
@@ -209,13 +226,13 @@
                 })
                 .catch(error => {
                     console.error('There was a problem with your fetch operation:', error);
-                    document.getElementById('weightDisplay').value = (0.000).toFixed(3);
-                    weight = (0.000).toFixed(3);
+                    document.getElementById('weightDisplay').value = "0.000";
                 });
         }
 
         function setTarget() {
-            var targetValue = parseFloat(document.getElementById('targetValueDisplay').value);
+            var targetValue = clampTargetValue(parseFloat(document.getElementById('targetValueDisplay').value));
+            document.getElementById('targetValueDisplay').value = targetValue.toFixed(3);
             var url = '/setTarget?targetWeight=' + targetValue;
             fetch(url).then(response => response.text());
         }

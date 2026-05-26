@@ -52,24 +52,32 @@
                     <option value="">None</option>
                 </select><br>
                 <span data-i18n="config.baud">Baud:</span> <input type="number" name="scale_baud" value="9600"><br>
-                <label for="scale_customCode" data-i18n="config.customCode">Custom request:</label>
-                <input type="text" id="scale_customCode" name="scale_customCode" maxlength="31"
-                    placeholder="0x1B 0x70 0x0D 0x0A"><br>
+                <div id="customRequestRow">
+                    <label for="scale_customCode" data-i18n="config.customCode">Custom request:</label>
+                    <input type="text" id="scale_customCode" name="scale_customCode" maxlength="31"
+                        placeholder="0x1B 0x70 0x0D 0x0A"><br>
+                </div>
             </fieldset>
 
-            <label for="beeper" data-i18n="config.beeper">Beeper:</label>
-            <select name="beeper">
-                <option value="done" selected data-i18n="config.done">Done</option>
-                <option value="button" data-i18n="config.button">Button</option>
-                <option value="both" data-i18n="config.both">Both</option>
-                <option value="off" data-i18n="config.off">Off</option>
-            </select><br>
+            <fieldset>
+                <legend data-i18n="config.general">General Settings</legend>
+                <label for="beeper" data-i18n="config.beeper">Beeper:</label>
+                <select name="beeper">
+                    <option value="done" selected data-i18n="config.done">Done</option>
+                    <option value="button" data-i18n="config.button">Button</option>
+                    <option value="both" data-i18n="config.both">Both</option>
+                    <option value="off" data-i18n="config.off">Off</option>
+                </select><br>
 
-            <label for="language" data-i18n="config.language">Language:</label>
-            <select name="language">
-                <option value="en" data-i18n="config.english">English</option>
-                <option value="de" selected data-i18n="config.german">Deutsch</option>
-            </select><br>
+                <label for="language" data-i18n="config.language">Language:</label>
+                <select name="language">
+                    <option value="en" data-i18n="config.english">English</option>
+                    <option value="de" selected data-i18n="config.german">Deutsch</option>
+                </select><br>
+
+                <label for="profile_name" data-i18n="config.profile">Profile:</label>
+                <input type="text" id="profile_name" name="profile_name" maxlength="31" value="avg"><br>
+            </fieldset>
 
             <fieldset>
                 <legend data-i18n="config.firmwareUpdate">Firmware Update</legend>
@@ -91,12 +99,18 @@
         const jsonOutput = document.getElementById('jsonOutput');
         const allowedScaleProtocols = ['GG', 'SBI', 'KERN', 'KERN-ABT', 'AD', 'CUSTOM', ''];
 
+        function updateCustomRequestVisibility() {
+            document.getElementById('customRequestRow').style.display = configForm.scale_protocol.value === 'CUSTOM' ? 'block' : 'none';
+        }
+
         function cleanConfigJSON(jsonObject) {
             var scaleProtocol = (jsonObject.scale && jsonObject.scale.protocol) || 'GG';
             if (!allowedScaleProtocols.includes(scaleProtocol)) {
                 scaleProtocol = 'GG';
             }
             var fwUpdate = jsonObject.fw_update || {};
+            var profileName = String(jsonObject.profile || 'calibrate').trim();
+            var customCode = scaleProtocol === 'CUSTOM' ? (jsonObject.scale && jsonObject.scale.customCode) || '' : '';
             return {
                 wifi: {
                     ssid: (jsonObject.wifi && jsonObject.wifi.ssid) || '',
@@ -108,10 +122,10 @@
                 },
                 scale: {
                     protocol: scaleProtocol,
-                    customCode: (jsonObject.scale && jsonObject.scale.customCode) || '',
+                    customCode: customCode,
                     baud: (jsonObject.scale && jsonObject.scale.baud) || 9600
                 },
-                profile: jsonObject.profile || 'calibrate',
+                profile: profileName || 'calibrate',
                 beeper: jsonObject.beeper || 'done',
                 language: jsonObject.language || 'en',
                 fw_update: {
@@ -123,6 +137,7 @@
         // Function to update JSON based on form data
         function formToJSON() {
             var formData = new FormData(configForm);
+            var scaleProtocol = formData.get('scale_protocol');
             var jsonObject = {
                 wifi: {
                     ssid: formData.get('wifi_ssid'),
@@ -133,11 +148,11 @@
                     IPDNS: formData.get('IPDNS')
                 },
                 scale: {
-                    protocol: formData.get('scale_protocol'),
+                    protocol: scaleProtocol,
                     baud: parseInt(formData.get('scale_baud'), 10),
-                    customCode: formData.get('scale_customCode')
+                    customCode: scaleProtocol === 'CUSTOM' ? formData.get('scale_customCode') : ''
                 },
-                profile: "calibrate",
+                profile: (formData.get('profile_name') || 'calibrate').trim() || 'calibrate',
                 beeper: formData.get('beeper'),
                 language: formData.get('language'),
                 fw_update: {
@@ -165,9 +180,11 @@
                 configForm.scale_protocol.value = jsonObject.scale.protocol || 'GG';
                 configForm.scale_baud.value = jsonObject.scale.baud || 9600;
                 configForm.scale_customCode.value = jsonObject.scale.customCode || '';
+                updateCustomRequestVisibility();
 
                 configForm.beeper.value = jsonObject.beeper || 'done';
                 configForm.language.value = jsonObject.language || 'en';
+                configForm.profile_name.value = jsonObject.profile || 'calibrate';
                 configForm.fw_check.checked = jsonObject.fw_update.check !== false;
 
             } catch (e) {
@@ -177,12 +194,17 @@
 
         // Event listener for form changes
         configForm.addEventListener('input', formToJSON);
+        configForm.scale_protocol.addEventListener('change', function () {
+            updateCustomRequestVisibility();
+            formToJSON();
+        });
 
         // Event listener for JSON textarea changes
         jsonOutput.addEventListener('input', jsonToForm);
         jsonOutput.addEventListener('select', jsonToForm);
 
         // Initialize JSON output
+        updateCustomRequestVisibility();
         formToJSON();
 
         document.getElementById('downloadButton').addEventListener('click', function () {

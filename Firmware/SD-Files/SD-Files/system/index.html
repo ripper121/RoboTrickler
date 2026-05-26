@@ -4,9 +4,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Robo-Trickler</title>
-  <link rel="icon" type="image/x-icon" href="./system/resources/favicon.ico">
-  <link rel="stylesheet" href="./system/resources/style.css">
-  <script src="./system/lang.js"></script>
+  <script>
+    (function () {
+      var localHost = location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "";
+      if (!localHost && location.pathname.toLowerCase().endsWith("/system/index.html")) {
+        window.location.replace("/");
+        return;
+      }
+      var systemRelative = location.protocol === "file:" || location.pathname.toLowerCase().indexOf("/system/") >= 0;
+      var resourceBase = systemRelative ? "./" : "./system/";
+      document.write('<link rel="icon" type="image/x-icon" href="' + resourceBase + 'resources/favicon.ico">');
+      document.write('<link rel="stylesheet" href="' + resourceBase + 'resources/style.css">');
+      document.write('<script src="' + resourceBase + 'lang.js"><\/script>');
+    }());
+  </script>
 </head>
 
 <body>
@@ -61,19 +72,6 @@
 
     window.addEventListener("DOMContentLoaded", (event) => {
       if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
-        // Change favicon
-        var link = document.createElement('link');
-        link.rel = 'icon';
-        link.type = 'image/x-icon';
-        link.href = './resources/favicon.ico';
-        document.head.appendChild(link);
-        
-        // Change stylesheet
-        var stylesheet = document.createElement('link');
-        stylesheet.rel = 'stylesheet';
-        stylesheet.href = './resources/style.css';
-        document.head.appendChild(stylesheet);
-
         document.getElementById("profileGenerator").onclick = function() {
             window.location.href = './profileGenerator.html';
         };

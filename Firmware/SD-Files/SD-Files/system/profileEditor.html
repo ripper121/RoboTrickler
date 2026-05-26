@@ -50,6 +50,12 @@
          'speed',
          'measurements'
       ];
+      const calibrationProperties = [
+         'actuator',
+         'steps',
+         'speed',
+         'measurements'
+      ];
 
       function cleanNumber(value, fallback) {
          const number = parseFloat(value);
@@ -63,11 +69,46 @@
          return fallback;
       }
 
-      function cleanProfileJSON(jsonData) {
-         if (!jsonData || !Array.isArray(jsonData.rs232TrickleMap)) {
-            throw new Error('Profile must contain rs232TrickleMap array');
+      function cleanInteger(value, fallback, minimum) {
+         const number = Math.round(cleanNumber(value, fallback));
+         if (minimum !== undefined && number < minimum) {
+            return minimum;
          }
-         return cleanNewProfileJSON(jsonData);
+         return number;
+      }
+
+      function cleanActuator(value) {
+         return value === 'stepper2' ? 'stepper2' : 'stepper1';
+      }
+
+      function isCalibrationProfileJSON(jsonData) {
+         return jsonData &&
+            !Array.isArray(jsonData.rs232TrickleMap) &&
+            jsonData.actuator !== undefined &&
+            jsonData.steps !== undefined &&
+            jsonData.speed !== undefined;
+      }
+
+      function cleanProfileJSON(jsonData) {
+         if (!jsonData) {
+            throw new Error('Profile must be a JSON object');
+         }
+         if (Array.isArray(jsonData.rs232TrickleMap)) {
+            return cleanNewProfileJSON(jsonData);
+         }
+         if (isCalibrationProfileJSON(jsonData)) {
+            return cleanCalibrationProfileJSON(jsonData);
+         }
+         throw new Error('Profile must contain rs232TrickleMap array or calibration fields');
+      }
+
+      function cleanCalibrationProfileJSON(jsonData) {
+         return {
+            actuator: cleanActuator(jsonData.actuator),
+            steps: cleanInteger(jsonData.steps, 20000, 1),
+            speed: cleanInteger(jsonData.speed, 200, 1),
+            measurements: cleanInteger(jsonData.measurements, 5, 0)
+         };
       }
 
       function cleanNewProfileJSON(jsonData) {
@@ -85,8 +126,8 @@
          cleanedData.general.tolerance = cleanNumber(general.tolerance, 0.000);
          cleanedData.general.alarmThreshold = cleanNumber(general.alarmThreshold, 1.000);
          cleanedData.general.weightGap = cleanNumber(general.weightGap, 1.000);
-         cleanedData.general.actuator = general.actuator === 'stepper2' ? 'stepper2' : 'stepper1';
-         cleanedData.general.measurements = Math.round(cleanNumber(general.measurements, 5));
+         cleanedData.general.actuator = cleanActuator(general.actuator);
+         cleanedData.general.measurements = cleanInteger(general.measurements, 5, 0);
 
          const actuator = jsonData.actuator || {};
          ['stepper1', 'stepper2'].forEach(function (stepperName) {
@@ -96,7 +137,7 @@
                : { enabled: false, unitsPerThrow: 10.000, unitsPerThrowSpeed: 200 };
             cleanedData.actuator[stepperName].enabled = cleanBoolean(stepper.enabled, defaults.enabled);
             cleanedData.actuator[stepperName].unitsPerThrow = cleanNumber(stepper.unitsPerThrow, defaults.unitsPerThrow);
-            cleanedData.actuator[stepperName].unitsPerThrowSpeed = Math.round(cleanNumber(stepper.unitsPerThrowSpeed, defaults.unitsPerThrowSpeed));
+            cleanedData.actuator[stepperName].unitsPerThrowSpeed = cleanInteger(stepper.unitsPerThrowSpeed, defaults.unitsPerThrowSpeed, 1);
          });
 
          if (Array.isArray(jsonData.rs232TrickleMap)) {
@@ -110,17 +151,23 @@
 
       function cleanProfileStep(entry) {
          return {
-            diffWeight: cleanNumber(entry.diffWeight, 0.000),
-            actuator: entry.actuator === 'stepper2' ? 'stepper2' : 'stepper1',
-            steps: Math.round(cleanNumber(entry.steps, 5)),
-            speed: Math.round(cleanNumber(entry.speed, 200)),
-            measurements: Math.round(cleanNumber(entry.measurements, 5))
+            diffWeight: Math.max(0, cleanNumber(entry.diffWeight, 0.000)),
+            actuator: cleanActuator(entry.actuator),
+            steps: cleanInteger(entry.steps, 5, 1),
+            speed: cleanInteger(entry.speed, 200, 1),
+            measurements: cleanInteger(entry.measurements, 5, 0)
          };
       }
 
       function generateFormFromJSON(jsonData) {
          var container = document.getElementById('container');
          container.innerHTML = ''; // Clear existing content
+
+         if (!Array.isArray(jsonData.rs232TrickleMap)) {
+            addObjectFieldset(container, 'Calibration', 'calibration', jsonData, calibrationProperties);
+            document.getElementById("profileContainer").style.display = "block";
+            return;
+         }
 
          addObjectFieldset(container, 'General', 'general', jsonData.general, generalProperties);
 
@@ -188,7 +235,8 @@
 
       function updateJSON() {
          var inputs = document.querySelectorAll('#container input, #container select');
-         var newJSONData = {
+         var isCalibrationProfile = document.querySelector('[data-path="calibration"]') !== null;
+         var newJSONData = isCalibrationProfile ? {} : {
             general: {},
             actuator: {
                stepper1: {},
@@ -219,7 +267,8 @@
                target[property] = parseFloat(input.value);
             }
          });
-         document.getElementById('jsonInput').value = JSON.stringify(cleanNewProfileJSON(newJSONData), null, 4);
+         var cleanedJSON = isCalibrationProfile ? cleanCalibrationProfileJSON(newJSONData.calibration || {}) : cleanNewProfileJSON(newJSONData);
+         document.getElementById('jsonInput').value = JSON.stringify(cleanedJSON, null, 4);
       }
 
       function loadProfileText(textArea, text) {

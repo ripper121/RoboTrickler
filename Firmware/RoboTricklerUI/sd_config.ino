@@ -173,7 +173,6 @@ void setDefaultConfiguration(Config &config)
   strlcpy(config.beeper, "done", sizeof(config.beeper));
   strlcpy(config.language, "en", sizeof(config.language));
   config.fwCheck = true;
-  strlcpy(config.fwUpdateUrl, DEFAULT_FW_UPDATE_URL, sizeof(config.fwUpdateUrl));
 }
 
 bool readProfile(const char *filename, Config &config)
@@ -355,7 +354,6 @@ bool loadConfiguration(const char *filename, Config &config)
 
   JsonObject fwUpdate = doc["fw_update"].as<JsonObject>();
   config.fwCheck = fwUpdate["check"] | config.fwCheck;
-  strlcpy(config.fwUpdateUrl, fwUpdate["url"] | config.fwUpdateUrl, sizeof(config.fwUpdateUrl));
 
   file.close();
 
@@ -720,7 +718,6 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["beeper"] = config.beeper;
   doc["language"] = config.language;
   doc["fw_update"]["check"] = config.fwCheck;
-  doc["fw_update"]["url"] = config.fwUpdateUrl;
 
   // Serialize JSON to file
   if (serializeJsonPretty(doc, file) == 0)

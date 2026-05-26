@@ -13,6 +13,10 @@ Use this order for all relevant implementation work:
 2. Define the smallest working scope
 3. Keep board mapping and hardware assumptions centralized
 
+## SD file rules
+
+- `fw_update.url` is for internal firmware use only. Keep the update URL in firmware code (`DEFAULT_FW_UPDATE_URL`) and do not add it to SD files, generated `config.txt`, the config generator UI, or SD-facing docs. `fw_update.check` may remain user-configurable.
+
 ## Compile check
 
 This workspace uses Arduino IDE 1.8.x with Espressif ESP32 core `3.3.8`.

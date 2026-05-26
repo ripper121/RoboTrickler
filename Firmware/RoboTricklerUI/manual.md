@@ -341,7 +341,7 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 * `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Unterstützt werden JSON-Dateien in `/lang` und `/system/lang`, z. B. `de` oder `en`; falls keine Datei geladen werden kann, nutzt die Firmware eingebaute englische Fallback-Texte.
 * `beeper`: `done`, `button`, `both` oder `off`.
 * `fw_update.check`: aktiviert die automatische Prüfung auf neue Firmware.
-* `fw_update.url`: optionale URL, über die die Firmware die aktuelle Version abfragt. Wenn das Feld fehlt oder leer ist, nutzt die Firmware die Standard-URL `https://strenuous.dev/roboTrickler/userTracker.php`.
+* Die Firmware-Update-URL ist intern in der Firmware definiert und gehört nicht in `config.txt`.
 
 Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu.
 

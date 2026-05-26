@@ -25,7 +25,7 @@
             <input type="number" id="speedInput" step="1" min="5" value="200"><br>
 
             <label for="measurementsInput" data-i18n="profileGenerator.measurements">General measurements (with PLC 100-BC use 5):</label>
-            <input type="number" id="measurementsInput" step="1" min="1" value="2"><br>
+            <input type="number" id="measurementsInput" step="1" min="1" value="5"><br>
 
             <label for="bulkActuatorSelect" data-i18n="profileGenerator.bulkActuator">Bulk actuator:</label>
             <select id="bulkActuatorSelect">
@@ -36,14 +36,12 @@
             <label for="calcToleranceInput" data-i18n="profileGenerator.calcTolerance">Calculation tolerance in %:</label>
             <input type="number" id="calcToleranceInput" step="1" min="1" max="100" value="65"><br>
 
-            <fieldset>
-               <legend data-i18n="profileGenerator.unit">Unit</legend>
-               <label for="gramRadio" data-i18n="profileGenerator.gram">Gram:</label>
-               <input type="radio" id="gramRadio" name="weightUnit" value="Gram"><br>
+            <label data-i18n="profileGenerator.unit">Unit: </label><br>
+            <label for="gramRadio" data-i18n="profileGenerator.gram">Gram:</label>
+            <input type="radio" id="gramRadio" name="weightUnit" value="Gram"><br>
 
-               <label for="grainRadio" data-i18n="profileGenerator.grain">Grain:</label>
-               <input type="radio" id="grainRadio" name="weightUnit" value="Grain" checked><br>
-            </fieldset>
+            <label for="grainRadio" data-i18n="profileGenerator.grain">Grain:</label>
+            <input type="radio" id="grainRadio" name="weightUnit" value="Grain" checked><br><br>
 
             <label for="alarmThresholdInput" data-i18n="profileGenerator.alarmThreshold">Threshold for alarm:</label>
             <input type="number" id="alarmThresholdInput" step="0.001" min="0" value="1.000"><br>
@@ -54,7 +52,6 @@
          </fieldset>
       </form>
 
-      <button id="generateButton" class="button" data-i18n="profileGenerator.generate">Generate Profile</button><br><br>
       <h2 data-i18n="profileGenerator.generated">Generated Profile:</h2>
       <textarea id="profileOutput" rows="20" cols="40"></textarea><br>
 
@@ -75,7 +72,7 @@
          return isNaN(value) ? fallback : value;
       }
 
-      document.getElementById("generateButton").addEventListener("click", function () {
+      function generateProfile() {
          const measuredWeight = numberValue("weightInput", 0);
          const targetWeight = 40.000;
          const speed = numberValue("speedInput", 200);
@@ -139,7 +136,7 @@
                if (steps < 5)
                   steps = 5;
 
-               measurements = mapMeasurements[i] || measurement;
+               measurements = Math.max(mapMeasurements[i] || measurement, measurement);
 
                const profileEntry = {
                   diffWeight: weight,
@@ -158,7 +155,10 @@
 
             document.getElementById("profileOutput").value = profileJSON;
          }
-      });
+      }
+
+      document.getElementById("profileForm").addEventListener("input", generateProfile);
+      document.getElementById("profileForm").addEventListener("change", generateProfile);
 
       function convertToLegalFAT32Filename(filename) {
          // Truncate if length is more than 255 characters
@@ -240,6 +240,7 @@
          document.querySelector("label[for=weightGapInput]").innerHTML = "Weight gap in Gram:";
          document.getElementById("weightGapInput").value = 0.100;
          document.querySelector("label[for=toleranceInput]").innerHTML = "Tolerance in Gram:";
+         generateProfile();
       });
 
       document.getElementById("grainRadio").addEventListener("click", function () {
@@ -248,8 +249,10 @@
          document.querySelector("label[for=weightGapInput]").innerHTML = "Weight gap in Grain:";
          document.getElementById("weightGapInput").value = 1.000;
          document.querySelector("label[for=toleranceInput]").innerHTML = "Tolerance in Grain:";
+         generateProfile();
       });
 
+      generateProfile();
 
    </script>
 </body>
