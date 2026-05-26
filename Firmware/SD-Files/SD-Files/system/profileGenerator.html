@@ -27,7 +27,7 @@
             <label for="measurementsInput" data-i18n="profileGenerator.measurements">General measurements (with PLC 100-BC use 5):</label>
             <input type="number" id="measurementsInput" step="1" min="1" value="2"><br>
 
-            <label for="bulkActuatorSelect">Bulk actuator:</label>
+            <label for="bulkActuatorSelect" data-i18n="profileGenerator.bulkActuator">Bulk actuator:</label>
             <select id="bulkActuatorSelect">
                <option value="stepper1" selected>stepper1</option>
                <option value="stepper2">stepper2</option>
@@ -35,12 +35,6 @@
 
             <label for="calcToleranceInput" data-i18n="profileGenerator.calcTolerance">Calculation tolerance in %:</label>
             <input type="number" id="calcToleranceInput" step="1" min="1" max="100" value="65"><br>
-
-            <fieldset>
-               <legend data-i18n="profileGenerator.trickler">Trickler</legend>
-               <label for="reverseCheckbox" data-i18n="profileGenerator.reverse">Reverse:</label>
-               <input type="checkbox" id="reverseCheckbox"><br>
-            </fieldset>
 
             <fieldset>
                <legend data-i18n="profileGenerator.unit">Unit</legend>
@@ -85,7 +79,6 @@
          const measuredWeight = numberValue("weightInput", 0);
          const targetWeight = 40.000;
          const speed = numberValue("speedInput", 200);
-         const reverse = document.getElementById("reverseCheckbox").checked; // Get the checkbox value
 
          const weightUnit = document.querySelector('input[name="weightUnit"]:checked').value;
          const tolerance = numberValue("toleranceInput", 0);
@@ -106,7 +99,7 @@
                   alarmThreshold: parseFloat(alarmThreshold.toFixed(3)),
                   weightGap: parseFloat(weightGap.toFixed(3)),
                   actuator: bulkActuator,
-                  measurements: 20
+                  measurements: measurement
                },
                actuator: {
                   stepper1: {
@@ -115,9 +108,9 @@
                      unitsPerThrowSpeed: speed
                   },
                   stepper2: {
-                     enabled: false,
+                     enabled: bulkActuator === "stepper2",
                      unitsPerThrow: 10.000,
-                     unitsPerThrowSpeed: 200
+                     unitsPerThrowSpeed: bulkActuator === "stepper2" ? speed : 200
                   }
                },
                rs232TrickleMap: []
@@ -153,7 +146,6 @@
                   actuator: "stepper1",
                   steps: steps,
                   speed: speed,
-                  reverse: reverse,
                   measurements: measurements
                };
 

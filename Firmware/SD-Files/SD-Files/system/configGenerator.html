@@ -52,6 +52,9 @@
                     <option value="">None</option>
                 </select><br>
                 <span data-i18n="config.baud">Baud:</span> <input type="number" name="scale_baud" value="9600"><br>
+                <label for="scale_customCode" data-i18n="config.customCode">Custom request:</label>
+                <input type="text" id="scale_customCode" name="scale_customCode" maxlength="31"
+                    placeholder="0x1B 0x70 0x0D 0x0A"><br>
             </fieldset>
 
             <label for="beeper" data-i18n="config.beeper">Beeper:</label>
@@ -68,6 +71,12 @@
                 <option value="de" selected data-i18n="config.german">Deutsch</option>
             </select><br>
 
+            <fieldset>
+                <legend data-i18n="config.firmwareUpdate">Firmware Update</legend>
+                <label for="fw_check" data-i18n="config.fwCheck">Check for new Firmware:</label>
+                <input type="checkbox" id="fw_check" name="fw_check" checked><br>
+            </fieldset>
+
         </form>
         <h2 data-i18n="config.generated">Generated config.txt:</h2>
         <textarea id="jsonOutput"></textarea>
@@ -81,12 +90,14 @@
         const configForm = document.getElementById('configForm');
         const jsonOutput = document.getElementById('jsonOutput');
         const allowedScaleProtocols = ['GG', 'SBI', 'KERN', 'KERN-ABT', 'AD', 'CUSTOM', ''];
+        const defaultFwUpdateUrl = 'https://strenuous.dev/roboTrickler/userTracker.php';
 
         function cleanConfigJSON(jsonObject) {
             var scaleProtocol = (jsonObject.scale && jsonObject.scale.protocol) || 'GG';
             if (!allowedScaleProtocols.includes(scaleProtocol)) {
                 scaleProtocol = 'GG';
             }
+            var fwUpdate = jsonObject.fw_update || {};
             return {
                 wifi: {
                     ssid: (jsonObject.wifi && jsonObject.wifi.ssid) || '',
@@ -103,7 +114,11 @@
                 },
                 profile: jsonObject.profile || 'calibrate',
                 beeper: jsonObject.beeper || 'done',
-                language: jsonObject.language || 'en'
+                language: jsonObject.language || 'en',
+                fw_update: {
+                    check: fwUpdate.check !== false,
+                    url: fwUpdate.url || defaultFwUpdateUrl
+                }
             };
         }
 
@@ -122,11 +137,15 @@
                 scale: {
                     protocol: formData.get('scale_protocol'),
                     baud: parseInt(formData.get('scale_baud'), 10),
-                    customCode: ""
+                    customCode: formData.get('scale_customCode')
                 },
                 profile: "calibrate",
                 beeper: formData.get('beeper'),
-                language: formData.get('language')
+                language: formData.get('language'),
+                fw_update: {
+                    check: document.getElementById('fw_check').checked,
+                    url: formData.get('fw_url') || defaultFwUpdateUrl
+                }
             };
             jsonOutput.value = JSON.stringify(jsonObject, null, 4);
         }
@@ -148,9 +167,12 @@
                 // Update Scale settings
                 configForm.scale_protocol.value = jsonObject.scale.protocol || 'GG';
                 configForm.scale_baud.value = jsonObject.scale.baud || 9600;
+                configForm.scale_customCode.value = jsonObject.scale.customCode || '';
 
                 configForm.beeper.value = jsonObject.beeper || 'done';
                 configForm.language.value = jsonObject.language || 'en';
+                configForm.fw_check.checked = jsonObject.fw_update.check !== false;
+                configForm.fw_url.value = jsonObject.fw_update.url || defaultFwUpdateUrl;
 
             } catch (e) {
                 console.error('Invalid JSON');
