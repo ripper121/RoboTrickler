@@ -4,7 +4,7 @@
 - Added automatic powder profile creation from the calibration run.
 - Added SD-card language support with `language` in `config.txt`.
 - Removed PID and logger-related firmware and UI pieces.
-- Removed microstep setting from active firmware behavior.
+- Removed old stepper driver configuration from active firmware behavior.
 
 ### Added
 
@@ -28,7 +28,7 @@
 - Reworked trickling logic around the new profile fields, including tolerance, alarm threshold, weight gap, measurement counts, reverse direction, and actuator selection.
 - Added first-throw bulk movement using `unitsPerThrow`, with support for `stepper1` and `stepper2`.
 - Replaced external stepper and shift-register libraries with local stepper and shift-register control code.
-- Stepper handling now assumes full-step A4988-style drivers.
+- Stepper handling now emits direct STEP pulses through local A4988-style driver control.
 - Reworked beeper control through the new shift-register stepper backend.
 - Updated web firmware update handling with better status and error messages.
 - Updated HTTPS firmware-version check for ESP32 core 3.3.8 using `NetworkClientSecure`.
@@ -40,7 +40,7 @@
 
 - Removed PID and logger-related firmware and UI pieces.
 - Removed `csv.ino`.
-- Removed microstep setting from active firmware behavior.
+- Removed old stepper driver configuration from active firmware behavior.
 - Removed watchdog disable and reset code.
 - Removed old sample grain and gram profile files from the SD image.
 - Removed bundled `StepperDriver` and `ShiftRegister74HC595` libraries.

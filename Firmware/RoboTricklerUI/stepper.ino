@@ -1,5 +1,3 @@
-#define FULL_STEP 1
-
 struct StepperPins
 {
   uint8_t dir;
@@ -83,7 +81,7 @@ static unsigned long stepperPulseIntervalUs(int rpm)
   {
     rpm = 100;
   }
-  return (unsigned long)(60000000UL / ((unsigned long)MOTOR_STEPS * (unsigned long)FULL_STEP * (unsigned long)rpm));
+  return (unsigned long)(60000000UL / ((unsigned long)MOTOR_STEPS * (unsigned long)rpm));
 }
 
 void setStepperSpeed(int stepperNum, int _stepperSpeed)
@@ -124,7 +122,7 @@ void step(int stepperNum, long steps, bool reverse)
   }
 
   bool forward = steps >= 0;
-  long pulseCount = (labs(steps) * (long)MOTOR_STEPS * (long)FULL_STEP) / 360L;
+  long pulseCount = labs(steps);
   if (pulseCount <= 0)
   {
     return;

@@ -66,7 +66,7 @@ Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte.
 }
 ```
 
-Dieses Profil nutzt `steps: 20000`. Generator und automatische Profilerstellung rechnen dabei mit 100 Umdrehungen, weil 200 Profil-Schritte einer Umdrehung entsprechen.
+Dieses Profil nutzt `steps: 20000`. Das sind 20000 direkte STEP-Pulse; bei `MOTOR_STEPS = 200` entspricht das dem Kalibrierlauf über 100 Umdrehungen.
 
 **Die Waage muss für den automatischen Kalibrierlauf auf Grain gestellt sein.** Die Firmware übernimmt den gemessenen Wert direkt als Grain und zeigt die Bestätigung als `gn` an.
 
@@ -80,7 +80,7 @@ Dieses Profil nutzt `steps: 20000`. Generator und automatische Profilerstellung 
 
 Die Firmware erstellt dann automatisch ein neues Profil in `/profiles` mit dem Namen `powder_000.txt`, `powder_001.txt` usw., wählt dieses Profil aus und speichert es in `config.txt`.
 
-Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `unitsPerThrow` wird aus `Kalibriergewicht / 100` berechnet. Die Firmware legt fünf Feinschritte an (`1.929`, `0.965`, `0.482`, `0.241`, `0.000` gn) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten Schrittzahlen.
+Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `unitsPerThrow` wird aus `Kalibriergewicht / 100` berechnet. Die Firmware legt fünf Feinwurf-Einträge an (`1.929`, `0.965`, `0.482`, `0.241`, `0.000` gn) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten STEP-Pulse.
 
 ## Profilgenerator
 
@@ -106,7 +106,7 @@ Video Anleitung:
 8. Speichere das Profil als `.txt` in `/profiles`.
 9. Starte den Trickler neu, damit die neue Profilliste geladen wird.
 
-Der Generator erzeugt aktuell `general.measurements` fest mit `20` und die fünf Feinschritte mit `2`, `2`, `5`, `10` und `15` Messungen. `general.actuator` bestimmt den Stepper für den automatischen ersten Grobwurf.
+Der Generator erzeugt aktuell `general.measurements` fest mit `20` und die fünf Feinwurf-Einträge mit `2`, `2`, `5`, `10` und `15` Messungen. `general.actuator` bestimmt den Stepper für den automatischen ersten Grobwurf.
 
 ![image](https://github.com/ripper121/RoboTrickler/assets/11836272/67fcc33f-f18f-44a9-9f25-5ea08cc997fe)
 
@@ -215,15 +215,15 @@ Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `ala
 * `unitsPerThrow`: Pulvermenge pro Umdrehung bei `unitsPerThrowSpeed`. Die Einheit muss zur Waage passen.
 * `unitsPerThrowSpeed`: Geschwindigkeit für den automatischen ersten Grobwurf.
 
-Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `unitsPerThrow` die benötigten Schritte. Es wird genau der in `general.actuator` eingetragene Bulk-Actuator verwendet; ohne gültigen Eintrag ist das `stepper1`. Wenn der gewählte Stepper nicht aktiviert ist oder `unitsPerThrow` fehlt bzw. `0` ist, wird der automatische Grobwurf übersprungen.
+Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `unitsPerThrow` die benötigten STEP-Pulse. Es wird genau der in `general.actuator` eingetragene Bulk-Actuator verwendet; ohne gültigen Eintrag ist das `stepper1`. Wenn der gewählte Stepper nicht aktiviert ist oder `unitsPerThrow` fehlt bzw. `0` ist, wird der automatische Grobwurf übersprungen.
 
 ### `rs232TrickleMap`
 
 `rs232TrickleMap` ist die eigentliche Trickel-Tabelle. Es sind maximal 16 Einträge möglich.
 
-* `diffWeight`: Abstand zum Zielgewicht, ab dem dieser Schritt verwendet wird.
+* `diffWeight`: Abstand zum Zielgewicht, ab dem dieser Eintrag verwendet wird.
 * `actuator`: `stepper1` oder `stepper2`.
-* `steps`: Schrittwert für diesen Wurf. Profile und Generatoren rechnen mit 200 Profil-Schritten pro Umdrehung.
+* `steps`: Anzahl direkter STEP-Pulse für diesen Wurf. Die Firmware gibt diesen Wert unverändert an den Stepper aus.
 * `speed`: Motorgeschwindigkeit in U/min. Sinnvolle Werte liegen meist zwischen 10 und 200.
 * `reverse`: `true` kehrt die Drehrichtung um, Standard ist `false`.
 * `measurements`: Anzahl stabiler Messwerte, die nach diesem Wurf abgewartet werden.
@@ -232,7 +232,7 @@ Die Firmware wählt den ersten Eintrag, dessen `diffWeight` noch zum Abstand zwi
 
 Hinweise:
 
-* Bei zu kleinen `steps` kann es sein, dass sich der Trickler nicht bewegt.
+* Bei zu wenigen STEP-Pulsen kann es sein, dass sich der Trickler nicht bewegt.
 * Niedrigere Geschwindigkeiten fördern je nach Pulver oft mehr Pulver pro Umdrehung.
 * Zu viele `measurements` machen das Trickeln langsam. Am Anfang reichen meist 2 Messungen, am Ende sind 10 bis 15 sinnvoll.
 
@@ -740,7 +740,7 @@ Hier sieht man, wie der Motor-Treiber richtig herum gesteckt ist:
 
 ## Motor Treiber Einstellungen
 
-Standard-Treiber ist der A4988 mit Full Step. Die Firmware 2.11 initialisiert beide Stepper mit Full Step.
+Standard-Treiber ist der A4988. Die Firmware steuert nur Enable, Richtung und direkte STEP-Pulse.
 
 ![image](https://github.com/user-attachments/assets/1453375b-e0a7-45d3-9df5-898fa958f221)
 
