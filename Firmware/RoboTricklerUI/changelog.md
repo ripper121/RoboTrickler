@@ -25,7 +25,7 @@
 - Reworked profile storage so profiles now live under `/profiles`.
 - Moved target weight handling into the selected profile.
 - Profile selection now reloads the profile immediately, updates the displayed target weight, and persists the selected profile to `config.txt`.
-- Reworked trickling logic around the new profile fields, including tolerance, alarm threshold, weight gap, measurement counts, reverse direction, and actuator selection.
+- Reworked trickling logic around the new profile fields, including tolerance, alarm threshold, weight gap, measurement counts, and actuator selection.
 - Added first-throw bulk movement using `unitsPerThrow`, with support for `stepper1` and `stepper2`.
 - Replaced external stepper and shift-register libraries with local stepper and shift-register control code.
 - Stepper handling now emits direct STEP pulses through local A4988-style driver control.

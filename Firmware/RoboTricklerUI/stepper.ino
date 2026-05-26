@@ -107,26 +107,15 @@ void initStepper()
   stepperEnableAll(false);
 }
 
-void step(int stepperNum, long steps, bool reverse)
+void step(int stepperNum, long steps)
 {
-  if ((stepperNum < 1) || (stepperNum > 2) || (steps == 0))
+  if ((stepperNum < 1) || (stepperNum > 2) || (steps <= 0))
   {
     return;
   }
 
   StepperPins *motor = &steppers[stepperNum];
-
-  if (reverse)
-  {
-    steps = steps * (-1);
-  }
-
-  bool forward = steps >= 0;
-  long pulseCount = labs(steps);
-  if (pulseCount <= 0)
-  {
-    return;
-  }
+  long pulseCount = steps;
 
   unsigned long intervalUs = stepperPulseIntervalUs(motor->rpm);
   if (intervalUs < 2)
@@ -135,7 +124,7 @@ void step(int stepperNum, long steps, bool reverse)
   }
 
   stepperEnableAll(true);
-  shiftRegisterWrite(motor->dir, forward ? HIGH : LOW);
+  shiftRegisterWrite(motor->dir, HIGH);
   delayMicroseconds(2);
 
   for (long i = 0; i < pulseCount; i++)

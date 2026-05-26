@@ -61,8 +61,7 @@ Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte.
 {
   "actuator": "stepper1",
   "steps": 20000,
-  "speed": 200,
-  "reverse": false
+  "speed": 200
 }
 ```
 
@@ -158,7 +157,6 @@ Beispiel für das neue Profilformat:
       "actuator": "stepper1",
       "steps": 669,
       "speed": 200,
-      "reverse": false,
       "measurements": 2
     },
     {
@@ -166,7 +164,6 @@ Beispiel für das neue Profilformat:
       "actuator": "stepper1",
       "steps": 335,
       "speed": 200,
-      "reverse": false,
       "measurements": 2
     },
     {
@@ -174,7 +171,6 @@ Beispiel für das neue Profilformat:
       "actuator": "stepper1",
       "steps": 167,
       "speed": 200,
-      "reverse": false,
       "measurements": 5
     },
     {
@@ -182,7 +178,6 @@ Beispiel für das neue Profilformat:
       "actuator": "stepper1",
       "steps": 84,
       "speed": 200,
-      "reverse": false,
       "measurements": 10
     },
     {
@@ -190,7 +185,6 @@ Beispiel für das neue Profilformat:
       "actuator": "stepper1",
       "steps": 5,
       "speed": 200,
-      "reverse": false,
       "measurements": 15
     }
   ]
@@ -225,7 +219,6 @@ Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet au
 * `actuator`: `stepper1` oder `stepper2`.
 * `steps`: Anzahl direkter STEP-Pulse für diesen Wurf. Die Firmware gibt diesen Wert unverändert an den Stepper aus.
 * `speed`: Motorgeschwindigkeit in U/min. Sinnvolle Werte liegen meist zwischen 10 und 200.
-* `reverse`: `true` kehrt die Drehrichtung um, Standard ist `false`.
 * `measurements`: Anzahl stabiler Messwerte, die nach diesem Wurf abgewartet werden.
 
 Die Firmware wählt den ersten Eintrag, dessen `diffWeight` noch zum Abstand zwischen aktuellem Gewicht und Zielgewicht passt. Je näher das Zielgewicht kommt, desto kleinere `diffWeight`-Einträge werden verwendet.
@@ -268,7 +261,6 @@ Für mehrere Trickler wird `actuator` verwendet:
       "actuator": "stepper2",
       "steps": 200,
       "speed": 200,
-      "reverse": false,
       "measurements": 2
     },
     {
@@ -276,7 +268,6 @@ Für mehrere Trickler wird `actuator` verwendet:
       "actuator": "stepper1",
       "steps": 80,
       "speed": 200,
-      "reverse": false,
       "measurements": 5
     },
     {
@@ -284,7 +275,6 @@ Für mehrere Trickler wird `actuator` verwendet:
       "actuator": "stepper1",
       "steps": 5,
       "speed": 200,
-      "reverse": false,
       "measurements": 15
     }
   ]

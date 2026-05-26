@@ -99,7 +99,6 @@ struct Config
   int profile_measurements[16];
   long profile_steps[16];
   int profile_speed[16];
-  bool profile_reverse[16];
   int profile_count;
 };
 Config config; // <- global configuration object
@@ -191,7 +190,7 @@ static bool runBulkStepperMove(String &infoText)
   }
 
   setStepperSpeed(stepperNum, speed);
-  step(stepperNum, stepsToMove, false);
+  step(stepperNum, stepsToMove);
   remainingUnits -= units;
   if (remainingUnits < 0.0)
   {
@@ -640,7 +639,7 @@ void loop()
             return;
           }
 
-          step(config.profile_num[profileStep], config.profile_steps[profileStep], config.profile_reverse[profileStep]);
+          step(config.profile_num[profileStep], config.profile_steps[profileStep]);
 
           measurementCount = config.profile_measurements[profileStep];
 

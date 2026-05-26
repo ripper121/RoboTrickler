@@ -84,7 +84,6 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   config.profile_steps[item_key] = profileSteps;
   config.profile_speed[item_key] = stepperSpeed;
   config.profile_measurements[item_key] = measurements;
-  config.profile_reverse[item_key] = profileEntry["reverse"] | false;
   config.profile_count++;
   return true;
 }
@@ -243,7 +242,6 @@ bool readProfile(const char *filename, Config &config)
     config.profile_steps[i] = 0;
     config.profile_speed[i] = 0;
     config.profile_measurements[i] = 0;
-    config.profile_reverse[i] = false;
   }
 
   JsonObject general = doc["general"].as<JsonObject>();
@@ -533,7 +531,6 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
     profileEntry["actuator"] = "stepper1";
     profileEntry["steps"] = steps;
     profileEntry["speed"] = profileSpeed;
-    profileEntry["reverse"] = false;
     profileEntry["measurements"] = measurements[i];
   }
 
