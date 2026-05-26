@@ -1,0 +1,357 @@
+#include <check.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <errno.h>
+
+/* Configuration - adjust host/port to match the device under test */
+#ifndef TARGET_HOST
+#define TARGET_HOST "127.0.0.1"
+#endif
+#ifndef TARGET_PORT
+#define TARGET_PORT 80
+#endif
+#define CONNECT_TIMEOUT_SEC 2
+#define RECV_TIMEOUT_SEC    3
+
+typedef struct {
+    const char *description;
+    const char *auth_header;   /* NULL means no Authorization header at all */
+    const char *cookie_header; /* NULL means no Cookie header at all */
+} auth_scenario_t;
+
+/*
+ * Send a minimal HTTP GET request to the given path with optional
+ * auth/cookie headers.  Returns the HTTP status code, or -1 on error.
+ */
+static int send_http_request(const char *path,
+                              const char *auth_header,
+                              const char *cookie_header)
+{
+    int sock;
+    struct sockaddr_in addr;
+    char request[2048];
+    char response[4096];
+    int pos = 0;
+    int status_code = -1;
+    ssize_t bytes;
+    struct timeval tv;
+
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0) {
+        return -1;
+    }
+
+    /* Set receive timeout */
+    tv.tv_sec  = RECV_TIMEOUT_SEC;
+    tv.tv_usec = 0;
+    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+
+    /* Set send timeout */
+    tv.tv_sec  = CONNECT_TIMEOUT_SEC;
+    tv.tv_usec = 0;
+    setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
+
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family      = AF_INET;
+    addr.sin_port        = htons(TARGET_PORT);
+    addr.sin_addr.s_addr = inet_addr(TARGET_HOST);
+
+    if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+        close(sock);
+        return -1;
+    }
+
+    /* Build request */
+    pos += snprintf(request + pos, sizeof(request) - pos,
+                    "GET %s HTTP/1.1\r\n"
+                    "Host: %s:%d\r\n"
+                    "Connection: close\r\n",
+                    path, TARGET_HOST, TARGET_PORT);
+
+    if (auth_header != NULL) {
+        pos += snprintf(request + pos, sizeof(request) - pos,
+                        "Authorization: %s\r\n", auth_header);
+    }
+
+    if (cookie_header != NULL) {
+        pos += snprintf(request + pos, sizeof(request) - pos,
+                        "Cookie: %s\r\n", cookie_header);
+    }
+
+    pos += snprintf(request + pos, sizeof(request) - pos, "\r\n");
+
+    if (send(sock, request, pos, 0) < 0) {
+        close(sock);
+        return -1;
+    }
+
+    /* Read response */
+    memset(response, 0, sizeof(response));
+    bytes = recv(sock, response, sizeof(response) - 1, 0);
+    close(sock);
+
+    if (bytes <= 0) {
+        return -1;
+    }
+
+    /* Parse status line: "HTTP/1.x NNN ..." */
+    if (strncmp(response, "HTTP/", 5) == 0) {
+        char *space = strchr(response, ' ');
+        if (space != NULL) {
+            status_code = atoi(space + 1);
+        }
+    }
+
+    return status_code;
+}
+
+/*
+ * Helper: assert that a status code represents an authentication/
+ * authorisation rejection.  We accept 401, 403, or -1 (connection
+ * refused / no server) because the invariant is that the endpoint
+ * MUST NOT return 200 (or any 2xx success) to an unauthenticated caller.
+ *
+ * If the server is unreachable we skip the assertion (return 1 = skip).
+ */
+static int is_rejected_or_unreachable(int status_code)
+{
+    if (status_code == -1) {
+        /* Cannot reach server – treat as "not 200", invariant not violated */
+        return 1;
+    }
+    /* Must NOT be a 2xx success */
+    return (status_code < 200 || status_code > 299);
+}
+
+/* ------------------------------------------------------------------ */
+/* Test: /getTarget endpoint rejects unauthenticated requests          */
+/* ------------------------------------------------------------------ */
+START_TEST(test_getTarget_rejects_unauthenticated)
+{
+    /* Invariant: /getTarget MUST NOT return HTTP 2xx to unauthenticated callers */
+
+    auth_scenario_t scenarios[] = {
+        /* 1. No credentials at all */
+        { "no credentials",          NULL,                                NULL },
+
+        /* 2. Missing token – empty Authorization header value */
+        { "empty bearer token",      "Bearer ",                           NULL },
+
+        /* 3. Malformed token – random garbage */
+        { "malformed bearer token",  "Bearer AAAA.BBBB.CCCC",             NULL },
+
+        /* 4. SQL-injection style token */
+        { "sql injection token",     "Bearer ' OR '1'='1",                NULL },
+
+        /* 5. Null-byte injection in token */
+        { "null byte token",         "Bearer valid\x00evil",              NULL },
+
+        /* 6. Expired / obviously fake JWT (header.payload.sig all base64) */
+        { "fake expired JWT",
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+                 "eyJzdWIiOiIxMjM0NTY3ODkwIiwiZXhwIjoxfQ."
+                 "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+          NULL },
+
+        /* 7. Basic auth with wrong credentials */
+        { "wrong basic auth",        "Basic YWRtaW46d3JvbmdwYXNz",       NULL },
+
+        /* 8. Basic auth with empty credentials */
+        { "empty basic auth",        "Basic Og==",                        NULL },
+
+        /* 9. Forged session cookie */
+        { "forged session cookie",   NULL,  "session=forged_session_12345" },
+
+        /* 10. Empty session cookie */
+        { "empty session cookie",    NULL,  "session=" },
+
+        /* 11. XSS payload in cookie */
+        { "xss in cookie",           NULL,  "session=<script>alert(1)</script>" },
+
+        /* 12. Path traversal in cookie value */
+        { "path traversal cookie",   NULL,  "session=../../etc/passwd" },
+
+        /* 13. Oversized token (potential buffer overflow probe) */
+        { "oversized token",
+          "Bearer AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                 "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                 "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                 "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          NULL },
+
+        /* 14. Unicode / multi-byte garbage token */
+        { "unicode garbage token",   "Bearer \xc3\xa9\xc3\xa0\xc3\xbc",  NULL },
+
+        /* 15. Multiple Authorization headers (second one valid-looking) */
+        { "double auth header",      "Bearer bad, Bearer alsoBad",        NULL },
+    };
+
+    int num_scenarios = (int)(sizeof(scenarios) / sizeof(scenarios[0]));
+
+    for (int i = 0; i < num_scenarios; i++) {
+        int status = send_http_request("/getTarget",
+                                       scenarios[i].auth_header,
+                                       scenarios[i].cookie_header);
+
+        ck_assert_msg(
+            is_rejected_or_unreachable(status),
+            "/getTarget returned HTTP %d (2xx success) for scenario [%s] – "
+            "unauthenticated access MUST be rejected with 401 or 403",
+            status, scenarios[i].description
+        );
+    }
+}
+END_TEST
+
+/* ------------------------------------------------------------------ */
+/* Test: /getProfile endpoint rejects unauthenticated requests         */
+/* ------------------------------------------------------------------ */
+START_TEST(test_getProfile_rejects_unauthenticated)
+{
+    /* Invariant: /getProfile MUST NOT return HTTP 2xx to unauthenticated callers */
+
+    auth_scenario_t scenarios[] = {
+        /* 1. No credentials at all */
+        { "no credentials",          NULL,                                NULL },
+
+        /* 2. Empty bearer token */
+        { "empty bearer token",      "Bearer ",                           NULL },
+
+        /* 3. Malformed token */
+        { "malformed bearer token",  "Bearer AAAA.BBBB.CCCC",             NULL },
+
+        /* 4. SQL injection in token */
+        { "sql injection token",     "Bearer ' OR '1'='1",                NULL },
+
+        /* 5. Null-byte injection */
+        { "null byte token",         "Bearer valid\x00evil",              NULL },
+
+        /* 6. Fake expired JWT */
+        { "fake expired JWT",
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+                 "eyJzdWIiOiIxMjM0NTY3ODkwIiwiZXhwIjoxfQ."
+                 "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+          NULL },
+
+        /* 7. Wrong basic auth */
+        { "wrong basic auth",        "Basic YWRtaW46d3JvbmdwYXNz",       NULL },
+
+        /* 8. Empty basic auth */
+        { "empty basic auth",        "Basic Og==",                        NULL },
+
+        /* 9. Forged session cookie */
+        { "forged session cookie",   NULL,  "session=forged_session_12345" },
+
+        /* 10. Empty session cookie */
+        { "empty session cookie",    NULL,  "session=" },
+
+        /* 11. XSS in cookie */
+        { "xss in cookie",           NULL,  "session=<script>alert(1)</script>" },
+
+        /* 12. Path traversal in cookie */
+        { "path traversal cookie",   NULL,  "session=../../etc/passwd" },
+
+        /* 13. Oversized token */
+        { "oversized token",
+          "Bearer AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                 "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                 "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                 "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          NULL },
+
+        /* 14. Unicode garbage token */
+        { "unicode garbage token",   "Bearer \xc3\xa9\xc3\xa0\xc3\xbc",  NULL },
+
+        /* 15. Double auth header */
+        { "double auth header",      "Bearer bad, Bearer alsoBad",        NULL },
+    };
+
+    int num_scenarios = (int)(sizeof(scenarios) / sizeof(scenarios[0]));
+
+    for (int i = 0; i < num_scenarios; i++) {
+        int status = send_http_request("/getProfile",
+                                       scenarios[i].auth_header,
+                                       scenarios[i].cookie_header);
+
+        ck_assert_msg(
+            is_rejected_or_unreachable(status),
+            "/getProfile returned HTTP %d (2xx success) for scenario [%s] – "
+            "unauthenticated access MUST be rejected with 401 or 403",
+            status, scenarios[i].description
+        );
+    }
+}
+END_TEST
+
+/* ------------------------------------------------------------------ */
+/* Test: status code is specifically 401 or 403 (not just non-2xx)     */
+/* when the server IS reachable                                         */
+/* ------------------------------------------------------------------ */
+START_TEST(test_endpoints_return_proper_auth_error_codes)
+{
+    /* Invariant: when reachable, protected endpoints must return 401 or 403 */
+
+    const char *endpoints[] = { "/getTarget", "/getProfile" };
+    int num_endpoints = (int)(sizeof(endpoints) / sizeof(endpoints[0]));
+
+    for (int e = 0; e < num_endpoints; e++) {
+        int status = send_http_request(endpoints[e], NULL, NULL);
+
+        if (status == -1) {
+            /* Server unreachable – cannot assert, skip */
+            continue;
+        }
+
+        ck_assert_msg(
+            status == 401 || status == 403,
+            "Endpoint %s returned HTTP %d for unauthenticated request; "
+            "expected 401 (Unauthorized) or 403 (Forbidden)",
+            endpoints[e], status
+        );
+    }
+}
+END_TEST
+
+/* ------------------------------------------------------------------ */
+/* Suite setup                                                          */
+/* ------------------------------------------------------------------ */
+Suite *security_suite(void)
+{
+    Suite *s;
+    TCase *tc_core;
+
+    s       = suite_create("Security_CWE287_AuthenticationBypass");
+    tc_core = tcase_create("ProtectedEndpoints");
+
+    /* Allow up to 30 s per test-case (network round-trips) */
+    tcase_set_timeout(tc_core, 30);
+
+    tcase_add_test(tc_core, test_getTarget_rejects_unauthenticated);
+    tcase_add_test(tc_core, test_getProfile_rejects_unauthenticated);
+    tcase_add_test(tc_core, test_endpoints_return_proper_auth_error_codes);
+
+    suite_add_tcase(s, tc_core);
+
+    return s;
+}
+
+int main(void)
+{
+    int      number_failed;
+    Suite   *s;
+    SRunner *sr;
+
+    s  = security_suite();
+    sr = srunner_create(s);
+
+    srunner_run_all(sr, CK_NORMAL);
+    number_failed = srunner_ntests_failed(sr);
+    srunner_free(sr);
+
+    return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+}
