@@ -26,6 +26,8 @@ static const char *languageFallback(const char *key)
     return "Get Weight...";
   if (strcmp(key, "status_running") == 0)
     return "Running...";
+  if (strcmp(key, "status_waiting_zero") == 0)
+    return "Waiting for 0.000...";
   if (strcmp(key, "status_done") == 0)
     return "Done :)";
   if (strcmp(key, "status_init_steppers") == 0)

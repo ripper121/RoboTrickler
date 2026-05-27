@@ -173,6 +173,7 @@ void setDefaultConfiguration(Config &config)
   strlcpy(config.beeper, "done", sizeof(config.beeper));
   strlcpy(config.language, "en", sizeof(config.language));
   config.fwCheck = true;
+  config.profile_startAtZero = false;
 }
 
 bool readProfile(const char *filename, Config &config)
@@ -227,6 +228,7 @@ bool readProfile(const char *filename, Config &config)
   config.profile_weightGap = 1.000;
   config.profile_bulkActuator = 1;
   config.profile_generalMeasurements = 20;
+  config.profile_startAtZero = false;
   config.profile_count = 0;
   for (int i = 0; i < 3; i++)
   {
@@ -252,6 +254,7 @@ bool readProfile(const char *filename, Config &config)
     config.profile_alarmThreshold = general["alarmThreshold"] | 0.000;
     config.profile_weightGap = general["weightGap"] | 1.000;
     config.profile_bulkActuator = profileActuatorNumber(general["actuator"] | "stepper1");
+    config.profile_startAtZero = general["startAtZero"] | false;
     if (config.profile_bulkActuator == 0)
     {
       config.profile_bulkActuator = 1;
@@ -503,6 +506,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   general["alarmThreshold"] = serialized(String(1.0, 3));
   general["weightGap"] = serialized(String(1.0, 3));
   general["actuator"] = "stepper1";
+  general["startAtZero"] = false;
   general["measurements"] = config.profile_generalMeasurements > 0 ? config.profile_generalMeasurements : 20;
 
   JsonObject actuator = doc["actuator"].to<JsonObject>();

@@ -92,6 +92,7 @@ struct Config
   float profile_weightGap;
   byte profile_bulkActuator;
   int profile_generalMeasurements;
+  bool profile_startAtZero;
   double profile_stepperUnitsPerThrow[3];
   int profile_stepperUnitsPerThrowSpeed[3];
   bool profile_stepperEnabled[3];
@@ -126,6 +127,15 @@ bool restart_now = false;
 bool calibrationProfilePromptPending = false;
 unsigned long calibrationProfilePromptTime = 0;
 unsigned long lastScaleWeightReadTime = 0;
+
+static bool canStartFirstThrowAtCurrentWeight()
+{
+  if (config.profile_startAtZero)
+  {
+    return fabs(weight) <= EPSILON;
+  }
+  return weight >= 0.0000;
+}
 
 String infoMessagBuff[14];
 String profileListBuff[32];
@@ -575,7 +585,7 @@ void loop()
 
       if (!finished)
       {
-        if (weight >= 0)
+        if ((weight >= 0.0000) && (!firstThrow || canStartFirstThrowAtCurrentWeight()))
         {
           updateDisplayLog(langText("status_running"), true);
           setLabelTextColor(ui_LabelTricklerWeight, 0xFFFFFF);
@@ -659,6 +669,10 @@ void loop()
           }
 
           updateDisplayLog(infoText, true);
+        }
+        else if (config.profile_startAtZero)
+        {
+          updateDisplayLog(langText("status_waiting_zero"), true);
         }
       }
 

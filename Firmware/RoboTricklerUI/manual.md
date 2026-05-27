@@ -137,6 +137,7 @@ Beispiel für das neue Profilformat:
     "alarmThreshold": 1.000,
     "weightGap": 1.000,
     "actuator": "stepper1",
+    "startAtZero": false,
     "measurements": 5
   },
   "actuator": {
@@ -198,9 +199,10 @@ Beispiel für das neue Profilformat:
 * `alarmThreshold`: Überwurf-Grenze. Wenn `targetWeight + alarmThreshold` erreicht oder überschritten wird, stoppt die Firmware, piept mehrfach und zeigt eine Warnung an. Bei `0` ist der Alarm deaktiviert.
 * `weightGap`: Abstand zum Zielgewicht, bei dem der automatische erste Grobwurf enden soll.
 * `actuator`: optionaler Bulk-Actuator für den automatischen ersten Grobwurf. Erlaubt sind `stepper1` und `stepper2`. Wenn das Feld fehlt, leer oder ungültig ist, verwendet die Firmware `stepper1`.
+* `startAtZero`: Wenn `true`, wartet die Firmware vor dem ersten Wurf auf exakt `0.000`. Wenn `false`, startet der erste Wurf bei jedem Gewicht ab `0.000`.
 * `measurements`: Anzahl stabiler Messwerte, die vor dem ersten Wurf und nach dem automatischen Grobwurf abgewartet werden.
 
-Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `actuator = stepper1` und `measurements = 20`.
+Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `actuator = stepper1`, `startAtZero = false` und `measurements = 20`.
 
 ### `actuator`
 
@@ -241,6 +243,7 @@ Für mehrere Trickler wird `actuator` verwendet:
     "alarmThreshold": 1.000,
     "weightGap": 1.000,
     "actuator": "stepper2",
+    "startAtZero": false,
     "measurements": 5
   },
   "actuator": {
