@@ -15,7 +15,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <math.h>
-#define FW_VERSION 2.11
+#define FW_VERSION "2.11"
 #define DEFAULT_FW_UPDATE_URL "https://strenuous.dev/roboTrickler/userTracker.php"
 
 /*
@@ -104,6 +104,8 @@ struct Config
 Config config; // <- global configuration object
 
 bool WIFI_AKTIVE = false;
+bool WEB_SERVER_ACTIVE = false;
+bool WEB_SERVER_ROUTES_REGISTERED = false;
 WebServer server(80);
 unsigned long wifiPreviousMillis = 0;
 unsigned long wifiInterval = 10000;
@@ -699,15 +701,5 @@ void loop()
     }
   }
 
-  if (WIFI_AKTIVE && !running)
-  {
-    // if WiFi is down, try reconnecting every wifiInterval seconds
-    if ((WiFi.status() != WL_CONNECTED) && (millis() - wifiPreviousMillis >= wifiInterval))
-    {
-      updateDisplayLog(langText("status_reconnecting_wifi"));
-      WiFi.disconnect();
-      WiFi.reconnect();
-      wifiPreviousMillis = millis();
-    }
-  }
+  maintainWifiConnection();
 }

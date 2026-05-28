@@ -30,7 +30,7 @@ IRAM_ATTR void lvgl_disp_task(void *parg)
             lv_timer_handler();
             lvglUnlock();
         }
-        if (WiFi.status() == WL_CONNECTED)
+        if (WEB_SERVER_ACTIVE && (WiFi.status() == WL_CONNECTED))
         {
             server.handleClient();
         }
@@ -310,7 +310,7 @@ void initSetup()
 
     DEBUG_PRINTLN("Display Init");
 
-    updateDisplayLog(String("Robo-Trickler v" + String(FW_VERSION, 2) + " // strenuous.dev").c_str());
+    updateDisplayLog((String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
 
     String infoText = langText("status_init_steppers");
     updateDisplayLog(infoText, true);
@@ -434,12 +434,12 @@ void initSetup()
 
     initWebServer();
 
-    if (WIFI_AKTIVE)
+    if (WiFi.status() == WL_CONNECTED)
     {
         updateDisplayLog("WIFI:" + WiFi.localIP().toString());
     }
 
-    setLabelText(ui_LabelInfo, String("Robo-Trickler v" + String(FW_VERSION, 2) + " // strenuous.dev").c_str());
+    setLabelText(ui_LabelInfo, (String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
     setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
     setLabelText(ui_LabelProfile, config.profile);
 

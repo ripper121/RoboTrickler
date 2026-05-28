@@ -1,6 +1,8 @@
 const char *host = "robo-trickler";
 
 File uploadFile;
+static bool webUpdateStarted = false;
+static bool webUpdateSucceeded = false;
 
 void returnOK()
 {
@@ -458,6 +460,34 @@ IPAddress stringToIPAddress(const String &ipAddressString)
   return ipAddress;
 }
 
+bool configStringHasValue(const char *value)
+{
+  String text(value);
+  text.trim();
+  return text.length() > 0;
+}
+
+bool parseConfigIPAddress(const char *name, const char *value, IPAddress &ipAddress)
+{
+  String text(value);
+  text.trim();
+  if (text.length() <= 0)
+  {
+    return false;
+  }
+
+  if (!ipAddress.fromString(text))
+  {
+    DEBUG_PRINT("Invalid ");
+    DEBUG_PRINT(name);
+    DEBUG_PRINT(": ");
+    DEBUG_PRINTLN(text);
+    return false;
+  }
+
+  return true;
+}
+
 String firmwareCheckUrl()
 {
   String serverPath = DEFAULT_FW_UPDATE_URL;
@@ -468,12 +498,215 @@ String firmwareCheckUrl()
   return serverPath;
 }
 
+static const unsigned long WIFI_CONNECT_TIMEOUT_MS = 30000;
+static bool wifiEventLoggingRegistered = false;
+static IPAddress wifiConfiguredDNS = IPAddress(8, 8, 8, 8);
+static bool wifiUsesStaticIp = false;
+
+const char *wifiStatusName(wl_status_t status)
+{
+  switch (status)
+  {
+  case WL_IDLE_STATUS:
+    return "WL_IDLE_STATUS";
+  case WL_NO_SSID_AVAIL:
+    return "WL_NO_SSID_AVAIL";
+  case WL_SCAN_COMPLETED:
+    return "WL_SCAN_COMPLETED";
+  case WL_CONNECTED:
+    return "WL_CONNECTED";
+  case WL_CONNECT_FAILED:
+    return "WL_CONNECT_FAILED";
+  case WL_CONNECTION_LOST:
+    return "WL_CONNECTION_LOST";
+  case WL_DISCONNECTED:
+    return "WL_DISCONNECTED";
+  case WL_STOPPED:
+    return "WL_STOPPED";
+  case WL_NO_SHIELD:
+    return "WL_NO_SHIELD";
+  default:
+    return "WL_UNKNOWN";
+  }
+}
+
+void logWifiDisconnectReason(WiFiEvent_t event, WiFiEventInfo_t info)
+{
+  if (event != ARDUINO_EVENT_WIFI_STA_DISCONNECTED)
+  {
+    return;
+  }
+
+  uint8_t reason = info.wifi_sta_disconnected.reason;
+  DEBUG_PRINT("WiFi disconnected, reason ");
+  DEBUG_PRINT(reason);
+  DEBUG_PRINT(" (");
+  DEBUG_PRINT(WiFi.disconnectReasonName((wifi_err_reason_t)reason));
+  DEBUG_PRINTLN(")");
+}
+
+void registerWifiDebugLogging()
+{
+  if (!wifiEventLoggingRegistered)
+  {
+    WiFi.onEvent(logWifiDisconnectReason, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
+    wifiEventLoggingRegistered = true;
+  }
+}
+
+bool waitForWifiConnected(unsigned long timeoutMs)
+{
+  unsigned long start = millis();
+  wl_status_t lastStatus = WL_NO_SHIELD;
+
+  while ((millis() - start) < timeoutMs)
+  {
+    wl_status_t status = WiFi.status();
+    if (status == WL_CONNECTED)
+    {
+      return true;
+    }
+
+    if (status != lastStatus)
+    {
+      DEBUG_PRINT("WiFi status: ");
+      DEBUG_PRINTLN(wifiStatusName(status));
+      lastStatus = status;
+    }
+
+    delay(250);
+  }
+
+  DEBUG_PRINT("WiFi connect timeout, final status: ");
+  DEBUG_PRINTLN(wifiStatusName(WiFi.status()));
+  return false;
+}
+
+void applyWifiDnsIfNeeded()
+{
+  if (!wifiUsesStaticIp && !WiFi.setDNS(wifiConfiguredDNS))
+  {
+    DEBUG_PRINTLN("WiFi DNS configuration failed.");
+  }
+}
+
+String normalizeFirmwareVersion(String version)
+{
+  version.trim();
+  if ((version.length() > 0) && ((version.charAt(0) == 'v') || (version.charAt(0) == 'V')))
+  {
+    version.remove(0, 1);
+    version.trim();
+  }
+  return version;
+}
+
+bool readFirmwareVersionSegment(const String &version, int &index, unsigned long &segment, bool &hasSegment)
+{
+  segment = 0;
+  hasSegment = false;
+  if (index >= version.length())
+  {
+    return true;
+  }
+
+  int digitCount = 0;
+  while (index < version.length())
+  {
+    char c = version.charAt(index);
+    if (!isdigit((unsigned char)c))
+    {
+      break;
+    }
+
+    unsigned long digit = (unsigned long)(c - '0');
+    if ((segment > 429496729UL) || ((segment == 429496729UL) && (digit > 5)))
+    {
+      return false;
+    }
+    segment = (segment * 10UL) + digit;
+    digitCount++;
+    index++;
+  }
+
+  if (digitCount == 0)
+  {
+    return false;
+  }
+
+  hasSegment = true;
+  if (index >= version.length())
+  {
+    return true;
+  }
+
+  if (version.charAt(index) != '.')
+  {
+    return false;
+  }
+
+  index++;
+  return index < version.length();
+}
+
+int compareFirmwareVersions(const String &leftVersion, const String &rightVersion, bool &valid)
+{
+  String left = normalizeFirmwareVersion(leftVersion);
+  String right = normalizeFirmwareVersion(rightVersion);
+  valid = (left.length() > 0) && (right.length() > 0);
+  if (!valid)
+  {
+    return 0;
+  }
+
+  int leftIndex = 0;
+  int rightIndex = 0;
+  while ((leftIndex < left.length()) || (rightIndex < right.length()))
+  {
+    unsigned long leftSegment = 0;
+    unsigned long rightSegment = 0;
+    bool leftHasSegment = false;
+    bool rightHasSegment = false;
+
+    if (!readFirmwareVersionSegment(left, leftIndex, leftSegment, leftHasSegment) ||
+        !readFirmwareVersionSegment(right, rightIndex, rightSegment, rightHasSegment))
+    {
+      valid = false;
+      return 0;
+    }
+
+    if (leftSegment > rightSegment)
+    {
+      return 1;
+    }
+    if (leftSegment < rightSegment)
+    {
+      return -1;
+    }
+  }
+
+  return 0;
+}
+
+bool isRemoteFirmwareNewer(const String &remoteVersion)
+{
+  bool valid = false;
+  int comparison = compareFirmwareVersions(FW_VERSION, remoteVersion, valid);
+  if (!valid)
+  {
+    DEBUG_PRINT("Invalid firmware version payload: ");
+    DEBUG_PRINTLN(remoteVersion);
+    return false;
+  }
+  return comparison < 0;
+}
+
 void makeHttpGetRequest(String serverPath)
 {
+  NetworkClientSecure secureClient;
   HTTPClient http;
   http.setTimeout(5000);
 
-  NetworkClientSecure secureClient;
   bool connected = false;
   if (serverPath.startsWith("https://"))
   {
@@ -495,7 +728,7 @@ void makeHttpGetRequest(String serverPath)
       DEBUG_PRINTLN(httpResponseCode);
       String payload = http.getString();
       DEBUG_PRINTLN(payload);
-      if (FW_VERSION < payload.toFloat())
+      if (isRemoteFirmwareNewer(payload))
       {
         messageBox((String(langText("msg_new_firmware")) + payload + langText("msg_check_url")).c_str(), &lv_font_montserrat_14, lv_color_hex(0x00FF00), true);
       }
@@ -515,42 +748,271 @@ void makeHttpGetRequest(String serverPath)
   }
 }
 
+void registerWebServerRoutes()
+{
+  if (WEB_SERVER_ROUTES_REGISTERED)
+  {
+    return;
+  }
+
+  server.on("/list", HTTP_GET, printDirectory);
+  server.on("/system/resources/edit", HTTP_DELETE, handleDelete);
+  server.on("/system/resources/edit", HTTP_PUT, handleCreate);
+  server.on("/system/resources/edit", HTTP_POST, []()
+            { returnOK(); }, handleFileUpload);
+  server.onNotFound(handleNotFound);
+  server.on("/generate_204", handleNotFound);
+  server.on("/favicon.ico", handleNotFound);
+  server.on("/fwlink", handleNotFound);
+  server.on("/reboot", handleReboot);
+  server.on("/getWeight", handleGetWeight);
+  server.on("/setProfile", handleSetProfile);
+  server.on("/getProfile", handleGetProfile);
+  server.on("/getLanguage", handleGetLanguage);
+  server.on("/getProfileList", handleGetProfileList);
+  server.on("/getTarget", handleGetTarget);
+  server.on("/setTarget", handleSetTarget);
+  server.on("/system/start", handleStart);
+  server.on("/system/stop", handleStop);
+  server.on("/fwupdate", HTTP_GET, []()
+            {
+            server.sendHeader("Connection", "close");
+            String updatePage = "<form method='POST' action='/update' enctype='multipart/form-data'><p>FW-Version: ";
+                  updatePage += FW_VERSION;
+                  updatePage += "</p><br><input type='file' name='update'><input type='submit' value='Update'></form><br><button onClick='javascript:history.back()'>Back</button>";
+            server.send(200, "text/html", updatePage); });
+
+  server.on(
+      "/update", HTTP_POST, []()
+      {
+        bool updateOk = webUpdateSucceeded && !Update.hasError();
+        webUpdateStarted = false;
+        webUpdateSucceeded = false;
+        Serial.setDebugOutput(false);
+        server.sendHeader("Connection", "close");
+        server.send(updateOk ? 200 : 500, "text/html", updateOk ? "<h3>OK</h3><br><br><input type='button' value='Back' onClick='javascript:history.back()'>" : "<h3>FAIL</h3><br><br><input type='button' value='Back' onClick='javascript:history.back()'>");
+        if (updateOk)
+        {
+          delay(500);
+          ESP.restart();
+        } },
+      []()
+      {
+        HTTPUpload &upload = server.upload();
+        if (upload.status == UPLOAD_FILE_START)
+        {
+          webUpdateStarted = false;
+          webUpdateSucceeded = false;
+          Update.clearError();
+          Serial.setDebugOutput(true);
+          Serial.printf("Update: %s\n", upload.filename.c_str());
+          String infoText = String(langText("status_update_upload")) + String(upload.filename);
+          updateDisplayLog(infoText);
+          if (Update.begin(UPDATE_SIZE_UNKNOWN))
+          {
+            webUpdateStarted = true;
+          }
+          else
+          { // start with max available size
+            Update.printError(Serial);
+            updateDisplayLog(String(langText("status_update_failed")) + Update.errorString());
+            Serial.setDebugOutput(false);
+          }
+        }
+        else if (upload.status == UPLOAD_FILE_WRITE)
+        {
+          if (!webUpdateStarted || Update.hasError())
+          {
+            return;
+          }
+          if (Update.write(upload.buf, upload.currentSize) != upload.currentSize)
+          {
+            Update.printError(Serial);
+            updateDisplayLog(String(langText("status_update_write_failed")) + Update.errorString());
+            Update.abort();
+            webUpdateStarted = false;
+            Serial.setDebugOutput(false);
+          }
+        }
+        else if (upload.status == UPLOAD_FILE_END)
+        {
+          if (!webUpdateStarted || Update.hasError())
+          {
+            if (Update.isRunning())
+            {
+              Update.abort();
+            }
+            updateDisplayLog(String(langText("status_update_end_failed")) + Update.errorString());
+          }
+          else if (Update.end(true))
+          { // true to set the size to the current progress
+            Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+            String infoText = String(langText("status_update_success")) + String(upload.totalSize);
+            updateDisplayLog(infoText);
+            webUpdateSucceeded = true;
+          }
+          else
+          {
+            Update.printError(Serial);
+            updateDisplayLog(String(langText("status_update_end_failed")) + Update.errorString());
+          }
+          webUpdateStarted = false;
+          Serial.setDebugOutput(false);
+        }
+        else if (upload.status == UPLOAD_FILE_ABORTED)
+        {
+          Update.abort();
+          webUpdateStarted = false;
+          webUpdateSucceeded = false;
+          Serial.setDebugOutput(false);
+          Serial.printf("Update Failed Unexpectedly (likely broken connection): status=%d\n", upload.status);
+          updateDisplayLog(langText("status_update_unexpected"));
+        }
+        else
+        {
+          Update.abort();
+          webUpdateStarted = false;
+          webUpdateSucceeded = false;
+          Serial.setDebugOutput(false);
+          Serial.printf("Update Failed Unexpectedly (likely broken connection): status=%d\n", upload.status);
+          updateDisplayLog(langText("status_update_unexpected"));
+        }
+      });
+
+  WEB_SERVER_ROUTES_REGISTERED = true;
+}
+
+bool startWebServerServices()
+{
+  if (WEB_SERVER_ACTIVE)
+  {
+    return true;
+  }
+
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    return false;
+  }
+
+  applyWifiDnsIfNeeded();
+  updateDisplayLog(langText("status_wifi_connected"));
+  bool mdnsStarted = MDNS.begin(host);
+  if (!mdnsStarted)
+  {
+    DEBUG_PRINTLN("mDNS responder failed to start.");
+  }
+
+  registerWebServerRoutes();
+  server.begin();
+  WEB_SERVER_ACTIVE = true;
+
+  if (mdnsStarted)
+  {
+    MDNS.addService("http", "tcp", 80);
+    updateDisplayLog(String(langText("status_open_browser_prefix")) + host + langText("status_open_browser_suffix"));
+  }
+  else
+  {
+    updateDisplayLog("WIFI:" + WiFi.localIP().toString());
+  }
+
+  if (config.fwCheck)
+  {
+    makeHttpGetRequest(firmwareCheckUrl());
+  }
+
+  if (lvglLock())
+  {
+    lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+    lvglUnlock();
+  }
+
+  return true;
+}
+
+void maintainWifiConnection()
+{
+  if (!WIFI_AKTIVE || running)
+  {
+    return;
+  }
+
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    if (!WEB_SERVER_ACTIVE)
+    {
+      startWebServerServices();
+    }
+    return;
+  }
+
+  if (millis() - wifiPreviousMillis >= wifiInterval)
+  {
+    updateDisplayLog(langText("status_reconnecting_wifi"));
+    if (!WiFi.reconnect())
+    {
+      DEBUG_PRINTLN("WiFi reconnect failed to start.");
+    }
+    wifiPreviousMillis = millis();
+  }
+}
+
 void initWebServer()
 {
   WIFI_AKTIVE = false;
+  WEB_SERVER_ACTIVE = false;
   if (String(config.wifi_ssid).length() > 0)
   {
     updateDisplayLog(langText("status_connect_wifi"));
     updateDisplayLog(config.wifi_ssid);
 
+    registerWifiDebugLogging();
     WiFi.disconnect();           // added to start with the wifi off, avoid crashing
     WiFi.softAPdisconnect(true); // Function will set currently configured SSID and password of the soft-AP to null values. The parameter  is optional. If set to true it will switch the soft-AP mode off.
     WiFi.mode(WIFI_OFF);         // added to start with the wifi off, avoid crashing
 
     delay(500);
 
-    IPAddress ipDNS = IPAddress(8, 8, 8, 8);
-    if (String(config.IPDns).length() > 0)
+    WiFi.persistent(false);
+    WiFi.setHostname(host);
+    WiFi.mode(WIFI_STA);
+    WiFi.setAutoReconnect(true);
+
+    IPAddress ipDNS(8, 8, 8, 8);
+    IPAddress parsedDNS;
+    if (parseConfigIPAddress("IPDNS", config.IPDns, parsedDNS))
     {
-      ipDNS = stringToIPAddress(String(config.IPDns));
+      ipDNS = parsedDNS;
+    }
+    else if (configStringHasValue(config.IPDns))
+    {
+      updateDisplayLog(langText("status_dns_failed"));
     }
 
-    if (String(config.IPStatic).length() > 0)
+    bool useStaticIp = false;
+    if (configStringHasValue(config.IPStatic))
     {
-      IPAddress staticIP = stringToIPAddress(String(config.IPStatic)); // Example IP
-      IPAddress gateway = stringToIPAddress(String(config.IPGateway)); // Gateway of your network
-      IPAddress subnet = stringToIPAddress(String(config.IPSubnet));   // Subnet mask
+      IPAddress staticIP;
+      IPAddress gateway;
+      IPAddress subnet;
+      bool staticIpConfigValid = parseConfigIPAddress("IPStatic", config.IPStatic, staticIP) &&
+                                 parseConfigIPAddress("IPGateway", config.IPGateway, gateway) &&
+                                 parseConfigIPAddress("IPSubnet", config.IPSubnet, subnet);
 
-      if (!WiFi.config(staticIP, gateway, subnet, ipDNS))
+      if (staticIpConfigValid && WiFi.config(staticIP, gateway, subnet, ipDNS))
+      {
+        useStaticIp = true;
+      }
+      else
       {
         // labelInfo.drawButton(false, "Static IP Failed to configure!");
         updateDisplayLog(langText("status_static_ip_failed"));
         delay(3000);
       }
     }
-    else
+    if (!useStaticIp)
     {
-      if (!WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, ipDNS))
+      if (!WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE))
       {
         // labelInfo.drawButton(false, "DNS Failed to configure!");
         updateDisplayLog(langText("status_dns_failed"));
@@ -558,111 +1020,18 @@ void initWebServer()
       }
     }
 
-    WiFi.mode(WIFI_STA);
+    wifiConfiguredDNS = ipDNS;
+    wifiUsesStaticIp = useStaticIp;
     WiFi.begin(config.wifi_ssid, config.wifi_psk);
-
+    WiFi.setSleep(false);
+    WIFI_AKTIVE = true;
+    wifiPreviousMillis = millis();
 
     messageBox(String(langText("status_connect_wifi")) + String(config.wifi_ssid) + langText("msg_connect_wifi_wait"), &lv_font_montserrat_14, lv_color_hex(0xFFFFFF), false);
 
-    if (WiFi.waitForConnectResult() == WL_CONNECTED)
+    if (waitForWifiConnected(WIFI_CONNECT_TIMEOUT_MS))
     {
-      updateDisplayLog(langText("status_wifi_connected"));
-      MDNS.begin(host);
-
-      server.on("/list", HTTP_GET, printDirectory);
-      server.on("/system/resources/edit", HTTP_DELETE, handleDelete);
-      server.on("/system/resources/edit", HTTP_PUT, handleCreate);
-      server.on("/system/resources/edit", HTTP_POST, []()
-                { returnOK(); }, handleFileUpload);
-      server.onNotFound(handleNotFound);
-      server.on("/generate_204", handleNotFound);
-      server.on("/favicon.ico", handleNotFound);
-      server.on("/fwlink", handleNotFound);
-      server.on("/reboot", handleReboot);
-      server.on("/getWeight", handleGetWeight);
-      server.on("/setProfile", handleSetProfile);
-      server.on("/getProfile", handleGetProfile);
-      server.on("/getLanguage", handleGetLanguage);
-      server.on("/getProfileList", handleGetProfileList);
-      server.on("/getTarget", handleGetTarget);
-      server.on("/setTarget", handleSetTarget);
-      server.on("/system/start", handleStart);
-      server.on("/system/stop", handleStop);
-      server.on("/fwupdate", HTTP_GET, []()
-                {
-                server.sendHeader("Connection", "close");
-                String updatePage = "<form method='POST' action='/update' enctype='multipart/form-data'><p>FW-Version: ";
-                      updatePage += String(FW_VERSION);
-                      updatePage += "</p><br><input type='file' name='update'><input type='submit' value='Update'></form><br><button onClick='javascript:history.back()'>Back</button>";
-                server.send(200, "text/html", updatePage); });
-
-      server.on(
-          "/update", HTTP_POST, []()
-          {
-        server.sendHeader("Connection", "close");
-        server.send(200, "text/html", (Update.hasError()) ? "<h3>FAIL</h3><br><br><input type='button' value='Back' onClick='javascript:history.back()'>" : "<h3>OK</h3><br><br><input type='button' value='Back' onClick='javascript:history.back()'>");
-        ESP.restart(); },
-          []()
-          {
-            HTTPUpload &upload = server.upload();
-            if (upload.status == UPLOAD_FILE_START)
-            {
-              Serial.setDebugOutput(true);
-              Serial.printf("Update: %s\n", upload.filename.c_str());
-              String infoText = String(langText("status_update_upload")) + String(upload.filename);
-              updateDisplayLog(infoText);
-              if (!Update.begin(UPDATE_SIZE_UNKNOWN))
-              { // start with max available size
-                Update.printError(Serial);
-                updateDisplayLog(String(langText("status_update_failed")) + Update.errorString());
-              }
-            }
-            else if (upload.status == UPLOAD_FILE_WRITE)
-            {
-              if (Update.write(upload.buf, upload.currentSize) != upload.currentSize)
-              {
-                Update.printError(Serial);
-                updateDisplayLog(String(langText("status_update_write_failed")) + Update.errorString());
-              }
-            }
-            else if (upload.status == UPLOAD_FILE_END)
-            {
-              if (Update.end(true))
-              { // true to set the size to the current progress
-                Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
-                String infoText = String(langText("status_update_success")) + String(upload.totalSize);
-                updateDisplayLog(infoText);
-              }
-              else
-              {
-                Update.printError(Serial);
-                updateDisplayLog(String(langText("status_update_end_failed")) + Update.errorString());
-              }
-              Serial.setDebugOutput(false);
-            }
-            else
-            {
-              Serial.printf("Update Failed Unexpectedly (likely broken connection): status=%d\n", upload.status);
-              updateDisplayLog(langText("status_update_unexpected"));
-            }
-          });
-
-      server.begin();
-      MDNS.addService("http", "tcp", 80);
-
-      updateDisplayLog(String(langText("status_open_browser_prefix")) + host + langText("status_open_browser_suffix"));
-
-      if (config.fwCheck)
-      {
-        makeHttpGetRequest(firmwareCheckUrl());
-      }    
-
-      WIFI_AKTIVE = true;      
-      if (lvglLock())
-      {
-        lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
-        lvglUnlock();
-      }
+      startWebServerServices();
     }
     else
     {
