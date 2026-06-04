@@ -166,6 +166,10 @@ void startTrickler()
 void stopTrickler()
 {
     stopMeasurment();
+    if (config.trickleCounter)
+    {
+        saveConfiguration("/config.txt", config);
+    }
     trickleCounter = 0;
     setLabelText(ui_LabelTricklerStart, langText("button_start"));
     setObjBgColor(ui_ButtonTricklerStart, 0x00FF00);

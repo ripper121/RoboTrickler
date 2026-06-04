@@ -79,6 +79,8 @@ struct Config
   char beeper[16];
   char language[8];
   bool fwCheck;
+  bool trickleCounter;
+  int trickleCount;
   float targetWeight;
   char scale_protocol[32];
   int scale_baud;
@@ -403,7 +405,6 @@ void loop()
           String messageText = langText("msg_over_trickle");
           if (config.profile_trickleCounter)
           {
-            messageText += "\n ";
             messageText += String(trickleCounter);
           }
           stopTrickler();
@@ -413,10 +414,14 @@ void loop()
         if (!finished)
         {
           beep("done");
+          if (config.trickleCounter)
+          {
+            config.trickleCount++;
+          }
           if (config.profile_trickleCounter && weightWithinTolerance)
           {
             trickleCounter++;
-            updateDisplayLog(String(langText("status_done")) + " " + String(trickleCounter), true);
+            updateDisplayLog(String(langText("status_done")) + " Count:" + String(trickleCounter), true);
           }
           else
           {

@@ -327,6 +327,8 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
   "profile": "avg",
   "language": "de",
   "beeper": "done",
+  "trickleCounter": false,
+  "trickleCount": 0,
   "fw_update": {
     "check": true
   }
@@ -346,6 +348,8 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 * `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil.
 * `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Unterstützt werden JSON-Dateien in `/lang` und `/system/lang`, z. B. `de` oder `en`; falls keine Datei geladen werden kann, nutzt die Firmware eingebaute englische Fallback-Texte.
 * `beeper`: `done`, `button`, `both` oder `off`.
+* `trickleCounter`: aktiviert den dauerhaften Gesamtzaehler fuer fertige Trickles.
+* `trickleCount`: gespeicherter Stand des dauerhaften Gesamtzaehlers. Standard ist `0`.
 * `fw_update.check`: aktiviert die automatische Prüfung auf neue Firmware.
 * Die Firmware-Update-URL ist intern in der Firmware definiert und gehört nicht in `config.txt`.
 

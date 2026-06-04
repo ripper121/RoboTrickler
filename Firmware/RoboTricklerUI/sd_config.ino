@@ -173,6 +173,8 @@ void setDefaultConfiguration(Config &config)
   strlcpy(config.beeper, "done", sizeof(config.beeper));
   strlcpy(config.language, "en", sizeof(config.language));
   config.fwCheck = true;
+  config.trickleCounter = false;
+  config.trickleCount = 0;
   config.profile_startAtZero = false;
   config.profile_trickleCounter = false;
 }
@@ -357,6 +359,12 @@ bool loadConfiguration(const char *filename, Config &config)
   strlcpy(config.profile, doc["profile"] | config.profile, sizeof(config.profile));
   strlcpy(config.beeper, doc["beeper"] | config.beeper, sizeof(config.beeper));
   strlcpy(config.language, doc["language"] | config.language, sizeof(config.language));
+  config.trickleCounter = doc["trickleCounter"] | config.trickleCounter;
+  config.trickleCount = doc["trickleCount"] | config.trickleCount;
+  if (config.trickleCount < 0)
+  {
+    config.trickleCount = 0;
+  }
 
   JsonObject fwUpdate = doc["fw_update"].as<JsonObject>();
   config.fwCheck = fwUpdate["check"] | config.fwCheck;
@@ -725,6 +733,8 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["profile"] = config.profile;
   doc["beeper"] = config.beeper;
   doc["language"] = config.language;
+  doc["trickleCounter"] = config.trickleCounter;
+  doc["trickleCount"] = config.trickleCount;
   doc["fw_update"]["check"] = config.fwCheck;
 
   // Serialize JSON to file

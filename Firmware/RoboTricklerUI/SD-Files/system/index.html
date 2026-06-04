@@ -52,9 +52,19 @@
 
   <script>
 
-    // JavaScript function to perform the reboot
     function rebootDevice() {
-      fetch('/reboot', { method: 'GET' })
+      if (!confirm('Reboot Robo-Trickler now?')) {
+        return;
+      }
+
+      var rebootButton = document.getElementById('reboot');
+      if (rebootButton) {
+        rebootButton.disabled = true;
+      }
+
+      alert('Reboot command sent. The device will be unavailable for a moment.');
+
+      fetch('/reboot', { method: 'GET', cache: 'no-store' })
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -65,9 +75,8 @@
           console.log('Reboot initiated:', data);
         })
         .catch(error => {
-          console.error('Error during reboot:', error);
+          console.log('Connection closed during reboot:', error);
         });
-      alert(window.rtT ? rtT('alerts.rebootOk', 'Reboot was successful!') : 'Reboot was successful!');
     }
 
     window.addEventListener("DOMContentLoaded", (event) => {
