@@ -188,11 +188,12 @@ void readWeight()
     DEBUG_PRINTLN(buff);
 
     weight = -1.0;
-    dec_places = 0;
 
     if (strchr(buff, '.') != NULL)
     {
-      stringToWeight(buff, &weight, &dec_places);
+      int decimalPlaces = 0;
+      stringToWeight(buff, &weight, &decimalPlaces);
+      decPlaces = (decimalPlaces > 0) ? decimalPlaces : DEC_PLACES;
 
       if (containsIgnoreCase(buff, "g"))
       {
@@ -206,8 +207,8 @@ void readWeight()
       DEBUG_PRINT("Weight: ");
       DEBUG_PRINTLN(weight);
       lastScaleWeightReadTime = millis();
-      DEBUG_PRINT("dec_places: ");
-      DEBUG_PRINTLN(dec_places);
+      DEBUG_PRINT("Decimal places: ");
+      DEBUG_PRINTLN(decPlaces);
 
       DEBUG_PRINT("Weight Counter: ");
       DEBUG_PRINTLN(weightCounter);
@@ -270,7 +271,6 @@ void readWeight()
     {
       updateDisplayLog(langText("status_timeout"), true);
       weight = -1.0;
-      dec_places = 0;
       delay(500);
       newData = false;
     }

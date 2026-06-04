@@ -80,7 +80,7 @@ struct Config
   char language[8];
   bool fwCheck;
   bool trickleCounter;
-  int trickleCount;
+  long trickleCount;
   float targetWeight;
   char scale_protocol[32];
   int scale_baud;
@@ -113,12 +113,14 @@ WebServer server(80);
 unsigned long wifiPreviousMillis = 0;
 unsigned long wifiInterval = 10000;
 
-#define MOTOR_STEPS 200
+#define MOTOR_REV_STEPS 200
 
 #define MAX_TARGET_WEIGHT 999
-float weight = 0.0;
+#define DEC_PLACES 3
+
+float weight = -1.0;
 const float EPSILON = 0.00001; // Define a small epsilon value
-int dec_places = 3;
+int decPlaces = DEC_PLACES;
 String unit = "";
 float lastWeight = 0;
 float addWeight = 0.1;
@@ -158,7 +160,7 @@ static long calculateStepperStepsForUnits(double remainingUnits, double unitsPer
     return 0;
   }
 
-  double exactSteps = remainingUnits * ((double)MOTOR_STEPS / unitsPerThrow);
+  double exactSteps = remainingUnits * ((double)MOTOR_REV_STEPS / unitsPerThrow);
   if ((exactSteps <= 0.0) || (exactSteps > 2147483647.0))
   {
     return 0;
@@ -167,7 +169,7 @@ static long calculateStepperStepsForUnits(double remainingUnits, double unitsPer
   long steps = (long)exactSteps;
   if (outUnits != NULL)
   {
-    *outUnits = ((double)steps * unitsPerThrow) / (double)MOTOR_STEPS;
+    *outUnits = ((double)steps * unitsPerThrow) / (double)MOTOR_REV_STEPS;
   }
   return steps;
 }
@@ -250,7 +252,7 @@ void setLabelText(lv_obj_t *label, const char *text)
 void setWeightLabel(lv_obj_t *label)
 {
   char text[32];
-  int decimals = dec_places;
+  int decimals = decPlaces;
   if (decimals < 0)
   {
     decimals = 0;
@@ -371,6 +373,7 @@ void loop()
 
       float tolerance = config.profile_tolerance;
       float alarmThreshold = config.profile_alarmThreshold;
+      bool calibrationProfile = strcmp(config.profile, "calibrate") == 0;
 
       DEBUG_PRINT("Weight: ");
       DEBUG_PRINTLN(weight);
@@ -380,7 +383,7 @@ void loop()
       DEBUG_PRINT("profile_alarmThreshold: ");
       DEBUG_PRINTLN(String((config.targetWeight + alarmThreshold), 5));
 
-      if ((weight >= (config.targetWeight - tolerance - EPSILON)) && (weight >= 0))
+      if (!calibrationProfile && (weight >= (config.targetWeight - tolerance - EPSILON)) && (weight >= 0))
       {
         bool weightWithinTolerance = weight <= (config.targetWeight + tolerance + EPSILON);
         if (weightWithinTolerance)
@@ -453,7 +456,7 @@ void loop()
             }
             if (infoText.length() > 0)
             {
-              if (strcmp(config.profile, "calibrate") == 0)
+              if (calibrationProfile)
               {
                 startCalibrationProfilePrompt();
                 return;
@@ -511,7 +514,7 @@ void loop()
                    config.profile_measurements[profileStep]);
           infoText = infoLine;
 
-          if (strcmp(config.profile, "calibrate") == 0)
+          if (calibrationProfile)
           {
             startCalibrationProfilePrompt();
             return;

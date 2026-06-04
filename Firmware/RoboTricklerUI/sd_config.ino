@@ -534,7 +534,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   JsonArray rs232TrickleMap = doc["rs232TrickleMap"].to<JsonArray>();
   for (int i = 0; i < 5; i++)
   {
-    long steps = lround(((diffWeights[i] * (double)MOTOR_STEPS) / unitsPerThrow) * rs232LimitFactor);
+    long steps = lround(((diffWeights[i] * (double)MOTOR_REV_STEPS) / unitsPerThrow) * rs232LimitFactor);
     if (steps < 5)
     {
       steps = 5;

@@ -65,7 +65,7 @@ Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte.
 }
 ```
 
-Dieses Profil nutzt `steps: 20000`. Das sind 20000 direkte STEP-Pulse; bei `MOTOR_STEPS = 200` entspricht das dem Kalibrierlauf über 100 Umdrehungen.
+Dieses Profil nutzt `steps: 20000`. Das sind 20000 direkte STEP-Pulse; bei 200 Schritten / Umdrehung (1.8°/Schritt) entspricht das dem Kalibrierlauf über 100 Umdrehungen.
 
 **Die Waage muss für den automatischen Kalibrierlauf auf Grain gestellt sein.** Die Firmware übernimmt den gemessenen Wert direkt als Grain und zeigt die Bestätigung als `gn` an.
 
