@@ -1,49 +1,28 @@
-# Changelog Firmware 2.10
+# Changelog Firmware 2.11
 
 ### Overview
-- Added automatic powder profile creation from the calibration run.
-- Added SD-card language support with `language` in `config.txt`.
-- Removed PID and logger-related firmware and UI pieces.
-- Removed old stepper driver configuration from active firmware behavior.
+- Added expanded RS232 scale support through the new `rs232.ino` module.
+- Added Firmware 2.11 config/profile options for trickle counters, start-at-zero behavior, and selectable bulk actuator handling.
+- Improved Wi-Fi and webserver reliability, including reboot support from the web UI.
 
 ### Added
 
-- Added SD-card language support with `language` in `config.txt`.
-- Added English and German language JSON files for firmware messages and web UI.
-- Added `lang.ino` with fallback strings and runtime UI text loading.
-- Added automatic powder profile creation from the calibration run.
-- Added new profile format using `general`, `actuator`, and `rs232TrickleMap`.
-- Added `/profiles/avg.txt` and `/profiles/calibrate.txt` as the default SD profiles.
-- Added profile validation, invalid profile reporting, and `.cor.txt` renaming for corrupted profiles.
-- Added `/getLanguage` web API endpoint.
-- Added JSON escaping for web API and file-browser output.
-- Added `lvgl_compat.c` for LVGL 9 compatibility.
+- Added scale protocol support for custom hex requests, and an empty protocol for no active request command.
+- Added global trickle counter support.
+- Added profile-level `startAtZero`, `trickleCounter`, and selectable bulk `actuator` options under profile `general`.
 
 ### Changed
 
-- Updated firmware version to `2.10`.
-- Reworked profile storage so profiles now live under `/profiles`.
-- Moved target weight handling into the selected profile.
-- Profile selection now reloads the profile immediately, updates the displayed target weight, and persists the selected profile to `config.txt`.
-- Reworked trickling logic around the new profile fields, including tolerance, alarm threshold, weight gap, measurement counts, and actuator selection.
-- Added first-throw bulk movement using `unitsPerThrow`, with support for `stepper1` and `stepper2`.
-- Replaced external stepper and shift-register libraries with local stepper and shift-register control code.
-- Stepper handling now emits direct STEP pulses through local A4988-style driver control.
-- Reworked beeper control through the new shift-register stepper backend.
-- Updated web firmware update handling with better status and error messages.
-- Updated HTTPS firmware-version check for ESP32 core 3.3.8 using `NetworkClientSecure`.
-- Updated SD file serving to support `.json` content type and cleaner `.gz` handling.
-- Updated web profile generator and editor pages for the new profile format and language support.
-- Updated Arduino build settings for ESP32 core `3.3.8`.
+- Updated firmware update checks to use the firmware-internal default update URL.
+- Updated webserver startup and client handling to track active server and registered route state.
+- Changed first-throw bulk movement to use the selected profile actuator instead of scanning both steppers.
+- Moved weight display, parsing, and decimal-place behavior into the RS232 code path.
+- Updated config parsing and saving for the new scale, trickle counter, and profile options.
 
 ### Removed
 
-- Removed PID and logger-related firmware and UI pieces.
-- Removed `csv.ino`.
-- Removed old stepper driver configuration from active firmware behavior.
-- Removed watchdog disable and reset code.
-- Removed old sample grain and gram profile files from the SD image.
-- Removed bundled `StepperDriver` and `ShiftRegister74HC595` libraries.
+- Removed active reverse-direction profile behavior from trickling and stepper handling.
+- Removed old conversion-to-degrees wording and related config behavior.
 
 ### Dependencies
 - Updated Boards-Manager esp32 - Espressif Systems version `3.1.3` to `3.3.8`
