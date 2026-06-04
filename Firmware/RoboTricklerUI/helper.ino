@@ -166,6 +166,7 @@ void startTrickler()
 void stopTrickler()
 {
     stopMeasurment();
+    trickleCounter = 0;
     setLabelText(ui_LabelTricklerStart, langText("button_start"));
     setObjBgColor(ui_ButtonTricklerStart, 0x00FF00);
     setLabelText(ui_LabelTricklerWeight, "-.-");
@@ -291,6 +292,8 @@ void initSetup()
         }
     }
 
+    initUpdate();
+
     infoText = langText("status_loading_config");
     updateDisplayLog(infoText, true);
     if (!loadConfiguration("/config.txt", config))
@@ -355,8 +358,6 @@ void initSetup()
     infoText = langText("status_starting_scale");
     updateDisplayLog(infoText, true);
     initRs232();
-
-    initUpdate();
 
     initWebServer();
 

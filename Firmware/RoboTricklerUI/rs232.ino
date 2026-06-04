@@ -230,14 +230,9 @@ void readWeight()
       else
       {
         weightCounter = 0;
-        setWeightLabel(ui_LabelTricklerWeight);
       }
       lastWeight = weight;
-
-      // DEBUG_PRINT("Scale Read: ");
-      // DEBUG_PRINTLN(weight);
     }
-
   }
   else
   {
@@ -270,14 +265,15 @@ void readWeight()
     {
       timeout = serialWait();
     }
+
     if (timeout)
     {
       updateDisplayLog(langText("status_timeout"), true);
       weight = -1.0;
       dec_places = 0;
-      setWeightLabel(ui_LabelTricklerWeight);
       delay(500);
       newData = false;
     }
-  }
+  }    
+  setWeightLabel(ui_LabelTricklerWeight);
 }

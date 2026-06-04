@@ -138,6 +138,7 @@ Beispiel für das neue Profilformat:
     "weightGap": 1.000,
     "actuator": "stepper1",
     "startAtZero": false,
+    "trickleCounter": false,
     "measurements": 5
   },
   "actuator": {
@@ -200,9 +201,10 @@ Beispiel für das neue Profilformat:
 * `weightGap`: Abstand zum Zielgewicht, bei dem der automatische erste Grobwurf enden soll.
 * `actuator`: optionaler Bulk-Actuator für den automatischen ersten Grobwurf. Erlaubt sind `stepper1` und `stepper2`. Wenn das Feld fehlt, leer oder ungültig ist, verwendet die Firmware `stepper1`.
 * `startAtZero`: Wenn `true`, wartet die Firmware vor dem ersten Wurf auf exakt `0.000`. Wenn `false`, startet der erste Wurf bei jedem Gewicht ab `0.000`.
+* `trickleCounter`: Wenn `true`, zeigt `Done :)` zusaetzlich die Anzahl der fertigen Trickles seit dem letzten Stop an. Standard ist `false`.
 * `measurements`: Anzahl stabiler Messwerte, die vor dem ersten Wurf und nach dem automatischen Grobwurf abgewartet werden.
 
-Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `actuator = stepper1`, `startAtZero = false` und `measurements = 20`.
+Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `actuator = stepper1`, `startAtZero = false`, `trickleCounter = false` und `measurements = 20`.
 
 ### `actuator`
 
@@ -244,6 +246,7 @@ Für mehrere Trickler wird `actuator` verwendet:
     "weightGap": 1.000,
     "actuator": "stepper2",
     "startAtZero": false,
+    "trickleCounter": false,
     "measurements": 5
   },
   "actuator": {

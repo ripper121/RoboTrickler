@@ -93,6 +93,7 @@ struct Config
   byte profile_bulkActuator;
   int profile_generalMeasurements;
   bool profile_startAtZero;
+  bool profile_trickleCounter;
   double profile_stepperUnitsPerThrow[3];
   int profile_stepperUnitsPerThrowSpeed[3];
   bool profile_stepperEnabled[3];
@@ -125,6 +126,7 @@ bool newData = false;
 bool running = false;
 bool finished = false;
 bool firstThrow = true;
+int trickleCounter = 0;
 bool restart_now = false;
 bool calibrationProfilePromptPending = false;
 unsigned long calibrationProfilePromptTime = 0;
@@ -305,7 +307,6 @@ void handleCalibrationProfilePrompt()
   }
 
   readWeight();
-  setWeightLabel(ui_LabelTricklerWeight);
 
   if (newData && (lastScaleWeightReadTime > calibrationProfilePromptTime))
   {
@@ -379,7 +380,8 @@ void loop()
 
       if ((weight >= (config.targetWeight - tolerance - EPSILON)) && (weight >= 0))
       {
-        if (weight <= (config.targetWeight + tolerance + EPSILON))
+        bool weightWithinTolerance = weight <= (config.targetWeight + tolerance + EPSILON);
+        if (weightWithinTolerance)
         {
           setLabelTextColor(ui_LabelTricklerWeight, 0x00FF00);
         }
@@ -398,14 +400,28 @@ void loop()
           beep("done");
           delay(250);
           beep("done");
+          String messageText = langText("msg_over_trickle");
+          if (config.profile_trickleCounter)
+          {
+            messageText += "\n ";
+            messageText += String(trickleCounter);
+          }
           stopTrickler();
-          messageBox(langText("msg_over_trickle"), &lv_font_montserrat_32, lv_color_hex(0xFF0000), true);
+          messageBox(messageText.c_str(), &lv_font_montserrat_32, lv_color_hex(0xFF0000), true);
         }
 
         if (!finished)
         {
           beep("done");
-          updateDisplayLog(langText("status_done"), true);
+          if (config.profile_trickleCounter && weightWithinTolerance)
+          {
+            trickleCounter++;
+            updateDisplayLog(String(langText("status_done")) + " " + String(trickleCounter), true);
+          }
+          else
+          {
+            updateDisplayLog(langText("status_done"), true);
+          }
         }
         measurementCount = 0;
         finished = true;
@@ -523,7 +539,6 @@ void loop()
       readWeightTime = millis();
       updateDisplayLog(langText("status_get_weight"), true);
       readWeight();
-      setWeightLabel(ui_LabelTricklerWeight);
     }
   }
 
