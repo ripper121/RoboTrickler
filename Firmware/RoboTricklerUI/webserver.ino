@@ -493,7 +493,7 @@ String firmwareCheckUrl()
   String serverPath = DEFAULT_FW_UPDATE_URL;
   if (serverPath == DEFAULT_FW_UPDATE_URL)
   {
-    serverPath += "?mac=" + String(WiFi.macAddress());
+    serverPath += "?mac=" + String(WiFi.macAddress()) + "&version=" + String(FW_VERSION);
   }
   return serverPath;
 }
@@ -703,22 +703,10 @@ bool isRemoteFirmwareNewer(const String &remoteVersion)
 
 void makeHttpGetRequest(String serverPath)
 {
-  NetworkClientSecure secureClient;
   HTTPClient http;
   http.setTimeout(5000);
 
-  bool connected = false;
-  if (serverPath.startsWith("https://"))
-  {
-    secureClient.setInsecure();
-    connected = http.begin(secureClient, serverPath);
-  }
-  else
-  {
-    connected = http.begin(serverPath);
-  }
-
-  if (connected)
+  if (http.begin(serverPath))
   {
     int httpResponseCode = http.GET();
 
