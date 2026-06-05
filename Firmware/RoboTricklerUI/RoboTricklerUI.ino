@@ -56,6 +56,9 @@ Events Run On: "Core 0"
 #define DEBUG_PRINTLN(...)
 #endif
 
+#define SPLASH_LOGO_PATH "/system/logo.bmp"
+#define SPLASH_DISPLAY_MS 3000
+
 #define DISP_TASK_STACK 4096 * 2
 #define DISP_TASK_PRO 1
 #define DISP_TASK_CORE 0

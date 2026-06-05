@@ -235,24 +235,16 @@ void initSetup()
     Serial.begin(115200); /* prepare for possible serial debug */
 
     displayInit();
-    ui_init();
-    disableTouchGestures();
-    disp_task_init();
 
     DEBUG_PRINTLN("Display Init");
 
-    updateDisplayLog((String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
-
-    String infoText = langText("status_init_steppers");
-    updateDisplayLog(infoText, true);
-    initStepper();
-
-    infoText = langText("status_mount_sd");
-    updateDisplayLog(infoText, true);
     SDspi = new SPIClass(HSPI);
     SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
     if (!SD.begin(GRBL_SPI_SS, *SDspi, SD_SPI_FREQ, "/sd", 10))
     {
+        ui_init();
+        disableTouchGestures();
+        disp_task_init();
         restart_now = true;
         messageBox(langText("msg_card_mount_failed"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
         return;
@@ -263,6 +255,9 @@ void initSetup()
 
         if (cardType == CARD_NONE)
         {
+            ui_init();
+            disableTouchGestures();
+            disp_task_init();
             restart_now = true;
             messageBox(langText("msg_no_sd_card"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
             return;
@@ -295,6 +290,18 @@ void initSetup()
             (void)cardSize;
         }
     }
+
+    showSplashLogo();
+
+    ui_init();
+    disableTouchGestures();
+    disp_task_init();
+
+    updateDisplayLog((String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
+
+    String infoText = langText("status_init_steppers");
+    updateDisplayLog(infoText, true);
+    initStepper();
 
     initUpdate();
 
