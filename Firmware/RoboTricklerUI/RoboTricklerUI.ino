@@ -135,6 +135,7 @@ bool firstThrow = true;
 int trickleCounter = 0;
 bool restart_now = false;
 bool calibrationProfilePromptPending = false;
+// Track prompt start and fresh scale reads so stale weights are ignored.
 unsigned long calibrationProfilePromptTime = 0;
 unsigned long lastScaleWeightReadTime = 0;
 
