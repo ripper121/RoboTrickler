@@ -305,7 +305,7 @@ class ScaleEmulator:
     def _read_loop(self) -> None:
         while not self.stop_event.is_set():
             try:
-                data = self.connection.read(64)
+                data = self.connection.read(1)
             except serial.SerialException as exc:
                 print(f"Serial read failed: {exc}")
                 self.stop_event.set()

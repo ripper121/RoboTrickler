@@ -257,6 +257,7 @@ void readWeight()
       stringToWeight(buff, &weight, &decimalPlaces);
       decPlaces = (decimalPlaces > 0) ? decimalPlaces : DEC_PLACES;
 
+      unit = "";
       if (containsIgnoreCase(buff, "g"))
       {
         unit = " g";
