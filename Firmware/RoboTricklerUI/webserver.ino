@@ -502,6 +502,9 @@ static const unsigned long WIFI_CONNECT_TIMEOUT_MS = 30000;
 static bool wifiEventLoggingRegistered = false;
 static IPAddress wifiConfiguredDNS = IPAddress(8, 8, 8, 8);
 static bool wifiUsesStaticIp = false;
+static unsigned long wifiConnectStartedMillis = 0;
+static bool wifiConnectTimeoutReported = false;
+static wl_status_t wifiLastLoggedStatus = WL_NO_SHIELD;
 
 const char *wifiStatusName(wl_status_t status)
 {
@@ -554,32 +557,15 @@ void registerWifiDebugLogging()
   }
 }
 
-bool waitForWifiConnected(unsigned long timeoutMs)
+void logWifiStatusChange()
 {
-  unsigned long start = millis();
-  wl_status_t lastStatus = WL_NO_SHIELD;
-
-  while ((millis() - start) < timeoutMs)
+  wl_status_t status = WiFi.status();
+  if (status != wifiLastLoggedStatus)
   {
-    wl_status_t status = WiFi.status();
-    if (status == WL_CONNECTED)
-    {
-      return true;
-    }
-
-    if (status != lastStatus)
-    {
-      DEBUG_PRINT("WiFi status: ");
-      DEBUG_PRINTLN(wifiStatusName(status));
-      lastStatus = status;
-    }
-
-    delay(250);
+    DEBUG_PRINT("WiFi status: ");
+    DEBUG_PRINTLN(wifiStatusName(status));
+    wifiLastLoggedStatus = status;
   }
-
-  DEBUG_PRINT("WiFi connect timeout, final status: ");
-  DEBUG_PRINTLN(wifiStatusName(WiFi.status()));
-  return false;
 }
 
 void applyWifiDnsIfNeeded()
@@ -927,11 +913,21 @@ void maintainWifiConnection()
 
   if (WiFi.status() == WL_CONNECTED)
   {
+    wifiConnectTimeoutReported = false;
+    wifiLastLoggedStatus = WL_CONNECTED;
     if (!WEB_SERVER_ACTIVE)
     {
       startWebServerServices();
     }
     return;
+  }
+
+  logWifiStatusChange();
+  if (!wifiConnectTimeoutReported && ((millis() - wifiConnectStartedMillis) >= WIFI_CONNECT_TIMEOUT_MS))
+  {
+    updateDisplayLog(langText("status_no_wifi"));
+    messageBox(langText("status_no_wifi"), &lv_font_montserrat_14, lv_color_hex(0xFFFF00), false);
+    wifiConnectTimeoutReported = true;
   }
 
   if (millis() - wifiPreviousMillis >= wifiInterval)
@@ -1014,17 +1010,10 @@ void initWebServer()
     WiFi.setSleep(false);
     WIFI_AKTIVE = true;
     wifiPreviousMillis = millis();
+    wifiConnectStartedMillis = wifiPreviousMillis;
+    wifiConnectTimeoutReported = false;
+    wifiLastLoggedStatus = WL_NO_SHIELD;
 
     messageBox(String(langText("status_connect_wifi")) + String(config.wifi_ssid) + langText("msg_connect_wifi_wait"), &lv_font_montserrat_14, lv_color_hex(0xFFFFFF), false);
-
-    if (waitForWifiConnected(WIFI_CONNECT_TIMEOUT_MS))
-    {
-      startWebServerServices();
-    }
-    else
-    {
-      updateDisplayLog(langText("status_no_wifi"));
-      messageBox(langText("status_no_wifi"), &lv_font_montserrat_14, lv_color_hex(0xFFFF00), true);
-    }
   }
 }

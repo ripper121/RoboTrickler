@@ -4,6 +4,7 @@ import random
 import sys
 import threading
 import time
+from collections import deque
 from dataclasses import dataclass, field
 from typing import Iterable
 
@@ -34,6 +35,33 @@ COMMANDS = {
     "t": "tare",
     "u": "backlight",
 }
+
+
+class RequestRateMeter:
+    def __init__(self, window_seconds: float = 1.0) -> None:
+        self.window_seconds = window_seconds
+        self.timestamps: deque[float] = deque()
+        self.total = 0
+        self.lock = threading.Lock()
+
+    def record(self) -> float:
+        now = time.monotonic()
+        with self.lock:
+            self.total += 1
+            self.timestamps.append(now)
+            self._prune(now)
+            return len(self.timestamps) / self.window_seconds
+
+    def snapshot(self) -> tuple[float, int]:
+        now = time.monotonic()
+        with self.lock:
+            self._prune(now)
+            return len(self.timestamps) / self.window_seconds, self.total
+
+    def _prune(self, now: float) -> None:
+        cutoff = now - self.window_seconds
+        while self.timestamps and self.timestamps[0] < cutoff:
+            self.timestamps.popleft()
 
 
 @dataclass
@@ -207,6 +235,7 @@ class ScaleEmulator:
         self.stop_event = threading.Event()
         self.rx_thread = threading.Thread(target=self._read_loop, name="serial-rx", daemon=True)
         self.pending_escape = False
+        self.request_rate = RequestRateMeter()
 
     def start(self) -> None:
         self.rx_thread.start()
@@ -228,13 +257,14 @@ class ScaleEmulator:
         print(f"TX {reason}: {packet!r}")
 
     def handle_command(self, command: str, prefixed: bool) -> None:
+        requests_per_second = self.request_rate.record()
         action = COMMANDS.get(command)
         prefix = "ESC " if prefixed else ""
         if not action:
-            print(f"RX unknown command: {prefix}{command!r}")
+            print(f"RX unknown command: {prefix}{command!r} ({requests_per_second:.1f} req/s)")
             return
 
-        print(f"RX command: {prefix}{command} ({action})")
+        print(f"RX command: {prefix}{command} ({action}, {requests_per_second:.1f} req/s)")
         if action == "print":
             self.send_weight("print command")
         elif action == "tare":
@@ -298,25 +328,27 @@ def print_help() -> None:
     print("j <value>       set random +/- jitter added to each print")
     print("print           send one weight frame, like pressing PRINT on the scale")
     print("tare            set displayed weight to zero")
-    print("status          show current emulator state")
+    print("status          show current emulator state and request rate")
     print("help            show this help")
     print("quit            close the serial port and exit")
     print()
 
 
-def print_status(state: ScaleState, connection: serial.Serial) -> None:
+def print_status(state: ScaleState, connection: serial.Serial, emulator: ScaleEmulator) -> None:
     with state.lock:
+        requests_per_second, total_requests = emulator.request_rate.snapshot()
         print(
             "Status: "
             f"port={connection.port} baud={connection.baudrate} "
             f"weight={state.weight:.{state.decimals}f} unit={state.unit} "
-            f"decimals={state.decimals} step={state.step} jitter={state.jitter}"
+            f"decimals={state.decimals} step={state.step} jitter={state.jitter} "
+            f"requests={requests_per_second:.1f}/s total_requests={total_requests}"
         )
 
 
 def adjust_weight_from_key(emulator: ScaleEmulator, direction: int) -> None:
     emulator.state.adjust_weight(direction)
-    print_status(emulator.state, emulator.connection)
+    print_status(emulator.state, emulator.connection, emulator)
 
 
 def read_console_line(emulator: ScaleEmulator) -> str | None:
@@ -403,38 +435,38 @@ def run_console(emulator: ScaleEmulator) -> None:
                     print("Usage: w <value>")
                     continue
                 emulator.state.set_weight(float(argument))
-                print_status(emulator.state, emulator.connection)
+                print_status(emulator.state, emulator.connection, emulator)
             elif command in {"u", "unit"}:
                 if not argument:
                     print("Usage: u <unit>")
                     continue
                 emulator.state.set_unit(argument)
-                print_status(emulator.state, emulator.connection)
+                print_status(emulator.state, emulator.connection, emulator)
             elif command in {"d", "decimals"}:
                 if not argument:
                     print("Usage: d <0-5>")
                     continue
                 emulator.state.set_decimals(int(argument))
-                print_status(emulator.state, emulator.connection)
+                print_status(emulator.state, emulator.connection, emulator)
             elif command in {"step", "increment", "inc"}:
                 if not argument:
                     print("Usage: step <value>")
                     continue
                 emulator.state.set_step(float(argument))
-                print_status(emulator.state, emulator.connection)
+                print_status(emulator.state, emulator.connection, emulator)
             elif command in {"j", "jitter"}:
                 if not argument:
                     print("Usage: j <value>")
                     continue
                 emulator.state.set_jitter(float(argument))
-                print_status(emulator.state, emulator.connection)
+                print_status(emulator.state, emulator.connection, emulator)
             elif command in {"p", "print"}:
                 emulator.send_weight("local print")
             elif command in {"t", "tare"}:
                 emulator.state.tare()
-                print_status(emulator.state, emulator.connection)
+                print_status(emulator.state, emulator.connection, emulator)
             elif command == "status":
-                print_status(emulator.state, emulator.connection)
+                print_status(emulator.state, emulator.connection, emulator)
             else:
                 print(f"Unknown console command {command!r}. Type help for commands.")
         except ValueError as exc:

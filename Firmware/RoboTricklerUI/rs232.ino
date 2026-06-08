@@ -24,6 +24,57 @@ void serialFlush()
   }
 }
 
+String serialBytesToDisplay(const uint8_t *bytes, int byteCount)
+{
+  String data = "";
+  data.reserve(byteCount);
+
+  for (int i = 0; i < byteCount; i++)
+  {
+    if ((bytes[i] >= 32) && (bytes[i] <= 126))
+    {
+      data += (char)bytes[i];
+    }
+    else if (bytes[i] == '\r')
+    {
+      data += "\\r";
+    }
+    else if (bytes[i] == '\n')
+    {
+      data += "\\n";
+    }
+    else if (bytes[i] == '\t')
+    {
+      data += "\\t";
+    }
+    else
+    {
+      data += ".";
+    }
+  }
+
+  return data;
+}
+
+String serialBytesToHex(const uint8_t *bytes, int byteCount)
+{
+  String data = "";
+  data.reserve(byteCount * 5);
+
+  for (int i = 0; i < byteCount; i++)
+  {
+    char byteText[6];
+    snprintf(byteText, sizeof(byteText), "0x%02X", bytes[i]);
+    if (i > 0)
+    {
+      data += " ";
+    }
+    data += byteText;
+  }
+
+  return data;
+}
+
 bool serialReq(String req, bool flush)
 {
   char request[128];
@@ -67,6 +118,12 @@ bool serialReq(String req, bool flush)
   {
     serialFlush();
   }
+
+  if (strcmp(config.scale_protocol, "CUSTOM") == 0)
+  {
+    updateDisplayLog("TX:" + serialBytesToDisplay(bytes, byteCount) + " / " + serialBytesToHex(bytes, byteCount), false);
+  }
+
   Serial1.write(bytes, byteCount);
 
   return serialWait();
@@ -184,6 +241,11 @@ void readWeight()
     char buff[64];
     size_t bytesRead = Serial1.readBytesUntil(0x0A, buff, sizeof(buff) - 1);
     buff[bytesRead] = '\0';
+
+    if (strcmp(config.scale_protocol, "CUSTOM") == 0)
+    {
+      updateDisplayLog("RX:" + String(buff), false);
+    }
 
     DEBUG_PRINTLN(buff);
 

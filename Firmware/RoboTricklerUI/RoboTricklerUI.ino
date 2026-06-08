@@ -278,9 +278,7 @@ void setObjBgColor(lv_obj_t *obj, uint32_t colorHex)
 
 void updateDisplayLog(String logOutput, bool noLog = false)
 {
-  setLabelText(ui_LabelInfo, logOutput.c_str());
   logOutput += "\n";
-
   if (!noLog)
   {
     insertLine(logOutput);
@@ -290,8 +288,10 @@ void updateDisplayLog(String logOutput, bool noLog = false)
       temp += infoMessagBuff[i];
     }
     setLabelText(ui_LabelLog, temp.c_str());
+  }else
+  {
+    setLabelText(ui_LabelInfo, logOutput.c_str());    
   }
-
   DEBUG_PRINT(logOutput);
 }
 
