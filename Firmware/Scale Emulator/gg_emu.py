@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import random
+import os
+import shutil
 import sys
 import threading
 import time
@@ -36,6 +38,23 @@ COMMANDS = {
     "u": "backlight",
 }
 
+HELP_LINES = (
+    "Console commands",
+    "----------------",
+    "+ / Up arrow    increase weight by the current step",
+    "- / Down arrow  decrease weight by the current step",
+    "w <value>       set the displayed weight, for example: w 12.345",
+    "step <value>    set keypress increment/decrement size",
+    "u <unit>        set unit: gr, g, kg, lb, oz, ct",
+    "d <0-5>         set decimal places used in the output",
+    "j <value>       set random +/- jitter added to each print",
+    "print           send one weight frame, like pressing PRINT on the scale",
+    "tare            set displayed weight to zero",
+    "status          show current emulator state and request rate",
+    "help            show this help",
+    "quit            close the serial port and exit",
+)
+
 
 class RequestRateMeter:
     def __init__(self, window_seconds: float = 1.0) -> None:
@@ -62,6 +81,75 @@ class RequestRateMeter:
         cutoff = now - self.window_seconds
         while self.timestamps and self.timestamps[0] < cutoff:
             self.timestamps.popleft()
+
+
+class FixedConsole:
+    def __init__(self, menu_lines: Iterable[str], prompt: str = "emu> ") -> None:
+        self.menu_lines = list(menu_lines)
+        self.prompt = prompt
+        self.input_buffer = ""
+        self.log_lines: deque[str] = deque(maxlen=200)
+        self.lock = threading.RLock()
+        self.active = False
+
+    def __enter__(self) -> FixedConsole:
+        os.system("")
+        self.active = True
+        sys.stdout.write("\x1b[?1049h\x1b[?25l")
+        sys.stdout.flush()
+        self.render()
+        return self
+
+    def __exit__(self, exc_type, exc, traceback) -> None:
+        with self.lock:
+            self.active = False
+            sys.stdout.write("\x1b[?25h\x1b[?1049l")
+            sys.stdout.flush()
+
+    def write(self, message: str = "") -> None:
+        with self.lock:
+            lines = str(message).splitlines() or [""]
+            self.log_lines.extend(lines)
+            self.render()
+
+    def set_input(self, value: str) -> None:
+        with self.lock:
+            self.input_buffer = value
+            self.render()
+
+    def render(self) -> None:
+        if not self.active:
+            return
+
+        size = shutil.get_terminal_size((100, 30))
+        width = max(size.columns, 20)
+        height = max(size.lines, len(self.menu_lines) + 4)
+        log_height = max(1, height - len(self.menu_lines) - 2)
+        visible_logs = list(self.log_lines)[-log_height:]
+
+        lines: list[str] = []
+        lines.extend(self._fit(line, width) for line in self.menu_lines)
+        lines.append("-" * width)
+        lines.extend(self._fit(line, width) for line in visible_logs)
+
+        body_height = height - 1
+        if len(lines) < body_height:
+            lines.extend("" for _ in range(body_height - len(lines)))
+        else:
+            lines = lines[:body_height]
+
+        prompt_line = self._fit(f"{self.prompt}{self.input_buffer}", width)
+        sys.stdout.write("\x1b[H\x1b[2J")
+        sys.stdout.write("\n".join(line.ljust(width) for line in lines))
+        sys.stdout.write("\n")
+        sys.stdout.write(prompt_line.ljust(width))
+        sys.stdout.flush()
+
+    @staticmethod
+    def _fit(line: str, width: int) -> str:
+        if len(line) <= width:
+            return line
+        return line[: max(0, width - 1)]
 
 
 @dataclass
@@ -236,6 +324,7 @@ class ScaleEmulator:
         self.rx_thread = threading.Thread(target=self._read_loop, name="serial-rx", daemon=True)
         self.pending_escape = False
         self.request_rate = RequestRateMeter()
+        self.log = print
 
     def start(self) -> None:
         self.rx_thread.start()
@@ -251,36 +340,36 @@ class ScaleEmulator:
             self.connection.write(packet)
             self.connection.flush()
         except serial.SerialException as exc:
-            print(f"Serial write failed: {exc}")
+            self.log(f"Serial write failed: {exc}")
             self.stop_event.set()
             return
-        print(f"TX {reason}: {packet!r}")
+        self.log(f"TX {reason}: {packet!r}")
 
     def handle_command(self, command: str, prefixed: bool) -> None:
         requests_per_second = self.request_rate.record()
         action = COMMANDS.get(command)
         prefix = "ESC " if prefixed else ""
         if not action:
-            print(f"RX unknown command: {prefix}{command!r} ({requests_per_second:.1f} req/s)")
+            self.log(f"RX unknown command: {prefix}{command!r} ({requests_per_second:.1f} req/s)")
             return
 
-        print(f"RX command: {prefix}{command} ({action}, {requests_per_second:.1f} req/s)")
+        self.log(f"RX command: {prefix}{command} ({action}, {requests_per_second:.1f} req/s)")
         if action == "print":
             self.send_weight("print command")
         elif action == "tare":
             self.state.tare()
-            print("Scale display tared to 0.000")
+            self.log("Scale display tared to 0.000")
         elif action == "unit":
             unit = self.state.next_unit()
-            print(f"Unit changed to {unit}")
+            self.log(f"Unit changed to {unit}")
         elif action == "counting":
             enabled = self.state.toggle_counting()
-            print(f"Counting mode {'enabled' if enabled else 'disabled'}")
+            self.log(f"Counting mode {'enabled' if enabled else 'disabled'}")
         elif action == "backlight":
             enabled = self.state.toggle_backlight()
-            print(f"Backlight {'enabled' if enabled else 'disabled'}")
+            self.log(f"Backlight {'enabled' if enabled else 'disabled'}")
         elif action == "calibration":
-            print("Calibration command acknowledged; no calibration is performed by the emulator.")
+            self.log("Calibration command acknowledged; no calibration is performed by the emulator.")
 
     def _process_byte(self, value: int) -> None:
         if value in (0x0A, 0x0D):
@@ -298,7 +387,7 @@ class ScaleEmulator:
         try:
             command = chr(value).lower()
         except ValueError:
-            print(f"RX non-ASCII byte: 0x{value:02X}")
+            self.log(f"RX non-ASCII byte: 0x{value:02X}")
             return
         self.handle_command(command, prefixed=False)
 
@@ -307,7 +396,7 @@ class ScaleEmulator:
             try:
                 data = self.connection.read(1)
             except serial.SerialException as exc:
-                print(f"Serial read failed: {exc}")
+                self.log(f"Serial read failed: {exc}")
                 self.stop_event.set()
                 return
 
@@ -315,29 +404,17 @@ class ScaleEmulator:
                 self._process_byte(value)
 
 
-def print_help() -> None:
-    print()
-    print("Console commands")
-    print("----------------")
-    print("+ / Up arrow    increase weight by the current step")
-    print("- / Down arrow  decrease weight by the current step")
-    print("w <value>       set the displayed weight, for example: w 12.345")
-    print("step <value>    set keypress increment/decrement size")
-    print("u <unit>        set unit: gr, g, kg, lb, oz, ct")
-    print("d <0-5>         set decimal places used in the output")
-    print("j <value>       set random +/- jitter added to each print")
-    print("print           send one weight frame, like pressing PRINT on the scale")
-    print("tare            set displayed weight to zero")
-    print("status          show current emulator state and request rate")
-    print("help            show this help")
-    print("quit            close the serial port and exit")
-    print()
+def print_help(log=print) -> None:
+    log("")
+    for line in HELP_LINES:
+        log(line)
+    log("")
 
 
 def print_status(state: ScaleState, connection: serial.Serial, emulator: ScaleEmulator) -> None:
     with state.lock:
         requests_per_second, total_requests = emulator.request_rate.snapshot()
-        print(
+        emulator.log(
             "Status: "
             f"port={connection.port} baud={connection.baudrate} "
             f"weight={state.weight:.{state.decimals}f} unit={state.unit} "
@@ -351,7 +428,7 @@ def adjust_weight_from_key(emulator: ScaleEmulator, direction: int) -> None:
     print_status(emulator.state, emulator.connection, emulator)
 
 
-def read_console_line(emulator: ScaleEmulator) -> str | None:
+def read_console_line(emulator: ScaleEmulator, ui: FixedConsole | None = None) -> str | None:
     if msvcrt is None or not sys.stdin.isatty():
         try:
             return input("emu> ")
@@ -360,7 +437,10 @@ def read_console_line(emulator: ScaleEmulator) -> str | None:
             return None
 
     buffer: list[str] = []
-    print("emu> ", end="", flush=True)
+    if ui is None:
+        print("emu> ", end="", flush=True)
+    else:
+        ui.set_input("")
     while not emulator.stop_event.is_set():
         if not msvcrt.kbhit():
             time.sleep(0.05)
@@ -368,48 +448,87 @@ def read_console_line(emulator: ScaleEmulator) -> str | None:
 
         char = msvcrt.getwch()
         if char == "\x03":
-            print()
             return None
         if char in ("\r", "\n"):
-            print()
-            return "".join(buffer)
+            line = "".join(buffer)
+            if ui is None:
+                print()
+            else:
+                ui.write(f"emu> {line}")
+                ui.set_input("")
+            return line
         if char == "\x08":
             if buffer:
                 buffer.pop()
-                print("\b \b", end="", flush=True)
+                if ui is None:
+                    print("\b \b", end="", flush=True)
+                else:
+                    ui.set_input("".join(buffer))
             continue
         if char in ("\x00", "\xe0"):
             key = msvcrt.getwch()
             if key == "H":
-                print()
+                if ui is None:
+                    print()
                 adjust_weight_from_key(emulator, 1)
-                print(f"emu> {''.join(buffer)}", end="", flush=True)
+                if ui is None:
+                    print(f"emu> {''.join(buffer)}", end="", flush=True)
+                else:
+                    ui.set_input("".join(buffer))
             elif key == "P":
-                print()
+                if ui is None:
+                    print()
                 adjust_weight_from_key(emulator, -1)
-                print(f"emu> {''.join(buffer)}", end="", flush=True)
+                if ui is None:
+                    print(f"emu> {''.join(buffer)}", end="", flush=True)
+                else:
+                    ui.set_input("".join(buffer))
             continue
         if char == "+" and not buffer:
-            print()
+            if ui is None:
+                print()
             adjust_weight_from_key(emulator, 1)
-            print("emu> ", end="", flush=True)
+            if ui is None:
+                print("emu> ", end="", flush=True)
+            else:
+                ui.set_input("")
             continue
         if char == "-" and not buffer:
-            print()
+            if ui is None:
+                print()
             adjust_weight_from_key(emulator, -1)
-            print("emu> ", end="", flush=True)
+            if ui is None:
+                print("emu> ", end="", flush=True)
+            else:
+                ui.set_input("")
             continue
         if char.isprintable():
             buffer.append(char)
-            print(char, end="", flush=True)
+            if ui is None:
+                print(char, end="", flush=True)
+            else:
+                ui.set_input("".join(buffer))
 
     return None
 
 
 def run_console(emulator: ScaleEmulator) -> None:
+    use_fixed_ui = msvcrt is not None and sys.stdin.isatty() and sys.stdout.isatty()
+    if use_fixed_ui:
+        with FixedConsole(HELP_LINES) as ui:
+            emulator.log = ui.write
+            ui.write("Console ready.")
+            run_console_loop(emulator, ui)
+        emulator.log = print
+        return
+
     print_help()
+    run_console_loop(emulator, None)
+
+
+def run_console_loop(emulator: ScaleEmulator, ui: FixedConsole | None) -> None:
     while not emulator.stop_event.is_set():
-        line = read_console_line(emulator)
+        line = read_console_line(emulator, ui)
         if line is None:
             break
 
@@ -429,34 +548,34 @@ def run_console(emulator: ScaleEmulator) -> None:
             elif command == "-":
                 adjust_weight_from_key(emulator, -1)
             elif command in {"h", "help", "?"}:
-                print_help()
+                print_help(emulator.log)
             elif command in {"w", "weight"}:
                 if not argument:
-                    print("Usage: w <value>")
+                    emulator.log("Usage: w <value>")
                     continue
                 emulator.state.set_weight(float(argument))
                 print_status(emulator.state, emulator.connection, emulator)
             elif command in {"u", "unit"}:
                 if not argument:
-                    print("Usage: u <unit>")
+                    emulator.log("Usage: u <unit>")
                     continue
                 emulator.state.set_unit(argument)
                 print_status(emulator.state, emulator.connection, emulator)
             elif command in {"d", "decimals"}:
                 if not argument:
-                    print("Usage: d <0-5>")
+                    emulator.log("Usage: d <0-5>")
                     continue
                 emulator.state.set_decimals(int(argument))
                 print_status(emulator.state, emulator.connection, emulator)
             elif command in {"step", "increment", "inc"}:
                 if not argument:
-                    print("Usage: step <value>")
+                    emulator.log("Usage: step <value>")
                     continue
                 emulator.state.set_step(float(argument))
                 print_status(emulator.state, emulator.connection, emulator)
             elif command in {"j", "jitter"}:
                 if not argument:
-                    print("Usage: j <value>")
+                    emulator.log("Usage: j <value>")
                     continue
                 emulator.state.set_jitter(float(argument))
                 print_status(emulator.state, emulator.connection, emulator)
@@ -468,9 +587,9 @@ def run_console(emulator: ScaleEmulator) -> None:
             elif command == "status":
                 print_status(emulator.state, emulator.connection, emulator)
             else:
-                print(f"Unknown console command {command!r}. Type help for commands.")
+                emulator.log(f"Unknown console command {command!r}. Type help for commands.")
         except ValueError as exc:
-            print(exc)
+            emulator.log(str(exc))
 
 
 def main() -> int:

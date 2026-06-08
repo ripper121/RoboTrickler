@@ -119,10 +119,12 @@ bool serialReq(String req, bool flush)
     serialFlush();
   }
 
+  #if DEBUG
   if (strcmp(config.scale_protocol, "CUSTOM") == 0)
   {
     updateDisplayLog("TX:" + serialBytesToDisplay(bytes, byteCount) + " / " + serialBytesToHex(bytes, byteCount), false);
   }
+  #endif
 
   Serial1.write(bytes, byteCount);
 
@@ -242,10 +244,12 @@ void readWeight()
     size_t bytesRead = Serial1.readBytesUntil(0x0A, buff, sizeof(buff) - 1);
     buff[bytesRead] = '\0';
 
+    #if DEBUG
     if (strcmp(config.scale_protocol, "CUSTOM") == 0)
     {
       updateDisplayLog("RX:" + String(buff), false);
     }
+    #endif
 
     DEBUG_PRINTLN(buff);
 
