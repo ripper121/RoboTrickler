@@ -1,7 +1,7 @@
 
 1. **Check for an existing ESP-IDF solution before writing new code**  
    Review the example code of these paths first:
-   - `C:\Users\ripper121\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.8\libraries`
+   - `C:\Users\ripper121\AppData\Local\Arduino15\packages\esp32\hardware\esp32\VERSION\libraries` look yourself for the Espressif ESP32 core VERSION
    - `C:\Users\ripper121\Documents\Arduino\libraries`
 
       Reuse existing solutions when possible. If no suitable solution exists, implement new code in the style and structure of the examples.
@@ -19,7 +19,7 @@ Use this order for all relevant implementation work:
 
 ## Compile check
 
-This workspace uses Arduino IDE 1.8.x with Espressif ESP32 core `3.3.8`.
+This workspace uses Arduino IDE 1.8.x with Espressif ESP32 core `3.3.9`.
 
 Preferred command-line verify from this folder:
 
@@ -44,3 +44,22 @@ New-Item -ItemType Directory -Force -Path $build | Out-Null
 ```
 
 The same board settings are mirrored in `.vscode/arduino.json`.
+
+
+
+Legacy Arduino IDE 1.8.19
+
+Boards-Manager esp32 - Espressif Systems version 3.3.9
+
+Tools
+Board: "ESP32 Dev Module"
+Upload Speed: "921600"
+CPU Frequency: "240MHz (WiFi/BT)"
+Flash Frequency: "80MHz"
+Flash Mode: "DIO"
+Flash Size: "4MB (32Mb)"
+Partition Scheme: "Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)"
+Core Debug Level: "None"
+PSRAM: "Disabled"
+Arduino Runs On: "Core 1"
+Events Run On: "Core 0"
