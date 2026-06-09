@@ -43,6 +43,16 @@ static bool isCalibrationProfileFile(const char *filename)
          normalized.endsWith("/calibrate.txt");
 }
 
+static String sdFilenameError(const char *key, const char *filename)
+{
+  return String(langText(key)) + filename;
+}
+
+static String sdProfileEntryError(const char *key, const char *filename, int itemNumber)
+{
+  return String(langText(key)) + filename + langText("err_entry") + String(itemNumber);
+}
+
 static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char *filename, Config &config, bool showErrors, bool allowCalibrationDefaults)
 {
   bool hasRequiredFields = hasRequiredProfileFields(profileEntry);
@@ -50,7 +60,7 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   {
     if (showErrors)
     {
-      setSdReadError(String("Incomplete profile entry:\n") + filename + "\nEntry: " + String(itemNumber) + "\nRequired: diffWeight, actuator, steps, speed, measurements");
+      setSdReadError(sdProfileEntryError("err_incomplete_profile_entry", filename, itemNumber) + langText("err_required_profile_entry"));
       DEBUG_PRINT("Incomplete profile entry: ");
       DEBUG_PRINTLN(itemNumber);
     }
@@ -66,7 +76,7 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   {
     if (showErrors)
     {
-      setSdReadError(String("Invalid profile values:\n") + filename + "\nEntry: " + String(itemNumber));
+      setSdReadError(sdProfileEntryError("err_invalid_profile_values", filename, itemNumber));
       DEBUG_PRINT("Invalid profile values in entry: ");
       DEBUG_PRINTLN(itemNumber);
     }
@@ -115,7 +125,7 @@ static bool loadProfileEntries(JsonObject doc, const char *filename, Config &con
 
     if (showErrors)
     {
-      setSdReadError(String("Calibration profile is incomplete:\n") + filename + "\nRequired: actuator, steps, speed");
+      setSdReadError(sdFilenameError("err_calibration_profile_incomplete", filename) + langText("err_required_calibration_profile"));
       DEBUG_PRINTLN("Calibration profile is incomplete");
     }
     return false;
@@ -123,7 +133,7 @@ static bool loadProfileEntries(JsonObject doc, const char *filename, Config &con
 
   if (showErrors)
   {
-    setSdReadError(String("Profile has no rs232TrickleMap:\n") + filename);
+    setSdReadError(sdFilenameError("err_profile_missing_map", filename));
     DEBUG_PRINTLN("Profile has no rs232TrickleMap");
   }
   return false;
@@ -187,7 +197,7 @@ bool readProfile(const char *filename, Config &config)
 
   if (!SD.exists(filename))
   {
-    setSdReadError(String("Profile file not found:\n") + filename);
+    setSdReadError(sdFilenameError("err_profile_file_not_found", filename));
     DEBUG_PRINTLN("Profile not found:");
     DEBUG_PRINTLN(filename);
     return false;
@@ -200,7 +210,7 @@ bool readProfile(const char *filename, Config &config)
   File file = SD.open(filename);
   if (!file)
   {
-    setSdReadError(String("Could not open profile file:\n") + filename);
+    setSdReadError(sdFilenameError("err_could_not_open_profile_file", filename));
     DEBUG_PRINT("Failed to open profile: ");
     DEBUG_PRINTLN(filename);
     return false;
@@ -216,8 +226,8 @@ bool readProfile(const char *filename, Config &config)
 
   if (error || !doc.is<JsonObject>())
   {
-    String errorText = error ? String(error.c_str()) : String("Root is not a JSON object");
-    setSdReadError(String("Profile JSON parse failed:\n") + filename + "\n" + errorText);
+    String errorText = error ? String(error.c_str()) : String(langText("err_root_not_json"));
+    setSdReadError(sdFilenameError("err_profile_json_parse_failed", filename) + "\n" + errorText);
     DEBUG_PRINT("deserializeJson() failed on : ");
     DEBUG_PRINT(filename);
     DEBUG_PRINT(" /");
@@ -291,7 +301,7 @@ bool readProfile(const char *filename, Config &config)
   {
     if (getSdReadError().length() <= 0)
     {
-      setSdReadError(String("Profile has no entries:\n") + filename);
+      setSdReadError(sdFilenameError("err_profile_has_no_entries", filename));
       DEBUG_PRINTLN("Profile has no entries");
     }
     file.close();
@@ -323,7 +333,7 @@ bool loadConfiguration(const char *filename, Config &config)
   File file = SD.open(filename);
   if (!file)
   {
-    setSdReadError(String("Could not open config file:\n") + filename);
+    setSdReadError(sdFilenameError("err_could_not_open_config_file", filename));
     DEBUG_PRINT("Failed to open config: ");
     DEBUG_PRINTLN(filename);
     return 0;
@@ -339,8 +349,8 @@ bool loadConfiguration(const char *filename, Config &config)
 
   if (error || !doc.is<JsonObject>())
   {
-    String errorText = error ? String(error.c_str()) : String("Root is not a JSON object");
-    setSdReadError(String("Config JSON parse failed:\n") + filename + "\n" + errorText);
+    String errorText = error ? String(error.c_str()) : String(langText("err_root_not_json"));
+    setSdReadError(sdFilenameError("err_config_json_parse_failed", filename) + "\n" + errorText);
     DEBUG_PRINT("deserializeJson() failed on config.txt: ");
     DEBUG_PRINTLN(errorText);
     file.close();
@@ -381,7 +391,7 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
   File file = SD.open(filename.c_str());
   if (!file)
   {
-    setSdReadError(String("Could not open profile file:\n") + filename);
+    setSdReadError(sdFilenameError("err_could_not_open_profile_file", filename.c_str()));
     DEBUG_PRINT("Failed to open profile: ");
     DEBUG_PRINTLN(filename);
     return false;
@@ -392,8 +402,8 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
   file.close();
   if (error || !doc.is<JsonObject>())
   {
-    String errorText = error ? String(error.c_str()) : String("Root is not a JSON object");
-    setSdReadError(String("Profile JSON parse failed:\n") + filename + "\n" + errorText);
+    String errorText = error ? String(error.c_str()) : String(langText("err_root_not_json"));
+    setSdReadError(sdFilenameError("err_profile_json_parse_failed", filename.c_str()) + "\n" + errorText);
     DEBUG_PRINT("deserializeJson() failed on profile target save: ");
     DEBUG_PRINTLN(errorText);
     return false;
@@ -411,7 +421,7 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
   file = SD.open(tempFilename.c_str(), FILE_WRITE);
   if (!file)
   {
-    setSdReadError(String("Could not write profile file:\n") + tempFilename);
+    setSdReadError(sdFilenameError("err_could_not_write_profile_file", tempFilename.c_str()));
     DEBUG_PRINT("Failed to create profile temp file: ");
     DEBUG_PRINTLN(tempFilename);
     return false;
@@ -422,7 +432,7 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
   if (!written)
   {
     SD.remove(tempFilename.c_str());
-    setSdReadError(String("Could not write profile file:\n") + filename);
+    setSdReadError(sdFilenameError("err_could_not_write_profile_file", filename.c_str()));
     DEBUG_PRINTLN("Failed to write profile target weight");
     return false;
   }
@@ -431,7 +441,7 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
   if (!SD.rename(tempFilename.c_str(), filename.c_str()))
   {
     SD.remove(tempFilename.c_str());
-    setSdReadError(String("Could not replace profile file:\n") + filename);
+    setSdReadError(sdFilenameError("err_could_not_replace_profile_file", filename.c_str()));
     DEBUG_PRINT("Failed to replace profile file: ");
     DEBUG_PRINTLN(filename);
     return false;

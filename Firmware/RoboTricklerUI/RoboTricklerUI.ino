@@ -20,7 +20,7 @@
 /*
 Legacy Arduino IDE 1.8.19
 
-Boards-Manager esp32 - Espressif Systems version 3.3.9
+Boards-Manager esp32 - Espressif Systems version 3.3.10
 
 Tools
 Board: "ESP32 Dev Module"
@@ -427,7 +427,7 @@ void loop()
           if (config.profile_trickleCounter && weightWithinTolerance)
           {
             trickleCounter++;
-            updateDisplayLog(String(langText("status_done")) + String(trickleCounter), true);
+            updateDisplayLog(String(langText("status_done")) + langText("status_count") + String(trickleCounter), true);
           }
           else
           {

@@ -166,25 +166,30 @@
          container.innerHTML = ''; // Clear existing content
 
          if (!Array.isArray(jsonData.rs232TrickleMap)) {
-            addObjectFieldset(container, 'Calibration', 'calibration', jsonData, calibrationProperties);
+            addObjectFieldset(container, translatedProfileText('calibration', 'Calibration'), 'calibration', jsonData, calibrationProperties);
             document.getElementById("profileContainer").style.display = "block";
             return;
          }
 
-         addObjectFieldset(container, 'General', 'general', jsonData.general, generalProperties);
+         addObjectFieldset(container, translatedProfileText('general', 'General'), 'general', jsonData.general, generalProperties);
 
          var actuatorFieldset = document.createElement('fieldset');
          container.appendChild(actuatorFieldset);
          var actuatorLegend = document.createElement('legend');
-         actuatorLegend.textContent = 'Actuator';
+         actuatorLegend.textContent = translatedProfileText('actuator', 'Actuator');
          actuatorFieldset.appendChild(actuatorLegend);
-         addObjectFieldset(actuatorFieldset, 'Stepper 1', 'actuator.stepper1', jsonData.actuator.stepper1, stepperProperties);
-         addObjectFieldset(actuatorFieldset, 'Stepper 2', 'actuator.stepper2', jsonData.actuator.stepper2, stepperProperties);
+         addObjectFieldset(actuatorFieldset, translatedProfileText('stepper', 'Stepper {number}', 1), 'actuator.stepper1', jsonData.actuator.stepper1, stepperProperties);
+         addObjectFieldset(actuatorFieldset, translatedProfileText('stepper', 'Stepper {number}', 2), 'actuator.stepper2', jsonData.actuator.stepper2, stepperProperties);
 
          jsonData.rs232TrickleMap.forEach(function (entry, index) {
-            addObjectFieldset(container, 'Profile-Step ' + (index + 1), 'rs232TrickleMap.' + index, entry, profileStepProperties);
+            addObjectFieldset(container, translatedProfileText('profileStep', 'Profile-Step {number}', index + 1), 'rs232TrickleMap.' + index, entry, profileStepProperties);
          });
          document.getElementById("profileContainer").style.display = "block";
+      }
+
+      function translatedProfileText(key, fallback, number) {
+         var text = window.rtT ? rtT('profileEditor.' + key, fallback) : fallback;
+         return text.replace('{number}', number);
       }
 
       function addObjectFieldset(parent, legendText, path, dataObject, properties) {

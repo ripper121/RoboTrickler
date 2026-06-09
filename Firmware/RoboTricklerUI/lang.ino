@@ -70,6 +70,14 @@ static const char *languageFallback(const char *key)
     return "No SD card attached!\n";
   if (strcmp(key, "msg_config_default") == 0)
     return "Default Config generated.";
+  if (strcmp(key, "msg_profile_corrupted") == 0)
+    return "Profile Corrupted / Not Found:\n\n";
+  if (strcmp(key, "msg_calibration_profile_loaded") == 0)
+    return "\n\nCalibration Profile Loaded.";
+  if (strcmp(key, "msg_unknown_config_read_error") == 0)
+    return "Unknown config read error";
+  if (strcmp(key, "msg_config_corrupted") == 0)
+    return "Config File Corrupted / Not Found!\n\n";
   if (strcmp(key, "msg_over_trickle") == 0)
     return "!Over trickle!\n!Check weight!";
   if (strcmp(key, "msg_create_profile_prompt") == 0)
@@ -160,6 +168,38 @@ static const char *languageFallback(const char *key)
     return "Update end failed: ";
   if (strcmp(key, "status_update_unexpected") == 0)
     return "Update Failed Unexpectedly (likely broken connection)";
+  if (strcmp(key, "err_incomplete_profile_entry") == 0)
+    return "Incomplete profile entry:\n";
+  if (strcmp(key, "err_entry") == 0)
+    return "\nEntry: ";
+  if (strcmp(key, "err_required_profile_entry") == 0)
+    return "\nRequired: diffWeight, actuator, steps, speed, measurements";
+  if (strcmp(key, "err_invalid_profile_values") == 0)
+    return "Invalid profile values:\n";
+  if (strcmp(key, "err_calibration_profile_incomplete") == 0)
+    return "Calibration profile is incomplete:\n";
+  if (strcmp(key, "err_required_calibration_profile") == 0)
+    return "\nRequired: actuator, steps, speed";
+  if (strcmp(key, "err_profile_missing_map") == 0)
+    return "Profile has no rs232TrickleMap:\n";
+  if (strcmp(key, "err_profile_file_not_found") == 0)
+    return "Profile file not found:\n";
+  if (strcmp(key, "err_could_not_open_profile_file") == 0)
+    return "Could not open profile file:\n";
+  if (strcmp(key, "err_root_not_json") == 0)
+    return "Root is not a JSON object";
+  if (strcmp(key, "err_profile_json_parse_failed") == 0)
+    return "Profile JSON parse failed:\n";
+  if (strcmp(key, "err_profile_has_no_entries") == 0)
+    return "Profile has no entries:\n";
+  if (strcmp(key, "err_could_not_open_config_file") == 0)
+    return "Could not open config file:\n";
+  if (strcmp(key, "err_config_json_parse_failed") == 0)
+    return "Config JSON parse failed:\n";
+  if (strcmp(key, "err_could_not_write_profile_file") == 0)
+    return "Could not write profile file:\n";
+  if (strcmp(key, "err_could_not_replace_profile_file") == 0)
+    return "Could not replace profile file:\n";
   return key;
 }
 

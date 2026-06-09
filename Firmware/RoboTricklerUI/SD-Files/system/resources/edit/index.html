@@ -179,6 +179,59 @@
     }
   </style>
   <script>
+    function textFromPath(data, path) {
+      return path.split('.').reduce(function (value, key) {
+        return value && value[key] !== undefined ? value[key] : undefined;
+      }, data);
+    }
+
+    window.rtLang = {};
+    window.rtT = function (path, fallback) {
+      var value = textFromPath(window.rtLang, path);
+      return value !== undefined ? value : fallback;
+    };
+
+    function loadEditorLanguage() {
+      return fetch('/getLanguage')
+        .then(function (response) {
+          return response.ok ? response.text() : 'en';
+        })
+        .catch(function () {
+          return 'en';
+        })
+        .then(function (language) {
+          language = (language || 'en').trim() || 'en';
+          return fetch('/system/lang/' + language + '.json')
+            .catch(function () {
+              return fetch('/system/lang/en.json');
+            });
+        })
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('language not found');
+          }
+          return response.json();
+        })
+        .then(function (data) {
+          document.documentElement.lang = data.language || 'en';
+          window.rtLang = data.web || {};
+        })
+        .catch(function () {
+          window.rtLang = {};
+        });
+    }
+
+    function setFileEditorText(node, key, fallback) {
+      node.textContent = rtT('fileEditor.' + key, fallback);
+    }
+
+    function setFileEditorMenuText(node, key, fallback) {
+      node.textContent = '';
+      var span = document.createElement('span');
+      span.textContent = rtT('fileEditor.' + key, fallback);
+      node.appendChild(span);
+    }
+
     function createFileUploader(element, tree, editor) {
       var xmlHttp;
       var input = document.createElement("input");
@@ -193,19 +246,19 @@
       path.defaultValue = "/";
       document.getElementById(element).appendChild(path);
       var button = document.createElement("button");
-      button.innerHTML = 'Upload';
+      setFileEditorText(button, 'upload', 'Upload');
       document.getElementById(element).appendChild(button);
       var mkdir = document.createElement("button");
-      mkdir.innerHTML = 'New Dir';
+      setFileEditorText(mkdir, 'newDir', 'New Dir');
       document.getElementById(element).appendChild(mkdir);
       var mkfile = document.createElement("button");
-      mkfile.innerHTML = 'New File';
+      setFileEditorText(mkfile, 'newFile', 'New File');
       document.getElementById(element).appendChild(mkfile);
       var savefile = document.createElement("button");
-      savefile.innerHTML = 'Save';
+      setFileEditorText(savefile, 'save', 'Save');
       document.getElementById(element).appendChild(savefile);
       var reboot = document.createElement("button");
-      reboot.innerHTML = 'Reboot';
+      setFileEditorText(reboot, 'reboot', 'Reboot');
       document.getElementById(element).appendChild(reboot);
 
       function httpPostProcessRequest() {
@@ -235,7 +288,7 @@
         editor.execCommand('saveCommand');
       };
       reboot.onclick = function (e) {
-        if (confirm("Reboot the Robo-Trickler now?")) {
+        if (confirm(rtT('fileEditor.rebootConfirm', 'Reboot the Robo-Trickler now?'))) {
           window.location.href = "/reboot";
         }
       };
@@ -306,14 +359,14 @@
         var expnd = document.createElement("li");
         list.appendChild(expnd);
         if (isChecked) {
-          expnd.innerHTML = "<span>Collapse</span>";
+          setFileEditorMenuText(expnd, 'collapse', 'Collapse');
           expnd.onclick = function (e) {
             document.getElementById(path).checked = false;
             if (document.body.getElementsByClassName('contextMenu').length > 0) document.body.removeChild(el);
           };
           var refrsh = document.createElement("li");
           list.appendChild(refrsh);
-          refrsh.innerHTML = "<span>Refresh</span>";
+          setFileEditorMenuText(refrsh, 'refresh', 'Refresh');
           refrsh.onclick = function (e) {
             var leaf = document.getElementById(path).parentNode;
             if (leaf.childNodes.length == 3) leaf.removeChild(leaf.childNodes[2]);
@@ -321,7 +374,7 @@
             if (document.body.getElementsByClassName('contextMenu').length > 0) document.body.removeChild(el);
           };
         } else {
-          expnd.innerHTML = "<span>Expand</span>";
+          setFileEditorMenuText(expnd, 'expand', 'Expand');
           expnd.onclick = function (e) {
             document.getElementById(path).checked = true;
             var leaf = document.getElementById(path).parentNode;
@@ -332,7 +385,7 @@
         }
         var upload = document.createElement("li");
         list.appendChild(upload);
-        upload.innerHTML = "<span>Upload</span>";
+        setFileEditorMenuText(upload, 'upload', 'Upload');
         upload.onclick = function (e) {
           var pathEl = document.getElementById("upload-path");
           if (pathEl) {
@@ -344,7 +397,7 @@
         };
         var delFile = document.createElement("li");
         list.appendChild(delFile);
-        delFile.innerHTML = "<span>Delete</span>";
+        setFileEditorMenuText(delFile, 'delete', 'Delete');
         delFile.onclick = function (e) {
           httpDelete(path);
           if (document.body.getElementsByClassName('contextMenu').length > 0) document.body.removeChild(el);
@@ -357,13 +410,13 @@
         var action = document.createElement("li");
         list.appendChild(action);
         if (isTextFile(path)) {
-          action.innerHTML = "<span>Edit</span>";
+          setFileEditorMenuText(action, 'edit', 'Edit');
           action.onclick = function (e) {
             editor.loadUrl(path);
             if (document.body.getElementsByClassName('contextMenu').length > 0) document.body.removeChild(el);
           };
         } else if (isImageFile(path)) {
-          action.innerHTML = "<span>Preview</span>";
+          setFileEditorMenuText(action, 'preview', 'Preview');
           action.onclick = function (e) {
             loadPreview(path);
             if (document.body.getElementsByClassName('contextMenu').length > 0) document.body.removeChild(el);
@@ -371,14 +424,14 @@
         }
         var download = document.createElement("li");
         list.appendChild(download);
-        download.innerHTML = "<span>Download</span>";
+        setFileEditorMenuText(download, 'download', 'Download');
         download.onclick = function (e) {
           loadDownload(path);
           if (document.body.getElementsByClassName('contextMenu').length > 0) document.body.removeChild(el);
         };
         var delFile = document.createElement("li");
         list.appendChild(delFile);
-        delFile.innerHTML = "<span>Delete</span>";
+        setFileEditorMenuText(delFile, 'delete', 'Delete');
         delFile.onclick = function (e) {
           httpDelete(path);
           if (document.body.getElementsByClassName('contextMenu').length > 0) document.body.removeChild(el);
@@ -624,7 +677,7 @@
       function httpPostProcessRequest() {
         if (xmlHttp.readyState == 4) {
           if (xmlHttp.status == 200)
-            alert("Saved!\nPlease reboot the Robo-Trickler to load the new Profile / Config.");
+            alert(rtT('alerts.fileSaved', 'Saved!\nPlease reboot the Robo-Trickler to load the new Profile / Config.'));
           else
             alert("ERROR[" + xmlHttp.status + "]: " + xmlHttp.responseText);
         }
@@ -696,11 +749,13 @@
       return editor;
     }
     function onBodyLoad() {
-      var vars = {};
-      var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) { vars[key] = value; });
-      var editor = createEditor("editor", vars.file, vars.lang, vars.theme);
-      var tree = createTree("tree", editor);
-      createFileUploader("uploader", tree, editor);
+      loadEditorLanguage().then(function () {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) { vars[key] = value; });
+        var editor = createEditor("editor", vars.file, vars.lang, vars.theme);
+        var tree = createTree("tree", editor);
+        createFileUploader("uploader", tree, editor);
+      });
     };
   </script>
   <script src="/system/resources/src/ace.js" type="text/javascript" charset="utf-8"></script>

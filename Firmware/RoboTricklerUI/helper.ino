@@ -88,14 +88,14 @@ void disableTouchGestures()
 void corruptProfile(String profile_filename)
 {
     String readError = getSdReadError();
-    String message = String("Profile Corrupted / Not Found:\n\n") + profile_filename;
+    String message = String(langText("msg_profile_corrupted")) + profile_filename;
     if (readError.length() > 0)
     {
         updateDisplayLog(readError);
         message += "\n\n";
         message += readError;
     }
-    message += "\n\nCalibration Profile Loaded.";
+    message += langText("msg_calibration_profile_loaded");
 
     // Rename file to indicate corruption
     if (SD.exists(profile_filename))
@@ -312,7 +312,7 @@ void initSetup()
         String readError = getSdReadError();
         if (readError.length() <= 0)
         {
-            readError = "Unknown config read error";
+            readError = langText("msg_unknown_config_read_error");
         }
         updateDisplayLog(readError);
 
@@ -320,7 +320,7 @@ void initSetup()
         saveConfiguration("/config.txt", config);
         delay(100);
 
-        String message = String("Config File Corrupted / Not Found!\n\n") + readError + "\n\n" + langText("msg_config_default");
+        String message = String(langText("msg_config_corrupted")) + readError + "\n\n" + langText("msg_config_default");
         restart_now = true;
         messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
         return;
