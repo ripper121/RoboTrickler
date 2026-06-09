@@ -24,7 +24,7 @@ Boards-Manager esp32 - Espressif Systems version 3.3.10
 
 Tools
 Board: "ESP32 Dev Module"
-Upload Speed: "921600"
+Upload Speed: "115200"
 CPU Frequency: "240MHz (WiFi/BT)"
 Flash Frequency: "80MHz"
 Flash Mode: "DIO"

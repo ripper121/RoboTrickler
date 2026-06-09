@@ -748,6 +748,7 @@ void registerWebServerRoutes()
   server.on("/setTarget", handleSetTarget);
   server.on("/system/start", handleStart);
   server.on("/system/stop", handleStop);
+  server.on("/screenshot", HTTP_GET, handleScreenshot);
   server.on("/fwupdate", HTTP_GET, []()
             {
             server.sendHeader("Connection", "close");
