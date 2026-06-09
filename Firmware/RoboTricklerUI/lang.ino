@@ -247,9 +247,7 @@ bool loadLanguage()
 
   String candidates[] = {
       "/lang/" + language + ".json",
-      "/system/lang/" + language + ".json",
-      "/lang/en.json",
-      "/system/lang/en.json"};
+      "/lang/en.json"};
 
   String filename = "";
   for (int i = 0; i < (int)(sizeof(candidates) / sizeof(candidates[0])); i++)

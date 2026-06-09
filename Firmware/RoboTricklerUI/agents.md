@@ -1,10 +1,11 @@
 
 1. **Check for an existing ESP-IDF solution before writing new code**  
    Review the example code of these paths first:
-   - `C:\Users\ripper121\AppData\Local\Arduino15\packages\esp32\hardware\esp32\VERSION\libraries` look yourself for the Espressif ESP32 core VERSION
+   - `C:\Users\ripper121\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.10\libraries` look yourself for the Espressif ESP32 core VERSION
    - `C:\Users\ripper121\Documents\Arduino\libraries`
 
       Reuse existing solutions when possible. If no suitable solution exists, implement new code in the style and structure of the examples.
+
 ## Standard workflow
 
 Use this order for all relevant implementation work:
@@ -19,7 +20,7 @@ Use this order for all relevant implementation work:
 
 ## Compile check
 
-This workspace uses Arduino IDE 1.8.x with Espressif ESP32 core `3.3.9`.
+This workspace uses Arduino IDE 1.8.x with Espressif ESP32 core `3.3.10`.
 
 Preferred command-line verify from this folder:
 
@@ -49,7 +50,7 @@ The same board settings are mirrored in `.vscode/arduino.json`.
 
 Legacy Arduino IDE 1.8.19
 
-Boards-Manager esp32 - Espressif Systems version 3.3.9
+Boards-Manager esp32 - Espressif Systems version 3.3.10
 
 Tools
 Board: "ESP32 Dev Module"

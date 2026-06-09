@@ -683,8 +683,6 @@ void getProfileList()
 {
   profileListCount = 0;
 
-  updateDisplayLog(langText("status_search_profiles"));
-
   byte profileCounter = 0;
   byte invalidProfileCounter = 0;
   String invalidProfiles = "";
@@ -697,6 +695,9 @@ void getProfileList()
   profileListCount = profileCounter;
   DEBUG_PRINT("  profileListCount: ");
   DEBUG_PRINTLN(profileListCount);
+
+  updateDisplayLog(String(langText("status_search_profiles")) + " " + String(profileListCount) + " / 30");
+
   for (int i = 0; i < profileListCount; i++)
   {
     DEBUG_PRINTLN(profileListBuff[i]);

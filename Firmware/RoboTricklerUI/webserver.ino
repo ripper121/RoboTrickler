@@ -449,23 +449,6 @@ void handleStop()
   server.send(200, "text/html", "<h3>Stopped...</h3><br><button onClick='javascript:history.back()'>Back</button>");
 }
 
-void handleScreenshot()
-{
-  String filename = saveScreenshotToSd();
-  if (filename.length() == 0)
-  {
-    String error = getScreenshotError();
-    if (error.length() == 0)
-    {
-      error = "Screenshot failed";
-    }
-    server.send(500, "text/plain", error);
-    return;
-  }
-
-  server.send(200, "text/plain", filename);
-}
-
 IPAddress stringToIPAddress(const String &ipAddressString)
 {
   IPAddress ipAddress;
@@ -765,7 +748,6 @@ void registerWebServerRoutes()
   server.on("/setTarget", handleSetTarget);
   server.on("/system/start", handleStart);
   server.on("/system/stop", handleStop);
-  server.on("/screenshot", HTTP_GET, handleScreenshot);
   server.on("/fwupdate", HTTP_GET, []()
             {
             server.sendHeader("Connection", "close");
@@ -903,10 +885,9 @@ bool startWebServerServices()
     MDNS.addService("http", "tcp", 80);
     updateDisplayLog(String(langText("status_open_browser_prefix")) + host + langText("status_open_browser_suffix"));
   }
-  else
-  {
-    updateDisplayLog("WIFI:" + WiFi.localIP().toString());
-  }
+
+  updateDisplayLog("IP:" + WiFi.localIP().toString());
+
 
   if (config.fwCheck)
   {

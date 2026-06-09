@@ -434,7 +434,7 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 * `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden.
 * `scale.baud`: Baudrate der Waage, meistens `9600`.
 * `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil.
-* `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Unterstützt werden JSON-Dateien in `/lang` und `/system/lang`, z. B. `de` oder `en`; falls keine Datei geladen werden kann, nutzt die Firmware eingebaute englische Fallback-Texte.
+* `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Unterstützt werden JSON-Dateien in `/lang`, z. B. `de` oder `en`; falls keine Datei geladen werden kann, nutzt die Firmware eingebaute englische Fallback-Texte. Webserver-Texte liegen getrennt in `/system/lang`.
 * `beeper`: `done` Beep wenn Trickle fertig, `button` Beep bei Touch betätigung, `both` beides aktiv oder `off` Beeper aus.
 * `trickleCounter`: aktiviert den dauerhaften Gesamtzaehler fuer fertige Trickles.
 * `trickleCount`: gespeicherter Stand des dauerhaften Gesamtzaehlers.
