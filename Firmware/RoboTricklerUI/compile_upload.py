@@ -16,6 +16,8 @@ from urllib import error, request
 
 SKETCH_DIR = Path(__file__).resolve().parent
 SKETCH_FILE = SKETCH_DIR / "RoboTricklerUI.ino"
+DEFAULT_BUILD_DIR = SKETCH_DIR.parent / "build"
+DEFAULT_BUILD_CACHE = Path(tempfile.gettempdir()) / "rtui-arduino-core-cache"
 DEFAULT_UPDATE_URL = "http://robo-trickler.local/update"
 DEFAULT_FQBN = (
     "esp32:esp32:esp32:"
@@ -55,7 +57,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--build-dir",
         type=Path,
-        help="Arduino build directory. Default: a fresh folder under the system temp directory.",
+        default=DEFAULT_BUILD_DIR,
+        help=f"Arduino build directory. Default: {DEFAULT_BUILD_DIR}",
+    )
+    parser.add_argument(
+        "--build-cache",
+        type=Path,
+        default=DEFAULT_BUILD_CACHE,
+        help=f"Arduino core build cache directory. Default: {DEFAULT_BUILD_CACHE}",
     )
     parser.add_argument(
         "--bin",
@@ -84,6 +93,11 @@ def parse_args() -> argparse.Namespace:
         default=600,
         help="Compile timeout in seconds. Default: 600",
     )
+    parser.add_argument(
+        "--jobs",
+        type=int,
+        help="Concurrent compiler jobs for arduino-builder. Default: builder auto-detect.",
+    )
     return parser.parse_args()
 
 
@@ -92,14 +106,16 @@ def require_path(path: Path, label: str) -> None:
         raise FileNotFoundError(f"{label} not found: {path}")
 
 
-def run_builder(build_dir: Path, compile_timeout: int) -> Path:
+def run_builder(build_dir: Path, build_cache: Path, compile_timeout: int, jobs: int | None) -> Path:
     require_path(ARDUINO_BUILDER, "arduino-builder")
     require_path(SKETCH_FILE, "sketch")
 
     build_dir.mkdir(parents=True, exist_ok=True)
+    build_cache.mkdir(parents=True, exist_ok=True)
     cmd = [
         str(ARDUINO_BUILDER),
         "-compile",
+        "-quiet=true",
         "-logger=machine",
         "-hardware",
         str(ARDUINO_HARDWARE),
@@ -120,12 +136,17 @@ def run_builder(build_dir: Path, compile_timeout: int) -> Path:
         "-ide-version=10819",
         "-build-path",
         str(build_dir),
+        "-build-cache",
+        str(build_cache),
         "-warnings=none",
         str(SKETCH_FILE),
     ]
+    if jobs is not None:
+        cmd[5:5] = ["-jobs", str(max(1, jobs))]
 
     print("Compiling firmware...")
     print(f"Build directory: {build_dir}")
+    print(f"Build cache: {build_cache}")
     proc = subprocess.Popen(cmd, cwd=SKETCH_DIR)
     started = time.monotonic()
     while proc.poll() is None:
@@ -200,9 +221,8 @@ def upload_firmware(url: str, bin_path: Path, timeout: int) -> None:
 
 def main() -> int:
     args = parse_args()
-    build_dir = args.build_dir
-    if build_dir is None:
-        build_dir = Path(tempfile.mkdtemp(prefix="rtui-build-upload-"))
+    build_dir = args.build_dir.resolve()
+    build_cache = args.build_cache.resolve()
 
     try:
         if args.bin:
@@ -210,7 +230,7 @@ def main() -> int:
         elif args.skip_compile:
             bin_path = find_firmware_bin(build_dir)
         else:
-            bin_path = run_builder(build_dir, args.compile_timeout)
+            bin_path = run_builder(build_dir, build_cache, args.compile_timeout, args.jobs)
 
         print(f"Firmware binary: {bin_path}")
         if args.compile_only:
