@@ -32,7 +32,7 @@ DEFAULT_CONFIGURATION = (
     "UploadSpeed=921600,"
     "LoopCore=1,"
     "EventsCore=0,"
-    "DebugLevel=error,"
+    "DebugLevel=debug,"
     "EraseFlash=all,"
     "ZigbeeMode=default"
 )
@@ -142,12 +142,12 @@ def force_debug_level_error(configuration: str) -> str:
     changed = False
     for index, part in enumerate(parts):
         if part.startswith("DebugLevel="):
-            parts[index] = "DebugLevel=error"
+            parts[index] = "DebugLevel=debug"
             changed = True
             break
 
     if not changed:
-        parts.append("DebugLevel=error")
+        parts.append("DebugLevel=debug")
 
     return ",".join(parts)
 
