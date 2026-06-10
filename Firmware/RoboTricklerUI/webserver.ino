@@ -367,6 +367,12 @@ void handleReboot()
   ESP.restart();
 }
 
+void handleDownloadSdFiles()
+{
+  bool success = downloadSdFilesTar();
+  server.send(success ? 200 : 500, "text/plain", success ? "OK" : "FAIL");
+}
+
 void handleGetWeight()
 {
   server.send(200, "text/plain", String(weight, 3));
@@ -739,6 +745,7 @@ void registerWebServerRoutes()
   server.on("/favicon.ico", handleNotFound);
   server.on("/fwlink", handleNotFound);
   server.on("/reboot", handleReboot);
+  server.on("/downloadSdFiles", HTTP_GET, handleDownloadSdFiles);
   server.on("/getWeight", handleGetWeight);
   server.on("/setProfile", handleSetProfile);
   server.on("/getProfile", handleGetProfile);

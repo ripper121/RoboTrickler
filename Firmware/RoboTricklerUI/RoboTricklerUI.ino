@@ -16,6 +16,8 @@
 #include <math.h>
 #define FW_VERSION "2.12"
 #define DEFAULT_FW_UPDATE_URL "http://strenuous.dev/roboTrickler/userTracker.php"
+#define DEFAULT_SD_FILES_TAR_URL "http://strenuous.dev/roboTrickler/SD-Files.tar"
+#define SD_FILES_TAR_PATH "/SD-Files.tar"
 
 /*
 Legacy Arduino IDE 1.8.19
@@ -46,7 +48,7 @@ Events Run On: "Core 0"
 #endif
 #include <TFT_eSPI.h>
 
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
