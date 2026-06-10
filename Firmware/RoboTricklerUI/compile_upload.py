@@ -75,6 +75,11 @@ def parse_args() -> argparse.Namespace:
         help="Compile with arduino-cli instead of the VS Code extension's legacy Arduino IDE variant.",
     )
     parser.add_argument(
+        "--error",
+        action="store_true",
+        help="Force ESP32 core debug level to Error for this compile.",
+    )
+    parser.add_argument(
         "--cli-path",
         type=Path,
         default=ARDUINO_CLI,
@@ -132,10 +137,13 @@ def resolve_build_dir(config: dict[str, str], override: Path | None) -> Path:
     return DEFAULT_BUILD_DIR.resolve()
 
 
-def build_descriptor(config: dict[str, str]) -> str:
+def build_descriptor(config: dict[str, str], force_error_debug_level: bool = False) -> str:
     board = config.get("board", DEFAULT_BOARD)
     configuration = config.get("configuration", DEFAULT_CONFIGURATION)
-    configuration = set_debug_level(configuration, read_sketch_debug_enabled())
+    if force_error_debug_level:
+        configuration = set_debug_level(configuration, "error")
+    else:
+        configuration = set_debug_level(configuration, "debug" if read_sketch_debug_enabled() else "none")
     return f"{board}:{configuration}" if configuration else board
 
 
@@ -150,8 +158,7 @@ def read_sketch_debug_enabled() -> bool:
     return True
 
 
-def set_debug_level(configuration: str, debug_enabled: bool) -> str:
-    debug_level = "debug" if debug_enabled else "none"
+def set_debug_level(configuration: str, debug_level: str) -> str:
     parts = [part for part in configuration.split(",") if part]
     changed = False
     for index, part in enumerate(parts):
@@ -308,7 +315,7 @@ def main() -> int:
         elif args.skip_compile:
             bin_path = find_firmware_bin(build_dir)
         else:
-            board_descriptor = build_descriptor(config)
+            board_descriptor = build_descriptor(config, args.error)
             if args.cli:
                 bin_path = run_cli_compile(args.cli_path.resolve(), build_dir, board_descriptor, args.compile_timeout)
             else:

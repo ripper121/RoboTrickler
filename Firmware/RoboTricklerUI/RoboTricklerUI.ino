@@ -360,6 +360,7 @@ void loop()
     printf("lv_disp_tcb stackHWM: %d / %d\n", (DISP_TASK_STACK - uxTaskGetStackHighWaterMark(lv_disp_tcb)), DISP_TASK_STACK);
     printf("loop stackHWM: %d / %d\n", (getArduinoLoopTaskStackSize() - uxTaskGetStackHighWaterMark(NULL)), getArduinoLoopTaskStackSize());
 #endif
+    maintainWifiConnection();
   }
 
   if (running)
@@ -555,6 +556,5 @@ void loop()
       readWeight();
     }
   }
-
-  maintainWifiConnection();
+  
 }

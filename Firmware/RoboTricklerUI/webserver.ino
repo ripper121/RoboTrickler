@@ -231,7 +231,7 @@ void deleteRecursive(String path)
       entry.close();
       SD.remove((char *)entryPath.c_str());
     }
-    yield();
+    delay(1);
   }
 
   SD.rmdir((char *)path.c_str());
