@@ -1,6 +1,9 @@
 String tempProfile = "";
 float tempTargetWeight = 0.0;
 extern int profileListCounter;
+bool profileDeleteConfirmPending = false;
+String profileDeleteName = "";
+String profileDeleteFilename = "";
 
 IRAM_ATTR void disp_task_init(void)
 {
@@ -80,6 +83,27 @@ void disableTouchGestures()
         lv_obj_clear_flag(tabViewContent, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_scroll_dir(tabViewContent, LV_DIR_NONE);
         lv_obj_set_scrollbar_mode(tabViewContent, LV_SCROLLBAR_MODE_OFF);
+        lvglUnlock();
+    }
+}
+
+void updateProfileDeleteButtonVisibility()
+{
+    if (ui_ButtonProfileDelete == NULL)
+    {
+        return;
+    }
+
+    if (lvglLock())
+    {
+        if (strcmp(config.profile, "calibrate") == 0)
+        {
+            lv_obj_add_flag(ui_ButtonProfileDelete, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+            lv_obj_clear_flag(ui_ButtonProfileDelete, LV_OBJ_FLAG_HIDDEN);
+        }
         lvglUnlock();
     }
 }
@@ -225,9 +249,115 @@ void setProfile(int num)
     DEBUG_PRINTLN(num);
 
     setLabelText(ui_LabelProfile, config.profile);
+    updateProfileDeleteButtonVisibility();
     setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
     infoText = String(langText("status_profile_ready")) + config.profile;
     updateDisplayLog(infoText, true);
+}
+
+int findProfileIndex(const char *profileName)
+{
+    for (int i = 0; i < profileListCount; i++)
+    {
+        if (profileListBuff[i] == profileName)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+bool deleteSelectedProfile()
+{
+    if (running)
+    {
+        messageBox("Stop trickler before deleting profile", &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
+        return false;
+    }
+
+    String profileName = config.profile;
+    if (profileName == "calibrate")
+    {
+        messageBox("Cannot delete calibrate profile", &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
+        return false;
+    }
+
+    String filename = profileFilename(profileName.c_str());
+    if (!SD.exists(filename.c_str()))
+    {
+        messageBox(String("Profile file not found: ") + filename, &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
+        getProfileList();
+        return false;
+    }
+
+    profileDeleteName = profileName;
+    profileDeleteFilename = filename;
+    profileDeleteConfirmPending = true;
+    showConfirmBox(String("Delete profile ") + profileName + "?", &lv_font_montserrat_14, lv_color_hex(0xFFFFFF));
+    return true;
+}
+
+void finishProfileDeleteConfirm(bool confirmed)
+{
+    if (!profileDeleteConfirmPending)
+    {
+        return;
+    }
+
+    String profileName = profileDeleteName;
+    String filename = profileDeleteFilename;
+    profileDeleteConfirmPending = false;
+    profileDeleteName = "";
+    profileDeleteFilename = "";
+
+    if (!confirmed)
+    {
+        return;
+    }
+
+    if (running)
+    {
+        messageBox("Stop trickler before deleting profile", &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
+        return;
+    }
+
+    if ((profileName.length() <= 0) || (profileName == "calibrate"))
+    {
+        messageBox("Cannot delete profile", &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
+        return;
+    }
+
+    if (!SD.exists(filename.c_str()))
+    {
+        messageBox(String("Profile file not found: ") + filename, &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
+        getProfileList();
+        return;
+    }
+
+    int calibrateIndex = findProfileIndex("calibrate");
+    if (calibrateIndex < 0)
+    {
+        messageBox("Cannot delete profile: calibrate profile missing", &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
+        return;
+    }
+
+    setProfile(calibrateIndex);
+    if (strcmp(config.profile, "calibrate") != 0)
+    {
+        messageBox("Cannot delete profile: failed to load calibrate", &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
+        return;
+    }
+
+    if (!SD.remove(filename.c_str()))
+    {
+        messageBox(String("Could not delete profile: ") + filename, &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
+        getProfileList();
+        return;
+    }
+
+    getProfileList();
+    updateProfileDeleteButtonVisibility();
+    messageBox(String("Profile deleted: ") + profileName, &lv_font_montserrat_14, lv_color_hex(0x00FF00), false);
 }
 
 void initSetup()
@@ -380,6 +510,7 @@ void initSetup()
     setLabelText(ui_LabelInfo, (String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
     setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
     setLabelText(ui_LabelProfile, config.profile);
+    updateProfileDeleteButtonVisibility();
 
     tempTargetWeight = config.targetWeight;
 

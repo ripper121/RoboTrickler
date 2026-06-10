@@ -44,6 +44,9 @@ lv_obj_t *ui_LabelInfo;
 lv_obj_t *ui_TabPageProfile;
 lv_obj_t *ui_PanelProfile;
 lv_obj_t *ui_LabelProfile;
+void ui_event_ButtonProfileDelete( lv_event_t * e);
+lv_obj_t *ui_ButtonProfileDelete;
+lv_obj_t *ui_LabelProfileDelete;
 void ui_event_ButtonProfilePrev( lv_event_t * e);
 lv_obj_t *ui_ButtonProfilePrev;
 lv_obj_t *ui_LabelProfilePrev;
@@ -117,6 +120,12 @@ void ui_event_ButtonProfilePrev( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
       prev_event_cb( e );
+}
+}
+void ui_event_ButtonProfileDelete( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      delete_event_cb( e );
 }
 }
 void ui_event_ButtonProfileNext( lv_event_t * e) {

@@ -87,6 +87,11 @@ void prev_event_cb(lv_event_t *e)
   setProfile(profileListCounter);
 }
 
+void delete_event_cb(lv_event_t *e)
+{
+  deleteSelectedProfile();
+}
+
 void next_event_cb(lv_event_t *e)
 {
   profileListCounter++;
@@ -97,9 +102,11 @@ void next_event_cb(lv_event_t *e)
 
 void message_event_cb(lv_event_t *e)
 {
+  bool confirmed = false;
   if (confirmBoxOpen)
   {
     confirmBoxResult = true;
+    confirmed = true;
   }
   if (lvglLock())
   {
@@ -107,6 +114,11 @@ void message_event_cb(lv_event_t *e)
     messageBoxOpen = false;
     confirmBoxOpen = false;
     lvglUnlock();
+  }
+  if (confirmed)
+  {
+    resetConfirmBoxButtons();
+    finishProfileDeleteConfirm(true);
   }
   if (restart_now)
   {
@@ -125,6 +137,8 @@ void confirm_no_event_cb(lv_event_t *e)
     confirmBoxOpen = false;
     lvglUnlock();
   }
+  resetConfirmBoxButtons();
+  finishProfileDeleteConfirm(false);
 }
 
 void messageBox(String message, const lv_font_t *font, lv_color_t color, bool wait)
@@ -161,6 +175,24 @@ void messageBox(String message, const lv_font_t *font, lv_color_t color, bool wa
 bool confirmBox(String message, const lv_font_t *font, lv_color_t color)
 {
   confirmBoxResult = false;
+  showConfirmBox(message, font, color);
+
+  while (messageBoxOpen)
+  {
+    if (lvglLock())
+    {
+      lv_timer_handler();
+      lvglUnlock();
+    }
+    delay(10);
+  }
+
+  resetConfirmBoxButtons();
+  return confirmBoxResult;
+}
+
+void showConfirmBox(String message, const lv_font_t *font, lv_color_t color)
+{
   if (lvglLock())
   {
     if (ui_ButtonMessageNo == NULL)
@@ -193,17 +225,10 @@ bool confirmBox(String message, const lv_font_t *font, lv_color_t color)
     lv_obj_clear_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
     lvglUnlock();
   }
+}
 
-  while (messageBoxOpen)
-  {
-    if (lvglLock())
-    {
-      lv_timer_handler();
-      lvglUnlock();
-    }
-    delay(10);
-  }
-
+void resetConfirmBoxButtons()
+{
   if (lvglLock())
   {
     if (ui_ButtonMessageNo != NULL)
@@ -214,8 +239,6 @@ bool confirmBox(String message, const lv_font_t *font, lv_color_t color)
     lv_label_set_text(ui_LabelButtonMessage, langText("button_ok"));
     lvglUnlock();
   }
-
-  return confirmBoxResult;
 }
 
 /* Display flushing */

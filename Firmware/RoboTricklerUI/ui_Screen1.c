@@ -201,6 +201,24 @@ lv_obj_set_align( ui_LabelProfile, LV_ALIGN_CENTER );
 lv_label_set_text(ui_LabelProfile,"Profile");
 lv_obj_set_style_text_align(ui_LabelProfile, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
+ui_ButtonProfileDelete = lv_btn_create(ui_PanelProfile);
+lv_obj_set_width( ui_ButtonProfileDelete, 75);
+lv_obj_set_height( ui_ButtonProfileDelete, 75);
+lv_obj_set_x( ui_ButtonProfileDelete, 15);
+lv_obj_set_align( ui_ButtonProfileDelete, LV_ALIGN_RIGHT_MID );
+lv_obj_add_flag( ui_ButtonProfileDelete, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
+lv_obj_clear_flag( ui_ButtonProfileDelete, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+lv_obj_set_style_bg_color(ui_ButtonProfileDelete, lv_color_hex(0xFF0000), LV_PART_MAIN);
+lv_obj_set_style_bg_opa(ui_ButtonProfileDelete, 255, LV_PART_MAIN);
+
+ui_LabelProfileDelete = lv_label_create(ui_ButtonProfileDelete);
+lv_obj_set_width( ui_LabelProfileDelete, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_LabelProfileDelete, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_align( ui_LabelProfileDelete, LV_ALIGN_CENTER );
+lv_label_set_text(ui_LabelProfileDelete,"X");
+lv_obj_set_style_text_align(ui_LabelProfileDelete, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+lv_obj_set_style_text_font(ui_LabelProfileDelete, &lv_font_montserrat_48, LV_PART_MAIN);
+
 ui_ButtonProfilePrev = lv_btn_create(ui_TabPageProfile);
 lv_obj_set_height( ui_ButtonProfilePrev, 75);
 lv_obj_set_width( ui_ButtonProfilePrev, lv_pct(100));
@@ -285,6 +303,7 @@ lv_obj_add_event_cb(ui_ButtonN, ui_event_ButtonN, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonP, ui_event_ButtonP, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonAdd, ui_event_ButtonAdd, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonSub, ui_event_ButtonSub, LV_EVENT_ALL, NULL);
+lv_obj_add_event_cb(ui_ButtonProfileDelete, ui_event_ButtonProfileDelete, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonProfilePrev, ui_event_ButtonProfilePrev, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonProfileNext, ui_event_ButtonProfileNext, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_ButtonMessage, ui_event_ButtonMessage, LV_EVENT_ALL, NULL);
