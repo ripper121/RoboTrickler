@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -40,6 +41,7 @@ DEFAULT_CONFIGURATION = (
 ARDUINO_DEBUG = Path(r"C:\Program Files (x86)\Arduino\arduino_debug.exe")
 ARDUINO_CLI = Path(os.environ.get("LOCALAPPDATA", "")) / "ArduinoCLI" / "arduino-cli.exe"
 USER_LIBRARIES = Path.home() / r"Documents\Arduino\libraries"
+DEBUG_DEFINE_RE = re.compile(r"^\s*#\s*define\s+DEBUG\s+([01])\b")
 
 
 def parse_args() -> argparse.Namespace:
@@ -133,21 +135,33 @@ def resolve_build_dir(config: dict[str, str], override: Path | None) -> Path:
 def build_descriptor(config: dict[str, str]) -> str:
     board = config.get("board", DEFAULT_BOARD)
     configuration = config.get("configuration", DEFAULT_CONFIGURATION)
-    configuration = force_debug_level_error(configuration)
+    configuration = set_debug_level(configuration, read_sketch_debug_enabled())
     return f"{board}:{configuration}" if configuration else board
 
 
-def force_debug_level_error(configuration: str) -> str:
+def read_sketch_debug_enabled() -> bool:
+    require_path(SKETCH_FILE, "sketch")
+    with SKETCH_FILE.open("r", encoding="utf-8") as sketch:
+        for line in sketch:
+            match = DEBUG_DEFINE_RE.match(line)
+            if match:
+                return match.group(1) != "0"
+
+    return True
+
+
+def set_debug_level(configuration: str, debug_enabled: bool) -> str:
+    debug_level = "debug" if debug_enabled else "none"
     parts = [part for part in configuration.split(",") if part]
     changed = False
     for index, part in enumerate(parts):
         if part.startswith("DebugLevel="):
-            parts[index] = "DebugLevel=debug"
+            parts[index] = f"DebugLevel={debug_level}"
             changed = True
             break
 
     if not changed:
-        parts.append("DebugLevel=debug")
+        parts.append(f"DebugLevel={debug_level}")
 
     return ",".join(parts)
 

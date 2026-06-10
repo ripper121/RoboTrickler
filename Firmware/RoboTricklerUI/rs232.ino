@@ -1,16 +1,33 @@
+const unsigned long SCALE_SERIAL_WAIT_MS = 2000;
+const size_t SCALE_SERIAL_MAX_REQUEST_BYTES = 64;
+const size_t SCALE_SERIAL_REQUEST_TEXT_LEN = 128;
+const size_t SCALE_SERIAL_LINE_LEN = 64;
+
+struct ScaleRequestCommand
+{
+  const char *protocol;
+  const char *request;
+};
+
+const ScaleRequestCommand SCALE_REQUEST_COMMANDS[] = {
+    {"GG", "0x1B 0x70 0x0D 0x0A"},
+    {"AD", "0x53 0x49 0x0D 0x0A"},
+    {"KERN", "0x77"},
+    {"KERN-ABT", "0x44 0x30 0x35 0x0D 0x0A"},
+    {"SBI", "0x50 0x0D 0x0A"}};
+
 bool serialWait()
 {
-  bool timeout = true;
-  for (int i = 0; i < 2000; i++)
+  unsigned long start = millis();
+  while ((millis() - start) < SCALE_SERIAL_WAIT_MS)
   {
     if (Serial1.available())
     {
-      timeout = false;
-      break;
+      return false;
     }
     delay(1);
   }
-  return timeout;
+  return true;
 }
 
 void serialFlush()
@@ -75,13 +92,13 @@ String serialBytesToHex(const uint8_t *bytes, int byteCount)
   return data;
 }
 
-bool serialReq(String req)
+bool serialReq(const char *req)
 {
 
-  char request[128];
-  req.toCharArray(request, sizeof(request));
+  char request[SCALE_SERIAL_REQUEST_TEXT_LEN];
+  strlcpy(request, req, sizeof(request));
 
-  uint8_t bytes[64];
+  uint8_t bytes[SCALE_SERIAL_MAX_REQUEST_BYTES];
   int byteCount = 0;
   bool hexRequest = true;
   bool hasToken = false;
@@ -312,27 +329,15 @@ bool containsIgnoreCase(const char *text, const char *needle)
 
 bool requestScaleWeight()
 {
-  if (strcmp(config.scale_protocol, "GG") == 0)
+  for (size_t i = 0; i < (sizeof(SCALE_REQUEST_COMMANDS) / sizeof(SCALE_REQUEST_COMMANDS[0])); i++)
   {
-    return serialReq("0x1B 0x70 0x0D 0x0A");
+    if (strcmp(config.scale_protocol, SCALE_REQUEST_COMMANDS[i].protocol) == 0)
+    {
+      return serialReq(SCALE_REQUEST_COMMANDS[i].request);
+    }
   }
-  else if (strcmp(config.scale_protocol, "AD") == 0)
-  {
-    return serialReq("0x51 0x0D 0x0A");
-  }
-  else if (strcmp(config.scale_protocol, "KERN") == 0)
-  {
-    return serialReq("0x77");
-  }
-  else if (strcmp(config.scale_protocol, "KERN-ABT") == 0)
-  {
-    return serialReq("0x44 0x30 0x35 0x0D 0x0A");
-  }
-  else if (strcmp(config.scale_protocol, "SBI") == 0)
-  {
-    return serialReq("0x50 0x0D 0x0A");
-  }
-  else if (strcmp(config.scale_protocol, "CUSTOM") == 0)
+
+  if (strcmp(config.scale_protocol, "CUSTOM") == 0)
   {
     return serialReq(config.scale_customCode);
   }
@@ -347,7 +352,7 @@ bool readScaleLine(float *parsedWeight, int *parsedDecimalPlaces, String *parsed
     return false;
   }
 
-  char buff[64];
+  char buff[SCALE_SERIAL_LINE_LEN];
   size_t bytesRead = Serial1.readBytesUntil(0x0A, buff, sizeof(buff) - 1);
   buff[bytesRead] = '\0';
 
