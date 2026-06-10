@@ -22,10 +22,10 @@ Use this order for all relevant implementation work:
 
 When the Robo-Trickler is reachable on the network, SD-hosted files can be updated for testing through the web editor API instead of mounting the SD card.
 
-Upload one changed file from this folder with `curl.exe -F`. The multipart filename must be the target SD path:
+Upload one changed file from this folder with `curl.exe -F`. The multipart filename must be the target SD path. Add `-H "Expect:"`, especially for binary files, so the ESP32 web editor receives the multipart body reliably instead of creating a zero-byte file after a stalled `100-continue` handshake:
 
 ```powershell
-curl.exe -sS -F "file=@SD-Files/system/resources/edit/index.html;filename=/system/resources/edit/index.html" "http://robo-trickler.local/system/resources/edit"
+curl.exe -sS -H "Expect:" -F "file=@SD-Files/system/resources/edit/index.html;filename=/system/resources/edit/index.html" "http://robo-trickler.local/system/resources/edit"
 ```
 
 Verify by fetching the file back and comparing hashes:
