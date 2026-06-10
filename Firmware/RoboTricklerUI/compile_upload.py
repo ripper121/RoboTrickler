@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Compile RoboTricklerUI and upload the application binary via HTTP OTA."""
+"""Compile RoboTricklerUI like the VS Code Arduino extension and upload via OTA."""
 
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import subprocess
 import sys
-import tempfile
 import time
 import uuid
 from pathlib import Path
@@ -16,11 +16,12 @@ from urllib import error, request
 
 SKETCH_DIR = Path(__file__).resolve().parent
 SKETCH_FILE = SKETCH_DIR / "RoboTricklerUI.ino"
+ARDUINO_JSON = SKETCH_DIR / ".vscode" / "arduino.json"
+
 DEFAULT_BUILD_DIR = SKETCH_DIR.parent / "build"
-DEFAULT_BUILD_CACHE = Path(tempfile.gettempdir()) / "rtui-arduino-core-cache"
 DEFAULT_UPDATE_URL = "http://robo-trickler.local/update"
-DEFAULT_FQBN = (
-    "esp32:esp32:esp32:"
+DEFAULT_BOARD = "esp32:esp32:esp32"
+DEFAULT_CONFIGURATION = (
     "JTAGAdapter=default,"
     "PSRAM=disabled,"
     "PartitionScheme=min_spiffs,"
@@ -31,23 +32,19 @@ DEFAULT_FQBN = (
     "UploadSpeed=921600,"
     "LoopCore=1,"
     "EventsCore=0,"
-    "DebugLevel=none,"
+    "DebugLevel=error,"
     "EraseFlash=all,"
     "ZigbeeMode=default"
 )
 
-ARDUINO_BUILDER = Path(r"C:\Program Files (x86)\Arduino\arduino-builder.exe")
-ARDUINO_HARDWARE = Path(r"C:\Program Files (x86)\Arduino\hardware")
-ARDUINO_TOOLS_BUILDER = Path(r"C:\Program Files (x86)\Arduino\tools-builder")
-ARDUINO_AVR_TOOLS = Path(r"C:\Program Files (x86)\Arduino\hardware\tools\avr")
-ARDUINO_BUILTIN_LIBS = Path(r"C:\Program Files (x86)\Arduino\libraries")
-ARDUINO15_PACKAGES = Path.home() / r"AppData\Local\Arduino15\packages"
+ARDUINO_DEBUG = Path(r"C:\Program Files (x86)\Arduino\arduino_debug.exe")
+ARDUINO_CLI = Path(os.environ.get("LOCALAPPDATA", "")) / "ArduinoCLI" / "arduino-cli.exe"
 USER_LIBRARIES = Path.home() / r"Documents\Arduino\libraries"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Compile RoboTricklerUI with arduino-builder and upload it to /update."
+        description="Compile RoboTricklerUI using the VS Code Arduino extension variant, then upload to /update."
     )
     parser.add_argument(
         "--url",
@@ -57,14 +54,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--build-dir",
         type=Path,
-        default=DEFAULT_BUILD_DIR,
-        help=f"Arduino build directory. Default: {DEFAULT_BUILD_DIR}",
-    )
-    parser.add_argument(
-        "--build-cache",
-        type=Path,
-        default=DEFAULT_BUILD_CACHE,
-        help=f"Arduino core build cache directory. Default: {DEFAULT_BUILD_CACHE}",
+        default=None,
+        help=f"Arduino build directory. Default: .vscode/arduino.json output or {DEFAULT_BUILD_DIR}",
     )
     parser.add_argument(
         "--bin",
@@ -75,6 +66,17 @@ def parse_args() -> argparse.Namespace:
         "--compile-only",
         action="store_true",
         help="Compile and print the generated .bin path without uploading.",
+    )
+    parser.add_argument(
+        "--cli",
+        action="store_true",
+        help="Compile with arduino-cli instead of the VS Code extension's legacy Arduino IDE variant.",
+    )
+    parser.add_argument(
+        "--cli-path",
+        type=Path,
+        default=ARDUINO_CLI,
+        help=f"Path to arduino-cli.exe for --cli. Default: {ARDUINO_CLI}",
     )
     parser.add_argument(
         "--skip-compile",
@@ -93,11 +95,6 @@ def parse_args() -> argparse.Namespace:
         default=600,
         help="Compile timeout in seconds. Default: 600",
     )
-    parser.add_argument(
-        "--jobs",
-        type=int,
-        help="Concurrent compiler jobs for arduino-builder. Default: builder auto-detect.",
-    )
     return parser.parse_args()
 
 
@@ -106,47 +103,113 @@ def require_path(path: Path, label: str) -> None:
         raise FileNotFoundError(f"{label} not found: {path}")
 
 
-def run_builder(build_dir: Path, build_cache: Path, compile_timeout: int, jobs: int | None) -> Path:
-    require_path(ARDUINO_BUILDER, "arduino-builder")
+def load_arduino_config() -> dict[str, str]:
+    if not ARDUINO_JSON.exists():
+        return {}
+
+    with ARDUINO_JSON.open("r", encoding="utf-8") as config_file:
+        data = json.load(config_file)
+
+    if not isinstance(data, dict):
+        raise RuntimeError(f"Invalid Arduino config: {ARDUINO_JSON}")
+
+    return {str(key): str(value) for key, value in data.items() if value is not None}
+
+
+def resolve_build_dir(config: dict[str, str], override: Path | None) -> Path:
+    if override is not None:
+        return override.resolve()
+
+    output = config.get("output")
+    if output:
+        output_path = Path(output)
+        if not output_path.is_absolute():
+            output_path = SKETCH_DIR / output_path
+        return output_path.resolve()
+
+    return DEFAULT_BUILD_DIR.resolve()
+
+
+def build_descriptor(config: dict[str, str]) -> str:
+    board = config.get("board", DEFAULT_BOARD)
+    configuration = config.get("configuration", DEFAULT_CONFIGURATION)
+    configuration = force_debug_level_error(configuration)
+    return f"{board}:{configuration}" if configuration else board
+
+
+def force_debug_level_error(configuration: str) -> str:
+    parts = [part for part in configuration.split(",") if part]
+    changed = False
+    for index, part in enumerate(parts):
+        if part.startswith("DebugLevel="):
+            parts[index] = "DebugLevel=error"
+            changed = True
+            break
+
+    if not changed:
+        parts.append("DebugLevel=error")
+
+    return ",".join(parts)
+
+
+def run_extension_compile(build_dir: Path, board_descriptor: str, compile_timeout: int) -> Path:
+    require_path(ARDUINO_DEBUG, "arduino_debug.exe")
     require_path(SKETCH_FILE, "sketch")
 
     build_dir.mkdir(parents=True, exist_ok=True)
-    build_cache.mkdir(parents=True, exist_ok=True)
     cmd = [
-        str(ARDUINO_BUILDER),
-        "-compile",
-        "-quiet=true",
-        "-logger=machine",
-        "-hardware",
-        str(ARDUINO_HARDWARE),
-        "-hardware",
-        str(ARDUINO15_PACKAGES),
-        "-tools",
-        str(ARDUINO_TOOLS_BUILDER),
-        "-tools",
-        str(ARDUINO_AVR_TOOLS),
-        "-tools",
-        str(ARDUINO15_PACKAGES),
-        "-built-in-libraries",
-        str(ARDUINO_BUILTIN_LIBS),
-        "-libraries",
-        str(USER_LIBRARIES),
-        "-fqbn",
-        DEFAULT_FQBN,
-        "-ide-version=10819",
-        "-build-path",
-        str(build_dir),
-        "-build-cache",
-        str(build_cache),
-        "-warnings=none",
+        str(ARDUINO_DEBUG),
+        "--verify",
+        "--board",
+        board_descriptor,
+        "--pref",
+        f"build.path={build_dir}",
+        "--verbose-build",
         str(SKETCH_FILE),
     ]
-    if jobs is not None:
-        cmd[5:5] = ["-jobs", str(max(1, jobs))]
 
-    print("Compiling firmware...")
+    print("Compiling firmware with Arduino Community Edition variant...")
     print(f"Build directory: {build_dir}")
-    print(f"Build cache: {build_cache}")
+    print(f"Board: {board_descriptor}")
+    proc = subprocess.Popen(cmd, cwd=SKETCH_DIR)
+    started = time.monotonic()
+    while proc.poll() is None:
+        if time.monotonic() - started > compile_timeout:
+            kill_process_tree(proc.pid)
+            raise TimeoutError(f"Compile timed out after {compile_timeout} seconds")
+        time.sleep(0.25)
+
+    if proc.returncode != 0:
+        raise subprocess.CalledProcessError(proc.returncode, cmd)
+
+    return find_firmware_bin(build_dir)
+
+
+def run_cli_compile(cli_path: Path, build_dir: Path, board_descriptor: str, compile_timeout: int) -> Path:
+    require_path(cli_path, "arduino-cli.exe")
+    require_path(SKETCH_FILE, "sketch")
+
+    build_dir.mkdir(parents=True, exist_ok=True)
+    cmd = [
+        str(cli_path),
+        "compile",
+        "--fqbn",
+        board_descriptor,
+        "--build-path",
+        str(build_dir),
+        "--warnings",
+        "all",
+        "--no-color",
+        "--verbose",
+    ]
+    if USER_LIBRARIES.exists():
+        cmd.extend(["--libraries", str(USER_LIBRARIES)])
+    cmd.append(str(SKETCH_DIR))
+
+    print("Compiling firmware with arduino-cli...")
+    print(f"CLI: {cli_path}")
+    print(f"Build directory: {build_dir}")
+    print(f"Board: {board_descriptor}")
     proc = subprocess.Popen(cmd, cwd=SKETCH_DIR)
     started = time.monotonic()
     while proc.poll() is None:
@@ -221,16 +284,21 @@ def upload_firmware(url: str, bin_path: Path, timeout: int) -> None:
 
 def main() -> int:
     args = parse_args()
-    build_dir = args.build_dir.resolve()
-    build_cache = args.build_cache.resolve()
 
     try:
+        config = load_arduino_config()
+        build_dir = resolve_build_dir(config, args.build_dir)
+
         if args.bin:
             bin_path = args.bin.resolve()
         elif args.skip_compile:
             bin_path = find_firmware_bin(build_dir)
         else:
-            bin_path = run_builder(build_dir, build_cache, args.compile_timeout, args.jobs)
+            board_descriptor = build_descriptor(config)
+            if args.cli:
+                bin_path = run_cli_compile(args.cli_path.resolve(), build_dir, board_descriptor, args.compile_timeout)
+            else:
+                bin_path = run_extension_compile(build_dir, board_descriptor, args.compile_timeout)
 
         print(f"Firmware binary: {bin_path}")
         if args.compile_only:
@@ -239,7 +307,7 @@ def main() -> int:
         upload_firmware(args.url, bin_path, args.timeout)
         print("Done. The device should reboot after accepting the update.")
         return 0
-    except (FileNotFoundError, subprocess.CalledProcessError, RuntimeError, TimeoutError) as exc:
+    except (FileNotFoundError, json.JSONDecodeError, subprocess.CalledProcessError, RuntimeError, TimeoutError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
