@@ -49,6 +49,8 @@ extern lv_obj_t *ui_LabelInfo;
 extern lv_obj_t *ui_TabPageProfile;
 extern lv_obj_t *ui_PanelProfile;
 extern lv_obj_t *ui_LabelProfile;
+extern lv_obj_t *ui_ButtonProfileTune;
+extern lv_obj_t *ui_LabelProfileTune;
 void ui_event_ButtonProfileDelete( lv_event_t * e);
 extern lv_obj_t *ui_ButtonProfileDelete;
 extern lv_obj_t *ui_LabelProfileDelete;

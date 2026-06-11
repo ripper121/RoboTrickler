@@ -201,6 +201,24 @@ lv_obj_set_align( ui_LabelProfile, LV_ALIGN_CENTER );
 lv_label_set_text(ui_LabelProfile,"Profile");
 lv_obj_set_style_text_align(ui_LabelProfile, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
+ui_ButtonProfileTune = lv_btn_create(ui_PanelProfile);
+lv_obj_set_width( ui_ButtonProfileTune, 75);
+lv_obj_set_height( ui_ButtonProfileTune, 75);
+lv_obj_set_x( ui_ButtonProfileTune, -15);
+lv_obj_set_align( ui_ButtonProfileTune, LV_ALIGN_LEFT_MID );
+lv_obj_add_flag( ui_ButtonProfileTune, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
+lv_obj_clear_flag( ui_ButtonProfileTune, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+lv_obj_set_style_bg_color(ui_ButtonProfileTune, lv_color_hex(0xFF9900), LV_PART_MAIN);
+lv_obj_set_style_bg_opa(ui_ButtonProfileTune, 255, LV_PART_MAIN);
+
+ui_LabelProfileTune = lv_label_create(ui_ButtonProfileTune);
+lv_obj_set_width( ui_LabelProfileTune, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_LabelProfileTune, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_align( ui_LabelProfileTune, LV_ALIGN_CENTER );
+lv_label_set_text(ui_LabelProfileTune,"T");
+lv_obj_set_style_text_align(ui_LabelProfileTune, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+lv_obj_set_style_text_font(ui_LabelProfileTune, &lv_font_montserrat_48, LV_PART_MAIN);
+
 ui_ButtonProfileDelete = lv_btn_create(ui_PanelProfile);
 lv_obj_set_width( ui_ButtonProfileDelete, 75);
 lv_obj_set_height( ui_ButtonProfileDelete, 75);
