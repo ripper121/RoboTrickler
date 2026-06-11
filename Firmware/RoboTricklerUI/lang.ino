@@ -30,6 +30,8 @@ static const char *languageFallback(const char *key)
     return "Waiting for 0.000...";
   if (strcmp(key, "status_done") == 0)
     return "Done :)";
+  if (strcmp(key, "status_count") == 0)
+    return " Count:";
   if (strcmp(key, "status_init_steppers") == 0)
     return "Init steppers...";
   if (strcmp(key, "status_mount_sd") == 0)
@@ -200,6 +202,26 @@ static const char *languageFallback(const char *key)
     return "Could not write profile file:\n";
   if (strcmp(key, "err_could_not_replace_profile_file") == 0)
     return "Could not replace profile file:\n";
+  if (strcmp(key, "msg_stop_trickler_before_delete_profile") == 0)
+    return "Stop trickler before deleting profile";
+  if (strcmp(key, "msg_cannot_delete_calibrate_profile") == 0)
+    return "Cannot delete calibrate profile";
+  if (strcmp(key, "msg_delete_profile_file_not_found") == 0)
+    return "Profile file not found: ";
+  if (strcmp(key, "msg_delete_profile_confirm_prefix") == 0)
+    return "Delete profile ";
+  if (strcmp(key, "msg_delete_profile_confirm_suffix") == 0)
+    return "?";
+  if (strcmp(key, "msg_cannot_delete_profile") == 0)
+    return "Cannot delete profile";
+  if (strcmp(key, "msg_delete_profile_calibrate_missing") == 0)
+    return "Cannot delete profile: calibrate profile missing";
+  if (strcmp(key, "msg_delete_profile_calibrate_load_failed") == 0)
+    return "Cannot delete profile: failed to load calibrate";
+  if (strcmp(key, "msg_could_not_delete_profile") == 0)
+    return "Could not delete profile: ";
+  if (strcmp(key, "msg_profile_deleted") == 0)
+    return "Profile deleted: ";
   return key;
 }
 

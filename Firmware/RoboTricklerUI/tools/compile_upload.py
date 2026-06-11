@@ -15,7 +15,17 @@ from pathlib import Path
 from urllib import error, request
 
 
-SKETCH_DIR = Path(__file__).resolve().parent
+SCRIPT_DIR = Path(__file__).resolve().parent
+
+
+def find_sketch_dir() -> Path:
+    for candidate in (SCRIPT_DIR, SCRIPT_DIR.parent):
+        if (candidate / "RoboTricklerUI.ino").exists():
+            return candidate
+    return SCRIPT_DIR
+
+
+SKETCH_DIR = find_sketch_dir()
 SKETCH_FILE = SKETCH_DIR / "RoboTricklerUI.ino"
 ARDUINO_JSON = SKETCH_DIR / ".vscode" / "arduino.json"
 
