@@ -117,13 +117,13 @@ WebServer server(80);
 unsigned long wifiPreviousMillis = 0;
 unsigned long wifiInterval = 10000;
 
-#define MOTOR_REV_STEPS 200
+#define MOTOR_REV_STEPS 200 // Number of steps for a full revolution of the stepper motor. This is typically 200 for a 1.8 degree stepper, but may be different for other motors.
 
 #define MAX_TARGET_WEIGHT 999
 #define DEC_PLACES 3
+#define WEIGHT_SCALE_FACTOR 100000.0f // Scale factor to convert weight to an integer for comparison, based on the number of decimal places (e.g., 1000 for 3 decimal places).
 
 float weight = -1.0;
-const float EPSILON = 0.00001; // Float comparison tolerance for zero and target checks.
 int decPlaces = DEC_PLACES;
 String unit = "";
 float lastWeight = 0;

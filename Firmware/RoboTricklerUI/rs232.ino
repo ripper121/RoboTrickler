@@ -430,7 +430,7 @@ void readWeight()
       continue;
     }
 
-    long candidateRoundedWeight = lround(candidateWeight * 1000.0f);
+    long candidateRoundedWeight = lroundf(candidateWeight * WEIGHT_SCALE_FACTOR);
     if (gotValidWeight && (candidateRoundedWeight == previousRoundedWeight))
     {
       stableCount++;

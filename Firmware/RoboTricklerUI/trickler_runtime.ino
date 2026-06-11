@@ -13,6 +13,31 @@ bool isCalibrationProfilePromptPending()
   return tricklerState == TRICKLER_CALIBRATION_PROMPT;
 }
 
+static long weightTicks(float value)
+{
+  return lroundf(value * WEIGHT_SCALE_FACTOR);
+}
+
+static bool weightIsZero(float value)
+{
+  return weightTicks(value) == 0;
+}
+
+static bool weightAtOrAbove(float value, float threshold)
+{
+  return weightTicks(value) >= weightTicks(threshold);
+}
+
+static bool weightAtOrBelow(float value, float threshold)
+{
+  return weightTicks(value) <= weightTicks(threshold);
+}
+
+static bool weightBelow(float value, float threshold)
+{
+  return weightTicks(value) < weightTicks(threshold);
+}
+
 void setTricklerState(TricklerState state)
 {
   tricklerState = state;
@@ -22,9 +47,9 @@ static bool canStartFirstThrowAtCurrentWeight()
 {
   if (config.profile_startAtZero)
   {
-    return fabs(weight) <= EPSILON;
+    return weightIsZero(weight);
   }
-  return weight >= 0.0000;
+  return weightAtOrAbove(weight, 0.0f);
 }
 
 static long calculateStepperStepsForUnits(double remainingUnits, double unitsPerThrow, double *outUnits)
@@ -198,7 +223,7 @@ static void handleTargetReached(bool weightWithinTolerance)
 {
   setLabelTextColor(ui_LabelTricklerWeight, weightWithinTolerance ? 0x00FF00 : 0xFFFF00);
 
-  if ((weight >= (config.targetWeight + config.profile_alarmThreshold + EPSILON)) && (config.profile_alarmThreshold > 0))
+  if (weightAtOrAbove(weight, config.targetWeight + config.profile_alarmThreshold) && (config.profile_alarmThreshold > 0))
   {
     handleOverTrickle();
   }
@@ -282,7 +307,7 @@ static bool runProfileStep(bool calibrationProfile)
 
 static void handleProfileRunning(bool calibrationProfile)
 {
-  if ((weight < 0.0000) || (firstProfileMovePending && !canStartFirstThrowAtCurrentWeight()))
+  if (weightBelow(weight, 0.0f) || (firstProfileMovePending && !canStartFirstThrowAtCurrentWeight()))
   {
     if (config.profile_startAtZero)
     {
@@ -329,7 +354,7 @@ static void handleNewWeight()
   newData = false;
   weightCounter = 0;
 
-  if (weight <= 0.0000)
+  if (weightAtOrBelow(weight, 0.0f))
   {
     firstProfileMovePending = true;
     measurementCount = config.profile_generalMeasurements;
@@ -345,9 +370,11 @@ static void handleNewWeight()
   DEBUG_PRINT("profile_alarmThreshold: ");
   DEBUG_PRINTLN(String((config.targetWeight + config.profile_alarmThreshold), 5));
 
-  if (!calibrationProfile && (weight >= (config.targetWeight - config.profile_tolerance - EPSILON)) && (weight >= 0))
+  if (!calibrationProfile &&
+      weightAtOrAbove(weight, config.targetWeight - config.profile_tolerance) &&
+      weightAtOrAbove(weight, 0.0f))
   {
-    handleTargetReached(weight <= (config.targetWeight + config.profile_tolerance + EPSILON));
+    handleTargetReached(weightAtOrBelow(weight, config.targetWeight + config.profile_tolerance));
   }
 
   if (!isTricklerFinished())
@@ -355,7 +382,7 @@ static void handleNewWeight()
     handleProfileRunning(calibrationProfile);
   }
 
-  if ((weight <= 0.0000) && isTricklerFinished())
+  if (weightAtOrBelow(weight, 0.0f) && isTricklerFinished())
   {
     updateDisplayLog(langText("status_ready"), true);
     setTricklerState(TRICKLER_IDLE);
