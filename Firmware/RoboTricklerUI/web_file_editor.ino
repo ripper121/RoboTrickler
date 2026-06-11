@@ -2,6 +2,8 @@ File uploadFile;
 
 bool loadFromSdCard(String path)
 {
+  // Serve SD-hosted UI files with a small extension-to-content-type map. If a
+  // compressed copy exists, prefer it transparently.
   String dataType = "text/plain";
   if (path.endsWith("/"))
   {
@@ -152,6 +154,7 @@ void handleFileUpload()
 
 void deleteRecursive(String path)
 {
+  // Used by the SD web editor; callers guard against deleting the SD root.
   File file = SD.open((char *)path.c_str());
   if (!file.isDirectory())
   {

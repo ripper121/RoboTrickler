@@ -69,6 +69,7 @@ void screenshotExpandInvalidatedArea(lv_event_t *event)
     return;
   }
 
+  // Force LVGL to redraw exactly the strip requested by handleScreenshot().
   area->x1 = screenshotCaptureArea.x1;
   area->y1 = screenshotCaptureArea.y1;
   area->x2 = screenshotCaptureArea.x2;
@@ -109,6 +110,7 @@ void screenshotCaptureFlush(const lv_area_t *area, uint8_t *px_map)
     return;
   }
 
+  // Convert LVGL's RGB565 draw buffer into a top-down 24-bit BMP stream.
   const uint16_t *pixels = (const uint16_t *)px_map;
 
   for (uint32_t row = 0; row < height; row++)

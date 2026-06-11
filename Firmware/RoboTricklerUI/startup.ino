@@ -6,6 +6,8 @@ void initSetup()
 
     DEBUG_PRINTLN("Display Init");
 
+    // SD shares neither the display SPI bus nor the LVGL task, so it uses HSPI
+    // with the GRBL board pin mapping from pindef.h.
     SDspi = new SPIClass(HSPI);
     SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
     if (!SD.begin(GRBL_SPI_SS, *SDspi, SD_SPI_FREQ, "/sd", 10))
@@ -100,6 +102,8 @@ void initSetup()
     updateDisplayLog(infoText, true);
     getProfileList();
 
+    // If config.txt names a missing profile, fall back through loadSelectedProfile()
+    // so the normal corruption handling and calibration profile recovery run.
     bool selectedProfileFound = false;
     for (int i = 0; i < profileListCount; i++)
     {

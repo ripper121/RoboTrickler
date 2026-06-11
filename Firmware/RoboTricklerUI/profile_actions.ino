@@ -5,10 +5,10 @@ bool profileDeleteConfirmPending = false;
 String profileDeleteName = "";
 String profileDeleteFilename = "";
 
-void corruptProfile(String profile_filename)
+void corruptProfile(String profileFilename)
 {
     String readError = getSdReadError();
-    String message = String(langText("msg_profile_corrupted")) + profile_filename;
+    String message = String(langText("msg_profile_corrupted")) + profileFilename;
     if (readError.length() > 0)
     {
         updateDisplayLog(readError);
@@ -18,11 +18,11 @@ void corruptProfile(String profile_filename)
     message += langText("msg_calibration_profile_loaded");
 
     // Rename file to indicate corruption
-    if (SD.exists(profile_filename))
+    if (SD.exists(profileFilename))
     {
-        String corruptedName = String(profile_filename);
+        String corruptedName = String(profileFilename);
         corruptedName.replace(".txt", ".cor.txt");
-        if (SD.rename(profile_filename, corruptedName.c_str()))
+        if (SD.rename(profileFilename, corruptedName.c_str()))
         {
             DEBUG_PRINT("Corrupted file renamed to: ");
             DEBUG_PRINTLN(corruptedName);
@@ -44,10 +44,10 @@ void corruptProfile(String profile_filename)
 
 bool loadSelectedProfile()
 {
-    String profile_filename = profileFilename(config.profile);
-    if (!readProfile(profile_filename.c_str(), config))
+    String selectedProfileFilename = profileFilename(config.profile);
+    if (!readProfile(selectedProfileFilename.c_str(), config))
     {
-        corruptProfile(profile_filename);
+        corruptProfile(selectedProfileFilename);
         return false;
     }
     tempProfile = config.profile;
@@ -103,6 +103,8 @@ int findProfileIndex(const char *profileName)
 
 bool deleteSelectedProfile()
 {
+    // Deletion is two-stage so the LVGL confirm dialog can return through its
+    // normal event callback instead of blocking the UI task.
     if (isTricklerRunning())
     {
         messageBox(langText("msg_stop_trickler_before_delete_profile"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);

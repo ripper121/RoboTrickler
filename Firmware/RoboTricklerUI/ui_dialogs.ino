@@ -6,6 +6,8 @@ lv_obj_t *ui_LabelButtonMessageNo = NULL;
 
 void message_event_cb(lv_event_t *e)
 {
+  // The OK button is shared by message and confirm boxes. Confirm actions are
+  // dispatched after the panel is hidden so follow-up dialogs can open cleanly.
   bool confirmed = false;
   if (confirmBoxOpen)
   {
@@ -64,6 +66,7 @@ void messageBox(String message, const lv_font_t *font, lv_color_t color, bool wa
   }
   if (wait)
   {
+    // Some startup and safety errors intentionally block until the user sees them.
     while (messageBoxOpen)
     {
       if (lvglLock())

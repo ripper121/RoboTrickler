@@ -68,7 +68,7 @@ void updateFromFS(fs::FS &fs)
 
     if (successfully)
     {
-      // whe finished remove the binary from sd card to indicate end of the process
+      // When finished, remove the binary from the SD card to indicate success.
       fs.remove("/update.bin");
       delay(1000);
       ESP.restart();

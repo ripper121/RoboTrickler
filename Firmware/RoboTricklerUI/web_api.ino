@@ -16,6 +16,8 @@ void handleGetTarget()
 
 void handleSetTarget()
 {
+  // Browser/UI clients pass targetWeight as a query/form argument; the profile
+  // file is updated only when the value actually changes.
   for (uint8_t i = 0; i < server.args(); i++)
   {
     if (server.argName(i) == "targetWeight")
@@ -59,6 +61,7 @@ void handleGetLanguage()
 
 void handleGetProfileList()
 {
+  // Keep this legacy object shape for the SD-hosted pages: {"0":"name", ...}.
   String message = "{";
   for (int i = 0; i < profileListCount; i++)
   {

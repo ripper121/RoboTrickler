@@ -21,6 +21,8 @@ String normalizeFirmwareVersion(String version)
 
 bool readFirmwareVersionSegment(const String &version, int &index, unsigned long &segment, bool &hasSegment)
 {
+  // Parse dotted numeric versions without atoi() so malformed payloads and
+  // overflowing segments cannot be treated as valid updates.
   segment = 0;
   hasSegment = false;
   if (index >= version.length())

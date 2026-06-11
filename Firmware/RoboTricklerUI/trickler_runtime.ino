@@ -54,6 +54,8 @@ static long calculateStepperStepsForUnits(double remainingUnits, double unitsPer
 
 static bool runBulkStepperMove(String &infoText)
 {
+  // The optional bulk move removes most remaining weight first; profile steps
+  // then handle the fine approach to target.
   double remainingUnits = (double)config.targetWeight - (double)weight - (double)config.profile_weightGap;
   if (remainingUnits <= 0.0)
   {
@@ -128,6 +130,8 @@ void startCalibrationProfilePrompt()
 
 void handleCalibrationProfilePrompt()
 {
+  // After running the calibration throw, wait for a fresh scale read before
+  // offering to generate a powder profile from the measured weight.
   if (!isCalibrationProfilePromptPending())
   {
     return;
@@ -162,7 +166,7 @@ void logRuntimeStats()
   snprintf(temp, sizeof(temp), "Heap: Free:%lu, Min:%lu, Size:%lu, Alloc:%lu", (unsigned long)ESP.getFreeHeap(), (unsigned long)ESP.getMinFreeHeap(), (unsigned long)ESP.getHeapSize(), (unsigned long)ESP.getMaxAllocHeap());
   DEBUG_PRINTLN(temp);
 
-  printf("lv_disp_tcb stackHWM: %d / %d\n", (DISP_TASK_STACK - uxTaskGetStackHighWaterMark(lv_disp_tcb)), DISP_TASK_STACK);
+  printf("lvDisplayTaskHandle stackHWM: %d / %d\n", (DISP_TASK_STACK - uxTaskGetStackHighWaterMark(lvDisplayTaskHandle)), DISP_TASK_STACK);
   printf("loop stackHWM: %d / %d\n", (getArduinoLoopTaskStackSize() - uxTaskGetStackHighWaterMark(NULL)), getArduinoLoopTaskStackSize());
 #endif
 }
@@ -320,6 +324,8 @@ static void handleProfileRunning(bool calibrationProfile)
 
 static void handleNewWeight()
 {
+  // Weight reads drive the state machine: finish on target, otherwise choose
+  // the next profile step and motor movement.
   newData = false;
   weightCounter = 0;
 

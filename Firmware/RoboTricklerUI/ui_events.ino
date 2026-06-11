@@ -1,4 +1,4 @@
-int profileListCounter;
+float addWeight = 0.1;
 
 void trickler_start_event_cb(lv_event_t *e)
 {

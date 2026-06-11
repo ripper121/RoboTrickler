@@ -45,7 +45,7 @@
 #define BLTOUCH_PWM                 GPIO_NUM_2
 #define BLTOUCH_READ                GPIO_NUM_34
 
-//sd card spi
+// SD card SPI
 #define GRBL_SPI_SCK 			    GPIO_NUM_14
 #define GRBL_SPI_MISO 			    GPIO_NUM_12
 #define GRBL_SPI_MOSI 			    GPIO_NUM_13

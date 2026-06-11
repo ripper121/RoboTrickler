@@ -17,6 +17,8 @@ static portMUX_TYPE shiftRegisterMux = portMUX_INITIALIZER_UNLOCKED;
 
 static void shiftRegisterFlush()
 {
+  // The GRBL-style board drives motor, enable, and beeper lines through a
+  // 32-bit serial shift register rather than direct GPIO pins.
   digitalWrite(I2S_OUT_WS, LOW);
   for (int i = 0; i < I2S_OUT_NUM_BITS; i++)
   {
@@ -84,18 +86,18 @@ static unsigned long stepperPulseIntervalUs(int rpm)
   return (unsigned long)(60000000UL / ((unsigned long)MOTOR_REV_STEPS * (unsigned long)rpm));
 }
 
-void setStepperSpeed(int stepperNum, int _stepperSpeed)
+void setStepperSpeed(int stepperNum, int stepperSpeed)
 {
   if ((stepperNum < 1) || (stepperNum > 2))
   {
     return;
   }
 
-  if (_stepperSpeed <= 0)
+  if (stepperSpeed <= 0)
   {
-    _stepperSpeed = 100;
+    stepperSpeed = 100;
   }
-  steppers[stepperNum].rpm = _stepperSpeed;
+  steppers[stepperNum].rpm = stepperSpeed;
 }
 
 void initStepper()
@@ -109,6 +111,8 @@ void initStepper()
 
 void step(int stepperNum, long steps)
 {
+  // A positive move always uses the configured direction pin level. Profiles
+  // encode direction through actuator choice, not signed step counts.
   if ((stepperNum < 1) || (stepperNum > 2) || (steps <= 0))
   {
     return;

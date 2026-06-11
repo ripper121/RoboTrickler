@@ -61,6 +61,8 @@ void registerWebServerRoutes()
   server.on("/list", HTTP_GET, printDirectory);
   server.on("/system/resources/edit", HTTP_DELETE, handleDelete);
   server.on("/system/resources/edit", HTTP_PUT, handleCreate);
+  // The SD web editor uses this endpoint for multipart uploads. The upload
+  // handler writes directly to the SD path supplied as the multipart filename.
   server.on("/system/resources/edit", HTTP_POST, []()
             { returnOK(); }, handleFileUpload);
   server.onNotFound(handleNotFound);

@@ -40,12 +40,12 @@ void startTrickler()
 
     String infoText = langText("status_starting_trickler");
     updateDisplayLog(infoText, true);
-    startMeasurment();
+    startMeasurement();
 }
 
 void stopTrickler()
 {
-    stopMeasurment();
+    stopMeasurement();
     if (config.trickleCounter)
     {
         saveConfiguration("/config.txt", config);
@@ -58,8 +58,9 @@ void stopTrickler()
     updateDisplayLog(infoText, true);
 }
 
-void startMeasurment()
+void startMeasurement()
 {
+    // Start with a stable-weight window before the first throw.
     newData = false;
     weightCounter = 0;
     measurementCount = config.profile_generalMeasurements;
@@ -69,7 +70,7 @@ void startMeasurment()
     beep("button");
 }
 
-void stopMeasurment()
+void stopMeasurement()
 {
     setTricklerState(TRICKLER_FINISHED);
     beep("button");

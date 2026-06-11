@@ -95,6 +95,7 @@ String serialBytesToHex(const uint8_t *bytes, int byteCount)
 bool serialReq(const char *req)
 {
 
+  // Requests are stored as human-readable hex bytes in the profile/config files.
   char request[SCALE_SERIAL_REQUEST_TEXT_LEN];
   strlcpy(request, req, sizeof(request));
 
@@ -389,6 +390,8 @@ bool readScaleLine(float *parsedWeight, int *parsedDecimalPlaces, String *parsed
 
 void readWeight()
 {
+  // Require repeated identical readings while trickling, but stay responsive
+  // during idle display refreshes.
   int stableTarget = measurementCount;
   if ((stableTarget <= 0) || (!isTricklerRunning() && !isCalibrationProfilePromptPending()))
   {

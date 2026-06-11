@@ -55,6 +55,8 @@ static String sdProfileEntryError(const char *key, const char *filename, int ite
 
 static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char *filename, Config &config, bool showErrors, bool allowCalibrationDefaults)
 {
+  // Calibration profiles can omit diffWeight and measurements; normal profiles
+  // must provide the full map used by the automatic trickling loop.
   bool hasRequiredFields = hasRequiredProfileFields(profileEntry);
   if (!hasRequiredFields && (!allowCalibrationDefaults || !hasCalibrationProfileFields(profileEntry)))
   {
@@ -216,9 +218,6 @@ bool readProfile(const char *filename, Config &config)
     return false;
   }
 
-  // Allocate a temporary JsonDocument
-  // Don't forget to change the capacity to match your requirements.
-  // Use https://arduinojson.org/v6/assistant to compute the capacity.
   JsonDocument doc;
 
   // Deserialize the JSON document
@@ -236,6 +235,8 @@ bool readProfile(const char *filename, Config &config)
     return false;
   }
 
+  // Reset profile-only fields before applying the selected JSON file so values
+  // from the previous profile cannot leak into a partially specified profile.
   config.profile_tolerance = 0.000;
   config.profile_alarmThreshold = 0.000;
   config.profile_weightGap = 1.000;
@@ -311,10 +312,8 @@ bool readProfile(const char *filename, Config &config)
   {
     config.profile_generalMeasurements = config.profile_measurements[0];
   }
-  DEBUG_PRINTLN("POWDER_AKTIVE");
+  
   file.close();
-
-  // doc.garbageCollect();
 
   infoText = String(langText("status_profile_ready")) + config.profile;
   updateDisplayLog(infoText, true);
@@ -339,9 +338,6 @@ bool loadConfiguration(const char *filename, Config &config)
     return 0;
   }
 
-  // Allocate a temporary JsonDocument
-  // Don't forget to change the capacity to match your requirements.
-  // Use https://arduinojson.org/v6/assistant to compute the capacity.
   JsonDocument doc;
 
   // Deserialize the JSON document
@@ -377,11 +373,11 @@ bool loadConfiguration(const char *filename, Config &config)
   }
 
   JsonObject fwUpdate = doc["fw_update"].as<JsonObject>();
+  // fw_update.url is intentionally firmware-only; only the check flag is SD configurable.
   config.fwCheck = fwUpdate["check"] | config.fwCheck;
 
   file.close();
 
-  // doc.garbageCollect();
   return 1;
 }
 
@@ -510,6 +506,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   String infoText = String(langText("status_creating_profile")) + profileName;
   updateDisplayLog(infoText, true);
 
+  // Seed a conservative five-step profile from the measured 100-throw weight.
   const float diffWeights[5] = {1.929, 0.965, 0.482, 0.241, 0.000};
   const int measurements[5] = {2, 2, 5, 10, 15};
   const float rs232LimitFactor = 0.65;
@@ -728,9 +725,6 @@ void saveConfiguration(const char *filename, const Config &config)
     return;
   }
 
-  // Allocate a temporary JsonDocument
-  // Don't forget to change the capacity to match your requirements.
-  // Use https://arduinojson.org/assistant to compute the capacity.
   JsonDocument doc;
   doc["wifi"]["ssid"] = config.wifi_ssid;
   doc["wifi"]["psk"] = config.wifi_psk;

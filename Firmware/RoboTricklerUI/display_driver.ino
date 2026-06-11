@@ -12,7 +12,8 @@ static uint32_t lvglMillis(void)
   return millis();
 }
 
-/* Display flushing */
+/* LVGL flush callback: copy the rendered RGB565 strip to TFT_eSPI, then let the
+   screenshot endpoint observe the same pixels before marking the flush done. */
 void my_disp_flush(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
 {
   uint32_t w = (area->x2 - area->x1 + 1);
@@ -28,7 +29,7 @@ void my_disp_flush(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
   lv_display_flush_ready(disp);
 }
 
-/*Read the touchpad*/
+/* Touch callback used by LVGL's pointer input device. */
 void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data)
 {
   (void)indev;

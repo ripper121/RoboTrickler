@@ -79,12 +79,16 @@ void logWifiDisconnectReason(WiFiEvent_t event, WiFiEventInfo_t info)
     return;
   }
 
+#if DEBUG
   uint8_t reason = info.wifi_sta_disconnected.reason;
   DEBUG_PRINT("WiFi disconnected, reason ");
   DEBUG_PRINT(reason);
   DEBUG_PRINT(" (");
   DEBUG_PRINT(WiFi.disconnectReasonName((wifi_err_reason_t)reason));
   DEBUG_PRINTLN(")");
+#else
+  (void)info;
+#endif
 }
 
 void registerWifiDebugLogging()
@@ -117,7 +121,7 @@ void applyWifiDnsIfNeeded()
 
 void maintainWifiConnection()
 {
-  if (!WIFI_AKTIVE || isTricklerRunning())
+  if (!wifiActive || isTricklerRunning())
   {
     return;
   }
@@ -154,7 +158,7 @@ void maintainWifiConnection()
 
 void initWebServer()
 {
-  WIFI_AKTIVE = false;
+  wifiActive = false;
   WEB_SERVER_ACTIVE = false;
   if (String(config.wifi_ssid).length() > 0)
   {
@@ -164,9 +168,11 @@ void initWebServer()
     #if DEBUG
       registerWifiDebugLogging();
     #endif
-    WiFi.disconnect();           // added to start with the wifi off, avoid crashing
-    WiFi.softAPdisconnect(true); // Function will set currently configured SSID and password of the soft-AP to null values. The parameter  is optional. If set to true it will switch the soft-AP mode off.
-    WiFi.mode(WIFI_OFF);         // added to start with the wifi off, avoid crashing
+    // Fully reset WiFi before entering STA mode. This avoids ESP32 reconnect
+    // edge cases seen when the radio was already active during startup.
+    WiFi.disconnect();
+    WiFi.softAPdisconnect(true);
+    WiFi.mode(WIFI_OFF);
 
     delay(500);
 
@@ -202,7 +208,6 @@ void initWebServer()
       }
       else
       {
-        // labelInfo.drawButton(false, "Static IP Failed to configure!");
         updateDisplayLog(langText("status_static_ip_failed"));
         delay(3000);
       }
@@ -211,7 +216,6 @@ void initWebServer()
     {
       if (!WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE))
       {
-        // labelInfo.drawButton(false, "DNS Failed to configure!");
         updateDisplayLog(langText("status_dns_failed"));
         delay(3000);
       }
@@ -221,7 +225,7 @@ void initWebServer()
     wifiUsesStaticIp = useStaticIp;
     WiFi.begin(config.wifi_ssid, config.wifi_psk);
     WiFi.setSleep(false);
-    WIFI_AKTIVE = true;
+    wifiActive = true;
     wifiPreviousMillis = millis();
     wifiConnectStartedMillis = wifiPreviousMillis;
     wifiConnectTimeoutReported = false;

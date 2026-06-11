@@ -15,6 +15,7 @@
 #include <string.h>
 #include <math.h>
 #define FW_VERSION "2.12"
+// Internal firmware update check endpoint. Do not mirror this value into SD files.
 #define DEFAULT_FW_UPDATE_URL "http://strenuous.dev/roboTrickler/userTracker.php"
 
 /*
@@ -61,7 +62,7 @@ Events Run On: "Core 0"
 #define DISP_TASK_STACK 4096 * 2
 #define DISP_TASK_PRO 1
 #define DISP_TASK_CORE 0
-TaskHandle_t lv_disp_tcb = NULL;
+TaskHandle_t lvDisplayTaskHandle = NULL;
 SemaphoreHandle_t lvglMutex = NULL;
 #define LV_DRAW_BUF_ROWS 10
 static lv_color_t buf[LV_HOR_RES_MAX * LV_DRAW_BUF_ROWS];
@@ -106,9 +107,10 @@ struct Config
   int profile_speed[16];
   int profile_count;
 };
-Config config; // <- global configuration object
+// Single source of truth for SD-backed settings and the active trickling profile.
+Config config;
 
-bool WIFI_AKTIVE = false;
+bool wifiActive = false;
 bool WEB_SERVER_ACTIVE = false;
 bool WEB_SERVER_ROUTES_REGISTERED = false;
 WebServer server(80);
@@ -121,14 +123,14 @@ unsigned long wifiInterval = 10000;
 #define DEC_PLACES 3
 
 float weight = -1.0;
-const float EPSILON = 0.00001; // Define a small epsilon value
+const float EPSILON = 0.00001; // Float comparison tolerance for zero and target checks.
 int decPlaces = DEC_PLACES;
 String unit = "";
 float lastWeight = 0;
-float addWeight = 0.1;
 int weightCounter = 0;
 int measurementCount = 0;
 bool newData = false;
+// Small state machine that keeps UI events, scale reads, and motor moves in sync.
 enum TricklerState
 {
   TRICKLER_IDLE,
@@ -144,9 +146,9 @@ bool restart_now = false;
 unsigned long calibrationProfilePromptTime = 0;
 unsigned long lastScaleWeightReadTime = 0;
 
-String infoMessagBuff[14];
 String profileListBuff[32];
 byte profileListCount;
+int profileListCounter;
 
 
 void setup()

@@ -1,12 +1,14 @@
+String infoMessageBuffer[14];
+
 void insertLine(String newLine)
 {
     // Shift all lines up by one position
-    for (int i = 0; i < (sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1; i++)
+    for (int i = 0; i < (sizeof(infoMessageBuffer) / sizeof(infoMessageBuffer[0])) - 1; i++)
     {
-        infoMessagBuff[i] = infoMessagBuff[i + 1];
+        infoMessageBuffer[i] = infoMessageBuffer[i + 1];
     }
     // Add new line at the bottom
-    infoMessagBuff[(sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])) - 1] = newLine;
+    infoMessageBuffer[(sizeof(infoMessageBuffer) / sizeof(infoMessageBuffer[0])) - 1] = newLine;
 }
 
 void setLabelTextColor(lv_obj_t *label, uint32_t colorHex)
@@ -104,9 +106,9 @@ void updateDisplayLog(String logOutput, bool noLog = false)
 void refreshLogLabel()
 {
   String logText = "";
-  for (int i = 0; i < (sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])); i++)
+  for (int i = 0; i < (sizeof(infoMessageBuffer) / sizeof(infoMessageBuffer[0])); i++)
   {
-    logText += infoMessagBuff[i];
+    logText += infoMessageBuffer[i];
   }
   setLabelText(ui_LabelLog, logText.c_str());
 }
