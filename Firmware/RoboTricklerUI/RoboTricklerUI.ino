@@ -170,7 +170,7 @@ static void handleTricklerState(uint32_t &readWeightTime)
       break;
 
     case TRICKLER_FINISHED:
-      handleIdleWeightRead(readWeightTime);
+      handleRunningTrickler();
       break;
 
     case TRICKLER_CALIBRATION_PROMPT:

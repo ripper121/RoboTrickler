@@ -72,7 +72,7 @@ void startMeasurement()
 
 void stopMeasurement()
 {
-    setTricklerState(TRICKLER_FINISHED);
+    setTricklerState(TRICKLER_IDLE);
     beep("button");
 }
 

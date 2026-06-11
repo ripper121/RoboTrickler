@@ -2,15 +2,15 @@ float addWeight = 0.1;
 
 void trickler_start_event_cb(lv_event_t *e)
 {
-  if (!isTricklerRunning())
-  {
-    DEBUG_PRINTLN("TricklerStart");
-    startTrickler();
-  }
-  else
+  if (isTricklerRunning() || isTricklerFinished())
   {
     DEBUG_PRINTLN("TricklerStop");
     stopTrickler();
+  }
+  else
+  {
+    DEBUG_PRINTLN("TricklerStart");
+    startTrickler();
   }
 }
 

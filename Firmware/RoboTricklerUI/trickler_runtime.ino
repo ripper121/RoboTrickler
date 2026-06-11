@@ -1,6 +1,6 @@
 bool isTricklerRunning()
 {
-  return tricklerState == TRICKLER_RUNNING;
+  return (tricklerState == TRICKLER_RUNNING) || (tricklerState == TRICKLER_FINISHED);
 }
 
 bool isTricklerFinished()
@@ -385,7 +385,7 @@ static void handleNewWeight()
   if (weightAtOrBelow(weight, 0.0f) && isTricklerFinished())
   {
     updateDisplayLog(langText("status_ready"), true);
-    setTricklerState(TRICKLER_IDLE);
+    setTricklerState(TRICKLER_RUNNING);
   }
 }
 
