@@ -47,7 +47,7 @@ Events Run On: "Core 0"
 #endif
 #include <TFT_eSPI.h>
 
-#define DEBUG 1
+#define DEBUG 0
 #if DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
@@ -130,6 +130,7 @@ String unit = "";
 float lastWeight = 0;
 int weightCounter = 0;
 int measurementCount = 0;
+int activeProfileStep = -1;
 bool newData = false;
 // State machine that keeps UI events, scale reads, and motor moves in sync.
 enum TricklerState

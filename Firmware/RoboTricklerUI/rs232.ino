@@ -331,6 +331,8 @@ bool containsIgnoreCase(const char *text, const char *needle)
 
 bool requestScaleWeight()
 {
+  updateActiveProfileStepCounterDisplay(weightCounter);
+
   for (size_t i = 0; i < (sizeof(SCALE_REQUEST_COMMANDS) / sizeof(SCALE_REQUEST_COMMANDS[0])); i++)
   {
     if (strcmp(config.scale_protocol, SCALE_REQUEST_COMMANDS[i].protocol) == 0)
@@ -449,7 +451,10 @@ void readWeight()
 
     DEBUG_PRINT("Weight Counter: ");
     DEBUG_PRINTLN(stableCount);
+    weightCounter = stableCount;
   }
+
+  updateActiveProfileStepCounterDisplay(weightCounter);
 
   if (timeout || (stableCount < stableTarget))
   {

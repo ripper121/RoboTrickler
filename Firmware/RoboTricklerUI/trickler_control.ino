@@ -63,6 +63,7 @@ void startMeasurement()
     // Start with a stable-weight window before the first throw.
     newData = false;
     weightCounter = 0;
+    activeProfileStep = -1;
     measurementCount = config.profile_generalMeasurements;
     lastWeight = weight;
     firstProfileMovePending = true;
@@ -72,6 +73,7 @@ void startMeasurement()
 
 void stopMeasurement()
 {
+    activeProfileStep = -1;
     setTricklerState(TRICKLER_IDLE);
     beep("button");
 }
