@@ -402,7 +402,7 @@ void handleIdleWeightRead(uint32_t &readWeightTime)
 {
   handleCalibrationProfilePrompt();
 
-  if (millis() - readWeightTime >= 1000)
+  if (millis() - readWeightTime >= IDLE_SCALE_READ_INTERVAL)
   {
     readWeightTime = millis();
     updateDisplayLog(langText("status_get_weight"), true);

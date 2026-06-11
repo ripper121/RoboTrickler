@@ -121,7 +121,8 @@ unsigned long wifiInterval = 10000;
 
 #define MAX_TARGET_WEIGHT 999
 #define DEC_PLACES 3
-#define WEIGHT_SCALE_FACTOR 100000.0f // Scale factor to convert weight to an integer for comparison, based on the number of decimal places (e.g., 1000 for 3 decimal places).
+#define WEIGHT_SCALE_FACTOR 100000.0f // Scale factor to convert weight to an integer for comparison, based on the number of decimal places (e.g., 10000 for 4 decimal places).
+#define IDLE_SCALE_READ_INTERVAL 1000 // Interval for reading the scale weight in idle state (milliseconds).
 
 float weight = -1.0;
 int decPlaces = DEC_PLACES;
@@ -130,7 +131,7 @@ float lastWeight = 0;
 int weightCounter = 0;
 int measurementCount = 0;
 bool newData = false;
-// Small state machine that keeps UI events, scale reads, and motor moves in sync.
+// State machine that keeps UI events, scale reads, and motor moves in sync.
 enum TricklerState
 {
   TRICKLER_IDLE,
@@ -156,6 +157,28 @@ void setup()
   initSetup();
 }
 
+static void handleTricklerState(uint32_t &readWeightTime)
+{
+  switch (tricklerState)
+  {
+    case TRICKLER_IDLE:
+      handleIdleWeightRead(readWeightTime);
+      break;
+
+    case TRICKLER_RUNNING:
+      handleRunningTrickler();
+      break;
+
+    case TRICKLER_FINISHED:
+      handleIdleWeightRead(readWeightTime);
+      break;
+
+    case TRICKLER_CALIBRATION_PROMPT:
+      handleIdleWeightRead(readWeightTime);
+      break;
+  }
+}
+
 void loop()
 {
   static uint32_t writeETime = millis();
@@ -164,17 +187,9 @@ void loop()
   if (millis() - writeETime >= 1000)
   {
     writeETime = millis();
-    logRuntimeStats();
+    logRuntimeStats();    
+    maintainWifiConnection();
   }
 
-  if (isTricklerRunning())
-  {
-    handleRunningTrickler();
-  }
-  else
-  {
-    handleIdleWeightRead(readWeightTime);
-  }
-
-  maintainWifiConnection();
+  handleTricklerState(readWeightTime);
 }
