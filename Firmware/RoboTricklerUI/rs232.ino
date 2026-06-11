@@ -390,7 +390,7 @@ bool readScaleLine(float *parsedWeight, int *parsedDecimalPlaces, String *parsed
 void readWeight()
 {
   int stableTarget = measurementCount;
-  if ((stableTarget <= 0) || (!running && !calibrationProfilePromptPending))
+  if ((stableTarget <= 0) || (!isTricklerRunning() && !isCalibrationProfilePromptPending()))
   {
     stableTarget = 1;
   }
@@ -465,7 +465,7 @@ void readWeight()
     lastWeight = weight;
     lastScaleWeightReadTime = millis();
     weightCounter = stableCount;
-    newData = running || calibrationProfilePromptPending;
+    newData = isTricklerRunning() || isCalibrationProfilePromptPending();
 
     DEBUG_PRINT("Weight: ");
     DEBUG_PRINTLN(weight);

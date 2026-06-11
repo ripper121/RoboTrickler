@@ -208,16 +208,14 @@ void startMeasurment()
     weightCounter = 0;
     measurementCount = config.profile_generalMeasurements;
     lastWeight = weight;
-    running = true;
-    finished = false;
-    firstThrow = true;
+    firstProfileMovePending = true;
+    setTricklerState(TRICKLER_RUNNING);
     beep("button");
 }
 
 void stopMeasurment()
 {
-    running = false;
-    finished = true;
+    setTricklerState(TRICKLER_FINISHED);
     beep("button");
 }
 
@@ -269,7 +267,7 @@ int findProfileIndex(const char *profileName)
 
 bool deleteSelectedProfile()
 {
-    if (running)
+    if (isTricklerRunning())
     {
         messageBox("Stop trickler before deleting profile", &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return false;
@@ -315,7 +313,7 @@ void finishProfileDeleteConfirm(bool confirmed)
         return;
     }
 
-    if (running)
+    if (isTricklerRunning())
     {
         messageBox("Stop trickler before deleting profile", &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return;

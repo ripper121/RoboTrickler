@@ -129,15 +129,40 @@ float addWeight = 0.1;
 int weightCounter = 0;
 int measurementCount = 0;
 bool newData = false;
-bool running = false;
-bool finished = false;
-bool firstThrow = true;
+enum TricklerState
+{
+  TRICKLER_IDLE,
+  TRICKLER_RUNNING,
+  TRICKLER_FINISHED,
+  TRICKLER_CALIBRATION_PROMPT
+};
+TricklerState tricklerState = TRICKLER_IDLE;
+bool firstProfileMovePending = true;
 int trickleCounter = 0;
 bool restart_now = false;
-bool calibrationProfilePromptPending = false;
 // Track prompt start and fresh scale reads so stale weights are ignored.
 unsigned long calibrationProfilePromptTime = 0;
 unsigned long lastScaleWeightReadTime = 0;
+
+bool isTricklerRunning()
+{
+  return tricklerState == TRICKLER_RUNNING;
+}
+
+bool isTricklerFinished()
+{
+  return tricklerState == TRICKLER_FINISHED;
+}
+
+bool isCalibrationProfilePromptPending()
+{
+  return tricklerState == TRICKLER_CALIBRATION_PROMPT;
+}
+
+void setTricklerState(TricklerState state)
+{
+  tricklerState = state;
+}
 
 static bool canStartFirstThrowAtCurrentWeight()
 {
@@ -151,6 +176,8 @@ static bool canStartFirstThrowAtCurrentWeight()
 String infoMessagBuff[14];
 String profileListBuff[32];
 byte profileListCount;
+
+void refreshLogLabel();
 
 static long calculateStepperStepsForUnits(double remainingUnits, double unitsPerThrow, double *outUnits)
 {
@@ -188,7 +215,7 @@ static bool runBulkStepperMove(String &infoText)
   int stepperNum = config.profile_bulkActuator;
   if ((stepperNum < 1) || (stepperNum > 2))
   {
-    stepperNum = 1;
+    return false;
   }
 
   if (!config.profile_stepperEnabled[stepperNum])
@@ -224,6 +251,21 @@ static bool runBulkStepperMove(String &infoText)
   infoText += " ";
 
   return true;
+}
+
+static int stepperSpeedOld[3] = {0, 0, 0};
+
+static void setStepperSpeedIfChanged(byte stepperNum, int speed)
+{
+  if ((stepperNum < 1) || (stepperNum > 2))
+  {
+    return;
+  }
+  if (stepperSpeedOld[stepperNum] != speed)
+  {
+    setStepperSpeed(stepperNum, speed);
+    stepperSpeedOld[stepperNum] = speed;
+  }
 }
 
 bool lvglLock()
@@ -283,24 +325,30 @@ void updateDisplayLog(String logOutput, bool noLog = false)
   {
     logOutput += "\n";
     insertLine(logOutput);
-    String temp = "";
-    for (int i = 0; i < (sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])); i++)
-    {
-      temp += infoMessagBuff[i];
-    }
-    setLabelText(ui_LabelLog, temp.c_str());
-  }else
+    refreshLogLabel();
+  }
+  else
   {
     logOutput.trim();
-    setLabelText(ui_LabelInfo, logOutput.c_str());    
+    setLabelText(ui_LabelInfo, logOutput.c_str());
   }
   DEBUG_PRINT(logOutput);
+}
+
+void refreshLogLabel()
+{
+  String logText = "";
+  for (int i = 0; i < (sizeof(infoMessagBuff) / sizeof(infoMessagBuff[0])); i++)
+  {
+    logText += infoMessagBuff[i];
+  }
+  setLabelText(ui_LabelLog, logText.c_str());
 }
 
 void startCalibrationProfilePrompt()
 {
   stopTrickler();
-  calibrationProfilePromptPending = true;
+  setTricklerState(TRICKLER_CALIBRATION_PROMPT);
   calibrationProfilePromptTime = millis();
   measurementCount = config.profile_generalMeasurements;
   weightCounter = 0;
@@ -309,7 +357,7 @@ void startCalibrationProfilePrompt()
 
 void handleCalibrationProfilePrompt()
 {
-  if (!calibrationProfilePromptPending)
+  if (!isCalibrationProfilePromptPending())
   {
     return;
   }
@@ -318,7 +366,7 @@ void handleCalibrationProfilePrompt()
 
   if (newData && (lastScaleWeightReadTime > calibrationProfilePromptTime))
   {
-    calibrationProfilePromptPending = false;
+    setTricklerState(TRICKLER_IDLE);
     newData = false;
     weightCounter = 0;
     if (confirmBox(String(langText("msg_create_profile_prompt")) + String(weight, 3) + " gn", &lv_font_montserrat_14, lv_color_hex(0xFFFFFF)))
@@ -336,6 +384,228 @@ void handleCalibrationProfilePrompt()
   }
 }
 
+static void logRuntimeStats()
+{
+#if DEBUG
+  char temp[300];
+  snprintf(temp, sizeof(temp), "Heap: Free:%lu, Min:%lu, Size:%lu, Alloc:%lu", (unsigned long)ESP.getFreeHeap(), (unsigned long)ESP.getMinFreeHeap(), (unsigned long)ESP.getHeapSize(), (unsigned long)ESP.getMaxAllocHeap());
+  DEBUG_PRINTLN(temp);
+
+  printf("lv_disp_tcb stackHWM: %d / %d\n", (DISP_TASK_STACK - uxTaskGetStackHighWaterMark(lv_disp_tcb)), DISP_TASK_STACK);
+  printf("loop stackHWM: %d / %d\n", (getArduinoLoopTaskStackSize() - uxTaskGetStackHighWaterMark(NULL)), getArduinoLoopTaskStackSize());
+#endif
+}
+
+static bool isCalibrationProfile()
+{
+  return strcmp(config.profile, "calibrate") == 0;
+}
+
+static void handleOverTrickle()
+{
+  setLabelTextColor(ui_LabelTricklerWeight, 0xFF0000);
+  updateDisplayLog(langText("status_over_trickle"), true);
+  beep("done");
+  delay(250);
+  beep("done");
+  delay(250);
+  beep("done");
+  String messageText = langText("msg_over_trickle");
+  if (config.profile_trickleCounter)
+  {
+    messageText += String(trickleCounter);
+  }
+  stopTrickler();
+  messageBox(messageText.c_str(), &lv_font_montserrat_32, lv_color_hex(0xFF0000), true);
+}
+
+static void handleTargetReached(bool weightWithinTolerance)
+{
+  setLabelTextColor(ui_LabelTricklerWeight, weightWithinTolerance ? 0x00FF00 : 0xFFFF00);
+
+  if ((weight >= (config.targetWeight + config.profile_alarmThreshold + EPSILON)) && (config.profile_alarmThreshold > 0))
+  {
+    handleOverTrickle();
+  }
+
+  if (!isTricklerFinished())
+  {
+    beep("done");
+    if (config.trickleCounter)
+    {
+      config.trickleCount++;
+    }
+    if (config.profile_trickleCounter && weightWithinTolerance)
+    {
+      trickleCounter++;
+      updateDisplayLog(String(langText("status_done")) + langText("status_count") + String(trickleCounter), true);
+    }
+    else
+    {
+      updateDisplayLog(langText("status_done"), true);
+    }
+  }
+  measurementCount = 0;
+  setTricklerState(TRICKLER_FINISHED);
+}
+
+static int selectProfileStep()
+{
+  int profileStep = config.profile_count - 1;
+  for (int i = 0; i < config.profile_count; i++)
+  {
+    if (weight <= (config.targetWeight - config.profile_weight[i]))
+    {
+      profileStep = i;
+      break;
+    }
+  }
+  return profileStep;
+}
+
+static bool runProfileStep(bool calibrationProfile)
+{
+  if (config.profile_count <= 0)
+  {
+    updateDisplayLog(langText("status_invalid_profile"), true);
+    stopTrickler();
+    return false;
+  }
+
+  int profileStep = selectProfileStep();
+  byte stepperNum = config.profile_num[profileStep];
+  if ((stepperNum < 1) || (stepperNum > 2))
+  {
+    updateDisplayLog(langText("status_invalid_stepper"), true);
+    stopTrickler();
+    return false;
+  }
+
+  setStepperSpeedIfChanged(stepperNum, config.profile_speed[profileStep]);
+  step(stepperNum, config.profile_steps[profileStep]);
+
+  measurementCount = config.profile_measurements[profileStep];
+
+  char infoLine[64];
+  snprintf(infoLine,
+           sizeof(infoLine),
+           "W%.3f ST%ld SP%d M%d",
+           config.profile_weight[profileStep],
+           config.profile_steps[profileStep],
+           config.profile_speed[profileStep],
+           config.profile_measurements[profileStep]);
+
+  if (calibrationProfile)
+  {
+    startCalibrationProfilePrompt();
+    return true;
+  }
+
+  updateDisplayLog(infoLine, true);
+  return true;
+}
+
+static void handleProfileRunning(bool calibrationProfile)
+{
+  if ((weight < 0.0000) || (firstProfileMovePending && !canStartFirstThrowAtCurrentWeight()))
+  {
+    if (config.profile_startAtZero)
+    {
+      updateDisplayLog(langText("status_waiting_zero"), true);
+    }
+    return;
+  }
+
+  updateDisplayLog(langText("status_running"), true);
+  setLabelTextColor(ui_LabelTricklerWeight, 0xFFFFFF);
+
+  DEBUG_PRINTLN("Profile Running");
+  if (firstProfileMovePending)
+  {
+    firstProfileMovePending = false;
+    String infoText = "";
+    infoText.reserve(48);
+    if (!runBulkStepperMove(infoText))
+    {
+      updateDisplayLog(langText("status_bulk_failed"), true);
+      stopTrickler();
+      return;
+    }
+    if (infoText.length() > 0)
+    {
+      if (calibrationProfile)
+      {
+        startCalibrationProfilePrompt();
+        return;
+      }
+      measurementCount = config.profile_generalMeasurements;
+      updateDisplayLog(infoText, true);
+      return;
+    }
+  }
+
+  runProfileStep(calibrationProfile);
+}
+
+static void handleNewWeight()
+{
+  newData = false;
+  weightCounter = 0;
+
+  if (weight <= 0.0000)
+  {
+    firstProfileMovePending = true;
+    measurementCount = config.profile_generalMeasurements;
+  }
+
+  bool calibrationProfile = isCalibrationProfile();
+
+  DEBUG_PRINT("Weight: ");
+  DEBUG_PRINTLN(weight);
+  DEBUG_PRINT("TargetWeight: ");
+  DEBUG_PRINTLN(String((config.targetWeight - config.profile_tolerance), 5));
+  DEBUG_PRINTLN(String((config.targetWeight + config.profile_tolerance), 5));
+  DEBUG_PRINT("profile_alarmThreshold: ");
+  DEBUG_PRINTLN(String((config.targetWeight + config.profile_alarmThreshold), 5));
+
+  if (!calibrationProfile && (weight >= (config.targetWeight - config.profile_tolerance - EPSILON)) && (weight >= 0))
+  {
+    handleTargetReached(weight <= (config.targetWeight + config.profile_tolerance + EPSILON));
+  }
+
+  if (!isTricklerFinished())
+  {
+    handleProfileRunning(calibrationProfile);
+  }
+
+  if ((weight <= 0.0000) && isTricklerFinished())
+  {
+    updateDisplayLog(langText("status_ready"), true);
+    setTricklerState(TRICKLER_IDLE);
+  }
+}
+
+static void handleRunningTrickler()
+{
+  readWeight();
+  if (newData)
+  {
+    handleNewWeight();
+  }
+}
+
+static void handleIdleWeightRead(uint32_t &readWeightTime)
+{
+  handleCalibrationProfilePrompt();
+
+  if (millis() - readWeightTime >= 1000)
+  {
+    readWeightTime = millis();
+    updateDisplayLog(langText("status_get_weight"), true);
+    readWeight();
+  }
+}
+
 void setup()
 {
   initSetup();
@@ -349,209 +619,16 @@ void loop()
   if (millis() - writeETime >= 1000)
   {
     writeETime = millis();
-
-#if DEBUG
-    char temp[300];
-    snprintf(temp, sizeof(temp), "Heap: Free:%lu, Min:%lu, Size:%lu, Alloc:%lu", (unsigned long)ESP.getFreeHeap(), (unsigned long)ESP.getMinFreeHeap(), (unsigned long)ESP.getHeapSize(), (unsigned long)ESP.getMaxAllocHeap());
-    DEBUG_PRINTLN(temp);
-
-    printf("lv_disp_tcb stackHWM: %d / %d\n", (DISP_TASK_STACK - uxTaskGetStackHighWaterMark(lv_disp_tcb)), DISP_TASK_STACK);
-    printf("loop stackHWM: %d / %d\n", (getArduinoLoopTaskStackSize() - uxTaskGetStackHighWaterMark(NULL)), getArduinoLoopTaskStackSize());
-#endif
+    logRuntimeStats();
   }
 
-  if (running)
+  if (isTricklerRunning())
   {
-    readWeight();
-
-    if (newData)
-    {
-      newData = false;
-      weightCounter = 0;
-
-      if (weight <= 0.0000)
-      {
-        firstThrow = true;
-        measurementCount = config.profile_generalMeasurements;
-      }
-
-      float tolerance = config.profile_tolerance;
-      float alarmThreshold = config.profile_alarmThreshold;
-      bool calibrationProfile = strcmp(config.profile, "calibrate") == 0;
-
-      DEBUG_PRINT("Weight: ");
-      DEBUG_PRINTLN(weight);
-      DEBUG_PRINT("TargetWeight: ");
-      DEBUG_PRINTLN(String((config.targetWeight - tolerance), 5));
-      DEBUG_PRINTLN(String((config.targetWeight + tolerance), 5));
-      DEBUG_PRINT("profile_alarmThreshold: ");
-      DEBUG_PRINTLN(String((config.targetWeight + alarmThreshold), 5));
-
-      if (!calibrationProfile && (weight >= (config.targetWeight - tolerance - EPSILON)) && (weight >= 0))
-      {
-        bool weightWithinTolerance = weight <= (config.targetWeight + tolerance + EPSILON);
-        if (weightWithinTolerance)
-        {
-          setLabelTextColor(ui_LabelTricklerWeight, 0x00FF00);
-        }
-        else
-        {
-          setLabelTextColor(ui_LabelTricklerWeight, 0xFFFF00);
-        }
-
-        if ((weight >= (config.targetWeight + alarmThreshold + EPSILON)) && (alarmThreshold > 0))
-        {
-          // Send Alarm
-          setLabelTextColor(ui_LabelTricklerWeight, 0xFF0000);
-          updateDisplayLog(langText("status_over_trickle"), true);
-          beep("done");
-          delay(250);
-          beep("done");
-          delay(250);
-          beep("done");
-          String messageText = langText("msg_over_trickle");
-          if (config.profile_trickleCounter)
-          {
-            messageText += String(trickleCounter);
-          }
-          stopTrickler();
-          messageBox(messageText.c_str(), &lv_font_montserrat_32, lv_color_hex(0xFF0000), true);
-        }
-
-        if (!finished)
-        {
-          beep("done");
-          if (config.trickleCounter)
-          {
-            config.trickleCount++;
-          }
-          if (config.profile_trickleCounter && weightWithinTolerance)
-          {
-            trickleCounter++;
-            updateDisplayLog(String(langText("status_done")) + langText("status_count") + String(trickleCounter), true);
-          }
-          else
-          {
-            updateDisplayLog(langText("status_done"), true);
-          }
-        }
-        measurementCount = 0;
-        finished = true;
-      }
-
-      if (!finished)
-      {
-        if ((weight >= 0.0000) && (!firstThrow || canStartFirstThrowAtCurrentWeight()))
-        {
-          updateDisplayLog(langText("status_running"), true);
-          setLabelTextColor(ui_LabelTricklerWeight, 0xFFFFFF);
-
-          DEBUG_PRINTLN("Profile Running");
-          String infoText = "";
-          infoText.reserve(48);
-          if (firstThrow)
-          {
-            firstThrow = false;
-            if (!runBulkStepperMove(infoText))
-            {
-              updateDisplayLog(langText("status_bulk_failed"), true);
-              stopTrickler();
-              return;
-            }
-            if (infoText.length() > 0)
-            {
-              if (calibrationProfile)
-              {
-                startCalibrationProfilePrompt();
-                return;
-              }
-              measurementCount = config.profile_generalMeasurements;
-              updateDisplayLog(infoText, true);
-              return;
-            }
-          }
-
-          if (config.profile_count <= 0)
-          {
-            updateDisplayLog(langText("status_invalid_profile"), true);
-            stopTrickler();
-            return;
-          }
-
-          static int stepperSpeedOld[3] = {0, 0, 0};
-          int profileStep = config.profile_count - 1;
-
-          for (int i = 0; i < config.profile_count; i++)
-          {
-            if ((weight) <= (config.targetWeight - config.profile_weight[i]))
-            {
-              profileStep = i;
-              break;
-            }
-          }
-
-          byte stepperNum = config.profile_num[profileStep];
-          if ((stepperNum >= 1) && (stepperNum <= 2) && (stepperSpeedOld[stepperNum] != config.profile_speed[profileStep]))
-          {
-            setStepperSpeed(stepperNum, config.profile_speed[profileStep]);
-            stepperSpeedOld[stepperNum] = config.profile_speed[profileStep];
-          }
-
-          if ((config.profile_num[profileStep] < 1) || (config.profile_num[profileStep] > 2))
-          {
-            updateDisplayLog(langText("status_invalid_stepper"), true);
-            stopTrickler();
-            return;
-          }
-
-          step(config.profile_num[profileStep], config.profile_steps[profileStep]);
-
-          measurementCount = config.profile_measurements[profileStep];
-
-          char infoLine[64];
-          snprintf(infoLine,
-                   sizeof(infoLine),
-                   "W%.3f ST%ld SP%d M%d",
-                   config.profile_weight[profileStep],
-                   config.profile_steps[profileStep],
-                   config.profile_speed[profileStep],
-                   config.profile_measurements[profileStep]);
-          infoText = infoLine;
-
-          if (calibrationProfile)
-          {
-            startCalibrationProfilePrompt();
-            return;
-          }
-
-          updateDisplayLog(infoText, true);
-        }
-        else if (config.profile_startAtZero)
-        {
-          updateDisplayLog(langText("status_waiting_zero"), true);
-        }
-      }
-
-      if (weight <= 0.0000)
-      {
-        if (finished)
-        {
-          updateDisplayLog(langText("status_ready"), true);
-          finished = false;
-        }
-      }
-    }
+    handleRunningTrickler();
   }
   else
   {
-    handleCalibrationProfilePrompt();
-
-    if (millis() - readWeightTime >= 1000)
-    {
-      readWeightTime = millis();
-      updateDisplayLog(langText("status_get_weight"), true);
-      readWeight();
-    }
+    handleIdleWeightRead(readWeightTime);
   }
 
   maintainWifiConnection();

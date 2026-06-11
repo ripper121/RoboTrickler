@@ -305,7 +305,7 @@ void applyLanguage()
     lv_tabview_set_tab_text(ui_TabView, 1, langText("tab_profile"));
     lv_tabview_set_tab_text(ui_TabView, 2, langText("tab_info"));
 
-    if (!running)
+    if (!isTricklerRunning())
     {
       lv_label_set_text(ui_LabelTricklerStart, langText("button_start"));
     }

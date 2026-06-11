@@ -21,7 +21,7 @@ static uint32_t lvglMillis(void)
 
 void trickler_start_event_cb(lv_event_t *e)
 {
-  if (!running)
+  if (!isTricklerRunning())
   {
     DEBUG_PRINTLN("TricklerStart");
     startTrickler();

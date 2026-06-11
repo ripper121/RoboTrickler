@@ -43,7 +43,7 @@ Use the same pattern for other SD files: local path under `SD-Files\...`, target
 
 This workspace uses Arduino IDE 1.8.x with Espressif ESP32 core `3.3.10`.
 
-Its preferred to use "compile_upload.py --cli".
+Its preferred to use "compile_upload.py --cli --error --compile-only".
 
 The same board settings are mirrored in `.vscode/arduino.json`.
 

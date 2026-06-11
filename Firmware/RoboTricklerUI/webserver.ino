@@ -906,7 +906,7 @@ bool startWebServerServices()
 
 void maintainWifiConnection()
 {
-  if (!WIFI_AKTIVE || running)
+  if (!WIFI_AKTIVE || isTricklerRunning())
   {
     return;
   }
