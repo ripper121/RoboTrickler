@@ -8,7 +8,7 @@
 
 ### Added
 
-- Added built-in RS232 request commands for `GG`, `AD`, `KERN`, `KERN-ABT`, and `SBI` scale protocols.
+- Added built-in RS232 request commands for `GG`, `AD`, `KERN`, `KERN-ABT`, `KERN-ABS`, and `SBI` scale protocols.
 - Added stricter RS232 response parsing that reads complete numeric tokens and rejects ambiguous scale lines instead of merging unrelated digits.
 - Added optional debug logging for custom RS232 transmit data in both display-safe text and hex forms.
 - Added `/system/logo.bmp` splash logo support during startup.

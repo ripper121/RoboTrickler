@@ -47,7 +47,7 @@ Events Run On: "Core 0"
 #endif
 #include <TFT_eSPI.h>
 
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
