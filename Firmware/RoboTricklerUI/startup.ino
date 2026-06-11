@@ -152,7 +152,7 @@ void initSetup()
     setLabelText(ui_LabelInfo, (String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
     setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
     setLabelText(ui_LabelProfile, config.profile);
-    updateProfileDeleteButtonVisibility();
+    updateProfileActionButtonVisibility();
 
     tempTargetWeight = config.targetWeight;
 

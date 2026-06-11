@@ -1,6 +1,27 @@
 float addWeight = 0.1;
+byte addWeightIndex = 2;
 
-void trickler_start_event_cb(lv_event_t *e)
+void updateAddWeightLabel()
+{
+  const float weights[] = {0.001, 0.01, 0.1, 1.0, 10.0};
+  if (addWeightIndex >= (sizeof(weights) / sizeof(weights[0])))
+  {
+    addWeightIndex = 0;
+  }
+  addWeight = weights[addWeightIndex];
+  if (ui_LabelAddWeightCycle != NULL)
+  {
+    setLabelText(ui_LabelAddWeightCycle, String(addWeight, 3).c_str());
+  }
+}
+
+void setAddWeight(byte index)
+{
+  addWeightIndex = index;
+  updateAddWeightLabel();
+}
+
+void toggleTrickler_event_cb(lv_event_t *e)
 {
   if (!isTricklerRunning())
   {
@@ -14,31 +35,36 @@ void trickler_start_event_cb(lv_event_t *e)
   }
 }
 
-void nnn_event_cb(lv_event_t *e)
+void setAddWeightFine_event_cb(lv_event_t *e)
 {
-  addWeight = 0.001;
+  setAddWeight(0);
   beep("button");
 }
 
-void nn_event_cb(lv_event_t *e)
+void cycleAddWeight_event_cb(lv_event_t *e)
 {
-  addWeight = 0.01;
+  addWeightIndex++;
+  if (addWeightIndex > 3)
+  {
+    addWeightIndex = 0;
+  }
+  updateAddWeightLabel();
   beep("button");
 }
 
-void n_event_cb(lv_event_t *e)
+void setAddWeightMedium_event_cb(lv_event_t *e)
 {
-  addWeight = 0.1;
+  setAddWeight(2);
   beep("button");
 }
 
-void p_event_cb(lv_event_t *e)
+void setAddWeightLarge_event_cb(lv_event_t *e)
 {
-  addWeight = 1.0;
+  setAddWeight(3);
   beep("button");
 }
 
-void add_event_cb(lv_event_t *e)
+void increaseTargetWeight_event_cb(lv_event_t *e)
 {
   config.targetWeight += addWeight;
   if (config.targetWeight > MAX_TARGET_WEIGHT)
@@ -49,7 +75,7 @@ void add_event_cb(lv_event_t *e)
   setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
 }
 
-void sub_event_cb(lv_event_t *e)
+void decreaseTargetWeight_event_cb(lv_event_t *e)
 {
   config.targetWeight -= addWeight;
   if (config.targetWeight < 0)
@@ -60,7 +86,7 @@ void sub_event_cb(lv_event_t *e)
   setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
 }
 
-void prev_event_cb(lv_event_t *e)
+void selectPreviousProfile_event_cb(lv_event_t *e)
 {
   profileListCounter--;
   if (profileListCounter < 0)
@@ -68,16 +94,20 @@ void prev_event_cb(lv_event_t *e)
   setProfile(profileListCounter);
 }
 
-void delete_event_cb(lv_event_t *e)
+void openProfileTune_event_cb(lv_event_t *e)
+{
+  tuneSelectedProfile();
+}
+
+void requestProfileDelete_event_cb(lv_event_t *e)
 {
   deleteSelectedProfile();
 }
 
-void next_event_cb(lv_event_t *e)
+void selectNextProfile_event_cb(lv_event_t *e)
 {
   profileListCounter++;
   if (profileListCounter > (profileListCount - 1))
     profileListCounter = 0;
   setProfile(profileListCounter);
 }
-

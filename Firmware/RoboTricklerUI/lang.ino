@@ -16,6 +16,10 @@ static const char *languageFallback(const char *key)
     return "Yes";
   if (strcmp(key, "button_no") == 0)
     return "No";
+  if (strcmp(key, "button_cancel") == 0)
+    return "Cancel";
+  if (strcmp(key, "button_save") == 0)
+    return "Save";
   if (strcmp(key, "placeholder_profile") == 0)
     return "Profile";
   if (strcmp(key, "status_ready") == 0)
@@ -116,6 +120,8 @@ static const char *languageFallback(const char *key)
     return "Loading profile: ";
   if (strcmp(key, "status_profile_ready") == 0)
     return "Profile ready: ";
+  if (strcmp(key, "status_tuning_profile") == 0)
+    return "Tuning profile: ";
   if (strcmp(key, "status_starting_trickler") == 0)
     return "Starting trickler...";
   if (strcmp(key, "status_profile_selected_suffix") == 0)
@@ -222,6 +228,16 @@ static const char *languageFallback(const char *key)
     return "Could not delete profile: ";
   if (strcmp(key, "msg_profile_deleted") == 0)
     return "Profile deleted: ";
+  if (strcmp(key, "msg_stop_trickler_before_tune_profile") == 0)
+    return "Stop trickler before tuning profile";
+  if (strcmp(key, "msg_cannot_tune_profile") == 0)
+    return "Cannot tune profile";
+  if (strcmp(key, "msg_tune_profile_title") == 0)
+    return "Stepper1 units/throw";
+  if (strcmp(key, "msg_could_not_tune_profile") == 0)
+    return "Could not tune profile";
+  if (strcmp(key, "msg_profile_tuned") == 0)
+    return "Profile tuned: ";
   return key;
 }
 
@@ -329,9 +345,9 @@ void applyLanguage()
 
     if (!isTricklerRunning())
     {
-      lv_label_set_text(ui_LabelTricklerStart, langText("button_start"));
+      lv_label_set_text(ui_LabelToggleTrickler, langText("button_start"));
     }
-    lv_label_set_text(ui_LabelButtonMessage, langText("button_ok"));
+    lv_label_set_text(ui_LabelMessageOk, langText("button_ok"));
     if (strcmp(lv_label_get_text(ui_LabelProfile), "Profile") == 0)
     {
       lv_label_set_text(ui_LabelProfile, langText("placeholder_profile"));

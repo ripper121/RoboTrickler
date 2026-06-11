@@ -10,17 +10,18 @@
 extern "C" {
 #endif
 
-void trickler_start_event_cb(lv_event_t * e);
-void nnn_event_cb(lv_event_t * e);
-void nn_event_cb(lv_event_t * e);
-void n_event_cb(lv_event_t * e);
-void p_event_cb(lv_event_t * e);
-void add_event_cb(lv_event_t * e);
-void sub_event_cb(lv_event_t * e);
-void prev_event_cb(lv_event_t * e);
-void delete_event_cb(lv_event_t * e);
-void next_event_cb(lv_event_t * e);
-void message_event_cb(lv_event_t * e);
+void toggleTrickler_event_cb(lv_event_t * e);
+void setAddWeightFine_event_cb(lv_event_t * e);
+void cycleAddWeight_event_cb(lv_event_t * e);
+void setAddWeightMedium_event_cb(lv_event_t * e);
+void setAddWeightLarge_event_cb(lv_event_t * e);
+void increaseTargetWeight_event_cb(lv_event_t * e);
+void decreaseTargetWeight_event_cb(lv_event_t * e);
+void selectPreviousProfile_event_cb(lv_event_t * e);
+void openProfileTune_event_cb(lv_event_t * e);
+void requestProfileDelete_event_cb(lv_event_t * e);
+void selectNextProfile_event_cb(lv_event_t * e);
+void messageOk_event_cb(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/

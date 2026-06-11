@@ -32,9 +32,9 @@ void disableTouchGestures()
     }
 }
 
-void updateProfileDeleteButtonVisibility()
+void updateProfileActionButtonVisibility()
 {
-    if (ui_ButtonProfileDelete == NULL)
+    if ((ui_ButtonProfileDelete == NULL) || (ui_ButtonProfileTune == NULL))
     {
         return;
     }
@@ -44,10 +44,12 @@ void updateProfileDeleteButtonVisibility()
         if (strcmp(config.profile, "calibrate") == 0)
         {
             lv_obj_add_flag(ui_ButtonProfileDelete, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(ui_ButtonProfileTune, LV_OBJ_FLAG_HIDDEN);
         }
         else
         {
             lv_obj_clear_flag(ui_ButtonProfileDelete, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(ui_ButtonProfileTune, LV_OBJ_FLAG_HIDDEN);
         }
         lvglUnlock();
     }

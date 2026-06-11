@@ -16,27 +16,27 @@ lv_obj_t *ui_TabView;
 lv_obj_t *ui_TabPageTrickler;
 lv_obj_t *ui_PanelTarget;
 lv_obj_t *ui_LabelTarget;
-void ui_event_ButtonTricklerStart( lv_event_t * e);
-lv_obj_t *ui_ButtonTricklerStart;
-lv_obj_t *ui_LabelTricklerStart;
-void ui_event_ButtonNNN( lv_event_t * e);
-lv_obj_t *ui_ButtonNNN;
-lv_obj_t *ui_LabelNNN;
-void ui_event_ButtonNN( lv_event_t * e);
-lv_obj_t *ui_ButtonNN;
-lv_obj_t *ui_LabelNN;
-void ui_event_ButtonN( lv_event_t * e);
-lv_obj_t *ui_ButtonN;
-lv_obj_t *ui_LabelN;
-void ui_event_ButtonP( lv_event_t * e);
-lv_obj_t *ui_ButtonP;
-lv_obj_t *ui_LabelP;
-void ui_event_ButtonAdd( lv_event_t * e);
-lv_obj_t *ui_ButtonAdd;
-lv_obj_t *ui_LabelAdd;
-void ui_event_ButtonSub( lv_event_t * e);
-lv_obj_t *ui_ButtonSub;
-lv_obj_t *ui_LabelSub;
+void ui_event_ButtonToggleTrickler( lv_event_t * e);
+lv_obj_t *ui_ButtonToggleTrickler;
+lv_obj_t *ui_LabelToggleTrickler;
+void ui_event_ButtonAddWeightFine( lv_event_t * e);
+lv_obj_t *ui_ButtonAddWeightFine;
+lv_obj_t *ui_LabelAddWeightFine;
+void ui_event_ButtonAddWeightCycle( lv_event_t * e);
+lv_obj_t *ui_ButtonAddWeightCycle;
+lv_obj_t *ui_LabelAddWeightCycle;
+void ui_event_ButtonAddWeightMedium( lv_event_t * e);
+lv_obj_t *ui_ButtonAddWeightMedium;
+lv_obj_t *ui_LabelAddWeightMedium;
+void ui_event_ButtonAddWeightLarge( lv_event_t * e);
+lv_obj_t *ui_ButtonAddWeightLarge;
+lv_obj_t *ui_LabelAddWeightLarge;
+void ui_event_ButtonIncreaseTargetWeight( lv_event_t * e);
+lv_obj_t *ui_ButtonIncreaseTargetWeight;
+lv_obj_t *ui_LabelIncreaseTargetWeight;
+void ui_event_ButtonDecreaseTargetWeight( lv_event_t * e);
+lv_obj_t *ui_ButtonDecreaseTargetWeight;
+lv_obj_t *ui_LabelDecreaseTargetWeight;
 lv_obj_t *ui_PanelTricklerWeight;
 lv_obj_t *ui_LabelTricklerWeight;
 lv_obj_t *ui_PanelInfo;
@@ -44,6 +44,7 @@ lv_obj_t *ui_LabelInfo;
 lv_obj_t *ui_TabPageProfile;
 lv_obj_t *ui_PanelProfile;
 lv_obj_t *ui_LabelProfile;
+void ui_event_ButtonProfileTune( lv_event_t * e);
 lv_obj_t *ui_ButtonProfileTune;
 lv_obj_t *ui_LabelProfileTune;
 void ui_event_ButtonProfileDelete( lv_event_t * e);
@@ -59,9 +60,9 @@ lv_obj_t *ui_TabPageInfo;
 lv_obj_t *ui_PanelPageInfo;
 lv_obj_t *ui_LabelLog;
 lv_obj_t *ui_PanelMessages;
-void ui_event_ButtonMessage( lv_event_t * e);
-lv_obj_t *ui_ButtonMessage;
-lv_obj_t *ui_LabelButtonMessage;
+void ui_event_ButtonMessageOk( lv_event_t * e);
+lv_obj_t *ui_ButtonMessageOk;
+lv_obj_t *ui_LabelMessageOk;
 lv_obj_t *ui_LabelMessages;
 lv_obj_t *ui____initial_actions0;
 
@@ -76,70 +77,76 @@ lv_obj_t *ui____initial_actions0;
 ///////////////////// ANIMATIONS ////////////////////
 
 ///////////////////// FUNCTIONS ////////////////////
-void ui_event_ButtonTricklerStart( lv_event_t * e) {
+void ui_event_ButtonToggleTrickler( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      trickler_start_event_cb( e );
+      toggleTrickler_event_cb( e );
 }
 }
-void ui_event_ButtonNNN( lv_event_t * e) {
+void ui_event_ButtonAddWeightFine( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      nnn_event_cb( e );
+      setAddWeightFine_event_cb( e );
 }
 }
-void ui_event_ButtonNN( lv_event_t * e) {
+void ui_event_ButtonAddWeightCycle( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      nn_event_cb( e );
+      cycleAddWeight_event_cb( e );
 }
 }
-void ui_event_ButtonN( lv_event_t * e) {
+void ui_event_ButtonAddWeightMedium( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      n_event_cb( e );
+      setAddWeightMedium_event_cb( e );
 }
 }
-void ui_event_ButtonP( lv_event_t * e) {
+void ui_event_ButtonAddWeightLarge( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      p_event_cb( e );
+      setAddWeightLarge_event_cb( e );
 }
 }
-void ui_event_ButtonAdd( lv_event_t * e) {
+void ui_event_ButtonIncreaseTargetWeight( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      add_event_cb( e );
+      increaseTargetWeight_event_cb( e );
 }
 }
-void ui_event_ButtonSub( lv_event_t * e) {
+void ui_event_ButtonDecreaseTargetWeight( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      sub_event_cb( e );
+      decreaseTargetWeight_event_cb( e );
 }
 }
 void ui_event_ButtonProfilePrev( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      prev_event_cb( e );
+      selectPreviousProfile_event_cb( e );
+}
+}
+void ui_event_ButtonProfileTune( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      openProfileTune_event_cb( e );
 }
 }
 void ui_event_ButtonProfileDelete( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      delete_event_cb( e );
+      requestProfileDelete_event_cb( e );
 }
 }
 void ui_event_ButtonProfileNext( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      next_event_cb( e );
+      selectNextProfile_event_cb( e );
 }
 }
-void ui_event_ButtonMessage( lv_event_t * e) {
+void ui_event_ButtonMessageOk( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      message_event_cb( e );
+      messageOk_event_cb( e );
 }
 }
 

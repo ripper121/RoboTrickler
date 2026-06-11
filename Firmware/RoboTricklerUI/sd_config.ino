@@ -446,6 +446,42 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
   return true;
 }
 
+static bool writeProfileDocument(const String &filename, JsonDocument &doc)
+{
+  String tempFilename = filename + ".tmp";
+  SD.remove(tempFilename.c_str());
+  File file = SD.open(tempFilename.c_str(), FILE_WRITE);
+  if (!file)
+  {
+    setSdReadError(sdFilenameError("err_could_not_write_profile_file", tempFilename.c_str()));
+    DEBUG_PRINT("Failed to create profile temp file: ");
+    DEBUG_PRINTLN(tempFilename);
+    return false;
+  }
+
+  bool written = serializeJsonPretty(doc, file) > 0;
+  file.close();
+  if (!written)
+  {
+    SD.remove(tempFilename.c_str());
+    setSdReadError(sdFilenameError("err_could_not_write_profile_file", filename.c_str()));
+    DEBUG_PRINTLN("Failed to write profile file");
+    return false;
+  }
+
+  SD.remove(filename.c_str());
+  if (!SD.rename(tempFilename.c_str(), filename.c_str()))
+  {
+    SD.remove(tempFilename.c_str());
+    setSdReadError(sdFilenameError("err_could_not_replace_profile_file", filename.c_str()));
+    DEBUG_PRINT("Failed to replace profile file: ");
+    DEBUG_PRINTLN(filename);
+    return false;
+  }
+
+  return true;
+}
+
 bool isValidProfileFile(const char *filename)
 {
   File file = SD.open(filename);
@@ -488,6 +524,30 @@ String nextCalibrationProfileName()
   return "";
 }
 
+static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerThrow, int profileSpeed)
+{
+  const float diffWeights[5] = {1.929, 0.965, 0.482, 0.241, 0.000};
+  const int measurements[5] = {2, 2, 5, 10, 15};
+  const float rs232LimitFactor = 0.65;
+
+  JsonArray rs232TrickleMap = doc["rs232TrickleMap"].to<JsonArray>();
+  for (int i = 0; i < 5; i++)
+  {
+    long steps = lround(((diffWeights[i] * (double)MOTOR_REV_STEPS) / unitsPerThrow) * rs232LimitFactor);
+    if (steps < 5)
+    {
+      steps = 5;
+    }
+
+    JsonObject profileEntry = rs232TrickleMap.add<JsonObject>();
+    profileEntry["diffWeight"] = serialized(String(diffWeights[i], 3));
+    profileEntry["actuator"] = "stepper1";
+    profileEntry["steps"] = steps;
+    profileEntry["speed"] = profileSpeed;
+    profileEntry["measurements"] = measurements[i];
+  }
+}
+
 bool createProfileFromCalibration(float calibrationWeight, String &profileName)
 {
   if (calibrationWeight <= 0.0)
@@ -506,10 +566,6 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   String infoText = String(langText("status_creating_profile")) + profileName;
   updateDisplayLog(infoText, true);
 
-  // Seed a conservative five-step profile from the measured 100-throw weight.
-  const float diffWeights[5] = {1.929, 0.965, 0.482, 0.241, 0.000};
-  const int measurements[5] = {2, 2, 5, 10, 15};
-  const float rs232LimitFactor = 0.65;
   const float unitsPerThrow = calibrationWeight / 100.0;
   int profileSpeed = config.profile_speed[0];
   if (profileSpeed <= 0)
@@ -538,22 +594,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   stepper2["unitsPerThrow"] = serialized(String(config.profile_stepperUnitsPerThrow[2] > 0.0 ? config.profile_stepperUnitsPerThrow[2] : 10.0, 3));
   stepper2["unitsPerThrowSpeed"] = config.profile_stepperUnitsPerThrowSpeed[2] > 0 ? config.profile_stepperUnitsPerThrowSpeed[2] : 200;
 
-  JsonArray rs232TrickleMap = doc["rs232TrickleMap"].to<JsonArray>();
-  for (int i = 0; i < 5; i++)
-  {
-    long steps = lround(((diffWeights[i] * (double)MOTOR_REV_STEPS) / unitsPerThrow) * rs232LimitFactor);
-    if (steps < 5)
-    {
-      steps = 5;
-    }
-
-    JsonObject profileEntry = rs232TrickleMap.add<JsonObject>();
-    profileEntry["diffWeight"] = serialized(String(diffWeights[i], 3));
-    profileEntry["actuator"] = "stepper1";
-    profileEntry["steps"] = steps;
-    profileEntry["speed"] = profileSpeed;
-    profileEntry["measurements"] = measurements[i];
-  }
+  populateCalibrationTrickleMap(doc, unitsPerThrow, profileSpeed);
 
   if (!SD.exists("/profiles") && !SD.mkdir("/profiles"))
   {
@@ -593,6 +634,70 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   }
 
   updateDisplayLog(String(langText("status_profile_created")) + profileName, true);
+  return true;
+}
+
+bool tuneProfileUnitsPerThrow(const char *profileName, float unitsPerThrow)
+{
+  if (unitsPerThrow <= 0.0)
+  {
+    updateDisplayLog(langText("msg_calibration_weight_invalid"), true);
+    return false;
+  }
+
+  String filename = profileFilename(profileName);
+  File file = SD.open(filename.c_str());
+  if (!file)
+  {
+    setSdReadError(sdFilenameError("err_could_not_open_profile_file", filename.c_str()));
+    DEBUG_PRINT("Failed to open profile: ");
+    DEBUG_PRINTLN(filename);
+    return false;
+  }
+
+  JsonDocument doc;
+  DeserializationError error = deserializeJson(doc, file);
+  file.close();
+  if (error || !doc.is<JsonObject>())
+  {
+    String errorText = error ? String(error.c_str()) : String(langText("err_root_not_json"));
+    setSdReadError(sdFilenameError("err_profile_json_parse_failed", filename.c_str()) + "\n" + errorText);
+    DEBUG_PRINT("deserializeJson() failed on profile tune: ");
+    DEBUG_PRINTLN(errorText);
+    return false;
+  }
+
+  int profileSpeed = config.profile_stepperUnitsPerThrowSpeed[1];
+  if (profileSpeed <= 0)
+  {
+    profileSpeed = config.profile_speed[0];
+  }
+  if (profileSpeed <= 0)
+  {
+    profileSpeed = 200;
+  }
+
+  JsonObject actuator = doc["actuator"].as<JsonObject>();
+  if (actuator.isNull())
+  {
+    actuator = doc["actuator"].to<JsonObject>();
+  }
+  JsonObject stepper1 = actuator["stepper1"].as<JsonObject>();
+  if (stepper1.isNull())
+  {
+    stepper1 = actuator["stepper1"].to<JsonObject>();
+  }
+  stepper1["enabled"] = true;
+  stepper1["unitsPerThrow"] = serialized(String(unitsPerThrow, 3));
+  stepper1["unitsPerThrowSpeed"] = profileSpeed;
+
+  populateCalibrationTrickleMap(doc, unitsPerThrow, profileSpeed);
+
+  if (!writeProfileDocument(filename, doc))
+  {
+    return false;
+  }
+
   return true;
 }
 

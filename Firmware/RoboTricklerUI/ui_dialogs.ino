@@ -2,9 +2,9 @@ volatile bool messageBoxOpen = false;
 volatile bool confirmBoxOpen = false;
 volatile bool confirmBoxResult = false;
 lv_obj_t *ui_ButtonMessageNo = NULL;
-lv_obj_t *ui_LabelButtonMessageNo = NULL;
+lv_obj_t *ui_LabelMessageNo = NULL;
 
-void message_event_cb(lv_event_t *e)
+void messageOk_event_cb(lv_event_t *e)
 {
   // The OK button is shared by message and confirm boxes. Confirm actions are
   // dispatched after the panel is hidden so follow-up dialogs can open cleanly.
@@ -33,7 +33,7 @@ void message_event_cb(lv_event_t *e)
   }
 }
 
-void confirm_no_event_cb(lv_event_t *e)
+void messageNo_event_cb(lv_event_t *e)
 {
   confirmBoxResult = false;
   if (lvglLock())
@@ -55,8 +55,8 @@ void messageBox(String message, const lv_font_t *font, lv_color_t color, bool wa
     {
       lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     }
-    lv_obj_set_x(ui_ButtonMessage, 0);
-    lv_label_set_text(ui_LabelButtonMessage, langText("button_ok"));
+    lv_obj_set_x(ui_ButtonMessageOk, 0);
+    lv_label_set_text(ui_LabelMessageOk, langText("button_ok"));
     messageBoxOpen = true;
     lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN);
     lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN);
@@ -113,16 +113,16 @@ void showConfirmBox(String message, const lv_font_t *font, lv_color_t color)
       lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
       lv_obj_clear_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_SCROLLABLE);
 
-      ui_LabelButtonMessageNo = lv_label_create(ui_ButtonMessageNo);
-      lv_obj_set_width(ui_LabelButtonMessageNo, LV_SIZE_CONTENT);
-      lv_obj_set_height(ui_LabelButtonMessageNo, LV_SIZE_CONTENT);
-      lv_obj_set_align(ui_LabelButtonMessageNo, LV_ALIGN_CENTER);
-      lv_label_set_text(ui_LabelButtonMessageNo, langText("button_no"));
-      lv_obj_add_event_cb(ui_ButtonMessageNo, confirm_no_event_cb, LV_EVENT_CLICKED, NULL);
+      ui_LabelMessageNo = lv_label_create(ui_ButtonMessageNo);
+      lv_obj_set_width(ui_LabelMessageNo, LV_SIZE_CONTENT);
+      lv_obj_set_height(ui_LabelMessageNo, LV_SIZE_CONTENT);
+      lv_obj_set_align(ui_LabelMessageNo, LV_ALIGN_CENTER);
+      lv_label_set_text(ui_LabelMessageNo, langText("button_no"));
+      lv_obj_add_event_cb(ui_ButtonMessageNo, messageNo_event_cb, LV_EVENT_CLICKED, NULL);
     }
 
-    lv_obj_set_x(ui_ButtonMessage, -70);
-    lv_label_set_text(ui_LabelButtonMessage, langText("button_yes"));
+    lv_obj_set_x(ui_ButtonMessageOk, -70);
+    lv_label_set_text(ui_LabelMessageOk, langText("button_yes"));
     lv_obj_clear_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     messageBoxOpen = true;
     confirmBoxOpen = true;
@@ -142,8 +142,8 @@ void resetConfirmBoxButtons()
     {
       lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     }
-    lv_obj_set_x(ui_ButtonMessage, 0);
-    lv_label_set_text(ui_LabelButtonMessage, langText("button_ok"));
+    lv_obj_set_x(ui_ButtonMessageOk, 0);
+    lv_label_set_text(ui_LabelMessageOk, langText("button_ok"));
     lvglUnlock();
   }
 }
