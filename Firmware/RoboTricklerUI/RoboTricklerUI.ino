@@ -16,8 +16,6 @@
 #include <math.h>
 #define FW_VERSION "2.12"
 #define DEFAULT_FW_UPDATE_URL "http://strenuous.dev/roboTrickler/userTracker.php"
-#define DEFAULT_SD_FILES_TAR_URL "http://strenuous.dev/roboTrickler/SD-Files.tar"
-#define SD_FILES_TAR_PATH "/SD-Files.tar"
 
 /*
 Legacy Arduino IDE 1.8.19
