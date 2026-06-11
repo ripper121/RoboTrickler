@@ -226,6 +226,8 @@ static void handleTargetReached(bool weightWithinTolerance)
   if (weightAtOrAbove(weight, config.targetWeight + config.profile_alarmThreshold) && (config.profile_alarmThreshold > 0))
   {
     handleOverTrickle();
+    measurementCount = 0;
+    return;
   }
 
   if (!isTricklerFinished())
