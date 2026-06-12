@@ -184,18 +184,6 @@ void handleCalibrationProfilePrompt()
   }
 }
 
-void logRuntimeStats()
-{
-#if DEBUG
-  char temp[300];
-  snprintf(temp, sizeof(temp), "Heap: Free:%lu, Min:%lu, Size:%lu, Alloc:%lu", (unsigned long)ESP.getFreeHeap(), (unsigned long)ESP.getMinFreeHeap(), (unsigned long)ESP.getHeapSize(), (unsigned long)ESP.getMaxAllocHeap());
-  DEBUG_PRINTLN(temp);
-
-  printf("lvDisplayTaskHandle stackHWM: %d / %d\n", (DISP_TASK_STACK - uxTaskGetStackHighWaterMark(lvDisplayTaskHandle)), DISP_TASK_STACK);
-  printf("loop stackHWM: %d / %d\n", (getArduinoLoopTaskStackSize() - uxTaskGetStackHighWaterMark(NULL)), getArduinoLoopTaskStackSize());
-#endif
-}
-
 static bool isCalibrationProfile()
 {
   return strcmp(config.profile, "calibrate") == 0;

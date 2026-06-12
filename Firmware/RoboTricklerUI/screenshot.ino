@@ -4,7 +4,8 @@ static bool screenshotCaptureOk = false;
 static String screenshotCaptureError = "";
 static int32_t screenshotCaptureNextY = 0;
 static lv_area_t screenshotCaptureArea;
-static uint8_t screenshotCaptureBuffer[LV_HOR_RES_MAX * LV_DRAW_BUF_ROWS * 3];
+#define SCREENSHOT_CHUNK_PIXELS 80
+static uint8_t screenshotCaptureBuffer[SCREENSHOT_CHUNK_PIXELS * 3];
 static const uint8_t screenshotBmpPadding[3] = {0, 0, 0};
 
 static void screenshotPutLE16(uint8_t *buffer, size_t &offset, uint16_t value)
@@ -115,28 +116,24 @@ void screenshotCaptureFlush(const lv_area_t *area, uint8_t *px_map)
 
   for (uint32_t row = 0; row < height; row++)
   {
-    uint8_t *output = screenshotCaptureBuffer + (row * width * 3U);
-    for (uint32_t x = 0; x < width; x++)
+    for (uint32_t chunkX = 0; chunkX < width; chunkX += SCREENSHOT_CHUNK_PIXELS)
     {
-      uint16_t color = pixels[(row * width) + x];
-      uint8_t r = (uint8_t)((((color >> 11) & 0x1F) * 255U) / 31U);
-      uint8_t g = (uint8_t)((((color >> 5) & 0x3F) * 255U) / 63U);
-      uint8_t b = (uint8_t)(((color & 0x1F) * 255U) / 31U);
-      output[(x * 3U) + 0] = b;
-      output[(x * 3U) + 1] = g;
-      output[(x * 3U) + 2] = r;
+      uint32_t chunkWidth = min((uint32_t)SCREENSHOT_CHUNK_PIXELS, width - chunkX);
+      for (uint32_t x = 0; x < chunkWidth; x++)
+      {
+        uint16_t color = pixels[(row * width) + chunkX + x];
+        uint8_t r = (uint8_t)((((color >> 11) & 0x1F) * 255U) / 31U);
+        uint8_t g = (uint8_t)((((color >> 5) & 0x3F) * 255U) / 63U);
+        uint8_t b = (uint8_t)(((color & 0x1F) * 255U) / 31U);
+        screenshotCaptureBuffer[(x * 3U) + 0] = b;
+        screenshotCaptureBuffer[(x * 3U) + 1] = g;
+        screenshotCaptureBuffer[(x * 3U) + 2] = r;
+      }
+      screenshotSendBytes(screenshotCaptureBuffer, chunkWidth * 3U);
     }
-  }
 
-  if (rowPadding == 0)
-  {
-    screenshotSendBytes(screenshotCaptureBuffer, width * height * 3U);
-  }
-  else
-  {
-    for (uint32_t row = 0; row < height; row++)
+    if (rowPadding > 0)
     {
-      screenshotSendBytes(screenshotCaptureBuffer + (row * width * 3U), width * 3U);
       screenshotSendBytes(screenshotBmpPadding, rowPadding);
     }
   }

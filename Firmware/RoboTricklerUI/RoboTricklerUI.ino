@@ -10,6 +10,7 @@
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <Update.h>
+#include <esp_heap_caps.h>
 #include <freertos/semphr.h>
 #include <ctype.h>
 #include <string.h>
@@ -64,8 +65,9 @@ Events Run On: "Core 0"
 #define DISP_TASK_CORE 0
 TaskHandle_t lvDisplayTaskHandle = NULL;
 SemaphoreHandle_t lvglMutex = NULL;
-#define LV_DRAW_BUF_ROWS 10
-static lv_color_t buf[LV_HOR_RES_MAX * LV_DRAW_BUF_ROWS];
+#define LV_DRAW_BUF_ROWS 4
+#define DISPLAY_DRAW_BUF_SIZE (LV_HOR_RES_MAX * LV_DRAW_BUF_ROWS * (LV_COLOR_DEPTH / 8))
+static uint32_t buf[DISPLAY_DRAW_BUF_SIZE / sizeof(uint32_t)];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 
 SPIClass *SDspi = NULL;
@@ -178,6 +180,28 @@ static void handleTricklerState(uint32_t &readWeightTime)
       handleIdleWeightRead(readWeightTime);
       break;
   }
+}
+
+void logRuntimeStats()
+{
+//#if DEBUG
+  lv_mem_monitor_t lvglMemory;
+  lv_mem_monitor(&lvglMemory);
+
+  printf("heap_free:%lu\theap_min:%lu\theap_largest:%lu\theap_internal:%lu\theap_internal_largest:%lu\theap_dma:%lu\t"
+         "lvgl_used:%lu\tlvgl_free:%lu\tlvgl_largest:%lu\tstack_lvgl_used:%lu\tstack_loop_used:%lu\n",
+         (unsigned long)ESP.getFreeHeap(),
+         (unsigned long)ESP.getMinFreeHeap(),
+         (unsigned long)ESP.getMaxAllocHeap(),
+         (unsigned long)heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT),
+         (unsigned long)heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT),
+         (unsigned long)heap_caps_get_free_size(MALLOC_CAP_DMA),
+         (unsigned long)(lvglMemory.total_size - lvglMemory.free_size),
+         (unsigned long)lvglMemory.free_size,
+         (unsigned long)lvglMemory.free_biggest_size,
+         (unsigned long)(DISP_TASK_STACK - uxTaskGetStackHighWaterMark(lvDisplayTaskHandle)),
+         (unsigned long)(getArduinoLoopTaskStackSize() - uxTaskGetStackHighWaterMark(NULL)));
+//#endif
 }
 
 void loop()
