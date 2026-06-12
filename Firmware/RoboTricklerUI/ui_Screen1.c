@@ -17,7 +17,7 @@ lv_obj_set_width( ui_TabView, lv_pct(100));
 lv_obj_set_height( ui_TabView, lv_pct(100));
 lv_obj_set_align( ui_TabView, LV_ALIGN_CENTER );
 lv_obj_clear_flag( ui_TabView, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-lv_obj_set_style_text_font(ui_TabView, &lv_font_montserrat_14, LV_PART_MAIN);
+lv_obj_set_style_text_font(ui_TabView, &lv_font_montserrat_16, LV_PART_MAIN);
 
 
 ui_TabPageTrickler = lv_tabview_add_tab(ui_TabView, "Trickler");
@@ -131,8 +131,8 @@ ui_LabelIncreaseTargetWeight = lv_label_create(ui_ButtonIncreaseTargetWeight);
 lv_obj_set_width( ui_LabelIncreaseTargetWeight, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelIncreaseTargetWeight, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelIncreaseTargetWeight, LV_ALIGN_CENTER );
-lv_label_set_text(ui_LabelIncreaseTargetWeight,"+");
-lv_obj_set_style_text_font(ui_LabelIncreaseTargetWeight, &lv_font_montserrat_48, LV_PART_MAIN);
+lv_label_set_text(ui_LabelIncreaseTargetWeight, LV_SYMBOL_PLUS);
+lv_obj_set_style_text_font(ui_LabelIncreaseTargetWeight, &lv_font_montserrat_46, LV_PART_MAIN);
 
 ui_ButtonDecreaseTargetWeight = lv_btn_create(ui_TabPageTrickler);
 lv_obj_set_height( ui_ButtonDecreaseTargetWeight, 50);
@@ -149,8 +149,8 @@ lv_obj_set_height( ui_LabelDecreaseTargetWeight, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_x( ui_LabelDecreaseTargetWeight, 1 );
 lv_obj_set_y( ui_LabelDecreaseTargetWeight, -4 );
 lv_obj_set_align( ui_LabelDecreaseTargetWeight, LV_ALIGN_CENTER );
-lv_label_set_text(ui_LabelDecreaseTargetWeight,"-");
-lv_obj_set_style_text_font(ui_LabelDecreaseTargetWeight, &lv_font_montserrat_48, LV_PART_MAIN);
+lv_label_set_text(ui_LabelDecreaseTargetWeight, LV_SYMBOL_MINUS);
+lv_obj_set_style_text_font(ui_LabelDecreaseTargetWeight, &lv_font_montserrat_46, LV_PART_MAIN);
 
 ui_PanelTricklerWeight = lv_obj_create(ui_TabPageTrickler);
 lv_obj_set_height( ui_PanelTricklerWeight, 50);
@@ -176,7 +176,7 @@ lv_obj_set_x( ui_PanelInfo, 0 );
 lv_obj_set_y( ui_PanelInfo, 116 );
 lv_obj_set_align( ui_PanelInfo, LV_ALIGN_CENTER );
 lv_obj_clear_flag( ui_PanelInfo, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-lv_obj_set_style_text_font(ui_PanelInfo, &lv_font_montserrat_14, LV_PART_MAIN);
+lv_obj_set_style_text_font(ui_PanelInfo, &lv_font_montserrat_16, LV_PART_MAIN);
 
 ui_LabelInfo = lv_label_create(ui_PanelInfo);
 lv_obj_set_width( ui_LabelInfo, LV_SIZE_CONTENT);  /// 1
@@ -216,9 +216,9 @@ ui_LabelProfileTune = lv_label_create(ui_ButtonProfileTune);
 lv_obj_set_width( ui_LabelProfileTune, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelProfileTune, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelProfileTune, LV_ALIGN_CENTER );
-lv_label_set_text(ui_LabelProfileTune,"T");
+lv_label_set_text(ui_LabelProfileTune, LV_SYMBOL_SETTINGS);
 lv_obj_set_style_text_align(ui_LabelProfileTune, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-lv_obj_set_style_text_font(ui_LabelProfileTune, &lv_font_montserrat_48, LV_PART_MAIN);
+lv_obj_set_style_text_font(ui_LabelProfileTune, &lv_font_montserrat_46, LV_PART_MAIN);
 
 ui_ButtonProfileDelete = lv_btn_create(ui_PanelProfile);
 lv_obj_set_width( ui_ButtonProfileDelete, 75);
@@ -234,9 +234,9 @@ ui_LabelProfileDelete = lv_label_create(ui_ButtonProfileDelete);
 lv_obj_set_width( ui_LabelProfileDelete, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelProfileDelete, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelProfileDelete, LV_ALIGN_CENTER );
-lv_label_set_text(ui_LabelProfileDelete,"X");
+lv_label_set_text(ui_LabelProfileDelete, LV_SYMBOL_TRASH);
 lv_obj_set_style_text_align(ui_LabelProfileDelete, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-lv_obj_set_style_text_font(ui_LabelProfileDelete, &lv_font_montserrat_48, LV_PART_MAIN);
+lv_obj_set_style_text_font(ui_LabelProfileDelete, &lv_font_montserrat_46, LV_PART_MAIN);
 
 ui_ButtonProfilePrev = lv_btn_create(ui_TabPageProfile);
 lv_obj_set_height( ui_ButtonProfilePrev, 75);
@@ -249,9 +249,9 @@ ui_LabelProfilePrev = lv_label_create(ui_ButtonProfilePrev);
 lv_obj_set_width( ui_LabelProfilePrev, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelProfilePrev, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelProfilePrev, LV_ALIGN_CENTER );
-lv_label_set_text(ui_LabelProfilePrev,"<");
+lv_label_set_text(ui_LabelProfilePrev, LV_SYMBOL_UP);
 lv_obj_set_style_text_align(ui_LabelProfilePrev, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-lv_obj_set_style_text_font(ui_LabelProfilePrev, &lv_font_montserrat_48, LV_PART_MAIN);
+lv_obj_set_style_text_font(ui_LabelProfilePrev, &lv_font_montserrat_46, LV_PART_MAIN);
 
 ui_ButtonProfileNext = lv_btn_create(ui_TabPageProfile);
 lv_obj_set_height( ui_ButtonProfileNext, 75);
@@ -264,9 +264,9 @@ ui_LabelProfileNext = lv_label_create(ui_ButtonProfileNext);
 lv_obj_set_width( ui_LabelProfileNext, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelProfileNext, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelProfileNext, LV_ALIGN_CENTER );
-lv_label_set_text(ui_LabelProfileNext,">");
+lv_label_set_text(ui_LabelProfileNext, LV_SYMBOL_DOWN);
 lv_obj_set_style_text_align(ui_LabelProfileNext, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-lv_obj_set_style_text_font(ui_LabelProfileNext, &lv_font_montserrat_48, LV_PART_MAIN);
+lv_obj_set_style_text_font(ui_LabelProfileNext, &lv_font_montserrat_46, LV_PART_MAIN);
 
 ui_TabPageInfo = lv_tabview_add_tab(ui_TabView, "Info");
 lv_obj_clear_flag( ui_TabPageInfo, LV_OBJ_FLAG_SCROLLABLE );    /// Flags

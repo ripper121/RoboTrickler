@@ -339,7 +339,6 @@ void applyLanguage()
   {
     lv_tabview_set_tab_text(ui_TabView, 0, langText("tab_trickler"));
     lv_tabview_set_tab_text(ui_TabView, 1, langText("tab_profile"));
-    lv_tabview_set_tab_text(ui_TabView, 2, langText("tab_info"));
 
     if (!isTricklerRunning())
     {
@@ -352,4 +351,6 @@ void applyLanguage()
     }
     lvglUnlock();
   }
+
+  updateInfoTabWifiSymbol(true);
 }
