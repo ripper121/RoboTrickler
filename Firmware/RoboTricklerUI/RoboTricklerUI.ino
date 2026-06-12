@@ -11,6 +11,8 @@
 #include <HTTPClient.h>
 #include <Update.h>
 #include <esp_heap_caps.h>
+#include <esp_task_wdt.h>
+#include <rtc_wdt.h>
 #include <freertos/semphr.h>
 #include <ctype.h>
 #include <string.h>
@@ -157,6 +159,12 @@ String profileListBuff[32];
 byte profileListCount;
 int profileListCounter;
 
+void disableRuntimeWatchdogs()
+{
+  disableLoopWDT();
+  esp_task_wdt_deinit();
+  rtc_wdt_disable();
+}
 
 void setup()
 {
