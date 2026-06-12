@@ -1,10 +1,3 @@
-static void startUiTask()
-{
-    ui_init();
-    disableTouchGestures();
-    disp_task_init();
-}
-
 void initSetup()
 {
     Serial.begin(115200); /* prepare for possible serial debug */
@@ -19,9 +12,11 @@ void initSetup()
     SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
     if (!SD.begin(GRBL_SPI_SS, *SDspi, SD_SPI_FREQ, "/sd", 10))
     {
-        startUiTask();
+        ui_init();
+        disableTouchGestures();
+        disp_task_init();
         restart_now = true;
-        messageBox(langText("msg_card_mount_failed"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
+        messageBox(langText("msg_card_mount_failed"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
         return;
     }
     else
@@ -30,9 +25,11 @@ void initSetup()
 
         if (cardType == CARD_NONE)
         {
-            startUiTask();
+            ui_init();
+            disableTouchGestures();
+            disp_task_init();
             restart_now = true;
-            messageBox(langText("msg_no_sd_card"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
+            messageBox(langText("msg_no_sd_card"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
             return;
         }
         else
@@ -66,7 +63,9 @@ void initSetup()
 
     showSplashLogo();
 
-    startUiTask();
+    ui_init();
+    disableTouchGestures();
+    disp_task_init();
 
     updateDisplayLog((String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
 
@@ -93,7 +92,7 @@ void initSetup()
 
         String message = String(langText("msg_config_corrupted")) + readError + "\n\n" + langText("msg_config_default");
         restart_now = true;
-        messageBox(message.c_str(), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
+        messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
         return;
     }
 

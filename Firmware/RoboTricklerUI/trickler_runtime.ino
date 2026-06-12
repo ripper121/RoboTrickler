@@ -169,16 +169,16 @@ void handleCalibrationProfilePrompt()
     setTricklerState(TRICKLER_IDLE);
     newData = false;
     weightCounter = 0;
-    if (confirmBox(String(langText("msg_create_profile_prompt")) + String(weight, 3) + " gn", UI_FONT_NORMAL, lv_color_hex(0xFFFFFF)))
+    if (confirmBox(String(langText("msg_create_profile_prompt")) + String(weight, 3) + " gn", &lv_font_montserrat_14, lv_color_hex(0xFFFFFF)))
     {
       String profileName = "";
       if (createProfileFromCalibration(weight, profileName))
       {
-        messageBox(String(langText("msg_profile_created")) + profileName + ".txt", UI_FONT_NORMAL, lv_color_hex(0x00FF00), true);
+        messageBox(String(langText("msg_profile_created")) + profileName + ".txt", &lv_font_montserrat_14, lv_color_hex(0x00FF00), true);
       }
       else
       {
-        messageBox(langText("msg_create_profile_failed"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
+        messageBox(langText("msg_create_profile_failed"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
       }
     }
   }
@@ -216,7 +216,7 @@ static void handleOverTrickle()
     messageText += String(trickleCounter);
   }
   stopTrickler();
-  messageBox(messageText.c_str(), UI_FONT_LARGE, lv_color_hex(0xFF0000), true);
+  messageBox(messageText.c_str(), &lv_font_montserrat_32, lv_color_hex(0xFF0000), true);
 }
 
 static void handleTargetReached(bool weightWithinTolerance)

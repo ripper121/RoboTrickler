@@ -18,34 +18,6 @@ lv_obj_t *ui_ButtonProfileTunePlus = NULL;
 lv_obj_t *ui_ButtonProfileTuneCancel = NULL;
 lv_obj_t *ui_ButtonProfileTuneSave = NULL;
 
-static bool isProfileTuneDialogOpen()
-{
-    bool open = false;
-    if ((ui_PanelProfileTune != NULL) && lvglLock())
-    {
-        open = !lv_obj_has_flag(ui_PanelProfileTune, LV_OBJ_FLAG_HIDDEN);
-        lvglUnlock();
-    }
-    return open;
-}
-
-static bool isMessageDialogOpen()
-{
-    bool open = false;
-    if (lvglLock())
-    {
-        open = isRuntimeMessageBoxOpen();
-        lvglUnlock();
-    }
-    return open;
-}
-
-static void clearProfileTuneState()
-{
-    profileTuneName = "";
-    profileTuneUnitsPerThrow = 0.0;
-}
-
 static void updateProfileTuneValueLabel()
 {
     if (ui_LabelProfileTuneValue != NULL)
@@ -56,11 +28,12 @@ static void updateProfileTuneValueLabel()
 
 static void updateProfileTuneStepLabel()
 {
-    if (profileTuneStepIndex >= WEIGHT_STEP_SIZE_COUNT)
+    const float stepSizes[] = {0.001, 0.01, 0.1, 1.0};
+    if (profileTuneStepIndex >= (sizeof(stepSizes) / sizeof(stepSizes[0])))
     {
         profileTuneStepIndex = 0;
     }
-    profileTuneStepSize = WEIGHT_STEP_SIZES[profileTuneStepIndex];
+    profileTuneStepSize = stepSizes[profileTuneStepIndex];
     if (ui_LabelProfileTuneStep != NULL)
     {
         lv_label_set_text(ui_LabelProfileTuneStep, String(profileTuneStepSize, 3).c_str());
@@ -80,16 +53,7 @@ static void hideProfileTuneDialog()
 {
     if ((ui_PanelProfileTune != NULL) && lvglLock())
     {
-        lv_msgbox_close(ui_PanelProfileTune);
-        ui_PanelProfileTune = NULL;
-        ui_LabelProfileTuneTitle = NULL;
-        ui_LabelProfileTuneValue = NULL;
-        ui_ButtonProfileTuneStep = NULL;
-        ui_LabelProfileTuneStep = NULL;
-        ui_ButtonProfileTuneMinus = NULL;
-        ui_ButtonProfileTunePlus = NULL;
-        ui_ButtonProfileTuneCancel = NULL;
-        ui_ButtonProfileTuneSave = NULL;
+        lv_obj_add_flag(ui_PanelProfileTune, LV_OBJ_FLAG_HIDDEN);
         lvglUnlock();
     }
 }
@@ -108,13 +72,13 @@ static void saveProfileTune()
 
     if (isTricklerRunning())
     {
-        messageBox(langText("msg_stop_trickler_before_tune_profile"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(langText("msg_stop_trickler_before_tune_profile"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return;
     }
 
     if ((profileName.length() <= 0) || (profileName == "calibrate") || (unitsPerThrow <= 0.0))
     {
-        messageBox(langText("msg_cannot_tune_profile"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(langText("msg_cannot_tune_profile"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return;
     }
 
@@ -126,7 +90,7 @@ static void saveProfileTune()
         {
             errorText = langText("msg_could_not_tune_profile");
         }
-        messageBox(errorText, UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(errorText, &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return;
     }
 
@@ -138,7 +102,7 @@ static void saveProfileTune()
     setLabelText(ui_LabelProfile, config.profile);
     updateProfileActionButtonVisibility();
     setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
-    messageBox(String(langText("msg_profile_tuned")) + profileName, UI_FONT_NORMAL, lv_color_hex(0x00FF00), false);
+    messageBox(String(langText("msg_profile_tuned")) + profileName, &lv_font_montserrat_14, lv_color_hex(0x00FF00), false);
 }
 
 void profile_tune_minus_event_cb(lv_event_t *e)
@@ -164,7 +128,7 @@ void profile_tune_plus_event_cb(lv_event_t *e)
 void profile_tune_step_event_cb(lv_event_t *e)
 {
     profileTuneStepIndex++;
-    if (profileTuneStepIndex >= WEIGHT_STEP_SIZE_COUNT)
+    if (profileTuneStepIndex > 3)
     {
         profileTuneStepIndex = 0;
     }
@@ -174,7 +138,8 @@ void profile_tune_step_event_cb(lv_event_t *e)
 void profile_tune_cancel_event_cb(lv_event_t *e)
 {
     hideProfileTuneDialog();
-    clearProfileTuneState();
+    profileTuneName = "";
+    profileTuneUnitsPerThrow = 0.0;
 }
 
 void profile_tune_save_event_cb(lv_event_t *e)
@@ -216,7 +181,7 @@ void corruptProfile(String profileFilename)
     saveConfiguration("/config.txt", config);
     delay(100);
     restart_now = true;
-    messageBox(message.c_str(), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
+    messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
 }
 
 bool loadSelectedProfile()
@@ -282,34 +247,23 @@ bool deleteSelectedProfile()
 {
     // Deletion is two-stage so the LVGL confirm dialog can return through its
     // normal event callback instead of blocking the UI task.
-    if (isMessageDialogOpen())
-    {
-        return false;
-    }
-
-    if (isProfileTuneDialogOpen())
-    {
-        hideProfileTuneDialog();
-        clearProfileTuneState();
-    }
-
     if (isTricklerRunning())
     {
-        messageBox(langText("msg_stop_trickler_before_delete_profile"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(langText("msg_stop_trickler_before_delete_profile"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return false;
     }
 
     String profileName = config.profile;
     if (profileName == "calibrate")
     {
-        messageBox(langText("msg_cannot_delete_calibrate_profile"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(langText("msg_cannot_delete_calibrate_profile"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return false;
     }
 
     String filename = profileFilename(profileName.c_str());
     if (!SD.exists(filename.c_str()))
     {
-        messageBox(String(langText("msg_delete_profile_file_not_found")) + filename, UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(String(langText("msg_delete_profile_file_not_found")) + filename, &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         getProfileList();
         return false;
     }
@@ -317,7 +271,7 @@ bool deleteSelectedProfile()
     profileDeleteName = profileName;
     profileDeleteFilename = filename;
     profileDeleteConfirmPending = true;
-    showConfirmBox(String(langText("msg_delete_profile_confirm_prefix")) + profileName + langText("msg_delete_profile_confirm_suffix"), UI_FONT_NORMAL, lv_color_hex(0xFFFFFF));
+    showConfirmBox(String(langText("msg_delete_profile_confirm_prefix")) + profileName + langText("msg_delete_profile_confirm_suffix"), &lv_font_montserrat_14, lv_color_hex(0xFFFFFF));
     return true;
 }
 
@@ -328,7 +282,7 @@ static lv_obj_t *createProfileTuneButton(lv_obj_t *parent, int x, int y, int wid
     lv_obj_set_height(button, 45);
     lv_obj_set_x(button, x);
     lv_obj_set_y(button, y);
-    lv_obj_set_align(button, LV_ALIGN_TOP_MID);
+    lv_obj_set_align(button, LV_ALIGN_CENTER);
     lv_obj_add_flag(button, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
     lv_obj_clear_flag(button, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_add_event_cb(button, eventCb, LV_EVENT_CLICKED, NULL);
@@ -338,16 +292,7 @@ static lv_obj_t *createProfileTuneButton(lv_obj_t *parent, int x, int y, int wid
     lv_obj_set_height(label, LV_SIZE_CONTENT);
     lv_obj_set_align(label, LV_ALIGN_CENTER);
     lv_label_set_text(label, text);
-    lv_obj_set_style_text_font(label, UI_FONT_NORMAL, LV_PART_MAIN);
-    return button;
-}
-
-static lv_obj_t *createProfileTuneFooterButton(lv_obj_t *parent, const char *text, lv_event_cb_t eventCb)
-{
-    lv_obj_t *button = lv_msgbox_add_footer_button(parent, text);
-    lv_obj_set_width(button, 110);
-    lv_obj_set_style_text_font(button, UI_FONT_NORMAL, LV_PART_MAIN);
-    lv_obj_add_event_cb(button, eventCb, LV_EVENT_CLICKED, NULL);
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_14, LV_PART_MAIN);
     return button;
 }
 
@@ -358,58 +303,44 @@ static void createProfileTuneDialog()
         return;
     }
 
-    ui_PanelProfileTune = lv_msgbox_create(NULL);
+    ui_PanelProfileTune = lv_obj_create(ui_Screen1);
     lv_obj_set_width(ui_PanelProfileTune, lv_pct(86));
-    lv_obj_set_style_radius(ui_PanelProfileTune, 4, LV_PART_MAIN);
-    lv_obj_set_style_text_font(ui_PanelProfileTune, UI_FONT_NORMAL, LV_PART_MAIN);
+    lv_obj_set_height(ui_PanelProfileTune, lv_pct(74));
+    lv_obj_set_align(ui_PanelProfileTune, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_PanelProfileTune, LV_OBJ_FLAG_HIDDEN);
     lv_obj_clear_flag(ui_PanelProfileTune, LV_OBJ_FLAG_SCROLLABLE);
 
-    ui_LabelProfileTuneTitle = lv_msgbox_add_title(ui_PanelProfileTune, langText("msg_tune_profile_title"));
+    ui_LabelProfileTuneTitle = lv_label_create(ui_PanelProfileTune);
+    lv_obj_set_width(ui_LabelProfileTuneTitle, lv_pct(100));
+    lv_obj_set_height(ui_LabelProfileTuneTitle, LV_SIZE_CONTENT);
+    lv_obj_set_y(ui_LabelProfileTuneTitle, -95);
+    lv_obj_set_align(ui_LabelProfileTuneTitle, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_LabelProfileTuneTitle, langText("msg_tune_profile_title"));
     lv_obj_set_style_text_align(ui_LabelProfileTuneTitle, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_set_style_text_font(ui_LabelProfileTuneTitle, UI_FONT_NORMAL, LV_PART_MAIN);
+    lv_obj_set_style_text_font(ui_LabelProfileTuneTitle, &lv_font_montserrat_14, LV_PART_MAIN);
 
-    lv_obj_t *content = lv_msgbox_get_content(ui_PanelProfileTune);
-    lv_obj_set_height(content, 150);
-    lv_obj_set_layout(content, LV_LAYOUT_NONE);
-    lv_obj_clear_flag(content, LV_OBJ_FLAG_SCROLLABLE);
-
-    lv_obj_t *profileLabel = lv_label_create(content);
-    lv_obj_set_width(profileLabel, lv_pct(100));
-    lv_obj_set_height(profileLabel, LV_SIZE_CONTENT);
-    lv_obj_set_y(profileLabel, 0);
-    lv_obj_set_align(profileLabel, LV_ALIGN_TOP_MID);
-    lv_label_set_text(profileLabel, profileTuneName.c_str());
-    lv_obj_set_style_text_align(profileLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_set_style_text_font(profileLabel, UI_FONT_NORMAL, LV_PART_MAIN);
-
-    ui_LabelProfileTuneValue = lv_label_create(content);
+    ui_LabelProfileTuneValue = lv_label_create(ui_PanelProfileTune);
     lv_obj_set_width(ui_LabelProfileTuneValue, 140);
-    lv_obj_set_height(ui_LabelProfileTuneValue, 46);
-    lv_obj_set_y(ui_LabelProfileTuneValue, 42);
-    lv_obj_set_align(ui_LabelProfileTuneValue, LV_ALIGN_TOP_MID);
+    lv_obj_set_height(ui_LabelProfileTuneValue, 50);
+    lv_obj_set_y(ui_LabelProfileTuneValue, -42);
+    lv_obj_set_align(ui_LabelProfileTuneValue, LV_ALIGN_CENTER);
     lv_label_set_text(ui_LabelProfileTuneValue, "0.000");
     lv_obj_set_style_text_align(ui_LabelProfileTuneValue, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_set_style_text_font(ui_LabelProfileTuneValue, UI_FONT_NORMAL, LV_PART_MAIN);
+    lv_obj_set_style_text_font(ui_LabelProfileTuneValue, &lv_font_montserrat_32, LV_PART_MAIN);
     lv_obj_set_style_bg_color(ui_LabelProfileTuneValue, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
-    lv_obj_set_style_bg_opa(ui_LabelProfileTuneValue, LV_OPA_COVER, LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(ui_LabelProfileTuneValue, 255, LV_PART_MAIN);
     lv_obj_set_style_text_color(ui_LabelProfileTuneValue, lv_color_hex(0x000000), LV_PART_MAIN);
     lv_obj_set_style_border_color(ui_LabelProfileTuneValue, lv_color_hex(0x808080), LV_PART_MAIN);
     lv_obj_set_style_border_width(ui_LabelProfileTuneValue, 2, LV_PART_MAIN);
-    lv_obj_set_style_pad_top(ui_LabelProfileTuneValue, 9, LV_PART_MAIN);
+    lv_obj_set_style_pad_top(ui_LabelProfileTuneValue, 5, LV_PART_MAIN);
     lv_obj_clear_flag(ui_LabelProfileTuneValue, LV_OBJ_FLAG_SCROLLABLE);
 
-    ui_ButtonProfileTuneMinus = createProfileTuneButton(content, -115, 40, 60, "-", profile_tune_minus_event_cb);
-    ui_ButtonProfileTunePlus = createProfileTuneButton(content, 115, 40, 60, "+", profile_tune_plus_event_cb);
-    ui_ButtonProfileTuneStep = createProfileTuneButton(content, 0, 100, 110, "0.001", profile_tune_step_event_cb);
+    ui_ButtonProfileTuneMinus = createProfileTuneButton(ui_PanelProfileTune, -115, -42, 60, "-", profile_tune_minus_event_cb);
+    ui_ButtonProfileTunePlus = createProfileTuneButton(ui_PanelProfileTune, 115, -42, 60, "+", profile_tune_plus_event_cb);
+    ui_ButtonProfileTuneStep = createProfileTuneButton(ui_PanelProfileTune, 0, 22, 110, "0.001", profile_tune_step_event_cb);
     ui_LabelProfileTuneStep = lv_obj_get_child(ui_ButtonProfileTuneStep, 0);
-    ui_ButtonProfileTuneCancel = createProfileTuneFooterButton(ui_PanelProfileTune, langText("button_cancel"), profile_tune_cancel_event_cb);
-    ui_ButtonProfileTuneSave = createProfileTuneFooterButton(ui_PanelProfileTune, langText("button_save"), profile_tune_save_event_cb);
-
-    lv_obj_t *footer = lv_msgbox_get_footer(ui_PanelProfileTune);
-    if (footer != NULL)
-    {
-        lv_obj_set_height(footer, 52);
-    }
+    ui_ButtonProfileTuneCancel = createProfileTuneButton(ui_PanelProfileTune, -70, 88, 110, langText("button_cancel"), profile_tune_cancel_event_cb);
+    ui_ButtonProfileTuneSave = createProfileTuneButton(ui_PanelProfileTune, 70, 88, 110, langText("button_save"), profile_tune_save_event_cb);
 }
 
 static void showProfileTuneDialog()
@@ -419,21 +350,18 @@ static void showProfileTuneDialog()
         createProfileTuneDialog();
         profileTuneUnitsPerThrow = currentProfileTuneUnitsPerThrow();
         updateProfileTuneStepLabel();
+        lv_label_set_text(ui_LabelProfileTuneTitle, (String(langText("msg_tune_profile_title")) + "\n" + profileTuneName).c_str());
         updateProfileTuneValueLabel();
+        lv_obj_clear_flag(ui_PanelProfileTune, LV_OBJ_FLAG_HIDDEN);
         lvglUnlock();
     }
 }
 
 bool tuneSelectedProfile()
 {
-    if (isMessageDialogOpen())
-    {
-        return false;
-    }
-
     if (isTricklerRunning())
     {
-        messageBox(langText("msg_stop_trickler_before_tune_profile"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(langText("msg_stop_trickler_before_tune_profile"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return false;
     }
 
@@ -441,7 +369,7 @@ bool tuneSelectedProfile()
     String filename = profileFilename(profileName.c_str());
     if (!SD.exists(filename.c_str()))
     {
-        messageBox(String(langText("msg_delete_profile_file_not_found")) + filename, UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(String(langText("msg_delete_profile_file_not_found")) + filename, &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         getProfileList();
         return false;
     }
@@ -471,19 +399,19 @@ void finishProfileDeleteConfirm(bool confirmed)
 
     if (isTricklerRunning())
     {
-        messageBox(langText("msg_stop_trickler_before_delete_profile"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(langText("msg_stop_trickler_before_delete_profile"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return;
     }
 
     if ((profileName.length() <= 0) || (profileName == "calibrate"))
     {
-        messageBox(langText("msg_cannot_delete_profile"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(langText("msg_cannot_delete_profile"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return;
     }
 
     if (!SD.exists(filename.c_str()))
     {
-        messageBox(String(langText("msg_delete_profile_file_not_found")) + filename, UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(String(langText("msg_delete_profile_file_not_found")) + filename, &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         getProfileList();
         return;
     }
@@ -491,25 +419,25 @@ void finishProfileDeleteConfirm(bool confirmed)
     int calibrateIndex = findProfileIndex("calibrate");
     if (calibrateIndex < 0)
     {
-        messageBox(langText("msg_delete_profile_calibrate_missing"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(langText("msg_delete_profile_calibrate_missing"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return;
     }
 
     setProfile(calibrateIndex);
     if (strcmp(config.profile, "calibrate") != 0)
     {
-        messageBox(langText("msg_delete_profile_calibrate_load_failed"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(langText("msg_delete_profile_calibrate_load_failed"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return;
     }
 
     if (!SD.remove(filename.c_str()))
     {
-        messageBox(String(langText("msg_could_not_delete_profile")) + filename, UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
+        messageBox(String(langText("msg_could_not_delete_profile")) + filename, &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         getProfileList();
         return;
     }
 
     getProfileList();
     updateProfileActionButtonVisibility();
-    messageBox(String(langText("msg_profile_deleted")) + profileName, UI_FONT_NORMAL, lv_color_hex(0x00FF00), false);
+    messageBox(String(langText("msg_profile_deleted")) + profileName, &lv_font_montserrat_14, lv_color_hex(0x00FF00), false);
 }

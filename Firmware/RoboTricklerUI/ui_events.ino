@@ -3,11 +3,12 @@ byte addWeightIndex = 2;
 
 void updateAddWeightLabel()
 {
-  if (addWeightIndex >= WEIGHT_STEP_SIZE_COUNT)
+  const float weights[] = {0.001, 0.01, 0.1, 1.0, 10.0};
+  if (addWeightIndex >= (sizeof(weights) / sizeof(weights[0])))
   {
     addWeightIndex = 0;
   }
-  addWeight = WEIGHT_STEP_SIZES[addWeightIndex];
+  addWeight = weights[addWeightIndex];
   if (ui_LabelAddWeightCycle != NULL)
   {
     setLabelText(ui_LabelAddWeightCycle, String(addWeight, 3).c_str());
@@ -43,7 +44,7 @@ void setAddWeightFine_event_cb(lv_event_t *e)
 void cycleAddWeight_event_cb(lv_event_t *e)
 {
   addWeightIndex++;
-  if (addWeightIndex >= WEIGHT_STEP_SIZE_COUNT)
+  if (addWeightIndex > 3)
   {
     addWeightIndex = 0;
   }

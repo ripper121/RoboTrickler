@@ -14,7 +14,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <math.h>
-#define FW_VERSION "2.121"
+#define FW_VERSION "2.12"
 // Internal firmware update check endpoint. Do not mirror this value into SD files.
 #define DEFAULT_FW_UPDATE_URL "http://strenuous.dev/roboTrickler/userTracker.php"
 
@@ -110,9 +110,6 @@ struct Config
 // Single source of truth for SD-backed settings and the active trickling profile.
 Config config;
 
-const float WEIGHT_STEP_SIZES[] = {0.001, 0.01, 0.1, 1.0, 10.0};
-const size_t WEIGHT_STEP_SIZE_COUNT = sizeof(WEIGHT_STEP_SIZES) / sizeof(WEIGHT_STEP_SIZES[0]);
-
 bool wifiActive = false;
 bool WEB_SERVER_ACTIVE = false;
 bool WEB_SERVER_ROUTES_REGISTERED = false;
@@ -191,9 +188,9 @@ void loop()
   if (millis() - writeETime >= 1000)
   {
     writeETime = millis();
-    logRuntimeStats();
+    logRuntimeStats();    
+    maintainWifiConnection();
   }
 
-  maintainWifiConnection();
   handleTricklerState(readWeightTime);
 }

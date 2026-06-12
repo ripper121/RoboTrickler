@@ -141,7 +141,6 @@ void maintainWifiConnection()
   if (!wifiConnectTimeoutReported && ((millis() - wifiConnectStartedMillis) >= WIFI_CONNECT_TIMEOUT_MS))
   {
     updateDisplayLog(langText("status_no_wifi"));
-    messageBox(langText("status_no_wifi"), UI_FONT_NORMAL, lv_color_hex(0xFFFF00), false);
     wifiConnectTimeoutReported = true;
   }
 
@@ -170,11 +169,8 @@ void initWebServer()
     #endif
     // Fully reset WiFi before entering STA mode. This avoids ESP32 reconnect
     // edge cases seen when the radio was already active during startup.
-    if (WiFi.getMode() != WIFI_MODE_NULL)
-    {
-      WiFi.disconnect();
-      WiFi.softAPdisconnect(true);
-    }
+    WiFi.disconnect();
+    WiFi.softAPdisconnect(true);
     WiFi.mode(WIFI_OFF);
 
     delay(500);
@@ -233,6 +229,5 @@ void initWebServer()
     wifiConnectStartedMillis = wifiPreviousMillis;
     wifiConnectTimeoutReported = false;
     wifiLastLoggedStatus = WL_NO_SHIELD;
-
   }
 }
