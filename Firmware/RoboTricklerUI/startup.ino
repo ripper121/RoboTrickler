@@ -17,7 +17,7 @@ void initSetup()
         disableTouchGestures();
         disp_task_init();
         restart_now = true;
-        messageBox(langText("msg_card_mount_failed"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+        messageBox(langText("msg_card_mount_failed"), &lv_font_montserrat_16, lv_color_hex(0xFF0000), true);
         return;
     }
     else
@@ -30,7 +30,7 @@ void initSetup()
             disableTouchGestures();
             disp_task_init();
             restart_now = true;
-            messageBox(langText("msg_no_sd_card"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+            messageBox(langText("msg_no_sd_card"), &lv_font_montserrat_16, lv_color_hex(0xFF0000), true);
             return;
         }
         else
@@ -93,7 +93,7 @@ void initSetup()
 
         String message = String(langText("msg_config_corrupted")) + readError + "\n\n" + langText("msg_config_default");
         restart_now = true;
-        messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+        messageBox(message.c_str(), &lv_font_montserrat_16, lv_color_hex(0xFF0000), true);
         return;
     }
 

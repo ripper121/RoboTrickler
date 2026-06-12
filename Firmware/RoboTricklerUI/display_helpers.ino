@@ -87,6 +87,34 @@ void setLabelText(lv_obj_t *label, const char *text)
   }
 }
 
+void updateInfoTabWifiSymbol(bool force)
+{
+  static bool initialized = false;
+  static bool wasConnected = false;
+  bool isConnected = WiFi.status() == WL_CONNECTED;
+
+  if (!force && initialized && (isConnected == wasConnected))
+  {
+    return;
+  }
+
+  String tabText;
+  if (isConnected)
+  {
+    tabText = LV_SYMBOL_WIFI " ";
+  }
+  tabText += langText("tab_info");
+
+  if (lvglLock())
+  {
+    lv_tabview_set_tab_text(ui_TabView, 2, tabText.c_str());
+    lvglUnlock();
+  }
+
+  wasConnected = isConnected;
+  initialized = true;
+}
+
 void setWeightLabel(lv_obj_t *label)
 {
   char text[32];

@@ -121,6 +121,8 @@ void applyWifiDnsIfNeeded()
 
 void maintainWifiConnection()
 {
+  updateInfoTabWifiSymbol(false);
+
   if (!wifiActive || isTricklerRunning())
   {
     return;

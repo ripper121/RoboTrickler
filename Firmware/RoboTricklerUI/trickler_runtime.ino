@@ -169,16 +169,16 @@ void handleCalibrationProfilePrompt()
     setTricklerState(TRICKLER_IDLE);
     newData = false;
     weightCounter = 0;
-    if (confirmBox(String(langText("msg_create_profile_prompt")) + String(weight, 3) + " gn", &lv_font_montserrat_14, lv_color_hex(0xFFFFFF)))
+    if (confirmBox(String(langText("msg_create_profile_prompt")) + String(weight, 3) + " gn", &lv_font_montserrat_16, lv_color_hex(0xFFFFFF)))
     {
       String profileName = "";
       if (createProfileFromCalibration(weight, profileName))
       {
-        messageBox(String(langText("msg_profile_created")) + profileName + ".txt", &lv_font_montserrat_14, lv_color_hex(0x00FF00), true);
+        messageBox(String(langText("msg_profile_created")) + profileName + ".txt", &lv_font_montserrat_16, lv_color_hex(0x00FF00), true);
       }
       else
       {
-        messageBox(langText("msg_create_profile_failed"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+        messageBox(langText("msg_create_profile_failed"), &lv_font_montserrat_16, lv_color_hex(0xFF0000), true);
       }
     }
   }

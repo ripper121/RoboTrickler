@@ -813,7 +813,7 @@ void getProfileList()
       message += "\n...";
     }
     message += langText("msg_invalid_profiles_ignored");
-    messageBox(message.c_str(), &lv_font_montserrat_14, lv_color_hex(0xFF0000), true);
+    messageBox(message.c_str(), &lv_font_montserrat_16, lv_color_hex(0xFF0000), true);
   }
 }
 
