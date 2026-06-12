@@ -167,13 +167,22 @@ void initWebServer()
     #if DEBUG
       registerWifiDebugLogging();
     #endif
-    // Fully reset WiFi before entering STA mode. This avoids ESP32 reconnect
-    // edge cases seen when the radio was already active during startup.
-    WiFi.disconnect();
-    WiFi.softAPdisconnect(true);
-    WiFi.mode(WIFI_OFF);
-
-    delay(500);
+    // Only reset interfaces that are already running. esp_wifi_disconnect()
+    // reports ESP_ERR_WIFI_NOT_INIT when called during a normal cold start.
+    wifi_mode_t currentMode = WiFi.getMode();
+    if (currentMode != WIFI_MODE_NULL)
+    {
+      if ((currentMode & WIFI_MODE_STA) != 0)
+      {
+        WiFi.disconnect();
+      }
+      if ((currentMode & WIFI_MODE_AP) != 0)
+      {
+        WiFi.softAPdisconnect(false);
+      }
+      WiFi.mode(WIFI_OFF);
+      delay(100);
+    }
 
     WiFi.persistent(false);
     WiFi.setHostname(host);

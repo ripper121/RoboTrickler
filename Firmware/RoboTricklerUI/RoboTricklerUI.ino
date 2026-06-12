@@ -65,7 +65,7 @@ Events Run On: "Core 0"
 #define DISP_TASK_CORE 0
 TaskHandle_t lvDisplayTaskHandle = NULL;
 SemaphoreHandle_t lvglMutex = NULL;
-#define LV_DRAW_BUF_ROWS 4
+#define LV_DRAW_BUF_ROWS ((LV_VER_RES_MAX + 9) / 10)
 #define DISPLAY_DRAW_BUF_SIZE (LV_HOR_RES_MAX * LV_DRAW_BUF_ROWS * (LV_COLOR_DEPTH / 8))
 static uint32_t buf[DISPLAY_DRAW_BUF_SIZE / sizeof(uint32_t)];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */

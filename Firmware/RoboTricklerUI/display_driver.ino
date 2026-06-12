@@ -27,6 +27,10 @@ void my_disp_flush(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
   screenshotCaptureFlush(area, px_map);
 
   lv_display_flush_ready(disp);
+
+  // A full refresh is split into many small strips. Let IDLE0 run between
+  // strips so software-rendered labels cannot trip the CPU 0 task watchdog.
+  vTaskDelay(1);
 }
 
 /* Touch callback used by LVGL's pointer input device. */
