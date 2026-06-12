@@ -1,6 +1,7 @@
 extern String tempProfile;
 extern float tempTargetWeight;
 extern int profileListCounter;
+extern volatile bool messageBoxOpen;
 bool profileDeleteConfirmPending = false;
 String profileDeleteName = "";
 String profileDeleteFilename = "";
@@ -17,6 +18,23 @@ lv_obj_t *ui_ButtonProfileTuneMinus = NULL;
 lv_obj_t *ui_ButtonProfileTunePlus = NULL;
 lv_obj_t *ui_ButtonProfileTuneCancel = NULL;
 lv_obj_t *ui_ButtonProfileTuneSave = NULL;
+
+static bool isProfileTuneDialogOpen()
+{
+    bool open = false;
+    if ((ui_PanelProfileTune != NULL) && lvglLock())
+    {
+        open = !lv_obj_has_flag(ui_PanelProfileTune, LV_OBJ_FLAG_HIDDEN);
+        lvglUnlock();
+    }
+    return open;
+}
+
+static void clearProfileTuneState()
+{
+    profileTuneName = "";
+    profileTuneUnitsPerThrow = 0.0;
+}
 
 static void updateProfileTuneValueLabel()
 {
@@ -137,8 +155,7 @@ void profile_tune_step_event_cb(lv_event_t *e)
 void profile_tune_cancel_event_cb(lv_event_t *e)
 {
     hideProfileTuneDialog();
-    profileTuneName = "";
-    profileTuneUnitsPerThrow = 0.0;
+    clearProfileTuneState();
 }
 
 void profile_tune_save_event_cb(lv_event_t *e)
@@ -246,6 +263,17 @@ bool deleteSelectedProfile()
 {
     // Deletion is two-stage so the LVGL confirm dialog can return through its
     // normal event callback instead of blocking the UI task.
+    if (messageBoxOpen)
+    {
+        return false;
+    }
+
+    if (isProfileTuneDialogOpen())
+    {
+        hideProfileTuneDialog();
+        clearProfileTuneState();
+    }
+
     String profileName = config.profile;
     if (profileName == "calibrate")
     {
@@ -345,6 +373,7 @@ static void showProfileTuneDialog()
         updateProfileTuneStepLabel();
         lv_label_set_text(ui_LabelProfileTuneTitle, (String(langText("msg_tune_profile_title"))).c_str());
         updateProfileTuneValueLabel();
+        lv_obj_move_to_index(ui_PanelProfileTune, -1);
         lv_obj_clear_flag(ui_PanelProfileTune, LV_OBJ_FLAG_HIDDEN);
         lvglUnlock();
     }
@@ -352,6 +381,11 @@ static void showProfileTuneDialog()
 
 bool tuneSelectedProfile()
 {
+    if (messageBoxOpen)
+    {
+        return false;
+    }
+
     if (isTricklerRunning())
     {
         messageBox(langText("msg_stop_trickler_before_tune_profile"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);

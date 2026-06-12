@@ -85,6 +85,7 @@ void messageBox(String message, const lv_font_t *font, lv_color_t color, bool wa
     lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN);
     lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN);
     lv_label_set_text(ui_LabelMessages, message.c_str());
+    lv_obj_move_to_index(ui_PanelMessages, -1);
     lv_obj_clear_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
     lvglUnlock();
   }
@@ -153,6 +154,7 @@ void showConfirmBox(String message, const lv_font_t *font, lv_color_t color)
     lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN);
     lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN);
     lv_label_set_text(ui_LabelMessages, message.c_str());
+    lv_obj_move_to_index(ui_PanelMessages, -1);
     lv_obj_clear_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
     lvglUnlock();
   }
