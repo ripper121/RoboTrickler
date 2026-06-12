@@ -70,13 +70,12 @@ void registerWebServerRoutes()
   server.on("/favicon.ico", handleNotFound);
   server.on("/fwlink", handleNotFound);
   server.on("/reboot", handleReboot);
-  server.on("/getWeight", handleGetWeight);
   server.on("/setProfile", handleSetProfile);
   server.on("/getProfile", handleGetProfile);
   server.on("/getLanguage", handleGetLanguage);
   server.on("/getProfileList", handleGetProfileList);
   server.on("/getTarget", handleGetTarget);
-  server.on("/getTricklerRunning", handleGetTricklerRunning);
+  server.on("/getTricklerState", handleGetTricklerState);
   server.on("/setTarget", handleSetTarget);
   server.on("/system/start", handleStart);
   server.on("/system/stop", handleStop);

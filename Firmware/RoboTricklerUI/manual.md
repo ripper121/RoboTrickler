@@ -503,7 +503,7 @@ Ausnahmen sind die Web-API-Funktionen `/setTarget` und `/setProfile`: Sie speich
 
 Diese Endpunkte können im Browser oder aus einer eigenen Steuerung aufgerufen werden:
 
-* `GET /getWeight`: aktuelles Gewicht lesen.
+* `GET /getTricklerState`: aktuelles Gewicht und Laufstatus als JSON lesen.
 * `GET /getTarget`: Zielgewicht lesen.
 * `GET /setTarget?targetWeight=WERT`: Zielgewicht setzen und im aktuellen Profil speichern. Erlaubt sind Werte größer `0` und kleiner `999`. Beispiel: `/setTarget?targetWeight=40`.
 * `GET /getProfile`: aktuelles Profil lesen.

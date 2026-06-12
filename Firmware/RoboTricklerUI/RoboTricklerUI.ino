@@ -126,6 +126,9 @@ unsigned long wifiInterval = 10000;
 #define WEIGHT_SCALE_FACTOR 100000.0f // Scale factor to convert weight to an integer for comparison, based on the number of decimal places (e.g., 10000 for 4 decimal places).
 #define IDLE_SCALE_READ_INTERVAL 1000 // Interval for reading the scale weight in idle state (milliseconds).
 
+const float WEIGHT_STEP_SIZES[] = {0.001, 0.01, 0.1, 1.0, 10.0};
+const byte WEIGHT_STEP_COUNT = sizeof(WEIGHT_STEP_SIZES) / sizeof(WEIGHT_STEP_SIZES[0]);
+
 float weight = -1.0;
 int decPlaces = DEC_PLACES;
 String unit = "";

@@ -84,8 +84,7 @@
         const maxTargetWeight = 998.999;
         const requestTimeoutMs = 3000;
         let tricklerRunning = false;
-        let tricklerStateRequestInFlight = false;
-        let weightRequestInFlight = false;
+        let tricklerDataRequestInFlight = false;
         const valueInterval = setInterval(loadValue, 1000);
 
         function clampTargetValue(value) {
@@ -117,7 +116,7 @@
                 });
 
             addTxtFilesToDropdown().then(selectActiveProfile);
-            loadTricklerState();
+            loadValue();
         });
 
         function selectActiveProfile() {
@@ -163,7 +162,9 @@
 
         function showTricklerState(running) {
             var btn = document.getElementById('start-stop-btn');
+            var profileDropdown = document.getElementById('dropdownMenu');
             tricklerRunning = running;
+            profileDropdown.disabled = running;
             if (running) {
                 btn.innerText = window.rtT ? rtT('trickler.stop', 'Stop') : "Stop";
                 btn.classList.remove("button-start");
@@ -173,34 +174,6 @@
                 btn.classList.remove("button-stop");
                 btn.classList.add("button-start");
             }
-        }
-
-        function loadTricklerState() {
-            if (tricklerStateRequestInFlight) {
-                return Promise.resolve();
-            }
-
-            tricklerStateRequestInFlight = true;
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), requestTimeoutMs);
-
-            return fetch('/getTricklerRunning', { signal: controller.signal })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(data => showTricklerState(data.trim() === '1'))
-                .catch(error => {
-                    if (error.name !== 'AbortError') {
-                        console.error('Could not load trickler state:', error);
-                    }
-                })
-                .finally(() => {
-                    clearTimeout(timeout);
-                    tricklerStateRequestInFlight = false;
-                });
         }
 
         function toggleStartStop() {
@@ -218,11 +191,11 @@
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    return loadTricklerState();
+                    return loadValue();
                 })
                 .catch(error => {
                     console.error('Could not change trickler state:', error);
-                    loadTricklerState();
+                    loadValue();
                 });
         }
 
@@ -255,6 +228,10 @@
         }
 
         function setProfile() {
+            if (tricklerRunning) {
+                return;
+            }
+
             var profileNumber = parseFloat(document.getElementById('dropdownMenu').value);
             if (isNaN(profileNumber)) {
                 return;
@@ -265,35 +242,33 @@
 
 
         function loadValue() {
-            loadTricklerState();
-            if (weightRequestInFlight) {
-                return;
+            if (tricklerDataRequestInFlight) {
+                return Promise.resolve();
             }
 
-            weightRequestInFlight = true;
+            tricklerDataRequestInFlight = true;
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), requestTimeoutMs);
 
-            fetch('/getWeight', { signal: controller.signal })
+            return fetch('/getTricklerState', { signal: controller.signal })
                 .then(response => {
-                    // Check if the request was successful
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    return response.text(); // Parse the response body as JSON
+                    return response.json();
                 })
                 .then(data => {
-                    console.log(data); // Here you have your data
-                    document.getElementById('weightDisplay').value = data;
+                    document.getElementById('weightDisplay').value = data.weight;
+                    showTricklerState(data.running);
                 })
                 .catch(error => {
                     if (error.name !== 'AbortError') {
-                        console.error('There was a problem with your fetch operation:', error);
+                        console.error('Could not load trickler data:', error);
                     }
                 })
                 .finally(() => {
                     clearTimeout(timeout);
-                    weightRequestInFlight = false;
+                    tricklerDataRequestInFlight = false;
                 });
         }
 

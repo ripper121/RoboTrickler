@@ -4,19 +4,20 @@ void handleReboot()
   ESP.restart();
 }
 
-void handleGetWeight()
-{
-  server.send(200, "text/plain", String(weight, 3));
-}
-
 void handleGetTarget()
 {
   server.send(200, "text/plain", String(config.targetWeight, 3));
 }
 
-void handleGetTricklerRunning()
+void handleGetTricklerState()
 {
-  server.send(200, "text/plain", isTricklerRunning() ? "1" : "0");
+  JsonDocument state;
+  state["weight"] = serialized(String(weight, 3));
+  state["running"] = isTricklerRunning();
+
+  String response;
+  serializeJson(state, response);
+  server.send(200, "application/json", response);
 }
 
 void handleSetTarget()

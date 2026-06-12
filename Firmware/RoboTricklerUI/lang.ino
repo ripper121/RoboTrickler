@@ -208,8 +208,6 @@ static const char *languageFallback(const char *key)
     return "Could not write profile file:\n";
   if (strcmp(key, "err_could_not_replace_profile_file") == 0)
     return "Could not replace profile file:\n";
-  if (strcmp(key, "msg_stop_trickler_before_delete_profile") == 0)
-    return "Stop trickler before deleting profile";
   if (strcmp(key, "msg_cannot_delete_calibrate_profile") == 0)
     return "Cannot delete calibrate profile";
   if (strcmp(key, "msg_delete_profile_file_not_found") == 0)
@@ -233,7 +231,7 @@ static const char *languageFallback(const char *key)
   if (strcmp(key, "msg_cannot_tune_profile") == 0)
     return "Cannot tune profile";
   if (strcmp(key, "msg_tune_profile_title") == 0)
-    return "Stepper1 units/throw";
+    return "units/throw";
   if (strcmp(key, "msg_could_not_tune_profile") == 0)
     return "Could not tune profile";
   if (strcmp(key, "msg_profile_tuned") == 0)

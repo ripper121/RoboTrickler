@@ -28,12 +28,11 @@ static void updateProfileTuneValueLabel()
 
 static void updateProfileTuneStepLabel()
 {
-    const float stepSizes[] = {0.001, 0.01, 0.1, 1.0};
-    if (profileTuneStepIndex >= (sizeof(stepSizes) / sizeof(stepSizes[0])))
+    if (profileTuneStepIndex >= WEIGHT_STEP_COUNT)
     {
         profileTuneStepIndex = 0;
     }
-    profileTuneStepSize = stepSizes[profileTuneStepIndex];
+    profileTuneStepSize = WEIGHT_STEP_SIZES[profileTuneStepIndex];
     if (ui_LabelProfileTuneStep != NULL)
     {
         lv_label_set_text(ui_LabelProfileTuneStep, String(profileTuneStepSize, 3).c_str());
@@ -128,7 +127,7 @@ void profile_tune_plus_event_cb(lv_event_t *e)
 void profile_tune_step_event_cb(lv_event_t *e)
 {
     profileTuneStepIndex++;
-    if (profileTuneStepIndex > 3)
+    if (profileTuneStepIndex >= WEIGHT_STEP_COUNT)
     {
         profileTuneStepIndex = 0;
     }
@@ -247,12 +246,6 @@ bool deleteSelectedProfile()
 {
     // Deletion is two-stage so the LVGL confirm dialog can return through its
     // normal event callback instead of blocking the UI task.
-    if (isTricklerRunning())
-    {
-        messageBox(langText("msg_stop_trickler_before_delete_profile"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
-        return false;
-    }
-
     String profileName = config.profile;
     if (profileName == "calibrate")
     {
@@ -350,7 +343,7 @@ static void showProfileTuneDialog()
         createProfileTuneDialog();
         profileTuneUnitsPerThrow = currentProfileTuneUnitsPerThrow();
         updateProfileTuneStepLabel();
-        lv_label_set_text(ui_LabelProfileTuneTitle, (String(langText("msg_tune_profile_title")) + "\n" + profileTuneName).c_str());
+        lv_label_set_text(ui_LabelProfileTuneTitle, (String(langText("msg_tune_profile_title"))).c_str());
         updateProfileTuneValueLabel();
         lv_obj_clear_flag(ui_PanelProfileTune, LV_OBJ_FLAG_HIDDEN);
         lvglUnlock();
@@ -394,12 +387,6 @@ void finishProfileDeleteConfirm(bool confirmed)
 
     if (!confirmed)
     {
-        return;
-    }
-
-    if (isTricklerRunning())
-    {
-        messageBox(langText("msg_stop_trickler_before_delete_profile"), &lv_font_montserrat_14, lv_color_hex(0xFF0000), false);
         return;
     }
 

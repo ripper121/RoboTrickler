@@ -32,6 +32,29 @@ void disableTouchGestures()
     }
 }
 
+void setProfileTabEnabled(bool enabled)
+{
+    if ((ui_TabView == NULL) || !lvglLock())
+    {
+        return;
+    }
+
+    lv_obj_t *profileTabButton = lv_tabview_get_tab_button(ui_TabView, 1);
+    if (profileTabButton != NULL)
+    {
+        if (enabled)
+        {
+            lv_obj_remove_state(profileTabButton, LV_STATE_DISABLED);
+        }
+        else
+        {
+            lv_tabview_set_active(ui_TabView, 0, LV_ANIM_OFF);
+            lv_obj_add_state(profileTabButton, LV_STATE_DISABLED);
+        }
+    }
+    lvglUnlock();
+}
+
 void updateProfileActionButtonVisibility()
 {
     if ((ui_ButtonProfileDelete == NULL) || (ui_ButtonProfileTune == NULL))

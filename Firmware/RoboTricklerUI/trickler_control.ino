@@ -40,12 +40,15 @@ void startTrickler()
 
     String infoText = langText("status_starting_trickler");
     updateDisplayLog(infoText, true);
+    cancelProfileDeleteConfirm();
+    setProfileTabEnabled(false);
     startMeasurement();
 }
 
 void stopTrickler()
 {
     stopMeasurement();
+    setProfileTabEnabled(true);
     if (config.trickleCounter)
     {
         saveConfiguration("/config.txt", config);

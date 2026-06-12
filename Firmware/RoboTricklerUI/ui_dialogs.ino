@@ -47,6 +47,30 @@ void messageNo_event_cb(lv_event_t *e)
   finishProfileDeleteConfirm(false);
 }
 
+void cancelProfileDeleteConfirm()
+{
+  if (!profileDeleteConfirmPending)
+  {
+    return;
+  }
+
+  confirmBoxResult = false;
+  if (lvglLock())
+  {
+    lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+    if (ui_ButtonMessageNo != NULL)
+    {
+      lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
+    }
+    lv_obj_set_x(ui_ButtonMessageOk, 0);
+    lv_label_set_text(ui_LabelMessageOk, langText("button_ok"));
+    messageBoxOpen = false;
+    confirmBoxOpen = false;
+    lvglUnlock();
+  }
+  finishProfileDeleteConfirm(false);
+}
+
 void messageBox(String message, const lv_font_t *font, lv_color_t color, bool wait)
 {
   if (lvglLock())
