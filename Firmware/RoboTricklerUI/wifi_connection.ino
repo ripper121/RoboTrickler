@@ -208,7 +208,6 @@ void initWebServer()
       else
       {
         updateDisplayLog(langText("status_static_ip_failed"));
-        delay(3000);
       }
     }
     if (!useStaticIp)
@@ -216,7 +215,6 @@ void initWebServer()
       if (!WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE))
       {
         updateDisplayLog(langText("status_dns_failed"));
-        delay(3000);
       }
     }
 

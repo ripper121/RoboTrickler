@@ -14,6 +14,11 @@ void handleGetTarget()
   server.send(200, "text/plain", String(config.targetWeight, 3));
 }
 
+void handleGetTricklerRunning()
+{
+  server.send(200, "text/plain", isTricklerRunning() ? "1" : "0");
+}
+
 void handleSetTarget()
 {
   // Browser/UI clients pass targetWeight as a query/form argument; the profile

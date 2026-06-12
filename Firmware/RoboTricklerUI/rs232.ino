@@ -461,7 +461,6 @@ void readWeight()
     if (timeout)
     {
       updateDisplayLog(langText("status_timeout"), true);
-      delay(3000);
     }
     weight = -1.0;
     newData = false;

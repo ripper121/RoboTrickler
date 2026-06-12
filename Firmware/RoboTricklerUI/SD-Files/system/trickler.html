@@ -82,7 +82,11 @@
     <script>
         const minTargetWeight = 0.001;
         const maxTargetWeight = 998.999;
-        valueInterval = setInterval(loadValue, 1000);
+        const requestTimeoutMs = 3000;
+        let tricklerRunning = false;
+        let tricklerStateRequestInFlight = false;
+        let weightRequestInFlight = false;
+        const valueInterval = setInterval(loadValue, 1000);
 
         function clampTargetValue(value) {
             if (isNaN(value) || value < minTargetWeight) {
@@ -113,6 +117,7 @@
                 });
 
             addTxtFilesToDropdown().then(selectActiveProfile);
+            loadTricklerState();
         });
 
         function selectActiveProfile() {
@@ -156,21 +161,69 @@
         }
 
 
-        function toggleStartStop() {
+        function showTricklerState(running) {
             var btn = document.getElementById('start-stop-btn');
-            if (btn.innerText === (window.rtT ? rtT('trickler.start', 'Start') : "Start")) {
+            tricklerRunning = running;
+            if (running) {
                 btn.innerText = window.rtT ? rtT('trickler.stop', 'Stop') : "Stop";
                 btn.classList.remove("button-start");
                 btn.classList.add("button-stop");
-                setProfile();
-                setTarget();
-                fetch('./start').then(response => response.text());
             } else {
                 btn.innerText = window.rtT ? rtT('trickler.start', 'Start') : "Start";
                 btn.classList.remove("button-stop");
                 btn.classList.add("button-start");
-                fetch('./stop').then(response => response.text());
             }
+        }
+
+        function loadTricklerState() {
+            if (tricklerStateRequestInFlight) {
+                return Promise.resolve();
+            }
+
+            tricklerStateRequestInFlight = true;
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), requestTimeoutMs);
+
+            return fetch('/getTricklerRunning', { signal: controller.signal })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => showTricklerState(data.trim() === '1'))
+                .catch(error => {
+                    if (error.name !== 'AbortError') {
+                        console.error('Could not load trickler state:', error);
+                    }
+                })
+                .finally(() => {
+                    clearTimeout(timeout);
+                    tricklerStateRequestInFlight = false;
+                });
+        }
+
+        function toggleStartStop() {
+            var request;
+            if (!tricklerRunning) {
+                setProfile();
+                setTarget();
+                request = fetch('./start');
+            } else {
+                request = fetch('./stop');
+            }
+
+            request
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return loadTricklerState();
+                })
+                .catch(error => {
+                    console.error('Could not change trickler state:', error);
+                    loadTricklerState();
+                });
         }
 
         function addTxtFilesToDropdown() {
@@ -212,7 +265,16 @@
 
 
         function loadValue() {
-            fetch('/getWeight')
+            loadTricklerState();
+            if (weightRequestInFlight) {
+                return;
+            }
+
+            weightRequestInFlight = true;
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), requestTimeoutMs);
+
+            fetch('/getWeight', { signal: controller.signal })
                 .then(response => {
                     // Check if the request was successful
                     if (!response.ok) {
@@ -225,8 +287,13 @@
                     document.getElementById('weightDisplay').value = data;
                 })
                 .catch(error => {
-                    console.error('There was a problem with your fetch operation:', error);
-                    document.getElementById('weightDisplay').value = "0.000";
+                    if (error.name !== 'AbortError') {
+                        console.error('There was a problem with your fetch operation:', error);
+                    }
+                })
+                .finally(() => {
+                    clearTimeout(timeout);
+                    weightRequestInFlight = false;
                 });
         }
 

@@ -76,6 +76,7 @@ void registerWebServerRoutes()
   server.on("/getLanguage", handleGetLanguage);
   server.on("/getProfileList", handleGetProfileList);
   server.on("/getTarget", handleGetTarget);
+  server.on("/getTricklerRunning", handleGetTricklerRunning);
   server.on("/setTarget", handleSetTarget);
   server.on("/system/start", handleStart);
   server.on("/system/stop", handleStop);
