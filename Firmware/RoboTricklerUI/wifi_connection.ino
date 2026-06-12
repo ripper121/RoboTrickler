@@ -141,7 +141,7 @@ void maintainWifiConnection()
   if (!wifiConnectTimeoutReported && ((millis() - wifiConnectStartedMillis) >= WIFI_CONNECT_TIMEOUT_MS))
   {
     updateDisplayLog(langText("status_no_wifi"));
-    messageBox(langText("status_no_wifi"), &lv_font_montserrat_14, lv_color_hex(0xFFFF00), false);
+    messageBox(langText("status_no_wifi"), UI_FONT_NORMAL, lv_color_hex(0xFFFF00), false);
     wifiConnectTimeoutReported = true;
   }
 
@@ -231,6 +231,6 @@ void initWebServer()
     wifiConnectTimeoutReported = false;
     wifiLastLoggedStatus = WL_NO_SHIELD;
 
-    messageBox(String(langText("status_connect_wifi")) + String(config.wifi_ssid) + langText("msg_connect_wifi_wait"), &lv_font_montserrat_14, lv_color_hex(0xFFFFFF), false);
+    messageBox(String(langText("status_connect_wifi")) + String(config.wifi_ssid) + langText("msg_connect_wifi_wait"), UI_FONT_NORMAL, lv_color_hex(0xFFFFFF), false);
   }
 }

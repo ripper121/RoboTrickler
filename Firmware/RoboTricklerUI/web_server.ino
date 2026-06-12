@@ -226,12 +226,6 @@ bool startWebServerServices()
     makeHttpGetRequest(firmwareCheckUrl());
   }
 
-  if (lvglLock())
-  {
-    lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
-    lvglUnlock();
-  }
-
   return true;
 }
 

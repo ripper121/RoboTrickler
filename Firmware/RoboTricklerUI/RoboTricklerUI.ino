@@ -14,7 +14,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <math.h>
-#define FW_VERSION "2.12"
+#define FW_VERSION "2.121"
 // Internal firmware update check endpoint. Do not mirror this value into SD files.
 #define DEFAULT_FW_UPDATE_URL "http://strenuous.dev/roboTrickler/userTracker.php"
 
@@ -60,8 +60,8 @@ Events Run On: "Core 0"
 #define SPLASH_DISPLAY_MS 3000
 
 #define DISP_TASK_STACK 4096 * 2
-#define DISP_TASK_PRO 1
-#define DISP_TASK_CORE 0
+#define DISP_TASK_PRO 2
+#define DISP_TASK_CORE 1
 TaskHandle_t lvDisplayTaskHandle = NULL;
 SemaphoreHandle_t lvglMutex = NULL;
 #define LV_DRAW_BUF_ROWS 10
@@ -109,6 +109,9 @@ struct Config
 };
 // Single source of truth for SD-backed settings and the active trickling profile.
 Config config;
+
+const float WEIGHT_STEP_SIZES[] = {0.001, 0.01, 0.1, 1.0, 10.0};
+const size_t WEIGHT_STEP_SIZE_COUNT = sizeof(WEIGHT_STEP_SIZES) / sizeof(WEIGHT_STEP_SIZES[0]);
 
 bool wifiActive = false;
 bool WEB_SERVER_ACTIVE = false;

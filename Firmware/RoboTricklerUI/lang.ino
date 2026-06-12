@@ -347,7 +347,6 @@ void applyLanguage()
     {
       lv_label_set_text(ui_LabelToggleTrickler, langText("button_start"));
     }
-    lv_label_set_text(ui_LabelMessageOk, langText("button_ok"));
     if (strcmp(lv_label_get_text(ui_LabelProfile), "Profile") == 0)
     {
       lv_label_set_text(ui_LabelProfile, langText("placeholder_profile"));

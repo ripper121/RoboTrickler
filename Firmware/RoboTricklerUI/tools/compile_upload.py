@@ -29,7 +29,7 @@ SKETCH_DIR = find_sketch_dir()
 SKETCH_FILE = SKETCH_DIR / "RoboTricklerUI.ino"
 ARDUINO_JSON = SKETCH_DIR / ".vscode" / "arduino.json"
 
-DEFAULT_BUILD_DIR = SKETCH_DIR.parent / "build"
+DEFAULT_BUILD_DIR = SKETCH_DIR / "build"
 DEFAULT_UPDATE_URL = "http://robo-trickler.local/update"
 DEFAULT_BOARD = "esp32:esp32:esp32"
 DEFAULT_CONFIGURATION = (

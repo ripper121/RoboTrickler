@@ -138,7 +138,7 @@ void makeHttpGetRequest(String serverPath)
       DEBUG_PRINTLN(payload);
       if (isRemoteFirmwareNewer(payload))
       {
-        messageBox((String(langText("msg_new_firmware")) + payload + langText("msg_check_url")).c_str(), &lv_font_montserrat_14, lv_color_hex(0x00FF00), true);
+        messageBox((String(langText("msg_new_firmware")) + payload + langText("msg_check_url")).c_str(), UI_FONT_NORMAL, lv_color_hex(0x00FF00), true);
       }
     }
     else
