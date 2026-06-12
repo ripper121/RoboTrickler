@@ -60,8 +60,8 @@ Events Run On: "Core 0"
 #define SPLASH_DISPLAY_MS 3000
 
 #define DISP_TASK_STACK 4096 * 2
-#define DISP_TASK_PRO 2
-#define DISP_TASK_CORE 1
+#define DISP_TASK_PRO 1
+#define DISP_TASK_CORE 0
 TaskHandle_t lvDisplayTaskHandle = NULL;
 SemaphoreHandle_t lvglMutex = NULL;
 #define LV_DRAW_BUF_ROWS 10
@@ -191,9 +191,9 @@ void loop()
   if (millis() - writeETime >= 1000)
   {
     writeETime = millis();
-    logRuntimeStats();    
-    maintainWifiConnection();
+    logRuntimeStats();
   }
 
+  maintainWifiConnection();
   handleTricklerState(readWeightTime);
 }

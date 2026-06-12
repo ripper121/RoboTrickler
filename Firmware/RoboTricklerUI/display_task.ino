@@ -37,6 +37,11 @@ IRAM_ATTR void lvgl_disp_task(void *parg)
 
 IRAM_ATTR void disp_task_init(void)
 {
+    if (lvDisplayTaskHandle != NULL)
+    {
+        return;
+    }
+
     if (lvglMutex == NULL)
     {
         lvglMutex = xSemaphoreCreateRecursiveMutex();

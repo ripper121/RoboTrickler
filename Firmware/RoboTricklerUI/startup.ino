@@ -1,3 +1,10 @@
+static void startUiTask()
+{
+    ui_init();
+    disableTouchGestures();
+    disp_task_init();
+}
+
 void initSetup()
 {
     Serial.begin(115200); /* prepare for possible serial debug */
@@ -12,9 +19,7 @@ void initSetup()
     SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
     if (!SD.begin(GRBL_SPI_SS, *SDspi, SD_SPI_FREQ, "/sd", 10))
     {
-        ui_init();
-        disableTouchGestures();
-        disp_task_init();
+        startUiTask();
         restart_now = true;
         messageBox(langText("msg_card_mount_failed"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
         return;
@@ -25,9 +30,7 @@ void initSetup()
 
         if (cardType == CARD_NONE)
         {
-            ui_init();
-            disableTouchGestures();
-            disp_task_init();
+            startUiTask();
             restart_now = true;
             messageBox(langText("msg_no_sd_card"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
             return;
@@ -63,9 +66,7 @@ void initSetup()
 
     showSplashLogo();
 
-    ui_init();
-    disableTouchGestures();
-    disp_task_init();
+    startUiTask();
 
     updateDisplayLog((String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
 

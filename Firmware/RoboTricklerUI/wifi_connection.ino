@@ -170,8 +170,11 @@ void initWebServer()
     #endif
     // Fully reset WiFi before entering STA mode. This avoids ESP32 reconnect
     // edge cases seen when the radio was already active during startup.
-    WiFi.disconnect();
-    WiFi.softAPdisconnect(true);
+    if (WiFi.getMode() != WIFI_MODE_NULL)
+    {
+      WiFi.disconnect();
+      WiFi.softAPdisconnect(true);
+    }
     WiFi.mode(WIFI_OFF);
 
     delay(500);
@@ -231,6 +234,5 @@ void initWebServer()
     wifiConnectTimeoutReported = false;
     wifiLastLoggedStatus = WL_NO_SHIELD;
 
-    messageBox(String(langText("status_connect_wifi")) + String(config.wifi_ssid) + langText("msg_connect_wifi_wait"), UI_FONT_NORMAL, lv_color_hex(0xFFFFFF), false);
   }
 }

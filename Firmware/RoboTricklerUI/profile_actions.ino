@@ -17,7 +17,6 @@ lv_obj_t *ui_ButtonProfileTuneMinus = NULL;
 lv_obj_t *ui_ButtonProfileTunePlus = NULL;
 lv_obj_t *ui_ButtonProfileTuneCancel = NULL;
 lv_obj_t *ui_ButtonProfileTuneSave = NULL;
-lv_obj_t *ui_ProfileTuneKeyboard = NULL;
 
 static bool isProfileTuneDialogOpen()
 {
@@ -51,7 +50,7 @@ static void updateProfileTuneValueLabel()
 {
     if (ui_LabelProfileTuneValue != NULL)
     {
-        lv_textarea_set_text(ui_LabelProfileTuneValue, String(profileTuneUnitsPerThrow, 3).c_str());
+        lv_label_set_text(ui_LabelProfileTuneValue, String(profileTuneUnitsPerThrow, 3).c_str());
     }
 }
 
@@ -81,11 +80,6 @@ static void hideProfileTuneDialog()
 {
     if ((ui_PanelProfileTune != NULL) && lvglLock())
     {
-        if (ui_ProfileTuneKeyboard != NULL)
-        {
-            lv_obj_delete(ui_ProfileTuneKeyboard);
-            ui_ProfileTuneKeyboard = NULL;
-        }
         lv_msgbox_close(ui_PanelProfileTune);
         ui_PanelProfileTune = NULL;
         ui_LabelProfileTuneTitle = NULL;
@@ -105,7 +99,7 @@ static void saveProfileTune()
     String profileName = profileTuneName;
     if (ui_LabelProfileTuneValue != NULL)
     {
-        profileTuneUnitsPerThrow = String(lv_textarea_get_text(ui_LabelProfileTuneValue)).toFloat();
+        profileTuneUnitsPerThrow = String(lv_label_get_text(ui_LabelProfileTuneValue)).toFloat();
     }
     float unitsPerThrow = profileTuneUnitsPerThrow;
     hideProfileTuneDialog();
@@ -186,37 +180,6 @@ void profile_tune_cancel_event_cb(lv_event_t *e)
 void profile_tune_save_event_cb(lv_event_t *e)
 {
     saveProfileTune();
-}
-
-void profile_tune_input_event_cb(lv_event_t *e)
-{
-    lv_event_code_t code = lv_event_get_code(e);
-    lv_obj_t *textarea = lv_event_get_target_obj(e);
-
-    if (ui_ProfileTuneKeyboard == NULL)
-    {
-        return;
-    }
-
-    if ((code == LV_EVENT_CLICKED) || (code == LV_EVENT_FOCUSED))
-    {
-        lv_keyboard_set_textarea(ui_ProfileTuneKeyboard, textarea);
-        lv_obj_clear_flag(ui_ProfileTuneKeyboard, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_align(ui_ProfileTuneKeyboard, LV_ALIGN_BOTTOM_MID, 0, 0);
-        if (ui_PanelProfileTune != NULL)
-        {
-            lv_obj_align(ui_PanelProfileTune, LV_ALIGN_TOP_MID, 0, 6);
-        }
-    }
-    else if ((code == LV_EVENT_READY) || (code == LV_EVENT_CANCEL) || (code == LV_EVENT_DEFOCUSED))
-    {
-        lv_keyboard_set_textarea(ui_ProfileTuneKeyboard, NULL);
-        lv_obj_add_flag(ui_ProfileTuneKeyboard, LV_OBJ_FLAG_HIDDEN);
-        if (ui_PanelProfileTune != NULL)
-        {
-            lv_obj_center(ui_PanelProfileTune);
-        }
-    }
 }
 
 void corruptProfile(String profileFilename)
@@ -419,19 +382,21 @@ static void createProfileTuneDialog()
     lv_obj_set_style_text_align(profileLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_set_style_text_font(profileLabel, UI_FONT_NORMAL, LV_PART_MAIN);
 
-    ui_LabelProfileTuneValue = lv_textarea_create(content);
+    ui_LabelProfileTuneValue = lv_label_create(content);
     lv_obj_set_width(ui_LabelProfileTuneValue, 140);
     lv_obj_set_height(ui_LabelProfileTuneValue, 46);
     lv_obj_set_y(ui_LabelProfileTuneValue, 42);
     lv_obj_set_align(ui_LabelProfileTuneValue, LV_ALIGN_TOP_MID);
-    lv_textarea_set_one_line(ui_LabelProfileTuneValue, true);
-    lv_textarea_set_accepted_chars(ui_LabelProfileTuneValue, "0123456789.");
-    lv_textarea_set_max_length(ui_LabelProfileTuneValue, 8);
-    lv_textarea_set_text(ui_LabelProfileTuneValue, "0.000");
+    lv_label_set_text(ui_LabelProfileTuneValue, "0.000");
     lv_obj_set_style_text_align(ui_LabelProfileTuneValue, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_set_style_text_font(ui_LabelProfileTuneValue, UI_FONT_NORMAL, LV_PART_MAIN);
+    lv_obj_set_style_bg_color(ui_LabelProfileTuneValue, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(ui_LabelProfileTuneValue, LV_OPA_COVER, LV_PART_MAIN);
+    lv_obj_set_style_text_color(ui_LabelProfileTuneValue, lv_color_hex(0x000000), LV_PART_MAIN);
+    lv_obj_set_style_border_color(ui_LabelProfileTuneValue, lv_color_hex(0x808080), LV_PART_MAIN);
+    lv_obj_set_style_border_width(ui_LabelProfileTuneValue, 2, LV_PART_MAIN);
+    lv_obj_set_style_pad_top(ui_LabelProfileTuneValue, 9, LV_PART_MAIN);
     lv_obj_clear_flag(ui_LabelProfileTuneValue, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_add_event_cb(ui_LabelProfileTuneValue, profile_tune_input_event_cb, LV_EVENT_ALL, NULL);
 
     ui_ButtonProfileTuneMinus = createProfileTuneButton(content, -115, 40, 60, "-", profile_tune_minus_event_cb);
     ui_ButtonProfileTunePlus = createProfileTuneButton(content, 115, 40, 60, "+", profile_tune_plus_event_cb);
@@ -445,12 +410,6 @@ static void createProfileTuneDialog()
     {
         lv_obj_set_height(footer, 52);
     }
-
-    ui_ProfileTuneKeyboard = lv_keyboard_create(lv_screen_active());
-    lv_obj_set_size(ui_ProfileTuneKeyboard, LV_HOR_RES, LV_VER_RES / 2);
-    lv_keyboard_set_mode(ui_ProfileTuneKeyboard, LV_KEYBOARD_MODE_NUMBER);
-    lv_keyboard_set_textarea(ui_ProfileTuneKeyboard, ui_LabelProfileTuneValue);
-    lv_obj_add_flag(ui_ProfileTuneKeyboard, LV_OBJ_FLAG_HIDDEN);
 }
 
 static void showProfileTuneDialog()
