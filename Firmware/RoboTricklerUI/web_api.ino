@@ -1,3 +1,11 @@
+void handleHomePage()
+{
+  if (!loadWebFile("/"))
+  {
+    server.send(404, "text/plain", "Home page not found");
+  }
+}
+
 void handleWifiSetupPortal()
 {
   if (WIFI_SETUP_AP_ACTIVE)
@@ -9,10 +17,7 @@ void handleWifiSetupPortal()
     return;
   }
 
-  if (!loadWebFile("/"))
-  {
-    server.send(404, "text/plain", "File not found");
-  }
+  handleHomePage();
 }
 
 void handleWifiScan()
