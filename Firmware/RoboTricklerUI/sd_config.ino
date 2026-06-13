@@ -148,7 +148,7 @@ String profileFilename(const char *profileName)
   for (int dirIndex = 0; dirIndex < (int)(sizeof(directories) / sizeof(directories[0])); dirIndex++)
   {
     String candidate = String(directories[dirIndex]) + String(profileName) + ".txt";
-    if (LittleFS.exists(candidate.c_str()))
+    if (ACTIVE_FS.exists(candidate.c_str()))
     {
       return candidate;
     }
@@ -196,7 +196,7 @@ bool readProfile(const char *filename, Config &config)
   String infoText = String(langText("status_loading_profile")) + filename;
   updateDisplayLog(infoText, true);
 
-  if (!LittleFS.exists(filename))
+  if (!ACTIVE_FS.exists(filename))
   {
     setSdReadError(sdFilenameError("err_profile_file_not_found", filename));
     DEBUG_PRINTLN("Profile not found:");
@@ -208,7 +208,7 @@ bool readProfile(const char *filename, Config &config)
   printFile(filename);
 
   // Open file for reading
-  File file = LittleFS.open(filename);
+  File file = ACTIVE_FS.open(filename);
   if (!file)
   {
     setSdReadError(sdFilenameError("err_could_not_open_profile_file", filename));
@@ -328,7 +328,7 @@ bool loadConfiguration(const char *filename, Config &config)
   printFile(filename);
 
   // Open file for reading
-  File file = LittleFS.open(filename);
+  File file = ACTIVE_FS.open(filename);
   if (!file)
   {
     setSdReadError(sdFilenameError("err_could_not_open_config_file", filename));
@@ -382,7 +382,7 @@ bool loadConfiguration(const char *filename, Config &config)
 bool saveProfileTargetWeight(const char *profileName, float targetWeight)
 {
   String filename = profileFilename(profileName);
-  File file = LittleFS.open(filename.c_str());
+  File file = ACTIVE_FS.open(filename.c_str());
   if (!file)
   {
     setSdReadError(sdFilenameError("err_could_not_open_profile_file", filename.c_str()));
@@ -411,8 +411,8 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
   general["targetWeight"] = serialized(String(targetWeight, 3));
 
   String tempFilename = filename + ".tmp";
-  LittleFS.remove(tempFilename.c_str());
-  file = LittleFS.open(tempFilename.c_str(), FILE_WRITE);
+  ACTIVE_FS.remove(tempFilename.c_str());
+  file = ACTIVE_FS.open(tempFilename.c_str(), FILE_WRITE);
   if (!file)
   {
     setSdReadError(sdFilenameError("err_could_not_write_profile_file", tempFilename.c_str()));
@@ -425,16 +425,16 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
   file.close();
   if (!written)
   {
-    LittleFS.remove(tempFilename.c_str());
+    ACTIVE_FS.remove(tempFilename.c_str());
     setSdReadError(sdFilenameError("err_could_not_write_profile_file", filename.c_str()));
     DEBUG_PRINTLN("Failed to write profile target weight");
     return false;
   }
 
-  LittleFS.remove(filename.c_str());
-  if (!LittleFS.rename(tempFilename.c_str(), filename.c_str()))
+  ACTIVE_FS.remove(filename.c_str());
+  if (!ACTIVE_FS.rename(tempFilename.c_str(), filename.c_str()))
   {
-    LittleFS.remove(tempFilename.c_str());
+    ACTIVE_FS.remove(tempFilename.c_str());
     setSdReadError(sdFilenameError("err_could_not_replace_profile_file", filename.c_str()));
     DEBUG_PRINT("Failed to replace profile file: ");
     DEBUG_PRINTLN(filename);
@@ -447,8 +447,8 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
 static bool writeProfileDocument(const String &filename, JsonDocument &doc)
 {
   String tempFilename = filename + ".tmp";
-  LittleFS.remove(tempFilename.c_str());
-  File file = LittleFS.open(tempFilename.c_str(), FILE_WRITE);
+  ACTIVE_FS.remove(tempFilename.c_str());
+  File file = ACTIVE_FS.open(tempFilename.c_str(), FILE_WRITE);
   if (!file)
   {
     setSdReadError(sdFilenameError("err_could_not_write_profile_file", tempFilename.c_str()));
@@ -461,16 +461,16 @@ static bool writeProfileDocument(const String &filename, JsonDocument &doc)
   file.close();
   if (!written)
   {
-    LittleFS.remove(tempFilename.c_str());
+    ACTIVE_FS.remove(tempFilename.c_str());
     setSdReadError(sdFilenameError("err_could_not_write_profile_file", filename.c_str()));
     DEBUG_PRINTLN("Failed to write profile file");
     return false;
   }
 
-  LittleFS.remove(filename.c_str());
-  if (!LittleFS.rename(tempFilename.c_str(), filename.c_str()))
+  ACTIVE_FS.remove(filename.c_str());
+  if (!ACTIVE_FS.rename(tempFilename.c_str(), filename.c_str()))
   {
-    LittleFS.remove(tempFilename.c_str());
+    ACTIVE_FS.remove(tempFilename.c_str());
     setSdReadError(sdFilenameError("err_could_not_replace_profile_file", filename.c_str()));
     DEBUG_PRINT("Failed to replace profile file: ");
     DEBUG_PRINTLN(filename);
@@ -482,7 +482,7 @@ static bool writeProfileDocument(const String &filename, JsonDocument &doc)
 
 bool isValidProfileFile(const char *filename)
 {
-  File file = LittleFS.open(filename);
+  File file = ACTIVE_FS.open(filename);
   if (!file)
   {
     return false;
@@ -513,7 +513,7 @@ String nextCalibrationProfileName()
     char profileName[16];
     snprintf(profileName, sizeof(profileName), "powder_%03d", i);
     String filename = "/profiles/" + String(profileName) + ".txt";
-    if (!LittleFS.exists(filename.c_str()))
+    if (!ACTIVE_FS.exists(filename.c_str()))
     {
       return String(profileName);
     }
@@ -594,7 +594,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
 
   populateCalibrationTrickleMap(doc, unitsPerThrow, profileSpeed);
 
-  if (!LittleFS.exists("/profiles") && !LittleFS.mkdir("/profiles"))
+  if (!ACTIVE_FS.exists("/profiles") && !ACTIVE_FS.mkdir("/profiles"))
   {
     updateDisplayLog(langText("msg_profiles_folder_failed"), true);
     return false;
@@ -603,7 +603,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   String filename = "/profiles/" + profileName + ".txt";
   infoText = String(langText("status_writing_profile")) + profileName;
   updateDisplayLog(infoText, true);
-  File file = LittleFS.open(filename.c_str(), FILE_WRITE);
+  File file = ACTIVE_FS.open(filename.c_str(), FILE_WRITE);
   if (!file)
   {
     updateDisplayLog(langText("msg_profile_file_create_failed"), true);
@@ -614,7 +614,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   file.close();
   if (!written)
   {
-    LittleFS.remove(filename.c_str());
+    ACTIVE_FS.remove(filename.c_str());
     updateDisplayLog(langText("msg_profile_file_write_failed"), true);
     return false;
   }
@@ -644,7 +644,7 @@ bool tuneProfileUnitsPerThrow(const char *profileName, float unitsPerThrow)
   }
 
   String filename = profileFilename(profileName);
-  File file = LittleFS.open(filename.c_str());
+  File file = ACTIVE_FS.open(filename.c_str());
   if (!file)
   {
     setSdReadError(sdFilenameError("err_could_not_open_profile_file", filename.c_str()));
@@ -701,7 +701,7 @@ bool tuneProfileUnitsPerThrow(const char *profileName, float unitsPerThrow)
 
 void scanProfileDirectory(const char *directory, byte &profileCounter, byte &invalidProfileCounter, String &invalidProfiles)
 {
-  File root = LittleFS.open(directory);
+  File root = ACTIVE_FS.open(directory);
   if (!root)
   {
     DEBUG_PRINTLN("Failed to open directory");
@@ -787,7 +787,7 @@ void getProfileList()
   byte invalidProfileCounter = 0;
   String invalidProfiles = "";
 
-  if (LittleFS.exists("/profiles"))
+  if (ACTIVE_FS.exists("/profiles"))
   {
     scanProfileDirectory("/profiles", profileCounter, invalidProfileCounter, invalidProfiles);
   }
@@ -818,10 +818,10 @@ void getProfileList()
 void saveConfiguration(const char *filename, const Config &config)
 {
   // Delete existing file, otherwise the configuration is appended to the file
-  LittleFS.remove(filename);
+  ACTIVE_FS.remove(filename);
 
   // Open file for writing
-  File file = LittleFS.open(filename, FILE_WRITE);
+  File file = ACTIVE_FS.open(filename, FILE_WRITE);
   if (!file)
   {
     Serial.println(F("Failed to create file"));
@@ -859,7 +859,7 @@ void printFile(const char *filename)
 {
 #if DEBUG
   // Open file for reading
-  File file = LittleFS.open(filename);
+  File file = ACTIVE_FS.open(filename);
 
   DEBUG_PRINTLN(filename);
 

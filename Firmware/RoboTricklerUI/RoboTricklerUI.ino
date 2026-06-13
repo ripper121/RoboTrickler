@@ -1,6 +1,8 @@
 #include "pindef.h"
 #include <FS.h>
 #include <LittleFS.h>
+#include <SD.h>
+#include <SPI.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
@@ -122,6 +124,10 @@ bool WIFI_SETUP_AP_ACTIVE = false;
 bool WEB_SERVER_ACTIVE = false;
 bool WEB_SERVER_ROUTES_REGISTERED = false;
 bool FILESYSTEM_ACTIVE = false;
+fs::FS *activeFS = NULL;
+bool activeFSIsSD = false;
+SPIClass *SDspi = NULL;
+#define ACTIVE_FS (*activeFS)
 WebServer server(80);
 DNSServer dnsServer;
 unsigned long wifiPreviousMillis = 0;

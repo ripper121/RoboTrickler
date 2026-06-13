@@ -113,7 +113,7 @@ bool loadFromFilesystem(fs::FS &fs, const char *sourceName, String path)
 
 bool loadWebFile(String path)
 {
-  return FILESYSTEM_ACTIVE && loadFromFilesystem(LittleFS, "LittleFS", path);
+  return FILESYSTEM_ACTIVE && loadFromFilesystem(ACTIVE_FS, activeFSIsSD ? "SD" : "LittleFS", path);
 }
 
 void handleFileUpload()
@@ -125,15 +125,15 @@ void handleFileUpload()
   HTTPUpload &upload = server.upload();
   if (upload.status == UPLOAD_FILE_START)
   {
-    if (upload.filename.startsWith("/profiles/") && !LittleFS.exists("/profiles"))
+    if (upload.filename.startsWith("/profiles/") && !ACTIVE_FS.exists("/profiles"))
     {
-      LittleFS.mkdir("/profiles");
+      ACTIVE_FS.mkdir("/profiles");
     }
-    if (LittleFS.exists((char *)upload.filename.c_str()))
+    if (ACTIVE_FS.exists((char *)upload.filename.c_str()))
     {
-      LittleFS.remove((char *)upload.filename.c_str());
+      ACTIVE_FS.remove((char *)upload.filename.c_str());
     }
-    uploadFile = LittleFS.open(upload.filename.c_str(), FILE_WRITE);
+    uploadFile = ACTIVE_FS.open(upload.filename.c_str(), FILE_WRITE);
     DEBUG_PRINT("Upload: START, filename: ");
     DEBUG_PRINTLN(upload.filename);
   }
@@ -160,11 +160,11 @@ void handleFileUpload()
 void deleteRecursive(String path)
 {
   // Used by the web editor; callers guard against deleting the filesystem root.
-  File file = LittleFS.open((char *)path.c_str());
+  File file = ACTIVE_FS.open((char *)path.c_str());
   if (!file.isDirectory())
   {
     file.close();
-    LittleFS.remove((char *)path.c_str());
+    ACTIVE_FS.remove((char *)path.c_str());
     return;
   }
 
@@ -185,12 +185,12 @@ void deleteRecursive(String path)
     else
     {
       entry.close();
-      LittleFS.remove((char *)entryPath.c_str());
+      ACTIVE_FS.remove((char *)entryPath.c_str());
     }
     yield();
   }
 
-  LittleFS.rmdir((char *)path.c_str());
+  ACTIVE_FS.rmdir((char *)path.c_str());
   file.close();
 }
 
@@ -201,7 +201,7 @@ void handleDelete()
     return returnFail("BAD ARGS");
   }
   String path = server.arg(0);
-  if (path == "/" || !LittleFS.exists((char *)path.c_str()))
+  if (path == "/" || !ACTIVE_FS.exists((char *)path.c_str()))
   {
     returnFail("BAD PATH");
     return;
@@ -217,7 +217,7 @@ void handleCreate()
     return returnFail("BAD ARGS");
   }
   String path = server.arg(0);
-  if (path == "/" || LittleFS.exists((char *)path.c_str()))
+  if (path == "/" || ACTIVE_FS.exists((char *)path.c_str()))
   {
     returnFail("BAD PATH");
     return;
@@ -225,7 +225,7 @@ void handleCreate()
 
   if (path.indexOf('.') > 0)
   {
-    File file = LittleFS.open((char *)path.c_str(), FILE_WRITE);
+    File file = ACTIVE_FS.open((char *)path.c_str(), FILE_WRITE);
     if (file)
     {
       file.write(0);
@@ -234,7 +234,7 @@ void handleCreate()
   }
   else
   {
-    LittleFS.mkdir((char *)path.c_str());
+    ACTIVE_FS.mkdir((char *)path.c_str());
   }
   returnOK();
 }
@@ -246,11 +246,11 @@ void printDirectory()
     return returnFail("BAD ARGS");
   }
   String path = server.arg("dir");
-  if (path != "/" && !LittleFS.exists((char *)path.c_str()))
+  if (path != "/" && !ACTIVE_FS.exists((char *)path.c_str()))
   {
     return returnFail("BAD PATH");
   }
-  File dir = LittleFS.open((char *)path.c_str());
+  File dir = ACTIVE_FS.open((char *)path.c_str());
   path = String();
   if (!dir.isDirectory())
   {
@@ -308,7 +308,7 @@ void handleNotFound()
     return;
   }
 
-  String message = "LittleFS file not found\n\n";
+  String message = "Filesystem file not found\n\n";
   message += "URI: ";
   message += server.uri();
   message += "\nMethod: ";

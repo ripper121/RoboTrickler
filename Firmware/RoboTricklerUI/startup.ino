@@ -4,11 +4,11 @@ static void deleteRootLegacyProfileFiles()
 
     for (size_t i = 0; i < (sizeof(legacyFiles) / sizeof(legacyFiles[0])); i++)
     {
-        if (LittleFS.exists(legacyFiles[i]))
+        if (ACTIVE_FS.exists(legacyFiles[i]))
         {
             DEBUG_PRINT("Deleting legacy root profile file: ");
             DEBUG_PRINTLN(legacyFiles[i]);
-            if (!LittleFS.remove(legacyFiles[i]))
+            if (!ACTIVE_FS.remove(legacyFiles[i]))
             {
                 DEBUG_PRINT("Failed to delete legacy root profile file: ");
                 DEBUG_PRINTLN(legacyFiles[i]);
@@ -32,7 +32,7 @@ void initSetup()
         disableTouchGestures();
         disp_task_init();
         restart_now = true;
-        messageBox("LittleFS mount failed", UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
+        messageBox("Filesystem mount failed", UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
         return;
     }
 

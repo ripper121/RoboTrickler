@@ -12,9 +12,19 @@ void restoreFilesystemAfterFailedUpdate()
     return;
   }
 
-  FILESYSTEM_ACTIVE = LittleFS.begin(false);
   webUpdateFilesystemUnmounted = false;
-  if (!FILESYSTEM_ACTIVE)
+  if (activeFSIsSD)
+  {
+    // SD is active, LittleFS was never the primary filesystem for runtime.
+    return;
+  }
+
+  FILESYSTEM_ACTIVE = LittleFS.begin(false);
+  if (FILESYSTEM_ACTIVE)
+  {
+    activeFS = &LittleFS;
+  }
+  else
   {
     DEBUG_PRINTLN("LittleFS remount failed after update error.");
   }
@@ -117,7 +127,7 @@ void registerWebServerRoutes()
                   updatePage += langText("web_update");
                   updatePage += " Firmware'></form><br>";
                   updatePage += "<h3>LittleFS image</h3>";
-                  updatePage += "<p>Uploading replaces all files in LittleFS.</p>";
+                  updatePage += "<p>Uploading replaces all files in ACTIVE_FS.</p>";
                   updatePage += "<form method='POST' action='/update' enctype='multipart/form-data'>";
                   updatePage += "<input type='file' name='filesystem' accept='.bin,application/octet-stream' required>";
                   updatePage += "<input type='submit' value='";
@@ -160,10 +170,11 @@ void registerWebServerRoutes()
           String infoText = String(langText("status_update_upload")) + String(upload.filename);
           updateDisplayLog(infoText);
 
-          if (webUpdateFilesystem && FILESYSTEM_ACTIVE)
+          if (webUpdateFilesystem && FILESYSTEM_ACTIVE && !activeFSIsSD)
           {
             LittleFS.end();
             FILESYSTEM_ACTIVE = false;
+            activeFS = NULL;
             webUpdateFilesystemUnmounted = true;
           }
 
