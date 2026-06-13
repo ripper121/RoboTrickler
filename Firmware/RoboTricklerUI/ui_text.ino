@@ -1,4 +1,4 @@
-static const char *languageFallback(const char *key)
+const char *langText(const char *key)
 {
   if (strcmp(key, "tab_trickler") == 0)
     return "Trickler";
@@ -50,12 +50,6 @@ static const char *languageFallback(const char *key)
     return "Invalid stepper number!";
   if (strcmp(key, "status_reconnecting_wifi") == 0)
     return "Reconnecting to WiFi...";
-  if (strcmp(key, "status_card_unknown") == 0)
-    return "CardType UNKNOWN";
-  if (strcmp(key, "msg_card_mount_failed") == 0)
-    return "Card Mount Failed!\n";
-  if (strcmp(key, "msg_no_sd_card") == 0)
-    return "No SD card attached!\n";
   if (strcmp(key, "msg_config_default") == 0)
     return "Default Config generated.";
   if (strcmp(key, "msg_profile_corrupted") == 0)
@@ -126,26 +120,8 @@ static const char *languageFallback(const char *key)
     return "New firmware available:\n\nv";
   if (strcmp(key, "msg_check_url") == 0)
     return "\n\nCheck: https://robo-trickler.de";
-  if (strcmp(key, "status_fw_update_done") == 0)
-    return "FW Update done!";
-  if (strcmp(key, "status_update_completed") == 0)
-    return "Update successfully completed. Rebooting.";
-  if (strcmp(key, "status_update_not_finished") == 0)
-    return "Update not finished? Something went wrong!";
   if (strcmp(key, "status_update_failed") == 0)
     return "Update failed: ";
-  if (strcmp(key, "status_fw_update_begin_failed") == 0)
-    return "FW Update begin failed: ";
-  if (strcmp(key, "status_update_not_file") == 0)
-    return "Error, update.bin is not a file";
-  if (strcmp(key, "status_update_start") == 0)
-    return "Try to start update";
-  if (strcmp(key, "status_update_empty") == 0)
-    return "Error, file is empty";
-  if (strcmp(key, "status_no_new_firmware") == 0)
-    return "No new firmware found";
-  if (strcmp(key, "status_check_fw_update") == 0)
-    return "Check for Firmware Update...";
   if (strcmp(key, "status_update_upload") == 0)
     return "Update: ";
   if (strcmp(key, "status_update_success") == 0)
@@ -235,127 +211,4 @@ static const char *languageFallback(const char *key)
   if (strcmp(key, "msg_profile_tuned") == 0)
     return "Profile tuned: ";
   return key;
-}
-
-String activeUiLangJson = "";
-String activeUiLangFilename = "";
-JsonDocument activeUiLangDoc;
-
-const char *langText(const char *key)
-{
-  JsonVariant translatedVariant = activeUiLangDoc["ui"][key];
-  if (!translatedVariant.isNull())
-  {
-    const char *translated = translatedVariant.as<const char *>();
-    if ((translated != nullptr) && (translated[0] != '\0'))
-    {
-      return translated;
-    }
-  }
-  return languageFallback(key);
-}
-
-bool loadLanguage()
-{
-  activeUiLangJson = "";
-  activeUiLangFilename = "";
-  activeUiLangDoc.clear();
-  String language = String(config.language);
-  language.trim();
-
-  language.toLowerCase();
-  int separator = language.indexOf('-');
-  if (separator < 0)
-  {
-    separator = language.indexOf('_');
-  }
-  if (separator > 0)
-  {
-    language = language.substring(0, separator);
-  }
-  if (language.length() <= 0)
-  {
-    language = "en";
-  }
-  strlcpy(config.language, language.c_str(), sizeof(config.language));
-
-  String candidates[] = {
-      "/lang/" + language + ".json",
-      "/lang/en.json"};
-
-  String filename = "";
-  for (int i = 0; i < (int)(sizeof(candidates) / sizeof(candidates[0])); i++)
-  {
-    if (SD.exists(candidates[i].c_str()))
-    {
-      filename = candidates[i];
-      break;
-    }
-  }
-
-  if (filename.length() <= 0)
-  {
-    DEBUG_PRINTLN("Language file not found; using built-in fallback");
-    return false;
-  }
-
-  File file = SD.open(filename.c_str());
-  if (!file)
-  {
-    DEBUG_PRINT("Language file not found: ");
-    DEBUG_PRINTLN(filename);
-    return false;
-  }
-  activeUiLangFilename = filename;
-
-  activeUiLangJson.reserve(file.size() + 1);
-  while (file.available())
-  {
-    activeUiLangJson += (char)file.read();
-  }
-  file.close();
-
-  DeserializationError error = deserializeJson(activeUiLangDoc, activeUiLangJson);
-  if (error || !activeUiLangDoc["ui"].is<JsonObject>())
-  {
-    DEBUG_PRINT("Language JSON parse failed: ");
-    DEBUG_PRINTLN(error.c_str());
-    activeUiLangJson = "";
-    activeUiLangDoc.clear();
-    return false;
-  }
-
-  DEBUG_PRINT("Loaded language: ");
-  DEBUG_PRINT(config.language);
-  DEBUG_PRINT(" from ");
-  DEBUG_PRINTLN(activeUiLangFilename);
-  return true;
-}
-
-void applyLanguage()
-{
-  if (!loadLanguage())
-  {
-    DEBUG_PRINTLN("Using built-in language fallback");
-  }
-
-  if (lvglLock())
-  {
-    lv_tabview_set_tab_text(ui_TabView, 0, langText("tab_trickler"));
-    lv_tabview_set_tab_text(ui_TabView, 1, langText("tab_profile"));
-    lv_tabview_set_tab_text(ui_TabView, 2, langText("tab_info"));
-
-    if (!isTricklerRunning())
-    {
-      lv_label_set_text(ui_LabelToggleTrickler, UI_SYMBOL_START);
-    }
-    lv_label_set_text(ui_LabelMessageOk, UI_SYMBOL_OK);
-    if (strcmp(lv_label_get_text(ui_LabelProfile), "Profile") == 0)
-    {
-      lv_label_set_text(ui_LabelProfile, langText("placeholder_profile"));
-    }
-    lvglUnlock();
-  }
-
-  updateWifiTabIndicator(true);
 }

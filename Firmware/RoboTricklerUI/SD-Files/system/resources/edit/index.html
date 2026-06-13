@@ -179,47 +179,8 @@
     }
   </style>
   <script>
-    function textFromPath(data, path) {
-      return path.split('.').reduce(function (value, key) {
-        return value && value[key] !== undefined ? value[key] : undefined;
-      }, data);
-    }
-
-    window.rtLang = {};
     window.rtT = function (path, fallback) {
-      var value = textFromPath(window.rtLang, path);
-      return value !== undefined ? value : fallback;
-    };
-
-    function loadEditorLanguage() {
-      return fetch('/getLanguage')
-        .then(function (response) {
-          return response.ok ? response.text() : 'en';
-        })
-        .catch(function () {
-          return 'en';
-        })
-        .then(function (language) {
-          language = (language || 'en').trim() || 'en';
-          return fetch('/system/lang/' + language + '.json')
-            .catch(function () {
-              return fetch('/system/lang/en.json');
-            });
-        })
-        .then(function (response) {
-          if (!response.ok) {
-            throw new Error('language not found');
-          }
-          return response.json();
-        })
-        .then(function (data) {
-          document.documentElement.lang = data.language || 'en';
-          window.rtLang = data.web || {};
-          document.title = rtT('titles.fileEditor', 'SD Editor');
-        })
-        .catch(function () {
-          window.rtLang = {};
-        });
+      return fallback;
     }
 
     function setFileEditorText(node, key, fallback) {
@@ -747,13 +708,11 @@
       return editor;
     }
     function onBodyLoad() {
-      loadEditorLanguage().then(function () {
-        var vars = {};
-        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) { vars[key] = value; });
-        var editor = createEditor("editor", vars.file, vars.lang, vars.theme);
-        var tree = createTree("tree", editor);
-        createFileUploader("uploader", tree, editor);
-      });
+      var vars = {};
+      window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) { vars[key] = value; });
+      var editor = createEditor("editor", vars.file, vars.lang, vars.theme);
+      var tree = createTree("tree", editor);
+      createFileUploader("uploader", tree, editor);
     };
   </script>
   <script src="/system/resources/src/ace.js" type="text/javascript" charset="utf-8"></script>

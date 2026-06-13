@@ -21,14 +21,14 @@ static uint16_t rgb565(uint8_t r, uint8_t g, uint8_t b)
 
 bool showSplashLogo()
 {
-  if (!SD.exists(SPLASH_LOGO_PATH))
+  if (!LittleFS.exists(SPLASH_LOGO_PATH))
   {
     DEBUG_PRINT("Splash logo not found: ");
     DEBUG_PRINTLN(SPLASH_LOGO_PATH);
     return false;
   }
 
-  File file = SD.open(SPLASH_LOGO_PATH, FILE_READ);
+  File file = LittleFS.open(SPLASH_LOGO_PATH, FILE_READ);
   if (!file)
   {
     DEBUG_PRINTLN("Failed to open splash logo");

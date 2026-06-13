@@ -28,6 +28,8 @@ def find_sketch_dir() -> Path:
 SKETCH_DIR = find_sketch_dir()
 SKETCH_FILE = SKETCH_DIR / "RoboTricklerUI.ino"
 ARDUINO_JSON = SKETCH_DIR / ".vscode" / "arduino.json"
+CREATE_FLASH_DATA = SCRIPT_DIR / "create_flash_data.py"
+CREATE_LITTLEFS_IMAGE = SCRIPT_DIR / "create_flash_littlefs_image.py"
 
 DEFAULT_BUILD_DIR = SKETCH_DIR.parent / "build"
 DEFAULT_UPDATE_URL = "http://robo-trickler.local/update"
@@ -35,7 +37,7 @@ DEFAULT_BOARD = "esp32:esp32:esp32"
 DEFAULT_CONFIGURATION = (
     "JTAGAdapter=default,"
     "PSRAM=disabled,"
-    "PartitionScheme=min_spiffs,"
+    "PartitionScheme=custom,"
     "CPUFreq=240,"
     "FlashMode=dio,"
     "FlashFreq=80,"
@@ -274,6 +276,31 @@ def find_firmware_bin(build_dir: Path) -> Path:
     raise FileNotFoundError(f"No application .bin found in {build_dir}")
 
 
+def build_littlefs_image(build_dir: Path, timeout: int) -> Path:
+    require_path(CREATE_FLASH_DATA, "LittleFS staging script")
+    require_path(CREATE_LITTLEFS_IMAGE, "LittleFS image script")
+
+    image_path = build_dir / "littlefs.bin"
+    subprocess.run(
+        [sys.executable, str(CREATE_FLASH_DATA)],
+        cwd=SKETCH_DIR,
+        check=True,
+        timeout=timeout,
+    )
+    subprocess.run(
+        [
+            sys.executable,
+            str(CREATE_LITTLEFS_IMAGE),
+            "--output",
+            str(image_path),
+        ],
+        cwd=SKETCH_DIR,
+        check=True,
+        timeout=timeout,
+    )
+    return image_path
+
+
 def make_multipart_body(field_name: str, file_path: Path) -> tuple[bytes, str]:
     boundary = f"----RoboTricklerUI{uuid.uuid4().hex}"
     header = (
@@ -331,14 +358,24 @@ def main() -> int:
             else:
                 bin_path = run_extension_compile(build_dir, board_descriptor, args.compile_timeout)
 
+        littlefs_path = build_littlefs_image(build_dir, args.compile_timeout)
         print(f"Firmware binary: {bin_path}")
+        print(f"LittleFS image: {littlefs_path} (flash offset 0x330000)")
         if args.compile_only:
             return 0
 
         upload_firmware(args.url, bin_path, args.timeout)
+        print("Firmware OTA does not replace LittleFS; flash littlefs.bin separately when its contents change.")
         print("Done. The device should reboot after accepting the update.")
         return 0
-    except (FileNotFoundError, json.JSONDecodeError, subprocess.CalledProcessError, RuntimeError, TimeoutError) as exc:
+    except (
+        FileNotFoundError,
+        json.JSONDecodeError,
+        subprocess.CalledProcessError,
+        subprocess.TimeoutExpired,
+        RuntimeError,
+        TimeoutError,
+    ) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 

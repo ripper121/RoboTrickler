@@ -1,12 +1,12 @@
 #include "pindef.h"
 #include <FS.h>
-#include <SD.h>
+#include <LittleFS.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
+#include <DNSServer.h>
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
-#include <SPI.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <Update.h>
@@ -33,7 +33,7 @@ CPU Frequency: "240MHz (WiFi/BT)"
 Flash Frequency: "80MHz"
 Flash Mode: "DIO"
 Flash Size: "4MB (32Mb)"
-Partition Scheme: "Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)"
+Partition Scheme: "Custom (1.56MB APP with OTA/768KB LittleFS)"
 Core Debug Level: "None"
 PSRAM: "Disabled"
 Arduino Runs On: "Core 1"
@@ -77,8 +77,6 @@ SemaphoreHandle_t lvglMutex = NULL;
 static uint32_t buf[DISPLAY_DRAW_BUF_SIZE / sizeof(uint32_t)];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 
-SPIClass *SDspi = NULL;
-
 struct Config
 {
   char wifi_ssid[64];
@@ -89,7 +87,6 @@ struct Config
   char IPDns[16];
 
   char beeper[16];
-  char language[8];
   bool fwCheck;
   bool trickleCounter;
   long trickleCount;
@@ -116,13 +113,16 @@ struct Config
   int profile_speed[16];
   int profile_count;
 };
-// Single source of truth for SD-backed settings and the active trickling profile.
+// Single source of truth for flash-backed settings and the active trickling profile.
 Config config;
 
 bool wifiActive = false;
+bool WIFI_SETUP_AP_ACTIVE = false;
 bool WEB_SERVER_ACTIVE = false;
 bool WEB_SERVER_ROUTES_REGISTERED = false;
+bool FILESYSTEM_ACTIVE = false;
 WebServer server(80);
+DNSServer dnsServer;
 unsigned long wifiPreviousMillis = 0;
 unsigned long wifiInterval = 10000;
 

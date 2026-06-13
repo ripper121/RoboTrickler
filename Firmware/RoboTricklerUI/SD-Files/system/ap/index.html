@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robo-Trickler WiFi Setup</title>
+  <link rel="icon" type="image/x-icon" href="../resources/favicon.ico">
+  <link rel="stylesheet" href="../resources/style.css">
+</head>
+
+<body>
+  <div class="card">
+    <h1>Robo-Trickler</h1>
+    <h2>WiFi Setup</h2>
+    <form id="wifi-form">
+      <fieldset>
+        <legend>WiFi Settings</legend>
+        <p>Select a network and enter its password.</p>
+
+        <label for="ssid">Available networks:</label>
+        <select id="ssid" name="ssid" required>
+          <option value="">Scanning...</option>
+        </select>
+
+        <label for="password">Password / PSK:</label>
+        <input id="password" name="password" type="password" maxlength="63" autocomplete="current-password">
+      </fieldset>
+      <button class="button" type="button" id="refresh">Scan again</button>
+      <button class="button" type="submit">Save and connect</button>
+    </form>
+
+    <p id="status">Scanning for WiFi networks...</p>
+  </div>
+
+  <script>
+    const form = document.getElementById('wifi-form');
+    const ssidSelect = document.getElementById('ssid');
+    const passwordInput = document.getElementById('password');
+    const statusText = document.getElementById('status');
+    const refreshButton = document.getElementById('refresh');
+
+    function securityLabel(network) {
+      return network.secure ? 'secured' : 'open';
+    }
+
+    async function scanNetworks() {
+      refreshButton.disabled = true;
+      statusText.textContent = 'Scanning for WiFi networks...';
+      ssidSelect.innerHTML = '<option value="">Scanning...</option>';
+
+      try {
+        const response = await fetch('/api/wifi/scan', { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error('Scan failed');
+        }
+
+        const networks = await response.json();
+        networks.sort((a, b) => b.rssi - a.rssi);
+        ssidSelect.innerHTML = '<option value="">Select a network</option>';
+
+        networks.forEach(function (network) {
+          if (!network.ssid) {
+            return;
+          }
+          const option = document.createElement('option');
+          option.value = network.ssid;
+          option.textContent = network.ssid + ' (' + network.rssi + ' dBm, ' + securityLabel(network) + ')';
+          option.dataset.secure = network.secure ? 'true' : 'false';
+          ssidSelect.appendChild(option);
+        });
+
+        statusText.textContent = networks.length ? 'Select your WiFi network.' : 'No WiFi networks found.';
+      } catch (error) {
+        ssidSelect.innerHTML = '<option value="">Scan failed</option>';
+        statusText.textContent = 'Could not scan WiFi networks. Try again.';
+      } finally {
+        refreshButton.disabled = false;
+      }
+    }
+
+    ssidSelect.addEventListener('change', function () {
+      const selected = ssidSelect.options[ssidSelect.selectedIndex];
+      if (selected && selected.dataset.secure === 'false') {
+        passwordInput.value = '';
+      }
+    });
+
+    refreshButton.addEventListener('click', scanNetworks);
+
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      if (!ssidSelect.value) {
+        statusText.textContent = 'Select a WiFi network.';
+        return;
+      }
+
+      const body = new URLSearchParams();
+      body.set('ssid', ssidSelect.value);
+      body.set('password', passwordInput.value);
+      statusText.textContent = 'Saving WiFi settings...';
+
+      try {
+        const response = await fetch('/api/wifi/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: body.toString()
+        });
+        if (!response.ok) {
+          throw new Error('Save failed');
+        }
+        statusText.textContent = 'Saved. Robo-Trickler is rebooting and connecting to your WiFi.';
+        form.querySelectorAll('input, select, button').forEach(function (control) {
+          control.disabled = true;
+        });
+      } catch (error) {
+        statusText.textContent = 'Could not save WiFi settings. Try again.';
+      }
+    });
+
+    scanNetworks();
+  </script>
+</body>
+
+</html>

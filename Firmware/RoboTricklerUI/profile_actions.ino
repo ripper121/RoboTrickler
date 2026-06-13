@@ -180,11 +180,11 @@ void corruptProfile(String profileFilename)
     message += langText("msg_calibration_profile_loaded");
 
     // Rename file to indicate corruption
-    if (SD.exists(profileFilename))
+    if (LittleFS.exists(profileFilename))
     {
         String corruptedName = String(profileFilename);
         corruptedName.replace(".txt", ".cor.txt");
-        if (SD.rename(profileFilename, corruptedName.c_str()))
+        if (LittleFS.rename(profileFilename, corruptedName.c_str()))
         {
             DEBUG_PRINT("Corrupted file renamed to: ");
             DEBUG_PRINTLN(corruptedName);
@@ -286,7 +286,7 @@ bool deleteSelectedProfile()
     }
 
     String filename = profileFilename(profileName.c_str());
-    if (!SD.exists(filename.c_str()))
+    if (!LittleFS.exists(filename.c_str()))
     {
         messageBox(String(langText("msg_delete_profile_file_not_found")) + filename, UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
         getProfileList();
@@ -398,7 +398,7 @@ bool tuneSelectedProfile()
 
     String profileName = config.profile;
     String filename = profileFilename(profileName.c_str());
-    if (!SD.exists(filename.c_str()))
+    if (!LittleFS.exists(filename.c_str()))
     {
         messageBox(String(langText("msg_delete_profile_file_not_found")) + filename, UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
         getProfileList();
@@ -434,7 +434,7 @@ void finishProfileDeleteConfirm(bool confirmed)
         return;
     }
 
-    if (!SD.exists(filename.c_str()))
+    if (!LittleFS.exists(filename.c_str()))
     {
         messageBox(String(langText("msg_delete_profile_file_not_found")) + filename, UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
         getProfileList();
@@ -455,7 +455,7 @@ void finishProfileDeleteConfirm(bool confirmed)
         return;
     }
 
-    if (!SD.remove(filename.c_str()))
+    if (!LittleFS.remove(filename.c_str()))
     {
         messageBox(String(langText("msg_could_not_delete_profile")) + filename, UI_FONT_NORMAL, lv_color_hex(0xFF0000), false);
         getProfileList();

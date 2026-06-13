@@ -38,6 +38,10 @@ bool parseConfigIPAddress(const char *name, const char *value, IPAddress &ipAddr
 }
 
 static const unsigned long WIFI_CONNECT_TIMEOUT_MS = 30000;
+static const char *WIFI_SETUP_AP_SSID = "Robo-Trickler-AP";
+static const IPAddress WIFI_SETUP_AP_IP(192, 168, 4, 1);
+static const IPAddress WIFI_SETUP_AP_SUBNET(255, 255, 255, 0);
+static String wifiSetupApPassword;
 static bool wifiEventLoggingRegistered = false;
 static IPAddress wifiConfiguredDNS = IPAddress(8, 8, 8, 8);
 static bool wifiUsesStaticIp = false;
@@ -123,6 +127,11 @@ void maintainWifiConnection()
 {
   updateWifiTabIndicator(false);
 
+  if (WIFI_SETUP_AP_ACTIVE)
+  {
+    return;
+  }
+
   if (!wifiActive || isTricklerRunning())
   {
     return;
@@ -144,6 +153,8 @@ void maintainWifiConnection()
   {
     updateDisplayLog(langText("status_no_wifi"));
     wifiConnectTimeoutReported = true;
+    startWifiSetupAccessPoint();
+    return;
   }
 
   if (millis() - wifiPreviousMillis >= wifiInterval)
@@ -160,8 +171,17 @@ void maintainWifiConnection()
 void initWebServer()
 {
   wifiActive = false;
+  WIFI_SETUP_AP_ACTIVE = false;
   WEB_SERVER_ACTIVE = false;
-  if (String(config.wifi_ssid).length() > 0)
+  String configuredSsid(config.wifi_ssid);
+  configuredSsid.trim();
+  if (configuredSsid.length() <= 0)
+  {
+    startWifiSetupAccessPoint();
+    return;
+  }
+
+  if (configuredSsid.length() > 0)
   {
     updateDisplayLog(langText("status_connect_wifi"));
     updateDisplayLog(config.wifi_ssid);
@@ -239,4 +259,53 @@ void initWebServer()
     wifiConnectTimeoutReported = false;
     wifiLastLoggedStatus = WL_NO_SHIELD;
   }
+}
+
+bool startWifiSetupAccessPoint()
+{
+  WiFi.persistent(false);
+  WiFi.mode(WIFI_AP_STA);
+  WiFi.setSleep(false);
+  wifiSetupApPassword = WiFi.macAddress();
+  wifiSetupApPassword.replace(":", "");
+
+  if (!WiFi.softAPConfig(WIFI_SETUP_AP_IP, WIFI_SETUP_AP_IP, WIFI_SETUP_AP_SUBNET))
+  {
+    DEBUG_PRINTLN("WiFi setup AP IP configuration failed.");
+    return false;
+  }
+  if (!WiFi.softAP(WIFI_SETUP_AP_SSID, wifiSetupApPassword.c_str()))
+  {
+    DEBUG_PRINTLN("WiFi setup AP creation failed.");
+    return false;
+  }
+
+  WIFI_SETUP_AP_ACTIVE = true;
+  wifiActive = true;
+  registerWebServerRoutes();
+  server.begin();
+  WEB_SERVER_ACTIVE = true;
+
+  if (!dnsServer.start(53, "*", WIFI_SETUP_AP_IP))
+  {
+    DEBUG_PRINTLN("Captive portal DNS server failed to start.");
+  }
+
+  updateDisplayLog(String("WiFi AP: ") + WIFI_SETUP_AP_SSID);
+  updateDisplayLog(String("Open http://") + WIFI_SETUP_AP_IP.toString());
+  showWifiSetupInfo();
+  return true;
+}
+
+void showWifiSetupInfo()
+{
+  String info = "WiFi setup mode\n\n";
+  info += "Connect to:\n";
+  info += WIFI_SETUP_AP_SSID;
+  info += "\nPassword:\n";
+  info += wifiSetupApPassword;
+  info += "\n\nOpen:\nhttp://";
+  info += WIFI_SETUP_AP_IP.toString();
+  info += "\n\nSelect your WiFi and save.";
+  setLabelText(ui_LabelInfo, info.c_str());
 }

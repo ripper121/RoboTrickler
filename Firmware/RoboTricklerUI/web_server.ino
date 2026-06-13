@@ -59,10 +59,15 @@ void registerWebServerRoutes()
   }
 
   server.on("/list", HTTP_GET, printDirectory);
+  server.on("/", HTTP_GET, handleWifiSetupPortal);
+  server.on("/system/ap", HTTP_GET, handleWifiSetupPortal);
+  server.on("/system/ap/", HTTP_GET, handleWifiSetupPortal);
+  server.on("/api/wifi/scan", HTTP_GET, handleWifiScan);
+  server.on("/api/wifi/save", HTTP_POST, handleWifiSave);
   server.on("/system/resources/edit", HTTP_DELETE, handleDelete);
   server.on("/system/resources/edit", HTTP_PUT, handleCreate);
-  // The SD web editor uses this endpoint for multipart uploads. The upload
-  // handler writes directly to the SD path supplied as the multipart filename.
+  // The web editor uses this endpoint for multipart uploads. The upload
+  // handler writes directly to the LittleFS path supplied as the filename.
   server.on("/system/resources/edit", HTTP_POST, []()
             { returnOK(); }, handleFileUpload);
   server.onNotFound(handleNotFound);
@@ -72,7 +77,6 @@ void registerWebServerRoutes()
   server.on("/reboot", handleReboot);
   server.on("/setProfile", handleSetProfile);
   server.on("/getProfile", handleGetProfile);
-  server.on("/getLanguage", handleGetLanguage);
   server.on("/getProfileList", handleGetProfileList);
   server.on("/getTarget", handleGetTarget);
   server.on("/getTricklerState", handleGetTricklerState);
