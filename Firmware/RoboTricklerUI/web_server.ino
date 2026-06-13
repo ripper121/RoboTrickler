@@ -2,6 +2,33 @@ const char *host = "robo-trickler";
 
 static bool webUpdateStarted = false;
 static bool webUpdateSucceeded = false;
+static bool webUpdateFilesystem = false;
+static bool webUpdateFilesystemUnmounted = false;
+
+void restoreFilesystemAfterFailedUpdate()
+{
+  if (!webUpdateFilesystemUnmounted)
+  {
+    return;
+  }
+
+  webUpdateFilesystemUnmounted = false;
+  if (activeFSIsSD)
+  {
+    // SD is active, LittleFS was never the primary filesystem for runtime.
+    return;
+  }
+
+  FILESYSTEM_ACTIVE = LittleFS.begin(false);
+  if (FILESYSTEM_ACTIVE)
+  {
+    activeFS = &LittleFS;
+  }
+  else
+  {
+    DEBUG_PRINTLN("LittleFS remount failed after update error.");
+  }
+}
 
 void returnOK()
 {
@@ -59,10 +86,15 @@ void registerWebServerRoutes()
   }
 
   server.on("/list", HTTP_GET, printDirectory);
+  server.on("/", HTTP_GET, handleHomePage);
+  server.on("/system/ap", HTTP_GET, handleWifiSetupPortal);
+  server.on("/system/ap/", HTTP_GET, handleWifiSetupPortal);
+  server.on("/api/wifi/scan", HTTP_GET, handleWifiScan);
+  server.on("/api/wifi/save", HTTP_POST, handleWifiSave);
   server.on("/system/resources/edit", HTTP_DELETE, handleDelete);
   server.on("/system/resources/edit", HTTP_PUT, handleCreate);
-  // The SD web editor uses this endpoint for multipart uploads. The upload
-  // handler writes directly to the SD path supplied as the multipart filename.
+  // The web editor uses this endpoint for multipart uploads. The upload
+  // handler writes directly to the LittleFS path supplied as the filename.
   server.on("/system/resources/edit", HTTP_POST, []()
             { returnOK(); }, handleFileUpload);
   server.onNotFound(handleNotFound);
@@ -85,12 +117,26 @@ void registerWebServerRoutes()
   server.on("/fwupdate", HTTP_GET, []()
             {
             server.sendHeader("Connection", "close");
-            String updatePage = "<form method='POST' action='/update' enctype='multipart/form-data'><p>";
+            String updatePage = "<p>";
                   updatePage += langText("web_fw_version");
                   updatePage += ": ";
                   updatePage += FW_VERSION;
-                  updatePage += "</p><br><input type='file' name='update'><input type='submit' value='";
-                  updatePage += langText("web_update");
+                  updatePage += "</p><h3>";
+                  updatePage += langText("web_firmware_image");
+                  updatePage += "</h3>";
+                  updatePage += "<form method='POST' action='/update' enctype='multipart/form-data'>";
+                  updatePage += "<input type='file' name='firmware' accept='.bin,application/octet-stream' required>";
+                  updatePage += "<input type='submit' value='";
+                  updatePage += langText("web_update_firmware");
+                  updatePage += "'></form><br><h3>";
+                  updatePage += langText("web_littlefs_image");
+                  updatePage += "</h3><p>";
+                  updatePage += langText("web_update_filesystem_warning");
+                  updatePage += "</p>";
+                  updatePage += "<form method='POST' action='/update' enctype='multipart/form-data'>";
+                  updatePage += "<input type='file' name='filesystem' accept='.bin,application/octet-stream' required>";
+                  updatePage += "<input type='submit' value='";
+                  updatePage += langText("web_update_littlefs");
                   updatePage += "'></form><br>";
                   updatePage += webBackButtonHtml();
             server.send(200, "text/html", updatePage); });
@@ -99,8 +145,14 @@ void registerWebServerRoutes()
       "/update", HTTP_POST, []()
       {
         bool updateOk = webUpdateSucceeded && !Update.hasError();
+        if (!updateOk)
+        {
+          restoreFilesystemAfterFailedUpdate();
+        }
         webUpdateStarted = false;
         webUpdateSucceeded = false;
+        webUpdateFilesystem = false;
+        webUpdateFilesystemUnmounted = false;
         Serial.setDebugOutput(false);
         server.sendHeader("Connection", "close");
         server.send(updateOk ? 200 : 500, "text/html", webStatusPage(updateOk ? "web_update_ok" : "web_update_fail"));
@@ -116,19 +168,31 @@ void registerWebServerRoutes()
         {
           webUpdateStarted = false;
           webUpdateSucceeded = false;
+          webUpdateFilesystem = upload.name == "filesystem";
           Update.clearError();
           Serial.setDebugOutput(true);
-          Serial.printf("Update: %s\n", upload.filename.c_str());
+          Serial.printf("%s update: %s\n", webUpdateFilesystem ? "LittleFS" : "Firmware", upload.filename.c_str());
           String infoText = String(langText("status_update_upload")) + String(upload.filename);
           updateDisplayLog(infoText);
-          if (Update.begin(UPDATE_SIZE_UNKNOWN))
+
+          if (webUpdateFilesystem && FILESYSTEM_ACTIVE && !activeFSIsSD)
+          {
+            LittleFS.end();
+            FILESYSTEM_ACTIVE = false;
+            activeFS = NULL;
+            webUpdateFilesystemUnmounted = true;
+          }
+
+          int updateTarget = webUpdateFilesystem ? U_FLASHFS : U_FLASH;
+          if (Update.begin(UPDATE_SIZE_UNKNOWN, updateTarget))
           {
             webUpdateStarted = true;
           }
           else
-          { // start with max available size
+          {
             Update.printError(Serial);
             updateDisplayLog(String(langText("status_update_failed")) + Update.errorString());
+            restoreFilesystemAfterFailedUpdate();
             Serial.setDebugOutput(false);
           }
         }
@@ -177,6 +241,7 @@ void registerWebServerRoutes()
           Update.abort();
           webUpdateStarted = false;
           webUpdateSucceeded = false;
+          restoreFilesystemAfterFailedUpdate();
           Serial.setDebugOutput(false);
           Serial.printf("Update Failed Unexpectedly (likely broken connection): status=%d\n", upload.status);
           updateDisplayLog(langText("status_update_unexpected"));
@@ -186,6 +251,7 @@ void registerWebServerRoutes()
           Update.abort();
           webUpdateStarted = false;
           webUpdateSucceeded = false;
+          restoreFilesystemAfterFailedUpdate();
           Serial.setDebugOutput(false);
           Serial.printf("Update Failed Unexpectedly (likely broken connection): status=%d\n", upload.status);
           updateDisplayLog(langText("status_update_unexpected"));

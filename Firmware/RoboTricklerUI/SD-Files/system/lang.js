@@ -82,11 +82,15 @@
       });
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
-    activeLanguage()
+  function initializeLanguage() {
+    return activeLanguage()
       .then(loadLanguage)
       .catch(function () {
         return loadLanguage(fallbackLanguage);
       });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    window.rtLanguageReady = initializeLanguage();
   });
 }());

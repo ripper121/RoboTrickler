@@ -210,7 +210,9 @@ static void handleTargetReached(bool weightWithinTolerance)
 {
   setLabelTextColor(ui_LabelTricklerWeight, weightWithinTolerance ? 0x00FF00 : 0xFFFF00);
 
-  if (weightAtOrAbove(weight, config.targetWeight + config.profile_alarmThreshold) && (config.profile_alarmThreshold > 0))
+  if ((tricklerState == TRICKLER_RUNNING) &&
+      weightAtOrAbove(weight, config.targetWeight + config.profile_alarmThreshold) &&
+      (config.profile_alarmThreshold > 0))
   {
     handleOverTrickle();
     measurementCount = 0;

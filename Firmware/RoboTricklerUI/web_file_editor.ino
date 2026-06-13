@@ -1,8 +1,8 @@
 File uploadFile;
 
-bool loadFromSdCard(String path)
+bool loadFromFilesystem(fs::FS &fs, const char *sourceName, String path)
 {
-  // Serve SD-hosted UI files with a small extension-to-content-type map. If a
+  // Serve UI files with a small extension-to-content-type map. If a
   // compressed copy exists, prefer it transparently.
   String dataType = "text/plain";
   if (path.endsWith("/"))
@@ -72,7 +72,7 @@ bool loadFromSdCard(String path)
     dataType = "application/octet-stream";
   }
 
-  File dataFile = SD.open(path.c_str());
+  File dataFile = fs.open(path.c_str());
   if (dataFile.isDirectory())
   {
     path += "/index.html";
@@ -81,16 +81,16 @@ bool loadFromSdCard(String path)
   dataFile.close();
 
   String pathWithGz = path + ".gz";
-  if (SD.exists(pathWithGz))
+  if (fs.exists(pathWithGz))
   {
     path = pathWithGz;
   }
-  else if (!SD.exists(path))
+  else if (!fs.exists(path))
   {
     return false;
   }
 
-  dataFile = SD.open(path.c_str());
+  dataFile = fs.open(path.c_str());
   if (!dataFile)
   {
     return false;
@@ -102,13 +102,18 @@ bool loadFromSdCard(String path)
     return false;
   }
 
-  DEBUG_PRINTLN(String("\tSent file: ") + path);
+  DEBUG_PRINTLN(String("\tSent ") + sourceName + " file: " + path);
   if (server.streamFile(dataFile, dataType) != dataFile.size())
   {
     DEBUG_PRINTLN("Sent less data than expected!");
   }
   dataFile.close();
   return true;
+}
+
+bool loadWebFile(String path)
+{
+  return FILESYSTEM_ACTIVE && loadFromFilesystem(ACTIVE_FS, activeFSIsSD ? "SD" : "LittleFS", path);
 }
 
 void handleFileUpload()
@@ -120,15 +125,15 @@ void handleFileUpload()
   HTTPUpload &upload = server.upload();
   if (upload.status == UPLOAD_FILE_START)
   {
-    if (upload.filename.startsWith("/profiles/") && !SD.exists("/profiles"))
+    if (upload.filename.startsWith("/profiles/") && !ACTIVE_FS.exists("/profiles"))
     {
-      SD.mkdir("/profiles");
+      ACTIVE_FS.mkdir("/profiles");
     }
-    if (SD.exists((char *)upload.filename.c_str()))
+    if (ACTIVE_FS.exists((char *)upload.filename.c_str()))
     {
-      SD.remove((char *)upload.filename.c_str());
+      ACTIVE_FS.remove((char *)upload.filename.c_str());
     }
-    uploadFile = SD.open(upload.filename.c_str(), FILE_WRITE);
+    uploadFile = ACTIVE_FS.open(upload.filename.c_str(), FILE_WRITE);
     DEBUG_PRINT("Upload: START, filename: ");
     DEBUG_PRINTLN(upload.filename);
   }
@@ -154,12 +159,12 @@ void handleFileUpload()
 
 void deleteRecursive(String path)
 {
-  // Used by the SD web editor; callers guard against deleting the SD root.
-  File file = SD.open((char *)path.c_str());
+  // Used by the web editor; callers guard against deleting the filesystem root.
+  File file = ACTIVE_FS.open((char *)path.c_str());
   if (!file.isDirectory())
   {
     file.close();
-    SD.remove((char *)path.c_str());
+    ACTIVE_FS.remove((char *)path.c_str());
     return;
   }
 
@@ -180,12 +185,12 @@ void deleteRecursive(String path)
     else
     {
       entry.close();
-      SD.remove((char *)entryPath.c_str());
+      ACTIVE_FS.remove((char *)entryPath.c_str());
     }
     yield();
   }
 
-  SD.rmdir((char *)path.c_str());
+  ACTIVE_FS.rmdir((char *)path.c_str());
   file.close();
 }
 
@@ -196,7 +201,7 @@ void handleDelete()
     return returnFail("BAD ARGS");
   }
   String path = server.arg(0);
-  if (path == "/" || !SD.exists((char *)path.c_str()))
+  if (path == "/" || !ACTIVE_FS.exists((char *)path.c_str()))
   {
     returnFail("BAD PATH");
     return;
@@ -212,7 +217,7 @@ void handleCreate()
     return returnFail("BAD ARGS");
   }
   String path = server.arg(0);
-  if (path == "/" || SD.exists((char *)path.c_str()))
+  if (path == "/" || ACTIVE_FS.exists((char *)path.c_str()))
   {
     returnFail("BAD PATH");
     return;
@@ -220,7 +225,7 @@ void handleCreate()
 
   if (path.indexOf('.') > 0)
   {
-    File file = SD.open((char *)path.c_str(), FILE_WRITE);
+    File file = ACTIVE_FS.open((char *)path.c_str(), FILE_WRITE);
     if (file)
     {
       file.write(0);
@@ -229,7 +234,7 @@ void handleCreate()
   }
   else
   {
-    SD.mkdir((char *)path.c_str());
+    ACTIVE_FS.mkdir((char *)path.c_str());
   }
   returnOK();
 }
@@ -241,11 +246,11 @@ void printDirectory()
     return returnFail("BAD ARGS");
   }
   String path = server.arg("dir");
-  if (path != "/" && !SD.exists((char *)path.c_str()))
+  if (path != "/" && !ACTIVE_FS.exists((char *)path.c_str()))
   {
     return returnFail("BAD PATH");
   }
-  File dir = SD.open((char *)path.c_str());
+  File dir = ACTIVE_FS.open((char *)path.c_str());
   path = String();
   if (!dir.isDirectory())
   {
@@ -292,11 +297,18 @@ void printDirectory()
 
 void handleNotFound()
 {
-  if (loadFromSdCard(server.uri()))
+  if (loadWebFile(server.uri()))
   {
     return;
   }
-  String message = "SDCARD Not Detected\n\n";
+  if (WIFI_SETUP_AP_ACTIVE)
+  {
+    server.sendHeader("Location", "/system/ap");
+    server.send(302, "text/plain", "");
+    return;
+  }
+
+  String message = "Filesystem file not found\n\n";
   message += "URI: ";
   message += server.uri();
   message += "\nMethod: ";

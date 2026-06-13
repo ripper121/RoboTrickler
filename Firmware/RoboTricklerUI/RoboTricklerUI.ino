@@ -1,23 +1,26 @@
 #include "pindef.h"
 #include <FS.h>
+#include <LittleFS.h>
 #include <SD.h>
+#include <SPI.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
+#include <DNSServer.h>
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
-#include <SPI.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <Update.h>
 #include <esp_heap_caps.h>
+#include <esp_mac.h>
 #include <esp_task_wdt.h>
 #include <rtc_wdt.h>
 #include <freertos/semphr.h>
 #include <ctype.h>
 #include <string.h>
 #include <math.h>
-#define FW_VERSION "2.12"
+#define FW_VERSION "2.13"
 // Internal firmware update check endpoint. Do not mirror this value into SD files.
 #define DEFAULT_FW_UPDATE_URL "http://strenuous.dev/roboTrickler/userTracker.php"
 
@@ -32,8 +35,8 @@ Upload Speed: "921600"
 CPU Frequency: "240MHz (WiFi/BT)"
 Flash Frequency: "80MHz"
 Flash Mode: "DIO"
-Flash Size: "4MB (32Mb)"
-Partition Scheme: "Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)"
+Flash Size: "8MB (64Mb)"
+Partition Scheme: "8M with spiffs (3MB APP/1.5MB SPIFFS)"
 Core Debug Level: "None"
 PSRAM: "Disabled"
 Arduino Runs On: "Core 1"
@@ -77,8 +80,6 @@ SemaphoreHandle_t lvglMutex = NULL;
 static uint32_t buf[DISPLAY_DRAW_BUF_SIZE / sizeof(uint32_t)];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 
-SPIClass *SDspi = NULL;
-
 struct Config
 {
   char wifi_ssid[64];
@@ -116,13 +117,20 @@ struct Config
   int profile_speed[16];
   int profile_count;
 };
-// Single source of truth for SD-backed settings and the active trickling profile.
+// Single source of truth for flash-backed settings and the active trickling profile.
 Config config;
 
 bool wifiActive = false;
+bool WIFI_SETUP_AP_ACTIVE = false;
 bool WEB_SERVER_ACTIVE = false;
 bool WEB_SERVER_ROUTES_REGISTERED = false;
+bool FILESYSTEM_ACTIVE = false;
+fs::FS *activeFS = NULL;
+bool activeFSIsSD = false;
+SPIClass *SDspi = NULL;
+#define ACTIVE_FS (*activeFS)
 WebServer server(80);
+DNSServer dnsServer;
 unsigned long wifiPreviousMillis = 0;
 unsigned long wifiInterval = 10000;
 

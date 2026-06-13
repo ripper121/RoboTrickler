@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a compressed SD-card tree in SD-Files-Gz."""
+"""Create the compressed LittleFS source tree in SD-Files-Gz."""
 
 from __future__ import annotations
 
@@ -14,7 +14,9 @@ from pathlib import Path
 
 DEFAULT_SOURCE = Path(__file__).resolve().parent.parent / "SD-Files"
 DEFAULT_OUTPUT = Path(__file__).resolve().parent.parent / "SD-Files-Gz"
-EXCLUDED_TOP_LEVEL_DIRECTORIES = {"profiles"}
+EXCLUDED_TOP_LEVEL_DIRECTORIES = {"profiles","lang"}
+EXCLUDED_FILES = {"avg.txt", "calibrate.txt"}
+UNCOMPRESSED_FILES = {"system/logo.bmp"}
 MAX_GZIP_COMPRESSION = 9
 
 
@@ -30,6 +32,7 @@ def should_compress(relative_path: Path) -> bool:
     return (
         len(relative_path.parts) > 1
         and relative_path.parts[0] not in EXCLUDED_TOP_LEVEL_DIRECTORIES
+        and relative_path.as_posix() not in UNCOMPRESSED_FILES
         and relative_path.suffix.lower() != ".gz"
     )
 
@@ -82,6 +85,8 @@ def create_output_tree(
             continue
 
         relative_path = path.relative_to(source)
+        if relative_path.as_posix() in EXCLUDED_FILES:
+            continue
         compress = should_compress(relative_path)
         output_relative_path = relative_path
         data = path.read_bytes()
@@ -137,21 +142,21 @@ def create_output_tree(
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Create an SD-Files-Gz tree. Root files and the profiles directory "
-            "are copied unchanged; other files are stored as .gz files."
+            "Create the SD-Files-Gz LittleFS source tree. Files parsed directly "
+            "by firmware remain uncompressed; web assets are stored as .gz files."
         )
     )
     parser.add_argument(
         "--source",
         type=Path,
         default=DEFAULT_SOURCE,
-        help=f"SD files folder. Default: {DEFAULT_SOURCE}",
+        help=f"Source files folder. Default: {DEFAULT_SOURCE}",
     )
     parser.add_argument(
         "--output",
         type=Path,
         default=DEFAULT_OUTPUT,
-        help=f"Generated compressed SD tree. Default: {DEFAULT_OUTPUT}",
+        help=f"Generated compressed LittleFS tree. Default: {DEFAULT_OUTPUT}",
     )
     parser.add_argument(
         "--dry-run",

@@ -1,3 +1,74 @@
+void handleHomePage()
+{
+  if (!loadWebFile("/"))
+  {
+    server.send(404, "text/plain", "Home page not found");
+  }
+}
+
+void handleWifiSetupPortal()
+{
+  if (!loadWebFile("/system/ap/index.html"))
+  {
+    server.send(500, "text/plain", "WiFi setup page not found");
+  }
+}
+
+void handleWifiScan()
+{
+  int networkCount = WiFi.scanNetworks(false, true);
+  if (networkCount < 0)
+  {
+    server.send(500, "application/json", "{\"error\":\"WiFi scan failed\"}");
+    return;
+  }
+
+  server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+  server.send(200, "application/json", "");
+  server.sendContent("[");
+  for (int i = 0; i < networkCount; i++)
+  {
+    if (i > 0)
+    {
+      server.sendContent(",");
+    }
+
+    String item = "{\"ssid\":\"";
+    item += jsonEscape(WiFi.SSID(i));
+    item += "\",\"rssi\":";
+    item += String(WiFi.RSSI(i));
+    item += ",\"channel\":";
+    item += String(WiFi.channel(i));
+    item += ",\"secure\":";
+    item += WiFi.encryptionType(i) == WIFI_AUTH_OPEN ? "false" : "true";
+    item += "}";
+    server.sendContent(item);
+  }
+  server.sendContent("]");
+  WiFi.scanDelete();
+}
+
+void handleWifiSave()
+{
+  String ssid = server.arg("ssid");
+  String password = server.arg("password");
+  ssid.trim();
+  if ((ssid.length() <= 0) || (ssid.length() >= sizeof(config.wifi_ssid)) ||
+      (password.length() >= sizeof(config.wifi_psk)))
+  {
+    server.send(400, "application/json", "{\"error\":\"invalid SSID or password length\"}");
+    return;
+  }
+
+  strlcpy(config.wifi_ssid, ssid.c_str(), sizeof(config.wifi_ssid));
+  strlcpy(config.wifi_psk, password.c_str(), sizeof(config.wifi_psk));
+  saveConfiguration("/config.txt", config);
+
+  server.send(200, "application/json", "{\"saved\":true,\"rebooting\":true}");
+  delay(500);
+  ESP.restart();
+}
+
 String webBackButtonHtml()
 {
   return String("<button onClick='javascript:history.back()'>") + langText("web_back") + "</button>";
@@ -77,7 +148,7 @@ void handleGetLanguage()
 
 void handleGetProfileList()
 {
-  // Keep this legacy object shape for the SD-hosted pages: {"0":"name", ...}.
+  // Keep this legacy object shape for the filesystem-hosted pages: {"0":"name", ...}.
   String message = "{";
   for (int i = 0; i < profileListCount; i++)
   {

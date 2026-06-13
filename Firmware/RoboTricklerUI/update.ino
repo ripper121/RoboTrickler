@@ -1,87 +1,116 @@
-// perform the actual update from a given stream
-bool performUpdate(Stream &updateSource, size_t updateSize)
+static const char *SD_FIRMWARE_UPDATE_PATH = "/firmware.bin";
+static const char *SD_LITTLEFS_UPDATE_PATH = "/littleFS.bin";
+
+static const int SD_UPDATE_NOT_FOUND = 0;
+static const int SD_UPDATE_FAILED = 1;
+static const int SD_UPDATE_SUCCEEDED = 2;
+
+static void logSdUpdateStatus(const String &message)
 {
-  if (Update.begin(updateSize))
+  DEBUG_PRINTLN(message);
+  if (lvDisplayTaskHandle != NULL)
   {
-    size_t written = Update.writeStream(updateSource);
-    if (written == updateSize)
-    {
-      DEBUG_PRINTLN("Written : " + String(written) + " successfully");
-    }
-    else
-    {
-      DEBUG_PRINTLN("Written only : " + String(written) + "/" + String(updateSize));
-    }
-    if (Update.end())
-    {
-      updateDisplayLog(langText("status_fw_update_done"));
-      if (Update.isFinished())
-      {
-        updateDisplayLog(langText("status_update_completed"));
-        return true;
-      }
-      else
-      {
-        updateDisplayLog(langText("status_update_not_finished"));
-      }
-    }
-    else
-    {
-      DEBUG_PRINTLN("Error Occurred. Error #: " + String(Update.getError()));
-      updateDisplayLog(String(langText("status_update_failed")) + Update.errorString());
-    }
+    updateDisplayLog(message);
   }
-  else
-  {
-    updateDisplayLog(String(langText("status_fw_update_begin_failed")) + Update.errorString());
-  }
-  return false;
 }
 
-// check given FS for valid update.bin and perform update if available
-void updateFromFS(fs::FS &fs)
+static bool performSdUpdate(File &updateFile, size_t updateSize, int updateTarget, const char *label)
 {
-  bool successfully = false;
-  File updateBin = fs.open("/update.bin");
-  if (updateBin)
+  Update.clearError();
+  if (!Update.begin(updateSize, updateTarget))
   {
-    if (updateBin.isDirectory())
-    {
-      updateDisplayLog(langText("status_update_not_file"));
-      updateBin.close();
-      return;
-    }
-
-    size_t updateSize = updateBin.size();
-
-    if (updateSize > 0)
-    {
-      updateDisplayLog(langText("status_update_start"));
-      successfully = performUpdate(updateBin, updateSize);
-    }
-    else
-    {
-      updateDisplayLog(langText("status_update_empty"));
-    }
-
-    updateBin.close();
-
-    if (successfully)
-    {
-      // When finished, remove the binary from the SD card to indicate success.
-      fs.remove("/update.bin");
-      delay(1000);
-      ESP.restart();
-    }
+    logSdUpdateStatus(String(label) + langText("status_update_begin_failed_suffix") + Update.errorString());
+    return false;
   }
-  else
+
+  size_t written = Update.writeStream(updateFile);
+  if (written != updateSize)
   {
-    updateDisplayLog(langText("status_no_new_firmware"));
+    logSdUpdateStatus(String(label) + langText("status_update_write_failed_suffix") + String(written) + "/" + String(updateSize));
+    Update.abort();
+    return false;
   }
+
+  if (!Update.end())
+  {
+    logSdUpdateStatus(String(label) + langText("status_update_failed_suffix") + Update.errorString());
+    return false;
+  }
+
+  if (!Update.isFinished())
+  {
+    logSdUpdateStatus(String(label) + langText("status_update_not_finished_suffix"));
+    return false;
+  }
+
+  logSdUpdateStatus(String(label) + langText("status_update_completed_suffix"));
+  return true;
+}
+
+static int updateFromSd(const char *path, int updateTarget, const char *label)
+{
+  File updateFile = SD.open(path, FILE_READ);
+  if (!updateFile)
+  {
+    return SD_UPDATE_NOT_FOUND;
+  }
+
+  if (updateFile.isDirectory())
+  {
+    logSdUpdateStatus(String(label) + langText("status_update_not_file_suffix") + path);
+    updateFile.close();
+    return SD_UPDATE_FAILED;
+  }
+
+  size_t updateSize = updateFile.size();
+  if (updateSize == 0)
+  {
+    logSdUpdateStatus(String(label) + langText("status_update_empty_suffix") + path);
+    updateFile.close();
+    return SD_UPDATE_FAILED;
+  }
+
+  logSdUpdateStatus(String(langText("status_update_start_prefix")) + label + langText("status_update_start_suffix") + path);
+  bool updateSucceeded = performSdUpdate(updateFile, updateSize, updateTarget, label);
+  updateFile.close();
+
+  if (!updateSucceeded)
+  {
+    return SD_UPDATE_FAILED;
+  }
+
+  if (!SD.remove(path))
+  {
+    logSdUpdateStatus(String(langText("status_update_delete_failed")) + path);
+  }
+
+  return SD_UPDATE_SUCCEEDED;
 }
 
 void initUpdate()
 {
-  updateDisplayLog(langText("status_check_fw_update"));
-  updateFromFS(SD);
+  if (!activeFSIsSD)
+  {
+    return;
+  }
+
+  bool restartRequired = false;
+  logSdUpdateStatus(langText("status_check_sd_updates"));
+
+  int firmwareResult = updateFromSd(SD_FIRMWARE_UPDATE_PATH, U_FLASH, "Firmware");
+  if (firmwareResult == SD_UPDATE_FAILED)
+  {
+    return;
+  }
+  restartRequired = firmwareResult == SD_UPDATE_SUCCEEDED;
+
+  int littleFsResult = updateFromSd(SD_LITTLEFS_UPDATE_PATH, U_FLASHFS, "LittleFS");
+  restartRequired = restartRequired || (littleFsResult == SD_UPDATE_SUCCEEDED);
+
+  if (restartRequired)
+  {
+    logSdUpdateStatus(langText("status_sd_update_complete"));
+    delay(1000);
+    ESP.restart();
+  }
 }
