@@ -12,6 +12,7 @@ bool initFilesystem()
     activeFSIsSD = true;
     FILESYSTEM_ACTIVE = true;
     DEBUG_PRINTLN("SD card mounted.");
+    initUpdate();
   }
   else
   {

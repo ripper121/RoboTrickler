@@ -74,7 +74,6 @@ void initSetup()
 
     applyLanguage();
     updateDisplayLog(langText(activeFSIsSD ? "status_storage_sd" : "status_storage_flash"));
-    initUpdate();
 
     infoText = langText("status_reading_profiles");
     updateDisplayLog(infoText, true);

@@ -5,36 +5,45 @@ static const int SD_UPDATE_NOT_FOUND = 0;
 static const int SD_UPDATE_FAILED = 1;
 static const int SD_UPDATE_SUCCEEDED = 2;
 
+static void logSdUpdateStatus(const String &message)
+{
+  DEBUG_PRINTLN(message);
+  if (lvDisplayTaskHandle != NULL)
+  {
+    updateDisplayLog(message);
+  }
+}
+
 static bool performSdUpdate(File &updateFile, size_t updateSize, int updateTarget, const char *label)
 {
   Update.clearError();
   if (!Update.begin(updateSize, updateTarget))
   {
-    updateDisplayLog(String(label) + langText("status_update_begin_failed_suffix") + Update.errorString());
+    logSdUpdateStatus(String(label) + langText("status_update_begin_failed_suffix") + Update.errorString());
     return false;
   }
 
   size_t written = Update.writeStream(updateFile);
   if (written != updateSize)
   {
-    updateDisplayLog(String(label) + langText("status_update_write_failed_suffix") + String(written) + "/" + String(updateSize));
+    logSdUpdateStatus(String(label) + langText("status_update_write_failed_suffix") + String(written) + "/" + String(updateSize));
     Update.abort();
     return false;
   }
 
   if (!Update.end())
   {
-    updateDisplayLog(String(label) + langText("status_update_failed_suffix") + Update.errorString());
+    logSdUpdateStatus(String(label) + langText("status_update_failed_suffix") + Update.errorString());
     return false;
   }
 
   if (!Update.isFinished())
   {
-    updateDisplayLog(String(label) + langText("status_update_not_finished_suffix"));
+    logSdUpdateStatus(String(label) + langText("status_update_not_finished_suffix"));
     return false;
   }
 
-  updateDisplayLog(String(label) + langText("status_update_completed_suffix"));
+  logSdUpdateStatus(String(label) + langText("status_update_completed_suffix"));
   return true;
 }
 
@@ -48,7 +57,7 @@ static int updateFromSd(const char *path, int updateTarget, const char *label)
 
   if (updateFile.isDirectory())
   {
-    updateDisplayLog(String(label) + langText("status_update_not_file_suffix") + path);
+    logSdUpdateStatus(String(label) + langText("status_update_not_file_suffix") + path);
     updateFile.close();
     return SD_UPDATE_FAILED;
   }
@@ -56,12 +65,12 @@ static int updateFromSd(const char *path, int updateTarget, const char *label)
   size_t updateSize = updateFile.size();
   if (updateSize == 0)
   {
-    updateDisplayLog(String(label) + langText("status_update_empty_suffix") + path);
+    logSdUpdateStatus(String(label) + langText("status_update_empty_suffix") + path);
     updateFile.close();
     return SD_UPDATE_FAILED;
   }
 
-  updateDisplayLog(String(langText("status_update_start_prefix")) + label + langText("status_update_start_suffix") + path);
+  logSdUpdateStatus(String(langText("status_update_start_prefix")) + label + langText("status_update_start_suffix") + path);
   bool updateSucceeded = performSdUpdate(updateFile, updateSize, updateTarget, label);
   updateFile.close();
 
@@ -72,7 +81,7 @@ static int updateFromSd(const char *path, int updateTarget, const char *label)
 
   if (!SD.remove(path))
   {
-    updateDisplayLog(String(langText("status_update_delete_failed")) + path);
+    logSdUpdateStatus(String(langText("status_update_delete_failed")) + path);
   }
 
   return SD_UPDATE_SUCCEEDED;
@@ -86,7 +95,7 @@ void initUpdate()
   }
 
   bool restartRequired = false;
-  updateDisplayLog(langText("status_check_sd_updates"));
+  logSdUpdateStatus(langText("status_check_sd_updates"));
 
   int firmwareResult = updateFromSd(SD_FIRMWARE_UPDATE_PATH, U_FLASH, "Firmware");
   if (firmwareResult == SD_UPDATE_FAILED)
@@ -100,7 +109,7 @@ void initUpdate()
 
   if (restartRequired)
   {
-    updateDisplayLog(langText("status_sd_update_complete"));
+    logSdUpdateStatus(langText("status_sd_update_complete"));
     delay(1000);
     ESP.restart();
   }
