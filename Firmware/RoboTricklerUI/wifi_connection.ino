@@ -49,6 +49,31 @@ static unsigned long wifiConnectStartedMillis = 0;
 static bool wifiConnectTimeoutReported = false;
 static wl_status_t wifiLastLoggedStatus = WL_NO_SHIELD;
 
+bool createWifiSetupPassword(String &password)
+{
+  uint8_t mac[6] = {0};
+  if (esp_efuse_mac_get_default(mac) != ESP_OK)
+  {
+    return false;
+  }
+
+  bool hasNonZeroByte = false;
+  for (uint8_t value : mac)
+  {
+    hasNonZeroByte = hasNonZeroByte || (value != 0);
+  }
+  if (!hasNonZeroByte)
+  {
+    return false;
+  }
+
+  char passwordBuffer[13];
+  snprintf(passwordBuffer, sizeof(passwordBuffer), "%02X%02X%02X%02X%02X%02X",
+           mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  password = passwordBuffer;
+  return true;
+}
+
 const char *wifiStatusName(wl_status_t status)
 {
   switch (status)
@@ -266,8 +291,11 @@ bool startWifiSetupAccessPoint()
   WiFi.persistent(false);
   WiFi.mode(WIFI_AP_STA);
   WiFi.setSleep(false);
-  wifiSetupApPassword = WiFi.macAddress();
-  wifiSetupApPassword.replace(":", "");
+  if (!createWifiSetupPassword(wifiSetupApPassword))
+  {
+    DEBUG_PRINTLN("Could not read hardware MAC for setup AP password.");
+    return false;
+  }
 
   if (!WiFi.softAPConfig(WIFI_SETUP_AP_IP, WIFI_SETUP_AP_IP, WIFI_SETUP_AP_SUBNET))
   {

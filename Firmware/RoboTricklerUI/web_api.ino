@@ -8,26 +8,14 @@ void handleHomePage()
 
 void handleWifiSetupPortal()
 {
-  if (WIFI_SETUP_AP_ACTIVE)
+  if (!loadWebFile("/system/ap/index.html"))
   {
-    if (!loadWebFile("/system/ap/index.html"))
-    {
-      server.send(500, "text/plain", "WiFi setup page not found");
-    }
-    return;
+    server.send(500, "text/plain", "WiFi setup page not found");
   }
-
-  handleHomePage();
 }
 
 void handleWifiScan()
 {
-  if (!WIFI_SETUP_AP_ACTIVE)
-  {
-    server.send(403, "application/json", "{\"error\":\"setup access point is not active\"}");
-    return;
-  }
-
   int networkCount = WiFi.scanNetworks(false, true);
   if (networkCount < 0)
   {
@@ -62,12 +50,6 @@ void handleWifiScan()
 
 void handleWifiSave()
 {
-  if (!WIFI_SETUP_AP_ACTIVE)
-  {
-    server.send(403, "application/json", "{\"error\":\"setup access point is not active\"}");
-    return;
-  }
-
   String ssid = server.arg("ssid");
   String password = server.arg("password");
   ssid.trim();
