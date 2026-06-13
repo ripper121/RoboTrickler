@@ -1,1 +1,3 @@
 - Add Sync from LittleFS to SD Card button
+- littleFS and FW update on new partion scheme
+- remove Delete of root avg, calibrate
