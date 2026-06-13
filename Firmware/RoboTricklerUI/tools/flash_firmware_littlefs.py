@@ -10,14 +10,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+from partition_layout import require_partition
+
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 SKETCH_DIR = SCRIPT_DIR.parent
 BUILD_DIR = SKETCH_DIR.parent / "build"
 ARDUINO_JSON = SKETCH_DIR / ".vscode" / "arduino.json"
-GZIP_FILES_SCRIPT = SCRIPT_DIR / "gzip_sd_files.py"
-CREATE_FLASH_DATA_SCRIPT = SCRIPT_DIR / "create_flash_data.py"
-CREATE_LITTLEFS_IMAGE_SCRIPT = SCRIPT_DIR / "create_flash_littlefs_image.py"
+COMPILE_UPLOAD_SCRIPT = SCRIPT_DIR / "compile_upload.py"
 DEFAULT_ESPTOOL = (
     Path(os.environ.get("LOCALAPPDATA", ""))
     / "Arduino15"
@@ -46,6 +46,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--build-dir", type=Path, default=BUILD_DIR, help="Build artifact directory.")
     parser.add_argument("--esptool", type=Path, default=DEFAULT_ESPTOOL, help="Path to esptool.exe.")
     parser.add_argument(
+        "--compile-timeout",
+        type=int,
+        default=600,
+        help="CLI compile timeout in seconds.",
+    )
+    parser.add_argument(
         "--full",
         action="store_true",
         help="Erase flash and install bootloader, partition table, firmware, and LittleFS.",
@@ -65,28 +71,23 @@ def run(command: list[str]) -> None:
     subprocess.run(command, check=True)
 
 
-def prepare_littlefs(build_dir: Path) -> Path:
-    require_file(GZIP_FILES_SCRIPT)
-    require_file(CREATE_FLASH_DATA_SCRIPT)
-    require_file(CREATE_LITTLEFS_IMAGE_SCRIPT)
-
+def compile_artifacts(build_dir: Path, timeout: int) -> None:
+    require_file(COMPILE_UPLOAD_SCRIPT)
     build_dir.mkdir(parents=True, exist_ok=True)
-    littlefs = build_dir / "littlefs.bin"
-
-    print("Regenerating SD-Files-Gz...", flush=True)
-    run([sys.executable, str(GZIP_FILES_SCRIPT)])
-    print("Staging LittleFS data...", flush=True)
-    run([sys.executable, str(CREATE_FLASH_DATA_SCRIPT)])
-    print("Building LittleFS image...", flush=True)
+    print("Compiling firmware and LittleFS with arduino-cli...", flush=True)
     run(
         [
             sys.executable,
-            str(CREATE_LITTLEFS_IMAGE_SCRIPT),
-            "--output",
-            str(littlefs),
+            str(COMPILE_UPLOAD_SCRIPT),
+            "--cli",
+            "--error",
+            "--compile-only",
+            "--build-dir",
+            str(build_dir),
+            "--compile-timeout",
+            str(timeout),
         ]
     )
-    return require_file(littlefs)
 
 
 def main() -> int:
@@ -94,8 +95,17 @@ def main() -> int:
     try:
         esptool = require_file(args.esptool)
         build_dir = args.build_dir.resolve()
-        littlefs = prepare_littlefs(build_dir)
+        compile_artifacts(build_dir, args.compile_timeout)
+        littlefs = require_file(build_dir / "littlefs.bin")
         firmware = require_file(build_dir / "RoboTricklerUI.ino.bin")
+        app_partition = require_partition("app0")
+        otadata_partition = require_partition("otadata")
+        littlefs_partition = require_partition("spiffs")
+        if firmware.stat().st_size > app_partition.size:
+            raise ValueError(
+                f"Firmware is {firmware.stat().st_size} bytes but app0 is only "
+                f"{app_partition.size} bytes"
+            )
 
         common = [
             str(esptool),
@@ -107,28 +117,32 @@ def main() -> int:
             str(args.baud),
         ]
 
+        partitions = require_file(build_dir / "RoboTricklerUI.ino.partitions.bin")
+        boot_app = require_file(build_dir / "boot_app0.bin")
         if args.full:
             bootloader = require_file(build_dir / "RoboTricklerUI.ino.bootloader.bin")
-            partitions = require_file(build_dir / "RoboTricklerUI.ino.partitions.bin")
-            boot_app = require_file(build_dir / "boot_app0.bin")
             run(common + ["erase-flash"])
             files = [
                 "0x1000",
                 str(bootloader),
                 "0x8000",
                 str(partitions),
-                "0xE000",
+                hex(otadata_partition.offset),
                 str(boot_app),
-                "0x10000",
+                hex(app_partition.offset),
                 str(firmware),
-                "0x330000",
+                hex(littlefs_partition.offset),
                 str(littlefs),
             ]
         else:
             files = [
-                "0x10000",
+                "0x8000",
+                str(partitions),
+                hex(otadata_partition.offset),
+                str(boot_app),
+                hex(app_partition.offset),
                 str(firmware),
-                "0x330000",
+                hex(littlefs_partition.offset),
                 str(littlefs),
             ]
 
@@ -151,7 +165,7 @@ def main() -> int:
         )
         print("Flash completed successfully.")
         return 0
-    except (FileNotFoundError, json.JSONDecodeError, subprocess.CalledProcessError) as exc:
+    except (FileNotFoundError, ValueError, json.JSONDecodeError, subprocess.CalledProcessError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 

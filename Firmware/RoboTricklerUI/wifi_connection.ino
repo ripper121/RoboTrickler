@@ -292,6 +292,7 @@ bool startWifiSetupAccessPoint()
   }
 
   updateDisplayLog(String("WiFi AP: ") + WIFI_SETUP_AP_SSID);
+  updateDisplayLog(String("WiFi password: ") + wifiSetupApPassword);
   updateDisplayLog(String("Open http://") + WIFI_SETUP_AP_IP.toString());
   showWifiSetupInfo();
   return true;

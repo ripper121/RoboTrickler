@@ -28,6 +28,7 @@ def find_sketch_dir() -> Path:
 SKETCH_DIR = find_sketch_dir()
 SKETCH_FILE = SKETCH_DIR / "RoboTricklerUI.ino"
 ARDUINO_JSON = SKETCH_DIR / ".vscode" / "arduino.json"
+GZIP_FILES = SCRIPT_DIR / "gzip_sd_files.py"
 CREATE_FLASH_DATA = SCRIPT_DIR / "create_flash_data.py"
 CREATE_LITTLEFS_IMAGE = SCRIPT_DIR / "create_flash_littlefs_image.py"
 
@@ -277,10 +278,17 @@ def find_firmware_bin(build_dir: Path) -> Path:
 
 
 def build_littlefs_image(build_dir: Path, timeout: int) -> Path:
+    require_path(GZIP_FILES, "GZ file generation script")
     require_path(CREATE_FLASH_DATA, "LittleFS staging script")
     require_path(CREATE_LITTLEFS_IMAGE, "LittleFS image script")
 
     image_path = build_dir / "littlefs.bin"
+    subprocess.run(
+        [sys.executable, str(GZIP_FILES)],
+        cwd=SKETCH_DIR,
+        check=True,
+        timeout=timeout,
+    )
     subprocess.run(
         [sys.executable, str(CREATE_FLASH_DATA)],
         cwd=SKETCH_DIR,
@@ -360,7 +368,10 @@ def main() -> int:
 
         littlefs_path = build_littlefs_image(build_dir, args.compile_timeout)
         print(f"Firmware binary: {bin_path}")
-        print(f"LittleFS image: {littlefs_path} (flash offset 0x330000)")
+        from partition_layout import require_partition
+
+        littlefs_partition = require_partition("spiffs")
+        print(f"LittleFS image: {littlefs_path} (flash offset {hex(littlefs_partition.offset)})")
         if args.compile_only:
             return 0
 

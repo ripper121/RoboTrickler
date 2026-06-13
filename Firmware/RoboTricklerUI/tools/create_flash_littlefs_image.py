@@ -8,6 +8,8 @@ import os
 import subprocess
 from pathlib import Path
 
+from partition_layout import require_partition
+
 
 SKETCH_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_DATA_DIR = SKETCH_DIR / "data"
@@ -23,7 +25,7 @@ DEFAULT_MKLITTLEFS = (
     / "mklittlefs.exe"
 )
 
-LITTLEFS_SIZE = 0xC0000
+LITTLEFS_SIZE = require_partition("spiffs").size
 
 
 def parse_args() -> argparse.Namespace:

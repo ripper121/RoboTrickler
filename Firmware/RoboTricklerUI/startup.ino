@@ -42,6 +42,7 @@ void initSetup()
 
     ui_init();
     disableTouchGestures();
+    initWifiQrCode();
     disp_task_init();
 
     updateDisplayLog((String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
