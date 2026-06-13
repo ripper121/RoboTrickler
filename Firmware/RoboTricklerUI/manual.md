@@ -1,6 +1,6 @@
 # Robo-Trickler Anleitung
 
-Stand: Firmware 2.12.
+Stand: Firmware 2.12
 
 ## Erste Schritte
 
@@ -20,10 +20,9 @@ Wähle im Tab `Profil` ein passendes Pulver aus. Falls das gewünschte Pulver ni
 
 **Für jedes Pulver muss ein eigenes Profil angelegt werden, um ein optimales Trickeln zu gewährleisten.**
 
-**Jede Waage muss vor dem Gebrauch warm laufen, je nach Modell bis zu 1 Stunde. Sonst kann der angezeigte Wert driften und die Waage geht nach dem Leeren der Pulverpfanne nicht sauber auf 0 zurück.**
-
 ### [Profil erstellen](#automatisches-profil-aus-kalibrierlauf-erstellen)
 
+**Jede Waage muss vor dem Gebrauch warm laufen, je nach Modell bis zu 1 Stunde. Sonst kann der angezeigte Wert driften und die Waage geht nach dem Leeren der Pulverpfanne nicht sauber auf 0 zurück.**
 
 
 <img width="722" height="482" alt="Screen" src="https://github.com/user-attachments/assets/dddc2665-baae-4eac-bc0d-5eb91caa13f8" />
@@ -50,7 +49,7 @@ dazu gehört die Datei:
 /profiles/avg.txt
 ```
 
-Die Profilliste im Display und über die Web-API enthält nur gültige Profile. Es werden bis zu 32 gültige `.txt`-Profile aus `/profiles` angezeigt; doppelte Namen und Dateien mit `.cor.txt` im Namen werden ignoriert. Ungültige Profile werden beim Scannen ignoriert und im Display gemeldet. Wenn das aktuell ausgewählte Profil beim Start oder beim Starten des Trickelns nicht geladen werden kann, benennt die Firmware die Datei nach `.cor.txt` um, stellt auf `calibrate` um und startet neu.
+Die Profilliste im Display und über die Web-API enthält nur gültige Profile. Es werden bis zu 32 gültige `.txt`-Profile angezeigt; Dateien mit `.cor.txt` im Namen werden ignoriert. Ungültige Profile werden beim Scannen ignoriert und im Display gemeldet. Wenn das aktuell ausgewählte Profil beim Start oder beim Starten des Trickelns nicht geladen werden kann, benennt die Firmware die Datei nach `.cor.txt` um, stellt auf `calibrate` um und startet neu.
 
 ## Automatisches Profil aus Kalibrierlauf erstellen
 
@@ -66,42 +65,93 @@ Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte.
 
 Dieses Profil nutzt `steps: 20000`. Das sind 20000 direkte STEP-Pulse; bei 200 STEP-Pulsen pro Umdrehung entspricht das dem Kalibrierlauf über 100 Umdrehungen.
 
-Das Kalibrierprofil ist ein Sonderfall: Es darf direkt aus `actuator`, `steps` und `speed` bestehen. Normale Pulverprofile brauchen dagegen `rs232TrickleMap` mit vollständigen Einträgen.
-
 **Vorgehen:**
 
 1. Wähle im Tab `Profil` `calibrate`.
 
-<img width="480" height="320" alt="screen0004" src="https://github.com/user-attachments/assets/db308896-3430-4eed-ab49-77892091905f" />
+<img width="480" height="320" alt="Calibrate" src="https://github.com/user-attachments/assets/36eb5c5b-7721-48a3-9a37-762c74fe1e67" />
 
-2. Im Tab `Trickler` drücke `Start`
+2. Im Tab `Trickler` drücke `Start`, achte darauf das die Waage auf 0.00 steht.
 
-<img width="480" height="320" alt="screen0003" src="https://github.com/user-attachments/assets/7e8f285f-1c29-48e5-a9c3-da177f38d81b" />
+<img width="480" height="320" alt="Trickle_Main" src="https://github.com/user-attachments/assets/c445d0f0-6b74-408d-820d-f0e4e8454064" />
 
 3. Lasse den Kalibrierlauf bei frisch gefülltem Trickler am besten 3-mal laufen, damit das Rohr gleichmäßig gefüllt ist. Klicke dabei bei `Profil aus Kalibrierung erstellen?` auf `Nein`, damit noch kein neues Profil erstellt wird.
 
-<img width="480" height="320" alt="screen0006" src="https://github.com/user-attachments/assets/523f93df-8171-45a6-8560-e898ec7e2113" />
+<img width="480" height="320" alt="Calibration_Run" src="https://github.com/user-attachments/assets/a46efe2d-41fb-4140-8a00-f821d6fe14d7" />
 
 4. Nach dem Kalibrierlauf  Bestätige am Display `Profil aus Kalibrierung erstellen?` mit `Ja`.
 
-<img width="480" height="320" alt="screen0006" src="https://github.com/user-attachments/assets/117c15f5-0c80-46e9-9fcc-f55e8c3a297b" />
+<img width="480" height="320" alt="Calibration_Run" src="https://github.com/user-attachments/assets/ce8b4c01-0785-48e5-bdb4-79179fb826fc" />
 
 5. Nach dem Kalibrierlauf liest die Firmware das stabile Gewicht von der Waage und erstellt ein neues Profil
 
-<img width="480" height="320" alt="screen0007" src="https://github.com/user-attachments/assets/6b20ee20-ac44-4f2b-ad1c-cdf644a76e9c" />
+<img width="480" height="320" alt="Calibration_Save" src="https://github.com/user-attachments/assets/80de2c87-3bf6-448a-a28c-2e319a4ac9ed" />
 
 6. Jetzt kann man das neue Profil verwenden, einfach ein Zielgewicht einstellen und auf Start drücken
 
-<img width="480" height="320" alt="screen0003" src="https://github.com/user-attachments/assets/7e8f285f-1c29-48e5-a9c3-da177f38d81b" />
+<img width="480" height="320" alt="Trickle_Main" src="https://github.com/user-attachments/assets/34cb2d95-5e9f-447c-9ac6-939140b4d0b9" />
 
 
 **Infos:**
 
 Die Firmware erstellt automatisch ein neues Profil in `/profiles` mit dem Namen `powder_000.txt`, `powder_001.txt` usw., wählt dieses Profil aus und speichert es in `config.txt`.
 
-Die automatische Erstellung verwendet die Namen `powder_000.txt` bis `powder_29.txt`. Sind alle diese Namen belegt, muss zuerst ein nicht mehr benötigtes Profil gelöscht werden. Die Profilliste der Firmware kann insgesamt bis zu 32 gültige Profile anzeigen.
+Die automatische Erstellung verwendet die 30 Namen `powder_000.txt` bis `powder_029.txt`. Sind alle diese Namen belegt, muss zuerst ein nicht mehr benötigtes Profil gelöscht werden. Die Profilliste der Firmware kann insgesamt bis zu 32 gültige Profile anzeigen.
 
-Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `unitsPerThrow` wird aus `Kalibriergewicht / 100` berechnet. Die Firmware legt fünf Feinwurf-Einträge an (`1.929`, `0.965`, `0.482`, `0.241`, `0.000` gn) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten STEP-Pulse. Jeder berechnete Feinwurf bekommt mindestens 5 STEP-Pulse.
+Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `unitsPerThrow` wird aus `Kalibriergewicht / 100` berechnet. Die Firmware legt fünf Feinwurf-Einträge an (`1.929`, `0.965`, `0.482`, `0.241`, `0.000` gn) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten STEP-Pulse.
+
+## Profil-Tuning
+
+Das Profil kann direkt über die Steuerung angepasst werden.
+
+### 1. Profil auswählen
+
+Wechsle in den **Profil-Tab** und wähle das Profil aus, das angepasst werden soll.
+
+![Profil auswählen](https://github.com/user-attachments/assets/b4ba4f5b-84c8-492e-a2bc-4d74446d9ba5)
+
+### 2. Units / Throw anpassen
+
+Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Throw** anpassen.
+
+![Units / Throw anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
+
+#### Hinweise
+
+- Je niedriger der Wert, desto mehr Pulver wird pro Wurf dosiert.
+- Übertrickelt der Trickler regelmäßig, erhöhe den Wert.
+- Verringere den Wert schrittweise, bis der Trickler gerade nicht mehr übertrickelt.
+- So erreichst du einen guten Kompromiss zwischen Geschwindigkeit und Genauigkeit.
+- Für eine optimale Feinabstimmung empfiehlt es sich, das Profil anschließend manuell anzupassen.
+
+### 3. Einstellungen speichern
+
+Klicke auf **Speichern**, um die Änderungen zu übernehmen.
+
+![Einstellungen speichern](https://github.com/user-attachments/assets/7a7d0735-f0f2-4740-8e7b-fcf7f4df550e)
+
+### 4. Ergebnis testen
+
+Wechsle zurück in den **Trickle-Tab** und teste die neuen Einstellungen.
+
+![Ergebnis testen](https://github.com/user-attachments/assets/b3d187a3-37ab-4deb-ba9e-6d8f17629922)
+
+## Profil löschen
+
+### 1. Profil auswählen
+
+Wechsle in den **Profil-Tab** und wähle das Profil aus, das gelöscht werden soll.
+
+![Profil auswählen](https://github.com/user-attachments/assets/c185afa4-03b1-41d3-b1b1-f0c7c5ff0df2)
+
+### 2. Profil löschen
+
+Klicke auf das **Löschen-Symbol**, um das ausgewählte Profil zu entfernen.
+
+> **Hinweis:** Das Löschen eines Profils kann nicht rückgängig gemacht werden.
+
+![Profil löschen](https://github.com/user-attachments/assets/305e6653-df4b-47c8-8035-8d8d7b95fbcd)
+
 
 ## Profilgenerator
 
@@ -231,8 +281,8 @@ Beispiel für das neue Profilformat:
 * `weightGap`: Abstand zum Zielgewicht, bei dem der automatische erste Grobwurf enden soll.
 * `actuator`: optionaler Bulk-Actuator für den automatischen ersten Grobwurf. Erlaubt sind `stepper1` und `stepper2`. Wenn das Feld fehlt, leer oder ungültig ist, verwendet die Firmware `stepper1`.
 * `startAtZero`: Wenn `true`, wartet die Firmware vor dem ersten Wurf auf exakt `0.000`. Wenn `false`, startet der erste Wurf bei jedem Gewicht ab `0.000`.
-* `trickleCounter`: Wenn `true`, zeigt die Anzahl der fertigen Trickles seit dem letzten Stop an. Gezählt werden nur Trickles innerhalb der Toleranz. Standard ist `false`.
-* `measurements`: Anzahl stabiler identischer Messwerte, die vor dem automatischen ersten Grobwurf oder nach dem Neuaufsetzen der Pulverpfanne abgewartet werden.
+* `trickleCounter`: Wenn `true`, zeigt die Anzahl der fertigen Trickles seit dem letzten Stop an. Standard ist `false`.
+* `measurements`: Anzahl stabiler Messwerte bevor der nächste Tricklevorgang gestartet wird (bei neu aufsetzen der Pulverpfanne).
 
 Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `actuator = stepper1`, `startAtZero = false`, `trickleCounter = false` und `measurements = 20`.
 
@@ -253,7 +303,7 @@ Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet au
 * `actuator`: `stepper1` oder `stepper2`.
 * `steps`: Anzahl direkter STEP-Pulse für diesen Wurf. Die Firmware gibt diesen Wert unverändert an den Stepper aus.
 * `speed`: Motorgeschwindigkeit in U/min. Sinnvolle Werte liegen meist zwischen 5 und 300.
-* `measurements`: Anzahl stabiler identischer Messwerte, die nach diesem Wurf für den nächsten Schritt abgewartet werden.
+* `measurements`: Anzahl stabiler Messwerte die abgewartet bis dieser Wurf ausgeführt wird.
 
 Die Firmware wählt den ersten Eintrag, dessen `diffWeight` noch zum Abstand zwischen aktuellem Gewicht und Zielgewicht passt. Je näher das Zielgewicht kommt, desto kleinere `diffWeight`-Einträge werden verwendet.
 
@@ -262,7 +312,6 @@ Hinweise:
 * Bei zu wenigen STEP-Pulsen kann es sein, dass sich der Trickler nicht bewegt.
 * Niedrigere Geschwindigkeiten fördern je nach Pulver oft mehr Pulver pro Umdrehung.
 * Zu viele `measurements` machen das Trickeln langsam. Am Anfang reichen meist 2 Messungen, am Ende sind 10 bis 15 sinnvoll.
-* Die Firmware liest pro Schritt höchstens etwa viermal so viele Waagenzeilen wie in `measurements` gefordert. Kommen nicht genug stabile Werte an, wird kein weiterer Wurf ausgeführt und ein Timeout angezeigt.
 
 ## Mehrere Trickler
 
@@ -368,9 +417,9 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 * `wifi.IPGateway`: Gateway-IP, nötig bei statischer IP.
 * `wifi.IPSubnet`: Subnetzmaske, nötig bei statischer IP.
 * `wifi.IPDNS`: optionaler DNS-Server. Wenn leer, nutzt die Firmware `8.8.8.8`.
-* Falls DHCP verwendet werden soll, lasse `wifi.IPStatic`, `wifi.IPGateway` und `wifi.IPSubnet` leer. `wifi.IPDNS` darf auch bei DHCP gesetzt werden; wenn es leer ist, nutzt die Firmware `8.8.8.8`.
+* Falls DHCP verwendet werden soll, lasse `wifi.IPStatic`, `wifi.IPGateway`, `wifi.IPSubnet` und `wifi.IPDNS` leer.
 * `scale.protocol`: unterstützte Werte sind `GG`, `SBI`, `KERN`, `KERN-ABT`, `KERN-ABS`, `AD`, `CUSTOM` und leer für kein aktives Anfragekommando.
-* `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden. Die Zeichenkette wird in der Firmware mit maximal 31 Zeichen gespeichert; Tokens dürfen mit Leerzeichen, Komma, Tab oder Zeilenumbruch getrennt sein.
+* `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden.
 * `scale.baud`: Baudrate der Waage, meistens `9600`.
 * `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil.
 * `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Die Display-Texte werden aus `/lang/<sprache>.json` geladen und fallen auf `/lang/en.json` sowie danach auf eingebaute englische Texte zurück. Die Weboberfläche verwendet getrennte Dateien unter `/system/lang`.
@@ -379,7 +428,7 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 * `trickleCount`: gespeicherter Stand des dauerhaften Gesamtzaehlers.
 * `fw_update.check`: aktiviert die automatische Prüfung auf neue Firmware.
 
-Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu. Die Firmware löscht beim Start außerdem alte Profil-Dateien `/calibrate.txt` und `/avg.txt` aus dem SD-Hauptverzeichnis; Profile gehören nach `/profiles`.
+Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu.
 
 Auf der SD-Karte befindet sich `system/configGenerator.html`, welcher das Erstellen der wichtigsten Konfigurationsfelder und `fw_update.check` erleichtert. Der Generator wird auch über den Webserver bereitgestellt. `trickleCounter` und `trickleCount` werden von der Firmware unterstützt, werden vom aktuellen Konfigurationsgenerator aber nicht erzeugt.
 
@@ -393,7 +442,7 @@ Die neueste Firmware findest du [hier](https://github.com/ripper121/RoboTrickler
 Es gibt drei Update-Möglichkeiten:
 
 1. Öffne bei aktivem WLAN in der Weboberfläche `Firmware-Update`, wähle die Firmware-Datei `.bin` und lade sie hoch. Nach erfolgreichem Schreiben startet der Trickler neu.
-2. Kopiere die Firmware-Datei als `/update.bin` in das Hauptverzeichnis der SD-Karte und starte den Trickler. Die Firmware prüft diese Datei bei jedem Start. Nach einem erfolgreichen Update löscht sie die Datei und startet neu. Ist `/update.bin` leer oder ein Ordner, wird kein Update ausgeführt.
+2. Kopiere die Firmware-Datei als `/update.bin` in das Hauptverzeichnis der SD-Karte und starte den Trickler. Nach einem erfolgreichen Update löscht die Firmware die Datei und startet neu.
 3. Verwende für eine vollständige Neuinstallation die Anleitung unter [Flash via USB](#flash-via-usb).
 
 `fw_update.check` steuert nur die automatische Versionsprüfung bei bestehender Netzwerkverbindung. Das eigentliche Update wird nicht automatisch heruntergeladen oder installiert.
@@ -404,7 +453,7 @@ Um den WLAN-Modus zu aktivieren, trage `ssid` und `psk` in `config.txt` ein.
 
 **Nur 2.4 GHz WLAN wird unterstützt.**
 
-Beim Start zeigt der Trickler `Mit WLAN verbinden:` an. Bei erfolgreicher Verbindung steht im Tab `Info` die IP-Adresse. Wenn die Verbindung nicht innerhalb von etwa 30 Sekunden zustande kommt, meldet die Firmware kein WLAN und versucht anschließend regelmäßig, sich erneut zu verbinden. Während der Trickler läuft, wird kein WLAN-Reconnect gestartet.
+Beim Start zeigt der Trickler `Mit WLAN verbinden:` an. Bei erfolgreicher Verbindung steht im Tab `Info` die IP-Adresse.
 
 Je nach Router erreichst du den Trickler über:
 
@@ -425,7 +474,7 @@ http://192.168.178.22
 
 ## Weboberfläche
 
-Die Startseite lädt `/system/index.html` von der SD-Karte. Wenn ein gleichnamiges `.gz` vorhanden ist, liefert die Firmware die komprimierte Datei aus. Von dort erreichst du:
+Die Startseite lädt `/system/index.html` von der SD-Karte. Von dort erreichst du:
 
 * Trickler
 * Dateibrowser
@@ -434,8 +483,6 @@ Die Startseite lädt `/system/index.html` von der SD-Karte. Wenn ein gleichnamig
 * Konfigurationsgenerator
 * Firmware-Update
 * Neustart
-
-Wenn die Firmware mit `ENABLE_SCREENSHOT=1` gebaut wurde, gibt es zusätzlich `GET /screenshot` für einen BMP-Screenshot des Displays. In der normalen Firmware ist dieser Debug-Endpunkt deaktiviert.
 
 <img width="556" height="675" alt="image" src="https://github.com/user-attachments/assets/a1242108-1b66-4a10-99d4-2867f0f85b6c" />
 
@@ -454,12 +501,12 @@ Ausnahmen sind die Web-API-Funktionen `/setTarget` und `/setProfile`: Sie speich
 
 Diese Endpunkte können im Browser oder aus einer eigenen Steuerung aufgerufen werden:
 
-* `GET /getTricklerState`: aktuelles Gewicht und Laufstatus als JSON lesen, z. B. `{"weight":"40.000","running":true}`.
+* `GET /getTricklerState`: aktuelles Gewicht und Laufstatus als JSON lesen, z. B. `{"weight":40.000,"running":true}`.
 * `GET /getTarget`: Zielgewicht lesen.
 * `GET /setTarget?targetWeight=WERT`: Zielgewicht setzen und im aktuellen Profil speichern. Erlaubt sind Werte größer `0` und kleiner `999`. Beispiel: `/setTarget?targetWeight=40`.
 * `GET /getProfile`: aktuelles Profil lesen.
 * `GET /getLanguage`: aktuell geladene Sprache lesen.
-* `GET /getProfileList`: Liste der erkannten Profile als JSON-Objekt mit Nummern als Schlüssel lesen, z. B. `{"0":"calibrate","1":"avg"}`.
+* `GET /getProfileList`: Liste der erkannten Profile als JSON lesen.
 * `GET /setProfile?profileNumber=NUMMER`: Profil über die Nummer aus der Profilliste wählen.
 * `GET /system/start`: Trickeln starten.
 * `GET /system/stop`: Trickeln stoppen.
@@ -470,7 +517,6 @@ Diese Endpunkte können im Browser oder aus einer eigenen Steuerung aufgerufen w
 * `PUT /system/resources/edit?path`: Datei oder Ordner anlegen.
 * `POST /system/resources/edit`: Datei hochladen.
 * `DELETE /system/resources/edit?path`: Datei oder Ordner löschen.
-* `GET /screenshot`: Display-Screenshot als BMP lesen, nur wenn die Firmware mit `ENABLE_SCREENSHOT=1` gebaut wurde.
 
 # Waagen
 
@@ -485,9 +531,7 @@ Die Firmware fragt die Waage je nach `scale.protocol` so ab:
 * `KERN-ABS`: Kern ABS Kommando `D01 CR LF`.
 * `SBI`: Sartorius Balance Interface Kommando `P CR LF`.
 * `CUSTOM`: sendet `scale.customCode` als Hex-Bytefolge, z. B. `0x51 0x0D 0x0A`.
-* leer oder unbekannt: sendet kein Anfragekommando und wartet nur auf eingehende Daten.
-
-Die Firmware liest eine Zeile bis `LF`, sucht darin einen eindeutigen Gewichtswert und übernimmt die Einheit aus dem Text: Enthält die Zeile `g`, wird `g` angezeigt; enthält sie `gn` oder `gr`, wird `gn` angezeigt. Enthält eine Zeile mehrere Dezimalwerte, wird sie verworfen, damit keine falschen Gewichtswerte aus Status- oder Gerätenummern entstehen.
+* leer oder unbekannt: wartet nur auf eingehende Daten.
 
 ## G&G
 
@@ -872,7 +916,7 @@ Download: [esptool.py](https://github.com/espressif/esptool)
 ```text
 esptool.py --chip esp32 erase_flash
 
-esptool.py --chip esp32 --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 8MB 0x1000 ./RoboTricklerUI.ino.bootloader.bin 0x8000 ./RoboTricklerUI.ino.partitions.bin 0xe000 ./boot_app0.bin 0x10000 ./RoboTricklerUI.ino.bin 0x670000 ./littlefs.bin
+esptool.py --chip esp32 --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dout --flash_freq 80m --flash_size 4MB 0x1000 ./RoboTricklerUI.ino.bootloader.bin 0x8000 ./RoboTricklerUI.ino.partitions.bin 0xe000 ./boot_app0.bin 0x10000 ./RoboTricklerUI.ino.bin
 ```
 
 # Hardware Aufbau
