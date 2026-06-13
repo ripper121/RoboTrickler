@@ -20,7 +20,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <math.h>
-#define FW_VERSION "2.12"
+#define FW_VERSION "2.13"
 // Internal firmware update check endpoint. Do not mirror this value into SD files.
 #define DEFAULT_FW_UPDATE_URL "http://strenuous.dev/roboTrickler/userTracker.php"
 

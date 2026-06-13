@@ -14,7 +14,7 @@ from pathlib import Path
 
 DEFAULT_SOURCE = Path(__file__).resolve().parent.parent / "SD-Files"
 DEFAULT_OUTPUT = Path(__file__).resolve().parent.parent / "SD-Files-Gz"
-EXCLUDED_TOP_LEVEL_DIRECTORIES = {"profiles"}
+EXCLUDED_TOP_LEVEL_DIRECTORIES = {"profiles","lang"}
 EXCLUDED_FILES = {"avg.txt", "calibrate.txt"}
 UNCOMPRESSED_FILES = {"system/logo.bmp"}
 MAX_GZIP_COMPRESSION = 9
