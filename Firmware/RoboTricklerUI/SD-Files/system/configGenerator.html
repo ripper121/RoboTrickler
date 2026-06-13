@@ -6,6 +6,7 @@
     <link rel="icon" type="image/x-icon" href="./resources/favicon.ico">
     <title data-i18n="titles.configGenerator">Configuration Page</title>
     <link rel="stylesheet" href="./resources/style.css">
+    <script src="./lang.js"></script>
 </head>
 
 <body>
@@ -69,8 +70,18 @@
                     <option value="off" data-i18n="config.off">Off</option>
                 </select><br>
 
+                <label for="language" data-i18n="config.language">Language:</label>
+                <select name="language">
+                    <option value="en" data-i18n="config.english">English</option>
+                    <option value="de" selected data-i18n="config.german">Deutsch</option>
+                </select><br>
+
                 <label for="profile_name" data-i18n="config.profile">Profile:</label>
                 <input type="text" id="profile_name" name="profile_name" maxlength="31" value="avg"><br>
+
+                <label for="trickle_counter" data-i18n="config.trickleCounter">Trickle counter:</label>
+                <input type="checkbox" id="trickle_counter" name="trickle_counter"><br>
+                <input type="hidden" id="trickle_count" name="trickle_count" value="0">
             </fieldset>
 
             <fieldset>
@@ -121,6 +132,9 @@
                 },
                 profile: profileName || 'calibrate',
                 beeper: jsonObject.beeper || 'done',
+                language: jsonObject.language || 'en',
+                trickleCounter: jsonObject.trickleCounter === true,
+                trickleCount: Math.max(0, parseInt(jsonObject.trickleCount, 10) || 0),
                 fw_update: {
                     check: fwUpdate.check !== false
                 }
@@ -147,6 +161,9 @@
                 },
                 profile: (formData.get('profile_name') || 'calibrate').trim() || 'calibrate',
                 beeper: formData.get('beeper'),
+                language: formData.get('language'),
+                trickleCounter: document.getElementById('trickle_counter').checked,
+                trickleCount: Math.max(0, parseInt(formData.get('trickle_count'), 10) || 0),
                 fw_update: {
                     check: document.getElementById('fw_check').checked
                 }
@@ -175,7 +192,10 @@
                 updateCustomRequestVisibility();
 
                 configForm.beeper.value = jsonObject.beeper || 'done';
+                configForm.language.value = jsonObject.language || 'en';
                 configForm.profile_name.value = jsonObject.profile || 'calibrate';
+                configForm.trickle_counter.checked = jsonObject.trickleCounter === true;
+                configForm.trickle_count.value = jsonObject.trickleCount || 0;
                 configForm.fw_check.checked = jsonObject.fw_update.check !== false;
 
             } catch (e) {

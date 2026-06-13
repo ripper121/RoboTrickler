@@ -5,33 +5,34 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="icon" type="image/x-icon" href="/system/resources/favicon.ico">
-   <title>Connect WiFi</title>
+   <title data-i18n="titles.wifiSetup">Connect WiFi</title>
    <link rel="stylesheet" href="/system/resources/style.css">
+   <script src="/system/lang.js"></script>
 </head>
 
 <body>
    <div class="card">
-      <h1>Connect WiFi</h1>
+      <h1 data-i18n="wifiSetup.title">Connect WiFi</h1>
       <form id="wifi-form">
          <fieldset>
-            <legend>WiFi Settings</legend>
-            <p>Select a network and enter its password.</p>
+            <legend data-i18n="wifiSetup.settings">WiFi Settings</legend>
+            <p data-i18n="wifiSetup.instructions">Select a network and enter its password.</p>
 
-            <label for="ssid">Available networks:</label>
+            <label for="ssid" data-i18n="wifiSetup.availableNetworks">Available networks:</label>
             <select id="ssid" name="ssid" required>
-               <option value="">Scanning...</option>
+               <option value="" data-i18n="wifiSetup.scanning">Scanning...</option>
             </select><br>
 
-            <label for="password">Password / PSK:</label>
+            <label for="password" data-i18n="wifiSetup.password">Password / PSK:</label>
             <input id="password" name="password" type="password" maxlength="63"
                autocomplete="current-password"><br>
 
-            <p id="status">Scanning for WiFi networks...</p>
+            <p id="status" data-i18n="wifiSetup.scanningNetworks">Scanning for WiFi networks...</p>
          </fieldset>
 
-         <button class="button" type="button" id="refresh">Scan again</button><br><br>
-         <button class="button" type="submit">Save and connect</button><br><br>
-         <button class="button" type="button" onclick="window.location.href='/'">Back</button>
+         <button class="button" type="button" id="refresh" data-i18n="wifiSetup.scanAgain">Scan again</button><br><br>
+         <button class="button" type="submit" data-i18n="wifiSetup.saveConnect">Save and connect</button><br><br>
+         <button class="button" type="button" onclick="window.location.href='/'" data-i18n="nav.back">Back</button>
       </form>
    </div>
 
@@ -42,10 +43,15 @@
       const statusText = document.getElementById('status');
       const refreshButton = document.getElementById('refresh');
 
+      function translated(path, fallback) {
+         return window.rtT ? window.rtT(path, fallback) : fallback;
+      }
+
       async function scanNetworks() {
          refreshButton.disabled = true;
-         statusText.textContent = 'Scanning for WiFi networks...';
-         ssidSelect.innerHTML = '<option value="">Scanning...</option>';
+         statusText.textContent = translated('wifiSetup.scanningNetworks', 'Scanning for WiFi networks...');
+         ssidSelect.innerHTML = '';
+         ssidSelect.add(new Option(translated('wifiSetup.scanning', 'Scanning...'), ''));
 
          try {
             const response = await fetch('/api/wifi/scan', { cache: 'no-store' });
@@ -55,7 +61,8 @@
 
             const networks = await response.json();
             networks.sort((a, b) => b.rssi - a.rssi);
-            ssidSelect.innerHTML = '<option value="">Select a network</option>';
+            ssidSelect.innerHTML = '';
+            ssidSelect.add(new Option(translated('wifiSetup.selectNetwork', 'Select a network'), ''));
 
             networks.forEach(function (network) {
                if (!network.ssid) {
@@ -68,10 +75,13 @@
                ssidSelect.appendChild(option);
             });
 
-            statusText.textContent = networks.length ? 'Select your WiFi network.' : 'No WiFi networks found.';
+            statusText.textContent = networks.length
+               ? translated('wifiSetup.selectWifi', 'Select your WiFi network.')
+               : translated('wifiSetup.noneFound', 'No WiFi networks found.');
          } catch (error) {
-            ssidSelect.innerHTML = '<option value="">Scan failed</option>';
-            statusText.textContent = 'Could not scan WiFi networks. Try again.';
+            ssidSelect.innerHTML = '';
+            ssidSelect.add(new Option(translated('wifiSetup.scanFailed', 'Scan failed'), ''));
+            statusText.textContent = translated('wifiSetup.scanTryAgain', 'Could not scan WiFi networks. Try again.');
          } finally {
             refreshButton.disabled = false;
          }
@@ -82,14 +92,14 @@
       form.addEventListener('submit', async function (event) {
          event.preventDefault();
          if (!ssidSelect.value) {
-            statusText.textContent = 'Select a WiFi network.';
+            statusText.textContent = translated('wifiSetup.selectWifi', 'Select your WiFi network.');
             return;
          }
 
          const body = new URLSearchParams();
          body.set('ssid', ssidSelect.value);
          body.set('password', passwordInput.value);
-         statusText.textContent = 'Saving WiFi settings...';
+         statusText.textContent = translated('wifiSetup.saving', 'Saving WiFi settings...');
 
          try {
             const response = await fetch('/api/wifi/save', {
@@ -101,16 +111,21 @@
                throw new Error('Save failed');
             }
 
-            statusText.textContent = 'Saved. Robo-Trickler is rebooting and connecting to your WiFi.';
+            statusText.textContent = translated(
+               'wifiSetup.savedRebooting',
+               'Saved. Robo-Trickler is rebooting and connecting to your WiFi.'
+            );
             form.querySelectorAll('input, select, button').forEach(function (control) {
                control.disabled = true;
             });
          } catch (error) {
-            statusText.textContent = 'Could not save WiFi settings. Try again.';
+            statusText.textContent = translated('wifiSetup.saveFailed', 'Could not save WiFi settings. Try again.');
          }
       });
 
-      scanNetworks();
+      document.addEventListener('DOMContentLoaded', function () {
+         Promise.resolve(window.rtLanguageReady).then(scanNetworks);
+      });
    </script>
 </body>
 

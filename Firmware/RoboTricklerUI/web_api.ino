@@ -141,6 +141,11 @@ void handleGetProfile()
   server.send(200, "text/plain", String(config.profile));
 }
 
+void handleGetLanguage()
+{
+  server.send(200, "text/plain", String(config.language));
+}
+
 void handleGetProfileList()
 {
   // Keep this legacy object shape for the filesystem-hosted pages: {"0":"name", ...}.

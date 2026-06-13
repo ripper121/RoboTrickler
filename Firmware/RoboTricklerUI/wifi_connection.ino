@@ -319,22 +319,29 @@ bool startWifiSetupAccessPoint()
     DEBUG_PRINTLN("Captive portal DNS server failed to start.");
   }
 
-  updateDisplayLog(String("WiFi AP: ") + WIFI_SETUP_AP_SSID);
-  updateDisplayLog(String("WiFi password: ") + wifiSetupApPassword);
-  updateDisplayLog(String("Open http://") + WIFI_SETUP_AP_IP.toString());
+  updateDisplayLog(String(langText("status_wifi_ap")) + WIFI_SETUP_AP_SSID);
+  updateDisplayLog(String(langText("status_wifi_password")) + wifiSetupApPassword);
+  updateDisplayLog(String(langText("status_wifi_open")) + WIFI_SETUP_AP_IP.toString());
   showWifiSetupInfo();
   return true;
 }
 
 void showWifiSetupInfo()
 {
-  String info = "WiFi setup mode\n\n";
-  info += "Connect to:\n";
+  String info = langText("wifi_setup_mode");
+  info += "\n\n";
+  info += langText("wifi_connect_to");
+  info += "\n";
   info += WIFI_SETUP_AP_SSID;
-  info += "\nPassword:\n";
+  info += "\n";
+  info += langText("wifi_password");
+  info += "\n";
   info += wifiSetupApPassword;
-  info += "\n\nOpen:\nhttp://";
+  info += "\n\n";
+  info += langText("wifi_open");
+  info += "\nhttp://";
   info += WIFI_SETUP_AP_IP.toString();
-  info += "\n\nSelect your WiFi and save.";
+  info += "\n\n";
+  info += langText("wifi_select_and_save");
   setLabelText(ui_LabelInfo, info.c_str());
 }

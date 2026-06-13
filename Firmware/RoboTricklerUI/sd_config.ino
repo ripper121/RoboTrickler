@@ -183,6 +183,7 @@ void setDefaultConfiguration(Config &config)
   strlcpy(config.profile, "calibrate", sizeof(config.profile));
   config.targetWeight = 40.0;
   strlcpy(config.beeper, "done", sizeof(config.beeper));
+  strlcpy(config.language, "en", sizeof(config.language));
   config.fwCheck = true;
   config.trickleCounter = false;
   config.trickleCount = 0;
@@ -363,6 +364,7 @@ bool loadConfiguration(const char *filename, Config &config)
   config.scale_baud = doc["scale"]["baud"] | config.scale_baud;
   strlcpy(config.profile, doc["profile"] | config.profile, sizeof(config.profile));
   strlcpy(config.beeper, doc["beeper"] | config.beeper, sizeof(config.beeper));
+  strlcpy(config.language, doc["language"] | config.language, sizeof(config.language));
   config.trickleCounter = doc["trickleCounter"] | config.trickleCounter;
   config.trickleCount = doc["trickleCount"] | config.trickleCount;
   if (config.trickleCount < 0)
@@ -840,6 +842,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["baud"] = config.scale_baud;
   doc["profile"] = config.profile;
   doc["beeper"] = config.beeper;
+  doc["language"] = config.language;
   doc["trickleCounter"] = config.trickleCounter;
   doc["trickleCount"] = config.trickleCount;
   doc["fw_update"]["check"] = config.fwCheck;

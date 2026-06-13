@@ -35,8 +35,8 @@ Upload Speed: "921600"
 CPU Frequency: "240MHz (WiFi/BT)"
 Flash Frequency: "80MHz"
 Flash Mode: "DIO"
-Flash Size: "4MB (32Mb)"
-Partition Scheme: "Custom (1.5MB APP with OTA/960KB LittleFS)"
+Flash Size: "8MB (64Mb)"
+Partition Scheme: "8M with spiffs (3MB APP/1.5MB SPIFFS)"
 Core Debug Level: "None"
 PSRAM: "Disabled"
 Arduino Runs On: "Core 1"
@@ -90,6 +90,7 @@ struct Config
   char IPDns[16];
 
   char beeper[16];
+  char language[8];
   bool fwCheck;
   bool trickleCounter;
   long trickleCount;

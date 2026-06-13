@@ -53,13 +53,23 @@ void showWifiQrCode(lv_event_t *event)
   lv_obj_move_to_index(wifiQrOverlay, -1);
 }
 
+static void showWifiQrCodeOnInfoTab(lv_event_t *event)
+{
+  (void)event;
+  if (WIFI_SETUP_AP_ACTIVE && (lv_tabview_get_tab_act(ui_TabView) == 2))
+  {
+    showWifiQrCode(NULL);
+  }
+}
+
 void initWifiQrCode()
 {
-  if (ui_LabelLog == NULL)
+  if ((ui_LabelLog == NULL) || (ui_TabView == NULL))
   {
     return;
   }
 
   lv_obj_add_flag(ui_LabelLog, LV_OBJ_FLAG_CLICKABLE);
   lv_obj_add_event_cb(ui_LabelLog, showWifiQrCode, LV_EVENT_CLICKED, NULL);
+  lv_obj_add_event_cb(ui_TabView, showWifiQrCodeOnInfoTab, LV_EVENT_VALUE_CHANGED, NULL);
 }

@@ -49,11 +49,11 @@ DEFAULT_ESPTOOL = (
 DEFAULT_CONFIGURATION = (
     "JTAGAdapter=default,"
     "PSRAM=disabled,"
-    "PartitionScheme=custom,"
+    "PartitionScheme=default_8MB,"
     "CPUFreq=240,"
     "FlashMode=dio,"
     "FlashFreq=80,"
-    "FlashSize=4M,"
+    "FlashSize=8M,"
     "UploadSpeed=921600,"
     "LoopCore=1,"
     "EventsCore=0,"
@@ -243,11 +243,21 @@ def set_debug_level(configuration: str, debug_level: str) -> str:
     return ",".join(parts)
 
 
+def clear_generated_partition_artifacts(build_dir: Path) -> None:
+    for path in (
+        build_dir / "partitions.csv",
+        build_dir / "RoboTricklerUI.ino.partitions.bin",
+    ):
+        if path.exists():
+            path.unlink()
+
+
 def run_extension_compile(build_dir: Path, board_descriptor: str, compile_timeout: int) -> Path:
     require_path(ARDUINO_DEBUG, "arduino_debug.exe")
     require_path(SKETCH_FILE, "sketch")
 
     build_dir.mkdir(parents=True, exist_ok=True)
+    clear_generated_partition_artifacts(build_dir)
     cmd = [
         str(ARDUINO_DEBUG),
         "--verify",
@@ -281,6 +291,7 @@ def run_cli_compile(cli_path: Path, build_dir: Path, board_descriptor: str, comp
     require_path(SKETCH_FILE, "sketch")
 
     build_dir.mkdir(parents=True, exist_ok=True)
+    clear_generated_partition_artifacts(build_dir)
     cmd = [
         str(cli_path),
         "compile",
@@ -364,6 +375,66 @@ def build_littlefs_image(build_dir: Path, timeout: int) -> Path:
         timeout=timeout,
     )
     return image_path
+
+
+def build_merged_image(
+    esptool_path: Path,
+    build_dir: Path,
+    firmware_path: Path,
+    littlefs_path: Path,
+    timeout: int,
+) -> Path:
+    from partition_layout import require_partition
+
+    require_path(esptool_path, "esptool")
+    bootloader_path = build_dir / "RoboTricklerUI.ino.bootloader.bin"
+    partitions_path = build_dir / "RoboTricklerUI.ino.partitions.bin"
+    boot_app0_path = build_dir / "boot_app0.bin"
+    for path, description in (
+        (bootloader_path, "bootloader"),
+        (partitions_path, "partition table"),
+        (boot_app0_path, "OTA boot data"),
+        (firmware_path, "firmware"),
+        (littlefs_path, "LittleFS image"),
+    ):
+        require_path(path, description)
+
+    littlefs_partition = require_partition("spiffs")
+    output_path = build_dir / "RoboTricklerUI.ino.merged.bin"
+    if output_path.exists():
+        output_path.unlink()
+    subprocess.run(
+        [
+            str(esptool_path),
+            "--chip",
+            "esp32",
+            "merge-bin",
+            "--flash-mode",
+            "dio",
+            "--flash-freq",
+            "80m",
+            "--flash-size",
+            "8MB",
+            "--pad-to-size",
+            "8MB",
+            "--output",
+            str(output_path),
+            "0x1000",
+            str(bootloader_path),
+            "0x8000",
+            str(partitions_path),
+            "0xe000",
+            str(boot_app0_path),
+            "0x10000",
+            str(firmware_path),
+            hex(littlefs_partition.offset),
+            str(littlefs_path),
+        ],
+        cwd=SKETCH_DIR,
+        check=True,
+        timeout=timeout,
+    )
+    return output_path
 
 
 def format_size(size: int) -> str:
@@ -534,7 +605,7 @@ def flash_serial(
             "--flash-freq",
             "80m",
             "--flash-size",
-            "4MB",
+            "8MB",
         ]
         + files
     )
@@ -560,11 +631,19 @@ def main() -> int:
                 bin_path = run_extension_compile(build_dir, board_descriptor, args.compile_timeout)
 
         littlefs_path = build_littlefs_image(build_dir, args.compile_timeout)
+        merged_path = build_merged_image(
+            args.esptool.resolve(),
+            build_dir,
+            bin_path,
+            littlefs_path,
+            args.compile_timeout,
+        )
         print(f"Firmware binary: {bin_path}")
         from partition_layout import require_partition
 
         littlefs_partition = require_partition("spiffs")
         print(f"LittleFS image: {littlefs_path} (flash offset {hex(littlefs_partition.offset)})")
+        print(f"Merged flash image: {merged_path}")
         if args.compile_only:
             print_space_summary(bin_path)
             return 0
@@ -587,7 +666,7 @@ def main() -> int:
             upload_web_artifact(args.url, "firmware", bin_path, args.timeout)
             print(
                 "Web upload completed. The partition table is unchanged; use --port "
-                "when partitions.csv has changed."
+                "when the selected partition scheme has changed."
             )
         print_space_summary(bin_path)
         return 0

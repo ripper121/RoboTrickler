@@ -32,7 +32,7 @@ void initSetup()
         disableTouchGestures();
         disp_task_init();
         restart_now = true;
-        messageBox("Filesystem mount failed", UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
+        messageBox(langText("msg_filesystem_mount_failed"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
         return;
     }
 
@@ -46,7 +46,6 @@ void initSetup()
     disp_task_init();
 
     updateDisplayLog((String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
-    updateDisplayLog(activeFSIsSD ? "Storage: SD Card" : "Storage: Internal Flash");
 
     String infoText = langText("status_init_steppers");
     updateDisplayLog(infoText, true);
@@ -72,6 +71,10 @@ void initSetup()
         messageBox(message.c_str(), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
         return;
     }
+
+    applyLanguage();
+    updateDisplayLog(langText(activeFSIsSD ? "status_storage_sd" : "status_storage_flash"));
+    initUpdate();
 
     infoText = langText("status_reading_profiles");
     updateDisplayLog(infoText, true);
@@ -110,6 +113,8 @@ void initSetup()
     {
         return;
     }
+
+    applyLanguage();
 
     infoText = langText("status_starting_scale");
     updateDisplayLog(infoText, true);

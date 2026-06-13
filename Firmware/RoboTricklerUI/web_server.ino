@@ -104,6 +104,7 @@ void registerWebServerRoutes()
   server.on("/reboot", handleReboot);
   server.on("/setProfile", handleSetProfile);
   server.on("/getProfile", handleGetProfile);
+  server.on("/getLanguage", handleGetLanguage);
   server.on("/getProfileList", handleGetProfileList);
   server.on("/getTarget", handleGetTarget);
   server.on("/getTricklerState", handleGetTricklerState);
@@ -120,19 +121,23 @@ void registerWebServerRoutes()
                   updatePage += langText("web_fw_version");
                   updatePage += ": ";
                   updatePage += FW_VERSION;
-                  updatePage += "</p><h3>Firmware image</h3>";
+                  updatePage += "</p><h3>";
+                  updatePage += langText("web_firmware_image");
+                  updatePage += "</h3>";
                   updatePage += "<form method='POST' action='/update' enctype='multipart/form-data'>";
                   updatePage += "<input type='file' name='firmware' accept='.bin,application/octet-stream' required>";
                   updatePage += "<input type='submit' value='";
-                  updatePage += langText("web_update");
-                  updatePage += " Firmware'></form><br>";
-                  updatePage += "<h3>LittleFS image</h3>";
-                  updatePage += "<p>Uploading replaces all files in ACTIVE_FS.</p>";
+                  updatePage += langText("web_update_firmware");
+                  updatePage += "'></form><br><h3>";
+                  updatePage += langText("web_littlefs_image");
+                  updatePage += "</h3><p>";
+                  updatePage += langText("web_update_filesystem_warning");
+                  updatePage += "</p>";
                   updatePage += "<form method='POST' action='/update' enctype='multipart/form-data'>";
                   updatePage += "<input type='file' name='filesystem' accept='.bin,application/octet-stream' required>";
                   updatePage += "<input type='submit' value='";
-                  updatePage += langText("web_update");
-                  updatePage += " LittleFS'></form><br>";
+                  updatePage += langText("web_update_littlefs");
+                  updatePage += "'></form><br>";
                   updatePage += webBackButtonHtml();
             server.send(200, "text/html", updatePage); });
 
