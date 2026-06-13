@@ -6,20 +6,6 @@ static const char *languageFallback(const char *key)
     return "Profile";
   if (strcmp(key, "tab_info") == 0)
     return "Info";
-  if (strcmp(key, "button_start") == 0)
-    return "Start";
-  if (strcmp(key, "button_stop") == 0)
-    return "Stop";
-  if (strcmp(key, "button_ok") == 0)
-    return "OK";
-  if (strcmp(key, "button_yes") == 0)
-    return "Yes";
-  if (strcmp(key, "button_no") == 0)
-    return "No";
-  if (strcmp(key, "button_cancel") == 0)
-    return "Cancel";
-  if (strcmp(key, "button_save") == 0)
-    return "Save";
   if (strcmp(key, "placeholder_profile") == 0)
     return "Profile";
   if (strcmp(key, "status_ready") == 0)
@@ -38,8 +24,6 @@ static const char *languageFallback(const char *key)
     return " Count:";
   if (strcmp(key, "status_init_steppers") == 0)
     return "Init steppers...";
-  if (strcmp(key, "status_mount_sd") == 0)
-    return "Mounting SD card...";
   if (strcmp(key, "status_loading_config") == 0)
     return "Loading config...";
   if (strcmp(key, "status_reading_profiles") == 0)
@@ -58,8 +42,6 @@ static const char *languageFallback(const char *key)
     return "Target weight save failed!";
   if (strcmp(key, "status_timeout") == 0)
     return "Timeout! Check RS232 Wiring & Settings!";
-  if (strcmp(key, "status_over_trickle") == 0)
-    return "!Over trickle!";
   if (strcmp(key, "status_bulk_failed") == 0)
     return "Bulk trickle failed!";
   if (strcmp(key, "status_invalid_profile") == 0)
@@ -140,8 +122,6 @@ static const char *languageFallback(const char *key)
     return "Open http://";
   if (strcmp(key, "status_open_browser_suffix") == 0)
     return ".local in your browser";
-  if (strcmp(key, "msg_connect_wifi_wait") == 0)
-    return "\n\nPlease wait...";
   if (strcmp(key, "msg_new_firmware") == 0)
     return "New firmware available:\n\nv";
   if (strcmp(key, "msg_check_url") == 0)
@@ -176,6 +156,24 @@ static const char *languageFallback(const char *key)
     return "Update end failed: ";
   if (strcmp(key, "status_update_unexpected") == 0)
     return "Update Failed Unexpectedly (likely broken connection)";
+  if (strcmp(key, "web_back") == 0)
+    return "Back";
+  if (strcmp(key, "web_reboot_now") == 0)
+    return "Reboot now.";
+  if (strcmp(key, "web_value_set") == 0)
+    return "Value set.";
+  if (strcmp(key, "web_running") == 0)
+    return "Running...";
+  if (strcmp(key, "web_stopped") == 0)
+    return "Stopped...";
+  if (strcmp(key, "web_fw_version") == 0)
+    return "FW-Version";
+  if (strcmp(key, "web_update") == 0)
+    return "Update";
+  if (strcmp(key, "web_update_ok") == 0)
+    return "OK";
+  if (strcmp(key, "web_update_fail") == 0)
+    return "FAIL";
   if (strcmp(key, "err_incomplete_profile_entry") == 0)
     return "Incomplete profile entry:\n";
   if (strcmp(key, "err_entry") == 0)
@@ -295,6 +293,12 @@ bool loadLanguage()
     }
   }
 
+  if (filename.length() <= 0)
+  {
+    DEBUG_PRINTLN("Language file not found; using built-in fallback");
+    return false;
+  }
+
   File file = SD.open(filename.c_str());
   if (!file)
   {
@@ -339,12 +343,13 @@ void applyLanguage()
   {
     lv_tabview_set_tab_text(ui_TabView, 0, langText("tab_trickler"));
     lv_tabview_set_tab_text(ui_TabView, 1, langText("tab_profile"));
+    lv_tabview_set_tab_text(ui_TabView, 2, langText("tab_info"));
 
     if (!isTricklerRunning())
     {
-      lv_label_set_text(ui_LabelToggleTrickler, langText("button_start"));
+      lv_label_set_text(ui_LabelToggleTrickler, UI_SYMBOL_START);
     }
-    lv_label_set_text(ui_LabelMessageOk, langText("button_ok"));
+    lv_label_set_text(ui_LabelMessageOk, UI_SYMBOL_OK);
     if (strcmp(lv_label_get_text(ui_LabelProfile), "Profile") == 0)
     {
       lv_label_set_text(ui_LabelProfile, langText("placeholder_profile"));
@@ -352,5 +357,5 @@ void applyLanguage()
     lvglUnlock();
   }
 
-  updateInfoTabWifiSymbol(true);
+  updateWifiTabIndicator(true);
 }

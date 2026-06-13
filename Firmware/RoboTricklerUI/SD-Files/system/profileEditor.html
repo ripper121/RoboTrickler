@@ -192,6 +192,14 @@
          return text.replace('{number}', number);
       }
 
+      function translatedFieldLabel(property) {
+         return window.rtT ? rtT('profileEditor.fields.' + property, property) : property;
+      }
+
+      function translatedOptionText(optionValue) {
+         return window.rtT ? rtT('profileEditor.options.' + optionValue, optionValue) : optionValue;
+      }
+
       function addObjectFieldset(parent, legendText, path, dataObject, properties) {
          var fieldset = document.createElement('fieldset');
          parent.appendChild(fieldset);
@@ -206,7 +214,7 @@
 
             var label = document.createElement('label');
             label.htmlFor = path + '-' + property;
-            label.textContent = property + ': ';
+            label.textContent = translatedFieldLabel(property) + ': ';
             pairDiv.appendChild(label);
 
             var input;
@@ -219,7 +227,7 @@
                ['stepper1', 'stepper2'].forEach(function (optionValue) {
                   var option = document.createElement('option');
                   option.value = optionValue;
-                  option.textContent = optionValue;
+                  option.textContent = translatedOptionText(optionValue);
                   option.selected = dataObject[property] === optionValue;
                   input.appendChild(option);
                });

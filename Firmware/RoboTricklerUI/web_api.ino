@@ -1,6 +1,16 @@
+String webBackButtonHtml()
+{
+  return String("<button onClick='javascript:history.back()'>") + langText("web_back") + "</button>";
+}
+
+String webStatusPage(const char *messageKey)
+{
+  return String("<h3>") + langText(messageKey) + "</h3><br>" + webBackButtonHtml();
+}
+
 void handleReboot()
 {
-  server.send(200, "text/html", "<h3>Reboot now.</h3><br><button onClick='javascript:history.back()'>Back</button>");
+  server.send(200, "text/html", webStatusPage("web_reboot_now"));
   ESP.restart();
 }
 
@@ -37,7 +47,7 @@ void handleSetTarget()
       }
     }
   }
-  server.send(200, "text/html", "<h3>Value Set.</h3><br><button onClick='javascript:history.back()'>Back</button>");
+  server.send(200, "text/html", webStatusPage("web_value_set"));
 }
 
 void handleSetProfile()
@@ -52,7 +62,7 @@ void handleSetProfile()
       }
     }
   }
-  server.send(200, "text/html", "<h3>Value Set.</h3><br><button onClick='javascript:history.back()'>Back</button>");
+  server.send(200, "text/html", webStatusPage("web_value_set"));
 }
 
 void handleGetProfile()
@@ -87,11 +97,11 @@ void handleGetProfileList()
 void handleStart()
 {
   startTrickler();
-  server.send(200, "text/html", "<h3>Running...</h3><br><button onClick='javascript:history.back()'>Back</button>");
+  server.send(200, "text/html", webStatusPage("web_running"));
 }
 void handleStop()
 {
   stopTrickler();
-  server.send(200, "text/html", "<h3>Stopped...</h3><br><button onClick='javascript:history.back()'>Back</button>");
+  server.send(200, "text/html", webStatusPage("web_stopped"));
 }
 

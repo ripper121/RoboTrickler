@@ -17,7 +17,7 @@ void beep(const char *beepMode)
 
 void startTrickler()
 {
-    setLabelText(ui_LabelToggleTrickler, langText("button_stop"));
+    setLabelText(ui_LabelToggleTrickler, UI_SYMBOL_STOP);
     setObjBgColor(ui_ButtonToggleTrickler, 0xFF0000);
 
     if (tempProfile != String(config.profile))
@@ -54,7 +54,7 @@ void stopTrickler()
         saveConfiguration("/config.txt", config);
     }
     trickleCounter = 0;
-    setLabelText(ui_LabelToggleTrickler, langText("button_start"));
+    setLabelText(ui_LabelToggleTrickler, UI_SYMBOL_START);
     setObjBgColor(ui_ButtonToggleTrickler, 0x00FF00);
     setLabelText(ui_LabelTricklerWeight, "-.-");
     String infoText = langText("status_stopped");

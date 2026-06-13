@@ -1,7 +1,26 @@
+static void deleteRootLegacyProfileFiles()
+{
+    const char *legacyFiles[] = {"/calibrate.txt", "/avg.txt"};
+
+    for (size_t i = 0; i < (sizeof(legacyFiles) / sizeof(legacyFiles[0])); i++)
+    {
+        if (SD.exists(legacyFiles[i]))
+        {
+            DEBUG_PRINT("Deleting legacy root SD file: ");
+            DEBUG_PRINTLN(legacyFiles[i]);
+            if (!SD.remove(legacyFiles[i]))
+            {
+                DEBUG_PRINT("Failed to delete legacy root SD file: ");
+                DEBUG_PRINTLN(legacyFiles[i]);
+            }
+        }
+    }
+}
+
 void initSetup()
 {
     Serial.begin(115200); /* prepare for possible serial debug */
-    disableRuntimeWatchdogs();
+    //disableRuntimeWatchdogs();
 
     displayInit();
 
@@ -17,7 +36,7 @@ void initSetup()
         disableTouchGestures();
         disp_task_init();
         restart_now = true;
-        messageBox(langText("msg_card_mount_failed"), &lv_font_montserrat_16, lv_color_hex(0xFF0000), true);
+        messageBox(langText("msg_card_mount_failed"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
         return;
     }
     else
@@ -30,7 +49,7 @@ void initSetup()
             disableTouchGestures();
             disp_task_init();
             restart_now = true;
-            messageBox(langText("msg_no_sd_card"), &lv_font_montserrat_16, lv_color_hex(0xFF0000), true);
+            messageBox(langText("msg_no_sd_card"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
             return;
         }
         else
@@ -61,6 +80,8 @@ void initSetup()
             (void)cardSize;
         }
     }
+
+    deleteRootLegacyProfileFiles();
 
     showSplashLogo();
 
@@ -93,7 +114,7 @@ void initSetup()
 
         String message = String(langText("msg_config_corrupted")) + readError + "\n\n" + langText("msg_config_default");
         restart_now = true;
-        messageBox(message.c_str(), &lv_font_montserrat_16, lv_color_hex(0xFF0000), true);
+        messageBox(message.c_str(), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
         return;
     }
 

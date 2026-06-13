@@ -1,3 +1,5 @@
+#if ENABLE_SCREENSHOT
+
 static bool screenshotCaptureInProgress = false;
 static bool screenshotCaptureActive = false;
 static bool screenshotCaptureOk = false;
@@ -197,3 +199,5 @@ void handleScreenshot()
 
   screenshotCaptureInProgress = false;
 }
+
+#endif

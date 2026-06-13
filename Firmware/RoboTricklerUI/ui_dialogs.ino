@@ -14,13 +14,9 @@ void messageOk_event_cb(lv_event_t *e)
     confirmBoxResult = true;
     confirmed = true;
   }
-  if (lvglLock())
-  {
-    lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
-    messageBoxOpen = false;
-    confirmBoxOpen = false;
-    lvglUnlock();
-  }
+  closeDialog(&ui_PanelMessages, false);
+  messageBoxOpen = false;
+  confirmBoxOpen = false;
   if (confirmed)
   {
     resetConfirmBoxButtons();
@@ -36,13 +32,9 @@ void messageOk_event_cb(lv_event_t *e)
 void messageNo_event_cb(lv_event_t *e)
 {
   confirmBoxResult = false;
-  if (lvglLock())
-  {
-    lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
-    messageBoxOpen = false;
-    confirmBoxOpen = false;
-    lvglUnlock();
-  }
+  closeDialog(&ui_PanelMessages, false);
+  messageBoxOpen = false;
+  confirmBoxOpen = false;
   resetConfirmBoxButtons();
   finishProfileDeleteConfirm(false);
 }
@@ -55,15 +47,15 @@ void cancelProfileDeleteConfirm()
   }
 
   confirmBoxResult = false;
+  closeDialog(&ui_PanelMessages, false);
   if (lvglLock())
   {
-    lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
     if (ui_ButtonMessageNo != NULL)
     {
       lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     }
     lv_obj_set_x(ui_ButtonMessageOk, 0);
-    lv_label_set_text(ui_LabelMessageOk, langText("button_ok"));
+    lv_label_set_text(ui_LabelMessageOk, UI_SYMBOL_OK);
     messageBoxOpen = false;
     confirmBoxOpen = false;
     lvglUnlock();
@@ -80,7 +72,7 @@ void messageBox(String message, const lv_font_t *font, lv_color_t color, bool wa
       lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     }
     lv_obj_set_x(ui_ButtonMessageOk, 0);
-    lv_label_set_text(ui_LabelMessageOk, langText("button_ok"));
+    lv_label_set_text(ui_LabelMessageOk, UI_SYMBOL_OK);
     messageBoxOpen = true;
     lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN);
     lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN);
@@ -142,12 +134,13 @@ void showConfirmBox(String message, const lv_font_t *font, lv_color_t color)
       lv_obj_set_width(ui_LabelMessageNo, LV_SIZE_CONTENT);
       lv_obj_set_height(ui_LabelMessageNo, LV_SIZE_CONTENT);
       lv_obj_set_align(ui_LabelMessageNo, LV_ALIGN_CENTER);
-      lv_label_set_text(ui_LabelMessageNo, langText("button_no"));
+      lv_label_set_text(ui_LabelMessageNo, UI_SYMBOL_NO);
+      lv_obj_set_style_text_font(ui_LabelMessageNo, UI_FONT_LARGE, LV_PART_MAIN);
       lv_obj_add_event_cb(ui_ButtonMessageNo, messageNo_event_cb, LV_EVENT_CLICKED, NULL);
     }
 
     lv_obj_set_x(ui_ButtonMessageOk, -70);
-    lv_label_set_text(ui_LabelMessageOk, langText("button_yes"));
+    lv_label_set_text(ui_LabelMessageOk, UI_SYMBOL_YES);
     lv_obj_clear_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     messageBoxOpen = true;
     confirmBoxOpen = true;
@@ -169,7 +162,7 @@ void resetConfirmBoxButtons()
       lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     }
     lv_obj_set_x(ui_ButtonMessageOk, 0);
-    lv_label_set_text(ui_LabelMessageOk, langText("button_ok"));
+    lv_label_set_text(ui_LabelMessageOk, UI_SYMBOL_OK);
     lvglUnlock();
   }
 }

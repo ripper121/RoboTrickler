@@ -59,6 +59,10 @@ Events Run On: "Core 0"
 #define DEBUG_PRINTLN(...)
 #endif
 
+#ifndef ENABLE_SCREENSHOT
+#define ENABLE_SCREENSHOT 0
+#endif
+
 #define SPLASH_LOGO_PATH "/system/logo.bmp"
 #define SPLASH_DISPLAY_MS 3000
 
@@ -67,7 +71,8 @@ Events Run On: "Core 0"
 #define DISP_TASK_CORE 0
 TaskHandle_t lvDisplayTaskHandle = NULL;
 SemaphoreHandle_t lvglMutex = NULL;
-#define LV_DRAW_BUF_ROWS ((LV_VER_RES_MAX + 9) / 10)
+//#define LV_DRAW_BUF_ROWS ((LV_VER_RES_MAX + 9) / 10)
+#define LV_DRAW_BUF_ROWS 8
 #define DISPLAY_DRAW_BUF_SIZE (LV_HOR_RES_MAX * LV_DRAW_BUF_ROWS * (LV_COLOR_DEPTH / 8))
 static uint32_t buf[DISPLAY_DRAW_BUF_SIZE / sizeof(uint32_t)];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
@@ -195,12 +200,13 @@ static void handleTricklerState(uint32_t &readWeightTime)
 
 void logRuntimeStats()
 {
-//#if DEBUG
+#if DEBUG
   lv_mem_monitor_t lvglMemory;
   lv_mem_monitor(&lvglMemory);
 
   printf("heap_free:%lu\theap_min:%lu\theap_largest:%lu\theap_internal:%lu\theap_internal_largest:%lu\theap_dma:%lu\t"
-         "lvgl_used:%lu\tlvgl_free:%lu\tlvgl_largest:%lu\tstack_lvgl_used:%lu\tstack_loop_used:%lu\n",
+         "lvgl_used:%lu\tlvgl_free:%lu\tlvgl_largest:%lu\tlvgl_frag:%u\tlvgl_max_used:%lu\t"
+         "stack_lvgl_peak_used:%lu\tstack_loop_peak_used:%lu\n",
          (unsigned long)ESP.getFreeHeap(),
          (unsigned long)ESP.getMinFreeHeap(),
          (unsigned long)ESP.getMaxAllocHeap(),
@@ -210,9 +216,11 @@ void logRuntimeStats()
          (unsigned long)(lvglMemory.total_size - lvglMemory.free_size),
          (unsigned long)lvglMemory.free_size,
          (unsigned long)lvglMemory.free_biggest_size,
+         (unsigned int)lvglMemory.frag_pct,
+         (unsigned long)lvglMemory.max_used,
          (unsigned long)(DISP_TASK_STACK - uxTaskGetStackHighWaterMark(lvDisplayTaskHandle)),
          (unsigned long)(getArduinoLoopTaskStackSize() - uxTaskGetStackHighWaterMark(NULL)));
-//#endif
+#endif
 }
 
 void loop()

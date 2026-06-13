@@ -79,13 +79,20 @@ void registerWebServerRoutes()
   server.on("/setTarget", handleSetTarget);
   server.on("/system/start", handleStart);
   server.on("/system/stop", handleStop);
+#if ENABLE_SCREENSHOT
   server.on("/screenshot", HTTP_GET, handleScreenshot);
+#endif
   server.on("/fwupdate", HTTP_GET, []()
             {
             server.sendHeader("Connection", "close");
-            String updatePage = "<form method='POST' action='/update' enctype='multipart/form-data'><p>FW-Version: ";
+            String updatePage = "<form method='POST' action='/update' enctype='multipart/form-data'><p>";
+                  updatePage += langText("web_fw_version");
+                  updatePage += ": ";
                   updatePage += FW_VERSION;
-                  updatePage += "</p><br><input type='file' name='update'><input type='submit' value='Update'></form><br><button onClick='javascript:history.back()'>Back</button>";
+                  updatePage += "</p><br><input type='file' name='update'><input type='submit' value='";
+                  updatePage += langText("web_update");
+                  updatePage += "'></form><br>";
+                  updatePage += webBackButtonHtml();
             server.send(200, "text/html", updatePage); });
 
   server.on(
@@ -96,7 +103,7 @@ void registerWebServerRoutes()
         webUpdateSucceeded = false;
         Serial.setDebugOutput(false);
         server.sendHeader("Connection", "close");
-        server.send(updateOk ? 200 : 500, "text/html", updateOk ? "<h3>OK</h3><br><br><input type='button' value='Back' onClick='javascript:history.back()'>" : "<h3>FAIL</h3><br><br><input type='button' value='Back' onClick='javascript:history.back()'>");
+        server.send(updateOk ? 200 : 500, "text/html", webStatusPage(updateOk ? "web_update_ok" : "web_update_fail"));
         if (updateOk)
         {
           delay(500);
@@ -226,11 +233,7 @@ bool startWebServerServices()
     makeHttpGetRequest(firmwareCheckUrl());
   }
 
-  if (lvglLock())
-  {
-    lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
-    lvglUnlock();
-  }
+  closeDialog(&ui_PanelMessages, false);
 
   return true;
 }

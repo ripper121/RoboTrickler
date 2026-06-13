@@ -12,8 +12,7 @@ static uint32_t lvglMillis(void)
   return millis();
 }
 
-/* LVGL flush callback: copy the rendered RGB565 strip to TFT_eSPI, then let the
-   screenshot endpoint observe the same pixels before marking the flush done. */
+/* LVGL flush callback: copy the rendered RGB565 strip to TFT_eSPI. */
 void my_disp_flush(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
 {
   uint32_t w = (area->x2 - area->x1 + 1);
@@ -24,7 +23,9 @@ void my_disp_flush(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
   tft.pushColors((uint16_t *)px_map, w * h, true);
   tft.endWrite();
 
+#if ENABLE_SCREENSHOT
   screenshotCaptureFlush(area, px_map);
+#endif
 
   lv_display_flush_ready(disp);
 
@@ -81,7 +82,9 @@ void displayInit()
   /*Initialize the display*/
   lv_display_t *disp = lv_display_create(LV_HOR_RES_MAX, LV_VER_RES_MAX);
   lv_display_set_flush_cb(disp, my_disp_flush);
+#if ENABLE_SCREENSHOT
   lv_display_add_event_cb(disp, screenshotExpandInvalidatedArea, LV_EVENT_INVALIDATE_AREA, NULL);
+#endif
   lv_display_set_buffers(disp, buf, NULL, sizeof(buf), LV_DISPLAY_RENDER_MODE_PARTIAL);
 
   /*Initialize the (dummy) input device driver*/
