@@ -58,6 +58,8 @@ const char *langText(const char *key)
     return "\n\nCalibration Profile Loaded.";
   if (strcmp(key, "msg_unknown_config_read_error") == 0)
     return "Unknown config read error";
+  if (strcmp(key, "msg_sd_card_not_connected") == 0)
+    return "SD card not connected.\n\nInternal Flash will be used instead.";
   if (strcmp(key, "msg_config_corrupted") == 0)
     return "Config File Corrupted / Not Found!\n\n";
   if (strcmp(key, "msg_over_trickle") == 0)

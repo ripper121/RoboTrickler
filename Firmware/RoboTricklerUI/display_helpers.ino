@@ -103,6 +103,11 @@ void updateWifiTabIndicator(bool forceUpdate)
         tabText += " ";
         tabText += UI_SYMBOL_WIFI;
     }
+    if (activeFSIsSD)
+    {
+        tabText += " ";
+        tabText += UI_SYMBOL_SD_CARD;
+    }
 
     if (lvglLock())
     {

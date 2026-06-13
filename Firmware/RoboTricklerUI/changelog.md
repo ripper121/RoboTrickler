@@ -23,7 +23,7 @@ Compared to firmware `2.11` (`7a8023b764e71e313d1028ca00592c1b6466e495`).
 - Added `/getTricklerState` so the SD-hosted trickler page can sync weight and running state in one request.
 - Added localized fallback/error strings for corrupt config/profile handling and profile validation errors.
 - Added localized web editor/file editor strings for reboot, upload, save, delete, preview, download, refresh, and expand/collapse actions.
-- Added `tools/compile_upload.py` for compiling with Arduino IDE/arduino-cli settings and uploading firmware through the web update endpoint.
+- Added `tools/compile_upload.py` as the single build/upload entry point for regenerating gzip files, building firmware and LittleFS with Arduino CLI at Core Debug Level Error, and uploading through the web server or a COM port.
 - Added `tools/create_sd_tar.py`, `tools/gzip_sd_files.py`, `SD-Files-Gz`, and `SD-Files-Gz.tar` support for compressed SD-file packaging.
 - Added updated `Hardware/CAD` model exports and moved older CAD/3D assets under `Hardware/CAD/OldVersion`.
 

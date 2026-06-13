@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compile RoboTricklerUI like the VS Code Arduino extension and upload via OTA."""
+"""Build RoboTricklerUI artifacts and upload them by web or serial."""
 
 from __future__ import annotations
 
@@ -31,10 +31,21 @@ ARDUINO_JSON = SKETCH_DIR / ".vscode" / "arduino.json"
 GZIP_FILES = SCRIPT_DIR / "gzip_sd_files.py"
 CREATE_FLASH_DATA = SCRIPT_DIR / "create_flash_data.py"
 CREATE_LITTLEFS_IMAGE = SCRIPT_DIR / "create_flash_littlefs_image.py"
+FLASH_DATA_DIR = SKETCH_DIR / "data"
 
 DEFAULT_BUILD_DIR = SKETCH_DIR.parent / "build"
 DEFAULT_UPDATE_URL = "http://robo-trickler.local/update"
 DEFAULT_BOARD = "esp32:esp32:esp32"
+DEFAULT_ESPTOOL = (
+    Path(os.environ.get("LOCALAPPDATA", ""))
+    / "Arduino15"
+    / "packages"
+    / "esp32"
+    / "tools"
+    / "esptool_py"
+    / "5.3.0"
+    / "esptool.exe"
+)
 DEFAULT_CONFIGURATION = (
     "JTAGAdapter=default,"
     "PSRAM=disabled,"
@@ -59,7 +70,10 @@ DEBUG_DEFINE_RE = re.compile(r"^\s*#\s*define\s+DEBUG\s+([01])\b")
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Compile RoboTricklerUI using the VS Code Arduino extension variant, then upload to /update."
+        description=(
+            "Regenerate SD-Files-Gz, build firmware and LittleFS, then upload "
+            "both through the web server or a serial port."
+        )
     )
     parser.add_argument(
         "--url",
@@ -80,17 +94,54 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--compile-only",
         action="store_true",
-        help="Compile and print the generated .bin path without uploading.",
+        help="Build both .bin files without uploading.",
+    )
+    parser.add_argument(
+        "--port",
+        help="Flash through this serial port instead of the web server, for example COM36.",
+    )
+    parser.add_argument(
+        "--baud",
+        type=int,
+        default=921600,
+        help="Serial upload baud rate. Default: 921600",
+    )
+    parser.add_argument(
+        "--esptool",
+        type=Path,
+        default=DEFAULT_ESPTOOL,
+        help=f"Path to esptool.exe. Default: {DEFAULT_ESPTOOL}",
+    )
+    parser.add_argument(
+        "--full",
+        action="store_true",
+        help="With --port, erase flash and also write the bootloader.",
     )
     parser.add_argument(
         "--cli",
+        dest="cli",
         action="store_true",
-        help="Compile with arduino-cli instead of the VS Code extension's legacy Arduino IDE variant.",
+        default=True,
+        help="Compile with arduino-cli (default).",
+    )
+    parser.add_argument(
+        "--legacy-ide",
+        dest="cli",
+        action="store_false",
+        help="Compile with the legacy Arduino IDE instead of arduino-cli.",
     )
     parser.add_argument(
         "--error",
+        dest="error",
         action="store_true",
-        help="Force ESP32 core debug level to Error for this compile.",
+        default=True,
+        help="Use ESP32 Core Debug Level Error (default).",
+    )
+    parser.add_argument(
+        "--automatic-debug-level",
+        dest="error",
+        action="store_false",
+        help="Derive the core debug level from the sketch DEBUG define.",
     )
     parser.add_argument(
         "--cli-path",
@@ -108,6 +159,12 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=120,
         help="HTTP upload timeout in seconds. Default: 120",
+    )
+    parser.add_argument(
+        "--reboot-timeout",
+        type=int,
+        default=60,
+        help="Seconds to wait for the web server after uploading LittleFS. Default: 60",
     )
     parser.add_argument(
         "--compile-timeout",
@@ -309,6 +366,38 @@ def build_littlefs_image(build_dir: Path, timeout: int) -> Path:
     return image_path
 
 
+def format_size(size: int) -> str:
+    if size >= 1024 * 1024:
+        return f"{size / (1024 * 1024):.2f} MiB"
+    return f"{size / 1024:.1f} KiB"
+
+
+def print_space_summary(firmware_path: Path) -> None:
+    from partition_layout import require_partition
+
+    app_partition = require_partition("app0")
+    littlefs_partition = require_partition("spiffs")
+    firmware_used = firmware_path.stat().st_size
+    firmware_free = max(0, app_partition.size - firmware_used)
+    littlefs_used = sum(
+        path.stat().st_size for path in FLASH_DATA_DIR.rglob("*") if path.is_file()
+    )
+    littlefs_free = max(0, littlefs_partition.size - littlefs_used)
+
+    print("\nSpace summary:")
+    print(
+        f"  Firmware: {format_size(firmware_used)} used of "
+        f"{format_size(app_partition.size)}, {format_size(firmware_free)} free "
+        f"({firmware_free * 100 / app_partition.size:.1f}%)"
+    )
+    print(
+        f"  LittleFS: {format_size(littlefs_used)} files of "
+        f"{format_size(littlefs_partition.size)}, about "
+        f"{format_size(littlefs_free)} free "
+        f"({littlefs_free * 100 / littlefs_partition.size:.1f}%, before filesystem metadata)"
+    )
+
+
 def make_multipart_body(field_name: str, file_path: Path) -> tuple[bytes, str]:
     boundary = f"----RoboTricklerUI{uuid.uuid4().hex}"
     header = (
@@ -322,16 +411,19 @@ def make_multipart_body(field_name: str, file_path: Path) -> tuple[bytes, str]:
     return header + file_path.read_bytes() + footer, boundary
 
 
-def upload_firmware(url: str, bin_path: Path, timeout: int) -> None:
-    require_path(bin_path, "firmware binary")
-    body, boundary = make_multipart_body("update", bin_path)
+def upload_web_artifact(url: str, field_name: str, bin_path: Path, timeout: int) -> None:
+    require_path(bin_path, f"{field_name} binary")
+    body, boundary = make_multipart_body(field_name, bin_path)
     headers = {
         "Content-Type": f"multipart/form-data; boundary={boundary}",
         "Content-Length": str(len(body)),
         "Connection": "close",
     }
 
-    print(f"Uploading {bin_path} ({bin_path.stat().st_size} bytes) to {url}...")
+    print(
+        f"Uploading {field_name}: {bin_path} "
+        f"({bin_path.stat().st_size} bytes) to {url}..."
+    )
     req = request.Request(url, data=body, headers=headers, method="POST")
     try:
         with request.urlopen(req, timeout=timeout) as resp:
@@ -346,6 +438,107 @@ def upload_firmware(url: str, bin_path: Path, timeout: int) -> None:
         raise RuntimeError(f"Upload failed with HTTP {exc.code}: {details}") from exc
     except error.URLError as exc:
         raise RuntimeError(f"Upload failed: {exc.reason}") from exc
+
+
+def wait_for_web_server(url: str, timeout: int) -> None:
+    probe_url = url.rsplit("/", 1)[0] + "/fwupdate"
+    deadline = time.monotonic() + timeout
+    print(f"Waiting for {probe_url} after reboot...")
+    while time.monotonic() < deadline:
+        try:
+            with request.urlopen(probe_url, timeout=3) as response:
+                if response.status < 500:
+                    print("Web server is ready.")
+                    return
+        except (error.HTTPError, error.URLError, TimeoutError):
+            pass
+        time.sleep(1)
+    raise TimeoutError(f"Web server did not return within {timeout} seconds")
+
+
+def run_command(command: list[str]) -> None:
+    print(" ".join(f'"{item}"' if " " in item else item for item in command), flush=True)
+    subprocess.run(command, check=True)
+
+
+def flash_serial(
+    port: str,
+    baud: int,
+    esptool_path: Path,
+    build_dir: Path,
+    firmware_path: Path,
+    littlefs_path: Path,
+    full: bool,
+) -> None:
+    from partition_layout import require_partition
+
+    require_path(esptool_path, "esptool.exe")
+    require_path(firmware_path, "firmware binary")
+    require_path(littlefs_path, "LittleFS image")
+
+    app_partition = require_partition("app0")
+    otadata_partition = require_partition("otadata")
+    littlefs_partition = require_partition("spiffs")
+    if firmware_path.stat().st_size > app_partition.size:
+        raise RuntimeError(
+            f"Firmware is {firmware_path.stat().st_size} bytes but app0 is only "
+            f"{app_partition.size} bytes"
+        )
+    if littlefs_path.stat().st_size > littlefs_partition.size:
+        raise RuntimeError(
+            f"LittleFS image is {littlefs_path.stat().st_size} bytes but the partition "
+            f"is only {littlefs_partition.size} bytes"
+        )
+
+    partitions = build_dir / "RoboTricklerUI.ino.partitions.bin"
+    boot_app = build_dir / "boot_app0.bin"
+    require_path(partitions, "partition table")
+    require_path(boot_app, "OTA boot data")
+
+    common = [
+        str(esptool_path),
+        "--chip",
+        "esp32",
+        "--port",
+        port,
+        "--baud",
+        str(baud),
+    ]
+    files = [
+        "0x8000",
+        str(partitions),
+        hex(otadata_partition.offset),
+        str(boot_app),
+        hex(app_partition.offset),
+        str(firmware_path),
+        hex(littlefs_partition.offset),
+        str(littlefs_path),
+    ]
+
+    if full:
+        bootloader = build_dir / "RoboTricklerUI.ino.bootloader.bin"
+        require_path(bootloader, "bootloader")
+        run_command(common + ["erase-flash"])
+        files = ["0x1000", str(bootloader)] + files
+
+    run_command(
+        common
+        + [
+            "--before",
+            "default-reset",
+            "--after",
+            "hard-reset",
+            "write-flash",
+            "--flash-mode",
+            "dio",
+            "--flash-freq",
+            "80m",
+            "--flash-size",
+            "4MB",
+        ]
+        + files
+    )
+    print("Serial flash completed successfully.")
 
 
 def main() -> int:
@@ -373,11 +566,30 @@ def main() -> int:
         littlefs_partition = require_partition("spiffs")
         print(f"LittleFS image: {littlefs_path} (flash offset {hex(littlefs_partition.offset)})")
         if args.compile_only:
+            print_space_summary(bin_path)
             return 0
 
-        upload_firmware(args.url, bin_path, args.timeout)
-        print("Firmware OTA does not replace LittleFS; flash littlefs.bin separately when its contents change.")
-        print("Done. The device should reboot after accepting the update.")
+        if args.port:
+            flash_serial(
+                args.port,
+                args.baud,
+                args.esptool.resolve(),
+                build_dir,
+                bin_path,
+                littlefs_path,
+                args.full,
+            )
+        else:
+            if args.full:
+                raise RuntimeError("--full requires --port")
+            upload_web_artifact(args.url, "filesystem", littlefs_path, args.timeout)
+            wait_for_web_server(args.url, args.reboot_timeout)
+            upload_web_artifact(args.url, "firmware", bin_path, args.timeout)
+            print(
+                "Web upload completed. The partition table is unchanged; use --port "
+                "when partitions.csv has changed."
+            )
+        print_space_summary(bin_path)
         return 0
     except (
         FileNotFoundError,

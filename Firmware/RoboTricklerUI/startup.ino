@@ -46,6 +46,7 @@ void initSetup()
     disp_task_init();
 
     updateDisplayLog((String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
+    updateDisplayLog(activeFSIsSD ? "Storage: SD Card" : "Storage: Internal Flash");
 
     String infoText = langText("status_init_steppers");
     updateDisplayLog(infoText, true);
@@ -137,6 +138,12 @@ void initSetup()
 
     infoText = langText("status_ready");
     updateDisplayLog(infoText, true);
+
+    if (!activeFSIsSD)
+    {
+        messageBox(langText("msg_sd_card_not_connected"), UI_FONT_NORMAL, lv_color_hex(0xFF9900), false);
+    }
+
     DEBUG_PRINTLN("Setup done.");
 }
 
