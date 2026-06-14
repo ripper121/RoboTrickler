@@ -270,10 +270,14 @@ void updateDisplayLog(const String &logOutput, bool noLog = false)
 {
   if (!noLog)
   {
-    char line[LOG_LINE_LEN];
-    snprintf(line, sizeof(line), "%s\n", logOutput.c_str());
-    insertLine(line);
-    refreshLogLabel();
+    if (lvglLock())
+    {
+      char line[LOG_LINE_LEN];
+      snprintf(line, sizeof(line), "%s\n", logOutput.c_str());
+      insertLine(line);
+      refreshLogLabel();
+      lvglUnlock();
+    }
   }
   else
   {

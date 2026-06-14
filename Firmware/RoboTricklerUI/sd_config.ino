@@ -766,7 +766,7 @@ void scanProfileDirectory(const char *directory, byte &profileCounter, byte &inv
       {
         updateDisplayLog(String(langText("status_invalid_profile_ignored")) + fileName);
         invalidProfileCounter++;
-        if (invalidProfileCounter <= 8)
+        if (invalidProfileCounter <= 4)
         {
           invalidProfiles += "\n";
           invalidProfiles += fileName;
@@ -812,7 +812,7 @@ void getProfileList()
   {
     String message = langText("msg_invalid_profiles_found");
     message += invalidProfiles;
-    if (invalidProfileCounter > 8)
+    if (invalidProfileCounter > 4)
     {
       message += "\n...";
     }

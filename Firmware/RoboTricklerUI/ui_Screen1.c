@@ -124,8 +124,12 @@ lv_obj_clear_flag( ui_PanelInfo, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 lv_obj_set_style_text_font(ui_PanelInfo, UI_FONT_NORMAL, LV_PART_MAIN);
 
 ui_LabelInfo = lv_label_create(ui_PanelInfo);
+lv_obj_set_width( ui_LabelInfo, lv_pct(95));
+lv_obj_set_height( ui_LabelInfo, 24);
 lv_obj_set_align( ui_LabelInfo, LV_ALIGN_CENTER );
-lv_label_set_text_static(ui_LabelInfo,"Robo-Trickler // strenuous.dev");
+lv_label_set_text(ui_LabelInfo,"Robo-Trickler // strenuous.dev");
+lv_label_set_long_mode(ui_LabelInfo, LV_LABEL_LONG_MODE_DOTS);
+lv_obj_set_style_text_align(ui_LabelInfo, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 lv_obj_clear_flag( ui_LabelInfo, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_TabPageProfile = lv_tabview_add_tab(ui_TabView, "Profile");
@@ -139,10 +143,11 @@ lv_obj_set_align( ui_PanelProfile, LV_ALIGN_CENTER );
 lv_obj_clear_flag( ui_PanelProfile, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_LabelProfile = lv_label_create(ui_PanelProfile);
-lv_obj_set_width( ui_LabelProfile, lv_pct(100));
-lv_obj_set_height( ui_LabelProfile, lv_pct(100));
+lv_obj_set_width( ui_LabelProfile, 280);
+lv_obj_set_height( ui_LabelProfile, 45);
 lv_obj_set_align( ui_LabelProfile, LV_ALIGN_CENTER );
-lv_label_set_text_static(ui_LabelProfile,"Profile");
+lv_label_set_text(ui_LabelProfile,"Profile");
+lv_label_set_long_mode(ui_LabelProfile, LV_LABEL_LONG_MODE_DOTS);
 lv_obj_set_style_text_align(ui_LabelProfile, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
 ui_ButtonProfileTune = lv_btn_create(ui_PanelProfile);
@@ -245,8 +250,12 @@ lv_obj_add_flag( ui_ButtonScaleProtocol, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Fl
 lv_obj_clear_flag( ui_ButtonScaleProtocol, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_LabelScaleProtocol = lv_label_create(ui_ButtonScaleProtocol);
+lv_obj_set_width( ui_LabelScaleProtocol, lv_pct(100));
+lv_obj_set_height( ui_LabelScaleProtocol, 24);
 lv_obj_set_align( ui_LabelScaleProtocol, LV_ALIGN_CENTER );
-lv_label_set_text_static(ui_LabelScaleProtocol,"Scale: --");
+lv_label_set_text(ui_LabelScaleProtocol,"Scale: --");
+lv_label_set_long_mode(ui_LabelScaleProtocol, LV_LABEL_LONG_MODE_DOTS);
+lv_obj_set_style_text_align(ui_LabelScaleProtocol, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 lv_obj_set_style_text_font(ui_LabelScaleProtocol, UI_FONT_NORMAL, LV_PART_MAIN);
 
 ui_ButtonSyncFlashToSd = lv_btn_create(ui_PanelPageInfo);
@@ -279,7 +288,7 @@ lv_obj_set_style_text_font(ui_LabelSyncSdToFlash, UI_FONT_NORMAL, LV_PART_MAIN);
 
 ui_PanelMessages = lv_obj_create(ui_Screen1);
 lv_obj_set_width( ui_PanelMessages, lv_pct(90));
-lv_obj_set_height( ui_PanelMessages, lv_pct(60));
+lv_obj_set_height( ui_PanelMessages, lv_pct(90));
 lv_obj_set_align( ui_PanelMessages, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_PanelMessages, LV_OBJ_FLAG_HIDDEN );   /// Flags
 lv_obj_clear_flag( ui_PanelMessages, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
@@ -288,7 +297,7 @@ ui_ButtonMessageOk = lv_btn_create(ui_PanelMessages);
 lv_obj_set_width( ui_ButtonMessageOk, 100);
 lv_obj_set_height( ui_ButtonMessageOk, 50);
 lv_obj_set_x( ui_ButtonMessageOk, 0 );
-lv_obj_set_y( ui_ButtonMessageOk, 45 );
+lv_obj_set_y( ui_ButtonMessageOk, 100 );
 lv_obj_set_align( ui_ButtonMessageOk, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_ButtonMessageOk, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
 lv_obj_clear_flag( ui_ButtonMessageOk, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
@@ -300,9 +309,10 @@ lv_obj_set_style_text_font(ui_LabelMessageOk, UI_FONT_LARGE, LV_PART_MAIN);
 
 ui_LabelMessages = lv_label_create(ui_PanelMessages);
 lv_obj_set_width( ui_LabelMessages, lv_pct(100));
-lv_obj_set_height( ui_LabelMessages, lv_pct(60));
+lv_obj_set_height( ui_LabelMessages, lv_pct(70));
 lv_obj_set_align( ui_LabelMessages, LV_ALIGN_TOP_MID );
-lv_label_set_text_static(ui_LabelMessages,"Test Info");
+lv_label_set_text(ui_LabelMessages,"Test Info");
+lv_label_set_long_mode(ui_LabelMessages, LV_LABEL_LONG_MODE_DOTS);
 lv_obj_set_style_text_align(ui_LabelMessages, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 lv_obj_set_style_text_font(ui_LabelMessages, UI_FONT_LARGE, LV_PART_MAIN);
 lv_obj_set_style_text_color(ui_LabelMessages, lv_color_hex(0xFF0000), LV_PART_MAIN);

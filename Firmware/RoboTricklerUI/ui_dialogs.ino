@@ -4,11 +4,13 @@ volatile bool confirmBoxResult = false;
 lv_obj_t *ui_ButtonMessageNo = NULL;
 lv_obj_t *ui_LabelMessageNo = NULL;
 
-static void closeReplacedDialogState()
+void cancelInteractiveDialogs()
 {
   if (confirmBoxOpen)
   {
     confirmBoxResult = false;
+    closeDialog(&ui_PanelMessages, false);
+    messageBoxOpen = false;
     confirmBoxOpen = false;
     resetConfirmBoxButtons();
     finishProfileDeleteConfirm(false);
@@ -67,7 +69,7 @@ static void ensureNoButton()
   {
     return;
   }
-  ui_ButtonMessageNo = createDialogButton(ui_PanelMessages, 70, 45, 100, 50,
+  ui_ButtonMessageNo = createDialogButton(ui_PanelMessages, 70, 100, 100, 50,
                                           UI_SYMBOL_NO, UI_FONT_LARGE, messageNo_event_cb);
   ui_LabelMessageNo = lv_obj_get_child(ui_ButtonMessageNo, 0);
 }
@@ -139,24 +141,9 @@ void messageNo_event_cb(lv_event_t *e)
   finishFilesystemSyncConfirm(false);
 }
 
-void cancelProfileDeleteConfirm()
-{
-  if (!profileDeleteConfirmPending)
-  {
-    return;
-  }
-
-  confirmBoxResult = false;
-  closeDialog(&ui_PanelMessages, false);
-  resetConfirmBoxButtons();
-  messageBoxOpen = false;
-  confirmBoxOpen = false;
-  finishProfileDeleteConfirm(false);
-}
-
 void messageBox(const String &message, const lv_font_t *font, lv_color_t color, bool wait)
 {
-  closeReplacedDialogState();
+  cancelInteractiveDialogs();
   messageBoxOpen = true;
   presentDialog(message, font, color, false);
   if (wait)
@@ -201,7 +188,7 @@ bool confirmBox(const String &message, const lv_font_t *font, lv_color_t color)
 
 void showConfirmBox(const String &message, const lv_font_t *font, lv_color_t color)
 {
-  closeReplacedDialogState();
+  cancelInteractiveDialogs();
   messageBoxOpen = true;
   confirmBoxOpen = true;
   presentDialog(message, font, color, true);

@@ -122,6 +122,12 @@ void handleSetTarget()
 
 void handleSetProfile()
 {
+  if (isTricklerRunning())
+  {
+    server.send(409, "text/html", webStatusPage("status_running"));
+    return;
+  }
+
   for (uint8_t i = 0; i < server.args(); i++)
   {
     if (server.argName(i) == "profileNumber")
@@ -166,7 +172,9 @@ void handleGetProfileList()
 void handleStart()
 {
   startTrickler();
-  server.send(200, "text/html", webStatusPage("web_running"));
+  bool running = isTricklerRunning();
+  server.send(running ? 200 : 409, "text/html",
+              webStatusPage(running ? "web_running" : "status_invalid_profile"));
 }
 void handleStop()
 {

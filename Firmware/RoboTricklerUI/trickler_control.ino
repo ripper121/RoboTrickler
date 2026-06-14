@@ -17,8 +17,10 @@ void beep(const char *beepMode)
 
 void startTrickler()
 {
-    setLabelText(ui_LabelToggleTrickler, UI_SYMBOL_STOP);
-    setObjBgColor(ui_ButtonToggleTrickler, 0xFF0000);
+    if (isTricklerRunning())
+    {
+        return;
+    }
 
     if (tempProfile != String(config.profile))
     {
@@ -40,7 +42,9 @@ void startTrickler()
 
     String infoText = langText("status_starting_trickler");
     updateDisplayLog(infoText, true);
-    cancelProfileDeleteConfirm();
+    cancelInteractiveDialogs();
+    setLabelText(ui_LabelToggleTrickler, UI_SYMBOL_STOP);
+    setObjBgColor(ui_ButtonToggleTrickler, 0xFF0000);
     setProfileTabEnabled(false);
     startMeasurement();
 }
@@ -56,6 +60,7 @@ void stopTrickler()
     trickleCounter = 0;
     setLabelText(ui_LabelToggleTrickler, UI_SYMBOL_START);
     setObjBgColor(ui_ButtonToggleTrickler, 0x00FF00);
+    setLabelTextColor(ui_LabelTricklerWeight, 0xFFFFFF);
     setLabelText(ui_LabelTricklerWeight, "-.-");
     String infoText = langText("status_stopped");
     updateDisplayLog(infoText, true);

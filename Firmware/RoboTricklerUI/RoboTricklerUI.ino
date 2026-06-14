@@ -72,7 +72,7 @@ Events Run On: "Core 0"
 TaskHandle_t lvDisplayTaskHandle = NULL;
 SemaphoreHandle_t lvglMutex = NULL;
 //#define LV_DRAW_BUF_ROWS ((LV_VER_RES_MAX + 9) / 10)
-#define LV_DRAW_BUF_ROWS 8
+#define LV_DRAW_BUF_ROWS 16
 #define DISPLAY_DRAW_BUF_SIZE (LV_HOR_RES_MAX * LV_DRAW_BUF_ROWS * (LV_COLOR_DEPTH / 8))
 static uint32_t buf[DISPLAY_DRAW_BUF_SIZE / sizeof(uint32_t)];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
@@ -223,7 +223,12 @@ void logRuntimeStats()
 {
 #if DEBUG
   lv_mem_monitor_t lvglMemory;
-  lv_mem_monitor(&lvglMemory);
+  memset(&lvglMemory, 0, sizeof(lvglMemory));
+  if (lvglLock())
+  {
+    lv_mem_monitor(&lvglMemory);
+    lvglUnlock();
+  }
 
   printf("heap_free:%lu\theap_min:%lu\theap_largest:%lu\theap_internal:%lu\theap_internal_largest:%lu\theap_dma:%lu\t"
          "lvgl_used:%lu\tlvgl_free:%lu\tlvgl_largest:%lu\tlvgl_frag:%u\tlvgl_max_used:%lu\t"

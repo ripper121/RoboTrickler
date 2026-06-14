@@ -70,6 +70,8 @@ void setProfile(int num)
         return;
     }
 
+    cancelInteractiveDialogs();
+
     strlcpy(config.profile,          // <- destination
             profileListBuff[num],    // <- source
             sizeof(config.profile)); // <- destination's capacity
