@@ -50,6 +50,8 @@ extern lv_obj_t *ui_LabelProfileNext;
 extern lv_obj_t *ui_TabPageInfo;
 extern lv_obj_t *ui_PanelPageInfo;
 extern lv_obj_t *ui_LabelLog;
+extern lv_obj_t *ui_ButtonWifi;
+extern lv_obj_t *ui_LabelWifi;
 extern lv_obj_t *ui_ButtonScaleProtocol;
 extern lv_obj_t *ui_LabelScaleProtocol;
 extern lv_obj_t *ui_ButtonSyncFlashToSd;

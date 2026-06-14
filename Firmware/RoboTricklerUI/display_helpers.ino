@@ -120,21 +120,20 @@ void updateWifiTabIndicator(bool forceUpdate)
         return;
     }
 
-    String tabText = langText("tab_info");
+    char tabText[48];
+    strlcpy(tabText, langText("tab_info"), sizeof(tabText));
     if (isConnected)
     {
-        tabText += " ";
-        tabText += UI_SYMBOL_WIFI;
+        strlcat(tabText, " " UI_SYMBOL_WIFI, sizeof(tabText));
     }
     if (activeFSIsSD)
     {
-        tabText += " ";
-        tabText += UI_SYMBOL_SD_CARD;
+        strlcat(tabText, " " UI_SYMBOL_SD_CARD, sizeof(tabText));
     }
 
     if (lvglLock())
     {
-        lv_tabview_set_tab_text(ui_TabView, 2, tabText.c_str());
+        lv_tabview_set_tab_text(ui_TabView, 2, tabText);
         lvglUnlock();
         indicatorInitialized = true;
         wasConnected = isConnected;
@@ -191,6 +190,12 @@ void updateTargetWeightLabel()
 void setWeightLabel(lv_obj_t *label)
 {
   char text[32];
+  if (!isfinite(weight) || (weight < 0.0f))
+  {
+    setLabelText(label, "NAN");
+    return;
+  }
+
   int decimals = decPlaces;
   if (decimals < 0)
   {

@@ -41,6 +41,8 @@ lv_obj_t *ui_LabelProfileNext;
 lv_obj_t *ui_TabPageInfo;
 lv_obj_t *ui_PanelPageInfo;
 lv_obj_t *ui_LabelLog;
+lv_obj_t *ui_ButtonWifi;
+lv_obj_t *ui_LabelWifi;
 lv_obj_t *ui_ButtonScaleProtocol;
 lv_obj_t *ui_LabelScaleProtocol;
 lv_obj_t *ui_ButtonSyncFlashToSd;

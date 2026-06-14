@@ -8,6 +8,8 @@ static const char *languageFallback(const char *key)
     return "Info";
   if (strcmp(key, "placeholder_profile") == 0)
     return "Profile";
+  if (strcmp(key, "label_scale") == 0)
+    return "Scale";
   if (strcmp(key, "status_ready") == 0)
     return "Ready";
   if (strcmp(key, "status_stopped") == 0)

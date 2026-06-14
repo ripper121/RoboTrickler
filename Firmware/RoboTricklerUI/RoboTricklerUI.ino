@@ -38,6 +38,7 @@ Events Run On: "Core 0"
 #include <esp_mac.h>
 #include <esp_task_wdt.h>
 #include <rtc_wdt.h>
+#include <qrcode.h>
 #include <freertos/semphr.h>
 #include <ctype.h>
 #include <string.h>
@@ -78,6 +79,7 @@ TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 
 struct Config
 {
+  bool wifi_enabled;
   char wifi_ssid[64];
   char wifi_psk[64];
   char IPStatic[16];

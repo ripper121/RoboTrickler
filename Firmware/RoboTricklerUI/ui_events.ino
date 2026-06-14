@@ -94,7 +94,7 @@ void updateScaleProtocolButtonLabel()
   }
 
   char text[48];
-  snprintf(text, sizeof(text), "Scale: %s", scaleProtocolDisplayName(config.scale_protocol));
+  snprintf(text, sizeof(text), "%s: %s", langText("label_scale"), scaleProtocolDisplayName(config.scale_protocol));
   setLabelText(ui_LabelScaleProtocol, text);
 }
 
@@ -104,5 +104,14 @@ void cycleScaleProtocol_event_cb(lv_event_t *e)
   serialFlush();
   saveConfiguration("/config.txt", config);
   updateScaleProtocolButtonLabel();
+  beep("button");
+}
+
+void toggleWifi_event_cb(lv_event_t *e)
+{
+  (void)e;
+  config.wifi_enabled = !config.wifi_enabled;
+  saveConfiguration("/config.txt", config);
+  applyWifiEnabled();
   beep("button");
 }

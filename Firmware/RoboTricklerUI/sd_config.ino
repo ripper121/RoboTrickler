@@ -171,6 +171,7 @@ String getSdReadError()
 
 void setDefaultConfiguration(Config &config)
 {
+  config.wifi_enabled = true;
   strlcpy(config.wifi_ssid, "", sizeof(config.wifi_ssid));
   strlcpy(config.wifi_psk, "", sizeof(config.wifi_psk));
   strlcpy(config.IPStatic, "", sizeof(config.IPStatic));
@@ -353,6 +354,7 @@ bool loadConfiguration(const char *filename, Config &config)
     return 0;
   }
 
+  config.wifi_enabled = doc["wifi"]["enabled"] | config.wifi_enabled;
   strlcpy(config.wifi_ssid, doc["wifi"]["ssid"] | config.wifi_ssid, sizeof(config.wifi_ssid));
   strlcpy(config.wifi_psk, doc["wifi"]["psk"] | config.wifi_psk, sizeof(config.wifi_psk));
   strlcpy(config.IPStatic, doc["wifi"]["IPStatic"] | config.IPStatic, sizeof(config.IPStatic));
@@ -527,11 +529,12 @@ String nextCalibrationProfileName()
 static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerThrow, int profileSpeed)
 {
   const float diffWeights[8] = {1.929, 0.965, 0.482, 0.241, 0.121, 0.060, 0.030, 0.000};
+  const size_t diffWeightsCount = sizeof(diffWeights) / sizeof(diffWeights[0]);
   const int measurements[8] = {2, 2, 5, 10, 15, 15, 20, 25};
   const float rs232LimitFactor = 0.65;
 
   JsonArray rs232TrickleMap = doc["rs232TrickleMap"].to<JsonArray>();
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < diffWeightsCount; i++)
   {
     long steps = lround(((diffWeights[i] * (double)MOTOR_REV_STEPS) / unitsPerThrow) * rs232LimitFactor);
     if (steps < 5)
@@ -547,6 +550,7 @@ static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerThrow
     profileEntry["measurements"] = measurements[i];
   }
 }
+
 
 bool createProfileFromCalibration(float calibrationWeight, String &profileName)
 {
@@ -831,6 +835,7 @@ void saveConfiguration(const char *filename, const Config &config)
   }
 
   JsonDocument doc;
+  doc["wifi"]["enabled"] = config.wifi_enabled;
   doc["wifi"]["ssid"] = config.wifi_ssid;
   doc["wifi"]["psk"] = config.wifi_psk;
   doc["wifi"]["IPStatic"] = config.IPStatic;

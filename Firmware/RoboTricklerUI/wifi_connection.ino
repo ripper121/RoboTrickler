@@ -41,7 +41,7 @@ static const unsigned long WIFI_CONNECT_TIMEOUT_MS = 30000;
 static const char *WIFI_SETUP_AP_SSID = "Robo-Trickler-AP";
 static const IPAddress WIFI_SETUP_AP_IP(192, 168, 4, 1);
 static const IPAddress WIFI_SETUP_AP_SUBNET(255, 255, 255, 0);
-static String wifiSetupApPassword;
+static char wifiSetupApPassword[13];
 static bool wifiEventLoggingRegistered = false;
 static IPAddress wifiConfiguredDNS = IPAddress(8, 8, 8, 8);
 static bool wifiUsesStaticIp = false;
@@ -49,7 +49,7 @@ static unsigned long wifiConnectStartedMillis = 0;
 static bool wifiConnectTimeoutReported = false;
 static wl_status_t wifiLastLoggedStatus = WL_NO_SHIELD;
 
-bool createWifiSetupPassword(String &password)
+bool createWifiSetupPassword()
 {
   uint8_t mac[6] = {0};
   if (esp_efuse_mac_get_default(mac) != ESP_OK)
@@ -67,10 +67,8 @@ bool createWifiSetupPassword(String &password)
     return false;
   }
 
-  char passwordBuffer[13];
-  snprintf(passwordBuffer, sizeof(passwordBuffer), "%02X%02X%02X%02X%02X%02X",
+  snprintf(wifiSetupApPassword, sizeof(wifiSetupApPassword), "%02X%02X%02X%02X%02X%02X",
            mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-  password = passwordBuffer;
   return true;
 }
 
@@ -193,11 +191,77 @@ void maintainWifiConnection()
   }
 }
 
+void updateWifiButtonState()
+{
+  if ((ui_ButtonWifi == NULL) || !lvglLock())
+  {
+    return;
+  }
+
+  if (config.wifi_enabled)
+  {
+    lv_obj_add_state(ui_ButtonWifi, LV_STATE_CHECKED);
+  }
+  else
+  {
+    lv_obj_remove_state(ui_ButtonWifi, LV_STATE_CHECKED);
+  }
+  lvglUnlock();
+}
+
+void stopWifiServices()
+{
+  dnsServer.stop();
+  server.stop();
+  MDNS.end();
+  WEB_SERVER_ACTIVE = false;
+  WIFI_SETUP_AP_ACTIVE = false;
+  wifiActive = false;
+  WiFi.setAutoReconnect(false);
+
+  wifi_mode_t currentMode = WiFi.getMode();
+  if ((currentMode & WIFI_MODE_AP) != 0)
+  {
+    WiFi.softAPdisconnect(true);
+  }
+  if ((currentMode & WIFI_MODE_STA) != 0)
+  {
+    WiFi.disconnect(true, false);
+  }
+  else if (currentMode != WIFI_MODE_NULL)
+  {
+    WiFi.mode(WIFI_OFF);
+  }
+
+  updateWifiSetupQrCode();
+  updateWifiTabIndicator(true);
+}
+
+void applyWifiEnabled()
+{
+  updateWifiButtonState();
+  if (config.wifi_enabled)
+  {
+    initWebServer();
+  }
+  else
+  {
+    stopWifiServices();
+  }
+}
+
 void initWebServer()
 {
   wifiActive = false;
   WIFI_SETUP_AP_ACTIVE = false;
   WEB_SERVER_ACTIVE = false;
+  updateWifiButtonState();
+  if (!config.wifi_enabled)
+  {
+    stopWifiServices();
+    return;
+  }
+
   String configuredSsid(config.wifi_ssid);
   configuredSsid.trim();
   if (configuredSsid.length() <= 0)
@@ -291,7 +355,7 @@ bool startWifiSetupAccessPoint()
   WiFi.persistent(false);
   WiFi.mode(WIFI_AP_STA);
   WiFi.setSleep(false);
-  if (!createWifiSetupPassword(wifiSetupApPassword))
+  if (!createWifiSetupPassword())
   {
     DEBUG_PRINTLN("Could not read hardware MAC for setup AP password.");
     return false;
@@ -302,7 +366,7 @@ bool startWifiSetupAccessPoint()
     DEBUG_PRINTLN("WiFi setup AP IP configuration failed.");
     return false;
   }
-  if (!WiFi.softAP(WIFI_SETUP_AP_SSID, wifiSetupApPassword.c_str()))
+  if (!WiFi.softAP(WIFI_SETUP_AP_SSID, wifiSetupApPassword))
   {
     DEBUG_PRINTLN("WiFi setup AP creation failed.");
     return false;
@@ -319,29 +383,34 @@ bool startWifiSetupAccessPoint()
     DEBUG_PRINTLN("Captive portal DNS server failed to start.");
   }
 
-  updateDisplayLog(String(langText("status_wifi_ap")) + WIFI_SETUP_AP_SSID);
-  updateDisplayLog(String(langText("status_wifi_password")) + wifiSetupApPassword);
-  updateDisplayLog(String(langText("status_wifi_open")) + WIFI_SETUP_AP_IP.toString());
+  char logLine[96];
+  snprintf(logLine, sizeof(logLine), "%s%s", langText("status_wifi_ap"), WIFI_SETUP_AP_SSID);
+  updateDisplayLog(logLine);
+  snprintf(logLine, sizeof(logLine), "%s%s", langText("status_wifi_password"), wifiSetupApPassword);
+  updateDisplayLog(logLine);
+  snprintf(logLine, sizeof(logLine), "%s%u.%u.%u.%u", langText("status_wifi_open"),
+           WIFI_SETUP_AP_IP[0], WIFI_SETUP_AP_IP[1], WIFI_SETUP_AP_IP[2], WIFI_SETUP_AP_IP[3]);
+  updateDisplayLog(logLine);
+  if (!generateWifiSetupQrCode(WIFI_SETUP_AP_SSID, wifiSetupApPassword))
+  {
+    DEBUG_PRINTLN("WiFi setup QR code generation failed.");
+  }
   showWifiSetupInfo();
   return true;
 }
 
 void showWifiSetupInfo()
 {
-  String info = langText("wifi_setup_mode");
-  info += "\n\n";
-  info += langText("wifi_connect_to");
-  info += "\n";
-  info += WIFI_SETUP_AP_SSID;
-  info += "\n";
-  info += langText("wifi_password");
-  info += "\n";
-  info += wifiSetupApPassword;
-  info += "\n\n";
-  info += langText("wifi_open");
-  info += "\nhttp://";
-  info += WIFI_SETUP_AP_IP.toString();
-  info += "\n\n";
-  info += langText("wifi_select_and_save");
-  setLabelText(ui_LabelInfo, info.c_str());
+  char info[320];
+  snprintf(info, sizeof(info),
+           "%s\n\n%s\n%s\n%s\n%s\n\n%s\nhttp://%u.%u.%u.%u\n\n%s",
+           langText("wifi_setup_mode"),
+           langText("wifi_connect_to"),
+           WIFI_SETUP_AP_SSID,
+           langText("wifi_password"),
+           wifiSetupApPassword,
+           langText("wifi_open"),
+           WIFI_SETUP_AP_IP[0], WIFI_SETUP_AP_IP[1], WIFI_SETUP_AP_IP[2], WIFI_SETUP_AP_IP[3],
+           langText("wifi_select_and_save"));
+  setLabelText(ui_LabelInfo, info);
 }

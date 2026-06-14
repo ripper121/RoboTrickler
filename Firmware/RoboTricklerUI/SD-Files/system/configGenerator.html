@@ -15,6 +15,9 @@
         <form id="configForm">
             <fieldset>
                 <legend data-i18n="config.wifi">WiFi Settings</legend>
+                <label for="wifi_enabled" data-i18n="config.wifiEnabled">WiFi enabled:</label>
+                <input type="checkbox" id="wifi_enabled" name="wifi_enabled" checked><br>
+
                 <label for="wifi_ssid" data-i18n="config.ssid">Name / SSID:</label>
                 <input type="text" id="wifi_ssid" name="wifi_ssid" maxlength="32" placeholder="MyWifiName"><br>
 
@@ -118,6 +121,7 @@
             var customCode = scaleProtocol === 'CUSTOM' ? (jsonObject.scale && jsonObject.scale.customCode) || '' : '';
             return {
                 wifi: {
+                    enabled: !jsonObject.wifi || jsonObject.wifi.enabled !== false,
                     ssid: (jsonObject.wifi && jsonObject.wifi.ssid) || '',
                     psk: (jsonObject.wifi && jsonObject.wifi.psk) || '',
                     IPStatic: (jsonObject.wifi && jsonObject.wifi.IPStatic) || '',
@@ -147,6 +151,7 @@
             var scaleProtocol = formData.get('scale_protocol');
             var jsonObject = {
                 wifi: {
+                    enabled: document.getElementById('wifi_enabled').checked,
                     ssid: formData.get('wifi_ssid'),
                     psk: formData.get('wifi_psk'),
                     IPStatic: formData.get('IPStatic'),
@@ -178,6 +183,7 @@
                 jsonOutput.value = JSON.stringify(jsonObject, null, 4);
 
                 // Update WiFi settings
+                configForm.wifi_enabled.checked = jsonObject.wifi.enabled !== false;
                 configForm.wifi_ssid.value = jsonObject.wifi.ssid || '';
                 configForm.wifi_psk.value = jsonObject.wifi.psk || '';
                 configForm.IPStatic.value = jsonObject.wifi.IPStatic || '';
