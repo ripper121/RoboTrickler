@@ -36,10 +36,8 @@ static lv_obj_t *createDialogButton(lv_obj_t *parent, int x, int y, int width, i
   lv_obj_add_event_cb(button, eventCb, LV_EVENT_CLICKED, NULL);
 
   lv_obj_t *label = lv_label_create(button);
-  lv_obj_set_width(label, LV_SIZE_CONTENT);
-  lv_obj_set_height(label, LV_SIZE_CONTENT);
   lv_obj_set_align(label, LV_ALIGN_CENTER);
-  lv_label_set_text(label, text);
+  lv_label_set_text_static(label, text);
   lv_obj_set_style_text_font(label, font, LV_PART_MAIN);
   return button;
 }
@@ -70,14 +68,14 @@ static void presentDialog(const String &message, const lv_font_t *font,
   if (showNo)
   {
     lv_obj_set_x(ui_ButtonMessageOk, -70);
-    lv_label_set_text(ui_LabelMessageOk, UI_SYMBOL_YES);
+    lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_YES);
     lv_obj_clear_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
   }
   else
   {
     lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_x(ui_ButtonMessageOk, 0);
-    lv_label_set_text(ui_LabelMessageOk, UI_SYMBOL_OK);
+    lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_OK);
   }
   lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN);
   lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN);
@@ -199,7 +197,7 @@ void resetConfirmBoxButtons()
       lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     }
     lv_obj_set_x(ui_ButtonMessageOk, 0);
-    lv_label_set_text(ui_LabelMessageOk, UI_SYMBOL_OK);
+    lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_OK);
     lvglUnlock();
   }
 }
@@ -248,7 +246,9 @@ static void updateProfileTuneValueLabel()
 {
     if (ui_LabelProfileTuneValue != NULL)
     {
-        lv_label_set_text(ui_LabelProfileTuneValue, String(profileTuneUnitsPerThrow, 3).c_str());
+        char text[16];
+        snprintf(text, sizeof(text), "%.3f", profileTuneUnitsPerThrow);
+        lv_label_set_text(ui_LabelProfileTuneValue, text);
     }
 }
 
@@ -261,7 +261,9 @@ static void updateProfileTuneStepLabel()
     profileTuneStepSize = WEIGHT_STEP_SIZES[profileTuneStepIndex];
     if (ui_LabelProfileTuneStep != NULL)
     {
-        lv_label_set_text(ui_LabelProfileTuneStep, String(profileTuneStepSize, 3).c_str());
+        char text[16];
+        snprintf(text, sizeof(text), "%.3f", profileTuneStepSize);
+        lv_label_set_text(ui_LabelProfileTuneStep, text);
     }
 }
 
@@ -403,7 +405,7 @@ static void createProfileTuneDialog()
     lv_obj_set_height(ui_LabelProfileTuneValue, 50);
     lv_obj_set_y(ui_LabelProfileTuneValue, -42);
     lv_obj_set_align(ui_LabelProfileTuneValue, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_LabelProfileTuneValue, "0.000");
+    lv_label_set_text_static(ui_LabelProfileTuneValue, "0.000");
     lv_obj_set_style_text_align(ui_LabelProfileTuneValue, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_set_style_text_font(ui_LabelProfileTuneValue, UI_FONT_LARGE, LV_PART_MAIN);
     lv_obj_set_style_bg_color(ui_LabelProfileTuneValue, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
@@ -429,7 +431,11 @@ static void showProfileTuneDialog()
         createProfileTuneDialog();
         profileTuneUnitsPerThrow = currentProfileTuneUnitsPerThrow();
         updateProfileTuneStepLabel();
-        lv_label_set_text(ui_LabelProfileTuneTitle, (String(langText("msg_tune_profile_title"))).c_str());
+        const char *title = langText("msg_tune_profile_title");
+        if (strcmp(lv_label_get_text(ui_LabelProfileTuneTitle), title) != 0)
+        {
+            lv_label_set_text(ui_LabelProfileTuneTitle, title);
+        }
         updateProfileTuneValueLabel();
         lv_obj_move_to_index(ui_PanelProfileTune, -1);
         lv_obj_clear_flag(ui_PanelProfileTune, LV_OBJ_FLAG_HIDDEN);

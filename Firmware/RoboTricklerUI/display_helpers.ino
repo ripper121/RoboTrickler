@@ -53,7 +53,11 @@ void setLabelTextColor(lv_obj_t *label, uint32_t colorHex)
 {
     if (lvglLock())
     {
-        lv_obj_set_style_text_color(label, lv_color_hex(colorHex), LV_PART_MAIN);
+        lv_color_t color = lv_color_hex(colorHex);
+        if (!lv_color_eq(lv_obj_get_style_text_color(label, LV_PART_MAIN), color))
+        {
+            lv_obj_set_style_text_color(label, color, LV_PART_MAIN);
+        }
         lvglUnlock();
     }
 }
@@ -162,18 +166,26 @@ void updateProfileActionButtonVisibility()
 
 void setLabelText(lv_obj_t *label, const char *text)
 {
-  if (lvglLock())
+  if ((label == NULL) || (text == NULL) || !lvglLock())
+  {
+    return;
+  }
+
+  const char *currentText = lv_label_get_text(label);
+  if ((currentText == NULL) || (strcmp(currentText, text) != 0))
   {
     lv_label_set_text(label, text);
-    lvglUnlock();
   }
+  lvglUnlock();
 }
 
 // The target weight label is rewritten from config.targetWeight in several
 // places (boot, +/- buttons, profile load/tune); keep that formatting in one spot.
 void updateTargetWeightLabel()
 {
-  setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+  char text[16];
+  snprintf(text, sizeof(text), "%.3f", config.targetWeight);
+  setLabelText(ui_LabelTarget, text);
 }
 
 void setWeightLabel(lv_obj_t *label)
@@ -196,7 +208,11 @@ void setObjBgColor(lv_obj_t *obj, uint32_t colorHex)
 {
   if (lvglLock())
   {
-    lv_obj_set_style_bg_color(obj, lv_color_hex(colorHex), LV_PART_MAIN);
+    lv_color_t color = lv_color_hex(colorHex);
+    if (!lv_color_eq(lv_obj_get_style_bg_color(obj, LV_PART_MAIN), color))
+    {
+      lv_obj_set_style_bg_color(obj, color, LV_PART_MAIN);
+    }
     lvglUnlock();
   }
 }

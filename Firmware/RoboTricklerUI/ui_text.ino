@@ -404,9 +404,9 @@ void applyLanguage()
 
     if (!isTricklerRunning())
     {
-      lv_label_set_text(ui_LabelToggleTrickler, UI_SYMBOL_START);
+      lv_label_set_text_static(ui_LabelToggleTrickler, UI_SYMBOL_START);
     }
-    lv_label_set_text(ui_LabelMessageOk, UI_SYMBOL_OK);
+    lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_OK);
     if (strcmp(lv_label_get_text(ui_LabelProfile), "Profile") == 0)
     {
       lv_label_set_text(ui_LabelProfile, langText("placeholder_profile"));

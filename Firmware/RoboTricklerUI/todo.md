@@ -1,0 +1,6 @@
+- Check if the sync also deltes files in both ways, never delete config or calibrate file
+- Add a Wifi QR Code for the AP(dont use LVGL QR, use the ESP qr code function), show the QR Code in the Info Tab, if no wifi is connected. When User klicks on the QR Code he can hide it, if he clicks on the Log Label he can unhide it again
+- add Wifi Toggle button to the Info Tab to turn on or off wifi, also add this to the config.txt as new parameter, default is on / true
+- set the targetWeight style like the tune value is
+- check if there UI strings without translation
+- Check the UI for optimisation

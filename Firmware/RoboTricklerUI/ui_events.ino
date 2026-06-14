@@ -10,14 +10,10 @@ void updateAddWeightLabel()
   addWeight = WEIGHT_STEP_SIZES[addWeightIndex];
   if (ui_LabelAddWeightCycle != NULL)
   {
-    setLabelText(ui_LabelAddWeightCycle, String(addWeight, 3).c_str());
+    char text[16];
+    snprintf(text, sizeof(text), "%.3f", addWeight);
+    setLabelText(ui_LabelAddWeightCycle, text);
   }
-}
-
-void setAddWeight(byte index)
-{
-  addWeightIndex = index;
-  updateAddWeightLabel();
 }
 
 void toggleTrickler_event_cb(lv_event_t *e)
@@ -34,29 +30,11 @@ void toggleTrickler_event_cb(lv_event_t *e)
   }
 }
 
-void setAddWeightFine_event_cb(lv_event_t *e)
-{
-  setAddWeight(0);
-  beep("button");
-}
-
 void cycleAddWeight_event_cb(lv_event_t *e)
 {
   // updateAddWeightLabel() wraps the index past WEIGHT_STEP_COUNT itself.
   addWeightIndex++;
   updateAddWeightLabel();
-  beep("button");
-}
-
-void setAddWeightMedium_event_cb(lv_event_t *e)
-{
-  setAddWeight(2);
-  beep("button");
-}
-
-void setAddWeightLarge_event_cb(lv_event_t *e)
-{
-  setAddWeight(3);
   beep("button");
 }
 

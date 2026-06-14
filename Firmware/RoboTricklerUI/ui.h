@@ -26,14 +26,8 @@ extern lv_obj_t *ui_PanelTarget;
 extern lv_obj_t *ui_LabelTarget;
 extern lv_obj_t *ui_ButtonToggleTrickler;
 extern lv_obj_t *ui_LabelToggleTrickler;
-extern lv_obj_t *ui_ButtonAddWeightFine;
-extern lv_obj_t *ui_LabelAddWeightFine;
 extern lv_obj_t *ui_ButtonAddWeightCycle;
 extern lv_obj_t *ui_LabelAddWeightCycle;
-extern lv_obj_t *ui_ButtonAddWeightMedium;
-extern lv_obj_t *ui_LabelAddWeightMedium;
-extern lv_obj_t *ui_ButtonAddWeightLarge;
-extern lv_obj_t *ui_LabelAddWeightLarge;
 extern lv_obj_t *ui_ButtonIncreaseTargetWeight;
 extern lv_obj_t *ui_LabelIncreaseTargetWeight;
 extern lv_obj_t *ui_ButtonDecreaseTargetWeight;
@@ -66,11 +60,6 @@ extern lv_obj_t *ui_PanelMessages;
 extern lv_obj_t *ui_ButtonMessageOk;
 extern lv_obj_t *ui_LabelMessageOk;
 extern lv_obj_t *ui_LabelMessages;
-extern lv_obj_t *ui____initial_actions0;
-
-
-
-
 void ui_init(void);
 
 #ifdef __cplusplus

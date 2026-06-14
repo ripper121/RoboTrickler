@@ -11,10 +11,7 @@ extern "C" {
 #endif
 
 void toggleTrickler_event_cb(lv_event_t * e);
-void setAddWeightFine_event_cb(lv_event_t * e);
 void cycleAddWeight_event_cb(lv_event_t * e);
-void setAddWeightMedium_event_cb(lv_event_t * e);
-void setAddWeightLarge_event_cb(lv_event_t * e);
 void increaseTargetWeight_event_cb(lv_event_t * e);
 void decreaseTargetWeight_event_cb(lv_event_t * e);
 void selectPreviousProfile_event_cb(lv_event_t * e);
