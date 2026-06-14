@@ -45,7 +45,7 @@ void showWifiQrCode(lv_event_t *event)
   lv_obj_clear_flag(qrCode, LV_OBJ_FLAG_CLICKABLE);
 
   lv_obj_t *hint = lv_label_create(wifiQrOverlay);
-  lv_label_set_text(hint, "Scan to connect - tap to close");
+  lv_label_set_text(hint, langText("wifi_qr_hint"));
   lv_obj_set_style_text_color(hint, lv_color_black(), LV_PART_MAIN);
   lv_obj_set_style_text_align(hint, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
   lv_obj_align(hint, LV_ALIGN_BOTTOM_MID, 0, 0);

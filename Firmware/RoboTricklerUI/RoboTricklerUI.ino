@@ -1,29 +1,3 @@
-#include "pindef.h"
-#include <FS.h>
-#include <LittleFS.h>
-#include <SD.h>
-#include <SPI.h>
-#include <WiFi.h>
-#include <WiFiClient.h>
-#include <WebServer.h>
-#include <DNSServer.h>
-#include <ESPmDNS.h>
-#include <WiFiUdp.h>
-#include <ArduinoJson.h>
-#include <HTTPClient.h>
-#include <Update.h>
-#include <esp_heap_caps.h>
-#include <esp_mac.h>
-#include <esp_task_wdt.h>
-#include <rtc_wdt.h>
-#include <freertos/semphr.h>
-#include <ctype.h>
-#include <string.h>
-#include <math.h>
-#define FW_VERSION "2.13"
-// Internal firmware update check endpoint. Do not mirror this value into SD files.
-#define DEFAULT_FW_UPDATE_URL "http://strenuous.dev/roboTrickler/userTracker.php"
-
 /*
 Legacy Arduino IDE 1.8.19
 
@@ -43,6 +17,36 @@ Arduino Runs On: "Core 1"
 Events Run On: "Core 0"
 */
 
+#include "compile_options.h"
+#include "pindef.h"
+#include <FS.h>
+#if ENABLE_LITTLEFS
+#include <LittleFS.h>
+#endif
+#include <SD.h>
+#include <SPI.h>
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <WebServer.h>
+#include <DNSServer.h>
+#include <ESPmDNS.h>
+#include <WiFiUdp.h>
+#include <ArduinoJson.h>
+#include <HTTPClient.h>
+#include <Update.h>
+#include <esp_heap_caps.h>
+#include <esp_mac.h>
+#include <esp_task_wdt.h>
+#include <rtc_wdt.h>
+#include <freertos/semphr.h>
+#include <ctype.h>
+#include <string.h>
+#include <math.h>
+
+#define FW_VERSION "2.13"
+// Internal firmware update check endpoint. Do not mirror this value into SD files.
+#define DEFAULT_FW_UPDATE_URL "http://strenuous.dev/roboTrickler/userTracker.php"
+
 
 #include <lv_conf.h>
 #include <lvgl.h>
@@ -53,17 +57,12 @@ Events Run On: "Core 0"
 #endif
 #include <TFT_eSPI.h>
 
-#define DEBUG 0
 #if DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
 #else
 #define DEBUG_PRINT(...)
 #define DEBUG_PRINTLN(...)
-#endif
-
-#ifndef ENABLE_SCREENSHOT
-#define ENABLE_SCREENSHOT 0
 #endif
 
 #define SPLASH_LOGO_PATH "/system/logo.bmp"

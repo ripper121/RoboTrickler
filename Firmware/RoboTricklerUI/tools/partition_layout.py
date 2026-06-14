@@ -14,6 +14,7 @@ SKETCH_DIR = Path(__file__).resolve().parent.parent
 ARDUINO_JSON = SKETCH_DIR / ".vscode" / "arduino.json"
 ESP32_CORE_VERSION = "3.3.10"
 DEFAULT_PARTITION_SCHEME = "default_8MB"
+PARTITION_SCHEME_ENV = "RTUI_PARTITION_SCHEME"
 
 
 @dataclass(frozen=True)
@@ -26,6 +27,10 @@ class Partition:
 
 
 def selected_partition_scheme() -> str:
+    override = os.environ.get(PARTITION_SCHEME_ENV)
+    if override:
+        return override
+
     if not ARDUINO_JSON.is_file():
         return DEFAULT_PARTITION_SCHEME
 

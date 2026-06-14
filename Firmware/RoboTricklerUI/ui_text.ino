@@ -70,6 +70,8 @@ static const char *languageFallback(const char *key)
     return "Open:";
   if (strcmp(key, "wifi_select_and_save") == 0)
     return "Select your WiFi and save.";
+  if (strcmp(key, "wifi_qr_hint") == 0)
+    return "Connect to WiFi AP - tap to close";
   if (strcmp(key, "msg_filesystem_mount_failed") == 0)
     return "Filesystem mount failed";
   if (strcmp(key, "msg_config_default") == 0)
@@ -81,7 +83,13 @@ static const char *languageFallback(const char *key)
   if (strcmp(key, "msg_unknown_config_read_error") == 0)
     return "Unknown config read error";
   if (strcmp(key, "msg_sd_card_not_connected") == 0)
-    return "SD card not connected.\n\nInternal Flash will be used instead.";
+  {
+#if ENABLE_LITTLEFS
+    return "SD card not connected!\n\nInternal Flash will be used instead!";
+#else
+    return "SD card not connected!";
+#endif
+  }
   if (strcmp(key, "msg_config_corrupted") == 0)
     return "Config File Corrupted / Not Found!\n\n";
   if (strcmp(key, "msg_over_trickle") == 0)
@@ -277,6 +285,11 @@ JsonDocument activeUiLangDoc;
 
 const char *langText(const char *key)
 {
+  if (strcmp(key, "msg_sd_card_not_connected") == 0)
+  {
+    return languageFallback(key);
+  }
+
   JsonVariant translatedVariant = activeUiLangDoc["ui"][key];
   if (!translatedVariant.isNull())
   {

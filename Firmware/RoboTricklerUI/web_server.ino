@@ -7,6 +7,7 @@ static bool webUpdateFilesystemUnmounted = false;
 
 void restoreFilesystemAfterFailedUpdate()
 {
+#if ENABLE_LITTLEFS
   if (!webUpdateFilesystemUnmounted)
   {
     return;
@@ -28,6 +29,7 @@ void restoreFilesystemAfterFailedUpdate()
   {
     DEBUG_PRINTLN("LittleFS remount failed after update error.");
   }
+#endif
 }
 
 void returnOK()
@@ -128,7 +130,9 @@ void registerWebServerRoutes()
                   updatePage += "<input type='file' name='firmware' accept='.bin,application/octet-stream' required>";
                   updatePage += "<input type='submit' value='";
                   updatePage += langText("web_update_firmware");
-                  updatePage += "'></form><br><h3>";
+                  updatePage += "'></form><br>";
+#if ENABLE_LITTLEFS
+                  updatePage += "<h3>";
                   updatePage += langText("web_littlefs_image");
                   updatePage += "</h3><p>";
                   updatePage += langText("web_update_filesystem_warning");
@@ -138,6 +142,7 @@ void registerWebServerRoutes()
                   updatePage += "<input type='submit' value='";
                   updatePage += langText("web_update_littlefs");
                   updatePage += "'></form><br>";
+#endif
                   updatePage += webBackButtonHtml();
             server.send(200, "text/html", updatePage); });
 
@@ -175,6 +180,7 @@ void registerWebServerRoutes()
           String infoText = String(langText("status_update_upload")) + String(upload.filename);
           updateDisplayLog(infoText);
 
+#if ENABLE_LITTLEFS
           if (webUpdateFilesystem && FILESYSTEM_ACTIVE && !activeFSIsSD)
           {
             LittleFS.end();
@@ -182,6 +188,14 @@ void registerWebServerRoutes()
             activeFS = NULL;
             webUpdateFilesystemUnmounted = true;
           }
+#else
+          if (webUpdateFilesystem)
+          {
+            updateDisplayLog(langText("status_update_failed"));
+            Serial.setDebugOutput(false);
+            return;
+          }
+#endif
 
           int updateTarget = webUpdateFilesystem ? U_FLASHFS : U_FLASH;
           if (Update.begin(UPDATE_SIZE_UNKNOWN, updateTarget))

@@ -1,5 +1,7 @@
 static const char *SD_FIRMWARE_UPDATE_PATH = "/firmware.bin";
+#if ENABLE_LITTLEFS
 static const char *SD_LITTLEFS_UPDATE_PATH = "/littleFS.bin";
+#endif
 
 static const int SD_UPDATE_NOT_FOUND = 0;
 static const int SD_UPDATE_FAILED = 1;
@@ -104,8 +106,10 @@ void initUpdate()
   }
   restartRequired = firmwareResult == SD_UPDATE_SUCCEEDED;
 
+#if ENABLE_LITTLEFS
   int littleFsResult = updateFromSd(SD_LITTLEFS_UPDATE_PATH, U_FLASHFS, "LittleFS");
   restartRequired = restartRequired || (littleFsResult == SD_UPDATE_SUCCEEDED);
+#endif
 
   if (restartRequired)
   {

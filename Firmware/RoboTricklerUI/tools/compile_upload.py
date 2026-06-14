@@ -27,6 +27,7 @@ def find_sketch_dir() -> Path:
 
 SKETCH_DIR = find_sketch_dir()
 SKETCH_FILE = SKETCH_DIR / "RoboTricklerUI.ino"
+COMPILE_OPTIONS_FILE = SKETCH_DIR / "compile_options.h"
 ARDUINO_JSON = SKETCH_DIR / ".vscode" / "arduino.json"
 GZIP_FILES = SCRIPT_DIR / "gzip_sd_files.py"
 CREATE_FLASH_DATA = SCRIPT_DIR / "create_flash_data.py"
@@ -36,6 +37,10 @@ FLASH_DATA_DIR = SKETCH_DIR / "data"
 DEFAULT_BUILD_DIR = SKETCH_DIR.parent / "build"
 DEFAULT_UPDATE_URL = "http://robo-trickler.local/update"
 DEFAULT_BOARD = "esp32:esp32:esp32"
+DEFAULT_FLASH_SIZE = "8MB"
+LEGACY_PARTITION_SCHEME = "min_spiffs"
+LEGACY_FLASH_SIZE = "4MB"
+PARTITION_SCHEME_ENV = "RTUI_PARTITION_SCHEME"
 DEFAULT_ESPTOOL = (
     Path(os.environ.get("LOCALAPPDATA", ""))
     / "Arduino15"
@@ -116,6 +121,16 @@ def parse_args() -> argparse.Namespace:
         "--full",
         action="store_true",
         help="With --port, erase flash and also write the bootloader.",
+    )
+    parser.add_argument(
+        "-legacyPartition",
+        "--legacy-partition",
+        dest="legacy_partition",
+        action="store_true",
+        help=(
+            "Use the 4 MB min_spiffs partition configuration from commit "
+            "1b312860d6c47f76a9c749f1be4ec189b48fe0b1."
+        ),
     )
     parser.add_argument(
         "--cli",
@@ -207,9 +222,20 @@ def resolve_build_dir(config: dict[str, str], override: Path | None) -> Path:
     return DEFAULT_BUILD_DIR.resolve()
 
 
-def build_descriptor(config: dict[str, str], force_error_debug_level: bool = False) -> str:
+def build_descriptor(
+    config: dict[str, str],
+    force_error_debug_level: bool = False,
+    legacy_partition: bool = False,
+) -> str:
     board = config.get("board", DEFAULT_BOARD)
     configuration = config.get("configuration", DEFAULT_CONFIGURATION)
+    if legacy_partition:
+        configuration = set_configuration_option(
+            configuration, "PartitionScheme", LEGACY_PARTITION_SCHEME
+        )
+        configuration = set_configuration_option(
+            configuration, "FlashSize", "4M"
+        )
     if force_error_debug_level:
         configuration = set_debug_level(configuration, "error")
     else:
@@ -218,9 +244,9 @@ def build_descriptor(config: dict[str, str], force_error_debug_level: bool = Fal
 
 
 def read_sketch_debug_enabled() -> bool:
-    require_path(SKETCH_FILE, "sketch")
-    with SKETCH_FILE.open("r", encoding="utf-8") as sketch:
-        for line in sketch:
+    require_path(COMPILE_OPTIONS_FILE, "compile options")
+    with COMPILE_OPTIONS_FILE.open("r", encoding="utf-8") as source:
+        for line in source:
             match = DEBUG_DEFINE_RE.match(line)
             if match:
                 return match.group(1) != "0"
@@ -229,16 +255,20 @@ def read_sketch_debug_enabled() -> bool:
 
 
 def set_debug_level(configuration: str, debug_level: str) -> str:
+    return set_configuration_option(configuration, "DebugLevel", debug_level)
+
+
+def set_configuration_option(configuration: str, name: str, value: str) -> str:
     parts = [part for part in configuration.split(",") if part]
     changed = False
     for index, part in enumerate(parts):
-        if part.startswith("DebugLevel="):
-            parts[index] = f"DebugLevel={debug_level}"
+        if part.startswith(f"{name}="):
+            parts[index] = f"{name}={value}"
             changed = True
             break
 
     if not changed:
-        parts.append(f"DebugLevel={debug_level}")
+        parts.append(f"{name}={value}")
 
     return ",".join(parts)
 
@@ -381,7 +411,8 @@ def build_merged_image(
     esptool_path: Path,
     build_dir: Path,
     firmware_path: Path,
-    littlefs_path: Path,
+    littlefs_path: Path | None,
+    flash_size: str,
     timeout: int,
 ) -> Path:
     from partition_layout import require_partition
@@ -395,14 +426,28 @@ def build_merged_image(
         (partitions_path, "partition table"),
         (boot_app0_path, "OTA boot data"),
         (firmware_path, "firmware"),
-        (littlefs_path, "LittleFS image"),
     ):
         require_path(path, description)
+    if littlefs_path is not None:
+        require_path(littlefs_path, "LittleFS image")
 
-    littlefs_partition = require_partition("spiffs")
     output_path = build_dir / "RoboTricklerUI.ino.merged.bin"
     if output_path.exists():
         output_path.unlink()
+    files = [
+        "0x1000",
+        str(bootloader_path),
+        "0x8000",
+        str(partitions_path),
+        "0xe000",
+        str(boot_app0_path),
+        "0x10000",
+        str(firmware_path),
+    ]
+    if littlefs_path is not None:
+        littlefs_partition = require_partition("spiffs")
+        files.extend([hex(littlefs_partition.offset), str(littlefs_path)])
+
     subprocess.run(
         [
             str(esptool_path),
@@ -414,22 +459,13 @@ def build_merged_image(
             "--flash-freq",
             "80m",
             "--flash-size",
-            "8MB",
+            flash_size,
             "--pad-to-size",
-            "8MB",
+            flash_size,
             "--output",
             str(output_path),
-            "0x1000",
-            str(bootloader_path),
-            "0x8000",
-            str(partitions_path),
-            "0xe000",
-            str(boot_app0_path),
-            "0x10000",
-            str(firmware_path),
-            hex(littlefs_partition.offset),
-            str(littlefs_path),
-        ],
+        ]
+        + files,
         cwd=SKETCH_DIR,
         check=True,
         timeout=timeout,
@@ -443,17 +479,12 @@ def format_size(size: int) -> str:
     return f"{size / 1024:.1f} KiB"
 
 
-def print_space_summary(firmware_path: Path) -> None:
+def print_space_summary(firmware_path: Path, include_littlefs: bool = True) -> None:
     from partition_layout import require_partition
 
     app_partition = require_partition("app0")
-    littlefs_partition = require_partition("spiffs")
     firmware_used = firmware_path.stat().st_size
     firmware_free = max(0, app_partition.size - firmware_used)
-    littlefs_used = sum(
-        path.stat().st_size for path in FLASH_DATA_DIR.rglob("*") if path.is_file()
-    )
-    littlefs_free = max(0, littlefs_partition.size - littlefs_used)
 
     print("\nSpace summary:")
     print(
@@ -461,12 +492,18 @@ def print_space_summary(firmware_path: Path) -> None:
         f"{format_size(app_partition.size)}, {format_size(firmware_free)} free "
         f"({firmware_free * 100 / app_partition.size:.1f}%)"
     )
-    print(
-        f"  LittleFS: {format_size(littlefs_used)} files of "
-        f"{format_size(littlefs_partition.size)}, about "
-        f"{format_size(littlefs_free)} free "
-        f"({littlefs_free * 100 / littlefs_partition.size:.1f}%, before filesystem metadata)"
-    )
+    if include_littlefs:
+        littlefs_partition = require_partition("spiffs")
+        littlefs_used = sum(
+            path.stat().st_size for path in FLASH_DATA_DIR.rglob("*") if path.is_file()
+        )
+        littlefs_free = max(0, littlefs_partition.size - littlefs_used)
+        print(
+            f"  LittleFS: {format_size(littlefs_used)} files of "
+            f"{format_size(littlefs_partition.size)}, about "
+            f"{format_size(littlefs_free)} free "
+            f"({littlefs_free * 100 / littlefs_partition.size:.1f}%, before filesystem metadata)"
+        )
 
 
 def make_multipart_body(field_name: str, file_path: Path) -> tuple[bytes, str]:
@@ -538,28 +575,31 @@ def flash_serial(
     esptool_path: Path,
     build_dir: Path,
     firmware_path: Path,
-    littlefs_path: Path,
+    littlefs_path: Path | None,
     full: bool,
+    flash_size: str,
 ) -> None:
     from partition_layout import require_partition
 
     require_path(esptool_path, "esptool.exe")
     require_path(firmware_path, "firmware binary")
-    require_path(littlefs_path, "LittleFS image")
+    if littlefs_path is not None:
+        require_path(littlefs_path, "LittleFS image")
 
     app_partition = require_partition("app0")
     otadata_partition = require_partition("otadata")
-    littlefs_partition = require_partition("spiffs")
     if firmware_path.stat().st_size > app_partition.size:
         raise RuntimeError(
             f"Firmware is {firmware_path.stat().st_size} bytes but app0 is only "
             f"{app_partition.size} bytes"
         )
-    if littlefs_path.stat().st_size > littlefs_partition.size:
-        raise RuntimeError(
-            f"LittleFS image is {littlefs_path.stat().st_size} bytes but the partition "
-            f"is only {littlefs_partition.size} bytes"
-        )
+    if littlefs_path is not None:
+        littlefs_partition = require_partition("spiffs")
+        if littlefs_path.stat().st_size > littlefs_partition.size:
+            raise RuntimeError(
+                f"LittleFS image is {littlefs_path.stat().st_size} bytes but the partition "
+                f"is only {littlefs_partition.size} bytes"
+            )
 
     partitions = build_dir / "RoboTricklerUI.ino.partitions.bin"
     boot_app = build_dir / "boot_app0.bin"
@@ -582,9 +622,9 @@ def flash_serial(
         str(boot_app),
         hex(app_partition.offset),
         str(firmware_path),
-        hex(littlefs_partition.offset),
-        str(littlefs_path),
     ]
+    if littlefs_path is not None:
+        files.extend([hex(littlefs_partition.offset), str(littlefs_path)])
 
     if full:
         bootloader = build_dir / "RoboTricklerUI.ino.bootloader.bin"
@@ -605,7 +645,7 @@ def flash_serial(
             "--flash-freq",
             "80m",
             "--flash-size",
-            "8MB",
+            flash_size,
         ]
         + files
     )
@@ -616,6 +656,17 @@ def main() -> int:
     args = parse_args()
 
     try:
+        partition_scheme = (
+            LEGACY_PARTITION_SCHEME if args.legacy_partition else None
+        )
+        if partition_scheme:
+            os.environ[PARTITION_SCHEME_ENV] = partition_scheme
+        else:
+            os.environ.pop(PARTITION_SCHEME_ENV, None)
+        flash_size = (
+            LEGACY_FLASH_SIZE if args.legacy_partition else DEFAULT_FLASH_SIZE
+        )
+
         config = load_arduino_config()
         build_dir = resolve_build_dir(config, args.build_dir)
 
@@ -624,28 +675,36 @@ def main() -> int:
         elif args.skip_compile:
             bin_path = find_firmware_bin(build_dir)
         else:
-            board_descriptor = build_descriptor(config, args.error)
+            board_descriptor = build_descriptor(
+                config, args.error, args.legacy_partition
+            )
             if args.cli:
                 bin_path = run_cli_compile(args.cli_path.resolve(), build_dir, board_descriptor, args.compile_timeout)
             else:
                 bin_path = run_extension_compile(build_dir, board_descriptor, args.compile_timeout)
 
-        littlefs_path = build_littlefs_image(build_dir, args.compile_timeout)
+        littlefs_path = None
+        if not args.legacy_partition:
+            littlefs_path = build_littlefs_image(build_dir, args.compile_timeout)
+        else:
+            print("Legacy partition mode: skipping LittleFS image (128 KiB partition).")
         merged_path = build_merged_image(
             args.esptool.resolve(),
             build_dir,
             bin_path,
             littlefs_path,
+            flash_size,
             args.compile_timeout,
         )
         print(f"Firmware binary: {bin_path}")
-        from partition_layout import require_partition
+        if littlefs_path is not None:
+            from partition_layout import require_partition
 
-        littlefs_partition = require_partition("spiffs")
-        print(f"LittleFS image: {littlefs_path} (flash offset {hex(littlefs_partition.offset)})")
+            littlefs_partition = require_partition("spiffs")
+            print(f"LittleFS image: {littlefs_path} (flash offset {hex(littlefs_partition.offset)})")
         print(f"Merged flash image: {merged_path}")
         if args.compile_only:
-            print_space_summary(bin_path)
+            print_space_summary(bin_path, littlefs_path is not None)
             return 0
 
         if args.port:
@@ -657,18 +716,20 @@ def main() -> int:
                 bin_path,
                 littlefs_path,
                 args.full,
+                flash_size,
             )
         else:
             if args.full:
                 raise RuntimeError("--full requires --port")
-            upload_web_artifact(args.url, "filesystem", littlefs_path, args.timeout)
-            wait_for_web_server(args.url, args.reboot_timeout)
+            if littlefs_path is not None:
+                upload_web_artifact(args.url, "filesystem", littlefs_path, args.timeout)
+                wait_for_web_server(args.url, args.reboot_timeout)
             upload_web_artifact(args.url, "firmware", bin_path, args.timeout)
             print(
                 "Web upload completed. The partition table is unchanged; use --port "
                 "when the selected partition scheme has changed."
             )
-        print_space_summary(bin_path)
+        print_space_summary(bin_path, littlefs_path is not None)
         return 0
     except (
         FileNotFoundError,

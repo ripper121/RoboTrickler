@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -15,6 +16,11 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 SKETCH_DIR = SCRIPT_DIR.parent
 DEFAULT_BUILD_DIR = SKETCH_DIR.parent / "build"
 DEFAULT_USB_FLASH_DIR = SKETCH_DIR.parent / "USB-Flash"
+SD_FILES_GZ_DIR = SKETCH_DIR / "SD-Files-Gz"
+COMPILE_UPLOAD = SCRIPT_DIR / "compile_upload.py"
+GZIP_SD_FILES = SCRIPT_DIR / "gzip_sd_files.py"
+CREATE_FLASH_DATA = SCRIPT_DIR / "create_flash_data.py"
+CREATE_FLASH_LITTLEFS_IMAGE = SCRIPT_DIR / "create_flash_littlefs_image.py"
 
 BUILD_ARTIFACTS = (
     "RoboTricklerUI.ino.bin",
@@ -34,8 +40,8 @@ STATIC_FILES = (
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Copy compiled firmware files into USB-Flash, copy the selected "
-            "partition CSV, and validate the merged image."
+            "Regenerate LittleFS, copy compiled firmware files into USB-Flash, "
+            "copy the selected partition CSV, and validate the merged image."
         )
     )
     parser.add_argument(
@@ -57,6 +63,51 @@ def require_file(path: Path, description: str) -> Path:
     if not path.is_file():
         raise FileNotFoundError(f"{description} not found: {path}")
     return path
+
+
+def regenerate_littlefs(build_dir: Path) -> None:
+    if SD_FILES_GZ_DIR.exists():
+        if not SD_FILES_GZ_DIR.is_dir():
+            raise RuntimeError(
+                f"Refusing to replace non-directory output: {SD_FILES_GZ_DIR}"
+            )
+        shutil.rmtree(SD_FILES_GZ_DIR)
+        print(f"Removed {SD_FILES_GZ_DIR}", flush=True)
+
+    steps = (
+        (GZIP_SD_FILES, []),
+        (CREATE_FLASH_DATA, []),
+        (
+            CREATE_FLASH_LITTLEFS_IMAGE,
+            ["--output", str(build_dir / "littlefs.bin")],
+        ),
+    )
+    for script, arguments in steps:
+        require_file(script, f"generation script {script.name}")
+        print(f"Running {script.name}...", flush=True)
+        subprocess.run(
+            [sys.executable, str(script), *arguments],
+            cwd=SKETCH_DIR,
+            check=True,
+        )
+
+
+def compile_firmware(build_dir: Path) -> None:
+    require_file(COMPILE_UPLOAD, "compile script")
+    print("Running compile_upload.py --cli...", flush=True)
+    subprocess.run(
+        [
+            sys.executable,
+            str(COMPILE_UPLOAD),
+            "--cli",
+            "--error",
+            "--compile-only",
+            "--build-dir",
+            str(build_dir),
+        ],
+        cwd=SKETCH_DIR,
+        check=True,
+    )
 
 
 def copy_package_files(build_dir: Path, output_dir: Path) -> None:
@@ -112,11 +163,19 @@ def main() -> int:
     output_dir = args.output_dir.resolve()
 
     try:
+        regenerate_littlefs(build_dir)
+        compile_firmware(build_dir)
         copy_package_files(build_dir, output_dir)
         validate_merged_image(output_dir)
         print("USB-Flash package updated successfully")
         return 0
-    except (FileNotFoundError, OSError, ValueError) as exc:
+    except (
+        FileNotFoundError,
+        OSError,
+        RuntimeError,
+        subprocess.CalledProcessError,
+        ValueError,
+    ) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
 

@@ -22,6 +22,7 @@ bool initFilesystem()
     SDspi = NULL;
   }
 
+#if ENABLE_LITTLEFS
   if (!FILESYSTEM_ACTIVE)
   {
     if (!LittleFS.begin(false))
@@ -33,6 +34,7 @@ bool initFilesystem()
     activeFSIsSD = false;
     FILESYSTEM_ACTIVE = true;
   }
+#endif
 
   if (activeFSIsSD)
   {
@@ -41,6 +43,7 @@ bool initFilesystem()
     DEBUG_PRINT("SD used bytes: ");
     DEBUG_PRINTLN(SD.usedBytes());
   }
+#if ENABLE_LITTLEFS
   else
   {
     DEBUG_PRINT("LittleFS total bytes: ");
@@ -48,5 +51,6 @@ bool initFilesystem()
     DEBUG_PRINT("LittleFS used bytes: ");
     DEBUG_PRINTLN(LittleFS.usedBytes());
   }
-  return true;
+#endif
+  return FILESYSTEM_ACTIVE;
 }
