@@ -288,7 +288,8 @@ lv_label_set_text(ui_LabelLog,"");
 ui_ButtonScaleProtocol = lv_btn_create(ui_PanelPageInfo);
 lv_obj_set_width( ui_ButtonScaleProtocol, 220);
 lv_obj_set_height( ui_ButtonScaleProtocol, 40);
-lv_obj_set_y( ui_ButtonScaleProtocol, -50 );
+lv_obj_set_x( ui_ButtonScaleProtocol, -48 );
+lv_obj_set_y( ui_ButtonScaleProtocol, -4 );
 lv_obj_set_align( ui_ButtonScaleProtocol, LV_ALIGN_BOTTOM_MID );
 lv_obj_add_flag( ui_ButtonScaleProtocol, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
 lv_obj_clear_flag( ui_ButtonScaleProtocol, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
@@ -301,9 +302,9 @@ lv_label_set_text(ui_LabelScaleProtocol,"Scale: --");
 lv_obj_set_style_text_font(ui_LabelScaleProtocol, UI_FONT_NORMAL, LV_PART_MAIN);
 
 ui_ButtonSyncFlashToSd = lv_btn_create(ui_PanelPageInfo);
-lv_obj_set_width( ui_ButtonSyncFlashToSd, 220);
+lv_obj_set_width( ui_ButtonSyncFlashToSd, 40);
 lv_obj_set_height( ui_ButtonSyncFlashToSd, 40);
-lv_obj_set_x( ui_ButtonSyncFlashToSd, -116 );
+lv_obj_set_x( ui_ButtonSyncFlashToSd, 90 );
 lv_obj_set_y( ui_ButtonSyncFlashToSd, -4 );
 lv_obj_set_align( ui_ButtonSyncFlashToSd, LV_ALIGN_BOTTOM_MID );
 lv_obj_add_flag( ui_ButtonSyncFlashToSd, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
@@ -313,13 +314,13 @@ ui_LabelSyncFlashToSd = lv_label_create(ui_ButtonSyncFlashToSd);
 lv_obj_set_width( ui_LabelSyncFlashToSd, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelSyncFlashToSd, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelSyncFlashToSd, LV_ALIGN_CENTER );
-lv_label_set_text(ui_LabelSyncFlashToSd, LV_SYMBOL_UPLOAD " Flash > SD");
+lv_label_set_text(ui_LabelSyncFlashToSd, LV_SYMBOL_UPLOAD);
 lv_obj_set_style_text_font(ui_LabelSyncFlashToSd, UI_FONT_NORMAL, LV_PART_MAIN);
 
 ui_ButtonSyncSdToFlash = lv_btn_create(ui_PanelPageInfo);
-lv_obj_set_width( ui_ButtonSyncSdToFlash, 220);
+lv_obj_set_width( ui_ButtonSyncSdToFlash, 40);
 lv_obj_set_height( ui_ButtonSyncSdToFlash, 40);
-lv_obj_set_x( ui_ButtonSyncSdToFlash, 116 );
+lv_obj_set_x( ui_ButtonSyncSdToFlash, 138 );
 lv_obj_set_y( ui_ButtonSyncSdToFlash, -4 );
 lv_obj_set_align( ui_ButtonSyncSdToFlash, LV_ALIGN_BOTTOM_MID );
 lv_obj_add_flag( ui_ButtonSyncSdToFlash, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
@@ -329,7 +330,7 @@ ui_LabelSyncSdToFlash = lv_label_create(ui_ButtonSyncSdToFlash);
 lv_obj_set_width( ui_LabelSyncSdToFlash, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_LabelSyncSdToFlash, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_LabelSyncSdToFlash, LV_ALIGN_CENTER );
-lv_label_set_text(ui_LabelSyncSdToFlash, LV_SYMBOL_DOWNLOAD " SD > Flash");
+lv_label_set_text(ui_LabelSyncSdToFlash, LV_SYMBOL_DOWNLOAD);
 lv_obj_set_style_text_font(ui_LabelSyncSdToFlash, UI_FONT_NORMAL, LV_PART_MAIN);
 
 ui_PanelMessages = lv_obj_create(ui_Screen1);

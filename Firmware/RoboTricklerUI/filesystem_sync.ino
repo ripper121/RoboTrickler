@@ -127,11 +127,8 @@ void updateFilesystemSyncControls()
       lv_obj_add_flag(ui_ButtonSyncSdToFlash, LV_OBJ_FLAG_HIDDEN);
     }
 
-    char label[64];
-    snprintf(label, sizeof(label), "%s %s", LV_SYMBOL_UPLOAD, langText("label_sync_flash_to_sd"));
-    lv_label_set_text(ui_LabelSyncFlashToSd, label);
-    snprintf(label, sizeof(label), "%s %s", LV_SYMBOL_DOWNLOAD, langText("label_sync_sd_to_flash"));
-    lv_label_set_text(ui_LabelSyncSdToFlash, label);
+    lv_label_set_text(ui_LabelSyncFlashToSd, LV_SYMBOL_UPLOAD);
+    lv_label_set_text(ui_LabelSyncSdToFlash, LV_SYMBOL_DOWNLOAD);
     lvglUnlock();
   }
 }
