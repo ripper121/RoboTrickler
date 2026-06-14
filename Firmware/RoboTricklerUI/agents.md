@@ -13,6 +13,8 @@ Use this order for all relevant implementation work:
 1. Check examples
 2. Define the smallest working scope
 3. Keep board mapping and hardware assumptions centralized
+4. Try always to save as much Heap as possible, because the Webserver, Wifi and LVGL are heap hungry.
+5. Try to reuse UI Code to save Heap.
 
 ## SD file rules
 

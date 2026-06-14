@@ -626,7 +626,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   getProfileList();
   for (int i = 0; i < profileListCount; i++)
   {
-    if (profileListBuff[i] == profileName)
+    if (strcmp(profileListBuff[i], profileName.c_str()) == 0)
     {
       setProfile(i);
       break;
@@ -746,7 +746,7 @@ void scanProfileDirectory(const char *directory, byte &profileCounter, byte &inv
         bool duplicate = false;
         for (int i = 0; i < profileCounter; i++)
         {
-          if (profileListBuff[i] == filename)
+          if (strcmp(profileListBuff[i], filename.c_str()) == 0)
           {
             duplicate = true;
             break;
@@ -754,7 +754,7 @@ void scanProfileDirectory(const char *directory, byte &profileCounter, byte &inv
         }
         if (!duplicate)
         {
-          profileListBuff[profileCounter] = filename;
+          strlcpy(profileListBuff[profileCounter], filename.c_str(), PROFILE_NAME_LEN);
           profileCounter++;
         }
       }
@@ -813,7 +813,7 @@ void getProfileList()
       message += "\n...";
     }
     message += langText("msg_invalid_profiles_ignored");
-    messageBox(message.c_str(), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
+    errorBox(message, true);
   }
 }
 

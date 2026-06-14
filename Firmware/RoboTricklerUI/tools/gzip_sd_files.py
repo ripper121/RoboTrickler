@@ -16,7 +16,6 @@ DEFAULT_SOURCE = Path(__file__).resolve().parent.parent / "SD-Files"
 DEFAULT_OUTPUT = Path(__file__).resolve().parent.parent / "SD-Files-Gz"
 EXCLUDED_TOP_LEVEL_DIRECTORIES = {"profiles","lang"}
 EXCLUDED_FILES = {"avg.txt", "calibrate.txt"}
-UNCOMPRESSED_FILES = {"system/logo.bmp"}
 MAX_GZIP_COMPRESSION = 9
 
 
@@ -32,7 +31,6 @@ def should_compress(relative_path: Path) -> bool:
     return (
         len(relative_path.parts) > 1
         and relative_path.parts[0] not in EXCLUDED_TOP_LEVEL_DIRECTORIES
-        and relative_path.as_posix() not in UNCOMPRESSED_FILES
         and relative_path.suffix.lower() != ".gz"
     )
 

@@ -84,7 +84,7 @@ void stopMeasurement()
 void saveTargetWeight(float weight)
 {
     config.targetWeight = weight;
-    setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+    updateTargetWeightLabel();
     String infoText = langText("status_saving_target");
     updateDisplayLog(infoText, true);
     if (!saveProfileTargetWeight(config.profile, config.targetWeight))

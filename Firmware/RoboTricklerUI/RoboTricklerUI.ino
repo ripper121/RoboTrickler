@@ -65,9 +65,6 @@ Events Run On: "Core 0"
 #define DEBUG_PRINTLN(...)
 #endif
 
-#define SPLASH_LOGO_PATH "/system/logo.bmp"
-#define SPLASH_DISPLAY_MS 3000
-
 #define DISP_TASK_STACK 4096 * 2
 #define DISP_TASK_PRO 1
 #define DISP_TASK_CORE 0
@@ -167,7 +164,12 @@ bool restart_now = false;
 unsigned long calibrationProfilePromptTime = 0;
 unsigned long lastScaleWeightReadTime = 0;
 
-String profileListBuff[32];
+// Profile names are bounded by config.profile (char[32]). Keeping the list in a
+// fixed BSS buffer instead of String[32] avoids up to 32 small heap allocations
+// (and their fragmentation) every time the profile list is rebuilt.
+#define PROFILE_LIST_MAX 32
+#define PROFILE_NAME_LEN 32
+char profileListBuff[PROFILE_LIST_MAX][PROFILE_NAME_LEN];
 byte profileListCount;
 int profileListCounter;
 

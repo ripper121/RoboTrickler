@@ -70,8 +70,6 @@ static const char *languageFallback(const char *key)
     return "Open:";
   if (strcmp(key, "wifi_select_and_save") == 0)
     return "Select your WiFi and save.";
-  if (strcmp(key, "wifi_qr_hint") == 0)
-    return "Connect to WiFi AP - tap to close";
   if (strcmp(key, "msg_filesystem_mount_failed") == 0)
     return "Filesystem mount failed";
   if (strcmp(key, "msg_config_default") == 0)
@@ -279,7 +277,6 @@ static const char *languageFallback(const char *key)
   return key;
 }
 
-String activeUiLangJson = "";
 String activeUiLangFilename = "";
 JsonDocument activeUiLangDoc;
 
@@ -304,7 +301,6 @@ const char *langText(const char *key)
 
 bool loadLanguage()
 {
-  activeUiLangJson = "";
   activeUiLangFilename = "";
   activeUiLangDoc.clear();
 
@@ -356,19 +352,14 @@ bool loadLanguage()
   }
   activeUiLangFilename = filename;
 
-  activeUiLangJson.reserve(file.size() + 1);
-  while (file.available())
-  {
-    activeUiLangJson += (char)file.read();
-  }
+  // Parse straight from the file stream. ArduinoJson copies keys/values into the
+  // document's own pool, so there is no need to keep the raw JSON text in heap.
+  DeserializationError error = deserializeJson(activeUiLangDoc, file);
   file.close();
-
-  DeserializationError error = deserializeJson(activeUiLangDoc, activeUiLangJson);
   if (error || !activeUiLangDoc["ui"].is<JsonObject>())
   {
     DEBUG_PRINT("Language JSON parse failed: ");
     DEBUG_PRINTLN(error.c_str());
-    activeUiLangJson = "";
     activeUiLangDoc.clear();
     return false;
   }

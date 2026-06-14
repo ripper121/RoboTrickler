@@ -13,34 +13,29 @@ extern "C" {
     #include "lvgl.h"
 
 #include "ui_fonts.h"
-#include "ui_helpers.h"
 #include "ui_events.h"
 // SCREEN: ui_Screen1
+// Buttons are wired straight to their *_event_cb handlers (declared in
+// ui_events.h) via LV_EVENT_CLICKED in ui_Screen1.c, so no per-button
+// ui_event_* wrapper functions are needed here.
 void ui_Screen1_screen_init(void);
 extern lv_obj_t *ui_Screen1;
 extern lv_obj_t *ui_TabView;
 extern lv_obj_t *ui_TabPageTrickler;
 extern lv_obj_t *ui_PanelTarget;
 extern lv_obj_t *ui_LabelTarget;
-void ui_event_ButtonToggleTrickler( lv_event_t * e);
 extern lv_obj_t *ui_ButtonToggleTrickler;
 extern lv_obj_t *ui_LabelToggleTrickler;
-void ui_event_ButtonAddWeightFine( lv_event_t * e);
 extern lv_obj_t *ui_ButtonAddWeightFine;
 extern lv_obj_t *ui_LabelAddWeightFine;
-void ui_event_ButtonAddWeightCycle( lv_event_t * e);
 extern lv_obj_t *ui_ButtonAddWeightCycle;
 extern lv_obj_t *ui_LabelAddWeightCycle;
-void ui_event_ButtonAddWeightMedium( lv_event_t * e);
 extern lv_obj_t *ui_ButtonAddWeightMedium;
 extern lv_obj_t *ui_LabelAddWeightMedium;
-void ui_event_ButtonAddWeightLarge( lv_event_t * e);
 extern lv_obj_t *ui_ButtonAddWeightLarge;
 extern lv_obj_t *ui_LabelAddWeightLarge;
-void ui_event_ButtonIncreaseTargetWeight( lv_event_t * e);
 extern lv_obj_t *ui_ButtonIncreaseTargetWeight;
 extern lv_obj_t *ui_LabelIncreaseTargetWeight;
-void ui_event_ButtonDecreaseTargetWeight( lv_event_t * e);
 extern lv_obj_t *ui_ButtonDecreaseTargetWeight;
 extern lv_obj_t *ui_LabelDecreaseTargetWeight;
 extern lv_obj_t *ui_PanelTricklerWeight;
@@ -50,23 +45,18 @@ extern lv_obj_t *ui_LabelInfo;
 extern lv_obj_t *ui_TabPageProfile;
 extern lv_obj_t *ui_PanelProfile;
 extern lv_obj_t *ui_LabelProfile;
-void ui_event_ButtonProfileTune( lv_event_t * e);
 extern lv_obj_t *ui_ButtonProfileTune;
 extern lv_obj_t *ui_LabelProfileTune;
-void ui_event_ButtonProfileDelete( lv_event_t * e);
 extern lv_obj_t *ui_ButtonProfileDelete;
 extern lv_obj_t *ui_LabelProfileDelete;
-void ui_event_ButtonProfilePrev( lv_event_t * e);
 extern lv_obj_t *ui_ButtonProfilePrev;
 extern lv_obj_t *ui_LabelProfilePrev;
-void ui_event_ButtonProfileNext( lv_event_t * e);
 extern lv_obj_t *ui_ButtonProfileNext;
 extern lv_obj_t *ui_LabelProfileNext;
 extern lv_obj_t *ui_TabPageInfo;
 extern lv_obj_t *ui_PanelPageInfo;
 extern lv_obj_t *ui_LabelLog;
 extern lv_obj_t *ui_PanelMessages;
-void ui_event_ButtonMessageOk( lv_event_t * e);
 extern lv_obj_t *ui_ButtonMessageOk;
 extern lv_obj_t *ui_LabelMessageOk;
 extern lv_obj_t *ui_LabelMessages;

@@ -1,4 +1,24 @@
-String infoMessageBuffer[11];
+// Fixed-size log storage. Kept in BSS instead of the heap so logging cannot
+// fragment the heap (the previous String[] + concatenation churned malloc on
+// every one of the ~70 log call sites). Lines are truncated to LOG_LINE_LEN.
+#define LOG_LINE_COUNT 11
+#define LOG_LINE_LEN 64
+static char infoMessageBuffer[LOG_LINE_COUNT][LOG_LINE_LEN];
+
+// Trim leading/trailing whitespace in place (no heap, replaces String::trim()).
+static void trimInPlace(char *s)
+{
+    size_t start = strspn(s, " \t\r\n");
+    if (start > 0)
+    {
+        memmove(s, s + start, strlen(s + start) + 1);
+    }
+    size_t len = strlen(s);
+    while (len > 0 && strchr(" \t\r\n", s[len - 1]) != NULL)
+    {
+        s[--len] = '\0';
+    }
+}
 
 void closeDialog(lv_obj_t **dialog, bool deleteAfterClose)
 {
@@ -19,15 +39,14 @@ void closeDialog(lv_obj_t **dialog, bool deleteAfterClose)
     lvglUnlock();
 }
 
-void insertLine(String newLine)
+void insertLine(const char *newLine)
 {
-    // Shift all lines up by one position
-    for (int i = 0; i < (sizeof(infoMessageBuffer) / sizeof(infoMessageBuffer[0])) - 1; i++)
-    {
-        infoMessageBuffer[i] = infoMessageBuffer[i + 1];
-    }
+    // Shift all lines up by one position (contiguous 2D array -> single memmove).
+    memmove(infoMessageBuffer[0], infoMessageBuffer[1],
+            (LOG_LINE_COUNT - 1) * LOG_LINE_LEN);
     // Add new line at the bottom
-    infoMessageBuffer[(sizeof(infoMessageBuffer) / sizeof(infoMessageBuffer[0])) - 1] = newLine;
+    strncpy(infoMessageBuffer[LOG_LINE_COUNT - 1], newLine, LOG_LINE_LEN - 1);
+    infoMessageBuffer[LOG_LINE_COUNT - 1][LOG_LINE_LEN - 1] = '\0';
 }
 
 void setLabelTextColor(lv_obj_t *label, uint32_t colorHex)
@@ -150,6 +169,13 @@ void setLabelText(lv_obj_t *label, const char *text)
   }
 }
 
+// The target weight label is rewritten from config.targetWeight in several
+// places (boot, +/- buttons, profile load/tune); keep that formatting in one spot.
+void updateTargetWeightLabel()
+{
+  setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+}
+
 void setWeightLabel(lv_obj_t *label)
 {
   char text[32];
@@ -175,29 +201,33 @@ void setObjBgColor(lv_obj_t *obj, uint32_t colorHex)
   }
 }
 
-void updateDisplayLog(String logOutput, bool noLog = false)
+void updateDisplayLog(const String &logOutput, bool noLog = false)
 {
   if (!noLog)
   {
-    logOutput += "\n";
-    insertLine(logOutput);
+    char line[LOG_LINE_LEN];
+    snprintf(line, sizeof(line), "%s\n", logOutput.c_str());
+    insertLine(line);
     refreshLogLabel();
   }
   else
   {
-    logOutput.trim();
-    setLabelText(ui_LabelInfo, logOutput.c_str());
+    char text[LOG_LINE_LEN];
+    snprintf(text, sizeof(text), "%s", logOutput.c_str());
+    trimInPlace(text);
+    setLabelText(ui_LabelInfo, text);
   }
   DEBUG_PRINT(logOutput);
 }
 
 void refreshLogLabel()
 {
-  String logText = "";
-  for (int i = 0; i < (sizeof(infoMessageBuffer) / sizeof(infoMessageBuffer[0])); i++)
+  static char logText[LOG_LINE_COUNT * LOG_LINE_LEN];
+  logText[0] = '\0';
+  for (int i = 0; i < LOG_LINE_COUNT; i++)
   {
-    logText += infoMessageBuffer[i];
+    strncat(logText, infoMessageBuffer[i], sizeof(logText) - strlen(logText) - 1);
   }
-  setLabelText(ui_LabelLog, logText.c_str());
+  setLabelText(ui_LabelLog, logText);
 }
 

@@ -317,17 +317,17 @@ lv_obj_set_style_text_align(ui_LabelMessages, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN
 lv_obj_set_style_text_font(ui_LabelMessages, UI_FONT_LARGE, LV_PART_MAIN);
 lv_obj_set_style_text_color(ui_LabelMessages, lv_color_hex(0xFF0000), LV_PART_MAIN);
 
-lv_obj_add_event_cb(ui_ButtonToggleTrickler, ui_event_ButtonToggleTrickler, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_ButtonAddWeightFine, ui_event_ButtonAddWeightFine, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_ButtonAddWeightCycle, ui_event_ButtonAddWeightCycle, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_ButtonAddWeightMedium, ui_event_ButtonAddWeightMedium, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_ButtonAddWeightLarge, ui_event_ButtonAddWeightLarge, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_ButtonIncreaseTargetWeight, ui_event_ButtonIncreaseTargetWeight, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_ButtonDecreaseTargetWeight, ui_event_ButtonDecreaseTargetWeight, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_ButtonProfileTune, ui_event_ButtonProfileTune, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_ButtonProfileDelete, ui_event_ButtonProfileDelete, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_ButtonProfilePrev, ui_event_ButtonProfilePrev, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_ButtonProfileNext, ui_event_ButtonProfileNext, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_ButtonMessageOk, ui_event_ButtonMessageOk, LV_EVENT_ALL, NULL);
+lv_obj_add_event_cb(ui_ButtonToggleTrickler, toggleTrickler_event_cb, LV_EVENT_CLICKED, NULL);
+lv_obj_add_event_cb(ui_ButtonAddWeightFine, setAddWeightFine_event_cb, LV_EVENT_CLICKED, NULL);
+lv_obj_add_event_cb(ui_ButtonAddWeightCycle, cycleAddWeight_event_cb, LV_EVENT_CLICKED, NULL);
+lv_obj_add_event_cb(ui_ButtonAddWeightMedium, setAddWeightMedium_event_cb, LV_EVENT_CLICKED, NULL);
+lv_obj_add_event_cb(ui_ButtonAddWeightLarge, setAddWeightLarge_event_cb, LV_EVENT_CLICKED, NULL);
+lv_obj_add_event_cb(ui_ButtonIncreaseTargetWeight, increaseTargetWeight_event_cb, LV_EVENT_CLICKED, NULL);
+lv_obj_add_event_cb(ui_ButtonDecreaseTargetWeight, decreaseTargetWeight_event_cb, LV_EVENT_CLICKED, NULL);
+lv_obj_add_event_cb(ui_ButtonProfileTune, openProfileTune_event_cb, LV_EVENT_CLICKED, NULL);
+lv_obj_add_event_cb(ui_ButtonProfileDelete, requestProfileDelete_event_cb, LV_EVENT_CLICKED, NULL);
+lv_obj_add_event_cb(ui_ButtonProfilePrev, selectPreviousProfile_event_cb, LV_EVENT_CLICKED, NULL);
+lv_obj_add_event_cb(ui_ButtonProfileNext, selectNextProfile_event_cb, LV_EVENT_CLICKED, NULL);
+lv_obj_add_event_cb(ui_ButtonMessageOk, messageOk_event_cb, LV_EVENT_CLICKED, NULL);
 
 }

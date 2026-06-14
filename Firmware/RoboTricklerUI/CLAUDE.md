@@ -103,3 +103,5 @@ All UI strings go through `langText(key)` which reads from `SD-Files/lang/en.jso
 - `C:\Users\ripper121\Documents\Arduino\libraries`
 
 Reuse existing ESP-IDF/Arduino library solutions before implementing new code.
+Try always to save as much Heap as possible, because the Webserver, Wifi and LVGL are heap hungry.
+Try to reuse UI Code to save Heap.

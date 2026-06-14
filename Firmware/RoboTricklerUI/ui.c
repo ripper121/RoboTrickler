@@ -4,7 +4,6 @@
 // Project name: RoboTricklerUI
 
 #include "ui.h"
-#include "ui_helpers.h"
 
 ///////////////////// VARIABLES ////////////////////
 
@@ -16,25 +15,18 @@ lv_obj_t *ui_TabView;
 lv_obj_t *ui_TabPageTrickler;
 lv_obj_t *ui_PanelTarget;
 lv_obj_t *ui_LabelTarget;
-void ui_event_ButtonToggleTrickler( lv_event_t * e);
 lv_obj_t *ui_ButtonToggleTrickler;
 lv_obj_t *ui_LabelToggleTrickler;
-void ui_event_ButtonAddWeightFine( lv_event_t * e);
 lv_obj_t *ui_ButtonAddWeightFine;
 lv_obj_t *ui_LabelAddWeightFine;
-void ui_event_ButtonAddWeightCycle( lv_event_t * e);
 lv_obj_t *ui_ButtonAddWeightCycle;
 lv_obj_t *ui_LabelAddWeightCycle;
-void ui_event_ButtonAddWeightMedium( lv_event_t * e);
 lv_obj_t *ui_ButtonAddWeightMedium;
 lv_obj_t *ui_LabelAddWeightMedium;
-void ui_event_ButtonAddWeightLarge( lv_event_t * e);
 lv_obj_t *ui_ButtonAddWeightLarge;
 lv_obj_t *ui_LabelAddWeightLarge;
-void ui_event_ButtonIncreaseTargetWeight( lv_event_t * e);
 lv_obj_t *ui_ButtonIncreaseTargetWeight;
 lv_obj_t *ui_LabelIncreaseTargetWeight;
-void ui_event_ButtonDecreaseTargetWeight( lv_event_t * e);
 lv_obj_t *ui_ButtonDecreaseTargetWeight;
 lv_obj_t *ui_LabelDecreaseTargetWeight;
 lv_obj_t *ui_PanelTricklerWeight;
@@ -44,23 +36,18 @@ lv_obj_t *ui_LabelInfo;
 lv_obj_t *ui_TabPageProfile;
 lv_obj_t *ui_PanelProfile;
 lv_obj_t *ui_LabelProfile;
-void ui_event_ButtonProfileTune( lv_event_t * e);
 lv_obj_t *ui_ButtonProfileTune;
 lv_obj_t *ui_LabelProfileTune;
-void ui_event_ButtonProfileDelete( lv_event_t * e);
 lv_obj_t *ui_ButtonProfileDelete;
 lv_obj_t *ui_LabelProfileDelete;
-void ui_event_ButtonProfilePrev( lv_event_t * e);
 lv_obj_t *ui_ButtonProfilePrev;
 lv_obj_t *ui_LabelProfilePrev;
-void ui_event_ButtonProfileNext( lv_event_t * e);
 lv_obj_t *ui_ButtonProfileNext;
 lv_obj_t *ui_LabelProfileNext;
 lv_obj_t *ui_TabPageInfo;
 lv_obj_t *ui_PanelPageInfo;
 lv_obj_t *ui_LabelLog;
 lv_obj_t *ui_PanelMessages;
-void ui_event_ButtonMessageOk( lv_event_t * e);
 lv_obj_t *ui_ButtonMessageOk;
 lv_obj_t *ui_LabelMessageOk;
 lv_obj_t *ui_LabelMessages;
@@ -75,80 +62,6 @@ lv_obj_t *ui____initial_actions0;
 #endif
 
 ///////////////////// ANIMATIONS ////////////////////
-
-///////////////////// FUNCTIONS ////////////////////
-void ui_event_ButtonToggleTrickler( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      toggleTrickler_event_cb( e );
-}
-}
-void ui_event_ButtonAddWeightFine( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      setAddWeightFine_event_cb( e );
-}
-}
-void ui_event_ButtonAddWeightCycle( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      cycleAddWeight_event_cb( e );
-}
-}
-void ui_event_ButtonAddWeightMedium( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      setAddWeightMedium_event_cb( e );
-}
-}
-void ui_event_ButtonAddWeightLarge( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      setAddWeightLarge_event_cb( e );
-}
-}
-void ui_event_ButtonIncreaseTargetWeight( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      increaseTargetWeight_event_cb( e );
-}
-}
-void ui_event_ButtonDecreaseTargetWeight( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      decreaseTargetWeight_event_cb( e );
-}
-}
-void ui_event_ButtonProfilePrev( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      selectPreviousProfile_event_cb( e );
-}
-}
-void ui_event_ButtonProfileTune( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      openProfileTune_event_cb( e );
-}
-}
-void ui_event_ButtonProfileDelete( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      requestProfileDelete_event_cb( e );
-}
-}
-void ui_event_ButtonProfileNext( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      selectNextProfile_event_cb( e );
-}
-}
-void ui_event_ButtonMessageOk( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-if ( event_code == LV_EVENT_CLICKED) {
-      messageOk_event_cb( e );
-}
-}
 
 ///////////////////// SCREENS ////////////////////
 

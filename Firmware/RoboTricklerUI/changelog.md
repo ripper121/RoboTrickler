@@ -6,7 +6,7 @@ Compared to firmware `2.11` (`7a8023b764e71e313d1028ca00592c1b6466e495`).
 - Updated firmware version from `2.11` to `2.12`.
 - Reworked the firmware into smaller runtime, display, startup, profile, web, Wi-Fi, and update modules.
 - Improved RS232 scale handling, especially request generation, response parsing, and A&D scale support.
-- Added display polish and maintenance features, including the SD logo splash, optional screenshots, profile deletion, and profile tuning.
+- Added display polish and maintenance features, including optional screenshots, profile deletion, and profile tuning.
 - Updated the SD-hosted web tools, SD packaging flow, and Arduino ESP32 core setup for `3.3.10`.
 
 ### Added
@@ -18,7 +18,6 @@ Compared to firmware `2.11` (`7a8023b764e71e313d1028ca00592c1b6466e495`).
 - Added weight comparison scaling (`WEIGHT_SCALE_FACTOR`) to make trickling/tolerance decisions less sensitive to float rounding.
 - Added profile tuning support for `unitsPerThrow`, including localized display text and stop-while-running protection.
 - Added profile delete support with confirmation, calibrate-profile protection, and automatic profile list refresh.
-- Added `/system/logo.bmp` splash logo support during startup.
 - Added optional BMP screenshot capture support for the LVGL display and `/screenshot` route when enabled.
 - Added `/getTricklerState` so the SD-hosted trickler page can sync weight and running state in one request.
 - Added localized fallback/error strings for corrupt config/profile handling and profile validation errors.

@@ -92,12 +92,11 @@ void handleGetTarget()
 
 void handleGetTricklerState()
 {
-  JsonDocument state;
-  state["weight"] = serialized(String(weight, 3));
-  state["running"] = isTricklerRunning();
-
-  String response;
-  serializeJson(state, response);
+  // Polled frequently by the web UI, so build the small fixed-shape response in a
+  // stack buffer instead of churning a JsonDocument + String on every request.
+  char response[48];
+  snprintf(response, sizeof(response), "{\"weight\":%.3f,\"running\":%s}",
+           weight, isTricklerRunning() ? "true" : "false");
   server.send(200, "application/json", response);
 }
 
@@ -149,20 +148,19 @@ void handleGetLanguage()
 void handleGetProfileList()
 {
   // Keep this legacy object shape for the filesystem-hosted pages: {"0":"name", ...}.
-  String message = "{";
+  // Stream the entries instead of concatenating one growing String in heap.
+  server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+  server.send(200, "text/json", "");
+  server.sendContent("{");
   for (int i = 0; i < profileListCount; i++)
   {
-    message += "\"";
-    message += String(i);
-    message += "\":\"";
-    message += jsonEscape(String(profileListBuff[i]));
-    message += "\"";
-    if (i < profileListCount - 1)
-      message += ",";
+    char prefix[16];
+    snprintf(prefix, sizeof(prefix), "%s\"%d\":\"", (i > 0) ? "," : "", i);
+    server.sendContent(prefix);
+    server.sendContent(jsonEscape(String(profileListBuff[i])));
+    server.sendContent("\"");
   }
-  message += "}";
-
-  server.send(200, "text/json", message);
+  server.sendContent("}");
 }
 
 void handleStart()

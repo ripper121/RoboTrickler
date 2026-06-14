@@ -42,11 +42,8 @@ void setAddWeightFine_event_cb(lv_event_t *e)
 
 void cycleAddWeight_event_cb(lv_event_t *e)
 {
+  // updateAddWeightLabel() wraps the index past WEIGHT_STEP_COUNT itself.
   addWeightIndex++;
-  if (addWeightIndex >= WEIGHT_STEP_COUNT)
-  {
-    addWeightIndex = 0;
-  }
   updateAddWeightLabel();
   beep("button");
 }
@@ -71,7 +68,7 @@ void increaseTargetWeight_event_cb(lv_event_t *e)
     config.targetWeight = MAX_TARGET_WEIGHT;
   }
   beep("button");
-  setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+  updateTargetWeightLabel();
 }
 
 void decreaseTargetWeight_event_cb(lv_event_t *e)
@@ -82,7 +79,7 @@ void decreaseTargetWeight_event_cb(lv_event_t *e)
     config.targetWeight = 0.0;
   }
   beep("button");
-  setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+  updateTargetWeightLabel();
 }
 
 void selectPreviousProfile_event_cb(lv_event_t *e)

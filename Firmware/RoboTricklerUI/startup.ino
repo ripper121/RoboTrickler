@@ -13,15 +13,12 @@ void initSetup()
         disableTouchGestures();
         disp_task_init();
         restart_now = true;
-        messageBox(langText("msg_filesystem_mount_failed"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
+        errorBox(langText("msg_filesystem_mount_failed"), true);
         return;
     }
 
-    showSplashLogo();
-
     ui_init();
     disableTouchGestures();
-    initWifiQrCode();
     disp_task_init();
 
     updateDisplayLog((String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
@@ -47,7 +44,7 @@ void initSetup()
 
         String message = String(langText("msg_config_corrupted")) + readError + "\n\n" + langText("msg_config_default");
         restart_now = true;
-        messageBox(message.c_str(), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
+        errorBox(message, true);
         return;
     }
 
@@ -63,7 +60,7 @@ void initSetup()
     bool selectedProfileFound = false;
     for (int i = 0; i < profileListCount; i++)
     {
-        if (String(config.profile) == profileListBuff[i])
+        if (strcmp(config.profile, profileListBuff[i]) == 0)
         {
             selectedProfileFound = true;
             profileListCounter = i;
@@ -79,7 +76,7 @@ void initSetup()
         saveConfiguration("/config.txt", config);
         for (int i = 0; i < profileListCount; i++)
         {
-            if (String(config.profile) == profileListBuff[i])
+            if (strcmp(config.profile, profileListBuff[i]) == 0)
             {
                 profileListCounter = i;
                 break;
@@ -113,7 +110,7 @@ void initSetup()
     {
         setLabelText(ui_LabelInfo, (String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
     }
-    setLabelText(ui_LabelTarget, String(config.targetWeight, 3).c_str());
+    updateTargetWeightLabel();
     setLabelText(ui_LabelProfile, config.profile);
     updateProfileActionButtonVisibility();
 
@@ -124,7 +121,7 @@ void initSetup()
 
     if (!activeFSIsSD)
     {
-        messageBox(langText("msg_sd_card_not_connected"), UI_FONT_NORMAL, lv_color_hex(0xFF9900), false);
+        warnBox(langText("msg_sd_card_not_connected"), false);
     }
 
     DEBUG_PRINTLN("Setup done.");

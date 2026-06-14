@@ -118,33 +118,31 @@ void registerWebServerRoutes()
 #endif
   server.on("/fwupdate", HTTP_GET, []()
             {
+            // Stream the page in fragments so we never hold the whole HTML body in heap.
             server.sendHeader("Connection", "close");
-            String updatePage = "<p>";
-                  updatePage += langText("web_fw_version");
-                  updatePage += ": ";
-                  updatePage += FW_VERSION;
-                  updatePage += "</p><h3>";
-                  updatePage += langText("web_firmware_image");
-                  updatePage += "</h3>";
-                  updatePage += "<form method='POST' action='/update' enctype='multipart/form-data'>";
-                  updatePage += "<input type='file' name='firmware' accept='.bin,application/octet-stream' required>";
-                  updatePage += "<input type='submit' value='";
-                  updatePage += langText("web_update_firmware");
-                  updatePage += "'></form><br>";
+            server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+            server.send(200, "text/html", "");
+            server.sendContent("<p>");
+            server.sendContent(langText("web_fw_version"));
+            server.sendContent(": " FW_VERSION "</p><h3>");
+            server.sendContent(langText("web_firmware_image"));
+            server.sendContent("</h3><form method='POST' action='/update' enctype='multipart/form-data'>"
+                               "<input type='file' name='firmware' accept='.bin,application/octet-stream' required>"
+                               "<input type='submit' value='");
+            server.sendContent(langText("web_update_firmware"));
+            server.sendContent("'></form><br>");
 #if ENABLE_LITTLEFS
-                  updatePage += "<h3>";
-                  updatePage += langText("web_littlefs_image");
-                  updatePage += "</h3><p>";
-                  updatePage += langText("web_update_filesystem_warning");
-                  updatePage += "</p>";
-                  updatePage += "<form method='POST' action='/update' enctype='multipart/form-data'>";
-                  updatePage += "<input type='file' name='filesystem' accept='.bin,application/octet-stream' required>";
-                  updatePage += "<input type='submit' value='";
-                  updatePage += langText("web_update_littlefs");
-                  updatePage += "'></form><br>";
+            server.sendContent("<h3>");
+            server.sendContent(langText("web_littlefs_image"));
+            server.sendContent("</h3><p>");
+            server.sendContent(langText("web_update_filesystem_warning"));
+            server.sendContent("</p><form method='POST' action='/update' enctype='multipart/form-data'>"
+                               "<input type='file' name='filesystem' accept='.bin,application/octet-stream' required>"
+                               "<input type='submit' value='");
+            server.sendContent(langText("web_update_littlefs"));
+            server.sendContent("'></form><br>");
 #endif
-                  updatePage += webBackButtonHtml();
-            server.send(200, "text/html", updatePage); });
+            server.sendContent(webBackButtonHtml()); });
 
   server.on(
       "/update", HTTP_POST, []()

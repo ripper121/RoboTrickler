@@ -374,8 +374,6 @@ Falls die SD-Karte defekt ist oder beim Bearbeiten Fehler aufgetreten sind, kön
 1. SD-Karte mit FAT32 Formatieren
 2. Kopiere alle Dateien aus der SD-Files.zip in das Hauptverzeichnis der SD-Karte und starte den Trickler neu.
 
-Beim Start zeigt die Firmware `/system/logo.bmp` für etwa drei Sekunden an. Unterstützt werden unkomprimierte BMP-Dateien mit 4, 24 oder 32 Bit Farbtiefe, die nicht größer als das Display sind. Fehlt die Datei oder ist das Format ungeeignet, startet die Oberfläche ohne Logo weiter.
-
 SD-Karten mit mehr als 32 GB:
 
 Ist die SD-Karte zu groß, gibt es hier eine Anleitung wie man sie Trotzdem mit FAT32 formatieren kann:

@@ -174,11 +174,11 @@ void handleCalibrationProfilePrompt()
       String profileName = "";
       if (createProfileFromCalibration(weight, profileName))
       {
-        messageBox(String(langText("msg_profile_created")) + profileName + ".txt", UI_FONT_NORMAL, lv_color_hex(0x00FF00), true);
+        successBox(String(langText("msg_profile_created")) + profileName + ".txt", true);
       }
       else
       {
-        messageBox(langText("msg_create_profile_failed"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
+        errorBox(langText("msg_create_profile_failed"), true);
       }
     }
   }
