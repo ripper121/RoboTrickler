@@ -1,6 +1,0 @@
-- Add a Wifi QR Code for the AP(dont use LVGL QR, use the ESP qr code function), show the QR Code in the Info Tab, if no wifi is connected. When User klicks on the QR Code he can hide it, if he clicks on the Log Label he can unhide it again
-- add Wifi Toggle button to the Info Tab to turn on or off wifi, also add this to the config.txt as new parameter, default is on / true
-- set the targetWeight style like the tune value is
-- move the Scale and Sync buttons in the Info Tab by 10px down
-- check if there UI strings without translation
-- if scale has timeout or other problems it will display -1.0, could we instead display NAN

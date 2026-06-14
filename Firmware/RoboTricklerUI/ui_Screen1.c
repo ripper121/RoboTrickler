@@ -223,7 +223,7 @@ lv_obj_set_scrollbar_mode(ui_PanelPageInfo, LV_SCROLLBAR_MODE_OFF);
 
 ui_LabelLog = lv_label_create(ui_PanelPageInfo);
 lv_obj_set_width( ui_LabelLog, lv_pct(100));
-lv_obj_set_height( ui_LabelLog, lv_pct(56));
+lv_obj_set_height( ui_LabelLog, lv_pct(82));
 lv_obj_set_align( ui_LabelLog, LV_ALIGN_TOP_MID );
 lv_label_set_text_static(ui_LabelLog,"");
 

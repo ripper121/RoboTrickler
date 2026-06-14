@@ -1,7 +1,7 @@
 // Fixed-size log storage. Kept in BSS instead of the heap so logging cannot
 // fragment the heap (the previous String[] + concatenation churned malloc on
 // every one of the ~70 log call sites). Lines are truncated to LOG_LINE_LEN.
-#define LOG_LINE_COUNT 11
+#define LOG_LINE_COUNT 8
 #define LOG_LINE_LEN 64
 static char infoMessageBuffer[LOG_LINE_COUNT][LOG_LINE_LEN];
 
@@ -192,7 +192,7 @@ void setWeightLabel(lv_obj_t *label)
   char text[32];
   if (!isfinite(weight) || (weight < 0.0f))
   {
-    setLabelText(label, "NAN");
+    setLabelText(label, "NaN...");
     return;
   }
 
