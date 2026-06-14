@@ -1,4 +1,3 @@
 - Add Sync from LittleFS to SD Card button and vice versa, sync config and profiles
 - littleFS and FW update on old partion scheme possible?
-- remove Delete of root avg, calibrate
 - update manual.md

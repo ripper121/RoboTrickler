@@ -1,22 +1,3 @@
-static void deleteRootLegacyProfileFiles()
-{
-    const char *legacyFiles[] = {"/calibrate.txt", "/avg.txt"};
-
-    for (size_t i = 0; i < (sizeof(legacyFiles) / sizeof(legacyFiles[0])); i++)
-    {
-        if (ACTIVE_FS.exists(legacyFiles[i]))
-        {
-            DEBUG_PRINT("Deleting legacy root profile file: ");
-            DEBUG_PRINTLN(legacyFiles[i]);
-            if (!ACTIVE_FS.remove(legacyFiles[i]))
-            {
-                DEBUG_PRINT("Failed to delete legacy root profile file: ");
-                DEBUG_PRINTLN(legacyFiles[i]);
-            }
-        }
-    }
-}
-
 void initSetup()
 {
     Serial.begin(115200); /* prepare for possible serial debug */
@@ -35,8 +16,6 @@ void initSetup()
         messageBox(langText("msg_filesystem_mount_failed"), UI_FONT_NORMAL, lv_color_hex(0xFF0000), true);
         return;
     }
-
-    deleteRootLegacyProfileFiles();
 
     showSplashLogo();
 

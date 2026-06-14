@@ -526,8 +526,8 @@ String nextCalibrationProfileName()
 
 static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerThrow, int profileSpeed)
 {
-  const float diffWeights[5] = {1.929, 0.965, 0.482, 0.241, 0.000};
-  const int measurements[5] = {2, 2, 5, 10, 15};
+  const float diffWeights[8] = {1.929, 0.965, 0.482, 0.241, 0.121, 0.060, 0.030, 0.000};
+  const int measurements[8] = {2, 2, 5, 10, 15, 15, 20, 25};
   const float rs232LimitFactor = 0.65;
 
   JsonArray rs232TrickleMap = doc["rs232TrickleMap"].to<JsonArray>();
