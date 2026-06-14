@@ -5,6 +5,7 @@
 #define WIFI_QR_OBJECT_SIZE 150
 
 static lv_obj_t *wifiQrObject = NULL;
+static lv_obj_t *wifiQrHintLabel = NULL;
 static uint8_t wifiQrModules[WIFI_QR_MODULE_BYTES];
 static uint8_t wifiQrPendingModules[WIFI_QR_MODULE_BYTES];
 static uint8_t wifiQrModuleCount = 0;
@@ -108,14 +109,39 @@ static void drawWifiQr_event_cb(lv_event_t *e)
   }
 }
 
+static void setWifiQrHidden(bool hidden)
+{
+  if (wifiQrObject != NULL)
+  {
+    if (hidden)
+    {
+      lv_obj_add_flag(wifiQrObject, LV_OBJ_FLAG_HIDDEN);
+    }
+    else
+    {
+      lv_obj_clear_flag(wifiQrObject, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_move_foreground(wifiQrObject);
+    }
+  }
+  if (wifiQrHintLabel != NULL)
+  {
+    if (hidden)
+    {
+      lv_obj_add_flag(wifiQrHintLabel, LV_OBJ_FLAG_HIDDEN);
+    }
+    else
+    {
+      lv_obj_clear_flag(wifiQrHintLabel, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_move_foreground(wifiQrHintLabel);
+    }
+  }
+}
+
 static void hideWifiQr_event_cb(lv_event_t *e)
 {
   (void)e;
   wifiQrDismissed = true;
-  if (wifiQrObject != NULL)
-  {
-    lv_obj_add_flag(wifiQrObject, LV_OBJ_FLAG_HIDDEN);
-  }
+  setWifiQrHidden(true);
 }
 
 static void showWifiQrFromLog_event_cb(lv_event_t *e)
@@ -124,8 +150,7 @@ static void showWifiQrFromLog_event_cb(lv_event_t *e)
   if (WIFI_SETUP_AP_ACTIVE && (wifiQrObject != NULL) && (wifiQrModuleCount > 0))
   {
     wifiQrDismissed = false;
-    lv_obj_clear_flag(wifiQrObject, LV_OBJ_FLAG_HIDDEN);
-    lv_obj_move_foreground(wifiQrObject);
+    setWifiQrHidden(false);
   }
 }
 
@@ -138,7 +163,7 @@ static void ensureWifiQrObject()
 
   wifiQrObject = lv_obj_create(ui_PanelPageInfo);
   lv_obj_set_size(wifiQrObject, WIFI_QR_OBJECT_SIZE, WIFI_QR_OBJECT_SIZE);
-  lv_obj_align(wifiQrObject, LV_ALIGN_TOP_RIGHT, 0, 0);
+  lv_obj_align(wifiQrObject, LV_ALIGN_CENTER, 0, 0);
   lv_obj_set_style_bg_color(wifiQrObject, lv_color_white(), LV_PART_MAIN);
   lv_obj_set_style_bg_opa(wifiQrObject, LV_OPA_COVER, LV_PART_MAIN);
   lv_obj_set_style_border_width(wifiQrObject, 0, LV_PART_MAIN);
@@ -148,6 +173,17 @@ static void ensureWifiQrObject()
   lv_obj_add_event_cb(wifiQrObject, hideWifiQr_event_cb, LV_EVENT_CLICKED, NULL);
   lv_obj_add_event_cb(ui_PanelPageInfo, showWifiQrFromLog_event_cb, LV_EVENT_CLICKED, NULL);
   lv_obj_add_flag(wifiQrObject, LV_OBJ_FLAG_HIDDEN);
+
+  wifiQrHintLabel = lv_label_create(ui_PanelPageInfo);
+  lv_label_set_text(wifiQrHintLabel, langText("wifi_qr_click_to_hide"));
+  lv_obj_set_style_text_color(wifiQrHintLabel, lv_color_white(), LV_PART_MAIN);
+  lv_obj_set_style_bg_color(wifiQrHintLabel, lv_color_black(), LV_PART_MAIN);
+  lv_obj_set_style_bg_opa(wifiQrHintLabel, LV_OPA_COVER, LV_PART_MAIN);
+  lv_obj_set_style_pad_hor(wifiQrHintLabel, 6, LV_PART_MAIN);
+  lv_obj_set_style_pad_ver(wifiQrHintLabel, 2, LV_PART_MAIN);
+  lv_obj_set_style_radius(wifiQrHintLabel, 4, LV_PART_MAIN);
+  lv_obj_align_to(wifiQrHintLabel, wifiQrObject, LV_ALIGN_OUT_BOTTOM_MID, 0, 6);
+  lv_obj_add_flag(wifiQrHintLabel, LV_OBJ_FLAG_HIDDEN);
 }
 
 void updateWifiSetupQrCode()
@@ -160,18 +196,14 @@ void updateWifiSetupQrCode()
   ensureWifiQrObject();
   if ((wifiQrObject == NULL) || !WIFI_SETUP_AP_ACTIVE || (wifiQrModuleCount == 0))
   {
-    if (wifiQrObject != NULL)
-    {
-      lv_obj_add_flag(wifiQrObject, LV_OBJ_FLAG_HIDDEN);
-    }
+    setWifiQrHidden(true);
     lvglUnlock();
     return;
   }
 
   if (!wifiQrDismissed)
   {
-    lv_obj_clear_flag(wifiQrObject, LV_OBJ_FLAG_HIDDEN);
-    lv_obj_move_foreground(wifiQrObject);
+    setWifiQrHidden(false);
     lv_obj_invalidate(wifiQrObject);
   }
   lvglUnlock();

@@ -90,6 +90,8 @@ static const char *languageFallback(const char *key)
     return "Open:";
   if (strcmp(key, "wifi_select_and_save") == 0)
     return "Select your WiFi and save.";
+  if (strcmp(key, "wifi_qr_click_to_hide") == 0)
+    return "Click to Hide";
   if (strcmp(key, "msg_filesystem_mount_failed") == 0)
     return "Filesystem mount failed";
   if (strcmp(key, "msg_config_default") == 0)
