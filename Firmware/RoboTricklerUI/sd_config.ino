@@ -560,6 +560,16 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
     return false;
   }
 
+  // The profile list (and selection) is capped at PROFILE_LIST_MAX total
+  // profiles, so refuse to create another one that would never show up or be
+  // auto-selected once that limit is reached.
+  getProfileList();
+  if (profileListCount >= PROFILE_LIST_MAX)
+  {
+    updateDisplayLog(langText("msg_no_free_profile_name"), true);
+    return false;
+  }
+
   profileName = nextCalibrationProfileName();
   if (profileName.length() <= 0)
   {
@@ -724,7 +734,7 @@ void scanProfileDirectory(const char *directory, byte &profileCounter, byte &inv
 
   while (file)
   {
-    if (profileCounter > 31)
+    if (profileCounter >= PROFILE_LIST_MAX)
     {
       file.close();
       break;

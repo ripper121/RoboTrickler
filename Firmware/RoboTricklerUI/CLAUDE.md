@@ -105,3 +105,29 @@ All UI strings go through `langText(key)` which reads from `SD-Files/lang/en.jso
 Reuse existing ESP-IDF/Arduino library solutions before implementing new code.
 Try always to save as much Heap as possible, because the Webserver, Wifi and LVGL are heap hungry.
 Try to reuse UI Code to save Heap.
+
+## Maintaining the User Manual (`manual.md`)
+
+`manual.md` is the German end-user manual, mirrored on the GitHub wiki (e.g. page `Anleitung-Firmware-2.13`). When firmware behavior changes, update the manual using this process — **verify every statement against the code, never from memory.**
+
+### Update checklist
+1. **Version line**: keep `Stand: Firmware X.XX` in sync with `FW_VERSION` in `RoboTricklerUI.ino`. Check `changelog.md` for what changed in the release.
+2. **Config fields**: cross-check every `config.txt` field documented in the *Konfiguration* section against `loadConfiguration()` / `saveConfiguration()` in `sd_config.ino`. Every field the firmware reads/writes must be documented with its default values; nothing extra.
+3. **Profile fields**: cross-check the *Aufbau eines Profils* section against `readProfile()` / `loadProfileEntries()` / `loadProfileEntry()` in `sd_config.ino` (`general`, `actuator.stepperN`, `rs232TrickleMap[]`, plus the `calibrate` shape).
+4. **Display UI**: derive what's possible on the touchscreen from the event callbacks in `ui_events.ino`, `filesystem_sync.ino`, `ui_dialogs.ino` and their button wiring in `ui_Screen1.c` (`lv_obj_add_event_cb`). Confirm which tab a control lives on via its parent panel (`ui_PanelPageInfo` = Info tab, etc.). Runtime behavior (auto-refill, weight colors, over-trickle alarm, counters, diagnostics line) comes from `trickler_runtime.ino` and `trickler_control.ino`.
+5. **Web features**: list HTTP endpoints from the `server.on(...)` registrations in `web_server.ino`; the browser remote-control / generators / file editor are the SD pages under `SD-Files/system/`.
+6. **Scales**: the protocol list and request commands come from `SCALE_REQUEST_COMMANDS` in `rs232.ino` (empty protocol is shown as `STREAM`).
+
+### Conventions to keep consistent
+- **Table of contents**: the *Inhaltsverzeichnis* lists all `#` and `##` headings. GitHub anchors = lowercase, spaces→`-`, punctuation dropped (`G&G`→`#gg`, `(LittleFS)`→`…littlefs`), umlauts kept, consecutive dropped chars leave double hyphens (`Gramm / Grain`→`#gramm--grain`). Update the TOC whenever headings change.
+- **Heading hierarchy**: top-level chapters are `#`, subsections `##`. All scale brands (G&G, Sartorius, Kern, A&D, Steinberg) are `##` under `# Waagen` — keep them at the same level.
+- **Screenshot placeholders**: use the blockquote form `> 📸 **Screenshot – Display:** …` or `> 📸 **Screenshot – Webserver:** …`, naming the source and what the shot must contain. Search the file for `📸` to find open placeholders.
+- Do **not** expose `fw_update.url` (see SD File Rules).
+
+### How we went through it (June 2026, 2.13)
+Reference for how the current manual was brought up to date:
+1. Bumped `2.12`→`2.13` and reconciled every section with the code (config/profile fields, LittleFS, WiFi toggle + AP setup, on-device scale-protocol cycling, filesystem sync, 8 MB USB-flash command).
+2. Audited the firmware + SD-files for user-facing features missing from the manual, then added the high-value ones (auto-refill dauerbetrieb, weight colors, profile-tab lock, web remote control, over-trickle alarm, trickle counters, captive portal, FW-update popup, storage indicator, tuning diagnostics line, web localization). Deliberately left out internal-only items (screenshot endpoint, `compile_options.h` switches).
+3. Added the *Inhaltsverzeichnis* with anchor links and a new *Bedienung am Display* chapter.
+4. Added `📸` screenshot placeholders for the new 2.13 features and the web pages lacking images.
+5. Fixed heading hierarchy so all scale brands sit under `# Waagen`.

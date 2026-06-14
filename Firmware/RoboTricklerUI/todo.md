@@ -1,0 +1,2 @@
+- fix sd card html pages to support anything what the fw supports (like config and profiles)
+- Update manual.md
