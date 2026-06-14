@@ -14,21 +14,18 @@ void restoreFilesystemAfterFailedUpdate()
   }
 
   webUpdateFilesystemUnmounted = false;
-  if (activeFSIsSD)
+  littleFSMounted = LittleFS.begin(false);
+  if (!littleFSMounted)
   {
-    // SD is active, LittleFS was never the primary filesystem for runtime.
+    DEBUG_PRINTLN("LittleFS remount failed after update error.");
     return;
   }
 
-  FILESYSTEM_ACTIVE = LittleFS.begin(false);
-  if (FILESYSTEM_ACTIVE)
+  if (!activeFSIsSD)
   {
     activeFS = &LittleFS;
   }
-  else
-  {
-    DEBUG_PRINTLN("LittleFS remount failed after update error.");
-  }
+  FILESYSTEM_ACTIVE = sdMounted || littleFSMounted;
 #endif
 }
 
@@ -179,11 +176,15 @@ void registerWebServerRoutes()
           updateDisplayLog(infoText);
 
 #if ENABLE_LITTLEFS
-          if (webUpdateFilesystem && FILESYSTEM_ACTIVE && !activeFSIsSD)
+          if (webUpdateFilesystem && littleFSMounted)
           {
             LittleFS.end();
-            FILESYSTEM_ACTIVE = false;
-            activeFS = NULL;
+            littleFSMounted = false;
+            if (!activeFSIsSD)
+            {
+              FILESYSTEM_ACTIVE = false;
+              activeFS = NULL;
+            }
             webUpdateFilesystemUnmounted = true;
           }
 #else

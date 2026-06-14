@@ -49,6 +49,8 @@ void initSetup()
     }
 
     applyLanguage();
+    updateScaleProtocolButtonLabel();
+    updateFilesystemSyncControls();
     updateDisplayLog(langText(activeFSIsSD ? "status_storage_sd" : "status_storage_flash"));
 
     infoText = langText("status_reading_profiles");

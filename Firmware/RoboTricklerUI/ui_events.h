@@ -21,6 +21,9 @@ void selectPreviousProfile_event_cb(lv_event_t * e);
 void openProfileTune_event_cb(lv_event_t * e);
 void requestProfileDelete_event_cb(lv_event_t * e);
 void selectNextProfile_event_cb(lv_event_t * e);
+void cycleScaleProtocol_event_cb(lv_event_t * e);
+void syncFlashToSd_event_cb(lv_event_t * e);
+void syncSdToFlash_event_cb(lv_event_t * e);
 void messageOk_event_cb(lv_event_t * e);
 
 #ifdef __cplusplus

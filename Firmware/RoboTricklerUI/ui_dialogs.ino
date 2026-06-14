@@ -104,8 +104,9 @@ void messageOk_event_cb(lv_event_t *e)
   {
     resetConfirmBoxButtons();
     finishProfileDeleteConfirm(true);
+    finishFilesystemSyncConfirm(true);
   }
-  if (restart_now)
+  if (restart_now && !messageBoxOpen)
   {
     delay(1000);
     ESP.restart();
@@ -120,6 +121,7 @@ void messageNo_event_cb(lv_event_t *e)
   confirmBoxOpen = false;
   resetConfirmBoxButtons();
   finishProfileDeleteConfirm(false);
+  finishFilesystemSyncConfirm(false);
 }
 
 void cancelProfileDeleteConfirm()

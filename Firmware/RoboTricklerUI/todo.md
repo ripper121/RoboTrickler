@@ -1,2 +1,0 @@
-- Add Sync from LittleFS to SD Card button and vice versa, sync config and profiles
-- update manual.md

@@ -123,8 +123,18 @@ bool WEB_SERVER_ROUTES_REGISTERED = false;
 bool FILESYSTEM_ACTIVE = false;
 fs::FS *activeFS = NULL;
 bool activeFSIsSD = false;
+bool sdMounted = false;
+bool littleFSMounted = false;
 SPIClass *SDspi = NULL;
 #define ACTIVE_FS (*activeFS)
+
+enum FilesystemSyncDirection
+{
+  FILESYSTEM_SYNC_NONE,
+  FILESYSTEM_SYNC_FLASH_TO_SD,
+  FILESYSTEM_SYNC_SD_TO_FLASH
+};
+
 WebServer server(80);
 DNSServer dnsServer;
 unsigned long wifiPreviousMillis = 0;

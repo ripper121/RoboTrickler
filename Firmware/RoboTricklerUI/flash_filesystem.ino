@@ -3,11 +3,14 @@ bool initFilesystem()
   FILESYSTEM_ACTIVE = false;
   activeFS = NULL;
   activeFSIsSD = false;
+  sdMounted = false;
+  littleFSMounted = false;
 
   SDspi = new SPIClass(HSPI);
   SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
   if (SD.begin(GRBL_SPI_SS, *SDspi, SD_SPI_FREQ, "/sd", 10) && (SD.cardType() != CARD_NONE))
   {
+    sdMounted = true;
     activeFS = &SD;
     activeFSIsSD = true;
     FILESYSTEM_ACTIVE = true;
@@ -23,20 +26,24 @@ bool initFilesystem()
   }
 
 #if ENABLE_LITTLEFS
-  if (!FILESYSTEM_ACTIVE)
+  if (LittleFS.begin(false))
   {
-    if (!LittleFS.begin(false))
+    littleFSMounted = true;
+    if (!FILESYSTEM_ACTIVE)
     {
-      DEBUG_PRINTLN("LittleFS mount failed.");
-      return false;
+      activeFS = &LittleFS;
+      activeFSIsSD = false;
+      FILESYSTEM_ACTIVE = true;
     }
-    activeFS = &LittleFS;
-    activeFSIsSD = false;
-    FILESYSTEM_ACTIVE = true;
+    DEBUG_PRINTLN("LittleFS mounted.");
+  }
+  else
+  {
+    DEBUG_PRINTLN("LittleFS mount failed.");
   }
 #endif
 
-  if (activeFSIsSD)
+  if (sdMounted)
   {
     DEBUG_PRINT("SD total bytes: ");
     DEBUG_PRINTLN(SD.totalBytes());
@@ -44,7 +51,7 @@ bool initFilesystem()
     DEBUG_PRINTLN(SD.usedBytes());
   }
 #if ENABLE_LITTLEFS
-  else
+  if (littleFSMounted)
   {
     DEBUG_PRINT("LittleFS total bytes: ");
     DEBUG_PRINTLN(LittleFS.totalBytes());

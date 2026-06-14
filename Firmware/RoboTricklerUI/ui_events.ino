@@ -107,3 +107,24 @@ void selectNextProfile_event_cb(lv_event_t *e)
     profileListCounter = 0;
   setProfile(profileListCounter);
 }
+
+void updateScaleProtocolButtonLabel()
+{
+  if (ui_LabelScaleProtocol == NULL)
+  {
+    return;
+  }
+
+  char text[48];
+  snprintf(text, sizeof(text), "Scale: %s", scaleProtocolDisplayName(config.scale_protocol));
+  setLabelText(ui_LabelScaleProtocol, text);
+}
+
+void cycleScaleProtocol_event_cb(lv_event_t *e)
+{
+  strlcpy(config.scale_protocol, nextScaleProtocol(config.scale_protocol), sizeof(config.scale_protocol));
+  serialFlush();
+  saveConfiguration("/config.txt", config);
+  updateScaleProtocolButtonLabel();
+  beep("button");
+}

@@ -54,6 +54,24 @@ static const char *languageFallback(const char *key)
     return "Storage: SD Card";
   if (strcmp(key, "status_storage_flash") == 0)
     return "Storage: Internal Flash";
+  if (strcmp(key, "label_sync_flash_to_sd") == 0)
+    return "Upload Flash > SD";
+  if (strcmp(key, "label_sync_sd_to_flash") == 0)
+    return "Download SD > Flash";
+  if (strcmp(key, "msg_sync_flash_to_sd_confirm") == 0)
+    return "Copy config and profiles\nfrom Flash to SD?";
+  if (strcmp(key, "msg_sync_sd_to_flash_confirm") == 0)
+    return "Copy config and profiles\nfrom SD to Flash?";
+  if (strcmp(key, "msg_stop_trickler_before_sync") == 0)
+    return "Stop trickler before syncing files";
+  if (strcmp(key, "msg_sync_filesystems_unavailable") == 0)
+    return "SD card and LittleFS must both be mounted";
+  if (strcmp(key, "msg_sync_failed") == 0)
+    return "Config/profile sync failed";
+  if (strcmp(key, "msg_sync_complete") == 0)
+    return "Sync complete: %d files copied";
+  if (strcmp(key, "msg_sync_restarting") == 0)
+    return "\n\nRestarting to load SD files.";
   if (strcmp(key, "status_wifi_ap") == 0)
     return "WiFi AP: ";
   if (strcmp(key, "status_wifi_password") == 0)
@@ -396,5 +414,6 @@ void applyLanguage()
     lvglUnlock();
   }
 
+  updateFilesystemSyncControls();
   updateWifiTabIndicator(true);
 }

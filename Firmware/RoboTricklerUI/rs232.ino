@@ -11,11 +11,32 @@ struct ScaleRequestCommand
 
 const ScaleRequestCommand SCALE_REQUEST_COMMANDS[] = {
     {"GG", "0x1B 0x70 0x0D 0x0A"},
-    {"AD", "0x53 0x49 0x0D 0x0A"},
+    {"SBI", "0x50 0x0D 0x0A"},
     {"KERN", "0x77"},
     {"KERN-ABT", "0x44 0x30 0x35 0x0D 0x0A"},
     {"KERN-ABS", "0x44 0x30 0x31 0x0D 0x0A"},
-    {"SBI", "0x50 0x0D 0x0A"}};
+    {"AD", "0x53 0x49 0x0D 0x0A"},
+    {"CUSTOM", NULL},
+    {"", NULL}};
+
+const size_t SCALE_PROTOCOL_COUNT = sizeof(SCALE_REQUEST_COMMANDS) / sizeof(SCALE_REQUEST_COMMANDS[0]);
+
+const char *scaleProtocolDisplayName(const char *protocol)
+{
+  return ((protocol == NULL) || (protocol[0] == '\0')) ? "STREAM" : protocol;
+}
+
+const char *nextScaleProtocol(const char *currentProtocol)
+{
+  for (size_t i = 0; i < SCALE_PROTOCOL_COUNT; i++)
+  {
+    if (strcmp(currentProtocol, SCALE_REQUEST_COMMANDS[i].protocol) == 0)
+    {
+      return SCALE_REQUEST_COMMANDS[(i + 1) % SCALE_PROTOCOL_COUNT].protocol;
+    }
+  }
+  return SCALE_REQUEST_COMMANDS[0].protocol;
+}
 
 bool serialWait()
 {
@@ -333,17 +354,18 @@ bool requestScaleWeight()
 {
   updateActiveProfileStepCounterDisplay(weightCounter);
 
-  for (size_t i = 0; i < (sizeof(SCALE_REQUEST_COMMANDS) / sizeof(SCALE_REQUEST_COMMANDS[0])); i++)
-  {
-    if (strcmp(config.scale_protocol, SCALE_REQUEST_COMMANDS[i].protocol) == 0)
-    {
-      return serialReq(SCALE_REQUEST_COMMANDS[i].request);
-    }
-  }
-
   if (strcmp(config.scale_protocol, "CUSTOM") == 0)
   {
     return serialReq(config.scale_customCode);
+  }
+
+  for (size_t i = 0; i < SCALE_PROTOCOL_COUNT; i++)
+  {
+    if ((SCALE_REQUEST_COMMANDS[i].request != NULL) &&
+        (strcmp(config.scale_protocol, SCALE_REQUEST_COMMANDS[i].protocol) == 0))
+    {
+      return serialReq(SCALE_REQUEST_COMMANDS[i].request);
+    }
   }
 
   return serialWait();
