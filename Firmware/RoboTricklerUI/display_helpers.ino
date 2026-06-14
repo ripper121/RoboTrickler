@@ -4,6 +4,8 @@
 #define LOG_LINE_COUNT 8
 #define LOG_LINE_LEN 64
 static char infoMessageBuffer[LOG_LINE_COUNT][LOG_LINE_LEN];
+static lv_obj_t *dialogBackdrop = NULL;
+static lv_obj_t *activeDialog = NULL;
 
 // Trim leading/trailing whitespace in place (no heap, replaces String::trim()).
 static void trimInPlace(char *s)
@@ -20,11 +22,49 @@ static void trimInPlace(char *s)
     }
 }
 
+void showDialog(lv_obj_t *dialog)
+{
+    if (dialog == NULL)
+    {
+        return;
+    }
+
+    if ((activeDialog != NULL) && (activeDialog != dialog))
+    {
+        lv_obj_add_flag(activeDialog, LV_OBJ_FLAG_HIDDEN);
+    }
+
+    if (dialogBackdrop == NULL)
+    {
+        dialogBackdrop = lv_obj_create(ui_Screen1);
+        lv_obj_set_size(dialogBackdrop, lv_pct(100), lv_pct(100));
+        lv_obj_set_align(dialogBackdrop, LV_ALIGN_CENTER);
+        lv_obj_clear_flag(dialogBackdrop, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_set_style_bg_color(dialogBackdrop, lv_color_hex(0x000000), LV_PART_MAIN);
+        lv_obj_set_style_bg_opa(dialogBackdrop, LV_OPA_40, LV_PART_MAIN);
+        lv_obj_set_style_border_width(dialogBackdrop, 0, LV_PART_MAIN);
+        lv_obj_set_style_radius(dialogBackdrop, 0, LV_PART_MAIN);
+        lv_obj_set_style_pad_all(dialogBackdrop, 0, LV_PART_MAIN);
+    }
+
+    activeDialog = dialog;
+    lv_obj_move_to_index(dialogBackdrop, -1);
+    lv_obj_clear_flag(dialogBackdrop, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_move_to_index(dialog, -1);
+    lv_obj_clear_flag(dialog, LV_OBJ_FLAG_HIDDEN);
+}
+
 void closeDialog(lv_obj_t **dialog, bool deleteAfterClose)
 {
     if ((dialog == NULL) || (*dialog == NULL) || !lvglLock())
     {
         return;
+    }
+
+    if ((dialogBackdrop != NULL) && (*dialog == activeDialog))
+    {
+        lv_obj_add_flag(dialogBackdrop, LV_OBJ_FLAG_HIDDEN);
+        activeDialog = NULL;
     }
 
     if (deleteAfterClose)
@@ -129,6 +169,10 @@ void updateWifiTabIndicator(bool forceUpdate)
     if (activeFSIsSD)
     {
         strlcat(tabText, " " UI_SYMBOL_SD_CARD, sizeof(tabText));
+    }
+    else
+    {
+        strlcat(tabText, " " UI_SYMBOL_FLASH, sizeof(tabText));
     }
 
     if (lvglLock())

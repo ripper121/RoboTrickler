@@ -34,19 +34,11 @@ lv_obj_set_align( ui_PanelTarget, LV_ALIGN_CENTER );
 lv_obj_clear_flag( ui_PanelTarget, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_LabelTarget = lv_label_create(ui_PanelTarget);
-lv_obj_set_width( ui_LabelTarget, 140);
-lv_obj_set_height( ui_LabelTarget, 50);
+lv_obj_set_x( ui_LabelTarget, 0 );
+lv_obj_set_y( ui_LabelTarget, -4 );
 lv_obj_set_align( ui_LabelTarget, LV_ALIGN_CENTER );
 lv_label_set_text_static(ui_LabelTarget,"0.000");
 lv_obj_clear_flag( ui_LabelTarget, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-lv_obj_set_style_text_align(ui_LabelTarget, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-lv_obj_set_style_text_font(ui_LabelTarget, UI_FONT_LARGE, LV_PART_MAIN);
-lv_obj_set_style_bg_color(ui_LabelTarget, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
-lv_obj_set_style_bg_opa(ui_LabelTarget, 255, LV_PART_MAIN);
-lv_obj_set_style_text_color(ui_LabelTarget, lv_color_hex(0x000000), LV_PART_MAIN);
-lv_obj_set_style_border_color(ui_LabelTarget, lv_color_hex(0x808080), LV_PART_MAIN);
-lv_obj_set_style_border_width(ui_LabelTarget, 2, LV_PART_MAIN);
-lv_obj_set_style_pad_top(ui_LabelTarget, 5, LV_PART_MAIN);
 
 ui_ButtonToggleTrickler = lv_btn_create(ui_TabPageTrickler);
 lv_obj_set_height( ui_ButtonToggleTrickler, 50);

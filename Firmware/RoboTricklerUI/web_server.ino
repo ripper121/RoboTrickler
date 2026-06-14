@@ -312,8 +312,6 @@ bool startWebServerServices()
     makeHttpGetRequest(firmwareCheckUrl());
   }
 
-  closeDialog(&ui_PanelMessages, false);
-
   return true;
 }
 

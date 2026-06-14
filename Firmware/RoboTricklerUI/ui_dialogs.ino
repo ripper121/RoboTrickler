@@ -4,6 +4,24 @@ volatile bool confirmBoxResult = false;
 lv_obj_t *ui_ButtonMessageNo = NULL;
 lv_obj_t *ui_LabelMessageNo = NULL;
 
+static void closeReplacedDialogState()
+{
+  if (confirmBoxOpen)
+  {
+    confirmBoxResult = false;
+    confirmBoxOpen = false;
+    resetConfirmBoxButtons();
+    finishProfileDeleteConfirm(false);
+    finishFilesystemSyncConfirm(false);
+  }
+
+  if (isProfileTuneDialogOpen())
+  {
+    closeProfileTuneDialog();
+    clearProfileTuneState();
+  }
+}
+
 // Block the caller until a dialog button clears the flag. The Core 0 display
 // task normally drives LVGL, but it can stall while servicing the web server,
 // so pump the handler here too to keep the blocking dialog responsive.
@@ -80,8 +98,7 @@ static void presentDialog(const String &message, const lv_font_t *font,
   lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN);
   lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN);
   lv_label_set_text(ui_LabelMessages, message.c_str());
-  lv_obj_move_to_index(ui_PanelMessages, -1);
-  lv_obj_clear_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+  showDialog(ui_PanelMessages);
   lvglUnlock();
 }
 
@@ -139,6 +156,7 @@ void cancelProfileDeleteConfirm()
 
 void messageBox(const String &message, const lv_font_t *font, lv_color_t color, bool wait)
 {
+  closeReplacedDialogState();
   messageBoxOpen = true;
   presentDialog(message, font, color, false);
   if (wait)
@@ -183,6 +201,7 @@ bool confirmBox(const String &message, const lv_font_t *font, lv_color_t color)
 
 void showConfirmBox(const String &message, const lv_font_t *font, lv_color_t color)
 {
+  closeReplacedDialogState();
   messageBoxOpen = true;
   confirmBoxOpen = true;
   presentDialog(message, font, color, true);
@@ -437,8 +456,7 @@ static void showProfileTuneDialog()
             lv_label_set_text(ui_LabelProfileTuneTitle, title);
         }
         updateProfileTuneValueLabel();
-        lv_obj_move_to_index(ui_PanelProfileTune, -1);
-        lv_obj_clear_flag(ui_PanelProfileTune, LV_OBJ_FLAG_HIDDEN);
+        showDialog(ui_PanelProfileTune);
         lvglUnlock();
     }
 }

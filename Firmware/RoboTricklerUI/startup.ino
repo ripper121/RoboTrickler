@@ -121,11 +121,6 @@ void initSetup()
     infoText = langText("status_ready");
     updateDisplayLog(infoText, true);
 
-    if (!activeFSIsSD)
-    {
-        warnBox(langText("msg_sd_card_not_connected"), false);
-    }
-
     DEBUG_PRINTLN("Setup done.");
 }
 
