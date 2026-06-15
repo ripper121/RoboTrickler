@@ -1,7 +1,7 @@
 void initSetup()
 {
     Serial.begin(115200); /* prepare for possible serial debug */
-    //disableRuntimeWatchdogs();
+    disableRuntimeWatchdogs();
 
     displayInit();
 
