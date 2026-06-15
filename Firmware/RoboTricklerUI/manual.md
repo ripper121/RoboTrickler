@@ -663,8 +663,11 @@ Die Startseite lädt `/system/index.html` von der SD-Karte. Von dort erreichst d
 * Dateibrowser
 * Pulverprofil-Editor
 * Einstellungen
+* WLAN verbinden (öffnet die [Access-Point-Einrichtung](#access-point-einrichtung) unter `/system/ap`)
 * Firmware-Update
 * Neustart
+
+Darunter führen zwei Links zu den [Firmware-Versionen](https://github.com/ripper121/RoboTrickler/releases/latest) und zum Handbuch im GitHub-Wiki.
 
 Die Weboberfläche ist mehrsprachig. Die Texte werden aus `/system/lang/<sprache>.json` geladen und folgen der in `config.txt` eingestellten `language` (mit Rückfall auf Englisch).
 

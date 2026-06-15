@@ -23,6 +23,13 @@ void initSetup()
 
     updateDisplayLog((String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
 
+    // Run the SD firmware/LittleFS update before loading config/profiles so it
+    // also works from a bare SD card that only contains firmware.bin /
+    // littleFS.bin. The display task is already up, so progress is shown on
+    // screen (config/language are not loaded yet, so messages use the built-in
+    // English fallback). initUpdate() self-guards on activeFSIsSD.
+    initUpdate();
+
     String infoText = langText("status_init_steppers");
     updateDisplayLog(infoText, true);
     initStepper();
