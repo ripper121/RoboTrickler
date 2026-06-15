@@ -13,6 +13,12 @@
    <div class="card">
       <fieldset>
          <legend data-i18n="profileEditor.profile">Profile</legend>
+         <fieldset id="loadProfileContainer">
+            <legend data-i18n="profileEditor.loadProfile">Load Profile:</legend>
+            <select id="profileSelect" class="dropdown" onchange="loadSelectedProfile();">
+               <option value="" data-i18n="profileEditor.selectPrompt">-- Select profile --</option>
+            </select>
+         </fieldset>
          <textarea id="jsonInput" placeholder="Paste or Drag&Drop Profile here" data-i18n-placeholder="profileEditor.placeholder"></textarea><br>
 
          <label for="profileName" data-i18n="profileEditor.profileName">Profile Name:</label>
@@ -404,11 +410,61 @@
          xmlHttp.send(formData);
       }
 
+      function addProfilesToDropdown() {
+         return fetch('/getProfileList')
+            .then(response => {
+               if (!response.ok) {
+                  throw new Error('Network response was not ok');
+               }
+               return response.json();
+            })
+            .then(data => {
+               var dropdown = document.getElementById('profileSelect');
+               // Keep the first "select" prompt option, drop the rest.
+               while (dropdown.options.length > 1) {
+                  dropdown.remove(1);
+               }
+               Object.values(data).forEach(function (name) {
+                  var option = document.createElement('option');
+                  option.value = name;
+                  option.textContent = name;
+                  dropdown.appendChild(option);
+               });
+            })
+            .catch(error => {
+               console.error('Could not load profile list:', error);
+            });
+      }
+
+      function loadSelectedProfile() {
+         var profileName = document.getElementById('profileSelect').value;
+         if (!profileName) {
+            return;
+         }
+         fetch('/profiles/' + encodeURIComponent(profileName) + '.txt', { cache: 'no-store' })
+            .then(response => {
+               if (!response.ok) {
+                  throw new Error('Network response was not ok');
+               }
+               return response.text();
+            })
+            .then(text => {
+               loadProfileText(document.getElementById('jsonInput'), text);
+               document.getElementById('profileName').value = profileName;
+            })
+            .catch(error => {
+               console.error('Could not load profile:', error);
+               alert(window.rtT ? rtT('alerts.profileLoadFailed', 'Could not load profile.') : 'Could not load profile.');
+            });
+      }
+
       window.addEventListener("load", (event) => {
          if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "" || location.hostname === "strenuous.dev") {
             document.getElementById("save-btn").style.display = "none";
+            document.getElementById("loadProfileContainer").style.display = "none";
          } else {
             document.getElementById("download-btn").style.display = "none";
+            addProfilesToDropdown();
          }
       });
    </script>

@@ -17,7 +17,6 @@ Stand: Firmware 2.13
   - [Automatisches Profil aus Kalibrierlauf erstellen](#automatisches-profil-aus-kalibrierlauf-erstellen)
   - [Profil-Tuning](#profil-tuning)
   - [Profil löschen](#profil-löschen)
-  - [Profilgenerator](#profilgenerator)
   - [Pulverprofil-Editor](#pulverprofil-editor)
   - [Profile am Display anpassen und löschen](#profile-am-display-anpassen-und-löschen)
   - [Gramm / Grain](#gramm--grain)
@@ -299,38 +298,13 @@ Klicke auf das **Löschen-Symbol**, um das ausgewählte Profil zu entfernen.
 ![Profil löschen](https://github.com/user-attachments/assets/305e6653-df4b-47c8-8035-8d8d7b95fbcd)
 
 
-## Profilgenerator
-
-Alternativ kann ein Profil mit `profileGenerator.html` erzeugt werden. Die Datei liegt auf der SD-Karte unter:
-
-```text
-/system/profileGenerator.html
-```
-
-Wenn WLAN aktiv ist, ist der Generator auch im Webbrowser erreichbar.
-
-Video Anleitung:
-
-[![youtube video](https://img.youtube.com/vi/Y3HOAB9iIfA/0.jpg)](https://www.youtube.com/watch?v=Y3HOAB9iIfA)
-
-1. Öffne den `Pulverprofil-Generator`.
-2. Trage bei `Gewicht des Kalibrierlaufs:` die Pulvermenge des Kalibrierlaufs ein.
-3. Wähle unter `Einheit` `Gramm:` oder `Grain:`.
-4. Stelle bei Bedarf `Gewichtsabstand:`, `Stepper-Drehzahl rpm:`, `Allgemeine Messungen (mit PLC 100-BC 5 nutzen):`, `Bulk actuator:`, `Berechnungstoleranz in %:`, `Alarmgrenze:`, `Toleranz:` und `Nur bei 0.000 starten:` ein.
-5. Trage bei `Profilname:` einen Profilnamen ein, z.B. `n140`.
-6. Klicke auf `Download` oder, wenn du über den Webserver arbeitest, auf `Speichern`.
-7. Speichere das Profil als `.txt` in `/profiles`.
-8. Starte den Trickler neu, damit die neue Profilliste geladen wird.
-
-Der Generator übernimmt `Allgemeine Messungen` als `general.measurements`. Für die acht Feinwurf-Einträge (`1.929`, `0.965`, `0.482`, `0.241`, `0.121`, `0.060`, `0.030`, `0.000` gn) verwendet er mindestens diesen Wert und sonst die Stufen `2`, `2`, `5`, `10`, `15`, `15`, `20` und `25` Messungen. `general.actuator` bestimmt den Stepper für den automatischen ersten Grobwurf. Die Feinwurf-Einträge in `rs232TrickleMap` nutzen weiterhin `stepper1`.
-
-<img width="447" height="1201" alt="image" src="https://github.com/user-attachments/assets/cd842237-bff4-4a58-b9f4-565258d935ef" />
-
 ## Pulverprofil-Editor
 
-Der Webserver enthält zusätzlich `profileEditor.html` als `Pulverprofil-Editor`. Damit können die im Editor sichtbaren Profilfelder bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` gespeichert werden. `general.trickleCounter` wird von der Firmware unterstützt, ist im aktuellen Editor aber kein eigenes Eingabefeld.
+Der Webserver enthält `profileEditor.html` als `Pulverprofil-Editor`. Damit können alle von der Firmware unterstützten Profilfelder (`general`, `actuator.stepper1`/`stepper2` und die `rs232TrickleMap`-Schritte sowie die Kalibrier-Profilform) bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` gespeichert werden. Auch `general.startAtZero` und `general.trickleCounter` sind eigene Eingabefelder.
 
-> 📸 **Screenshot – Webserver:** Der Pulverprofil-Editor (`profileEditor.html`) mit einem geladenen Profil, sichtbaren `general`-Feldern, der `rs232TrickleMap`-Tabelle und den Buttons zum Herunterladen/Speichern.
+Wenn du über den Webserver arbeitest, listet das Auswahlfeld `Profil laden:` alle vorhandenen Profile aus `/profiles` auf. Beim Auswählen wird das Profil vom Gerät geladen und in den Editor übernommen; mit `Speichern` wird es unter dem `Profilname` wieder in `/profiles` zurückgeschrieben. Profile lassen sich weiterhin per Drag&Drop oder Einfügen in das Textfeld laden. Starte den Trickler nach dem Speichern neu, damit die neue Profilliste geladen wird.
+
+> 📸 **Screenshot – Webserver:** Der Pulverprofil-Editor (`profileEditor.html`) mit dem Auswahlfeld `Profil laden:`, einem geladenen Profil, sichtbaren `general`-Feldern, der `rs232TrickleMap`-Tabelle und den Buttons zum Herunterladen/Speichern.
 
 ## Profile am Display anpassen und löschen
 
@@ -578,7 +552,7 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 
 Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu.
 
-Auf der SD-Karte befindet sich `system/configGenerator.html`, welcher das Erstellen der wichtigsten Konfigurationsfelder und `fw_update.check` erleichtert. Der Generator wird auch über den Webserver bereitgestellt. `trickleCounter` und `trickleCount` werden von der Firmware unterstützt, werden vom aktuellen Konfigurationsgenerator aber nicht erzeugt.
+Auf der SD-Karte befindet sich `system/settings.html` (Menüpunkt `Einstellungen`), womit sich alle Konfigurationsfelder inklusive `trickleCounter`, `trickleCount` und `fw_update.check` erstellen lassen. Die Seite wird auch über den Webserver bereitgestellt.
 
 <img width="372" height="1220" alt="image" src="https://github.com/user-attachments/assets/bfb98107-4ebd-4d78-a6bd-ee829973a59f" />
 
@@ -672,9 +646,8 @@ Die Startseite lädt `/system/index.html` von der SD-Karte. Von dort erreichst d
 
 * Trickler
 * Dateibrowser
-* Pulverprofil-Generator
 * Pulverprofil-Editor
-* Konfigurationsgenerator
+* Einstellungen
 * Firmware-Update
 * Neustart
 

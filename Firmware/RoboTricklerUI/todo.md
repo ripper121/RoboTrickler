@@ -1,2 +1,4 @@
+- remove profile Generator
+- renam config Generator to settings
+- to the profile Editor add a drop down to list all aviable profiles to edit, save button should save the profile to sd-card, check out File Browser and Trickler page for api references
 - fix sd card html pages to support anything what the fw supports (like config and profiles)
-- Update manual.md
