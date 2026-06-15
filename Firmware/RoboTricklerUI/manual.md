@@ -437,7 +437,22 @@ Hinweise:
 
 ## Mehrere Trickler
 
-Für mehrere Trickler wird `actuator` verwendet:
+Die Firmware kann zwei Trickler (Stepper) unabhängig ansteuern. Das ist nützlich, um z.B. einen schnellen Grob-Trickler für die große Menge weit vom Zielgewicht und einen feinen Trickler für die letzten Körner zu kombinieren.
+
+**Hardware:**
+
+* `stepper1` wird über den **X-Motoranschluss** des Treiberboards angesteuert.
+* `stepper2` wird über den **Y-Motoranschluss** des Treiberboards angesteuert.
+
+Beide Treiber teilen sich die gemeinsame Enable-Leitung; es ist immer nur ein Stepper gleichzeitig in Bewegung.
+
+**So werden die beiden Trickler verteilt:**
+
+1. **Beide Stepper aktivieren.** Setze im `actuator`-Block bei beiden, die du nutzen willst, `enabled: true` und trage jeweils `unitsPerThrow` (Pulvermenge pro Umdrehung) und `unitsPerThrowSpeed` (Geschwindigkeit) passend zum jeweiligen Trickler ein.
+2. **Grobwurf-Stepper wählen.** `general.actuator` bestimmt, welcher Stepper den automatischen ersten Grobwurf ausführt (z.B. `stepper2` als großer/schneller Trickler). Dieser Stepper muss `enabled: true` sein und ein gültiges `unitsPerThrow` größer `0` haben, sonst wird der Grobwurf übersprungen.
+3. **Feinwurf pro Tabelleneintrag zuweisen.** Jeder Eintrag in `rs232TrickleMap` hat ein eigenes `actuator`-Feld (`stepper1` oder `stepper2`). So kannst du je nach Abstand zum Zielgewicht (`diffWeight`) einen anderen Trickler verwenden – typischerweise der große Trickler für die größeren `diffWeight`-Bereiche und der feine Trickler für die letzten Einträge nahe `0`.
+
+Damit übernimmt im folgenden Beispiel `stepper2` den Grobwurf und den ersten Feinwurf-Bereich (großer/schneller Trickler), während `stepper1` ab `diffWeight 0.250` die feine Annäherung an das Zielgewicht erledigt:
 
 ```json
 {
@@ -566,7 +581,7 @@ Die neueste Firmware findest du [hier](https://github.com/ripper121/RoboTrickler
 Es gibt drei Update-Möglichkeiten:
 
 1. Öffne bei aktivem WLAN in der Weboberfläche `Firmware-Update`, wähle die Firmware-Datei `.bin` und lade sie hoch. Nach erfolgreichem Schreiben startet der Trickler neu. Auf dieser Seite kann zusätzlich ein LittleFS-Image (`littlefs.bin`) hochgeladen werden, um das interne Dateisystem zu aktualisieren.
-2. Kopiere die Firmware-Datei als `/update.bin` in das Hauptverzeichnis der SD-Karte und starte den Trickler. Nach einem erfolgreichen Update löscht die Firmware die Datei und startet neu.
+2. Kopiere die Firmware-Datei als `/firmware.bin` in das Hauptverzeichnis der SD-Karte und starte den Trickler. Zusätzlich kann ein LittleFS-Image als `/littleFS.bin` ins Hauptverzeichnis gelegt werden, um das interne Dateisystem zu aktualisieren. Die Firmware prüft beim Start auf diese Dateien, spielt sie ein, löscht die jeweilige Datei nach einem erfolgreichen Update und startet neu.
 3. Verwende für eine vollständige Neuinstallation die Anleitung unter [Flash via USB](#flash-via-usb).
 
 `fw_update.check` steuert nur die automatische Versionsprüfung bei bestehender Netzwerkverbindung. Wird eine neuere Firmware gefunden, zeigt der Trickler einen Hinweis mit der neuen Versionsnummer und der Download-Adresse an. Das eigentliche Update wird nicht automatisch heruntergeladen oder installiert.
