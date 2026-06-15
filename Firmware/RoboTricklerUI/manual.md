@@ -581,7 +581,9 @@ Die neueste Firmware findest du [hier](https://github.com/ripper121/RoboTrickler
 Es gibt drei Update-Möglichkeiten:
 
 1. Öffne bei aktivem WLAN in der Weboberfläche `Firmware-Update`, wähle die Firmware-Datei `.bin` und lade sie hoch. Nach erfolgreichem Schreiben startet der Trickler neu. Auf dieser Seite kann zusätzlich ein LittleFS-Image (`littlefs.bin`) hochgeladen werden, um das interne Dateisystem zu aktualisieren.
-2. Kopiere die Firmware-Datei als `/firmware.bin` in das Hauptverzeichnis der SD-Karte und starte den Trickler. Zusätzlich kann ein LittleFS-Image als `/littleFS.bin` ins Hauptverzeichnis gelegt werden, um das interne Dateisystem zu aktualisieren. Die Firmware prüft beim Start auf diese Dateien, spielt sie ein, löscht die jeweilige Datei nach einem erfolgreichen Update und startet neu.
+2. Kopiere die Firmware-Datei als `/firmware.bin` in das Hauptverzeichnis der SD-Karte und starte den Trickler. Zusätzlich kann ein LittleFS-Image als `/littleFS.bin` ins Hauptverzeichnis gelegt werden, um das interne Dateisystem zu aktualisieren. Die Firmware prüft schon früh beim Start – noch vor dem Laden von Konfiguration und Profilen – auf diese Dateien. Dadurch funktioniert das Update auch von einer ansonsten leeren SD-Karte, die nur `/firmware.bin` (und optional `/littleFS.bin`) enthält. Der Fortschritt wird dabei am Display angezeigt (in englischer Sprache, da die Konfiguration zu diesem Zeitpunkt noch nicht geladen ist). Nach einem erfolgreichen Update löscht die Firmware die jeweilige Datei und startet neu.
+
+> 📸 **Screenshot – Display:** Statuszeile beim Start während eines SD-Updates (z.B. „Checking SD card updates..." bzw. „SD card update complete. Rebooting..."), bevor die Konfiguration geladen wird.
 3. Verwende für eine vollständige Neuinstallation die Anleitung unter [Flash via USB](#flash-via-usb).
 
 `fw_update.check` steuert nur die automatische Versionsprüfung bei bestehender Netzwerkverbindung. Wird eine neuere Firmware gefunden, zeigt der Trickler einen Hinweis mit der neuen Versionsnummer und der Download-Adresse an. Das eigentliche Update wird nicht automatisch heruntergeladen oder installiert.
