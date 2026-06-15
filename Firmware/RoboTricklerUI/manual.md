@@ -2,6 +2,8 @@
 
 Stand: Firmware 2.13
 
+> **Keine Sorge:** Diese Anleitung ist bewusst sehr ausführlich und wirkt dadurch umfangreich. Die eigentliche Bedienung des Robo-Tricklers ist aber ganz einfach – für den Einstieg genügt das Kapitel [Erste Schritte](#erste-schritte). Der Rest dient zum Nachschlagen.
+
 ## Inhaltsverzeichnis
 
 - [Erste Schritte](#erste-schritte)
@@ -18,7 +20,6 @@ Stand: Firmware 2.13
   - [Profil-Tuning](#profil-tuning)
   - [Profil löschen](#profil-löschen)
   - [Pulverprofil-Editor](#pulverprofil-editor)
-  - [Profile am Display anpassen und löschen](#profile-am-display-anpassen-und-löschen)
   - [Gramm / Grain](#gramm--grain)
   - [Aufbau eines Profils](#aufbau-eines-profils)
   - [Mehrere Trickler](#mehrere-trickler)
@@ -31,6 +32,7 @@ Stand: Firmware 2.13
   - [WLAN am Display steuern](#wlan-am-display-steuern)
   - [Access-Point-Einrichtung](#access-point-einrichtung)
   - [Weboberfläche](#weboberfläche)
+  - [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)
   - [Fernsteuerung über den Webbrowser](#fernsteuerung-über-den-webbrowser)
   - [Dateibrowser](#dateibrowser)
   - [Web-API](#web-api)
@@ -51,7 +53,7 @@ Stand: Firmware 2.13
   - [Gehäuse Aufbau](#gehäuse-aufbau)
   - [Alurohr Passung](#alurohr-passung)
 
-## Erste Schritte
+# Erste Schritte
 
 1. Verbinde die Steuereinheit mit der Waage über den RS-232-Stecker.
 2. Verbinde die Steuereinheit mit dem Trickler.
@@ -75,7 +77,7 @@ Optional kannst du den Trickler auch über WLAN und den Webbrowser bedienen. Tra
 
 **Für jedes Pulver muss ein eigenes Profil angelegt werden, um ein optimales Trickeln zu gewährleisten.**
 
-### [Profil erstellen](#automatisches-profil-aus-kalibrierlauf-erstellen)
+**Profil erstellen:** Wie du für ein neues Pulver ein passendes Profil anlegst, ist unter [Automatisches Profil aus Kalibrierlauf erstellen](#automatisches-profil-aus-kalibrierlauf-erstellen) beschrieben.
 
 **Jede Waage muss vor dem Gebrauch warm laufen, je nach Modell bis zu 1 Stunde. Sonst kann der angezeigte Wert driften und die Waage geht nach dem Leeren der Pulverpfanne nicht sauber auf 0 zurück.**
 
@@ -124,7 +126,7 @@ Das angezeigte Gewicht wechselt während des Trickelns die Farbe:
 * Der rote Button (Papierkorb) löscht das ausgewählte Profil nach einer Bestätigung.
 * Für das Profil `calibrate` werden Tuning- und Lösch-Button ausgeblendet.
 
-**Während des Trickelns ist der Profil-Tab gesperrt.** Um das Profil zu wechseln, muss der Trickler zuerst gestoppt werden.
+**Während des Trickelns ist der Tab `Profil` gesperrt.** Um das Profil zu wechseln, muss der Trickler zuerst gestoppt werden.
 
 > 📸 **Screenshot – Display:** Tab `Profil` mit einem geladenen Profil (z.B. `avg`). Sichtbar: Profilname in der Mitte, orangefarbener Zahnrad-Button (Tuning) links, roter Papierkorb-Button (Löschen) rechts und die Pfeil-Buttons oben/unten.
 
@@ -204,7 +206,7 @@ Dieses Profil nutzt `steps: 20000`. Das sind 20000 direkte STEP-Pulse; bei 200 S
 
 <img width="480" height="320" alt="Calibrate" src="https://github.com/user-attachments/assets/36eb5c5b-7721-48a3-9a37-762c74fe1e67" />
 
-2. Im Tab `Trickler` drücke `Start`, achte darauf das die Waage auf 0.00 steht.
+2. Im Tab `Trickler` drücke `Start`, achte darauf, dass die Waage auf `0.000` steht.
 
 <img width="480" height="320" alt="Trickle_Main" src="https://github.com/user-attachments/assets/c445d0f0-6b74-408d-820d-f0e4e8454064" />
 
@@ -212,15 +214,15 @@ Dieses Profil nutzt `steps: 20000`. Das sind 20000 direkte STEP-Pulse; bei 200 S
 
 <img width="480" height="320" alt="Calibration_Run" src="https://github.com/user-attachments/assets/a46efe2d-41fb-4140-8a00-f821d6fe14d7" />
 
-4. Nach dem Kalibrierlauf  Bestätige am Display `Profil aus Kalibrierung erstellen?` mit `Ja`.
+4. Nach dem Kalibrierlauf bestätige am Display `Profil aus Kalibrierung erstellen?` mit `Ja`.
 
 <img width="480" height="320" alt="Calibration_Run" src="https://github.com/user-attachments/assets/ce8b4c01-0785-48e5-bdb4-79179fb826fc" />
 
-5. Nach dem Kalibrierlauf liest die Firmware das stabile Gewicht von der Waage und erstellt ein neues Profil
+5. Nach dem Kalibrierlauf liest die Firmware das stabile Gewicht von der Waage und erstellt ein neues Profil.
 
 <img width="480" height="320" alt="Calibration_Save" src="https://github.com/user-attachments/assets/80de2c87-3bf6-448a-a28c-2e319a4ac9ed" />
 
-6. Jetzt kann man das neue Profil verwenden, einfach ein Zielgewicht einstellen und auf Start drücken
+6. Jetzt kannst du das neue Profil verwenden: einfach ein Zielgewicht einstellen und auf `Start` drücken.
 
 <img width="480" height="320" alt="Trickle_Main" src="https://github.com/user-attachments/assets/34cb2d95-5e9f-447c-9ac6-939140b4d0b9" />
 
@@ -239,13 +241,13 @@ Das Profil kann direkt über die Steuerung angepasst werden.
 
 ### 1. Profil auswählen
 
-Wechsle in den **Profil-Tab** und wähle das Profil aus, das angepasst werden soll.
+Wechsle in den Tab `Profil` und wähle das Profil aus, das angepasst werden soll.
 
 ![Profil auswählen](https://github.com/user-attachments/assets/b4ba4f5b-84c8-492e-a2bc-4d74446d9ba5)
 
 ### 2. Units / Throw anpassen
 
-Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Throw** anpassen.
+Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Throw** anpassen (entspricht `actuator.stepper1.unitsPerThrow`). Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
 
 ![Units / Throw anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
 
@@ -259,13 +261,13 @@ Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Throw** anpa
 
 ### 3. Einstellungen speichern
 
-Klicke auf **Speichern**, um die Änderungen zu übernehmen.
+Klicke auf **Speichern**, um die Änderungen zu übernehmen. Beim Speichern berechnet die Firmware die acht Einträge der `rs232TrickleMap` neu und schreibt das Profil direkt auf die SD-Karte. Der Trickler muss dafür gestoppt sein.
 
 ![Einstellungen speichern](https://github.com/user-attachments/assets/7a7d0735-f0f2-4740-8e7b-fcf7f4df550e)
 
 ### 4. Ergebnis testen
 
-Wechsle zurück in den **Trickle-Tab** und teste die neuen Einstellungen.
+Wechsle zurück in den Tab `Trickler` und teste die neuen Einstellungen.
 
 ![Ergebnis testen](https://github.com/user-attachments/assets/b3d187a3-37ab-4deb-ba9e-6d8f17629922)
 
@@ -285,13 +287,13 @@ Das bedeutet: `W` = `diffWeight` des aktiven Eintrags, `ST` = `steps`, `SP` = `s
 
 ### 1. Profil auswählen
 
-Wechsle in den **Profil-Tab** und wähle das Profil aus, das gelöscht werden soll.
+Wechsle in den Tab `Profil` und wähle das Profil aus, das gelöscht werden soll.
 
 ![Profil auswählen](https://github.com/user-attachments/assets/c185afa4-03b1-41d3-b1b1-f0c7c5ff0df2)
 
 ### 2. Profil löschen
 
-Klicke auf das **Löschen-Symbol**, um das ausgewählte Profil zu entfernen.
+Klicke auf das **Löschen-Symbol**, um das ausgewählte Profil zu entfernen. Vor dem Löschen wechselt die Firmware auf `calibrate` und aktualisiert anschließend die Profilliste. Das Profil `calibrate` selbst kann am Display weder angepasst noch gelöscht werden.
 
 > **Hinweis:** Das Löschen eines Profils kann nicht rückgängig gemacht werden.
 
@@ -304,16 +306,9 @@ Der Webserver enthält `profileEditor.html` als `Pulverprofil-Editor`. Damit kö
 
 Wenn du über den Webserver arbeitest, listet das Auswahlfeld `Profil laden:` alle vorhandenen Profile aus `/profiles` auf. Beim Auswählen wird das Profil vom Gerät geladen und in den Editor übernommen; mit `Speichern` wird es unter dem `Profilname` wieder in `/profiles` zurückgeschrieben. Profile lassen sich weiterhin per Drag&Drop oder Einfügen in das Textfeld laden. Starte den Trickler nach dem Speichern neu, damit die neue Profilliste geladen wird.
 
+Der Editor lässt sich auch offline direkt von der SD-Karte öffnen. Offline fehlen das Auswahlfeld `Profil laden:` und das Speichern auf das Gerät; das bearbeitete Profil wird stattdessen über `Herunterladen` als Datei gesichert (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
+
 > 📸 **Screenshot – Webserver:** Der Pulverprofil-Editor (`profileEditor.html`) mit dem Auswahlfeld `Profil laden:`, einem geladenen Profil, sichtbaren `general`-Feldern, der `rs232TrickleMap`-Tabelle und den Buttons zum Herunterladen/Speichern.
-
-## Profile am Display anpassen und löschen
-
-Im Tab `Profil` werden bei allen Profilen außer `calibrate` zwei Wartungsfunktionen angezeigt:
-
-* Mit dem orangefarbenen Einstellungs-Button kann `actuator.stepper1.unitsPerThrow` angepasst werden. Die Schrittweite wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
-* Beim Speichern berechnet die Firmware die acht Einträge in `rs232TrickleMap` neu und schreibt das Profil direkt auf die SD-Karte. Der Trickler muss dafür gestoppt sein.
-* Mit dem roten Papierkorb-Button kann das ausgewählte Profil nach einer Bestätigung gelöscht werden. Vor dem Löschen wechselt die Firmware auf `calibrate` und aktualisiert anschließend die Profilliste.
-* Das Profil `calibrate` kann über das Display weder angepasst noch gelöscht werden.
 
 ## Gramm / Grain
 
@@ -402,7 +397,7 @@ Beispiel für das neue Profilformat:
 * `alarmThreshold`: Überwurf-Grenze. Wenn `targetWeight + alarmThreshold` erreicht oder überschritten wird, stoppt die Firmware, piept mehrfach und zeigt eine Warnung an. Bei `0` ist der Alarm deaktiviert.
 * `weightGap`: Abstand zum Zielgewicht, bei dem der automatische erste Grobwurf enden soll.
 * `actuator`: optionaler Bulk-Actuator für den automatischen ersten Grobwurf. Erlaubt sind `stepper1` und `stepper2`. Wenn das Feld fehlt, leer oder ungültig ist, verwendet die Firmware `stepper1`.
-* `startAtZero`: Wenn `true`, wartet die Firmware vor dem ersten Wurf auf exakt `0.000`. Wenn `false`, startet der erste Wurf bei jedem Gewicht ab `0.000`.
+* `startAtZero`: Wenn `true`, wartet die Firmware vor dem ersten Wurf auf exakt `0.000`. Wenn `false`, beginnt der erste Wurf bereits, sobald das Gewicht bei oder über `0.000` liegt – die Waage muss also nicht exakt genullt sein.
 * `trickleCounter`: Wenn `true`, zeigt die Anzahl der fertigen Trickles seit dem letzten Stop an. Standard ist `false`.
 * `measurements`: Anzahl stabiler Messwerte bevor der nächste Tricklevorgang gestartet wird (bei neu aufsetzen der Pulverpfanne).
 
@@ -425,7 +420,7 @@ Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet au
 * `actuator`: `stepper1` oder `stepper2`.
 * `steps`: Anzahl direkter STEP-Pulse für diesen Wurf. Die Firmware gibt diesen Wert unverändert an den Stepper aus.
 * `speed`: Motorgeschwindigkeit in U/min. Sinnvolle Werte liegen meist zwischen 5 und 300.
-* `measurements`: Anzahl stabiler Messwerte die abgewartet bis dieser Wurf ausgeführt wird.
+* `measurements`: Anzahl stabiler Messwerte, die abgewartet werden, bis dieser Wurf ausgeführt wird.
 
 Die Firmware wählt den ersten Eintrag, dessen `diffWeight` noch zum Abstand zwischen aktuellem Gewicht und Zielgewicht passt. Je näher das Zielgewicht kommt, desto kleinere `diffWeight`-Einträge werden verwendet.
 
@@ -513,7 +508,7 @@ Falls die SD-Karte defekt ist oder beim Bearbeiten Fehler aufgetreten sind, kön
 
 SD-Karten mit mehr als 32 GB:
 
-Ist die SD-Karte zu groß, gibt es hier eine Anleitung wie man sie Trotzdem mit FAT32 formatieren kann:
+Ist die SD-Karte zu groß, gibt es hier eine Anleitung, wie du sie trotzdem mit FAT32 formatieren kannst:
 https://www.simon42.com/grosse-sd-karte-formatieren-fat32/
 
 ## Konfiguration
@@ -547,27 +542,29 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
 }
 ```
 
-* `wifi.enabled`: aktiviert WLAN, Webserver und alle Netzwerkdienste. Bei `false` startet der Trickler ohne WLAN. Lässt sich auch direkt am Display im Tab `Info` ein- und ausschalten.
-* `wifi.ssid`: WLAN-Name. Nur 2.4 GHz WLAN wird unterstützt.
-* `wifi.psk`: WLAN-Passwort. Bei offenem WLAN leer lassen.
-* `wifi.IPStatic`: optionale statische IP-Adresse.
-* `wifi.IPGateway`: Gateway-IP, nötig bei statischer IP.
-* `wifi.IPSubnet`: Subnetzmaske, nötig bei statischer IP.
-* `wifi.IPDNS`: optionaler DNS-Server. Wenn leer, nutzt die Firmware `8.8.8.8`.
+Die Werte im Beispiel oben dienen nur zur Veranschaulichung. In Klammern steht jeweils der Standardwert, den die Firmware verwendet, wenn `config.txt` fehlt oder das Feld nicht gesetzt ist.
+
+* `wifi.enabled`: aktiviert WLAN, Webserver und alle Netzwerkdienste. Bei `false` startet der Trickler ohne WLAN. Lässt sich auch direkt am Display im Tab `Info` ein- und ausschalten. (Standard: `true`)
+* `wifi.ssid`: WLAN-Name. Nur 2.4 GHz WLAN wird unterstützt. (Standard: leer)
+* `wifi.psk`: WLAN-Passwort. Bei offenem WLAN leer lassen. (Standard: leer)
+* `wifi.IPStatic`: optionale statische IP-Adresse. (Standard: leer = DHCP)
+* `wifi.IPGateway`: Gateway-IP, nötig bei statischer IP. (Standard: leer)
+* `wifi.IPSubnet`: Subnetzmaske, nötig bei statischer IP. (Standard: leer)
+* `wifi.IPDNS`: optionaler DNS-Server. Wenn leer, nutzt die Firmware `8.8.8.8`. (Standard: leer)
 * Falls DHCP verwendet werden soll, lasse `wifi.IPStatic`, `wifi.IPGateway`, `wifi.IPSubnet` und `wifi.IPDNS` leer.
-* `scale.protocol`: unterstützte Werte sind `GG`, `SBI`, `KERN`, `KERN-ABT`, `KERN-ABS`, `AD`, `CUSTOM` und leer für kein aktives Anfragekommando.
-* `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden.
-* `scale.baud`: Baudrate der Waage, meistens `9600`.
-* `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil.
-* `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Die Display-Texte werden aus `/lang/<sprache>.json` geladen und fallen auf `/lang/en.json` sowie danach auf eingebaute englische Texte zurück. Die Weboberfläche verwendet getrennte Dateien unter `/system/lang`.
-* `beeper`: `done` Beep wenn Trickle fertig, `button` Beep bei Touch betätigung, `both` beides aktiv oder `off` Beeper aus.
-* `trickleCounter`: aktiviert den dauerhaften Gesamtzaehler fuer fertige Trickles.
-* `trickleCount`: gespeicherter Stand des dauerhaften Gesamtzaehlers.
-* `fw_update.check`: aktiviert die automatische Prüfung auf neue Firmware.
+* `scale.protocol`: unterstützte Werte sind `GG`, `SBI`, `KERN`, `KERN-ABT`, `KERN-ABS`, `AD`, `CUSTOM` und leer für kein aktives Anfragekommando. (Standard: `GG`)
+* `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden. (Standard: leer)
+* `scale.baud`: Baudrate der Waage, meistens `9600`. (Standard: `9600`)
+* `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil. (Standard: `calibrate`)
+* `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Die Display-Texte werden aus `/lang/<sprache>.json` geladen und fallen auf `/lang/en.json` sowie danach auf eingebaute englische Texte zurück. Die Weboberfläche verwendet getrennte Dateien unter `/system/lang`. (Standard: `en`)
+* `beeper`: `done` Beep wenn Trickle fertig, `button` Beep bei Touch betätigung, `both` beides aktiv oder `off` Beeper aus. (Standard: `done`)
+* `trickleCounter`: aktiviert den dauerhaften Gesamtzähler für fertige Trickles. (Standard: `false`)
+* `trickleCount`: gespeicherter Stand des dauerhaften Gesamtzählers. (Standard: `0`)
+* `fw_update.check`: aktiviert die automatische Prüfung auf neue Firmware. (Standard: `true`)
 
 Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu.
 
-Auf der SD-Karte befindet sich `system/settings.html` (Menüpunkt `Einstellungen`), womit sich alle Konfigurationsfelder inklusive `trickleCounter`, `trickleCount` und `fw_update.check` erstellen lassen. Die Seite wird auch über den Webserver bereitgestellt.
+Auf der SD-Karte befindet sich `system/settings.html` (Menüpunkt `Einstellungen`), womit sich alle Konfigurationsfelder inklusive `trickleCounter`, `trickleCount` und `fw_update.check` erstellen lassen. Die Seite wird auch über den Webserver bereitgestellt und lässt sich zudem offline direkt von der SD-Karte öffnen (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
 
 <img width="372" height="1220" alt="image" src="https://github.com/user-attachments/assets/bfb98107-4ebd-4d78-a6bd-ee829973a59f" />
 
@@ -671,9 +668,21 @@ Die Startseite lädt `/system/index.html` von der SD-Karte. Von dort erreichst d
 
 Darunter führen zwei Links zu den [Firmware-Versionen](https://github.com/ripper121/RoboTrickler/releases/latest) und zum Handbuch im GitHub-Wiki.
 
-Die Weboberfläche ist mehrsprachig. Die Texte werden aus `/system/lang/<sprache>.json` geladen und folgen der in `config.txt` eingestellten `language` (mit Rückfall auf Englisch).
+Die Weboberfläche ist mehrsprachig. Die Texte werden aus `/system/lang/<sprache>.json` geladen und folgen der in `config.txt` eingestellten `language` (mit Rückfall auf Englisch). Wird eine Seite offline direkt von der SD-Karte geöffnet, richtet sich die Sprache stattdessen nach der Browser-Spracheinstellung (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
 
 <img width="556" height="675" alt="image" src="https://github.com/user-attachments/assets/a1242108-1b66-4a10-99d4-2867f0f85b6c" />
+
+
+## Weboberfläche offline nutzen
+
+Die beiden Generator-Seiten lassen sich auch ohne Gerät und ohne WLAN nutzen: Öffne dazu `system/index.html` von der SD-Karte direkt im Browser (z.B. per Doppelklick). In diesem lokalen Modus zeigt die Startseite nur die beiden eigenständigen Werkzeuge an:
+
+* **Einstellungen** (`settings.html`): erzeugt eine `config.txt` zum Herunterladen.
+* **Pulverprofil-Editor** (`profileEditor.html`): bearbeitet ein Profil und lädt es als Datei herunter. Das Auswahlfeld `Profil laden:` und das Speichern direkt auf das Gerät stehen offline nicht zur Verfügung – lade ein Profil per Drag&Drop oder Einfügen in das Textfeld und sichere das Ergebnis über `Herunterladen`.
+
+Die gerätegebundenen Funktionen (Trickler-Fernsteuerung, Dateibrowser, `WLAN verbinden`, Firmware-Update, Neustart) werden offline ausgeblendet. Die beiden Werkzeuge können auch direkt geöffnet werden (`system/settings.html` bzw. `system/profileEditor.html`).
+
+Die Sprache der offline geöffneten Seiten richtet sich nach der Spracheinstellung des Browsers (mit Rückfall auf Englisch); eine `config.txt` wird dafür nicht benötigt.
 
 
 ## Fernsteuerung über den Webbrowser
@@ -748,7 +757,7 @@ Eine Empfehlung für Wiederlader direkt von G&G: https://gandg.de/download/anlei
 
 ### Einstellungen
 
-Man sollte alle Filter ausschalten und die Sensibilität auf maximal stellen. Falls der Gewichtswert zu stark schwankt, spiele etwas mit C1 und C2.
+Du solltest alle Filter ausschalten und die Sensibilität auf Maximum stellen. Falls der Gewichtswert zu stark schwankt, spiele etwas mit C1 und C2.
 
 Anleitung für G&G Waagen: https://gandg.de/index.php/downloads
 
@@ -847,7 +856,7 @@ https://github.com/ripper121/RoboTrickler/blob/main/Doc/Sartorius_Trickler_Param
 
 ## Kern
 
-Kern 440-21a, Kern PCB 100-3, Kern ABT-120 4NM, Kern ABS 80-4  und Kern EG-220 3NM wurden erfolgreich getestet.
+Kern 440-21a, Kern PCB 100-3, Kern ABT-120 4NM, Kern ABS 80-4 und Kern EG-220 3NM wurden erfolgreich getestet.
 
 | Befehl | Verhalten                               |
 |---------|-----------------------------------------|
@@ -1170,7 +1179,7 @@ Korrekte Verkabelung:
 
 **Verpolung beschädigt den Motor-Treiber.**
 
-Hier sieht man, wie der Motor-Treiber richtig herum gesteckt ist:
+Hier siehst du, wie der Motor-Treiber richtig herum gesteckt ist:
 
 ![image](https://github.com/ripper121/RoboTrickler/assets/11836272/cd5a5732-4a88-4232-9ace-a2b0bba3e675)
 
@@ -1180,7 +1189,7 @@ Standard-Treiber ist der A4988. Die Firmware steuert nur Enable, Richtung und di
 
 ![image](https://github.com/user-attachments/assets/1453375b-e0a7-45d3-9df5-898fa958f221)
 
-**Achtung: Manche als A4988 gekennzeichnete Treiber sind in Wirklichkeit TMC2208. Man merkt es daran, dass der Motor sehr langsam dreht.**
+**Achtung: Manche als A4988 gekennzeichnete Treiber sind in Wirklichkeit TMC2208. Du merkst es daran, dass der Motor sehr langsam dreht.**
 
 Einstellung für andere Treiber:
 
@@ -1202,7 +1211,7 @@ Kann verschraubt werden, ich verklebe es aber einfach mit Sekundenkleber.
 
 ## Alurohr Passung
 
-Falls das Alurohr nicht in die Lager passt, muss man es etwas nachbearbeiten.
+Falls das Alurohr nicht in die Lager passt, musst du es etwas nachbearbeiten.
 
 Dazu das Rohr in eine Bohrmaschine einspannen und mit Schleifpapier bearbeiten.
 

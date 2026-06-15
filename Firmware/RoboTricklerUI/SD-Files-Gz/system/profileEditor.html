@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <meta charset="UTF-8">
+   <link rel="icon" type="image/x-icon" href="./resources/favicon.ico">
+   <title data-i18n="titles.profileEditor">Profile Editor</title>
+   <link rel="stylesheet" href="./resources/style.css">
+   <script src="./lang.js"></script>
+</head>
+
+<body>
+   <div class="card">
+      <fieldset>
+         <legend data-i18n="profileEditor.profile">Profile</legend>
+         <fieldset id="loadProfileContainer">
+            <legend data-i18n="profileEditor.loadProfile">Load Profile:</legend>
+            <select id="profileSelect" class="dropdown" onchange="loadSelectedProfile();">
+               <option value="" data-i18n="profileEditor.selectPrompt">-- Select profile --</option>
+            </select>
+         </fieldset>
+         <textarea id="jsonInput" placeholder="Paste or Drag&Drop Profile here" data-i18n-placeholder="profileEditor.placeholder"></textarea><br>
+
+         <label for="profileName" data-i18n="profileEditor.profileName">Profile Name:</label>
+         <input type="text" id="profileName" value="my_profile_name" maxlength="16" required data-i18n-title="profileEditor.filenameTitle"
+            title="Filename must not contain < > : \" / \\ | ? *"><br>
+         <button id="download-btn" class="button" data-i18n="profileEditor.download">Download</button><br><br>
+         <button id="save-btn" class="button" data-i18n="profileEditor.save">Save</button><br><br>
+         <button onClick='javascript:history.back()' class="button" data-i18n="nav.back">Back</button>
+      </fieldset>
+      <fieldset id="profileContainer" style="display: none;">
+         <legend data-i18n="profileEditor.profile">Profile</legend>
+         <div id="container"></div>
+      </fieldset>
+   </div>
+
+
+   <script>
+      const generalProperties = [
+         'targetWeight',
+         'tolerance',
+         'alarmThreshold',
+         'weightGap',
+         'actuator',
+         'startAtZero',
+         'trickleCounter',
+         'measurements'
+      ];
+      const stepperProperties = [
+         'enabled',
+         'unitsPerThrow',
+         'unitsPerThrowSpeed'
+      ];
+      const profileStepProperties = [
+         'diffWeight',
+         'actuator',
+         'steps',
+         'speed',
+         'measurements'
+      ];
+      const calibrationProperties = [
+         'actuator',
+         'steps',
+         'speed',
+         'measurements'
+      ];
+
+      function cleanNumber(value, fallback) {
+         const number = parseFloat(value);
+         return isNaN(number) ? fallback : number;
+      }
+
+      function cleanBoolean(value, fallback) {
+         if (typeof value === 'boolean') {
+            return value;
+         }
+         return fallback;
+      }
+
+      function cleanInteger(value, fallback, minimum) {
+         const number = Math.round(cleanNumber(value, fallback));
+         if (minimum !== undefined && number < minimum) {
+            return minimum;
+         }
+         return number;
+      }
+
+      function cleanActuator(value) {
+         return value === 'stepper2' ? 'stepper2' : 'stepper1';
+      }
+
+      function isCalibrationProfileJSON(jsonData) {
+         return jsonData &&
+            !Array.isArray(jsonData.rs232TrickleMap) &&
+            jsonData.actuator !== undefined &&
+            jsonData.steps !== undefined &&
+            jsonData.speed !== undefined;
+      }
+
+      function cleanProfileJSON(jsonData) {
+         if (!jsonData) {
+            throw new Error('Profile must be a JSON object');
+         }
+         if (Array.isArray(jsonData.rs232TrickleMap)) {
+            return cleanNewProfileJSON(jsonData);
+         }
+         if (isCalibrationProfileJSON(jsonData)) {
+            return cleanCalibrationProfileJSON(jsonData);
+         }
+         throw new Error('Profile must contain rs232TrickleMap array or calibration fields');
+      }
+
+      function cleanCalibrationProfileJSON(jsonData) {
+         return {
+            actuator: cleanActuator(jsonData.actuator),
+            steps: cleanInteger(jsonData.steps, 20000, 1),
+            speed: cleanInteger(jsonData.speed, 200, 1),
+            measurements: cleanInteger(jsonData.measurements, 5, 0)
+         };
+      }
+
+      function cleanNewProfileJSON(jsonData) {
+         var cleanedData = {
+            general: {},
+            actuator: {
+               stepper1: {},
+               stepper2: {}
+            },
+            rs232TrickleMap: []
+         };
+
+         const general = jsonData.general || {};
+         cleanedData.general.targetWeight = cleanNumber(general.targetWeight, 40.000);
+         cleanedData.general.tolerance = cleanNumber(general.tolerance, 0.000);
+         cleanedData.general.alarmThreshold = cleanNumber(general.alarmThreshold, 1.000);
+         cleanedData.general.weightGap = cleanNumber(general.weightGap, 1.000);
+         cleanedData.general.actuator = cleanActuator(general.actuator);
+         cleanedData.general.startAtZero = cleanBoolean(general.startAtZero, false);
+         cleanedData.general.trickleCounter = cleanBoolean(general.trickleCounter, false);
+         cleanedData.general.measurements = cleanInteger(general.measurements, 5, 0);
+
+         const actuator = jsonData.actuator || {};
+         ['stepper1', 'stepper2'].forEach(function (stepperName) {
+            const stepper = actuator[stepperName] || {};
+            const defaults = stepperName === 'stepper1'
+               ? { enabled: true, unitsPerThrow: 0.000, unitsPerThrowSpeed: 200 }
+               : { enabled: false, unitsPerThrow: 10.000, unitsPerThrowSpeed: 200 };
+            cleanedData.actuator[stepperName].enabled = cleanBoolean(stepper.enabled, defaults.enabled);
+            cleanedData.actuator[stepperName].unitsPerThrow = cleanNumber(stepper.unitsPerThrow, defaults.unitsPerThrow);
+            cleanedData.actuator[stepperName].unitsPerThrowSpeed = cleanInteger(stepper.unitsPerThrowSpeed, defaults.unitsPerThrowSpeed, 1);
+         });
+
+         if (Array.isArray(jsonData.rs232TrickleMap)) {
+            jsonData.rs232TrickleMap.forEach(function (entry) {
+               cleanedData.rs232TrickleMap.push(cleanProfileStep(entry || {}));
+            });
+         }
+
+         return cleanedData;
+      }
+
+      function cleanProfileStep(entry) {
+         return {
+            diffWeight: Math.max(0, cleanNumber(entry.diffWeight, 0.000)),
+            actuator: cleanActuator(entry.actuator),
+            steps: cleanInteger(entry.steps, 5, 1),
+            speed: cleanInteger(entry.speed, 200, 1),
+            measurements: cleanInteger(entry.measurements, 5, 0)
+         };
+      }
+
+      function generateFormFromJSON(jsonData) {
+         var container = document.getElementById('container');
+         container.innerHTML = ''; // Clear existing content
+
+         if (!Array.isArray(jsonData.rs232TrickleMap)) {
+            addObjectFieldset(container, translatedProfileText('calibration', 'Calibration'), 'calibration', jsonData, calibrationProperties);
+            document.getElementById("profileContainer").style.display = "block";
+            return;
+         }
+
+         addObjectFieldset(container, translatedProfileText('general', 'General'), 'general', jsonData.general, generalProperties);
+
+         var actuatorFieldset = document.createElement('fieldset');
+         container.appendChild(actuatorFieldset);
+         var actuatorLegend = document.createElement('legend');
+         actuatorLegend.textContent = translatedProfileText('actuator', 'Actuator');
+         actuatorFieldset.appendChild(actuatorLegend);
+         addObjectFieldset(actuatorFieldset, translatedProfileText('stepper', 'Stepper {number}', 1), 'actuator.stepper1', jsonData.actuator.stepper1, stepperProperties);
+         addObjectFieldset(actuatorFieldset, translatedProfileText('stepper', 'Stepper {number}', 2), 'actuator.stepper2', jsonData.actuator.stepper2, stepperProperties);
+
+         jsonData.rs232TrickleMap.forEach(function (entry, index) {
+            addObjectFieldset(container, translatedProfileText('profileStep', 'Profile-Step {number}', index + 1), 'rs232TrickleMap.' + index, entry, profileStepProperties);
+         });
+         document.getElementById("profileContainer").style.display = "block";
+      }
+
+      function translatedProfileText(key, fallback, number) {
+         var text = window.rtT ? rtT('profileEditor.' + key, fallback) : fallback;
+         return text.replace('{number}', number);
+      }
+
+      function translatedFieldLabel(property) {
+         return window.rtT ? rtT('profileEditor.fields.' + property, property) : property;
+      }
+
+      function translatedOptionText(optionValue) {
+         return window.rtT ? rtT('profileEditor.options.' + optionValue, optionValue) : optionValue;
+      }
+
+      function addObjectFieldset(parent, legendText, path, dataObject, properties) {
+         var fieldset = document.createElement('fieldset');
+         parent.appendChild(fieldset);
+         var legend = document.createElement('legend');
+         legend.textContent = legendText;
+         fieldset.appendChild(legend);
+
+         properties.forEach(function (property) {
+            var pairDiv = document.createElement('div');
+            pairDiv.className = 'label-input-pair';
+            fieldset.appendChild(pairDiv);
+
+            var label = document.createElement('label');
+            label.htmlFor = path + '-' + property;
+            label.textContent = translatedFieldLabel(property) + ': ';
+            pairDiv.appendChild(label);
+
+            var input;
+            if (typeof dataObject[property] === 'boolean') {
+               input = document.createElement('input');
+               input.type = 'checkbox';
+               input.checked = dataObject[property];
+            } else if (property === 'actuator') {
+               input = document.createElement('select');
+               ['stepper1', 'stepper2'].forEach(function (optionValue) {
+                  var option = document.createElement('option');
+                  option.value = optionValue;
+                  option.textContent = translatedOptionText(optionValue);
+                  option.selected = dataObject[property] === optionValue;
+                  input.appendChild(option);
+               });
+            } else {
+               input = document.createElement('input');
+               input.type = 'number';
+               input.step = property === 'measurements' || property === 'steps' || property === 'speed' || property === 'unitsPerThrowSpeed' ? '1' : '0.001';
+               input.value = dataObject[property];
+            }
+
+            input.id = path + '-' + property;
+            input.name = property;
+            input.dataset.path = path;
+            input.dataset.property = property;
+            pairDiv.appendChild(input);
+            input.addEventListener('input', updateJSON);
+            input.addEventListener('change', updateJSON);
+         });
+      }
+
+      function updateJSON() {
+         var inputs = document.querySelectorAll('#container input, #container select');
+         var isCalibrationProfile = document.querySelector('[data-path="calibration"]') !== null;
+         var newJSONData = isCalibrationProfile ? {} : {
+            general: {},
+            actuator: {
+               stepper1: {},
+               stepper2: {}
+            },
+            rs232TrickleMap: []
+         };
+
+         inputs.forEach(function (input) {
+            var path = input.dataset.path;
+            var property = input.dataset.property;
+            var target = newJSONData;
+            path.split('.').forEach(function (pathPart) {
+               if (/^\d+$/.test(pathPart)) {
+                  pathPart = parseInt(pathPart);
+               }
+               if (target[pathPart] === undefined) {
+                  target[pathPart] = {};
+               }
+               target = target[pathPart];
+            });
+
+            if (input.type === 'checkbox') {
+               target[property] = input.checked;
+            } else if (input.tagName === 'SELECT') {
+               target[property] = input.value;
+            } else {
+               target[property] = parseFloat(input.value);
+            }
+         });
+         var cleanedJSON = isCalibrationProfile ? cleanCalibrationProfileJSON(newJSONData.calibration || {}) : cleanNewProfileJSON(newJSONData);
+         document.getElementById('jsonInput').value = JSON.stringify(cleanedJSON, null, 4);
+      }
+
+      function loadProfileText(textArea, text) {
+         textArea.value = text;
+         var jsonData = cleanProfileJSON(JSON.parse(text));
+         textArea.value = JSON.stringify(jsonData, null, 4);
+         generateFormFromJSON(jsonData);
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+         var textArea = document.getElementById('jsonInput');
+
+         textArea.addEventListener('input', function () {
+            try {
+               loadProfileText(this, this.value);
+            } catch (e) {
+               console.error('Invalid JSON:', e);
+            }
+         });
+
+         // Add dragover and drop event listeners
+         textArea.addEventListener('dragover', function (event) {
+            event.preventDefault(); // Necessary to allow drop
+         });
+
+         textArea.addEventListener('drop', function (event) {
+            event.preventDefault(); // Prevent default behavior (like opening the file)
+
+            var files = event.dataTransfer.files;
+            if (files.length > 0) {
+               var reader = new FileReader();
+               reader.onload = function (e) {
+                  try {
+                     loadProfileText(textArea, e.target.result);
+                  } catch (e) {
+                     console.error('Invalid JSON:', e);
+                  }
+               };
+               reader.readAsText(files[0]);
+               document.getElementById("profileName").value = files[0].name.replace(".txt", "");
+
+            } else {
+               try {
+                  loadProfileText(textArea, event.dataTransfer.getData('text'));
+               } catch (e) {
+                  console.error('Invalid JSON:', e);
+               }
+            }
+         });
+      });
+
+
+      function convertToLegalFAT32Filename(filename) {
+         // Truncate if length is more than 255 characters
+         let legalFilename = filename.slice(0, 255);
+
+         // Replace illegal characters
+         legalFilename = legalFilename.replace(/[<>:"/\\|?*]/g, '_');
+
+         // List of reserved names
+         const reservedNames = [
+            "CON", "PRN", "AUX", "NUL",
+            "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+            "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+         ];
+
+         // Check for reserved names
+         const upperFilename = legalFilename.toUpperCase();
+         if (reservedNames.includes(upperFilename) || /^COM\d$/.test(upperFilename) || /^LPT\d$/.test(upperFilename)) {
+            legalFilename += "_file";
+         }
+
+         return legalFilename;
+      }
+
+      document.getElementById("download-btn").addEventListener("click", function () {
+         const fileName = document.getElementById('profileName').value;
+         // Get the content from the textarea
+         var text = document.getElementById('jsonInput').value;
+
+         // Convert the content to a Blob
+         var blob = new Blob([text], { type: 'text/plain' });
+
+         // Create a download link
+         var downloadLink = document.createElement('a');
+         downloadLink.href = window.URL.createObjectURL(blob);
+         downloadLink.download = convertToLegalFAT32Filename(fileName.toLowerCase() + '.txt');
+
+         // Append the link to the body, click it, and then remove it
+         document.body.appendChild(downloadLink);
+         downloadLink.click();
+         document.body.removeChild(downloadLink);
+      }, false);
+
+      document.getElementById("save-btn").addEventListener("click", function () {
+         const fileName = convertToLegalFAT32Filename(document.getElementById('profileName').value.toLowerCase() + '.txt');
+         const text = document.getElementById('jsonInput').value;
+         httpPost("/profiles/" + fileName, text);
+      }, false);
+
+      function httpPostProcessRequest() {
+         if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200)
+               alert(window.rtT ? rtT('alerts.profileSaved', 'Profile saved!') : "Profile saved!");
+            else
+               alert((window.rtT ? rtT('alerts.errorPrefix', 'ERROR') : "ERROR") + "[" + xmlHttp.status + "]: " + xmlHttp.responseText);
+         }
+      }
+
+      function httpPost(filename, data) {
+         xmlHttp = new XMLHttpRequest();
+         xmlHttp.onreadystatechange = httpPostProcessRequest;
+         var formData = new FormData();
+         formData.append("data", new Blob([data], { type: "text/json" }), filename);
+         xmlHttp.open("POST", "/system/resources/edit");
+         xmlHttp.send(formData);
+      }
+
+      function addProfilesToDropdown() {
+         return fetch('/getProfileList')
+            .then(response => {
+               if (!response.ok) {
+                  throw new Error('Network response was not ok');
+               }
+               return response.json();
+            })
+            .then(data => {
+               var dropdown = document.getElementById('profileSelect');
+               // Keep the first "select" prompt option, drop the rest.
+               while (dropdown.options.length > 1) {
+                  dropdown.remove(1);
+               }
+               Object.values(data).forEach(function (name) {
+                  var option = document.createElement('option');
+                  option.value = name;
+                  option.textContent = name;
+                  dropdown.appendChild(option);
+               });
+            })
+            .catch(error => {
+               console.error('Could not load profile list:', error);
+            });
+      }
+
+      function loadSelectedProfile() {
+         var profileName = document.getElementById('profileSelect').value;
+         if (!profileName) {
+            return;
+         }
+         fetch('/profiles/' + encodeURIComponent(profileName) + '.txt', { cache: 'no-store' })
+            .then(response => {
+               if (!response.ok) {
+                  throw new Error('Network response was not ok');
+               }
+               return response.text();
+            })
+            .then(text => {
+               loadProfileText(document.getElementById('jsonInput'), text);
+               document.getElementById('profileName').value = profileName;
+            })
+            .catch(error => {
+               console.error('Could not load profile:', error);
+               alert(window.rtT ? rtT('alerts.profileLoadFailed', 'Could not load profile.') : 'Could not load profile.');
+            });
+      }
+
+      window.addEventListener("load", (event) => {
+         if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "" || location.hostname === "strenuous.dev") {
+            document.getElementById("save-btn").style.display = "none";
+            document.getElementById("loadProfileContainer").style.display = "none";
+         } else {
+            document.getElementById("download-btn").style.display = "none";
+            addProfilesToDropdown();
+         }
+      });
+   </script>
+</body>
+
+</html>

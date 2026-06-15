@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title data-i18n="titles.home">Robo-Trickler</title>
+  <script>
+    (function () {
+      var localHost = location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "";
+      if (!localHost && location.pathname.toLowerCase().endsWith("/system/index.html")) {
+        window.location.replace("/");
+        return;
+      }
+      var systemRelative = location.protocol === "file:" || location.pathname.toLowerCase().indexOf("/system/") >= 0;
+      var resourceBase = systemRelative ? "./" : "./system/";
+      document.write('<link rel="icon" type="image/x-icon" href="' + resourceBase + 'resources/favicon.ico">');
+      document.write('<link rel="stylesheet" href="' + resourceBase + 'resources/style.css">');
+      document.write('<script src="' + resourceBase + 'lang.js"><\/script>');
+    }());
+  </script>
+</head>
+
+<body>
+  <div class="card">
+    <h1>Robo-Trickler</h1><br>
+    <button class="button" id="trickler" data-i18n="nav.trickler" onclick="window.location.href='./system/trickler.html';">
+      Trickler
+    </button><br>
+    <button class="button" id="editor" data-i18n="nav.fileBrowser" onclick="window.location.href='./system/resources/edit';">
+      File Browser
+    </button><br>
+    <button class="button" id="profileEditor" data-i18n="nav.profileEditor" onclick="window.location.href='./system/profileEditor.html';">
+      Powder Profile Editor
+    </button><br>
+    <button class="button" id="settings" data-i18n="nav.settings" onclick="window.location.href='./system/settings.html';">
+      Settings
+    </button><br>
+    <button class="button" id="connectWifi" data-i18n="nav.connectWifi" onclick="window.location.href='/system/ap';">
+      Connect WiFi
+    </button><br>
+    <button class="button" id="fwUpdate" data-i18n="nav.firmwareUpdate" onclick="window.location.href='./fwupdate';">
+      Firmware Update
+    </button><br>
+    <button class="button" id="reboot" data-i18n="nav.reboot" onclick="rebootDevice();">
+      Reboot
+    </button><br><br>
+
+    <a data-i18n="nav.firmwareReleases" href="https://github.com/ripper121/RoboTrickler/releases/latest">Firmware Releases</a><br>
+    <a data-i18n="nav.manual" href="https://github.com/ripper121/RoboTrickler/wiki">Manual</a><br>
+    <h5>Robo-Trickler 2.13 (2026) ripper121@gmail.com</h5><br>
+  </div>
+
+  <script>
+
+    function rebootDevice() {
+      if (!confirm(window.rtT ? rtT('alerts.rebootConfirm', 'Reboot Robo-Trickler now?') : 'Reboot Robo-Trickler now?')) {
+        return;
+      }
+
+      var rebootButton = document.getElementById('reboot');
+      if (rebootButton) {
+        rebootButton.disabled = true;
+      }
+
+      alert(window.rtT ? rtT('alerts.rebootSent', 'Reboot command sent. The device will be unavailable for a moment.') : 'Reboot command sent. The device will be unavailable for a moment.');
+
+      fetch('/reboot', { method: 'GET', cache: 'no-store' })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.text();
+        })
+        .then(data => {
+          console.log('Reboot initiated:', data);
+        })
+        .catch(error => {
+          console.log('Connection closed during reboot:', error);
+        });
+    }
+
+    window.addEventListener("DOMContentLoaded", (event) => {
+      if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
+        document.getElementById("profileEditor").onclick = function() {
+            window.location.href = './profileEditor.html';
+        };
+        document.getElementById("settings").onclick = function() {
+            window.location.href = './settings.html';
+        };
+
+        document.getElementById("editor").style.display = "none";
+        document.getElementById("fwUpdate").style.display = "none";
+        document.getElementById("reboot").style.display = "none";
+        document.getElementById("trickler").style.display = "none";
+        document.getElementById("connectWifi").style.display = "none";
+      }
+    });
+  </script>
+</body>
+
+</html>

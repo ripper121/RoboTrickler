@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="./resources/favicon.ico">
+    <title data-i18n="titles.settings">Settings</title>
+    <link rel="stylesheet" href="./resources/style.css">
+    <script src="./lang.js"></script>
+</head>
+
+<body>
+    <div class="card">
+        <h2 data-i18n="config.title">Settings</h2>
+        <form id="configForm">
+            <fieldset>
+                <legend data-i18n="config.wifi">WiFi Settings</legend>
+                <label for="wifi_enabled" data-i18n="config.wifiEnabled">WiFi enabled:</label>
+                <input type="checkbox" id="wifi_enabled" name="wifi_enabled" checked><br>
+
+                <label for="wifi_ssid" data-i18n="config.ssid">Name / SSID:</label>
+                <input type="text" id="wifi_ssid" name="wifi_ssid" maxlength="32" placeholder="MyWifiName"><br>
+
+                <label for="wifi_psk" data-i18n="config.password">Password / PSK:</label>
+                <input type="text" id="wifi_psk" name="wifi_psk" maxlength="64" placeholder="MyWifiPassword"><br>
+                <fieldset>
+                    <legend data-i18n="config.ipSettings">IP Settings (optional)</legend>
+                    <label for="IPStatic" data-i18n="config.staticIp">Static IP:</label>
+                    <input type="text" id="IPStatic" name="IPStatic" maxlength="15" size="15"
+                        placeholder="192.168.178.100"><br>
+
+                    <label for="IPGateway" data-i18n="config.gateway">Gateway:</label>
+                    <input type="text" id="IPGateway" name="IPGateway" maxlength="15" size="15"
+                        placeholder="192.168.178.1"><br>
+
+                    <label for="IPSubnet" data-i18n="config.subnet">Subnet:</label>
+                    <input type="text" id="IPSubnet" name="IPSubnet" maxlength="15" size="15"
+                        placeholder="255.255.255.0"><br>
+
+                    <label for="IPDNS" data-i18n="config.dns">DNS:</label>
+                    <input type="text" id="IPDNS" name="IPDNS" maxlength="15" size="15" placeholder="8.8.8.8"><br>
+                </fieldset>
+            </fieldset>
+
+            <fieldset>
+                <legend data-i18n="config.scale">Scale Settings</legend>
+                <span data-i18n="config.protocol">Protocol:</span>
+                <select name="scale_protocol">
+                    <option value="GG" selected>G&G</option>
+                    <option value="SBI">Sartorius</option>
+                    <option value="KERN">Kern</option>
+                    <option value="KERN-ABT">Kern ABT</option>
+                    <option value="KERN-ABS">Kern ABS</option>
+                    <option value="AD">A&D</option>
+                    <option value="CUSTOM">Custom</option>
+                    <option value="">None</option>
+                </select><br>
+                <span data-i18n="config.baud">Baud:</span> <input type="number" name="scale_baud" value="9600"><br>
+                <div id="customRequestRow">
+                    <label for="scale_customCode" data-i18n="config.customCode">Custom request (String in Hexformat 0x00):</label>
+                    <input type="text" id="scale_customCode" name="scale_customCode" maxlength="31"
+                        placeholder="0x1B 0x70 0x0D 0x0A"><br>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend data-i18n="config.general">General Settings</legend>
+                <label for="beeper" data-i18n="config.beeper">Beeper:</label>
+                <select name="beeper">
+                    <option value="done" selected data-i18n="config.done">Done</option>
+                    <option value="button" data-i18n="config.button">Button</option>
+                    <option value="both" data-i18n="config.both">Both</option>
+                    <option value="off" data-i18n="config.off">Off</option>
+                </select><br>
+
+                <label for="language" data-i18n="config.language">Language:</label>
+                <select name="language">
+                    <option value="en" data-i18n="config.english">English</option>
+                    <option value="de" selected data-i18n="config.german">Deutsch</option>
+                </select><br>
+
+                <label for="profile_name" data-i18n="config.profile">Profile:</label>
+                <input type="text" id="profile_name" name="profile_name" maxlength="31" value="avg"><br>
+
+                <label for="trickle_counter" data-i18n="config.trickleCounter">Trickle counter:</label>
+                <input type="checkbox" id="trickle_counter" name="trickle_counter"><br>
+                <input type="hidden" id="trickle_count" name="trickle_count" value="0">
+            </fieldset>
+
+            <fieldset>
+                <legend data-i18n="config.firmwareUpdate">Firmware Update</legend>
+                <label for="fw_check" data-i18n="config.fwCheck">Check for new Firmware:</label>
+                <input type="checkbox" id="fw_check" name="fw_check" checked><br>
+            </fieldset>
+
+        </form>
+        <h2 data-i18n="config.generated">Generated config.txt:</h2>
+        <textarea id="jsonOutput"></textarea>
+        <button id="downloadButton" class="button" data-i18n="config.download">Download</button>
+        <button id="saveButton" class="button" data-i18n="config.save">Save</button><br>
+        <button onClick='javascript:history.back()' class="button" data-i18n="nav.back">Back</button>
+
+    </div>
+
+    <script>
+        const configForm = document.getElementById('configForm');
+        const jsonOutput = document.getElementById('jsonOutput');
+        const allowedScaleProtocols = ['GG', 'SBI', 'KERN', 'KERN-ABT', 'KERN-ABS', 'AD', 'CUSTOM', ''];
+
+        function updateCustomRequestVisibility() {
+            document.getElementById('customRequestRow').style.display = configForm.scale_protocol.value === 'CUSTOM' ? 'block' : 'none';
+        }
+
+        function cleanConfigJSON(jsonObject) {
+            var scaleProtocol = (jsonObject.scale && jsonObject.scale.protocol) || 'GG';
+            if (!allowedScaleProtocols.includes(scaleProtocol)) {
+                scaleProtocol = 'GG';
+            }
+            var fwUpdate = jsonObject.fw_update || {};
+            var profileName = String(jsonObject.profile || 'calibrate').trim();
+            var customCode = scaleProtocol === 'CUSTOM' ? (jsonObject.scale && jsonObject.scale.customCode) || '' : '';
+            return {
+                wifi: {
+                    enabled: !jsonObject.wifi || jsonObject.wifi.enabled !== false,
+                    ssid: (jsonObject.wifi && jsonObject.wifi.ssid) || '',
+                    psk: (jsonObject.wifi && jsonObject.wifi.psk) || '',
+                    IPStatic: (jsonObject.wifi && jsonObject.wifi.IPStatic) || '',
+                    IPGateway: (jsonObject.wifi && jsonObject.wifi.IPGateway) || '',
+                    IPSubnet: (jsonObject.wifi && jsonObject.wifi.IPSubnet) || '',
+                    IPDNS: (jsonObject.wifi && jsonObject.wifi.IPDNS) || ''
+                },
+                scale: {
+                    protocol: scaleProtocol,
+                    customCode: customCode,
+                    baud: (jsonObject.scale && jsonObject.scale.baud) || 9600
+                },
+                profile: profileName || 'calibrate',
+                beeper: jsonObject.beeper || 'done',
+                language: jsonObject.language || 'en',
+                trickleCounter: jsonObject.trickleCounter === true,
+                trickleCount: Math.max(0, parseInt(jsonObject.trickleCount, 10) || 0),
+                fw_update: {
+                    check: fwUpdate.check !== false
+                }
+            };
+        }
+
+        // Function to update JSON based on form data
+        function formToJSON() {
+            var formData = new FormData(configForm);
+            var scaleProtocol = formData.get('scale_protocol');
+            var jsonObject = {
+                wifi: {
+                    enabled: document.getElementById('wifi_enabled').checked,
+                    ssid: formData.get('wifi_ssid'),
+                    psk: formData.get('wifi_psk'),
+                    IPStatic: formData.get('IPStatic'),
+                    IPGateway: formData.get('IPGateway'),
+                    IPSubnet: formData.get('IPSubnet'),
+                    IPDNS: formData.get('IPDNS')
+                },
+                scale: {
+                    protocol: scaleProtocol,
+                    baud: parseInt(formData.get('scale_baud'), 10),
+                    customCode: scaleProtocol === 'CUSTOM' ? formData.get('scale_customCode') : ''
+                },
+                profile: (formData.get('profile_name') || 'calibrate').trim() || 'calibrate',
+                beeper: formData.get('beeper'),
+                language: formData.get('language'),
+                trickleCounter: document.getElementById('trickle_counter').checked,
+                trickleCount: Math.max(0, parseInt(formData.get('trickle_count'), 10) || 0),
+                fw_update: {
+                    check: document.getElementById('fw_check').checked
+                }
+            };
+            jsonOutput.value = JSON.stringify(jsonObject, null, 4);
+        }
+
+        // Function to update form based on JSON data
+        function jsonToForm() {
+            try {
+                var jsonObject = cleanConfigJSON(JSON.parse(jsonOutput.value));
+                jsonOutput.value = JSON.stringify(jsonObject, null, 4);
+
+                // Update WiFi settings
+                configForm.wifi_enabled.checked = jsonObject.wifi.enabled !== false;
+                configForm.wifi_ssid.value = jsonObject.wifi.ssid || '';
+                configForm.wifi_psk.value = jsonObject.wifi.psk || '';
+                configForm.IPStatic.value = jsonObject.wifi.IPStatic || '';
+                configForm.IPGateway.value = jsonObject.wifi.IPGateway || '';
+                configForm.IPSubnet.value = jsonObject.wifi.IPSubnet || '';
+                configForm.IPDNS.value = jsonObject.wifi.IPDNS || '';
+
+                // Update Scale settings
+                configForm.scale_protocol.value = jsonObject.scale.protocol || 'GG';
+                configForm.scale_baud.value = jsonObject.scale.baud || 9600;
+                configForm.scale_customCode.value = jsonObject.scale.customCode || '';
+                updateCustomRequestVisibility();
+
+                configForm.beeper.value = jsonObject.beeper || 'done';
+                configForm.language.value = jsonObject.language || 'en';
+                configForm.profile_name.value = jsonObject.profile || 'calibrate';
+                configForm.trickle_counter.checked = jsonObject.trickleCounter === true;
+                configForm.trickle_count.value = jsonObject.trickleCount || 0;
+                configForm.fw_check.checked = jsonObject.fw_update.check !== false;
+
+            } catch (e) {
+                console.error('Invalid JSON');
+            }
+        }
+
+        // Event listener for form changes
+        configForm.addEventListener('input', formToJSON);
+        configForm.scale_protocol.addEventListener('change', function () {
+            updateCustomRequestVisibility();
+            formToJSON();
+        });
+
+        // Event listener for JSON textarea changes
+        jsonOutput.addEventListener('input', jsonToForm);
+        jsonOutput.addEventListener('select', jsonToForm);
+
+        // Initialize JSON output
+        updateCustomRequestVisibility();
+        formToJSON();
+
+        document.getElementById('downloadButton').addEventListener('click', function () {
+            var content = jsonOutput.value;
+            var blob = new Blob([content], { type: 'text/plain' });
+            var url = URL.createObjectURL(blob);
+
+            // Create a temporary anchor and trigger the download
+            var tempLink = document.createElement('a');
+            tempLink.href = url;
+            tempLink.download = 'config.txt';
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+
+            // Revoke the URL after the download
+            URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('saveButton').addEventListener('click', function () {
+            var content = jsonOutput.value;
+            httpPost(content);
+        });
+
+        function httpGetProcessRequest() {
+            if (xmlHttp.readyState == 4) {
+                if (xmlHttp.status == 200) {
+                    document.getElementById('jsonOutput').value = xmlHttp.responseText;
+                    jsonToForm();
+                }
+            }
+        }
+        function httpGet(theUrl) {
+            xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = httpGetProcessRequest;
+            xmlHttp.open("GET", theUrl, true);
+            xmlHttp.send(null);
+        }
+
+        //post
+        function httpPostProcessRequest() {
+            if (xmlHttp.readyState == 4) {
+                if (xmlHttp.status == 200)
+                    alert(window.rtT ? rtT('alerts.configSaved', "Config Saved!\nPlease reboot the Robo-Trickler to load new config.txt") : "Config Saved!\nPlease reboot the Robo-Trickler to load new config.txt");
+                else
+                    alert((window.rtT ? rtT('alerts.errorPrefix', 'ERROR') : "ERROR") + "[" + xmlHttp.status + "]: " + xmlHttp.responseText);
+            }
+        }
+        function httpPost(data) {
+            xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = httpPostProcessRequest;
+            var formData = new FormData();
+            formData.append("data", new Blob([data], { type: "text/json" }), "/config.txt");
+            xmlHttp.open("POST", "/system/resources/edit");
+            xmlHttp.send(formData);
+        }
+
+        window.addEventListener("load", (event) => {
+            if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "" || location.hostname === "strenuous.dev") {
+                document.getElementById("saveButton").style.display = "none";
+            } else {
+                httpGet("/config.txt");
+                document.getElementById("downloadButton").style.display = "none";
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,6 +1,24 @@
 (function () {
   const fallbackLanguage = 'en';
 
+  function isLocal() {
+    return location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '';
+  }
+
+  function browserLanguage() {
+    // file:// has no access to config.txt, so use the browser's preferred
+    // language. Normalize like the firmware does (e.g. "de-DE" -> "de"); an
+    // unsupported language simply falls back to English when its file is missing.
+    try {
+      const preferred = (navigator.languages && navigator.languages[0]) || navigator.language;
+      if (preferred) {
+        return String(preferred).split('-')[0].toLowerCase();
+      }
+    } catch (e) {
+    }
+    return '';
+  }
+
   function localLanguage() {
     try {
       const saved = window.localStorage && localStorage.getItem('rt_language');
@@ -9,12 +27,15 @@
       }
     } catch (e) {
     }
-    return fallbackLanguage;
+    return browserLanguage() || fallbackLanguage;
   }
 
   function languageUrl(language) {
-    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '') {
-      return './lang/' + language + '.json';
+    // A local file:// page cannot fetch() a JSON file (blocked origin), so load
+    // a JSONP wrapper (<lang>.js) via <script> injection instead. When served by
+    // the webserver we fetch the (gzip-compressed) JSON as before.
+    if (isLocal()) {
+      return './lang/' + language + '.js';
     }
     return '/system/lang/' + language + '.json';
   }
@@ -52,8 +73,8 @@
     };
   }
 
-  function loadLanguage(language) {
-    return fetch(languageUrl(language))
+  function loadViaFetch(url) {
+    return fetch(url)
       .then(function (response) {
         if (!response.ok) {
           throw new Error('language not found');
@@ -65,8 +86,37 @@
       });
   }
 
+  function loadViaScript(url) {
+    // The injected JSONP file calls window.rtLoadLanguage(data) when it runs.
+    return new Promise(function (resolve, reject) {
+      const script = document.createElement('script');
+      let settled = false;
+      window.rtLoadLanguage = function (data) {
+        settled = true;
+        try {
+          applyTranslations(data);
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      };
+      script.onerror = function () {
+        if (!settled) {
+          reject(new Error('language not found'));
+        }
+      };
+      script.src = url;
+      document.head.appendChild(script);
+    });
+  }
+
+  function loadLanguage(language) {
+    const url = languageUrl(language);
+    return isLocal() ? loadViaScript(url) : loadViaFetch(url);
+  }
+
   function activeLanguage() {
-    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '') {
+    if (isLocal()) {
       return Promise.resolve(localLanguage());
     }
     return fetch('/getLanguage')
