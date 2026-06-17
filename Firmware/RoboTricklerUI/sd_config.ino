@@ -188,6 +188,7 @@ void setDefaultConfiguration(Config &config)
   config.fwCheck = true;
   config.trickleCounter = false;
   config.trickleCount = 0;
+  config.motorRevSteps = MOTOR_REV_STEPS;
   config.profile_startAtZero = false;
   config.profile_trickleCounter = false;
 }
@@ -369,6 +370,11 @@ bool loadConfiguration(const char *filename, Config &config)
   strlcpy(config.language, doc["language"] | config.language, sizeof(config.language));
   config.trickleCounter = doc["trickleCounter"] | config.trickleCounter;
   config.trickleCount = doc["trickleCount"] | config.trickleCount;
+  config.motorRevSteps = doc["motorRevSteps"] | config.motorRevSteps;
+  if (config.motorRevSteps <= 0)
+  {
+    config.motorRevSteps = MOTOR_REV_STEPS;
+  }
   if (config.trickleCount < 0)
   {
     config.trickleCount = 0;
@@ -536,7 +542,7 @@ static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerThrow
   JsonArray rs232TrickleMap = doc["rs232TrickleMap"].to<JsonArray>();
   for (int i = 0; i < diffWeightsCount; i++)
   {
-    long steps = lround(((diffWeights[i] * (double)MOTOR_REV_STEPS) / unitsPerThrow) * rs232LimitFactor);
+    long steps = lround(((diffWeights[i] * (double)config.motorRevSteps) / unitsPerThrow) * rs232LimitFactor);
     if (steps < 5)
     {
       steps = 5;
@@ -860,6 +866,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["language"] = config.language;
   doc["trickleCounter"] = config.trickleCounter;
   doc["trickleCount"] = config.trickleCount;
+  doc["motorRevSteps"] = config.motorRevSteps;
   doc["fw_update"]["check"] = config.fwCheck;
 
   // Serialize JSON to file

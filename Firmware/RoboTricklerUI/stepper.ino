@@ -83,7 +83,7 @@ static unsigned long stepperPulseIntervalUs(int rpm)
   {
     rpm = 100;
   }
-  return (unsigned long)(60000000UL / ((unsigned long)MOTOR_REV_STEPS * (unsigned long)rpm));
+  return (unsigned long)(60000000UL / ((unsigned long)config.motorRevSteps * (unsigned long)rpm));
 }
 
 void setStepperSpeed(int stepperNum, int stepperSpeed)

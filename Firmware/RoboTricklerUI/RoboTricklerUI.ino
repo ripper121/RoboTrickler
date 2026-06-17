@@ -92,6 +92,7 @@ struct Config
   bool fwCheck;
   bool trickleCounter;
   long trickleCount;
+  int motorRevSteps;
   float targetWeight;
   char scale_protocol[32];
   int scale_baud;
@@ -142,7 +143,7 @@ DNSServer dnsServer;
 unsigned long wifiPreviousMillis = 0;
 unsigned long wifiInterval = 10000;
 
-#define MOTOR_REV_STEPS 200 // Number of steps for a full revolution of the stepper motor. This is typically 200 for a 1.8 degree stepper, but may be different for other motors.
+#define MOTOR_REV_STEPS 200 // Default number of steps for a full revolution of the stepper motor (1.8 degree stepper). Overridable via "motorRevSteps" in config.txt, e.g. 3200 for 16x microstepping.
 
 #define MAX_TARGET_WEIGHT 999
 #define DEC_PLACES 3

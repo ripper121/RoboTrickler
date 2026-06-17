@@ -85,6 +85,9 @@
                 <label for="trickle_counter" data-i18n="config.trickleCounter">Trickle counter:</label>
                 <input type="checkbox" id="trickle_counter" name="trickle_counter"><br>
                 <input type="hidden" id="trickle_count" name="trickle_count" value="0">
+
+                <label for="motor_rev_steps" data-i18n="config.motorRevSteps">Motor steps/rev:</label>
+                <input type="number" id="motor_rev_steps" name="motor_rev_steps" min="1" value="200"><br>
             </fieldset>
 
             <fieldset>
@@ -139,6 +142,7 @@
                 language: jsonObject.language || 'en',
                 trickleCounter: jsonObject.trickleCounter === true,
                 trickleCount: Math.max(0, parseInt(jsonObject.trickleCount, 10) || 0),
+                motorRevSteps: parseInt(jsonObject.motorRevSteps, 10) > 0 ? parseInt(jsonObject.motorRevSteps, 10) : 200,
                 fw_update: {
                     check: fwUpdate.check !== false
                 }
@@ -169,6 +173,7 @@
                 language: formData.get('language'),
                 trickleCounter: document.getElementById('trickle_counter').checked,
                 trickleCount: Math.max(0, parseInt(formData.get('trickle_count'), 10) || 0),
+                motorRevSteps: parseInt(formData.get('motor_rev_steps'), 10) > 0 ? parseInt(formData.get('motor_rev_steps'), 10) : 200,
                 fw_update: {
                     check: document.getElementById('fw_check').checked
                 }
@@ -202,6 +207,7 @@
                 configForm.profile_name.value = jsonObject.profile || 'calibrate';
                 configForm.trickle_counter.checked = jsonObject.trickleCounter === true;
                 configForm.trickle_count.value = jsonObject.trickleCount || 0;
+                configForm.motor_rev_steps.value = jsonObject.motorRevSteps || 200;
                 configForm.fw_check.checked = jsonObject.fw_update.check !== false;
 
             } catch (e) {

@@ -63,7 +63,7 @@ static long calculateStepperStepsForUnits(double remainingUnits, double unitsPer
     return 0;
   }
 
-  double exactSteps = remainingUnits * ((double)MOTOR_REV_STEPS / unitsPerThrow);
+  double exactSteps = remainingUnits * ((double)config.motorRevSteps / unitsPerThrow);
   if ((exactSteps <= 0.0) || (exactSteps > 2147483647.0))
   {
     return 0;
@@ -72,7 +72,7 @@ static long calculateStepperStepsForUnits(double remainingUnits, double unitsPer
   long steps = (long)exactSteps;
   if (outUnits != NULL)
   {
-    *outUnits = ((double)steps * unitsPerThrow) / (double)MOTOR_REV_STEPS;
+    *outUnits = ((double)steps * unitsPerThrow) / (double)config.motorRevSteps;
   }
   return steps;
 }

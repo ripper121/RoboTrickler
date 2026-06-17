@@ -536,6 +536,7 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
   "beeper": "both",
   "trickleCounter": true,
   "trickleCount": 128,
+  "motorRevSteps": 3200,
   "fw_update": {
     "check": true
   }
@@ -560,11 +561,12 @@ Die Werte im Beispiel oben dienen nur zur Veranschaulichung. In Klammern steht j
 * `beeper`: `done` Beep wenn Trickle fertig, `button` Beep bei Touch betätigung, `both` beides aktiv oder `off` Beeper aus. (Standard: `done`)
 * `trickleCounter`: aktiviert den dauerhaften Gesamtzähler für fertige Trickles. (Standard: `false`)
 * `trickleCount`: gespeicherter Stand des dauerhaften Gesamtzählers. (Standard: `0`)
+* `motorRevSteps`: Schritte pro Umdrehung des Schrittmotors. Bei einem 1.8°-Motor ohne Microstepping `200`; bei aktivem Microstepping entsprechend höher (z.B. `3200` bei 16x). Werte ≤ 0 werden ignoriert und auf den Standard zurückgesetzt. (Standard: `200`)
 * `fw_update.check`: aktiviert die automatische Prüfung auf neue Firmware. (Standard: `true`)
 
 Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu.
 
-Auf der SD-Karte befindet sich `system/settings.html` (Menüpunkt `Einstellungen`), womit sich alle Konfigurationsfelder inklusive `trickleCounter`, `trickleCount` und `fw_update.check` erstellen lassen. Die Seite wird auch über den Webserver bereitgestellt und lässt sich zudem offline direkt von der SD-Karte öffnen (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
+Auf der SD-Karte befindet sich `system/settings.html` (Menüpunkt `Einstellungen`), womit sich alle Konfigurationsfelder inklusive `trickleCounter`, `trickleCount`, `motorRevSteps` und `fw_update.check` erstellen lassen. Die Seite wird auch über den Webserver bereitgestellt und lässt sich zudem offline direkt von der SD-Karte öffnen (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
 
 <img width="372" height="1220" alt="image" src="https://github.com/user-attachments/assets/bfb98107-4ebd-4d78-a6bd-ee829973a59f" />
 
