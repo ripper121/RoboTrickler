@@ -26,6 +26,7 @@ EXCLUDED_FILES = {"avg.txt", "calibrate.txt"}
 # lint warnings); they are the largest assets, so the slim LittleFS editor
 # drops them while the SD-card tree keeps full linting.
 LITTLEFS_EXCLUDED_FILES = {
+    "start.html"
 }
 # Assets the offline web UI loads via <link>/<script> when index.html /
 # settings.html / profileEditor.html are opened from a file:// URL or localhost
