@@ -66,8 +66,8 @@ void displayInit()
   lv_log_register_print_cb(my_print); /* register print function for debugging */
 #endif
 
-  pinMode(LCD_EN, OUTPUT);
-  digitalWrite(LCD_EN, LOW);
+  pinMode(LCD_BL, OUTPUT);
+  digitalWrite(LCD_BL, HIGH);  // backlight on (active HIGH)
 
   tft.init();
   tft.setRotation(DISPLAY_ROTATION);

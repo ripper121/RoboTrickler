@@ -9,7 +9,16 @@ import subprocess
 import sys
 from pathlib import Path
 
+from compile_upload import DEFAULT_FLASH_SIZE
 from partition_layout import require_partition, selected_partitions_csv
+
+
+def flash_size_bytes(value: str) -> int:
+    """Parse an ESP32 flash-size string such as "4MB" / "8M" into bytes."""
+    digits = "".join(character for character in value if character.isdigit())
+    if not digits:
+        raise ValueError(f"Unrecognised flash size: {value!r}")
+    return int(digits) * 1024 * 1024
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -133,10 +142,12 @@ def copy_package_files(build_dir: Path, output_dir: Path) -> None:
 
 def validate_merged_image(output_dir: Path) -> None:
     merged_path = output_dir / "RoboTricklerUI.ino.merged.bin"
+    expected_size = flash_size_bytes(DEFAULT_FLASH_SIZE)
     flash_size = merged_path.stat().st_size
-    if flash_size != 8 * 1024 * 1024:
+    if flash_size != expected_size:
         raise ValueError(
-            f"Merged image is {flash_size} bytes; expected an 8 MiB flash image"
+            f"Merged image is {flash_size} bytes; expected {expected_size} "
+            f"({DEFAULT_FLASH_SIZE})"
         )
 
     checks = (
@@ -154,7 +165,7 @@ def validate_merged_image(output_dir: Path) -> None:
                 raise ValueError(
                     f"Merged image does not contain {name} at {offset:#x}"
                 )
-    print("Validated 8 MiB merged image, including LittleFS")
+    print(f"Validated {DEFAULT_FLASH_SIZE} merged image, including LittleFS")
 
 
 def main() -> int:

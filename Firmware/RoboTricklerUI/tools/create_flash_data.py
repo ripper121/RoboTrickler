@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Copy SD-Files-Gz into the complete LittleFS staging folder."""
+"""Copy SD-Files-LittleFS into the complete LittleFS staging folder."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 SKETCH_DIR = Path(__file__).resolve().parent.parent
-DEFAULT_SOURCE = SKETCH_DIR / "SD-Files-Gz"
+DEFAULT_SOURCE = SKETCH_DIR / "SD-Files-LittleFS"
 DEFAULT_OUTPUT = SKETCH_DIR / "data"
 
 

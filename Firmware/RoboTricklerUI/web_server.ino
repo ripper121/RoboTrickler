@@ -87,7 +87,6 @@ void registerWebServerRoutes()
   server.on("/list", HTTP_GET, printDirectory);
   server.on("/", HTTP_GET, handleHomePage);
   server.on("/system/ap", HTTP_GET, handleWifiSetupPortal);
-  server.on("/system/ap/", HTTP_GET, handleWifiSetupPortal);
   server.on("/api/wifi/scan", HTTP_GET, handleWifiScan);
   server.on("/api/wifi/save", HTTP_POST, handleWifiSave);
   server.on("/system/resources/edit", HTTP_DELETE, handleDelete);
