@@ -51,4 +51,4 @@
 #define GRBL_SPI_MOSI                       GPIO_NUM_13
 #define GRBL_SPI_SS                         GPIO_NUM_15
 #define SDCARD_DET_PIN                      GPIO_NUM_39
-#define SD_SPI_FREQ                           4000000
+#define SD_SPI_FREQ                         20000000

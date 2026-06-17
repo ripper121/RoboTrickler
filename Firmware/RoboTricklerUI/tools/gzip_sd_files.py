@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Create the compressed LittleFS source tree in SD-Files-Gz."""
+"""Create the compressed web trees: the full SD-card tree (SD-Files-Gz) and a
+minimal LittleFS tree (SD-Files-LittleFS) that keeps only .gz variants in
+system/ and drops the offline-only landing page."""
 
 from __future__ import annotations
 
@@ -14,8 +16,17 @@ from pathlib import Path
 
 DEFAULT_SOURCE = Path(__file__).resolve().parent.parent / "SD-Files"
 DEFAULT_OUTPUT = Path(__file__).resolve().parent.parent / "SD-Files-Gz"
+DEFAULT_OUTPUT_LITTLEFS = Path(__file__).resolve().parent.parent / "SD-Files-LittleFS"
 EXCLUDED_TOP_LEVEL_DIRECTORIES = {"profiles","lang"}
 EXCLUDED_FILES = {"avg.txt", "calibrate.txt"}
+# Dropped from the minimal LittleFS tree only. LittleFS is the fallback
+# filesystem served exclusively by the webserver (which can serve .gz
+# transparently), so the offline file:// landing page is dead weight there.
+# The Ace web-worker linters are optional (the editor works without inline
+# lint warnings); they are the largest assets, so the slim LittleFS editor
+# drops them while the SD-card tree keeps full linting.
+LITTLEFS_EXCLUDED_FILES = {
+}
 # Assets the offline web UI loads via <link>/<script> when index.html /
 # settings.html / profileEditor.html are opened from a file:// URL or localhost
 # (see the `location.hostname === "localhost" || ... === ""` checks in those
@@ -117,7 +128,7 @@ def write_if_changed(output: Path, data: bytes) -> bool:
 
 
 def create_output_tree(
-    source: Path, output: Path, dry_run: bool
+    source: Path, output: Path, dry_run: bool, minimal: bool = False
 ) -> tuple[int, int, int]:
     processed = 0
     changed = 0
@@ -154,21 +165,30 @@ def create_output_tree(
         relative_path = path.relative_to(source)
         if relative_path.as_posix() in EXCLUDED_FILES:
             continue
+        # The minimal LittleFS tree omits the offline-only landing page and
+        # the Ace lint workers, but keeps the language directories.
+        if minimal:
+            if relative_path.as_posix() in LITTLEFS_EXCLUDED_FILES:
+                continue
 
         data = path.read_bytes()
         if should_compress(relative_path):
             gz_relative_path = relative_path.with_name(relative_path.name + ".gz")
             emit(gz_relative_path, gzip_bytes(data), True)
-            # The offline (file://) UI cannot gunzip a local response, so also
-            # keep an uncompressed copy of the files it loads next to the .gz.
-            if is_local_uncompressed(relative_path):
-                emit(relative_path, data, False)
-            # Web language JSON additionally gets an uncompressed JSONP .js so the
-            # offline UI can load it via <script> injection (fetch is blocked on
-            # file://).
-            jsonp = local_jsonp_variant(relative_path, data)
-            if jsonp is not None:
-                emit(jsonp[0], jsonp[1], False)
+            # The minimal LittleFS tree keeps only the .gz variants (the
+            # webserver serves them directly), so skip every offline-only copy.
+            if not minimal:
+                # The offline (file://) UI cannot gunzip a local response, so
+                # also keep an uncompressed copy of the files it loads next to
+                # the .gz.
+                if is_local_uncompressed(relative_path):
+                    emit(relative_path, data, False)
+                # Web language JSON additionally gets an uncompressed JSONP .js
+                # so the offline UI can load it via <script> injection (fetch is
+                # blocked on file://).
+                jsonp = local_jsonp_variant(relative_path, data)
+                if jsonp is not None:
+                    emit(jsonp[0], jsonp[1], False)
         else:
             emit(relative_path, data, False)
 
@@ -210,7 +230,16 @@ def main() -> int:
         "--output",
         type=Path,
         default=DEFAULT_OUTPUT,
-        help=f"Generated compressed LittleFS tree. Default: {DEFAULT_OUTPUT}",
+        help=f"Generated full SD-card tree (all variants). Default: {DEFAULT_OUTPUT}",
+    )
+    parser.add_argument(
+        "--littlefs-output",
+        type=Path,
+        default=DEFAULT_OUTPUT_LITTLEFS,
+        help=(
+            "Generated minimal LittleFS tree (.gz only in system/, no offline "
+            f"landing page). Default: {DEFAULT_OUTPUT_LITTLEFS}"
+        ),
     )
     parser.add_argument(
         "--dry-run",
@@ -221,28 +250,35 @@ def main() -> int:
 
     source = args.source.resolve()
     output = args.output.resolve()
+    littlefs_output = args.littlefs_output.resolve()
 
     if not source.is_dir():
         print(f"Source folder does not exist: {source}", file=sys.stderr)
         return 1
 
-    if is_relative_to(output, source) or is_relative_to(source, output):
-        print(
-            "Source and output folders must not contain each other.",
-            file=sys.stderr,
-        )
+    for candidate in (output, littlefs_output):
+        if is_relative_to(candidate, source) or is_relative_to(source, candidate):
+            print(
+                "Source and output folders must not contain each other.",
+                file=sys.stderr,
+            )
+            return 1
+    if output == littlefs_output:
+        print("The two output folders must differ.", file=sys.stderr)
         return 1
 
-    if not args.dry_run:
-        output.mkdir(parents=True, exist_ok=True)
-
-    processed, changed, removed = create_output_tree(source, output, args.dry_run)
     action = "Would update" if args.dry_run else "Updated"
     remove_action = "would remove" if args.dry_run else "removed"
-    print(
-        f"{action} {changed} of {processed} files and {remove_action} "
-        f"{removed} stale files in {output}"
-    )
+    for target, minimal in ((output, False), (littlefs_output, True)):
+        if not args.dry_run:
+            target.mkdir(parents=True, exist_ok=True)
+        processed, changed, removed = create_output_tree(
+            source, target, args.dry_run, minimal=minimal
+        )
+        print(
+            f"{action} {changed} of {processed} files and {remove_action} "
+            f"{removed} stale files in {target}"
+        )
     return 0
 
 
