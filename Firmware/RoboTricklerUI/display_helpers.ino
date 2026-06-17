@@ -234,7 +234,7 @@ void updateTargetWeightLabel()
 void setWeightLabel(lv_obj_t *label)
 {
   char text[32];
-  if (!isfinite(weight) || (weight < 0.0f))
+  if (!isfinite(weight))
   {
     setLabelText(label, "NaN...");
     return;

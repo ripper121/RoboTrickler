@@ -484,7 +484,7 @@ void readWeight()
     {
       updateDisplayLog(langText("status_timeout"), true);
     }
-    weight = -1.0;
+    weight = NAN;
     newData = false;
   }
   else

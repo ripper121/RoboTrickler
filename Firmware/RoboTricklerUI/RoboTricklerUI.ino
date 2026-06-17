@@ -152,7 +152,7 @@ unsigned long wifiInterval = 10000;
 const float WEIGHT_STEP_SIZES[] = {0.001, 0.01, 0.1, 1.0, 10.0};
 const byte WEIGHT_STEP_COUNT = sizeof(WEIGHT_STEP_SIZES) / sizeof(WEIGHT_STEP_SIZES[0]);
 
-float weight = -1.0;
+float weight = NAN;
 int decPlaces = DEC_PLACES;
 String unit = "";
 float lastWeight = 0;
