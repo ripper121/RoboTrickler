@@ -478,17 +478,29 @@ void readWeight()
 
   updateActiveProfileStepCounterDisplay(weightCounter);
 
+  static bool timeoutLogged = false;
+
   if (timeout || (stableCount < stableTarget))
   {
     if (timeout)
     {
+      // Keep the transient status line updated every cycle, but push only one
+      // entry into the scrolling log when the timeout first occurs so it does
+      // not flood the log while the scale stays unreachable.
       updateDisplayLog(langText("status_timeout"), true);
+      delay(200);
+      if (!timeoutLogged)
+      {
+        updateDisplayLog(langText("status_timeout"));
+        timeoutLogged = true;
+      }
     }
-    weight = -1.0;
+    weight = NAN;
     newData = false;
   }
   else
   {
+    timeoutLogged = false;
     weight = stableWeight;
     decPlaces = (stableDecimalPlaces > 0) ? stableDecimalPlaces : DEC_PLACES;
     unit = stableUnit;

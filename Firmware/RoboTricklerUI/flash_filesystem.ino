@@ -47,6 +47,11 @@ bool initFilesystem()
 
   if (sdMounted)
   {
+    removeLegacyRootFiles();
+  }
+
+  if (sdMounted)
+  {
     DEBUG_PRINT("SD total bytes: ");
     DEBUG_PRINTLN(SD.totalBytes());
     DEBUG_PRINT("SD used bytes: ");
@@ -62,4 +67,21 @@ bool initFilesystem()
   }
 #endif
   return FILESYSTEM_ACTIVE;
+}
+
+// Pre-2.13 firmware stored the active profile/calibration at the SD-card root as
+// /avg.txt and /calibrate.txt. They are unused now (profiles live under
+// /profiles/) but linger on cards upgraded from old releases. Delete them on
+// boot so they do not confuse the file editor or waste space.
+void removeLegacyRootFiles()
+{
+  static const char *legacyFiles[] = {"/avg.txt", "/calibrate.txt"};
+  for (size_t i = 0; i < sizeof(legacyFiles) / sizeof(legacyFiles[0]); i++)
+  {
+    if (SD.exists(legacyFiles[i]) && SD.remove(legacyFiles[i]))
+    {
+      DEBUG_PRINT("Removed legacy file: ");
+      DEBUG_PRINTLN(legacyFiles[i]);
+    }
+  }
 }

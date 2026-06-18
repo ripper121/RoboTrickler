@@ -95,8 +95,17 @@ void handleGetTricklerState()
   // Polled frequently by the web UI, so build the small fixed-shape response in a
   // stack buffer instead of churning a JsonDocument + String on every request.
   char response[48];
-  snprintf(response, sizeof(response), "{\"weight\":%.3f,\"running\":%s}",
-           weight, isTricklerRunning() ? "true" : "false");
+  char weightText[16];
+  if (isfinite(weight))
+  {
+    snprintf(weightText, sizeof(weightText), "%.3f", weight);
+  }
+  else
+  {
+    strlcpy(weightText, "null", sizeof(weightText));
+  }
+  snprintf(response, sizeof(response), "{\"weight\":%s,\"running\":%s}",
+           weightText, isTricklerRunning() ? "true" : "false");
   server.send(200, "application/json", response);
 }
 

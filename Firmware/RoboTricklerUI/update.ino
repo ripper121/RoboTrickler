@@ -1,6 +1,6 @@
 static const char *SD_FIRMWARE_UPDATE_PATH = "/firmware.bin";
 #if ENABLE_LITTLEFS
-static const char *SD_LITTLEFS_UPDATE_PATH = "/littleFS.bin";
+static const char *SD_LITTLEFS_UPDATE_PATH = "/littlefs.bin";
 #endif
 
 static const int SD_UPDATE_NOT_FOUND = 0;

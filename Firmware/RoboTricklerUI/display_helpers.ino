@@ -2,7 +2,7 @@
 // fragment the heap (the previous String[] + concatenation churned malloc on
 // every one of the ~70 log call sites). Lines are truncated to LOG_LINE_LEN.
 #define LOG_LINE_COUNT 8
-#define LOG_LINE_LEN 64
+#define LOG_LINE_LEN 40
 static char infoMessageBuffer[LOG_LINE_COUNT][LOG_LINE_LEN];
 static lv_obj_t *dialogBackdrop = NULL;
 static lv_obj_t *activeDialog = NULL;
@@ -234,7 +234,7 @@ void updateTargetWeightLabel()
 void setWeightLabel(lv_obj_t *label)
 {
   char text[32];
-  if (!isfinite(weight) || (weight < 0.0f))
+  if (!isfinite(weight))
   {
     setLabelText(label, "NaN...");
     return;
@@ -272,8 +272,15 @@ void updateDisplayLog(const String &logOutput, bool noLog = false)
   {
     if (lvglLock())
     {
+      // Cut the message to fit one display line, reserving the last two slots
+      // for the trailing newline and null terminator. Truncating content here
+      // (instead of letting snprintf drop the "\n") keeps each entry on its own
+      // line so over-long messages are cut rather than wrapped/merged.
       char line[LOG_LINE_LEN];
-      snprintf(line, sizeof(line), "%s\n", logOutput.c_str());
+      snprintf(line, sizeof(line) - 1, "%s", logOutput.c_str());
+      size_t len = strlen(line);
+      line[len] = '\n';
+      line[len + 1] = '\0';
       insertLine(line);
       refreshLogLabel();
       lvglUnlock();
