@@ -11,69 +11,65 @@ Wer kein USB-Flash durchführen möchte, kann die Datei `SD-File-Legacy.zip` nut
 
 Hinweis: In diesem Fall ist die Nutzung ohne SD-Karte nicht möglich.
 
+Bei Fehlern oder Fragen, einfach melden: [Kontakt](https://shop.strenuous.dev/contact)
 
-# Changelog Firmware 2.13
 
+# Changelog Firmware 2.14
 
 ### Overview
-
-- Added Wi-Fi enable/disable controls, connection QR codes, and improved network recovery.
-- Added scale protocol selection from the touchscreen.
-- Reduced heap use and improved UI/dialog reliability.
-Only with USB-Update:
-- Added LittleFS support so the firmware can run from internal flash without an SD card.
-- Added on-device synchronization of configuration and profiles between LittleFS and SD.
-
+- Added on-device control over Wi-Fi (enable/disable), scale protocol cycling, the Wi-Fi QR code, and SD ↔ LittleFS file synchronization.
+- Reworked the dual-filesystem handling so SD and LittleFS can be mounted at the same time, with the SD firmware/LittleFS update now running early enough to flash from a bare SD card.
+- Improved speed and memory usage: faster SD SPI clock, streamed web responses, stack-buffer profile/state handling, and a minimal LittleFS web bundle.
+- Replaced the browser profile/config generators with a `create_profiles.py` tool and reworked the message/confirmation dialog system.
+- Updated the manual, USB-flash tooling, and SD packaging (legacy 4 MB layout support).
 
 ### Added
 
-- Added a persistent `wifi.enabled` setting to disable Wi-Fi services when they are not required.
-- Added touchscreen Wi-Fi controls and QR codes for the configured network, access point, and web interface.
-- Added an access-point setup page for devices without working station credentials.
-- Added touchscreen scale protocol cycling for `GG`, `SBI`, `KERN`, `KERN-ABT`, `KERN-ABS`, `AD`, `CUSTOM`, and streaming scales.
-- Added semantic error, warning, and success dialogs with shared confirmation handling.
-- Added compile-time feature switches in `compile_options.h`.
-- Added tools to build LittleFS images, gzip SD assets, create 8 MB merged firmware images, and update USB-flash release files.
-Only with USB-Update:
-- Added an internal LittleFS image containing the default configuration, profiles, languages, and web interface.
-- Added automatic filesystem selection at startup, preferring SD when available and falling back to LittleFS.
-- Added touchscreen actions to copy `config.txt` and profile files from flash to SD or from SD to flash.
-- Added confirmation, progress, completion, and error messages for filesystem synchronization.
+- Added a Wi-Fi enable/disable toggle on the display, backed by a new `wifi.enabled` config field that defaults to on.
+- Added on-device scale-protocol cycling via a button that steps through `STREAM`, `GG`, `SBI`, `KERN`, `KERN-ABT`, `KERN-ABS`, `AD`, and `CUSTOM`, with a label showing the current protocol.
+- Added a Wi-Fi QR code on the display with a "Click to Hide" action.
+- Added SD ↔ LittleFS file synchronization ("Upload Flash > SD" / "Download SD > Flash") with confirmation dialogs, a copied-file count, and an automatic restart to load the synced SD files.
+- Added a new `settings.html` web page.
+- Added early-boot SD firmware/LittleFS updating so a card containing only `firmware.bin` / `littlefs.bin` can flash the device, with progress shown on the display.
+- Added typed dialog helpers (`errorBox`, `successBox`, `warnBox`, `confirmBox`, `showConfirmBox`) and `cancelInteractiveDialogs()` to centralize and standardize message boxes.
+- Added negative/`NaN` weight handling so unstable or unreachable-scale readings show as `NaN...` instead of a fake `-1.0`.
+- Added finer calibration trickle maps (8 difference-weight steps instead of 5) for smoother approach to target.
+- Added `tools/create_profiles.py` to generate and upload trickler profiles through the web file-editor API (single, bulk, or local dry-run).
+- Added a minimal `SD-Files-LittleFS` web bundle (slimmed editor, `.gz`-only assets) for the LittleFS fallback filesystem.
+- Added legacy 4 MB / `min_spiffs` packaging support (`--legacy`) and a `--prod` mode to the USB-flash tooling.
+- Added `userTracker.php` and a `CLAUDE.md` project guide.
 
 ### Changed
 
-- Changed the flash layout and release image to support the 8 MB board configuration and a dedicated LittleFS partition.
-- Changed config, profile, language, web, and update file access to use the active filesystem instead of assuming an SD card.
-- Changed firmware updates to preserve or restore the internal filesystem where required.
-- Changed profile storage and several UI text paths from dynamic `String` allocations to fixed buffers or static text to reduce heap fragmentation.
-- Reworked dialogs so message, confirmation, profile tuning, and filesystem sync actions share reusable UI code.
-- Reworked generated UI elements and button placement for filesystem sync, Wi-Fi, scale protocol, profile actions, target weight, and trickler controls.
-- Improved target-weight formatting and active trickling feedback.
-- Improved web server file handling for LittleFS, compressed assets, uploads, downloads, and filesystem reporting.
-- Improved Wi-Fi startup, reconnect, mDNS, DNS, and service-state handling.
-- Updated English and German firmware/web translations for the new controls and status messages.
-- Updated default profiles and the profile generator for the current calibration and trickling behavior.
-- Updated build documentation and board settings for Espressif ESP32 core `3.3.10`.
+- Increased the SD SPI clock from 4 MHz to 20 MHz for faster card access.
+- Reworked filesystem mounting so SD and LittleFS are tracked independently (`sdMounted` / `littleFSMounted`) and both can be mounted simultaneously.
+- Streamed the `/fwupdate`, `/getProfileList` web responses and built `/getTricklerState` in a stack buffer to reduce heap pressure.
+- Stored the profile list in fixed `char` buffers (`PROFILE_LIST_MAX`, `strcmp`/`strlcpy`) instead of `String` objects, fixing several comparison edge cases and saving heap.
+- Rejected web `/setProfile` and `/start` while the trickler is running or the profile is invalid (HTTP 409).
+- Throttled scale-timeout logging so it updates the status line every cycle but only adds one scrollback entry per outage.
+- Reset the weight label color to white on stop and routed target-weight label updates through a single `updateTargetWeightLabel()` helper.
+- Enabled the runtime watchdog disable during setup.
+- Updated the manual for firmware `2.14`.
 
 ### Fixed
 
-- Fixed UI dialog crashes, stale modal state, unresponsive blocking dialogs, and confirmation-button cleanup.
-- Fixed profile tuning and deletion interactions when another dialog is open or trickling starts.
-- Fixed filesystem sync controls being shown when SD or LittleFS is unavailable.
-- Fixed custom and streaming scale protocols so they do not send an unintended built-in request.
-- Fixed Wi-Fi QR positioning, sizing, localization, and refresh behavior.
-- Fixed Wi-Fi toggling and reconnect behavior after configuration changes.
-- Fixed target and live-weight labels retaining stale text or colors after stopping.
-- Fixed profile list handling and several temporary UI allocations that could exhaust or fragment heap.
-- Fixed web API and UI edge cases discovered during the LittleFS and touchscreen-control changes.
+- Fixed stale dialogs lingering during web-triggered actions.
+- Fixed a false running-state toggle button after a failed startup.
+- Fixed repeated web starts and profile changes while the trickler was running.
+- Fixed dialog and long-label overflow, including invalid-profile message clipping.
+- Fixed cross-core log-buffer and debug LVGL access races.
+- Fixed the weight color not resetting after a stop.
+- Fixed the offline SD `start.html` page.
+- Removed leftover pre-2.13 root profile files (`/avg.txt`, `/calibrate.txt`) on boot.
 
 ### Removed
 
-- Removed duplicate and obsolete generated UI helper code.
-- Removed obsolete SD packaging and build artifacts superseded by the LittleFS/8 MB release workflow.
+- Removed the browser profile generator and config generator pages (superseded by the profile editor and `create_profiles.py`).
+- Removed the SD splash logo (`splash.ino`, `showSplashLogo`, `logo.bmp`).
+- Removed the dead generated UI sources `ui_helpers.c`, `ui_helpers.h`, and `ui_comp_hook.c`.
+- Removed the bundled `profiles/full.txt` sample profile.
 
 ### Dependencies
 
-- Uses Boards-Manager esp32 - Espressif Systems version `3.3.10`.
-- Uses the ESP32 `LittleFS` implementation included with the selected core.
-- Keeps LVGL widgets disabled and retains the existing LVGL memory allocation.
+- Updated the bundled LVGL configuration (`lv_conf.h`).
+- Kept the ESP32 Dev Module / Espressif `3.3.10` board settings mirrored in `.vscode/arduino.json`.

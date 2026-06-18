@@ -90,6 +90,13 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Production build: force DEBUG 0 and ENABLE_SCREENSHOT 0 for the build.",
     )
+    parser.add_argument(
+        "-flash",
+        "--flash",
+        dest="flash",
+        action="store_true",
+        help="After building the package, run flash.bat to flash a connected device.",
+    )
     return parser.parse_args()
 
 
@@ -99,7 +106,7 @@ def require_file(path: Path, description: str) -> Path:
     return path
 
 
-def regenerate_littlefs(build_dir: Path) -> None:
+def regenerate_littlefs(build_dir: Path, legacy: bool = False) -> None:
     if SD_FILES_GZ_DIR.exists():
         if not SD_FILES_GZ_DIR.is_dir():
             raise RuntimeError(
@@ -108,14 +115,19 @@ def regenerate_littlefs(build_dir: Path) -> None:
         shutil.rmtree(SD_FILES_GZ_DIR)
         print(f"Removed {SD_FILES_GZ_DIR}", flush=True)
 
-    steps = (
+    steps = [
         (GZIP_SD_FILES, []),
         (CREATE_FLASH_DATA, []),
-        (
-            CREATE_FLASH_LITTLEFS_IMAGE,
-            ["--output", str(build_dir / "littlefs.bin")],
-        ),
-    )
+    ]
+    # The 4 MB / min_spiffs build has no LittleFS, so skip the image build but
+    # still regenerate the gzipped SD-Files-Gz output.
+    if not legacy:
+        steps.append(
+            (
+                CREATE_FLASH_LITTLEFS_IMAGE,
+                ["--output", str(build_dir / "littlefs.bin")],
+            )
+        )
     for script, arguments in steps:
         require_file(script, f"generation script {script.name}")
         print(f"Running {script.name}...", flush=True)
@@ -208,19 +220,6 @@ def copy_package_files(build_dir: Path, output_dir: Path, legacy: bool) -> None:
         shutil.copy2(update_source, update_dest)
         print(f"Copied {update_source.name} as {update_dest.name} ({update_dest.stat().st_size} bytes)")
 
-        # Bundle the legacy SD-card files (e.g. profile/calibration files) so the
-        # package has everything the 4 MB build needs.
-        if not SD_FILES_LEGACY_DIR.is_dir():
-            raise FileNotFoundError(
-                f"legacy SD files directory not found: {SD_FILES_LEGACY_DIR}"
-            )
-        for source in sorted(SD_FILES_LEGACY_DIR.glob("*")):
-            if not source.is_file():
-                continue
-            destination = output_dir / source.name
-            shutil.copy2(source, destination)
-            print(f"Copied {source.name} ({destination.stat().st_size} bytes)")
-
     partition_source = selected_partitions_csv()
     shutil.copy2(partition_source, output_dir / "partitions.csv")
     print(f"Copied partition layout: {partition_source}")
@@ -242,6 +241,40 @@ def export_prod_images(build_dir: Path) -> None:
         littlefs_dest = SD_FILES_GZ_DIR / "littlefs.bin"
         shutil.copy2(littlefs_source, littlefs_dest)
         print(f"Exported {littlefs_dest.name} ({littlefs_dest.stat().st_size} bytes)")
+
+
+def export_legacy_update(build_dir: Path) -> None:
+    """Export the legacy OTA firmware and SD-card files into SD-Files-Gz."""
+    SD_FILES_GZ_DIR.mkdir(parents=True, exist_ok=True)
+    firmware_source = require_file(
+        build_dir / "RoboTricklerUI.ino.bin", "firmware binary"
+    )
+    update_dest = SD_FILES_GZ_DIR / "update.bin"
+    shutil.copy2(firmware_source, update_dest)
+    print(f"Exported {update_dest.name} ({update_dest.stat().st_size} bytes)")
+
+    # Bundle the legacy SD-card files (e.g. profile/calibration files) so the
+    # release folder has everything the 4 MB build needs.
+    if not SD_FILES_LEGACY_DIR.is_dir():
+        raise FileNotFoundError(
+            f"legacy SD files directory not found: {SD_FILES_LEGACY_DIR}"
+        )
+    for source in sorted(SD_FILES_LEGACY_DIR.glob("*")):
+        if not source.is_file():
+            continue
+        destination = SD_FILES_GZ_DIR / source.name
+        shutil.copy2(source, destination)
+        print(f"Exported {source.name} ({destination.stat().st_size} bytes)")
+
+
+def run_flash_bat(output_dir: Path) -> None:
+    flash_bat = require_file(output_dir / "flash.bat", "flash script flash.bat")
+    print(f"Running {flash_bat.name}...", flush=True)
+    subprocess.run(
+        ["cmd.exe", "/c", str(flash_bat)],
+        cwd=output_dir,
+        check=True,
+    )
 
 
 def validate_merged_image(output_dir: Path, legacy: bool) -> None:
@@ -303,14 +336,17 @@ def main() -> int:
             original_compile_options = set_compile_defines(define_overrides)
         if args.legacy:
             print("Legacy mode: 4 MB / Minimal SPIFFS, skipping LittleFS image.", flush=True)
-        else:
-            regenerate_littlefs(build_dir)
+        regenerate_littlefs(build_dir, args.legacy)
         compile_firmware(build_dir, args.legacy)
         copy_package_files(build_dir, output_dir, args.legacy)
         validate_merged_image(output_dir, args.legacy)
+        if args.legacy:
+            export_legacy_update(build_dir)
         if args.prod:
             export_prod_images(build_dir)
         print("USB-Flash package updated successfully")
+        if args.flash:
+            run_flash_bat(output_dir)
         return 0
     except (
         FileNotFoundError,

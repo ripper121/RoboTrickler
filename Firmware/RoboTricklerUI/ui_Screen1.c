@@ -37,6 +37,7 @@ ui_LabelTarget = lv_label_create(ui_PanelTarget);
 lv_obj_set_x( ui_LabelTarget, 0 );
 lv_obj_set_y( ui_LabelTarget, -4 );
 lv_obj_set_align( ui_LabelTarget, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelTarget, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelTarget,"0.000");
 lv_obj_clear_flag( ui_LabelTarget, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
@@ -53,6 +54,7 @@ lv_obj_set_style_bg_opa(ui_ButtonToggleTrickler, 255, LV_PART_MAIN);
 
 ui_LabelToggleTrickler = lv_label_create(ui_ButtonToggleTrickler);
 lv_obj_set_align( ui_LabelToggleTrickler, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelToggleTrickler, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelToggleTrickler, UI_SYMBOL_START);
 lv_obj_set_style_text_font(ui_LabelToggleTrickler, UI_FONT_LARGE, LV_PART_MAIN);
 
@@ -67,6 +69,7 @@ lv_obj_clear_flag( ui_ButtonAddWeightCycle, LV_OBJ_FLAG_SCROLLABLE );    /// Fla
 
 ui_LabelAddWeightCycle = lv_label_create(ui_ButtonAddWeightCycle);
 lv_obj_set_align( ui_LabelAddWeightCycle, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelAddWeightCycle, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelAddWeightCycle,"0.100");
 
 ui_ButtonIncreaseTargetWeight = lv_btn_create(ui_TabPageTrickler);
@@ -80,6 +83,7 @@ lv_obj_clear_flag( ui_ButtonIncreaseTargetWeight, LV_OBJ_FLAG_SCROLLABLE );    /
 
 ui_LabelIncreaseTargetWeight = lv_label_create(ui_ButtonIncreaseTargetWeight);
 lv_obj_set_align( ui_LabelIncreaseTargetWeight, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelIncreaseTargetWeight, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelIncreaseTargetWeight, UI_SYMBOL_INCREASE);
 lv_obj_set_style_text_font(ui_LabelIncreaseTargetWeight, UI_FONT_LARGE, LV_PART_MAIN);
 
@@ -96,6 +100,7 @@ ui_LabelDecreaseTargetWeight = lv_label_create(ui_ButtonDecreaseTargetWeight);
 lv_obj_set_x( ui_LabelDecreaseTargetWeight, 1 );
 lv_obj_set_y( ui_LabelDecreaseTargetWeight, -4 );
 lv_obj_set_align( ui_LabelDecreaseTargetWeight, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelDecreaseTargetWeight, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelDecreaseTargetWeight, UI_SYMBOL_DECREASE);
 lv_obj_set_style_text_font(ui_LabelDecreaseTargetWeight, UI_FONT_LARGE, LV_PART_MAIN);
 
@@ -111,6 +116,7 @@ ui_LabelTricklerWeight = lv_label_create(ui_PanelTricklerWeight);
 lv_obj_set_x( ui_LabelTricklerWeight, 0 );
 lv_obj_set_y( ui_LabelTricklerWeight, -4 );
 lv_obj_set_align( ui_LabelTricklerWeight, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelTricklerWeight, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelTricklerWeight,"-.-");
 lv_obj_clear_flag( ui_LabelTricklerWeight, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
@@ -162,6 +168,7 @@ lv_obj_set_style_bg_opa(ui_ButtonProfileTune, 255, LV_PART_MAIN);
 
 ui_LabelProfileTune = lv_label_create(ui_ButtonProfileTune);
 lv_obj_set_align( ui_LabelProfileTune, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelProfileTune, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelProfileTune, UI_SYMBOL_TUNE);
 lv_obj_set_style_text_align(ui_LabelProfileTune, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 lv_obj_set_style_text_font(ui_LabelProfileTune, UI_FONT_LARGE, LV_PART_MAIN);
@@ -178,6 +185,7 @@ lv_obj_set_style_bg_opa(ui_ButtonProfileDelete, 255, LV_PART_MAIN);
 
 ui_LabelProfileDelete = lv_label_create(ui_ButtonProfileDelete);
 lv_obj_set_align( ui_LabelProfileDelete, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelProfileDelete, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelProfileDelete, UI_SYMBOL_DELETE);
 lv_obj_set_style_text_align(ui_LabelProfileDelete, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 lv_obj_set_style_text_font(ui_LabelProfileDelete, UI_FONT_LARGE, LV_PART_MAIN);
@@ -191,6 +199,7 @@ lv_obj_clear_flag( ui_ButtonProfilePrev, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_LabelProfilePrev = lv_label_create(ui_ButtonProfilePrev);
 lv_obj_set_align( ui_LabelProfilePrev, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelProfilePrev, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelProfilePrev, UI_SYMBOL_PREVIOUS);
 lv_obj_set_style_text_align(ui_LabelProfilePrev, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 lv_obj_set_style_text_font(ui_LabelProfilePrev, UI_FONT_LARGE, LV_PART_MAIN);
@@ -204,6 +213,7 @@ lv_obj_clear_flag( ui_ButtonProfileNext, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_LabelProfileNext = lv_label_create(ui_ButtonProfileNext);
 lv_obj_set_align( ui_LabelProfileNext, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelProfileNext, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelProfileNext, UI_SYMBOL_NEXT);
 lv_obj_set_style_text_align(ui_LabelProfileNext, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 lv_obj_set_style_text_font(ui_LabelProfileNext, UI_FONT_LARGE, LV_PART_MAIN);
@@ -222,6 +232,7 @@ ui_LabelLog = lv_label_create(ui_PanelPageInfo);
 lv_obj_set_width( ui_LabelLog, lv_pct(100));
 lv_obj_set_height( ui_LabelLog, lv_pct(82));
 lv_obj_set_align( ui_LabelLog, LV_ALIGN_TOP_MID );
+lv_label_set_long_mode(ui_LabelLog, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelLog,"");
 
 ui_ButtonWifi = lv_btn_create(ui_PanelPageInfo);
@@ -237,6 +248,7 @@ lv_obj_set_style_bg_color(ui_ButtonWifi, lv_color_hex(0x219653), LV_PART_MAIN | 
 
 ui_LabelWifi = lv_label_create(ui_ButtonWifi);
 lv_obj_set_align( ui_LabelWifi, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelWifi, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelWifi, UI_SYMBOL_WIFI);
 lv_obj_set_style_text_font(ui_LabelWifi, UI_FONT_NORMAL, LV_PART_MAIN);
 
@@ -269,6 +281,7 @@ lv_obj_clear_flag( ui_ButtonSyncFlashToSd, LV_OBJ_FLAG_SCROLLABLE );    /// Flag
 
 ui_LabelSyncFlashToSd = lv_label_create(ui_ButtonSyncFlashToSd);
 lv_obj_set_align( ui_LabelSyncFlashToSd, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelSyncFlashToSd, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelSyncFlashToSd, LV_SYMBOL_DOWNLOAD);
 lv_obj_set_style_text_font(ui_LabelSyncFlashToSd, UI_FONT_NORMAL, LV_PART_MAIN);
 
@@ -283,6 +296,7 @@ lv_obj_clear_flag( ui_ButtonSyncSdToFlash, LV_OBJ_FLAG_SCROLLABLE );    /// Flag
 
 ui_LabelSyncSdToFlash = lv_label_create(ui_ButtonSyncSdToFlash);
 lv_obj_set_align( ui_LabelSyncSdToFlash, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelSyncSdToFlash, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelSyncSdToFlash, LV_SYMBOL_UPLOAD);
 lv_obj_set_style_text_font(ui_LabelSyncSdToFlash, UI_FONT_NORMAL, LV_PART_MAIN);
 
@@ -304,6 +318,7 @@ lv_obj_clear_flag( ui_ButtonMessageOk, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_LabelMessageOk = lv_label_create(ui_ButtonMessageOk);
 lv_obj_set_align( ui_LabelMessageOk, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_LabelMessageOk, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_OK);
 lv_obj_set_style_text_font(ui_LabelMessageOk, UI_FONT_LARGE, LV_PART_MAIN);
 

@@ -2,7 +2,7 @@
 // fragment the heap (the previous String[] + concatenation churned malloc on
 // every one of the ~70 log call sites). Lines are truncated to LOG_LINE_LEN.
 #define LOG_LINE_COUNT 8
-#define LOG_LINE_LEN 40
+#define LOG_LINE_LEN 48
 static char infoMessageBuffer[LOG_LINE_COUNT][LOG_LINE_LEN];
 static lv_obj_t *dialogBackdrop = NULL;
 static lv_obj_t *activeDialog = NULL;
@@ -272,13 +272,18 @@ void updateDisplayLog(const String &logOutput, bool noLog = false)
   {
     if (lvglLock())
     {
-      // Cut the message to fit one display line, reserving the last two slots
-      // for the trailing newline and null terminator. Truncating content here
-      // (instead of letting snprintf drop the "\n") keeps each entry on its own
-      // line so over-long messages are cut rather than wrapped/merged.
+      // Copy the message, reserving the last two slots for the trailing
+      // newline and null terminator. The label (LV_LABEL_LONG_CLIP) clips
+      // overflow, so we only need to ensure each entry ends with exactly one
+      // "\n" to keep it on its own row once refreshLogLabel() concatenates them.
       char line[LOG_LINE_LEN];
       snprintf(line, sizeof(line) - 1, "%s", logOutput.c_str());
       size_t len = strlen(line);
+      // Strip any newlines already in the message so we end with exactly one.
+      while (len > 0 && line[len - 1] == '\n')
+      {
+        len--;
+      }
       line[len] = '\n';
       line[len + 1] = '\0';
       insertLine(line);
@@ -293,7 +298,7 @@ void updateDisplayLog(const String &logOutput, bool noLog = false)
     trimInPlace(text);
     setLabelText(ui_LabelInfo, text);
   }
-  DEBUG_PRINT(logOutput);
+  DEBUG_PRINTLN(logOutput);
 }
 
 void refreshLogLabel()
