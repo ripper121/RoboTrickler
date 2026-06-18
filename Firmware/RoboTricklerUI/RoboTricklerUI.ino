@@ -96,6 +96,7 @@ struct Config
   char scale_protocol[32];
   int scale_baud;
   char scale_customCode[32];
+  int motorRevSteps;
   char profile[32];
 
   byte profile_num[16];
@@ -107,8 +108,8 @@ struct Config
   int profile_generalMeasurements;
   bool profile_startAtZero;
   bool profile_trickleCounter;
-  double profile_stepperUnitsPerThrow[3];
-  int profile_stepperUnitsPerThrowSpeed[3];
+  double profile_stepperUnitsPerRev[3];
+  int profile_stepperUnitsPerRevSpeed[3];
   bool profile_stepperEnabled[3];
   int profile_measurements[16];
   long profile_steps[16];
@@ -142,7 +143,7 @@ DNSServer dnsServer;
 unsigned long wifiPreviousMillis = 0;
 unsigned long wifiInterval = 10000;
 
-#define MOTOR_REV_STEPS 200 // Number of steps for a full revolution of the stepper motor. This is typically 200 for a 1.8 degree stepper, but may be different for other motors.
+#define DEFAULT_MOTOR_REV_STEPS 200 // Default number of steps for a full revolution of the stepper motor (config.motorRevSteps). This is typically 200 for a 1.8 degree stepper, but may be different for other motors.
 
 #define MAX_TARGET_WEIGHT 999
 #define DEC_PLACES 3

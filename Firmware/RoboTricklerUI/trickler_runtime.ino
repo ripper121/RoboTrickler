@@ -52,18 +52,18 @@ static bool canStartFirstThrowAtCurrentWeight()
   return weightAtOrAbove(weight, 0.0f);
 }
 
-static long calculateStepperStepsForUnits(double remainingUnits, double unitsPerThrow, double *outUnits)
+static long calculateStepperStepsForUnits(double remainingUnits, double unitsPerRev, double *outUnits)
 {
   if (outUnits != NULL)
   {
     *outUnits = 0.0;
   }
-  if ((remainingUnits <= 0.0) || (unitsPerThrow <= 0.0))
+  if ((remainingUnits <= 0.0) || (unitsPerRev <= 0.0))
   {
     return 0;
   }
 
-  double exactSteps = remainingUnits * ((double)MOTOR_REV_STEPS / unitsPerThrow);
+  double exactSteps = remainingUnits * ((double)config.motorRevSteps / unitsPerRev);
   if ((exactSteps <= 0.0) || (exactSteps > 2147483647.0))
   {
     return 0;
@@ -72,7 +72,7 @@ static long calculateStepperStepsForUnits(double remainingUnits, double unitsPer
   long steps = (long)exactSteps;
   if (outUnits != NULL)
   {
-    *outUnits = ((double)steps * unitsPerThrow) / (double)MOTOR_REV_STEPS;
+    *outUnits = ((double)steps * unitsPerRev) / (double)config.motorRevSteps;
   }
   return steps;
 }
@@ -98,14 +98,14 @@ static bool runBulkStepperMove(String &infoText)
     return true;
   }
 
-  int speed = config.profile_stepperUnitsPerThrowSpeed[stepperNum];
+  int speed = config.profile_stepperUnitsPerRevSpeed[stepperNum];
   if (speed <= 0)
   {
     speed = 200;
   }
 
   double units = 0.0;
-  long stepsToMove = calculateStepperStepsForUnits(remainingUnits, config.profile_stepperUnitsPerThrow[stepperNum], &units);
+  long stepsToMove = calculateStepperStepsForUnits(remainingUnits, config.profile_stepperUnitsPerRev[stepperNum], &units);
   if (stepsToMove <= 0)
   {
     return true;

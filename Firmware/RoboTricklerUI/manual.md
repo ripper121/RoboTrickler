@@ -122,7 +122,7 @@ Das angezeigte Gewicht wechselt während des Trickelns die Farbe:
 ## Tab `Profil`
 
 * Mit den Pfeil-Buttons (oben/unten) wird durch die erkannten Profile geblättert; das gewählte Profil wird sofort geladen.
-* Der orangefarbene Button (Zahnrad) öffnet das Profil-Tuning und passt `actuator.stepper1.unitsPerThrow` an (siehe [Profil-Tuning](#profil-tuning)).
+* Der orangefarbene Button (Zahnrad) öffnet das Profil-Tuning und passt `actuator.stepper1.unitsPerRev` an (siehe [Profil-Tuning](#profil-tuning)).
 * Der rote Button (Papierkorb) löscht das ausgewählte Profil nach einer Bestätigung.
 * Für das Profil `calibrate` werden Tuning- und Lösch-Button ausgeblendet.
 
@@ -193,12 +193,13 @@ Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte.
 ```json
 {
   "actuator": "stepper1",
-  "steps": 20000,
-  "speed": 200
+  "revolutions": 100,
+  "speed": 200,
+  "measurements": 10
 }
 ```
 
-Dieses Profil nutzt `steps: 20000`. Das sind 20000 direkte STEP-Pulse; bei 200 STEP-Pulsen pro Umdrehung entspricht das dem Kalibrierlauf über 100 Umdrehungen.
+Anders als normale Profile (die ihre Würfe als `steps` angeben) ist `calibrate` ein Sonderfall und gibt den Kalibrierlauf in Motor-**Umdrehungen** an. Dieses Profil nutzt `revolutions: 100`. Die Firmware rechnet das beim Laden in STEP-Pulse um: `steps = revolutions × motorRevSteps`. Bei den Standard-`motorRevSteps: 200` ergibt das einen Kalibrierlauf über 100 Umdrehungen (20000 STEP-Pulse). Der Vorteil: Der Kalibrierlauf bleibt unabhängig von der Mikroschritt-Einstellung immer gleich lang.
 
 **Vorgehen:**
 
@@ -233,7 +234,7 @@ Die Firmware erstellt automatisch ein neues Profil in `/profiles` mit dem Namen 
 
 Die automatische Erstellung verwendet die Namen `powder_000.txt` bis `powder_999.txt`. Sind alle diese Namen belegt, muss zuerst ein nicht mehr benötigtes Profil gelöscht werden. Die Profilliste der Firmware kann insgesamt bis zu 32 gültige Profile anzeigen.
 
-Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `unitsPerThrow` wird aus `Kalibriergewicht / 100` berechnet. Die Firmware legt acht Feinwurf-Einträge an (`1.929`, `0.965`, `0.482`, `0.241`, `0.121`, `0.060`, `0.030`, `0.000` gn mit `2`, `2`, `5`, `5`, `10`, `10`, `15`, `20` Messungen) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten STEP-Pulse. Jeder Eintrag erhält mindestens `5` STEP-Pulse.
+Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `unitsPerRev` wird aus `Kalibriergewicht / 100` berechnet. Die Firmware legt acht Feinwurf-Einträge an (`1.929`, `0.965`, `0.482`, `0.241`, `0.121`, `0.060`, `0.030`, `0.000` gn mit `2`, `2`, `5`, `5`, `10`, `10`, `15`, `20` Messungen) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten STEP-Pulse. Jeder Eintrag erhält mindestens `5` STEP-Pulse.
 
 ## Profil-Tuning
 
@@ -245,11 +246,11 @@ Wechsle in den Tab `Profil` und wähle das Profil aus, das angepasst werden soll
 
 ![Profil auswählen](https://github.com/user-attachments/assets/b4ba4f5b-84c8-492e-a2bc-4d74446d9ba5)
 
-### 2. Units / Throw anpassen
+### 2. Units / Rev anpassen
 
-Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Throw** anpassen (entspricht `actuator.stepper1.unitsPerThrow`). Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
+Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Rev** anpassen (entspricht `actuator.stepper1.unitsPerRev`). Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
 
-![Units / Throw anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
+![Units / Rev anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
 
 #### Hinweise
 
@@ -312,7 +313,7 @@ Der Editor lässt sich auch offline direkt von der SD-Karte öffnen. Offline feh
 
 ## Gramm / Grain
 
-Das Profil muss zur Einheit der Waage passen. Wenn die Waage in Grain ausgibt, müssen `targetWeight`, `diffWeight`, `tolerance`, `alarmThreshold`, `weightGap` und `unitsPerThrow` ebenfalls in Grain angegeben werden. Wenn die Waage in Gramm ausgibt, müssen diese Werte in Gramm angegeben werden.
+Das Profil muss zur Einheit der Waage passen. Wenn die Waage in Grain ausgibt, müssen `targetWeight`, `diffWeight`, `tolerance`, `alarmThreshold`, `weightGap` und `unitsPerRev` ebenfalls in Grain angegeben werden. Wenn die Waage in Gramm ausgibt, müssen diese Werte in Gramm angegeben werden.
 
 Um Gramm in Grain umzurechnen:
 
@@ -341,13 +342,13 @@ Beispiel für das neue Profilformat:
   "actuator": {
     "stepper1": {
       "enabled": true,
-      "unitsPerThrow": 0.375,
-      "unitsPerThrowSpeed": 200
+      "unitsPerRev": 0.375,
+      "unitsPerRevSpeed": 200
     },
     "stepper2": {
       "enabled": false,
-      "unitsPerThrow": 10.000,
-      "unitsPerThrowSpeed": 200
+      "unitsPerRev": 10.000,
+      "unitsPerRevSpeed": 200
     }
   },
   "rs232TrickleMap": [
@@ -407,10 +408,10 @@ Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `ala
 
 * `stepper1` und `stepper2`: Einstellungen für Trickler 1 und Trickler 2.
 * `enabled`: aktiviert den jeweiligen Stepper für den automatischen ersten Grobwurf.
-* `unitsPerThrow`: Pulvermenge pro Umdrehung bei `unitsPerThrowSpeed`.
-* `unitsPerThrowSpeed`: Geschwindigkeit für den automatischen ersten Grobwurf.
+* `unitsPerRev`: Pulvermenge pro Umdrehung bei `unitsPerRevSpeed`.
+* `unitsPerRevSpeed`: Geschwindigkeit für den automatischen ersten Grobwurf.
 
-Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `unitsPerThrow` die benötigten STEP-Pulse. Es wird genau der in `general.actuator` eingetragene Bulk-Actuator verwendet; ohne gültigen Eintrag ist das `stepper1`. Wenn der gewählte Stepper nicht aktiviert ist oder `unitsPerThrow` fehlt bzw. `0` ist, wird der automatische Grobwurf übersprungen.
+Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `unitsPerRev` die benötigten STEP-Pulse. Es wird genau der in `general.actuator` eingetragene Bulk-Actuator verwendet; ohne gültigen Eintrag ist das `stepper1`. Wenn der gewählte Stepper nicht aktiviert ist oder `unitsPerRev` fehlt bzw. `0` ist, wird der automatische Grobwurf übersprungen.
 
 ### `rs232TrickleMap`
 
@@ -443,8 +444,8 @@ Beide Treiber teilen sich die gemeinsame Enable-Leitung; es ist immer nur ein St
 
 **So werden die beiden Trickler verteilt:**
 
-1. **Beide Stepper aktivieren.** Setze im `actuator`-Block bei beiden, die du nutzen willst, `enabled: true` und trage jeweils `unitsPerThrow` (Pulvermenge pro Umdrehung) und `unitsPerThrowSpeed` (Geschwindigkeit) passend zum jeweiligen Trickler ein.
-2. **Grobwurf-Stepper wählen.** `general.actuator` bestimmt, welcher Stepper den automatischen ersten Grobwurf ausführt (z.B. `stepper2` als großer/schneller Trickler). Dieser Stepper muss `enabled: true` sein und ein gültiges `unitsPerThrow` größer `0` haben, sonst wird der Grobwurf übersprungen.
+1. **Beide Stepper aktivieren.** Setze im `actuator`-Block bei beiden, die du nutzen willst, `enabled: true` und trage jeweils `unitsPerRev` (Pulvermenge pro Umdrehung) und `unitsPerRevSpeed` (Geschwindigkeit) passend zum jeweiligen Trickler ein.
+2. **Grobwurf-Stepper wählen.** `general.actuator` bestimmt, welcher Stepper den automatischen ersten Grobwurf ausführt (z.B. `stepper2` als großer/schneller Trickler). Dieser Stepper muss `enabled: true` sein und ein gültiges `unitsPerRev` größer `0` haben, sonst wird der Grobwurf übersprungen.
 3. **Feinwurf pro Tabelleneintrag zuweisen.** Jeder Eintrag in `rs232TrickleMap` hat ein eigenes `actuator`-Feld (`stepper1` oder `stepper2`). So kannst du je nach Abstand zum Zielgewicht (`diffWeight`) einen anderen Trickler verwenden – typischerweise der große Trickler für die größeren `diffWeight`-Bereiche und der feine Trickler für die letzten Einträge nahe `0`.
 
 Damit übernimmt im folgenden Beispiel `stepper2` den Grobwurf und den ersten Feinwurf-Bereich (großer/schneller Trickler), während `stepper1` ab `diffWeight 0.250` die feine Annäherung an das Zielgewicht erledigt:
@@ -464,13 +465,13 @@ Damit übernimmt im folgenden Beispiel `stepper2` den Grobwurf und den ersten Fe
   "actuator": {
     "stepper1": {
       "enabled": true,
-      "unitsPerThrow": 0.200,
-      "unitsPerThrowSpeed": 200
+      "unitsPerRev": 0.200,
+      "unitsPerRevSpeed": 200
     },
     "stepper2": {
       "enabled": true,
-      "unitsPerThrow": 2.000,
-      "unitsPerThrowSpeed": 200
+      "unitsPerRev": 2.000,
+      "unitsPerRevSpeed": 200
     }
   },
   "rs232TrickleMap": [
@@ -531,6 +532,7 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
     "customCode": "0x1B 0x70 0x0D 0x0A",
     "baud": 9600
   },
+  "motorRevSteps": 200,
   "profile": "avg",
   "language": "de",
   "beeper": "both",
@@ -555,6 +557,7 @@ Die Werte im Beispiel oben dienen nur zur Veranschaulichung. In Klammern steht j
 * `scale.protocol`: unterstützte Werte sind `GG`, `SBI`, `KERN`, `KERN-ABT`, `KERN-ABS`, `AD`, `CUSTOM` und leer für kein aktives Anfragekommando. (Standard: `GG`)
 * `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden. (Standard: leer)
 * `scale.baud`: Baudrate der Waage, meistens `9600`. (Standard: `9600`)
+* `motorRevSteps`: Schritte pro voller Umdrehung des Schrittmotors. Bei einem 1,8°-Schrittmotor sind das `200`; bei anderen Motoren entsprechend anpassen. Beeinflusst die Schrittberechnung beim Trickeln und die Kalibrierung. (Standard: `200`)
 * `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil. (Standard: `calibrate`)
 * `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Die Display-Texte werden aus `/lang/<sprache>.json` geladen und fallen auf `/lang/en.json` sowie danach auf eingebaute englische Texte zurück. Die Weboberfläche verwendet getrennte Dateien unter `/system/lang`. (Standard: `en`)
 * `beeper`: `done` Beep wenn Trickle fertig, `button` Beep bei Touch betätigung, `both` beides aktiv oder `off` Beeper aus. (Standard: `done`)

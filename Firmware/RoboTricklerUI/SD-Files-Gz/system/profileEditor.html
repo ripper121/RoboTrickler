@@ -48,8 +48,8 @@
       ];
       const stepperProperties = [
          'enabled',
-         'unitsPerThrow',
-         'unitsPerThrowSpeed'
+         'unitsPerRev',
+         'unitsPerRevSpeed'
       ];
       const profileStepProperties = [
          'diffWeight',
@@ -60,7 +60,7 @@
       ];
       const calibrationProperties = [
          'actuator',
-         'steps',
+         'revolutions',
          'speed',
          'measurements'
       ];
@@ -93,7 +93,7 @@
          return jsonData &&
             !Array.isArray(jsonData.rs232TrickleMap) &&
             jsonData.actuator !== undefined &&
-            jsonData.steps !== undefined &&
+            jsonData.revolutions !== undefined &&
             jsonData.speed !== undefined;
       }
 
@@ -113,7 +113,7 @@
       function cleanCalibrationProfileJSON(jsonData) {
          return {
             actuator: cleanActuator(jsonData.actuator),
-            steps: cleanInteger(jsonData.steps, 20000, 1),
+            revolutions: Math.max(0.001, cleanNumber(jsonData.revolutions, 100)),
             speed: cleanInteger(jsonData.speed, 200, 1),
             measurements: cleanInteger(jsonData.measurements, 5, 0)
          };
@@ -143,11 +143,11 @@
          ['stepper1', 'stepper2'].forEach(function (stepperName) {
             const stepper = actuator[stepperName] || {};
             const defaults = stepperName === 'stepper1'
-               ? { enabled: true, unitsPerThrow: 0.000, unitsPerThrowSpeed: 200 }
-               : { enabled: false, unitsPerThrow: 10.000, unitsPerThrowSpeed: 200 };
+               ? { enabled: true, unitsPerRev: 0.000, unitsPerRevSpeed: 200 }
+               : { enabled: false, unitsPerRev: 10.000, unitsPerRevSpeed: 200 };
             cleanedData.actuator[stepperName].enabled = cleanBoolean(stepper.enabled, defaults.enabled);
-            cleanedData.actuator[stepperName].unitsPerThrow = cleanNumber(stepper.unitsPerThrow, defaults.unitsPerThrow);
-            cleanedData.actuator[stepperName].unitsPerThrowSpeed = cleanInteger(stepper.unitsPerThrowSpeed, defaults.unitsPerThrowSpeed, 1);
+            cleanedData.actuator[stepperName].unitsPerRev = cleanNumber(stepper.unitsPerRev, defaults.unitsPerRev);
+            cleanedData.actuator[stepperName].unitsPerRevSpeed = cleanInteger(stepper.unitsPerRevSpeed, defaults.unitsPerRevSpeed, 1);
          });
 
          if (Array.isArray(jsonData.rs232TrickleMap)) {
@@ -242,7 +242,7 @@
             } else {
                input = document.createElement('input');
                input.type = 'number';
-               input.step = property === 'measurements' || property === 'steps' || property === 'speed' || property === 'unitsPerThrowSpeed' ? '1' : '0.001';
+               input.step = property === 'measurements' || property === 'steps' || property === 'speed' || property === 'unitsPerRevSpeed' ? '1' : '0.001';
                input.value = dataObject[property];
             }
 

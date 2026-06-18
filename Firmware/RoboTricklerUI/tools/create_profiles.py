@@ -92,7 +92,7 @@ def generate_profile(
     """Build a profile dict using the original generator algorithm.
 
     ``weight`` is the powder weight measured during a 20000-step calibration run;
-    it drives ``unitsPerThrow`` and the per-entry step counts.
+    it drives ``unitsPerRev`` and the per-entry step counts.
     """
     if weight <= 0:
         raise ValueError("calibration weight must be greater than 0")
@@ -113,13 +113,13 @@ def generate_profile(
         "actuator": {
             "stepper1": {
                 "enabled": True,
-                "unitsPerThrow": round3(weight / 100.0),
-                "unitsPerThrowSpeed": speed,
+                "unitsPerRev": round3(weight / 100.0),
+                "unitsPerRevSpeed": speed,
             },
             "stepper2": {
                 "enabled": bulk == "stepper2",
-                "unitsPerThrow": 10.000,
-                "unitsPerThrowSpeed": speed if bulk == "stepper2" else 200,
+                "unitsPerRev": 10.000,
+                "unitsPerRevSpeed": speed if bulk == "stepper2" else 200,
             },
         },
         "rs232TrickleMap": [],

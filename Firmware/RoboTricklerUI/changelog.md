@@ -49,6 +49,8 @@ Bei Fehlern oder Fragen, einfach melden: [Kontakt](https://shop.strenuous.dev/co
 - Throttled scale-timeout logging so it updates the status line every cycle but only adds one scrollback entry per outage.
 - Reset the weight label color to white on stop and routed target-weight label updates through a single `updateTargetWeightLabel()` helper.
 - Enabled the runtime watchdog disable during setup.
+- Added a `motorRevSteps` config field (default `200`) for the stepper's steps per revolution, used by the bulk move and calibration math.
+- Renamed the profile actuator fields `unitsPerThrow`/`unitsPerThrowSpeed` to `unitsPerRev`/`unitsPerRevSpeed` (and the on-device tuning label to `units/rev`). Existing profiles must be re-saved with the new names.
 - Updated the manual for firmware `2.14`.
 
 ### Fixed

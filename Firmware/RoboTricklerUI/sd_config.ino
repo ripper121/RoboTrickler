@@ -28,9 +28,12 @@ static bool hasRequiredProfileFields(JsonObject profileEntry)
 
 static bool hasCalibrationProfileFields(JsonObject profileEntry)
 {
+  // The calibration profile is the one special case that expresses its throw in
+  // motor revolutions (hardware-independent) instead of raw steps; steps are
+  // derived from config.motorRevSteps when the entry is loaded.
   return !profileEntry.isNull() &&
          !profileEntry["actuator"].isNull() &&
-         !profileEntry["steps"].isNull() &&
+         !profileEntry["revolutions"].isNull() &&
          !profileEntry["speed"].isNull();
 }
 
@@ -73,7 +76,20 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   int stepperSpeed = profileEntry["speed"] | 200;
   int measurements = profileEntry["measurements"] | 5;
   float profileWeight = profileEntry["diffWeight"] | 0.0;
-  long profileSteps = profileEntry["steps"] | 0;
+  // The calibration profile is special: it stores its throw as motor
+  // revolutions, which we convert to steps using the configured steps-per-rev.
+  // Normal map entries continue to carry raw steps.
+  bool calibrationEntry = allowCalibrationDefaults && !hasRequiredFields;
+  long profileSteps;
+  if (calibrationEntry)
+  {
+    float profileRevolutions = profileEntry["revolutions"] | 0.0;
+    profileSteps = lround((double)profileRevolutions * (double)config.motorRevSteps);
+  }
+  else
+  {
+    profileSteps = profileEntry["steps"] | 0;
+  }
   if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
   {
     if (showErrors)
@@ -181,6 +197,7 @@ void setDefaultConfiguration(Config &config)
   strlcpy(config.scale_protocol, "GG", sizeof(config.scale_protocol));
   strlcpy(config.scale_customCode, "", sizeof(config.scale_customCode));
   config.scale_baud = 9600;
+  config.motorRevSteps = DEFAULT_MOTOR_REV_STEPS;
   strlcpy(config.profile, "calibrate", sizeof(config.profile));
   config.targetWeight = 40.0;
   strlcpy(config.beeper, "done", sizeof(config.beeper));
@@ -249,8 +266,8 @@ bool readProfile(const char *filename, Config &config)
   for (int i = 0; i < 3; i++)
   {
     config.profile_stepperEnabled[i] = false;
-    config.profile_stepperUnitsPerThrow[i] = 0.0;
-    config.profile_stepperUnitsPerThrowSpeed[i] = 0;
+    config.profile_stepperUnitsPerRev[i] = 0.0;
+    config.profile_stepperUnitsPerRevSpeed[i] = 0;
   }
   for (int i = 0; i < 16; i++)
   {
@@ -293,8 +310,8 @@ bool readProfile(const char *filename, Config &config)
       if (!stepper.isNull())
       {
         config.profile_stepperEnabled[stepperNumber] = stepper["enabled"] | true;
-        config.profile_stepperUnitsPerThrow[stepperNumber] = stepper["unitsPerThrow"] | 0.0;
-        config.profile_stepperUnitsPerThrowSpeed[stepperNumber] = stepper["unitsPerThrowSpeed"] | 0;
+        config.profile_stepperUnitsPerRev[stepperNumber] = stepper["unitsPerRev"] | 0.0;
+        config.profile_stepperUnitsPerRevSpeed[stepperNumber] = stepper["unitsPerRevSpeed"] | 0;
       }
     }
   }
@@ -364,6 +381,11 @@ bool loadConfiguration(const char *filename, Config &config)
   strlcpy(config.scale_protocol, doc["scale"]["protocol"] | config.scale_protocol, sizeof(config.scale_protocol));
   strlcpy(config.scale_customCode, doc["scale"]["customCode"] | config.scale_customCode, sizeof(config.scale_customCode));
   config.scale_baud = doc["scale"]["baud"] | config.scale_baud;
+  config.motorRevSteps = doc["motorRevSteps"] | config.motorRevSteps;
+  if (config.motorRevSteps <= 0)
+  {
+    config.motorRevSteps = DEFAULT_MOTOR_REV_STEPS;
+  }
   strlcpy(config.profile, doc["profile"] | config.profile, sizeof(config.profile));
   strlcpy(config.beeper, doc["beeper"] | config.beeper, sizeof(config.beeper));
   strlcpy(config.language, doc["language"] | config.language, sizeof(config.language));
@@ -526,7 +548,7 @@ String nextCalibrationProfileName()
   return "";
 }
 
-static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerThrow, int profileSpeed)
+static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerRev, int profileSpeed)
 {
   const float diffWeights[8] = {1.929, 0.965, 0.482, 0.241, 0.121, 0.060, 0.030, 0.000};
   const size_t diffWeightsCount = sizeof(diffWeights) / sizeof(diffWeights[0]);
@@ -536,7 +558,9 @@ static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerThrow
   JsonArray rs232TrickleMap = doc["rs232TrickleMap"].to<JsonArray>();
   for (int i = 0; i < diffWeightsCount; i++)
   {
-    long steps = lround(((diffWeights[i] * (double)MOTOR_REV_STEPS) / unitsPerThrow) * rs232LimitFactor);
+    long steps = (unitsPerRev > 0.0)
+                     ? lround(((diffWeights[i] * (double)config.motorRevSteps) / unitsPerRev) * rs232LimitFactor)
+                     : 5;
     if (steps < 5)
     {
       steps = 5;
@@ -580,7 +604,19 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   String infoText = String(langText("status_creating_profile")) + profileName;
   updateDisplayLog(infoText, true);
 
-  const float unitsPerThrow = calibrationWeight / 100.0;
+  // unitsPerRev is the dispensed weight per full motor revolution. The
+  // calibration throw runs config.profile_steps[0] steps (calibrate profile),
+  // so the number of revolutions depends on config.motorRevSteps. With the
+  // defaults (20000 steps / 200 steps-per-rev) this resolves to 100 revolutions.
+  long calibrationSteps = config.profile_steps[0];
+  if (calibrationSteps <= 0)
+  {
+    calibrationSteps = 20000;
+  }
+  double calibrationRevolutions = (double)calibrationSteps / (double)config.motorRevSteps;
+  const float unitsPerRev = calibrationRevolutions > 0.0
+                                ? (float)(calibrationWeight / calibrationRevolutions)
+                                : calibrationWeight;
   int profileSpeed = config.profile_speed[0];
   if (profileSpeed <= 0)
   {
@@ -601,14 +637,14 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   JsonObject actuator = doc["actuator"].to<JsonObject>();
   JsonObject stepper1 = actuator["stepper1"].to<JsonObject>();
   stepper1["enabled"] = true;
-  stepper1["unitsPerThrow"] = serialized(String(unitsPerThrow, 3));
-  stepper1["unitsPerThrowSpeed"] = profileSpeed;
+  stepper1["unitsPerRev"] = serialized(String(unitsPerRev, 3));
+  stepper1["unitsPerRevSpeed"] = profileSpeed;
   JsonObject stepper2 = actuator["stepper2"].to<JsonObject>();
   stepper2["enabled"] = config.profile_stepperEnabled[2];
-  stepper2["unitsPerThrow"] = serialized(String(config.profile_stepperUnitsPerThrow[2] > 0.0 ? config.profile_stepperUnitsPerThrow[2] : 10.0, 3));
-  stepper2["unitsPerThrowSpeed"] = config.profile_stepperUnitsPerThrowSpeed[2] > 0 ? config.profile_stepperUnitsPerThrowSpeed[2] : 200;
+  stepper2["unitsPerRev"] = serialized(String(config.profile_stepperUnitsPerRev[2] > 0.0 ? config.profile_stepperUnitsPerRev[2] : 10.0, 3));
+  stepper2["unitsPerRevSpeed"] = config.profile_stepperUnitsPerRevSpeed[2] > 0 ? config.profile_stepperUnitsPerRevSpeed[2] : 200;
 
-  populateCalibrationTrickleMap(doc, unitsPerThrow, profileSpeed);
+  populateCalibrationTrickleMap(doc, unitsPerRev, profileSpeed);
 
   if (!ACTIVE_FS.exists("/profiles") && !ACTIVE_FS.mkdir("/profiles"))
   {
@@ -651,9 +687,9 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   return true;
 }
 
-bool tuneProfileUnitsPerThrow(const char *profileName, float unitsPerThrow)
+bool tuneProfileUnitsPerRev(const char *profileName, float unitsPerRev)
 {
-  if (unitsPerThrow <= 0.0)
+  if (unitsPerRev <= 0.0)
   {
     updateDisplayLog(langText("msg_calibration_weight_invalid"), true);
     return false;
@@ -681,7 +717,7 @@ bool tuneProfileUnitsPerThrow(const char *profileName, float unitsPerThrow)
     return false;
   }
 
-  int profileSpeed = config.profile_stepperUnitsPerThrowSpeed[1];
+  int profileSpeed = config.profile_stepperUnitsPerRevSpeed[1];
   if (profileSpeed <= 0)
   {
     profileSpeed = config.profile_speed[0];
@@ -702,10 +738,10 @@ bool tuneProfileUnitsPerThrow(const char *profileName, float unitsPerThrow)
     stepper1 = actuator["stepper1"].to<JsonObject>();
   }
   stepper1["enabled"] = true;
-  stepper1["unitsPerThrow"] = serialized(String(unitsPerThrow, 3));
-  stepper1["unitsPerThrowSpeed"] = profileSpeed;
+  stepper1["unitsPerRev"] = serialized(String(unitsPerRev, 3));
+  stepper1["unitsPerRevSpeed"] = profileSpeed;
 
-  populateCalibrationTrickleMap(doc, unitsPerThrow, profileSpeed);
+  populateCalibrationTrickleMap(doc, unitsPerRev, profileSpeed);
 
   if (!writeProfileDocument(filename, doc))
   {
@@ -855,6 +891,7 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["protocol"] = config.scale_protocol;
   doc["scale"]["customCode"] = config.scale_customCode;
   doc["scale"]["baud"] = config.scale_baud;
+  doc["motorRevSteps"] = config.motorRevSteps;
   doc["profile"] = config.profile;
   doc["beeper"] = config.beeper;
   doc["language"] = config.language;

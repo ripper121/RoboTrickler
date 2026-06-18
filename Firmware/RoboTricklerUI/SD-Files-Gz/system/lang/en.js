@@ -84,10 +84,11 @@ window.rtLoadLanguage({
         "trickleCounter": "Trickle counter",
         "measurements": "Measurements",
         "enabled": "Enabled",
-        "unitsPerThrow": "Units per throw",
-        "unitsPerThrowSpeed": "Units per throw speed",
+        "unitsPerRev": "Units per revolution",
+        "unitsPerRevSpeed": "Units per revolution speed",
         "diffWeight": "Difference weight",
         "steps": "Steps",
+        "revolutions": "Revolutions",
         "speed": "Speed"
       },
       "options": {
