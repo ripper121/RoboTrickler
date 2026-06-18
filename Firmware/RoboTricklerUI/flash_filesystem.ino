@@ -8,7 +8,10 @@ bool initFilesystem()
 
   SDspi = new SPIClass(HSPI);
   SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
-  if (SD.begin(GRBL_SPI_SS, *SDspi, SD_SPI_FREQ, "/sd", 10) && (SD.cardType() != CARD_NONE))
+  delay(100); // give the SD card time to initialize before querying it
+  bool sdBegan = SD.begin(GRBL_SPI_SS, *SDspi, SD_SPI_FREQ, "/sd", 5);
+  delay(100); // give the SD card time to initialize before querying it
+  if (sdBegan && (SD.cardType() != CARD_NONE))
   {
     sdMounted = true;
     activeFS = &SD;
