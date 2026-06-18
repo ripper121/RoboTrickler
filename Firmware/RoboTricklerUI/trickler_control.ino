@@ -29,6 +29,19 @@ void startTrickler()
             return;
         }
     }
+    // The calibration throw is only useful if a powder profile can be created
+    // from it afterwards. Bail out before wasting a throw when the profile list
+    // is already full (createProfileFromCalibration would refuse later anyway).
+    if (strcmp(config.profile, "calibrate") == 0)
+    {
+        getProfileList();
+        if (profileListCount >= PROFILE_LIST_MAX)
+        {
+            errorBox(langText("msg_max_profiles_reached"), true);
+            return;
+        }
+    }
+
     String selectedText = String(langText("placeholder_profile")) + ": " + config.profile + langText("status_profile_selected_suffix");
     updateDisplayLog(selectedText);
 

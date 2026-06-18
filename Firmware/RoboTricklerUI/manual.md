@@ -1,6 +1,6 @@
 # Robo-Trickler Anleitung
 
-Stand: Firmware 2.13
+Stand: Firmware 2.14
 
 > **Keine Sorge:** Diese Anleitung ist bewusst sehr ausführlich und wirkt dadurch umfangreich. Die eigentliche Bedienung des Robo-Tricklers ist aber ganz einfach – für den Einstieg genügt das Kapitel [Erste Schritte](#erste-schritte). Der Rest dient zum Nachschlagen.
 
@@ -233,6 +233,8 @@ Anders als normale Profile (die ihre Würfe als `steps` angeben) ist `calibrate`
 Die Firmware erstellt automatisch ein neues Profil in `/profiles` mit dem Namen `powder_000.txt`, `powder_001.txt` usw., wählt dieses Profil aus und speichert es in `config.txt`.
 
 Die automatische Erstellung verwendet die Namen `powder_000.txt` bis `powder_999.txt`. Sind alle diese Namen belegt, muss zuerst ein nicht mehr benötigtes Profil gelöscht werden. Die Profilliste der Firmware kann insgesamt bis zu 32 gültige Profile anzeigen.
+
+Ist dieses Limit von 32 Profilen bereits erreicht, prüft die Firmware das schon **vor** dem Kalibrierlauf: Beim Druck auf `Start` (mit gewähltem `calibrate`-Profil) erscheint dann die Meldung `Profillimit erreicht! Kalibrierung nicht möglich.`, und der Kalibrierlauf wird gar nicht erst gestartet. Lösche in diesem Fall zuerst ein nicht mehr benötigtes Profil.
 
 Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `unitsPerRev` wird aus `Kalibriergewicht / 100` berechnet. Die Firmware legt acht Feinwurf-Einträge an (`1.929`, `0.965`, `0.482`, `0.241`, `0.121`, `0.060`, `0.030`, `0.000` gn mit `2`, `2`, `5`, `5`, `10`, `10`, `15`, `20` Messungen) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten STEP-Pulse. Jeder Eintrag erhält mindestens `5` STEP-Pulse.
 

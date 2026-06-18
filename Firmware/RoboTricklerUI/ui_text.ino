@@ -124,6 +124,8 @@ static const char *languageFallback(const char *key)
     return "Calibration weight invalid!";
   if (strcmp(key, "msg_no_free_profile_name") == 0)
     return "No free powder profile name!";
+  if (strcmp(key, "msg_max_profiles_reached") == 0)
+    return "Profile limit reached!\nCannot calibrate.";
   if (strcmp(key, "msg_profiles_folder_failed") == 0)
     return "Failed to create profiles folder!";
   if (strcmp(key, "msg_profile_file_create_failed") == 0)

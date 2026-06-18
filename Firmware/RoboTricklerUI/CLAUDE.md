@@ -59,8 +59,9 @@ The main loop dispatches through `TricklerState` (`TRICKLER_IDLE`, `TRICKLER_RUN
 ### Filesystem
 - **Primary**: SD card (SPI, `SD-Files/` layout)
 - **Fallback**: LittleFS (enabled by `ENABLE_LITTLEFS 1` in `compile_options.h`)
-- `activeFS` / `ACTIVE_FS` pointer selects the active filesystem at runtime; `activeFSIsSD` tracks which is in use
-- **Never edit `data/` or `SD-Files-Gz/` directly** — both are generated from `SD-Files/`
+- SD and LittleFS can be mounted **simultaneously**: `sdMounted` / `littleFSMounted` track each independently. The `activeFS` / `ACTIVE_FS` pointer selects which one serves runtime reads/writes, and `activeFSIsSD` says which that is (SD preferred when present).
+- `filesystem_sync.ino` copies files both ways ("Upload Flash > SD" / "Download SD > Flash") from the display, then restarts.
+- **Never edit `data/`, `SD-Files-Gz/`, or `SD-Files-LittleFS/` directly** — all are generated from `SD-Files/`
 
 ### File Layout
 
@@ -81,20 +82,24 @@ The main loop dispatches through `TricklerState` (`TRICKLER_IDLE`, `TRICKLER_RUN
 | `web_api.ino` | REST endpoints: `/getTricklerState`, `/setTarget`, etc. |
 | `web_file_editor.ino` | SD file browser/editor API routes |
 | `wifi_connection.ino` | Station + AP mode, `maintainWifiConnection()` |
+| `wifi_qr.ino` | Wi-Fi QR-code generation/display |
 | `stepper.ino` | I2S stepper driver, `stepperBeep()` |
 | `profile_actions.ino` | Profile list, load, save, delete |
+| `flash_filesystem.ino` | SD/LittleFS mounting, legacy-file cleanup |
+| `filesystem_sync.ino` | SD ↔ LittleFS file synchronization (display action) |
 | `ui.c` / `ui_Screen1.c` | SquareLine Studio-generated LVGL UI objects |
 | `ui_events.ino` | LVGL event callbacks wired to hardware actions |
-| `ui_dialogs.ino` | `messageBox()` and modal dialog helpers |
+| `ui_dialogs.ino` | `messageBox()` + typed dialog helpers (`errorBox`, `successBox`, `warnBox`, `confirmBox`, `cancelInteractiveDialogs()`) |
 | `ui_text.ino` | `langText()` — localization lookup |
 | `firmware_check.ino` | OTA version check against remote endpoint |
 | `update.ino` | OTA firmware + LittleFS update handlers |
+| `screenshot.ino` | Display screenshot endpoint (gated by `ENABLE_SCREENSHOT`) |
 
 ### Localization
 All UI strings go through `langText(key)` which reads from `SD-Files/lang/en.json` (or `de.json`). When adding visible text, add the key/value to both language files — never hardcode display strings in firmware.
 
 ### SD File Rules
-- `fw_update.url` is internal to firmware (`DEFAULT_FW_UPDATE_URL` in `RoboTricklerUI.ino`). Do **not** expose it in SD files, `config.txt`, the config generator UI, or docs. `fw_update.check` may stay user-configurable.
+- `fw_update.url` is internal to firmware (`DEFAULT_FW_UPDATE_URL` in `RoboTricklerUI.ino`). Do **not** expose it in SD files, `config.txt`, or docs. `fw_update.check` may stay user-configurable.
 - Files under `SD-Files/system/` are gzip-compressed into `SD-Files-Gz/system/` with `.gz` extension. Files under `SD-Files/profiles/` and `SD-Files/lang/` are copied uncompressed (parsed directly by firmware).
 - The web server transparently serves `.gz` variants when they exist.
 
@@ -108,14 +113,14 @@ Try to reuse UI Code to save Heap.
 
 ## Maintaining the User Manual (`manual.md`)
 
-`manual.md` is the German end-user manual, mirrored on the GitHub wiki (e.g. page `Anleitung-Firmware-2.13`). When firmware behavior changes, update the manual using this process — **verify every statement against the code, never from memory.**
+`manual.md` is the German end-user manual, mirrored on the GitHub wiki (e.g. page `Anleitung-Firmware-2.14`). When firmware behavior changes, update the manual using this process — **verify every statement against the code, never from memory.**
 
 ### Update checklist
 1. **Version line**: keep `Stand: Firmware X.XX` in sync with `FW_VERSION` in `RoboTricklerUI.ino`. Check `changelog.md` for what changed in the release.
 2. **Config fields**: cross-check every `config.txt` field documented in the *Konfiguration* section against `loadConfiguration()` / `saveConfiguration()` in `sd_config.ino`. Every field the firmware reads/writes must be documented with its default values; nothing extra.
 3. **Profile fields**: cross-check the *Aufbau eines Profils* section against `readProfile()` / `loadProfileEntries()` / `loadProfileEntry()` in `sd_config.ino` (`general`, `actuator.stepperN`, `rs232TrickleMap[]`, plus the `calibrate` shape).
 4. **Display UI**: derive what's possible on the touchscreen from the event callbacks in `ui_events.ino`, `filesystem_sync.ino`, `ui_dialogs.ino` and their button wiring in `ui_Screen1.c` (`lv_obj_add_event_cb`). Confirm which tab a control lives on via its parent panel (`ui_PanelPageInfo` = Info tab, etc.). Runtime behavior (auto-refill, weight colors, over-trickle alarm, counters, diagnostics line) comes from `trickler_runtime.ino` and `trickler_control.ino`.
-5. **Web features**: list HTTP endpoints from the `server.on(...)` registrations in `web_server.ino`; the browser remote-control / generators / file editor are the SD pages under `SD-Files/system/`.
+5. **Web features**: list HTTP endpoints from the `server.on(...)` registrations in `web_server.ino`; the browser remote-control, `settings.html`, `profileEditor.html`, and file editor are the SD pages under `SD-Files/system/`. Bulk profile generation now lives in `tools/create_profiles.py` (uploads via the web file-editor API), not a browser generator page.
 6. **Scales**: the protocol list and request commands come from `SCALE_REQUEST_COMMANDS` in `rs232.ino` (empty protocol is shown as `STREAM`).
 
 ### Conventions to keep consistent
