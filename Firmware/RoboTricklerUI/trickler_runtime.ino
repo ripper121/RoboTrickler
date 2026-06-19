@@ -98,10 +98,10 @@ static bool runBulkStepperMove(String &infoText)
     return true;
   }
 
-  int speed = config.profile_stepperUnitsPerRevSpeed[stepperNum];
-  if (speed <= 0)
+  int rpm = config.profile_stepperUnitsPerRevRpm[stepperNum];
+  if (rpm <= 0)
   {
-    speed = 200;
+    rpm = 200;
   }
 
   double units = 0.0;
@@ -111,7 +111,7 @@ static bool runBulkStepperMove(String &infoText)
     return true;
   }
 
-  setStepperSpeed(stepperNum, speed);
+  setStepperRpm(stepperNum, rpm);
   step(stepperNum, stepsToMove);
   remainingUnits -= units;
   if (remainingUnits < 0.0)
@@ -128,18 +128,18 @@ static bool runBulkStepperMove(String &infoText)
   return true;
 }
 
-static int stepperSpeedOld[3] = {0, 0, 0};
+static int stepperRpmOld[3] = {0, 0, 0};
 
-static void setStepperSpeedIfChanged(byte stepperNum, int speed)
+static void setStepperRpmIfChanged(byte stepperNum, int rpm)
 {
   if ((stepperNum < 1) || (stepperNum > 2))
   {
     return;
   }
-  if (stepperSpeedOld[stepperNum] != speed)
+  if (stepperRpmOld[stepperNum] != rpm)
   {
-    setStepperSpeed(stepperNum, speed);
-    stepperSpeedOld[stepperNum] = speed;
+    setStepperRpm(stepperNum, rpm);
+    stepperRpmOld[stepperNum] = rpm;
   }
 }
 
@@ -267,10 +267,10 @@ void updateActiveProfileStepCounterDisplay(int actualWeightCounter)
   char infoLine[64];
   snprintf(infoLine,
            sizeof(infoLine),
-           "W%.3f ST%ld SP%d M%d/%d",
+           "W%.3f ST%ld RPM%d M%d/%d",
            config.profile_weight[activeProfileStep],
            config.profile_steps[activeProfileStep],
-           config.profile_speed[activeProfileStep],
+           config.profile_rpm[activeProfileStep],
            config.profile_measurements[activeProfileStep],
            actualWeightCounter);
   updateDisplayLog(infoLine, true);
@@ -295,7 +295,7 @@ static bool runProfileStep(bool calibrationProfile, int actualWeightCounter)
     return false;
   }
 
-  setStepperSpeedIfChanged(stepperNum, config.profile_speed[profileStep]);
+  setStepperRpmIfChanged(stepperNum, config.profile_rpm[profileStep]);
   step(stepperNum, config.profile_steps[profileStep]);
 
   measurementCount = config.profile_measurements[profileStep];

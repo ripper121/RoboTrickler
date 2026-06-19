@@ -194,7 +194,7 @@ Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte.
 {
   "actuator": "stepper1",
   "revolutions": 100,
-  "speed": 200,
+  "rpm": 200,
   "measurements": 10
 }
 ```
@@ -279,12 +279,12 @@ Wechsle zurück in den Tab `Trickler` und teste die neuen Einstellungen.
 Während des Trickelns zeigt die Statuszeile (im Tab `Info`) den gerade aktiven Tabelleneintrag an, z.B.:
 
 ```text
-W0.482 ST167 SP200 M5/3
+W0.482 ST167 RPM200 M5/3
 ```
 
-Das bedeutet: `W` = `diffWeight` des aktiven Eintrags, `ST` = `steps`, `SP` = `speed`, `M` = benötigte / aktuelle Anzahl stabiler Messwerte. Diese Anzeige hilft beim Feinabstimmen der `rs232TrickleMap`.
+Das bedeutet: `W` = `diffWeight` des aktiven Eintrags, `ST` = `steps`, `RPM` = `rpm`, `M` = benötigte / aktuelle Anzahl stabiler Messwerte. Diese Anzeige hilft beim Feinabstimmen der `rs232TrickleMap`.
 
-> 📸 **Screenshot – Display:** Tab `Info` während eines laufenden Trickelvorgangs mit sichtbarer Diagnosezeile (z.B. `W0.482 ST167 SP200 M5/3`).
+> 📸 **Screenshot – Display:** Tab `Info` während eines laufenden Trickelvorgangs mit sichtbarer Diagnosezeile (z.B. `W0.482 ST167 RPM200 M5/3`).
 
 ## Profil löschen
 
@@ -345,12 +345,12 @@ Beispiel für das neue Profilformat:
     "stepper1": {
       "enabled": true,
       "unitsPerRev": 0.375,
-      "unitsPerRevSpeed": 200
+      "unitsPerRevRpm": 200
     },
     "stepper2": {
       "enabled": false,
       "unitsPerRev": 10.000,
-      "unitsPerRevSpeed": 200
+      "unitsPerRevRpm": 200
     }
   },
   "rs232TrickleMap": [
@@ -358,35 +358,35 @@ Beispiel für das neue Profilformat:
       "diffWeight": 1.929,
       "actuator": "stepper1",
       "steps": 669,
-      "speed": 200,
+      "rpm": 200,
       "measurements": 2
     },
     {
       "diffWeight": 0.965,
       "actuator": "stepper1",
       "steps": 335,
-      "speed": 200,
+      "rpm": 200,
       "measurements": 2
     },
     {
       "diffWeight": 0.482,
       "actuator": "stepper1",
       "steps": 167,
-      "speed": 200,
+      "rpm": 200,
       "measurements": 5
     },
     {
       "diffWeight": 0.241,
       "actuator": "stepper1",
       "steps": 84,
-      "speed": 200,
+      "rpm": 200,
       "measurements": 10
     },
     {
       "diffWeight": 0.000,
       "actuator": "stepper1",
       "steps": 5,
-      "speed": 200,
+      "rpm": 200,
       "measurements": 15
     }
   ]
@@ -410,8 +410,8 @@ Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `ala
 
 * `stepper1` und `stepper2`: Einstellungen für Trickler 1 und Trickler 2.
 * `enabled`: aktiviert den jeweiligen Stepper für den automatischen ersten Grobwurf.
-* `unitsPerRev`: Pulvermenge pro Umdrehung bei `unitsPerRevSpeed`.
-* `unitsPerRevSpeed`: Geschwindigkeit für den automatischen ersten Grobwurf.
+* `unitsPerRev`: Pulvermenge pro Umdrehung bei `unitsPerRevRpm`.
+* `unitsPerRevRpm`: Motordrehzahl in U/min für den automatischen ersten Grobwurf.
 
 Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `unitsPerRev` die benötigten STEP-Pulse. Es wird genau der in `general.actuator` eingetragene Bulk-Actuator verwendet; ohne gültigen Eintrag ist das `stepper1`. Wenn der gewählte Stepper nicht aktiviert ist oder `unitsPerRev` fehlt bzw. `0` ist, wird der automatische Grobwurf übersprungen.
 
@@ -422,7 +422,7 @@ Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet au
 * `diffWeight`: Abstand zum Zielgewicht, ab dem dieser Eintrag verwendet wird.
 * `actuator`: `stepper1` oder `stepper2`.
 * `steps`: Anzahl direkter STEP-Pulse für diesen Wurf. Die Firmware gibt diesen Wert unverändert an den Stepper aus.
-* `speed`: Motorgeschwindigkeit in U/min. Sinnvolle Werte liegen meist zwischen 5 und 300.
+* `rpm`: Motordrehzahl in U/min. Sinnvolle Werte liegen meist zwischen 5 und 300.
 * `measurements`: Anzahl stabiler Messwerte, die abgewartet werden, bis dieser Wurf ausgeführt wird.
 
 Die Firmware wählt den ersten Eintrag, dessen `diffWeight` noch zum Abstand zwischen aktuellem Gewicht und Zielgewicht passt. Je näher das Zielgewicht kommt, desto kleinere `diffWeight`-Einträge werden verwendet.
@@ -446,7 +446,7 @@ Beide Treiber teilen sich die gemeinsame Enable-Leitung; es ist immer nur ein St
 
 **So werden die beiden Trickler verteilt:**
 
-1. **Beide Stepper aktivieren.** Setze im `actuator`-Block bei beiden, die du nutzen willst, `enabled: true` und trage jeweils `unitsPerRev` (Pulvermenge pro Umdrehung) und `unitsPerRevSpeed` (Geschwindigkeit) passend zum jeweiligen Trickler ein.
+1. **Beide Stepper aktivieren.** Setze im `actuator`-Block bei beiden, die du nutzen willst, `enabled: true` und trage jeweils `unitsPerRev` (Pulvermenge pro Umdrehung) und `unitsPerRevRpm` (Drehzahl in U/min) passend zum jeweiligen Trickler ein.
 2. **Grobwurf-Stepper wählen.** `general.actuator` bestimmt, welcher Stepper den automatischen ersten Grobwurf ausführt (z.B. `stepper2` als großer/schneller Trickler). Dieser Stepper muss `enabled: true` sein und ein gültiges `unitsPerRev` größer `0` haben, sonst wird der Grobwurf übersprungen.
 3. **Feinwurf pro Tabelleneintrag zuweisen.** Jeder Eintrag in `rs232TrickleMap` hat ein eigenes `actuator`-Feld (`stepper1` oder `stepper2`). So kannst du je nach Abstand zum Zielgewicht (`diffWeight`) einen anderen Trickler verwenden – typischerweise der große Trickler für die größeren `diffWeight`-Bereiche und der feine Trickler für die letzten Einträge nahe `0`.
 
@@ -468,12 +468,12 @@ Damit übernimmt im folgenden Beispiel `stepper2` den Grobwurf und den ersten Fe
     "stepper1": {
       "enabled": true,
       "unitsPerRev": 0.200,
-      "unitsPerRevSpeed": 200
+      "unitsPerRevRpm": 200
     },
     "stepper2": {
       "enabled": true,
       "unitsPerRev": 2.000,
-      "unitsPerRevSpeed": 200
+      "unitsPerRevRpm": 200
     }
   },
   "rs232TrickleMap": [
@@ -481,21 +481,21 @@ Damit übernimmt im folgenden Beispiel `stepper2` den Grobwurf und den ersten Fe
       "diffWeight": 2.000,
       "actuator": "stepper2",
       "steps": 200,
-      "speed": 200,
+      "rpm": 200,
       "measurements": 2
     },
     {
       "diffWeight": 0.250,
       "actuator": "stepper1",
       "steps": 80,
-      "speed": 200,
+      "rpm": 200,
       "measurements": 5
     },
     {
       "diffWeight": 0.000,
       "actuator": "stepper1",
       "steps": 5,
-      "speed": 200,
+      "rpm": 200,
       "measurements": 15
     }
   ]

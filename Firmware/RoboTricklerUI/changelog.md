@@ -51,6 +51,7 @@ Bei Fehlern oder Fragen, einfach melden: [Kontakt](https://shop.strenuous.dev/co
 - Enabled the runtime watchdog disable during setup.
 - Added a `motorRevSteps` config field (default `200`) for the stepper's steps per revolution, used by the bulk move and calibration math.
 - Renamed the profile actuator fields `unitsPerThrow`/`unitsPerThrowSpeed` to `unitsPerRev`/`unitsPerRevSpeed` (and the on-device tuning label to `units/rev`). Existing profiles must be re-saved with the new names.
+- Renamed the profile motor-speed fields `speed`/`unitsPerRevSpeed` to `rpm`/`unitsPerRevRpm` (the diagnostics line now shows `RPM` instead of `SP`). Existing profiles must be re-saved with the new names.
 - Updated the manual for firmware `2.14`.
 
 ### Fixed

@@ -79,7 +79,7 @@ def generate_profile(
     weight: float,
     target_weight: float,
     weight_gap: float,
-    speed: int,
+    rpm: int,
     measurements: int,
     bulk_actuator: str,
     calc_tolerance: float,
@@ -114,12 +114,12 @@ def generate_profile(
             "stepper1": {
                 "enabled": True,
                 "unitsPerRev": round3(weight / 100.0),
-                "unitsPerRevSpeed": speed,
+                "unitsPerRevRpm": rpm,
             },
             "stepper2": {
                 "enabled": bulk == "stepper2",
                 "unitsPerRev": 10.000,
-                "unitsPerRevSpeed": speed if bulk == "stepper2" else 200,
+                "unitsPerRevRpm": rpm if bulk == "stepper2" else 200,
             },
         },
         "rs232TrickleMap": [],
@@ -140,7 +140,7 @@ def generate_profile(
                 "diffWeight": diff_weight,
                 "actuator": "stepper1",
                 "steps": steps,
-                "speed": speed,
+                "rpm": rpm,
                 "measurements": entry_measurements,
             }
         )
@@ -234,7 +234,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     gen.add_argument("--weight", type=float, default=40.0, help="calibration-run weight")
     gen.add_argument("--target-weight", type=float, default=40.0, help="stored target weight")
     gen.add_argument("--weight-gap", type=float, default=1.0, help="weight gap")
-    gen.add_argument("--speed", type=int, default=200, help="stepper speed (rpm)")
+    gen.add_argument("--rpm", type=int, default=200, help="stepper speed (rpm)")
     gen.add_argument("--measurements", type=int, default=2, help="general measurement count")
     gen.add_argument(
         "--bulk-actuator",
@@ -272,7 +272,7 @@ def main(argv: list[str] | None = None) -> int:
             weight=args.weight,
             target_weight=args.target_weight,
             weight_gap=args.weight_gap,
-            speed=args.speed,
+            rpm=args.rpm,
             measurements=args.measurements,
             bulk_actuator=args.bulk_actuator,
             calc_tolerance=args.calc_tolerance,

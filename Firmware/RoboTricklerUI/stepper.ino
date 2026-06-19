@@ -86,26 +86,26 @@ static unsigned long stepperPulseIntervalUs(int rpm)
   return (unsigned long)(60000000UL / ((unsigned long)config.motorRevSteps * (unsigned long)rpm));
 }
 
-void setStepperSpeed(int stepperNum, int stepperSpeed)
+void setStepperRpm(int stepperNum, int stepperRpm)
 {
   if ((stepperNum < 1) || (stepperNum > 2))
   {
     return;
   }
 
-  if (stepperSpeed <= 0)
+  if (stepperRpm <= 0)
   {
-    stepperSpeed = 100;
+    stepperRpm = 100;
   }
-  steppers[stepperNum].rpm = stepperSpeed;
+  steppers[stepperNum].rpm = stepperRpm;
 }
 
 void initStepper()
 {
   DEBUG_PRINTLN("initStepper()");
   shiftRegisterInit();
-  setStepperSpeed(1, 100);
-  setStepperSpeed(2, 100);
+  setStepperRpm(1, 100);
+  setStepperRpm(2, 100);
   stepperEnableAll(false);
 }
 

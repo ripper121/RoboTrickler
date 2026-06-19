@@ -22,7 +22,7 @@ static bool hasRequiredProfileFields(JsonObject profileEntry)
          !profileEntry["diffWeight"].isNull() &&
          !profileEntry["actuator"].isNull() &&
          !profileEntry["steps"].isNull() &&
-         !profileEntry["speed"].isNull() &&
+         !profileEntry["rpm"].isNull() &&
          !profileEntry["measurements"].isNull();
 }
 
@@ -34,7 +34,7 @@ static bool hasCalibrationProfileFields(JsonObject profileEntry)
   return !profileEntry.isNull() &&
          !profileEntry["actuator"].isNull() &&
          !profileEntry["revolutions"].isNull() &&
-         !profileEntry["speed"].isNull();
+         !profileEntry["rpm"].isNull();
 }
 
 static bool isCalibrationProfileFile(const char *filename)
@@ -73,7 +73,7 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   }
 
   byte stepperNumber = profileActuatorNumber(profileEntry["actuator"] | "stepper1");
-  int stepperSpeed = profileEntry["speed"] | 200;
+  int stepperRpm = profileEntry["rpm"] | 200;
   int measurements = profileEntry["measurements"] | 5;
   float profileWeight = profileEntry["diffWeight"] | 0.0;
   // The calibration profile is special: it stores its throw as motor
@@ -90,7 +90,7 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   {
     profileSteps = profileEntry["steps"] | 0;
   }
-  if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperSpeed <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
+  if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperRpm <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
   {
     if (showErrors)
     {
@@ -110,7 +110,7 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   config.profile_num[item_key] = stepperNumber;
   config.profile_weight[item_key] = profileWeight;
   config.profile_steps[item_key] = profileSteps;
-  config.profile_speed[item_key] = stepperSpeed;
+  config.profile_rpm[item_key] = stepperRpm;
   config.profile_measurements[item_key] = measurements;
   config.profile_count++;
   return true;
@@ -225,7 +225,7 @@ bool writeDefaultCalibrateProfile()
   JsonDocument doc;
   doc["actuator"] = "stepper1";
   doc["revolutions"] = 100;
-  doc["speed"] = 200;
+  doc["rpm"] = 200;
   doc["measurements"] = 10;
 
   const char *filename = "/profiles/calibrate.txt";
@@ -327,14 +327,14 @@ bool readProfile(const char *filename, Config &config)
   {
     config.profile_stepperEnabled[i] = false;
     config.profile_stepperUnitsPerRev[i] = 0.0;
-    config.profile_stepperUnitsPerRevSpeed[i] = 0;
+    config.profile_stepperUnitsPerRevRpm[i] = 0;
   }
   for (int i = 0; i < 16; i++)
   {
     config.profile_num[i] = 1;
     config.profile_weight[i] = 0;
     config.profile_steps[i] = 0;
-    config.profile_speed[i] = 0;
+    config.profile_rpm[i] = 0;
     config.profile_measurements[i] = 0;
   }
 
@@ -371,7 +371,7 @@ bool readProfile(const char *filename, Config &config)
       {
         config.profile_stepperEnabled[stepperNumber] = stepper["enabled"] | true;
         config.profile_stepperUnitsPerRev[stepperNumber] = stepper["unitsPerRev"] | 0.0;
-        config.profile_stepperUnitsPerRevSpeed[stepperNumber] = stepper["unitsPerRevSpeed"] | 0;
+        config.profile_stepperUnitsPerRevRpm[stepperNumber] = stepper["unitsPerRevRpm"] | 0;
       }
     }
   }
@@ -608,7 +608,7 @@ String nextCalibrationProfileName()
   return "";
 }
 
-static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerRev, int profileSpeed)
+static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerRev, int profileRpm)
 {
   const float diffWeights[8] = {1.929, 0.965, 0.482, 0.241, 0.121, 0.060, 0.030, 0.000};
   const size_t diffWeightsCount = sizeof(diffWeights) / sizeof(diffWeights[0]);
@@ -630,7 +630,7 @@ static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerRev, 
     profileEntry["diffWeight"] = serialized(String(diffWeights[i], 3));
     profileEntry["actuator"] = "stepper1";
     profileEntry["steps"] = steps;
-    profileEntry["speed"] = profileSpeed;
+    profileEntry["rpm"] = profileRpm;
     profileEntry["measurements"] = measurements[i];
   }
 }
@@ -677,10 +677,10 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   const float unitsPerRev = calibrationRevolutions > 0.0
                                 ? (float)(calibrationWeight / calibrationRevolutions)
                                 : calibrationWeight;
-  int profileSpeed = config.profile_speed[0];
-  if (profileSpeed <= 0)
+  int profileRpm = config.profile_rpm[0];
+  if (profileRpm <= 0)
   {
-    profileSpeed = 200;
+    profileRpm = 200;
   }
 
   JsonDocument doc;
@@ -698,13 +698,13 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   JsonObject stepper1 = actuator["stepper1"].to<JsonObject>();
   stepper1["enabled"] = true;
   stepper1["unitsPerRev"] = serialized(String(unitsPerRev, 3));
-  stepper1["unitsPerRevSpeed"] = profileSpeed;
+  stepper1["unitsPerRevRpm"] = profileRpm;
   JsonObject stepper2 = actuator["stepper2"].to<JsonObject>();
   stepper2["enabled"] = config.profile_stepperEnabled[2];
   stepper2["unitsPerRev"] = serialized(String(config.profile_stepperUnitsPerRev[2] > 0.0 ? config.profile_stepperUnitsPerRev[2] : 10.0, 3));
-  stepper2["unitsPerRevSpeed"] = config.profile_stepperUnitsPerRevSpeed[2] > 0 ? config.profile_stepperUnitsPerRevSpeed[2] : 200;
+  stepper2["unitsPerRevRpm"] = config.profile_stepperUnitsPerRevRpm[2] > 0 ? config.profile_stepperUnitsPerRevRpm[2] : 200;
 
-  populateCalibrationTrickleMap(doc, unitsPerRev, profileSpeed);
+  populateCalibrationTrickleMap(doc, unitsPerRev, profileRpm);
 
   if (!ACTIVE_FS.exists("/profiles") && !ACTIVE_FS.mkdir("/profiles"))
   {
@@ -777,14 +777,14 @@ bool tuneProfileUnitsPerRev(const char *profileName, float unitsPerRev)
     return false;
   }
 
-  int profileSpeed = config.profile_stepperUnitsPerRevSpeed[1];
-  if (profileSpeed <= 0)
+  int profileRpm = config.profile_stepperUnitsPerRevRpm[1];
+  if (profileRpm <= 0)
   {
-    profileSpeed = config.profile_speed[0];
+    profileRpm = config.profile_rpm[0];
   }
-  if (profileSpeed <= 0)
+  if (profileRpm <= 0)
   {
-    profileSpeed = 200;
+    profileRpm = 200;
   }
 
   JsonObject actuator = doc["actuator"].as<JsonObject>();
@@ -799,9 +799,9 @@ bool tuneProfileUnitsPerRev(const char *profileName, float unitsPerRev)
   }
   stepper1["enabled"] = true;
   stepper1["unitsPerRev"] = serialized(String(unitsPerRev, 3));
-  stepper1["unitsPerRevSpeed"] = profileSpeed;
+  stepper1["unitsPerRevRpm"] = profileRpm;
 
-  populateCalibrationTrickleMap(doc, unitsPerRev, profileSpeed);
+  populateCalibrationTrickleMap(doc, unitsPerRev, profileRpm);
 
   if (!writeProfileDocument(filename, doc))
   {

@@ -109,11 +109,11 @@ struct Config
   bool profile_startAtZero;
   bool profile_trickleCounter;
   double profile_stepperUnitsPerRev[3];
-  int profile_stepperUnitsPerRevSpeed[3];
+  int profile_stepperUnitsPerRevRpm[3];
   bool profile_stepperEnabled[3];
   int profile_measurements[16];
   long profile_steps[16];
-  int profile_speed[16];
+  int profile_rpm[16];
   int profile_count;
 };
 // Single source of truth for flash-backed settings and the active trickling profile.
