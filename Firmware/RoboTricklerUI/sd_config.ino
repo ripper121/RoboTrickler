@@ -209,6 +209,66 @@ void setDefaultConfiguration(Config &config)
   config.profile_trickleCounter = false;
 }
 
+// Recreate /profiles/calibrate.txt from the built-in template. The calibration
+// profile is a fixed firmware concept that must always be available, so if the
+// file is lost or corrupt we regenerate it instead of boot-looping. The fields
+// mirror the shipped SD-Files/profiles/calibrate.txt. Returns true once the
+// default file is written to disk.
+bool writeDefaultCalibrateProfile()
+{
+  if (!ACTIVE_FS.exists("/profiles") && !ACTIVE_FS.mkdir("/profiles"))
+  {
+    updateDisplayLog(langText("msg_profiles_folder_failed"), true);
+    return false;
+  }
+
+  JsonDocument doc;
+  doc["actuator"] = "stepper1";
+  doc["revolutions"] = 100;
+  doc["speed"] = 200;
+  doc["measurements"] = 10;
+
+  const char *filename = "/profiles/calibrate.txt";
+  ACTIVE_FS.remove(filename);
+  File file = ACTIVE_FS.open(filename, FILE_WRITE);
+  if (!file)
+  {
+    updateDisplayLog(langText("msg_profile_file_create_failed"), true);
+    return false;
+  }
+
+  bool written = serializeJsonPretty(doc, file) > 0;
+  file.close();
+  if (!written)
+  {
+    ACTIVE_FS.remove(filename);
+    updateDisplayLog(langText("msg_profile_file_write_failed"), true);
+    return false;
+  }
+
+  DEBUG_PRINTLN("Wrote default calibration profile");
+  return true;
+}
+
+// Load the calibration profile into config, regenerating its file from the
+// built-in template first if the existing one is missing or corrupt. Returns
+// true only when config ends up holding a valid calibration profile.
+bool ensureCalibrateProfile(Config &config)
+{
+  if (readProfile(profileFilename("calibrate").c_str(), config))
+  {
+    return true;
+  }
+
+  DEBUG_PRINTLN("Calibration profile unusable; rewriting default");
+  if (!writeDefaultCalibrateProfile())
+  {
+    return false;
+  }
+  getProfileList();
+  return readProfile(profileFilename("calibrate").c_str(), config);
+}
+
 bool readProfile(const char *filename, Config &config)
 {
   setSdReadError("");

@@ -45,14 +45,17 @@ void initSetup()
         }
         updateDisplayLog(readError);
 
+        // loadConfiguration() applies full defaults to config before it touches
+        // the file, so config is already consistent here regardless of whether
+        // config.txt was missing or corrupt. Persist the defaults and keep
+        // booting instead of rebooting; the device ends up in the same state a
+        // fresh boot would produce. Non-blocking so boot continues behind the
+        // notice.
         setDefaultConfiguration(config);
         saveConfiguration("/config.txt", config);
-        delay(100);
 
         String message = String(langText("msg_config_corrupted")) + readError + "\n\n" + langText("msg_config_default");
-        restart_now = true;
-        errorBox(message, true);
-        return;
+        errorBox(message, false);
     }
 
     applyLanguage();
@@ -76,12 +79,17 @@ void initSetup()
             break;
         }
     }
+    // Load the configured profile once. loadSelectedProfile() recovers onto the
+    // calibration profile if it is missing/corrupt.
+    if (!loadSelectedProfile(true))
+    {
+        return;
+    }
+
+    // If config named a profile that was not in the list it was recovered onto
+    // calibrate; persist that and re-sync the highlighted list entry.
     if (!selectedProfileFound)
     {
-        if (!loadSelectedProfile())
-        {
-            return;
-        }
         saveConfiguration("/config.txt", config);
         for (int i = 0; i < profileListCount; i++)
         {
@@ -91,11 +99,6 @@ void initSetup()
                 break;
             }
         }
-    }
-
-    if ((tempProfile != String(config.profile)) && !loadSelectedProfile())
-    {
-        return;
     }
 
     applyLanguage();

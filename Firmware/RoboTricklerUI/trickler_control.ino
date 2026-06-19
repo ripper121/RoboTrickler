@@ -1,4 +1,3 @@
-String tempProfile = "";
 float tempTargetWeight = 0.0;
 
 void beep(const char *beepMode)
@@ -22,12 +21,11 @@ void startTrickler()
         return;
     }
 
-    if (tempProfile != String(config.profile))
+    // Always reload the selected profile from the filesystem on Start so the
+    // run uses the on-disk values even if the file changed since it was picked.
+    if (!loadSelectedProfile(false))
     {
-        if (!loadSelectedProfile())
-        {
-            return;
-        }
+        return;
     }
     // The calibration throw is only useful if a powder profile can be created
     // from it afterwards. Bail out before wasting a throw when the profile list

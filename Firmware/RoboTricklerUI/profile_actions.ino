@@ -1,4 +1,3 @@
-extern String tempProfile;
 extern float tempTargetWeight;
 extern int profileListCounter;
 extern volatile bool messageBoxOpen;
@@ -11,10 +10,20 @@ String profileDeleteFilename = "";
 // here. deleteSelectedProfile() reaches into it via the non-static helpers
 // isProfileTuneDialogOpen()/closeProfileTuneDialog()/clearProfileTuneState().
 
-void corruptProfile(String profileFilename)
+// Recover from a profile that failed to load by switching to the built-in
+// calibration profile in memory. Returns true when calibrate is loaded and
+// config is left in a consistent state, false only if calibrate itself is
+// unusable (the last-resort reboot path).
+//
+// `blocking` must be false when called from the LVGL display task (any profile
+// switch triggered by a touch event). It is only consulted on the fatal reboot
+// path, where errorBox(..., true) pumps lv_timer_handler() via pumpUntil();
+// re-entering the handler from inside an event callback crashes LVGL, so only
+// the Core 1 startup path may block.
+bool corruptProfile(String badFilename, bool blocking)
 {
     String readError = getSdReadError();
-    String message = String(langText("msg_profile_corrupted")) + profileFilename;
+    String message = String(langText("msg_profile_corrupted")) + badFilename;
     if (readError.length() > 0)
     {
         updateDisplayLog(readError);
@@ -23,12 +32,13 @@ void corruptProfile(String profileFilename)
     }
     message += langText("msg_calibration_profile_loaded");
 
-    // Rename file to indicate corruption
-    if (ACTIVE_FS.exists(profileFilename))
+    // Quarantine a genuinely corrupt file so it is not picked again. A missing
+    // file simply does not exist, so nothing is renamed in that case.
+    if (ACTIVE_FS.exists(badFilename))
     {
-        String corruptedName = String(profileFilename);
+        String corruptedName = String(badFilename);
         corruptedName.replace(".txt", ".cor.txt");
-        if (ACTIVE_FS.rename(profileFilename, corruptedName.c_str()))
+        if (ACTIVE_FS.rename(badFilename, corruptedName.c_str()))
         {
             DEBUG_PRINT("Corrupted file renamed to: ");
             DEBUG_PRINTLN(corruptedName);
@@ -39,24 +49,53 @@ void corruptProfile(String profileFilename)
         }
     }
 
+    // Switch to the calibration profile and load it in memory instead of
+    // rebooting. ensureCalibrateProfile() regenerates the calibrate file from
+    // the built-in template if it is itself missing or corrupt, and readProfile()
+    // resets every profile field before applying the values, so config ends up
+    // fully consistent.
     strlcpy(config.profile,          // <- destination
             "calibrate",             // <- source
             sizeof(config.profile)); // <- destination's capacity
     saveConfiguration("/config.txt", config);
+
+    if (ensureCalibrateProfile(config))
+    {
+        tempTargetWeight = config.targetWeight;
+
+        int calibrateIndex = findProfileIndex("calibrate");
+        if (calibrateIndex >= 0)
+        {
+            profileListCounter = calibrateIndex;
+        }
+
+        setLabelText(ui_LabelProfile, config.profile);
+        updateProfileActionButtonVisibility();
+        updateTargetWeightLabel();
+
+        errorBox(message, false);
+        return true;
+    }
+
+    // Even regenerating the calibration profile failed (the filesystem is
+    // unwritable), so there is no good in-memory state to fall back to. Reboot
+    // to recover through the normal boot path.
+    DEBUG_PRINTLN("Calibration profile recovery failed; rebooting");
     delay(100);
     restart_now = true;
-    errorBox(message, true);
+    errorBox(message, blocking);
+    return false;
 }
 
-bool loadSelectedProfile()
+bool loadSelectedProfile(bool blocking)
 {
     String selectedProfileFilename = profileFilename(config.profile);
     if (!readProfile(selectedProfileFilename.c_str(), config))
     {
-        corruptProfile(selectedProfileFilename);
-        return false;
+        // corruptProfile() recovers onto calibrate in memory; it returns true
+        // when that succeeds so the caller can continue without a reboot.
+        return corruptProfile(selectedProfileFilename, blocking);
     }
-    tempProfile = config.profile;
     tempTargetWeight = config.targetWeight;
     return true;
 }
@@ -82,7 +121,7 @@ void setProfile(int num)
 
     saveConfiguration("/config.txt", config);
 
-    if (!loadSelectedProfile())
+    if (!loadSelectedProfile(false))
     {
         return;
     }

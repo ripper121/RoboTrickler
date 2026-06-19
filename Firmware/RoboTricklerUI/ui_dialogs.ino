@@ -331,7 +331,7 @@ static void saveProfileTune()
         return;
     }
 
-    if (!loadSelectedProfile())
+    if (!loadSelectedProfile(false))
     {
         return;
     }
