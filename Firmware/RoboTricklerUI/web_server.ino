@@ -115,30 +115,35 @@ void registerWebServerRoutes()
   server.on("/fwupdate", HTTP_GET, []()
             {
             // Stream the page in fragments so we never hold the whole HTML body in heap.
+            // Web text is parsed once from the web language store for this request.
+            JsonDocument langDoc;
+            loadWebLang(langDoc);
             server.sendHeader("Connection", "close");
             server.setContentLength(CONTENT_LENGTH_UNKNOWN);
             server.send(200, "text/html", "");
+            server.sendContent(webPageHead(webFwText(langDoc, "updateTitle", "Firmware Update")));
             server.sendContent("<p>");
-            server.sendContent(langText("web_fw_version"));
+            server.sendContent(webFwText(langDoc, "fwVersion", "FW-Version"));
             server.sendContent(": " FW_VERSION "</p><h3>");
-            server.sendContent(langText("web_firmware_image"));
+            server.sendContent(webFwText(langDoc, "firmwareImage", "Firmware image"));
             server.sendContent("</h3><form method='POST' action='/update' enctype='multipart/form-data'>"
                                "<input type='file' name='firmware' accept='.bin,application/octet-stream' required>"
-                               "<input type='submit' value='");
-            server.sendContent(langText("web_update_firmware"));
+                               "<input class='button' type='submit' value='");
+            server.sendContent(webFwText(langDoc, "updateFirmware", "Update Firmware"));
             server.sendContent("'></form><br>");
 #if ENABLE_LITTLEFS
             server.sendContent("<h3>");
-            server.sendContent(langText("web_littlefs_image"));
+            server.sendContent(webFwText(langDoc, "littlefsImage", "LittleFS image"));
             server.sendContent("</h3><p>");
-            server.sendContent(langText("web_update_filesystem_warning"));
+            server.sendContent(webFwText(langDoc, "filesystemWarning", "Uploading replaces all files in the internal filesystem."));
             server.sendContent("</p><form method='POST' action='/update' enctype='multipart/form-data'>"
                                "<input type='file' name='filesystem' accept='.bin,application/octet-stream' required>"
-                               "<input type='submit' value='");
-            server.sendContent(langText("web_update_littlefs"));
+                               "<input class='button' type='submit' value='");
+            server.sendContent(webFwText(langDoc, "updateLittlefs", "Update LittleFS"));
             server.sendContent("'></form><br>");
 #endif
-            server.sendContent(webBackButtonHtml()); });
+            server.sendContent(webBackButtonHtml(langDoc));
+            server.sendContent(webPageFoot()); });
 
   server.on(
       "/update", HTTP_POST, []()
@@ -154,7 +159,8 @@ void registerWebServerRoutes()
         webUpdateFilesystemUnmounted = false;
         Serial.setDebugOutput(false);
         server.sendHeader("Connection", "close");
-        server.send(updateOk ? 200 : 500, "text/html", webStatusPage(updateOk ? "web_update_ok" : "web_update_fail"));
+        server.send(updateOk ? 200 : 500, "text/html",
+                    webStatusPage(updateOk ? "ok" : "fail", updateOk ? "OK" : "FAIL"));
         if (updateOk)
         {
           delay(500);

@@ -101,11 +101,11 @@ window.rtLoadLanguage({
       "errorPrefix": "ERROR",
       "rebootConfirm": "Reboot Robo-Trickler now?",
       "rebootSent": "Reboot command sent. The device will be unavailable for a moment.",
-      "rebootOk": "Reboot was successful!",
       "profileSaved": "Profile saved!",
       "profileLoadFailed": "Could not load profile.",
       "configSaved": "Config Saved!\nPlease reboot the Robo-Trickler to load new config.txt",
-      "fileSaved": "Saved!\nPlease reboot the Robo-Trickler to load the new Profile / Config."
+      "fileSaved": "Saved!",
+      "deleteConfirm": "Delete this file?"
     },
     "fileEditor": {
       "upload": "Upload",
@@ -140,6 +140,24 @@ window.rtLoadLanguage({
       "saving": "Saving WiFi settings...",
       "savedRebooting": "Saved. Robo-Trickler is rebooting and connecting to your WiFi.",
       "saveFailed": "Could not save WiFi settings. Try again."
+    },
+    "firmware": {
+      "statusTitle": "Robo-Trickler",
+      "updateTitle": "Firmware Update",
+      "fwVersion": "FW-Version",
+      "firmwareImage": "Firmware image",
+      "littlefsImage": "LittleFS image",
+      "filesystemWarning": "Uploading replaces all files in the internal filesystem.",
+      "updateFirmware": "Update Firmware",
+      "updateLittlefs": "Update LittleFS",
+      "back": "Back",
+      "rebootNow": "Reboot now.",
+      "valueSet": "Value set.",
+      "running": "Running...",
+      "stopped": "Stopped...",
+      "invalidProfile": "Invalid profile!",
+      "ok": "OK",
+      "fail": "FAIL"
     }
   }
 });

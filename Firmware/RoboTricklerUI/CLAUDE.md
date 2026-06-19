@@ -96,7 +96,14 @@ The main loop dispatches through `TricklerState` (`TRICKLER_IDLE`, `TRICKLER_RUN
 | `screenshot.ino` | Display screenshot endpoint (gated by `ENABLE_SCREENSHOT`) |
 
 ### Localization
-All UI strings go through `langText(key)` which reads from `SD-Files/lang/en.json` (or `de.json`). When adding visible text, add the key/value to both language files — never hardcode display strings in firmware.
+There are **two completely separate** translation stores — never mix them:
+
+- **`SD-Files/lang/` (`en.json` / `de.json`, `"ui"` object) → Display (touchscreen) UI only.** Read by the firmware via `langText(key)`, which looks the key up in the active SD lang file and falls back to the English `languageFallback()` table in `ui_text.ino`. When adding a display string, add the key to both SD lang files **and** the C fallback — never hardcode display strings in firmware. No `web_*`/web strings belong here.
+- **`SD-Files/system/lang/` (`en.json` / `de.json`, `"web"` object) → All web pages.** Used by both:
+  - the static HTML pages under `SD-Files/system/` (loaded in the browser by `lang.js`), and
+  - the **firmware-generated** web pages (`/fwupdate`, the `webStatusPage()` responses), which read the `web.firmware.*` keys server-side via `loadWebLang()` + `webFwText()` (in `web_api.ino`). The lang file is parsed per request and freed on return (never heap-resident); each `webFwText()` call passes an English fallback so the page still works if the key/file is missing. No display/`ui` strings belong here.
+
+**Rule of thumb:** if a string appears on the touchscreen → `SD-Files/lang/` (+ C fallback). If it appears in a browser (static *or* firmware-served page) → `SD-Files/system/lang/`. When adding a new firmware-served web string, add the key under `web.firmware` in **both** `SD-Files/system/lang/` files and pass an English fallback at the call site.
 
 ### SD File Rules
 - `fw_update.url` is internal to firmware (`DEFAULT_FW_UPDATE_URL` in `RoboTricklerUI.ino`). Do **not** expose it in SD files, `config.txt`, or docs. `fw_update.check` may stay user-configurable.

@@ -69,19 +69,102 @@ void handleWifiSave()
   ESP.restart();
 }
 
-String webBackButtonHtml()
+// Firmware-served web pages take their text from the web language store
+// (SD-Files/system/lang/<lang>.json, "web.firmware" object) so they match the
+// localized static pages. The doc is parsed per request and freed on return, so
+// it never sits resident in heap. Use loadWebLang() once per page, then webFwText().
+bool loadWebLang(JsonDocument &doc)
 {
-  return String("<button onClick='javascript:history.back()'>") + langText("web_back") + "</button>";
+  String language = String(config.language);
+  language.trim();
+  language.toLowerCase();
+  int separator = language.indexOf('-');
+  if (separator < 0)
+  {
+    separator = language.indexOf('_');
+  }
+  if (separator > 0)
+  {
+    language = language.substring(0, separator);
+  }
+  if (language.length() <= 0)
+  {
+    language = "en";
+  }
+
+  String candidates[] = {
+      "/system/lang/" + language + ".json",
+      "/system/lang/en.json"};
+
+  for (int i = 0; i < (int)(sizeof(candidates) / sizeof(candidates[0])); i++)
+  {
+    if (!ACTIVE_FS.exists(candidates[i].c_str()))
+    {
+      continue;
+    }
+    File file = ACTIVE_FS.open(candidates[i].c_str());
+    if (!file)
+    {
+      continue;
+    }
+    DeserializationError error = deserializeJson(doc, file);
+    file.close();
+    if (!error && doc["web"]["firmware"].is<JsonObject>())
+    {
+      return true;
+    }
+    doc.clear();
+  }
+  return false;
 }
 
-String webStatusPage(const char *messageKey)
+const char *webFwText(JsonDocument &doc, const char *key, const char *fallback)
 {
-  return String("<h3>") + langText(messageKey) + "</h3><br>" + webBackButtonHtml();
+  JsonVariant value = doc["web"]["firmware"][key];
+  if (!value.isNull())
+  {
+    const char *text = value.as<const char *>();
+    if ((text != nullptr) && (text[0] != '\0'))
+    {
+      return text;
+    }
+  }
+  return fallback;
+}
+
+String webPageHead(const char *title)
+{
+  return String("<!DOCTYPE html><html><head><meta charset='UTF-8'>"
+                "<meta name='viewport' content='width=device-width, initial-scale=1'>"
+                "<link rel='icon' type='image/x-icon' href='/system/resources/favicon.ico'>"
+                "<title>") +
+         title +
+         "</title><link rel='stylesheet' href='/system/resources/style.css'></head>"
+         "<body><div class='card'>";
+}
+
+String webPageFoot()
+{
+  return String("</div></body></html>");
+}
+
+String webBackButtonHtml(JsonDocument &doc)
+{
+  return String("<button class='button' onClick='javascript:history.back()'>") + webFwText(doc, "back", "Back") + "</button>";
+}
+
+String webStatusPage(const char *messageKey, const char *messageFallback)
+{
+  JsonDocument doc;
+  loadWebLang(doc);
+  return webPageHead(webFwText(doc, "statusTitle", "Robo-Trickler")) +
+         "<h3>" + webFwText(doc, messageKey, messageFallback) + "</h3><br>" +
+         webBackButtonHtml(doc) + webPageFoot();
 }
 
 void handleReboot()
 {
-  server.send(200, "text/html", webStatusPage("web_reboot_now"));
+  server.send(200, "text/html", webStatusPage("rebootNow", "Reboot now."));
   ESP.restart();
 }
 
@@ -126,14 +209,14 @@ void handleSetTarget()
       }
     }
   }
-  server.send(200, "text/html", webStatusPage("web_value_set"));
+  server.send(200, "text/html", webStatusPage("valueSet", "Value set."));
 }
 
 void handleSetProfile()
 {
   if (isTricklerRunning())
   {
-    server.send(409, "text/html", webStatusPage("status_running"));
+    server.send(409, "text/html", webStatusPage("running", "Running..."));
     return;
   }
 
@@ -147,7 +230,7 @@ void handleSetProfile()
       }
     }
   }
-  server.send(200, "text/html", webStatusPage("web_value_set"));
+  server.send(200, "text/html", webStatusPage("valueSet", "Value set."));
 }
 
 void handleGetProfile()
@@ -183,11 +266,12 @@ void handleStart()
   startTrickler();
   bool running = isTricklerRunning();
   server.send(running ? 200 : 409, "text/html",
-              webStatusPage(running ? "web_running" : "status_invalid_profile"));
+              webStatusPage(running ? "running" : "invalidProfile",
+                            running ? "Running..." : "Invalid profile!"));
 }
 void handleStop()
 {
   stopTrickler();
-  server.send(200, "text/html", webStatusPage("web_stopped"));
+  server.send(200, "text/html", webStatusPage("stopped", "Stopped..."));
 }
 

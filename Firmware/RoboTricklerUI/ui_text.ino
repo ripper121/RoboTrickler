@@ -210,34 +210,6 @@ static const char *languageFallback(const char *key)
     return "Checking SD card updates...";
   if (strcmp(key, "status_sd_update_complete") == 0)
     return "SD card update complete. Rebooting...";
-  if (strcmp(key, "web_back") == 0)
-    return "Back";
-  if (strcmp(key, "web_reboot_now") == 0)
-    return "Reboot now.";
-  if (strcmp(key, "web_value_set") == 0)
-    return "Value set.";
-  if (strcmp(key, "web_running") == 0)
-    return "Running...";
-  if (strcmp(key, "web_stopped") == 0)
-    return "Stopped...";
-  if (strcmp(key, "web_fw_version") == 0)
-    return "FW-Version";
-  if (strcmp(key, "web_update") == 0)
-    return "Update";
-  if (strcmp(key, "web_firmware_image") == 0)
-    return "Firmware image";
-  if (strcmp(key, "web_littlefs_image") == 0)
-    return "LittleFS image";
-  if (strcmp(key, "web_update_filesystem_warning") == 0)
-    return "Uploading replaces all files in the internal filesystem.";
-  if (strcmp(key, "web_update_firmware") == 0)
-    return "Update Firmware";
-  if (strcmp(key, "web_update_littlefs") == 0)
-    return "Update LittleFS";
-  if (strcmp(key, "web_update_ok") == 0)
-    return "OK";
-  if (strcmp(key, "web_update_fail") == 0)
-    return "FAIL";
   if (strcmp(key, "err_incomplete_profile_entry") == 0)
     return "Incomplete profile entry:\n";
   if (strcmp(key, "err_entry") == 0)

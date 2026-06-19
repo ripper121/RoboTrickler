@@ -101,11 +101,11 @@ window.rtLoadLanguage({
       "errorPrefix": "FEHLER",
       "rebootConfirm": "Robo-Trickler jetzt neu starten?",
       "rebootSent": "Neustart wurde gesendet. Das Gerät ist kurz nicht erreichbar.",
-      "rebootOk": "Neustart wurde ausgelöst!",
       "profileSaved": "Profil gespeichert!",
       "profileLoadFailed": "Profil konnte nicht geladen werden.",
       "configSaved": "Konfiguration gespeichert!\nBitte Robo-Trickler neu starten, damit config.txt geladen wird",
-      "fileSaved": "Gespeichert!\nBitte Robo-Trickler neu starten, damit das neue Profil / die neue Konfiguration geladen wird."
+      "fileSaved": "Gespeichert!",
+      "deleteConfirm": "Diese Datei löschen?"
     },
     "fileEditor": {
       "upload": "Upload",
@@ -140,6 +140,24 @@ window.rtLoadLanguage({
       "saving": "WLAN-Einstellungen werden gespeichert...",
       "savedRebooting": "Gespeichert. Robo-Trickler startet neu und verbindet sich mit dem WLAN.",
       "saveFailed": "WLAN-Einstellungen konnten nicht gespeichert werden. Erneut versuchen."
+    },
+    "firmware": {
+      "statusTitle": "Robo-Trickler",
+      "updateTitle": "Firmware-Update",
+      "fwVersion": "FW-Version",
+      "firmwareImage": "Firmware-Abbild",
+      "littlefsImage": "LittleFS-Abbild",
+      "filesystemWarning": "Beim Hochladen werden alle Dateien im internen Dateisystem ersetzt.",
+      "updateFirmware": "Firmware aktualisieren",
+      "updateLittlefs": "LittleFS aktualisieren",
+      "back": "Zurueck",
+      "rebootNow": "Jetzt neu starten.",
+      "valueSet": "Wert gesetzt.",
+      "running": "Laeuft...",
+      "stopped": "Gestoppt...",
+      "invalidProfile": "Ungueltiges Profil!",
+      "ok": "OK",
+      "fail": "FEHLER"
     }
   }
 });
