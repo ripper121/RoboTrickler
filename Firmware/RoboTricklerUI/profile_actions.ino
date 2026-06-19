@@ -63,6 +63,11 @@ bool corruptProfile(String badFilename, bool blocking)
     {
         tempTargetWeight = config.targetWeight;
 
+        // Refresh the list from the filesystem so the quarantined/missing
+        // profile drops out of the selection and findProfileIndex() searches
+        // the current state rather than the stale buffer.
+        getProfileList();
+
         int calibrateIndex = findProfileIndex("calibrate");
         if (calibrateIndex >= 0)
         {
