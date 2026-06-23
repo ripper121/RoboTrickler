@@ -122,7 +122,7 @@ Das angezeigte Gewicht wechselt während des Trickelns die Farbe:
 ## Tab `Profil`
 
 * Mit den Pfeil-Buttons (oben/unten) wird durch die erkannten Profile geblättert; das gewählte Profil wird sofort geladen.
-* Der orangefarbene Button (Zahnrad) öffnet das Profil-Tuning und passt `actuator.stepper1.unitsPerRev` an (siehe [Profil-Tuning](#profil-tuning)).
+* Der orangefarbene Button (Zahnrad) öffnet das Profil-Tuning und passt `steppers.stepper1.weightPerRev` an (siehe [Profil-Tuning](#profil-tuning)).
 * Der rote Button (Papierkorb) löscht das ausgewählte Profil nach einer Bestätigung.
 * Für das Profil `calibrate` werden Tuning- und Lösch-Button ausgeblendet.
 
@@ -174,7 +174,7 @@ Der Profilname in `config.txt` enthält nur den Dateinamen ohne `.txt`. Beispiel
 
 ```json
 {
-  "profile": "avg"
+  "activeProfile": "avg"
 }
 ```
 
@@ -192,14 +192,14 @@ Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte.
 
 ```json
 {
-  "actuator": "stepper1",
+  "stepper": "stepper1",
   "revolutions": 100,
   "rpm": 200,
   "measurements": 10
 }
 ```
 
-Anders als normale Profile (die ihre Würfe als `steps` angeben) ist `calibrate` ein Sonderfall und gibt den Kalibrierlauf in Motor-**Umdrehungen** an. Dieses Profil nutzt `revolutions: 100`. Die Firmware rechnet das beim Laden in STEP-Pulse um: `steps = revolutions × motorRevSteps`. Bei den Standard-`motorRevSteps: 200` ergibt das einen Kalibrierlauf über 100 Umdrehungen (20000 STEP-Pulse). Der Vorteil: Der Kalibrierlauf bleibt unabhängig von der Mikroschritt-Einstellung immer gleich lang.
+Anders als normale Profile (die ihre Würfe als `steps` angeben) ist `calibrate` ein Sonderfall und gibt den Kalibrierlauf in Motor-**Umdrehungen** an. Dieses Profil nutzt `revolutions: 100`. Die Firmware rechnet das beim Laden in STEP-Pulse um: `steps = revolutions × motorStepsPerRev`. Bei den Standard-`motorStepsPerRev: 200` ergibt das einen Kalibrierlauf über 100 Umdrehungen (20000 STEP-Pulse). Der Vorteil: Der Kalibrierlauf bleibt unabhängig von der Mikroschritt-Einstellung immer gleich lang.
 
 **Vorgehen:**
 
@@ -236,7 +236,7 @@ Die automatische Erstellung verwendet die Namen `powder_000.txt` bis `powder_999
 
 Ist dieses Limit von 32 Profilen bereits erreicht, prüft die Firmware das schon **vor** dem Kalibrierlauf: Beim Druck auf `Start` (mit gewähltem `calibrate`-Profil) erscheint dann die Meldung `Profillimit erreicht! Kalibrierung nicht möglich.`, und der Kalibrierlauf wird gar nicht erst gestartet. Lösche in diesem Fall zuerst ein nicht mehr benötigtes Profil.
 
-Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `unitsPerRev` wird aus `Kalibriergewicht / 100` berechnet. Die Firmware legt acht Feinwurf-Einträge an (`1.929`, `0.965`, `0.482`, `0.241`, `0.121`, `0.060`, `0.030`, `0.000` gn mit `2`, `2`, `5`, `5`, `10`, `10`, `15`, `20` Messungen) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten STEP-Pulse. Jeder Eintrag erhält mindestens `5` STEP-Pulse.
+Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `weightPerRev` wird aus `Kalibriergewicht / 100` berechnet. Die Firmware legt acht Feinwurf-Einträge an (`1.929`, `0.965`, `0.482`, `0.241`, `0.121`, `0.060`, `0.030`, `0.000` gn mit `2`, `2`, `5`, `5`, `10`, `10`, `15`, `20` Messungen) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten STEP-Pulse. Jeder Eintrag erhält mindestens `5` STEP-Pulse.
 
 ## Profil-Tuning
 
@@ -250,7 +250,7 @@ Wechsle in den Tab `Profil` und wähle das Profil aus, das angepasst werden soll
 
 ### 2. Units / Rev anpassen
 
-Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Rev** anpassen (entspricht `actuator.stepper1.unitsPerRev`). Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
+Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Rev** anpassen (entspricht `steppers.stepper1.weightPerRev`). Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
 
 ![Units / Rev anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
 
@@ -264,7 +264,7 @@ Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Rev** anpass
 
 ### 3. Einstellungen speichern
 
-Klicke auf **Speichern**, um die Änderungen zu übernehmen. Beim Speichern berechnet die Firmware die acht Einträge der `rs232TrickleMap` neu und schreibt das Profil direkt auf die SD-Karte. Der Trickler muss dafür gestoppt sein.
+Klicke auf **Speichern**, um die Änderungen zu übernehmen. Beim Speichern berechnet die Firmware die acht Einträge der `trickleMap` neu und schreibt das Profil direkt auf die SD-Karte. Der Trickler muss dafür gestoppt sein.
 
 ![Einstellungen speichern](https://github.com/user-attachments/assets/7a7d0735-f0f2-4740-8e7b-fcf7f4df550e)
 
@@ -282,7 +282,7 @@ Während des Trickelns zeigt die Statuszeile (im Tab `Info`) den gerade aktiven 
 W0.482 ST167 RPM200 M5/3
 ```
 
-Das bedeutet: `W` = `diffWeight` des aktiven Eintrags, `ST` = `steps`, `RPM` = `rpm`, `M` = benötigte / aktuelle Anzahl stabiler Messwerte. Diese Anzeige hilft beim Feinabstimmen der `rs232TrickleMap`.
+Das bedeutet: `W` = `diffWeight` des aktiven Eintrags, `ST` = `steps`, `RPM` = `rpm`, `M` = benötigte / aktuelle Anzahl stabiler Messwerte. Diese Anzeige hilft beim Feinabstimmen der `trickleMap`.
 
 > 📸 **Screenshot – Display:** Tab `Info` während eines laufenden Trickelvorgangs mit sichtbarer Diagnosezeile (z.B. `W0.482 ST167 RPM200 M5/3`).
 
@@ -305,17 +305,17 @@ Klicke auf das **Löschen-Symbol**, um das ausgewählte Profil zu entfernen. Vor
 
 ## Pulverprofil-Editor
 
-Der Webserver enthält `profileEditor.html` als `Pulverprofil-Editor`. Damit können alle von der Firmware unterstützten Profilfelder (`general`, `actuator.stepper1`/`stepper2` und die `rs232TrickleMap`-Schritte sowie die Kalibrier-Profilform) bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` gespeichert werden. Auch `general.startAtZero` und `general.trickleCounter` sind eigene Eingabefelder.
+Der Webserver enthält `profileEditor.html` als `Pulverprofil-Editor`. Damit können alle von der Firmware unterstützten Profilfelder (`general`, `steppers.stepper1`/`stepper2` und die `trickleMap`-Schritte sowie die Kalibrier-Profilform) bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` gespeichert werden. Auch `general.startAtZero` und `general.trickleCounter` sind eigene Eingabefelder.
 
 Wenn du über den Webserver arbeitest, listet das Auswahlfeld `Profil laden:` alle vorhandenen Profile aus `/profiles` auf. Beim Auswählen wird das Profil vom Gerät geladen und in den Editor übernommen; mit `Speichern` wird es unter dem `Profilname` wieder in `/profiles` zurückgeschrieben. Profile lassen sich weiterhin per Drag&Drop oder Einfügen in das Textfeld laden. Starte den Trickler nach dem Speichern neu, damit die neue Profilliste geladen wird.
 
 Der Editor lässt sich auch offline direkt von der SD-Karte öffnen. Offline fehlen das Auswahlfeld `Profil laden:` und das Speichern auf das Gerät; das bearbeitete Profil wird stattdessen über `Herunterladen` als Datei gesichert (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
 
-> 📸 **Screenshot – Webserver:** Der Pulverprofil-Editor (`profileEditor.html`) mit dem Auswahlfeld `Profil laden:`, einem geladenen Profil, sichtbaren `general`-Feldern, der `rs232TrickleMap`-Tabelle und den Buttons zum Herunterladen/Speichern.
+> 📸 **Screenshot – Webserver:** Der Pulverprofil-Editor (`profileEditor.html`) mit dem Auswahlfeld `Profil laden:`, einem geladenen Profil, sichtbaren `general`-Feldern, der `trickleMap`-Tabelle und den Buttons zum Herunterladen/Speichern.
 
 ## Gramm / Grain
 
-Das Profil muss zur Einheit der Waage passen. Wenn die Waage in Grain ausgibt, müssen `targetWeight`, `diffWeight`, `tolerance`, `alarmThreshold`, `weightGap` und `unitsPerRev` ebenfalls in Grain angegeben werden. Wenn die Waage in Gramm ausgibt, müssen diese Werte in Gramm angegeben werden.
+Das Profil muss zur Einheit der Waage passen. Wenn die Waage in Grain ausgibt, müssen `targetWeight`, `diffWeight`, `tolerance`, `alarmThreshold`, `weightGap` und `weightPerRev` ebenfalls in Grain angegeben werden. Wenn die Waage in Gramm ausgibt, müssen diese Werte in Gramm angegeben werden.
 
 Um Gramm in Grain umzurechnen:
 
@@ -336,55 +336,55 @@ Beispiel für das neue Profilformat:
     "tolerance": 0.000,
     "alarmThreshold": 1.000,
     "weightGap": 1.000,
-    "actuator": "stepper1",
+    "bulkStepper": "stepper1",
     "startAtZero": false,
     "trickleCounter": false,
     "measurements": 5
   },
-  "actuator": {
+  "steppers": {
     "stepper1": {
       "enabled": true,
-      "unitsPerRev": 0.375,
-      "unitsPerRevRpm": 200
+      "weightPerRev": 0.375,
+      "rpm": 200
     },
     "stepper2": {
       "enabled": false,
-      "unitsPerRev": 10.000,
-      "unitsPerRevRpm": 200
+      "weightPerRev": 10.000,
+      "rpm": 200
     }
   },
-  "rs232TrickleMap": [
+  "trickleMap": [
     {
       "diffWeight": 1.929,
-      "actuator": "stepper1",
+      "stepper": "stepper1",
       "steps": 669,
       "rpm": 200,
       "measurements": 2
     },
     {
       "diffWeight": 0.965,
-      "actuator": "stepper1",
+      "stepper": "stepper1",
       "steps": 335,
       "rpm": 200,
       "measurements": 2
     },
     {
       "diffWeight": 0.482,
-      "actuator": "stepper1",
+      "stepper": "stepper1",
       "steps": 167,
       "rpm": 200,
       "measurements": 5
     },
     {
       "diffWeight": 0.241,
-      "actuator": "stepper1",
+      "stepper": "stepper1",
       "steps": 84,
       "rpm": 200,
       "measurements": 10
     },
     {
       "diffWeight": 0.000,
-      "actuator": "stepper1",
+      "stepper": "stepper1",
       "steps": 5,
       "rpm": 200,
       "measurements": 15
@@ -399,28 +399,28 @@ Beispiel für das neue Profilformat:
 * `tolerance`: erlaubte Abweichung zum Zielgewicht.
 * `alarmThreshold`: Überwurf-Grenze. Wenn `targetWeight + alarmThreshold` erreicht oder überschritten wird, stoppt die Firmware, piept mehrfach und zeigt eine Warnung an. Bei `0` ist der Alarm deaktiviert.
 * `weightGap`: Abstand zum Zielgewicht, bei dem der automatische erste Grobwurf enden soll.
-* `actuator`: optionaler Bulk-Actuator für den automatischen ersten Grobwurf. Erlaubt sind `stepper1` und `stepper2`. Wenn das Feld fehlt, leer oder ungültig ist, verwendet die Firmware `stepper1`.
+* `bulkStepper`: optionaler Grob-Stepper für den automatischen ersten Grobwurf. Erlaubt sind `stepper1` und `stepper2`. Wenn das Feld fehlt, leer oder ungültig ist, verwendet die Firmware `stepper1`.
 * `startAtZero`: Wenn `true`, wartet die Firmware vor dem ersten Wurf auf exakt `0.000`. Wenn `false`, beginnt der erste Wurf bereits, sobald das Gewicht bei oder über `0.000` liegt – die Waage muss also nicht exakt genullt sein.
 * `trickleCounter`: Wenn `true`, zeigt die Anzahl der fertigen Trickles seit dem letzten Stop an. Standard ist `false`.
 * `measurements`: Anzahl stabiler Messwerte bevor der nächste Tricklevorgang gestartet wird (bei neu aufsetzen der Pulverpfanne).
 
-Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `actuator = stepper1`, `startAtZero = false`, `trickleCounter = false` und `measurements = 20`.
+Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `bulkStepper = stepper1`, `startAtZero = false`, `trickleCounter = false` und `measurements = 20`.
 
-### `actuator`
+### `steppers`
 
 * `stepper1` und `stepper2`: Einstellungen für Trickler 1 und Trickler 2.
 * `enabled`: aktiviert den jeweiligen Stepper für den automatischen ersten Grobwurf.
-* `unitsPerRev`: Pulvermenge pro Umdrehung bei `unitsPerRevRpm`.
-* `unitsPerRevRpm`: Motordrehzahl in U/min für den automatischen ersten Grobwurf.
+* `weightPerRev`: Pulvermenge pro Umdrehung bei `rpm`.
+* `rpm`: Motordrehzahl in U/min für den automatischen ersten Grobwurf.
 
-Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `unitsPerRev` die benötigten STEP-Pulse. Es wird genau der in `general.actuator` eingetragene Bulk-Actuator verwendet; ohne gültigen Eintrag ist das `stepper1`. Wenn der gewählte Stepper nicht aktiviert ist oder `unitsPerRev` fehlt bzw. `0` ist, wird der automatische Grobwurf übersprungen.
+Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `weightPerRev` die benötigten STEP-Pulse. Es wird genau der in `general.bulkStepper` eingetragene Grob-Stepper verwendet; ohne gültigen Eintrag ist das `stepper1`. Wenn der gewählte Stepper nicht aktiviert ist oder `weightPerRev` fehlt bzw. `0` ist, wird der automatische Grobwurf übersprungen.
 
-### `rs232TrickleMap`
+### `trickleMap`
 
-`rs232TrickleMap` ist die eigentliche Trickel-Tabelle. Es sind maximal 16 Einträge möglich.
+`trickleMap` ist die eigentliche Trickel-Tabelle. Es sind maximal 16 Einträge möglich.
 
 * `diffWeight`: Abstand zum Zielgewicht, ab dem dieser Eintrag verwendet wird.
-* `actuator`: `stepper1` oder `stepper2`.
+* `stepper`: `stepper1` oder `stepper2`.
 * `steps`: Anzahl direkter STEP-Pulse für diesen Wurf. Die Firmware gibt diesen Wert unverändert an den Stepper aus.
 * `rpm`: Motordrehzahl in U/min. Sinnvolle Werte liegen meist zwischen 5 und 300.
 * `measurements`: Anzahl stabiler Messwerte, die abgewartet werden, bis dieser Wurf ausgeführt wird.
@@ -446,9 +446,9 @@ Beide Treiber teilen sich die gemeinsame Enable-Leitung; es ist immer nur ein St
 
 **So werden die beiden Trickler verteilt:**
 
-1. **Beide Stepper aktivieren.** Setze im `actuator`-Block bei beiden, die du nutzen willst, `enabled: true` und trage jeweils `unitsPerRev` (Pulvermenge pro Umdrehung) und `unitsPerRevRpm` (Drehzahl in U/min) passend zum jeweiligen Trickler ein.
-2. **Grobwurf-Stepper wählen.** `general.actuator` bestimmt, welcher Stepper den automatischen ersten Grobwurf ausführt (z.B. `stepper2` als großer/schneller Trickler). Dieser Stepper muss `enabled: true` sein und ein gültiges `unitsPerRev` größer `0` haben, sonst wird der Grobwurf übersprungen.
-3. **Feinwurf pro Tabelleneintrag zuweisen.** Jeder Eintrag in `rs232TrickleMap` hat ein eigenes `actuator`-Feld (`stepper1` oder `stepper2`). So kannst du je nach Abstand zum Zielgewicht (`diffWeight`) einen anderen Trickler verwenden – typischerweise der große Trickler für die größeren `diffWeight`-Bereiche und der feine Trickler für die letzten Einträge nahe `0`.
+1. **Beide Stepper aktivieren.** Setze im `steppers`-Block bei beiden, die du nutzen willst, `enabled: true` und trage jeweils `weightPerRev` (Pulvermenge pro Umdrehung) und `rpm` (Drehzahl in U/min) passend zum jeweiligen Trickler ein.
+2. **Grobwurf-Stepper wählen.** `general.bulkStepper` bestimmt, welcher Stepper den automatischen ersten Grobwurf ausführt (z.B. `stepper2` als großer/schneller Trickler). Dieser Stepper muss `enabled: true` sein und ein gültiges `weightPerRev` größer `0` haben, sonst wird der Grobwurf übersprungen.
+3. **Feinwurf pro Tabelleneintrag zuweisen.** Jeder Eintrag in `trickleMap` hat ein eigenes `stepper`-Feld (`stepper1` oder `stepper2`). So kannst du je nach Abstand zum Zielgewicht (`diffWeight`) einen anderen Trickler verwenden – typischerweise der große Trickler für die größeren `diffWeight`-Bereiche und der feine Trickler für die letzten Einträge nahe `0`.
 
 Damit übernimmt im folgenden Beispiel `stepper2` den Grobwurf und den ersten Feinwurf-Bereich (großer/schneller Trickler), während `stepper1` ab `diffWeight 0.250` die feine Annäherung an das Zielgewicht erledigt:
 
@@ -459,41 +459,41 @@ Damit übernimmt im folgenden Beispiel `stepper2` den Grobwurf und den ersten Fe
     "tolerance": 0.000,
     "alarmThreshold": 1.000,
     "weightGap": 1.000,
-    "actuator": "stepper2",
+    "bulkStepper": "stepper2",
     "startAtZero": false,
     "trickleCounter": false,
     "measurements": 5
   },
-  "actuator": {
+  "steppers": {
     "stepper1": {
       "enabled": true,
-      "unitsPerRev": 0.200,
-      "unitsPerRevRpm": 200
+      "weightPerRev": 0.200,
+      "rpm": 200
     },
     "stepper2": {
       "enabled": true,
-      "unitsPerRev": 2.000,
-      "unitsPerRevRpm": 200
+      "weightPerRev": 2.000,
+      "rpm": 200
     }
   },
-  "rs232TrickleMap": [
+  "trickleMap": [
     {
       "diffWeight": 2.000,
-      "actuator": "stepper2",
+      "stepper": "stepper2",
       "steps": 200,
       "rpm": 200,
       "measurements": 2
     },
     {
       "diffWeight": 0.250,
-      "actuator": "stepper1",
+      "stepper": "stepper1",
       "steps": 80,
       "rpm": 200,
       "measurements": 5
     },
     {
       "diffWeight": 0.000,
-      "actuator": "stepper1",
+      "stepper": "stepper1",
       "steps": 5,
       "rpm": 200,
       "measurements": 15
@@ -524,23 +524,23 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
     "enabled": true,
     "ssid": "RoboTrickler-WiFi",
     "psk": "change-me-1234",
-    "IPStatic": "192.168.178.50",
-    "IPGateway": "192.168.178.1",
-    "IPSubnet": "255.255.255.0",
-    "IPDNS": "8.8.8.8"
+    "ipStatic": "192.168.178.50",
+    "ipGateway": "192.168.178.1",
+    "ipSubnet": "255.255.255.0",
+    "ipDns": "8.8.8.8"
   },
   "scale": {
     "protocol": "CUSTOM",
     "customCode": "0x1B 0x70 0x0D 0x0A",
     "baud": 9600
   },
-  "motorRevSteps": 200,
-  "profile": "avg",
+  "motorStepsPerRev": 200,
+  "activeProfile": "avg",
   "language": "de",
   "beeper": "both",
   "trickleCounter": true,
   "trickleCount": 128,
-  "fw_update": {
+  "fwUpdate": {
     "check": true
   }
 }
@@ -551,25 +551,25 @@ Die Werte im Beispiel oben dienen nur zur Veranschaulichung. In Klammern steht j
 * `wifi.enabled`: aktiviert WLAN, Webserver und alle Netzwerkdienste. Bei `false` startet der Trickler ohne WLAN. Lässt sich auch direkt am Display im Tab `Info` ein- und ausschalten. (Standard: `true`)
 * `wifi.ssid`: WLAN-Name. Nur 2.4 GHz WLAN wird unterstützt. (Standard: leer)
 * `wifi.psk`: WLAN-Passwort. Bei offenem WLAN leer lassen. (Standard: leer)
-* `wifi.IPStatic`: optionale statische IP-Adresse. (Standard: leer = DHCP)
-* `wifi.IPGateway`: Gateway-IP, nötig bei statischer IP. (Standard: leer)
-* `wifi.IPSubnet`: Subnetzmaske, nötig bei statischer IP. (Standard: leer)
-* `wifi.IPDNS`: optionaler DNS-Server. Wenn leer, nutzt die Firmware `8.8.8.8`. (Standard: leer)
-* Falls DHCP verwendet werden soll, lasse `wifi.IPStatic`, `wifi.IPGateway`, `wifi.IPSubnet` und `wifi.IPDNS` leer.
+* `wifi.ipStatic`: optionale statische IP-Adresse. (Standard: leer = DHCP)
+* `wifi.ipGateway`: Gateway-IP, nötig bei statischer IP. (Standard: leer)
+* `wifi.ipSubnet`: Subnetzmaske, nötig bei statischer IP. (Standard: leer)
+* `wifi.ipDns`: optionaler DNS-Server. Wenn leer, nutzt die Firmware `8.8.8.8`. (Standard: leer)
+* Falls DHCP verwendet werden soll, lasse `wifi.ipStatic`, `wifi.ipGateway`, `wifi.ipSubnet` und `wifi.ipDns` leer.
 * `scale.protocol`: unterstützte Werte sind `GG`, `SBI`, `KERN`, `KERN-ABT`, `KERN-ABS`, `AD`, `CUSTOM` und leer für kein aktives Anfragekommando. (Standard: `GG`)
 * `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden. (Standard: leer)
 * `scale.baud`: Baudrate der Waage, meistens `9600`. (Standard: `9600`)
-* `motorRevSteps`: Schritte pro voller Umdrehung des Schrittmotors. Bei einem 1,8°-Schrittmotor sind das `200`; bei anderen Motoren entsprechend anpassen. Beeinflusst die Schrittberechnung beim Trickeln und die Kalibrierung. (Standard: `200`)
+* `motorStepsPerRev`: Schritte pro voller Umdrehung des Schrittmotors. Bei einem 1,8°-Schrittmotor sind das `200`; bei anderen Motoren entsprechend anpassen. Beeinflusst die Schrittberechnung beim Trickeln und die Kalibrierung. (Standard: `200`)
 * `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil. (Standard: `calibrate`)
 * `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Die Display-Texte werden aus `/lang/<sprache>.json` geladen und fallen auf `/lang/en.json` sowie danach auf eingebaute englische Texte zurück. Die Weboberfläche verwendet getrennte Dateien unter `/system/lang`. (Standard: `en`)
 * `beeper`: `done` Beep wenn Trickle fertig, `button` Beep bei Touch betätigung, `both` beides aktiv oder `off` Beeper aus. (Standard: `done`)
 * `trickleCounter`: aktiviert den dauerhaften Gesamtzähler für fertige Trickles. (Standard: `false`)
 * `trickleCount`: gespeicherter Stand des dauerhaften Gesamtzählers. (Standard: `0`)
-* `fw_update.check`: aktiviert die automatische Prüfung auf neue Firmware. (Standard: `true`)
+* `fwUpdate.check`: aktiviert die automatische Prüfung auf neue Firmware. (Standard: `true`)
 
 Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu.
 
-Auf der SD-Karte befindet sich `system/settings.html` (Menüpunkt `Einstellungen`), womit sich alle Konfigurationsfelder inklusive `trickleCounter`, `trickleCount` und `fw_update.check` erstellen lassen. Die Seite wird auch über den Webserver bereitgestellt und lässt sich zudem offline direkt von der SD-Karte öffnen (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
+Auf der SD-Karte befindet sich `system/settings.html` (Menüpunkt `Einstellungen`), womit sich alle Konfigurationsfelder inklusive `trickleCounter`, `trickleCount` und `fwUpdate.check` erstellen lassen. Die Seite wird auch über den Webserver bereitgestellt und lässt sich zudem offline direkt von der SD-Karte öffnen (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
 
 <img width="372" height="1220" alt="image" src="https://github.com/user-attachments/assets/bfb98107-4ebd-4d78-a6bd-ee829973a59f" />
 
@@ -588,7 +588,7 @@ Es gibt drei Update-Möglichkeiten:
 > 📸 **Screenshot – Display:** Statuszeile beim Start während eines SD-Updates (z.B. „Checking SD card updates..." bzw. „SD card update complete. Rebooting..."), bevor die Konfiguration geladen wird.
 3. Verwende für eine vollständige Neuinstallation die Anleitung unter [Flash via USB](#flash-via-usb).
 
-`fw_update.check` steuert nur die automatische Versionsprüfung bei bestehender Netzwerkverbindung. Wird eine neuere Firmware gefunden, zeigt der Trickler einen Hinweis mit der neuen Versionsnummer und der Download-Adresse an. Das eigentliche Update wird nicht automatisch heruntergeladen oder installiert.
+`fwUpdate.check` steuert nur die automatische Versionsprüfung bei bestehender Netzwerkverbindung. Wird eine neuere Firmware gefunden, zeigt der Trickler einen Hinweis mit der neuen Versionsnummer und der Download-Adresse an. Das eigentliche Update wird nicht automatisch heruntergeladen oder installiert.
 
 > 📸 **Screenshot – Display:** Der Hinweis-Dialog „Neue Firmware verfügbar" mit der neuen Versionsnummer und der Download-Adresse.
 

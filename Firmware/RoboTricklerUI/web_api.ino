@@ -53,15 +53,15 @@ void handleWifiSave()
   String ssid = server.arg("ssid");
   String password = server.arg("password");
   ssid.trim();
-  if ((ssid.length() <= 0) || (ssid.length() >= sizeof(config.wifi_ssid)) ||
-      (password.length() >= sizeof(config.wifi_psk)))
+  if ((ssid.length() <= 0) || (ssid.length() >= sizeof(config.wifiSsid)) ||
+      (password.length() >= sizeof(config.wifiPsk)))
   {
     server.send(400, "application/json", "{\"error\":\"invalid SSID or password length\"}");
     return;
   }
 
-  strlcpy(config.wifi_ssid, ssid.c_str(), sizeof(config.wifi_ssid));
-  strlcpy(config.wifi_psk, password.c_str(), sizeof(config.wifi_psk));
+  strlcpy(config.wifiSsid, ssid.c_str(), sizeof(config.wifiSsid));
+  strlcpy(config.wifiPsk, password.c_str(), sizeof(config.wifiPsk));
   saveConfiguration("/config.txt", config);
 
   server.send(200, "application/json", "{\"saved\":true,\"rebooting\":true}");
@@ -235,7 +235,7 @@ void handleSetProfile()
 
 void handleGetProfile()
 {
-  server.send(200, "text/plain", String(config.profile));
+  server.send(200, "text/plain", String(config.profileName));
 }
 
 void handleGetLanguage()
@@ -255,7 +255,7 @@ void handleGetProfileList()
     char prefix[16];
     snprintf(prefix, sizeof(prefix), "%s\"%d\":\"", (i > 0) ? "," : "", i);
     server.sendContent(prefix);
-    server.sendContent(jsonEscape(String(profileListBuff[i])));
+    server.sendContent(jsonEscape(String(profileList[i])));
     server.sendContent("\"");
   }
   server.sendContent("}");

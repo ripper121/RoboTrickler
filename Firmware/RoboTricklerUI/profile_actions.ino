@@ -1,5 +1,5 @@
-extern float tempTargetWeight;
-extern int profileListCounter;
+extern float pendingTargetWeight;
+extern int selectedProfileIndex;
 extern volatile bool messageBoxOpen;
 bool profileDeleteConfirmPending = false;
 String profileDeleteName = "";
@@ -20,7 +20,7 @@ String profileDeleteFilename = "";
 // path, where errorBox(..., true) pumps lv_timer_handler() via pumpUntil();
 // re-entering the handler from inside an event callback crashes LVGL, so only
 // the Core 1 startup path may block.
-bool corruptProfile(String badFilename, bool blocking)
+bool recoverCorruptProfile(String badFilename, bool blocking)
 {
     String readError = getSdReadError();
     String message = String(langText("msg_profile_corrupted")) + badFilename;
@@ -51,30 +51,30 @@ bool corruptProfile(String badFilename, bool blocking)
 
     // Switch to the calibration profile and load it in memory instead of
     // rebooting. ensureCalibrateProfile() regenerates the calibrate file from
-    // the built-in template if it is itself missing or corrupt, and readProfile()
+    // the built-in template if it is itself missing or corrupt, and loadProfile()
     // resets every profile field before applying the values, so config ends up
     // fully consistent.
-    strlcpy(config.profile,          // <- destination
+    strlcpy(config.profileName,          // <- destination
             "calibrate",             // <- source
-            sizeof(config.profile)); // <- destination's capacity
+            sizeof(config.profileName)); // <- destination's capacity
     saveConfiguration("/config.txt", config);
 
     if (ensureCalibrateProfile(config))
     {
-        tempTargetWeight = config.targetWeight;
+        pendingTargetWeight = config.targetWeight;
 
         // Refresh the list from the filesystem so the quarantined/missing
         // profile drops out of the selection and findProfileIndex() searches
         // the current state rather than the stale buffer.
-        getProfileList();
+        refreshProfileList();
 
         int calibrateIndex = findProfileIndex("calibrate");
         if (calibrateIndex >= 0)
         {
-            profileListCounter = calibrateIndex;
+            selectedProfileIndex = calibrateIndex;
         }
 
-        setLabelText(ui_LabelProfile, config.profile);
+        setLabelText(ui_LabelProfile, config.profileName);
         updateProfileActionButtonVisibility();
         updateTargetWeightLabel();
 
@@ -87,41 +87,41 @@ bool corruptProfile(String badFilename, bool blocking)
     // to recover through the normal boot path.
     DEBUG_PRINTLN("Calibration profile recovery failed; rebooting");
     delay(100);
-    restart_now = true;
+    restartNow = true;
     errorBox(message, blocking);
     return false;
 }
 
 bool loadSelectedProfile(bool blocking)
 {
-    String selectedProfileFilename = profileFilename(config.profile);
-    if (!readProfile(selectedProfileFilename.c_str(), config))
+    String selectedProfileFilename = profileFilename(config.profileName);
+    if (!loadProfile(selectedProfileFilename.c_str(), config))
     {
-        // corruptProfile() recovers onto calibrate in memory; it returns true
+        // recoverCorruptProfile() recovers onto calibrate in memory; it returns true
         // when that succeeds so the caller can continue without a reboot.
-        return corruptProfile(selectedProfileFilename, blocking);
+        return recoverCorruptProfile(selectedProfileFilename, blocking);
     }
-    tempTargetWeight = config.targetWeight;
+    pendingTargetWeight = config.targetWeight;
     return true;
 }
 
-void setProfile(int num)
+void setProfile(int index)
 {
-    if ((num < 0) || (num >= profileListCount))
+    if ((index < 0) || (index >= profileListCount))
     {
-        DEBUG_PRINT("Invalid profile number: ");
-        DEBUG_PRINTLN(num);
+        DEBUG_PRINT("Invalid profile index: ");
+        DEBUG_PRINTLN(index);
         return;
     }
 
     cancelInteractiveDialogs();
 
-    strlcpy(config.profile,          // <- destination
-            profileListBuff[num],    // <- source
-            sizeof(config.profile)); // <- destination's capacity
-    profileListCounter = num;
+    strlcpy(config.profileName,          // <- destination
+            profileList[index],    // <- source
+            sizeof(config.profileName)); // <- destination's capacity
+    selectedProfileIndex = index;
 
-    String infoText = String(langText("status_selecting_profile")) + config.profile;
+    String infoText = String(langText("status_selecting_profile")) + config.profileName;
     updateDisplayLog(infoText, true);
 
     saveConfiguration("/config.txt", config);
@@ -131,13 +131,13 @@ void setProfile(int num)
         return;
     }
 
-    DEBUG_PRINT("num: ");
-    DEBUG_PRINTLN(num);
+    DEBUG_PRINT("index: ");
+    DEBUG_PRINTLN(index);
 
-    setLabelText(ui_LabelProfile, config.profile);
+    setLabelText(ui_LabelProfile, config.profileName);
     updateProfileActionButtonVisibility();
     updateTargetWeightLabel();
-    infoText = String(langText("status_profile_ready")) + config.profile;
+    infoText = String(langText("status_profile_ready")) + config.profileName;
     updateDisplayLog(infoText, true);
 }
 
@@ -145,7 +145,7 @@ int findProfileIndex(const char *profileName)
 {
     for (int i = 0; i < profileListCount; i++)
     {
-        if (strcmp(profileListBuff[i], profileName) == 0)
+        if (strcmp(profileList[i], profileName) == 0)
         {
             return i;
         }
@@ -168,7 +168,7 @@ bool deleteSelectedProfile()
         clearProfileTuneState();
     }
 
-    String profileName = config.profile;
+    String profileName = config.profileName;
     if (profileName == "calibrate")
     {
         errorBox(langText("msg_cannot_delete_calibrate_profile"), false);
@@ -179,7 +179,7 @@ bool deleteSelectedProfile()
     if (!ACTIVE_FS.exists(filename.c_str()))
     {
         errorBox(String(langText("msg_delete_profile_file_not_found")) + filename, false);
-        getProfileList();
+        refreshProfileList();
         return false;
     }
 
@@ -217,7 +217,7 @@ void finishProfileDeleteConfirm(bool confirmed)
     if (!ACTIVE_FS.exists(filename.c_str()))
     {
         errorBox(String(langText("msg_delete_profile_file_not_found")) + filename, false);
-        getProfileList();
+        refreshProfileList();
         return;
     }
 
@@ -229,7 +229,7 @@ void finishProfileDeleteConfirm(bool confirmed)
     }
 
     setProfile(calibrateIndex);
-    if (strcmp(config.profile, "calibrate") != 0)
+    if (strcmp(config.profileName, "calibrate") != 0)
     {
         errorBox(langText("msg_delete_profile_calibrate_load_failed"), false);
         return;
@@ -238,11 +238,11 @@ void finishProfileDeleteConfirm(bool confirmed)
     if (!ACTIVE_FS.remove(filename.c_str()))
     {
         errorBox(String(langText("msg_could_not_delete_profile")) + filename, false);
-        getProfileList();
+        refreshProfileList();
         return;
     }
 
-    getProfileList();
+    refreshProfileList();
     updateProfileActionButtonVisibility();
     successBox(String(langText("msg_profile_deleted")) + profileName, false);
 }

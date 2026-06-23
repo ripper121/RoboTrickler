@@ -62,10 +62,10 @@ void decreaseTargetWeight_event_cb(lv_event_t *e)
 
 void selectPreviousProfile_event_cb(lv_event_t *e)
 {
-  profileListCounter--;
-  if (profileListCounter < 0)
-    profileListCounter = (profileListCount - 1);
-  setProfile(profileListCounter);
+  selectedProfileIndex--;
+  if (selectedProfileIndex < 0)
+    selectedProfileIndex = (profileListCount - 1);
+  setProfile(selectedProfileIndex);
 }
 
 void openProfileTune_event_cb(lv_event_t *e)
@@ -80,10 +80,10 @@ void requestProfileDelete_event_cb(lv_event_t *e)
 
 void selectNextProfile_event_cb(lv_event_t *e)
 {
-  profileListCounter++;
-  if (profileListCounter > (profileListCount - 1))
-    profileListCounter = 0;
-  setProfile(profileListCounter);
+  selectedProfileIndex++;
+  if (selectedProfileIndex > (profileListCount - 1))
+    selectedProfileIndex = 0;
+  setProfile(selectedProfileIndex);
 }
 
 void updateScaleProtocolButtonLabel()
@@ -94,13 +94,13 @@ void updateScaleProtocolButtonLabel()
   }
 
   char text[48];
-  snprintf(text, sizeof(text), "%s: %s", langText("label_scale"), scaleProtocolDisplayName(config.scale_protocol));
+  snprintf(text, sizeof(text), "%s: %s", langText("label_scale"), scaleProtocolDisplayName(config.scaleProtocol));
   setLabelText(ui_LabelScaleProtocol, text);
 }
 
 void cycleScaleProtocol_event_cb(lv_event_t *e)
 {
-  strlcpy(config.scale_protocol, nextScaleProtocol(config.scale_protocol), sizeof(config.scale_protocol));
+  strlcpy(config.scaleProtocol, nextScaleProtocol(config.scaleProtocol), sizeof(config.scaleProtocol));
   serialFlush();
   saveConfiguration("/config.txt", config);
   updateScaleProtocolButtonLabel();
@@ -110,7 +110,7 @@ void cycleScaleProtocol_event_cb(lv_event_t *e)
 void toggleWifi_event_cb(lv_event_t *e)
 {
   (void)e;
-  config.wifi_enabled = !config.wifi_enabled;
+  config.wifiEnabled = !config.wifiEnabled;
   saveConfiguration("/config.txt", config);
   applyWifiEnabled();
   beep("button");

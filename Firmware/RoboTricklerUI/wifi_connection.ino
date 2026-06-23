@@ -150,7 +150,7 @@ void maintainWifiConnection()
 {
   updateWifiTabIndicator(false);
 
-  if (WIFI_SETUP_AP_ACTIVE)
+  if (wifiSetupApActive)
   {
     return;
   }
@@ -164,7 +164,7 @@ void maintainWifiConnection()
   {
     wifiConnectTimeoutReported = false;
     wifiLastLoggedStatus = WL_CONNECTED;
-    if (!WEB_SERVER_ACTIVE)
+    if (!webServerActive)
     {
       startWebServerServices();
     }
@@ -198,7 +198,7 @@ void updateWifiButtonState()
     return;
   }
 
-  if (config.wifi_enabled)
+  if (config.wifiEnabled)
   {
     lv_obj_add_state(ui_ButtonWifi, LV_STATE_CHECKED);
   }
@@ -214,8 +214,8 @@ void stopWifiServices()
   dnsServer.stop();
   server.stop();
   MDNS.end();
-  WEB_SERVER_ACTIVE = false;
-  WIFI_SETUP_AP_ACTIVE = false;
+  webServerActive = false;
+  wifiSetupApActive = false;
   wifiActive = false;
   WiFi.setAutoReconnect(false);
 
@@ -240,7 +240,7 @@ void stopWifiServices()
 void applyWifiEnabled()
 {
   updateWifiButtonState();
-  if (config.wifi_enabled)
+  if (config.wifiEnabled)
   {
     initWebServer();
   }
@@ -253,16 +253,16 @@ void applyWifiEnabled()
 void initWebServer()
 {
   wifiActive = false;
-  WIFI_SETUP_AP_ACTIVE = false;
-  WEB_SERVER_ACTIVE = false;
+  wifiSetupApActive = false;
+  webServerActive = false;
   updateWifiButtonState();
-  if (!config.wifi_enabled)
+  if (!config.wifiEnabled)
   {
     stopWifiServices();
     return;
   }
 
-  String configuredSsid(config.wifi_ssid);
+  String configuredSsid(config.wifiSsid);
   configuredSsid.trim();
   if (configuredSsid.length() <= 0)
   {
@@ -273,7 +273,7 @@ void initWebServer()
   if (configuredSsid.length() > 0)
   {
     updateDisplayLog(langText("status_connect_wifi"));
-    updateDisplayLog(config.wifi_ssid);
+    updateDisplayLog(config.wifiSsid);
 
     #if DEBUG
       registerWifiDebugLogging();
@@ -302,24 +302,24 @@ void initWebServer()
 
     IPAddress ipDNS(8, 8, 8, 8);
     IPAddress parsedDNS;
-    if (parseConfigIPAddress("IPDNS", config.IPDns, parsedDNS))
+    if (parseConfigIPAddress("ipDns", config.wifiIpDns, parsedDNS))
     {
       ipDNS = parsedDNS;
     }
-    else if (configStringHasValue(config.IPDns))
+    else if (configStringHasValue(config.wifiIpDns))
     {
       updateDisplayLog(langText("status_dns_failed"));
     }
 
     bool useStaticIp = false;
-    if (configStringHasValue(config.IPStatic))
+    if (configStringHasValue(config.wifiIpStatic))
     {
       IPAddress staticIP;
       IPAddress gateway;
       IPAddress subnet;
-      bool staticIpConfigValid = parseConfigIPAddress("IPStatic", config.IPStatic, staticIP) &&
-                                 parseConfigIPAddress("IPGateway", config.IPGateway, gateway) &&
-                                 parseConfigIPAddress("IPSubnet", config.IPSubnet, subnet);
+      bool staticIpConfigValid = parseConfigIPAddress("ipStatic", config.wifiIpStatic, staticIP) &&
+                                 parseConfigIPAddress("ipGateway", config.wifiIpGateway, gateway) &&
+                                 parseConfigIPAddress("ipSubnet", config.wifiIpSubnet, subnet);
 
       if (staticIpConfigValid && WiFi.config(staticIP, gateway, subnet, ipDNS))
       {
@@ -340,7 +340,7 @@ void initWebServer()
 
     wifiConfiguredDNS = ipDNS;
     wifiUsesStaticIp = useStaticIp;
-    WiFi.begin(config.wifi_ssid, config.wifi_psk);
+    WiFi.begin(config.wifiSsid, config.wifiPsk);
     WiFi.setSleep(false);
     wifiActive = true;
     wifiPreviousMillis = millis();
@@ -372,11 +372,11 @@ bool startWifiSetupAccessPoint()
     return false;
   }
 
-  WIFI_SETUP_AP_ACTIVE = true;
+  wifiSetupApActive = true;
   wifiActive = true;
   registerWebServerRoutes();
   server.begin();
-  WEB_SERVER_ACTIVE = true;
+  webServerActive = true;
 
   if (!dnsServer.start(53, "*", WIFI_SETUP_AP_IP))
   {

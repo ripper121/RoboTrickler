@@ -193,7 +193,7 @@ void updateProfileActionButtonVisibility()
 
     if (lvglLock())
     {
-        if (strcmp(config.profile, "calibrate") == 0)
+        if (strcmp(config.profileName, "calibrate") == 0)
         {
             lv_obj_add_flag(ui_ButtonProfileDelete, LV_OBJ_FLAG_HIDDEN);
             lv_obj_add_flag(ui_ButtonProfileTune, LV_OBJ_FLAG_HIDDEN);
@@ -240,7 +240,7 @@ void setWeightLabel(lv_obj_t *label)
     return;
   }
 
-  int decimals = decPlaces;
+  int decimals = decimalPlaces;
   if (decimals < 0)
   {
     decimals = 0;
@@ -249,7 +249,7 @@ void setWeightLabel(lv_obj_t *label)
   {
     decimals = 6;
   }
-  snprintf(text, sizeof(text), "%.*f%s", decimals, weight, unit.c_str());
+  snprintf(text, sizeof(text), "%.*f%s", decimals, weight, weightUnit.c_str());
   setLabelText(label, text);
 }
 

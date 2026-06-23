@@ -17,9 +17,46 @@ Use this order for all relevant implementation work:
 5. Try to reuse UI Code to save Heap.
 6. Dont turn on WIDGETS in lv_config and dont increase LV_MEM_SIZE
 
+### Re-running the audit
+
+This is the project-specific instance of the reusable runbook in `NAMING_AUDIT.md`
+(a portable C/Arduino template — copy that file into other projects).
+
+**Conventions enforced here:** functions / variables / `Config` fields are `camelCase`;
+types (`Config`, `TricklerState`, `FilesystemSyncDirection`) are `PascalCase`; macros,
+enum constants, and compile-time constants are `UPPER_SNAKE`; mutable globals stay
+`camelCase` (`webServerActive`, not `WEB_SERVER_ACTIVE`); source files are `snake_case`
+with a domain prefix (`ui_*`, `wifi_*`, `web_*`, `filesystem_*`, `trickler_*`). LVGL
+event callbacks use `verbNoun_event_cb` (e.g. `toggleWifi_event_cb`).
+
+**Do NOT rename** (externally required): `setup()` / `loop()` and library APIs; LVGL /
+TFT callbacks (`my_disp_flush`, `my_print`, `my_touchpad_read`, `disp_task_init`,
+`lvgl_disp_task`); SquareLine-generated `ui*.c/.h` symbols and `*_event_cb` names wired
+in `ui_Screen1.c`; `lv_conf.h` / `build_opt.h`; the sketch `.ino` (must match the folder);
+and contract strings — HTTP routes in `web_server.ino`, the `config.txt` / profile JSON
+keys in `sd_storage.ino`, and the `web.firmware.*` lang keys.
+
+**Deny-list re-check** (run from this folder after any rename; should return nothing but
+deliberate hits — the audit doc itself and intentional legacy vocabulary):
+
+```bash
+# replace OLD1|OLD2|... with the old side of the current rename map
+rg -n --glob '!build/**' --glob '!data/**' --glob '!SD-Files-Gz/**' --glob '!SD-Files-LittleFS/**' 'OLD1|OLD2'
+# mutable globals wrongly UPPER_SNAKE:
+rg -n '^(bool|int|long|float|double|char|byte|uint\w+) +[A-Z][A-Z0-9_]+ *(=|;|\[)' *.ino
+# snake_case Config fields (should be camelCase):
+rg -n 'config\.[a-z]+_[a-z]'
+# snake_case custom event callbacks (should be verbNoun_event_cb):
+rg -n '\b[a-z]+_[a-z_]+_event_cb\b' *.ino
+```
+
+Then validate contracts/data and rebuild: confirm SD JSON parses
+(`python -c "import json,glob; [json.load(open(f,encoding='utf-8')) for f in glob.glob('SD-Files/**/*.json',recursive=True)]"`)
+and compile with `python tools/compile_upload.py --cli --error --compile-only`.
+
 ## SD file rules
 
-- `fw_update.url` is for internal firmware use only. Keep the update URL in firmware code (`DEFAULT_FW_UPDATE_URL`) and do not add it to SD files, generated `config.txt`, the config generator UI, or SD-facing docs. `fw_update.check` may remain user-configurable.
+- `fwUpdate.url` is for internal firmware use only. Keep the update URL in firmware code (`DEFAULT_FW_UPDATE_URL`) and do not add it to SD files, generated `config.txt`, the config generator UI, or SD-facing docs. `fwUpdate.check` may remain user-configurable.
 
 ## SD file testing upload
 

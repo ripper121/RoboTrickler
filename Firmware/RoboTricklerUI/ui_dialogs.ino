@@ -123,7 +123,7 @@ void messageOk_event_cb(lv_event_t *e)
     finishProfileDeleteConfirm(true);
     finishFilesystemSyncConfirm(true);
   }
-  if (restart_now && !messageBoxOpen)
+  if (restartNow && !messageBoxOpen)
   {
     delay(1000);
     ESP.restart();
@@ -275,9 +275,9 @@ static void updateProfileTuneStepLabel()
 
 static float currentProfileTuneUnitsPerRev()
 {
-    if (config.profile_stepperUnitsPerRev[1] > 0.0)
+    if (config.profileStepperWeightPerRev[1] > 0.0)
     {
-        return config.profile_stepperUnitsPerRev[1];
+        return config.profileStepperWeightPerRev[1];
     }
     return 0.001;
 }
@@ -336,13 +336,13 @@ static void saveProfileTune()
         return;
     }
 
-    setLabelText(ui_LabelProfile, config.profile);
+    setLabelText(ui_LabelProfile, config.profileName);
     updateProfileActionButtonVisibility();
     updateTargetWeightLabel();
     successBox(String(langText("msg_profile_tuned")) + profileName, false);
 }
 
-void profile_tune_minus_event_cb(lv_event_t *e)
+void profileTuneMinus_event_cb(lv_event_t *e)
 {
     profileTuneUnitsPerRev -= profileTuneStepSize;
     if (profileTuneUnitsPerRev < 0.001)
@@ -352,7 +352,7 @@ void profile_tune_minus_event_cb(lv_event_t *e)
     updateProfileTuneValueLabel();
 }
 
-void profile_tune_plus_event_cb(lv_event_t *e)
+void profileTunePlus_event_cb(lv_event_t *e)
 {
     profileTuneUnitsPerRev += profileTuneStepSize;
     if (profileTuneUnitsPerRev > 99.999)
@@ -362,7 +362,7 @@ void profile_tune_plus_event_cb(lv_event_t *e)
     updateProfileTuneValueLabel();
 }
 
-void profile_tune_step_event_cb(lv_event_t *e)
+void profileTuneStep_event_cb(lv_event_t *e)
 {
     profileTuneStepIndex++;
     if (profileTuneStepIndex >= WEIGHT_STEP_COUNT)
@@ -372,13 +372,13 @@ void profile_tune_step_event_cb(lv_event_t *e)
     updateProfileTuneStepLabel();
 }
 
-void profile_tune_cancel_event_cb(lv_event_t *e)
+void profileTuneCancel_event_cb(lv_event_t *e)
 {
     closeProfileTuneDialog();
     clearProfileTuneState();
 }
 
-void profile_tune_save_event_cb(lv_event_t *e)
+void profileTuneSave_event_cb(lv_event_t *e)
 {
     saveProfileTune();
 }
@@ -422,12 +422,12 @@ static void createProfileTuneDialog()
     lv_obj_set_style_pad_top(ui_LabelProfileTuneValue, 5, LV_PART_MAIN);
     lv_obj_clear_flag(ui_LabelProfileTuneValue, LV_OBJ_FLAG_SCROLLABLE);
 
-    ui_ButtonProfileTuneMinus = createDialogButton(ui_PanelProfileTune, 115, -42, 60, 45, "-", UI_FONT_NORMAL, profile_tune_minus_event_cb);
-    ui_ButtonProfileTunePlus = createDialogButton(ui_PanelProfileTune, -115, -42, 60, 45, "+", UI_FONT_NORMAL, profile_tune_plus_event_cb);
-    ui_ButtonProfileTuneStep = createDialogButton(ui_PanelProfileTune, 0, 22, 110, 45, "0.001", UI_FONT_NORMAL, profile_tune_step_event_cb);
+    ui_ButtonProfileTuneMinus = createDialogButton(ui_PanelProfileTune, 115, -42, 60, 45, "-", UI_FONT_NORMAL, profileTuneMinus_event_cb);
+    ui_ButtonProfileTunePlus = createDialogButton(ui_PanelProfileTune, -115, -42, 60, 45, "+", UI_FONT_NORMAL, profileTunePlus_event_cb);
+    ui_ButtonProfileTuneStep = createDialogButton(ui_PanelProfileTune, 0, 22, 110, 45, "0.001", UI_FONT_NORMAL, profileTuneStep_event_cb);
     ui_LabelProfileTuneStep = lv_obj_get_child(ui_ButtonProfileTuneStep, 0);
-    ui_ButtonProfileTuneCancel = createDialogButton(ui_PanelProfileTune, 70, 88, 110, 45, UI_SYMBOL_CANCEL, UI_FONT_NORMAL, profile_tune_cancel_event_cb);
-    ui_ButtonProfileTuneSave = createDialogButton(ui_PanelProfileTune, -70, 88, 110, 45, UI_SYMBOL_SAVE, UI_FONT_NORMAL, profile_tune_save_event_cb);
+    ui_ButtonProfileTuneCancel = createDialogButton(ui_PanelProfileTune, 70, 88, 110, 45, UI_SYMBOL_CANCEL, UI_FONT_NORMAL, profileTuneCancel_event_cb);
+    ui_ButtonProfileTuneSave = createDialogButton(ui_PanelProfileTune, -70, 88, 110, 45, UI_SYMBOL_SAVE, UI_FONT_NORMAL, profileTuneSave_event_cb);
 }
 
 static void showProfileTuneDialog()
@@ -461,12 +461,12 @@ bool tuneSelectedProfile()
         return false;
     }
 
-    String profileName = config.profile;
+    String profileName = config.profileName;
     String filename = profileFilename(profileName.c_str());
     if (!ACTIVE_FS.exists(filename.c_str()))
     {
         errorBox(String(langText("msg_delete_profile_file_not_found")) + filename, false);
-        getProfileList();
+        refreshProfileList();
         return false;
     }
 

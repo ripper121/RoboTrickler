@@ -1,4 +1,4 @@
-float tempTargetWeight = 0.0;
+float pendingTargetWeight = 0.0;
 
 void beep(const char *beepMode)
 {
@@ -30,9 +30,9 @@ void startTrickler()
     // The calibration throw is only useful if a powder profile can be created
     // from it afterwards. Bail out before wasting a throw when the profile list
     // is already full (createProfileFromCalibration would refuse later anyway).
-    if (strcmp(config.profile, "calibrate") == 0)
+    if (strcmp(config.profileName, "calibrate") == 0)
     {
-        getProfileList();
+        refreshProfileList();
         if (profileListCount >= PROFILE_LIST_MAX)
         {
             errorBox(langText("msg_max_profiles_reached"), true);
@@ -40,16 +40,16 @@ void startTrickler()
         }
     }
 
-    String selectedText = String(langText("placeholder_profile")) + ": " + config.profile + langText("status_profile_selected_suffix");
+    String selectedText = String(langText("placeholder_profile")) + ": " + config.profileName + langText("status_profile_selected_suffix");
     updateDisplayLog(selectedText);
 
-    if (tempTargetWeight != config.targetWeight)
+    if (pendingTargetWeight != config.targetWeight)
     {
         String infoText = langText("status_saving_target");
         updateDisplayLog(infoText, true);
         saveTargetWeight(config.targetWeight);
     }
-    tempTargetWeight = config.targetWeight;
+    pendingTargetWeight = config.targetWeight;
 
     String infoText = langText("status_starting_trickler");
     updateDisplayLog(infoText, true);
@@ -80,10 +80,10 @@ void stopTrickler()
 void startMeasurement()
 {
     // Start with a stable-weight window before the first throw.
-    newData = false;
+    newWeightData = false;
     weightCounter = 0;
     activeProfileStep = -1;
-    measurementCount = config.profile_generalMeasurements;
+    measurementCount = config.profileGeneralMeasurements;
     lastWeight = weight;
     firstProfileMovePending = true;
     setTricklerState(TRICKLER_RUNNING);
@@ -103,7 +103,7 @@ void saveTargetWeight(float weight)
     updateTargetWeightLabel();
     String infoText = langText("status_saving_target");
     updateDisplayLog(infoText, true);
-    if (!saveProfileTargetWeight(config.profile, config.targetWeight))
+    if (!saveProfileTargetWeight(config.profileName, config.targetWeight))
     {
         String readError = getSdReadError();
         updateDisplayLog(readError.length() > 0 ? readError : langText("status_saving_target_failed"), true);
@@ -113,6 +113,6 @@ void saveTargetWeight(float weight)
         infoText = langText("status_target_saved");
         updateDisplayLog(infoText, true);
     }
-    tempTargetWeight = config.targetWeight;
+    pendingTargetWeight = config.targetWeight;
 }
 

@@ -25,7 +25,7 @@ void restoreFilesystemAfterFailedUpdate()
   {
     activeFS = &LittleFS;
   }
-  FILESYSTEM_ACTIVE = sdMounted || littleFSMounted;
+  filesystemActive = sdMounted || littleFSMounted;
 #endif
 }
 
@@ -79,7 +79,7 @@ String jsonEscape(const String &input)
 
 void registerWebServerRoutes()
 {
-  if (WEB_SERVER_ROUTES_REGISTERED)
+  if (webServerRoutesRegistered)
   {
     return;
   }
@@ -187,7 +187,7 @@ void registerWebServerRoutes()
             littleFSMounted = false;
             if (!activeFSIsSD)
             {
-              FILESYSTEM_ACTIVE = false;
+              filesystemActive = false;
               activeFS = NULL;
             }
             webUpdateFilesystemUnmounted = true;
@@ -276,12 +276,12 @@ void registerWebServerRoutes()
         }
       });
 
-  WEB_SERVER_ROUTES_REGISTERED = true;
+  webServerRoutesRegistered = true;
 }
 
 bool startWebServerServices()
 {
-  if (WEB_SERVER_ACTIVE)
+  if (webServerActive)
   {
     return true;
   }
@@ -301,7 +301,7 @@ bool startWebServerServices()
 
   registerWebServerRoutes();
   server.begin();
-  WEB_SERVER_ACTIVE = true;
+  webServerActive = true;
 
   if (mdnsStarted)
   {

@@ -45,7 +45,7 @@ void setTricklerState(TricklerState state)
 
 static bool canStartFirstThrowAtCurrentWeight()
 {
-  if (config.profile_startAtZero)
+  if (config.profileStartAtZero)
   {
     return weightIsZero(weight);
   }
@@ -63,7 +63,7 @@ static long calculateStepperStepsForUnits(double remainingUnits, double unitsPer
     return 0;
   }
 
-  double exactSteps = remainingUnits * ((double)config.motorRevSteps / unitsPerRev);
+  double exactSteps = remainingUnits * ((double)config.motorStepsPerRev / unitsPerRev);
   if ((exactSteps <= 0.0) || (exactSteps > 2147483647.0))
   {
     return 0;
@@ -72,7 +72,7 @@ static long calculateStepperStepsForUnits(double remainingUnits, double unitsPer
   long steps = (long)exactSteps;
   if (outUnits != NULL)
   {
-    *outUnits = ((double)steps * unitsPerRev) / (double)config.motorRevSteps;
+    *outUnits = ((double)steps * unitsPerRev) / (double)config.motorStepsPerRev;
   }
   return steps;
 }
@@ -81,31 +81,31 @@ static bool runBulkStepperMove(String &infoText)
 {
   // The optional bulk move removes most remaining weight first; profile steps
   // then handle the fine approach to target.
-  double remainingUnits = (double)config.targetWeight - (double)weight - (double)config.profile_weightGap;
+  double remainingUnits = (double)config.targetWeight - (double)weight - (double)config.profileWeightGap;
   if (remainingUnits <= 0.0)
   {
     return true;
   }
 
-  int stepperNum = config.profile_bulkActuator;
+  int stepperNum = config.profileBulkStepper;
   if ((stepperNum < 1) || (stepperNum > 2))
   {
     return false;
   }
 
-  if (!config.profile_stepperEnabled[stepperNum])
+  if (!config.profileStepperEnabled[stepperNum])
   {
     return true;
   }
 
-  int rpm = config.profile_stepperUnitsPerRevRpm[stepperNum];
+  int rpm = config.profileStepperRpm[stepperNum];
   if (rpm <= 0)
   {
     rpm = 200;
   }
 
   double units = 0.0;
-  long stepsToMove = calculateStepperStepsForUnits(remainingUnits, config.profile_stepperUnitsPerRev[stepperNum], &units);
+  long stepsToMove = calculateStepperStepsForUnits(remainingUnits, config.profileStepperWeightPerRev[stepperNum], &units);
   if (stepsToMove <= 0)
   {
     return true;
@@ -148,9 +148,9 @@ void startCalibrationProfilePrompt()
   stopTrickler();
   setTricklerState(TRICKLER_CALIBRATION_PROMPT);
   calibrationProfilePromptTime = millis();
-  measurementCount = config.profile_generalMeasurements;
+  measurementCount = config.profileGeneralMeasurements;
   weightCounter = 0;
-  newData = false;
+  newWeightData = false;
 }
 
 void handleCalibrationProfilePrompt()
@@ -164,10 +164,10 @@ void handleCalibrationProfilePrompt()
 
   readWeight();
 
-  if (newData && (lastScaleWeightReadTime > calibrationProfilePromptTime))
+  if (newWeightData && (lastScaleWeightReadTime > calibrationProfilePromptTime))
   {
     setTricklerState(TRICKLER_IDLE);
-    newData = false;
+    newWeightData = false;
     weightCounter = 0;
     if (confirmBox(String(langText("msg_create_profile_prompt")) + String(weight, 3) + " gn", UI_FONT_NORMAL, lv_color_hex(0xFFFFFF)))
     {
@@ -186,7 +186,7 @@ void handleCalibrationProfilePrompt()
 
 static bool isCalibrationProfile()
 {
-  return strcmp(config.profile, "calibrate") == 0;
+  return strcmp(config.profileName, "calibrate") == 0;
 }
 
 static void handleOverTrickle()
@@ -198,7 +198,7 @@ static void handleOverTrickle()
   delay(250);
   beep("done");
   String messageText = langText("msg_over_trickle");
-  if (config.profile_trickleCounter)
+  if (config.profileTrickleCounter)
   {
     messageText += String(trickleCounter);
   }
@@ -211,8 +211,8 @@ static void handleTargetReached(bool weightWithinTolerance)
   setLabelTextColor(ui_LabelTricklerWeight, weightWithinTolerance ? 0x00FF00 : 0xFFFF00);
 
   if ((tricklerState == TRICKLER_RUNNING) &&
-      weightAtOrAbove(weight, config.targetWeight + config.profile_alarmThreshold) &&
-      (config.profile_alarmThreshold > 0))
+      weightAtOrAbove(weight, config.targetWeight + config.profileAlarmThreshold) &&
+      (config.profileAlarmThreshold > 0))
   {
     handleOverTrickle();
     measurementCount = 0;
@@ -226,7 +226,7 @@ static void handleTargetReached(bool weightWithinTolerance)
     {
       config.trickleCount++;
     }
-    if (config.profile_trickleCounter && weightWithinTolerance)
+    if (config.profileTrickleCounter && weightWithinTolerance)
     {
       trickleCounter++;
       updateDisplayLog(String(langText("status_done")) + langText("status_count") + String(trickleCounter), true);
@@ -242,10 +242,10 @@ static void handleTargetReached(bool weightWithinTolerance)
 
 static int selectProfileStep()
 {
-  int profileStep = config.profile_count - 1;
-  for (int i = 0; i < config.profile_count; i++)
+  int profileStep = config.profileEntryCount - 1;
+  for (int i = 0; i < config.profileEntryCount; i++)
   {
-    if (weight <= (config.targetWeight - config.profile_weight[i]))
+    if (weight <= (config.targetWeight - config.profileDiffWeight[i]))
     {
       profileStep = i;
       break;
@@ -257,9 +257,9 @@ static int selectProfileStep()
 void updateActiveProfileStepCounterDisplay(int actualWeightCounter)
 {
   if ((activeProfileStep < 0) ||
-      (activeProfileStep >= config.profile_count) ||
+      (activeProfileStep >= config.profileEntryCount) ||
       (tricklerState != TRICKLER_RUNNING) ||
-      (measurementCount != config.profile_measurements[activeProfileStep]))
+      (measurementCount != config.profileMeasurements[activeProfileStep]))
   {
     return;
   }
@@ -268,17 +268,17 @@ void updateActiveProfileStepCounterDisplay(int actualWeightCounter)
   snprintf(infoLine,
            sizeof(infoLine),
            "W%.3f ST%ld RPM%d M%d/%d",
-           config.profile_weight[activeProfileStep],
-           config.profile_steps[activeProfileStep],
-           config.profile_rpm[activeProfileStep],
-           config.profile_measurements[activeProfileStep],
+           config.profileDiffWeight[activeProfileStep],
+           config.profileSteps[activeProfileStep],
+           config.profileRpm[activeProfileStep],
+           config.profileMeasurements[activeProfileStep],
            actualWeightCounter);
   updateDisplayLog(infoLine, true);
 }
 
 static bool runProfileStep(bool calibrationProfile, int actualWeightCounter)
 {
-  if (config.profile_count <= 0)
+  if (config.profileEntryCount <= 0)
   {
     updateDisplayLog(langText("status_invalid_profile"), true);
     stopTrickler();
@@ -287,7 +287,7 @@ static bool runProfileStep(bool calibrationProfile, int actualWeightCounter)
 
   int profileStep = selectProfileStep();
   activeProfileStep = profileStep;
-  byte stepperNum = config.profile_num[profileStep];
+  byte stepperNum = config.profileStepper[profileStep];
   if ((stepperNum < 1) || (stepperNum > 2))
   {
     updateDisplayLog(langText("status_invalid_stepper"), true);
@@ -295,10 +295,10 @@ static bool runProfileStep(bool calibrationProfile, int actualWeightCounter)
     return false;
   }
 
-  setStepperRpmIfChanged(stepperNum, config.profile_rpm[profileStep]);
-  step(stepperNum, config.profile_steps[profileStep]);
+  setStepperRpmIfChanged(stepperNum, config.profileRpm[profileStep]);
+  step(stepperNum, config.profileSteps[profileStep]);
 
-  measurementCount = config.profile_measurements[profileStep];
+  measurementCount = config.profileMeasurements[profileStep];
 
   if (calibrationProfile)
   {
@@ -314,7 +314,7 @@ static void handleProfileRunning(bool calibrationProfile, int actualWeightCounte
 {
   if (weightBelow(weight, 0.0f) || (firstProfileMovePending && !canStartFirstThrowAtCurrentWeight()))
   {
-    if (config.profile_startAtZero)
+    if (config.profileStartAtZero)
     {
       updateDisplayLog(langText("status_waiting_zero"), true);
     }
@@ -343,7 +343,7 @@ static void handleProfileRunning(bool calibrationProfile, int actualWeightCounte
         startCalibrationProfilePrompt();
         return;
       }
-      measurementCount = config.profile_generalMeasurements;
+      measurementCount = config.profileGeneralMeasurements;
       updateDisplayLog(infoText, true);
       return;
     }
@@ -356,14 +356,14 @@ static void handleNewWeight()
 {
   // Weight reads drive the state machine: finish on target, otherwise choose
   // the next profile step and motor movement.
-  newData = false;
+  newWeightData = false;
   int actualWeightCounter = weightCounter;
   weightCounter = 0;
 
   if (weightAtOrBelow(weight, 0.0f))
   {
     firstProfileMovePending = true;
-    measurementCount = config.profile_generalMeasurements;
+    measurementCount = config.profileGeneralMeasurements;
   }
 
   bool calibrationProfile = isCalibrationProfile();
@@ -371,16 +371,16 @@ static void handleNewWeight()
   DEBUG_PRINT("Weight: ");
   DEBUG_PRINTLN(weight);
   DEBUG_PRINT("TargetWeight: ");
-  DEBUG_PRINTLN(String((config.targetWeight - config.profile_tolerance), 5));
-  DEBUG_PRINTLN(String((config.targetWeight + config.profile_tolerance), 5));
-  DEBUG_PRINT("profile_alarmThreshold: ");
-  DEBUG_PRINTLN(String((config.targetWeight + config.profile_alarmThreshold), 5));
+  DEBUG_PRINTLN(String((config.targetWeight - config.profileTolerance), 5));
+  DEBUG_PRINTLN(String((config.targetWeight + config.profileTolerance), 5));
+  DEBUG_PRINT("profileAlarmThreshold: ");
+  DEBUG_PRINTLN(String((config.targetWeight + config.profileAlarmThreshold), 5));
 
   if (!calibrationProfile &&
-      weightAtOrAbove(weight, config.targetWeight - config.profile_tolerance) &&
+      weightAtOrAbove(weight, config.targetWeight - config.profileTolerance) &&
       weightAtOrAbove(weight, 0.0f))
   {
-    handleTargetReached(weightAtOrBelow(weight, config.targetWeight + config.profile_tolerance));
+    handleTargetReached(weightAtOrBelow(weight, config.targetWeight + config.profileTolerance));
   }
 
   if (tricklerState == TRICKLER_RUNNING)
@@ -398,7 +398,7 @@ static void handleNewWeight()
 void handleRunningTrickler()
 {
   readWeight();
-  if (newData)
+  if (newWeightData)
   {
     handleNewWeight();
   }

@@ -147,7 +147,7 @@ static void hideWifiQr_event_cb(lv_event_t *e)
 static void showWifiQrFromLog_event_cb(lv_event_t *e)
 {
   (void)e;
-  if (WIFI_SETUP_AP_ACTIVE && (wifiQrObject != NULL) && (wifiQrModuleCount > 0))
+  if (wifiSetupApActive && (wifiQrObject != NULL) && (wifiQrModuleCount > 0))
   {
     wifiQrDismissed = false;
     setWifiQrHidden(false);
@@ -194,7 +194,7 @@ void updateWifiSetupQrCode()
   }
 
   ensureWifiQrObject();
-  if ((wifiQrObject == NULL) || !WIFI_SETUP_AP_ACTIVE || (wifiQrModuleCount == 0))
+  if ((wifiQrObject == NULL) || !wifiSetupApActive || (wifiQrModuleCount == 0))
   {
     setWifiQrHidden(true);
     lvglUnlock();

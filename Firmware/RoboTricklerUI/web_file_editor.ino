@@ -113,7 +113,7 @@ bool loadFromFilesystem(fs::FS &fs, const char *sourceName, String path)
 
 bool loadWebFile(String path)
 {
-  return FILESYSTEM_ACTIVE && loadFromFilesystem(ACTIVE_FS, activeFSIsSD ? "SD" : "LittleFS", path);
+  return filesystemActive && loadFromFilesystem(ACTIVE_FS, activeFSIsSD ? "SD" : "LittleFS", path);
 }
 
 void handleFileUpload()
@@ -301,7 +301,7 @@ void handleNotFound()
   {
     return;
   }
-  if (WIFI_SETUP_AP_ACTIVE)
+  if (wifiSetupApActive)
   {
     server.sendHeader("Location", "/system/ap");
     server.send(302, "text/plain", "");

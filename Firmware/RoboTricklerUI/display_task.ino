@@ -26,7 +26,7 @@ IRAM_ATTR void lvgl_disp_task(void *parg)
             lv_timer_handler();
             lvglUnlock();
         }
-        if (WEB_SERVER_ACTIVE && ((WiFi.status() == WL_CONNECTED) || WIFI_SETUP_AP_ACTIVE))
+        if (webServerActive && ((WiFi.status() == WL_CONNECTED) || wifiSetupApActive))
         {
             server.handleClient();
         }

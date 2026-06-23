@@ -79,13 +79,13 @@ TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 
 struct Config
 {
-  bool wifi_enabled;
-  char wifi_ssid[64];
-  char wifi_psk[64];
-  char IPStatic[16];
-  char IPGateway[16];
-  char IPSubnet[16];
-  char IPDns[16];
+  bool wifiEnabled;
+  char wifiSsid[64];
+  char wifiPsk[64];
+  char wifiIpStatic[16];
+  char wifiIpGateway[16];
+  char wifiIpSubnet[16];
+  char wifiIpDns[16];
 
   char beeper[16];
   char language[8];
@@ -93,37 +93,37 @@ struct Config
   bool trickleCounter;
   long trickleCount;
   float targetWeight;
-  char scale_protocol[32];
-  int scale_baud;
-  char scale_customCode[32];
-  int motorRevSteps;
-  char profile[32];
+  char scaleProtocol[32];
+  int scaleBaud;
+  char scaleCustomCode[32];
+  int motorStepsPerRev;
+  char profileName[32];
 
-  byte profile_num[16];
-  float profile_weight[16];
-  float profile_tolerance;
-  float profile_alarmThreshold;
-  float profile_weightGap;
-  byte profile_bulkActuator;
-  int profile_generalMeasurements;
-  bool profile_startAtZero;
-  bool profile_trickleCounter;
-  double profile_stepperUnitsPerRev[3];
-  int profile_stepperUnitsPerRevRpm[3];
-  bool profile_stepperEnabled[3];
-  int profile_measurements[16];
-  long profile_steps[16];
-  int profile_rpm[16];
-  int profile_count;
+  byte profileStepper[16];
+  float profileDiffWeight[16];
+  float profileTolerance;
+  float profileAlarmThreshold;
+  float profileWeightGap;
+  byte profileBulkStepper;
+  int profileGeneralMeasurements;
+  bool profileStartAtZero;
+  bool profileTrickleCounter;
+  double profileStepperWeightPerRev[3];
+  int profileStepperRpm[3];
+  bool profileStepperEnabled[3];
+  int profileMeasurements[16];
+  long profileSteps[16];
+  int profileRpm[16];
+  int profileEntryCount;
 };
 // Single source of truth for flash-backed settings and the active trickling profile.
 Config config;
 
 bool wifiActive = false;
-bool WIFI_SETUP_AP_ACTIVE = false;
-bool WEB_SERVER_ACTIVE = false;
-bool WEB_SERVER_ROUTES_REGISTERED = false;
-bool FILESYSTEM_ACTIVE = false;
+bool wifiSetupApActive = false;
+bool webServerActive = false;
+bool webServerRoutesRegistered = false;
+bool filesystemActive = false;
 fs::FS *activeFS = NULL;
 bool activeFSIsSD = false;
 bool sdMounted = false;
@@ -143,10 +143,10 @@ DNSServer dnsServer;
 unsigned long wifiPreviousMillis = 0;
 unsigned long wifiInterval = 10000;
 
-#define DEFAULT_MOTOR_REV_STEPS 200 // Default number of steps for a full revolution of the stepper motor (config.motorRevSteps). This is typically 200 for a 1.8 degree stepper, but may be different for other motors.
+#define DEFAULT_MOTOR_STEPS_PER_REV 200 // Default number of steps for a full revolution of the stepper motor (config.motorStepsPerRev). This is typically 200 for a 1.8 degree stepper, but may be different for other motors.
 
 #define MAX_TARGET_WEIGHT 999
-#define DEC_PLACES 3
+#define DECIMAL_PLACES 3
 #define WEIGHT_SCALE_FACTOR 100000.0f // Scale factor to convert weight to an integer for comparison, based on the number of decimal places (e.g., 10000 for 4 decimal places).
 #define IDLE_SCALE_READ_INTERVAL 1000 // Interval for reading the scale weight in idle state (milliseconds).
 
@@ -154,13 +154,13 @@ const float WEIGHT_STEP_SIZES[] = {0.001, 0.01, 0.1, 1.0, 10.0};
 const byte WEIGHT_STEP_COUNT = sizeof(WEIGHT_STEP_SIZES) / sizeof(WEIGHT_STEP_SIZES[0]);
 
 float weight = NAN;
-int decPlaces = DEC_PLACES;
-String unit = "";
+int decimalPlaces = DECIMAL_PLACES;
+String weightUnit = "";
 float lastWeight = 0;
 int weightCounter = 0;
 int measurementCount = 0;
 int activeProfileStep = -1;
-bool newData = false;
+bool newWeightData = false;
 // State machine that keeps UI events, scale reads, and motor moves in sync.
 enum TricklerState
 {
@@ -172,19 +172,19 @@ enum TricklerState
 TricklerState tricklerState = TRICKLER_IDLE;
 bool firstProfileMovePending = true;
 int trickleCounter = 0;
-bool restart_now = false;
+bool restartNow = false;
 // Track prompt start and fresh scale reads so stale weights are ignored.
 unsigned long calibrationProfilePromptTime = 0;
 unsigned long lastScaleWeightReadTime = 0;
 
-// Profile names are bounded by config.profile (char[32]). Keeping the list in a
+// Profile names are bounded by config.profileName (char[32]). Keeping the list in a
 // fixed BSS buffer instead of String[32] avoids up to 32 small heap allocations
 // (and their fragmentation) every time the profile list is rebuilt.
 #define PROFILE_LIST_MAX 32
 #define PROFILE_NAME_LEN 32
-char profileListBuff[PROFILE_LIST_MAX][PROFILE_NAME_LEN];
+char profileList[PROFILE_LIST_MAX][PROFILE_NAME_LEN];
 byte profileListCount;
-int profileListCounter;
+int selectedProfileIndex;
 
 void disableRuntimeWatchdogs()
 {

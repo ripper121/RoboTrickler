@@ -41,25 +41,25 @@
          'tolerance',
          'alarmThreshold',
          'weightGap',
-         'actuator',
+         'bulkStepper',
          'startAtZero',
          'trickleCounter',
          'measurements'
       ];
       const stepperProperties = [
          'enabled',
-         'unitsPerRev',
-         'unitsPerRevRpm'
+         'weightPerRev',
+         'rpm'
       ];
       const profileStepProperties = [
          'diffWeight',
-         'actuator',
+         'stepper',
          'steps',
          'rpm',
          'measurements'
       ];
       const calibrationProperties = [
-         'actuator',
+         'stepper',
          'revolutions',
          'rpm',
          'measurements'
@@ -85,14 +85,14 @@
          return number;
       }
 
-      function cleanActuator(value) {
+      function cleanStepper(value) {
          return value === 'stepper2' ? 'stepper2' : 'stepper1';
       }
 
       function isCalibrationProfileJSON(jsonData) {
          return jsonData &&
-            !Array.isArray(jsonData.rs232TrickleMap) &&
-            jsonData.actuator !== undefined &&
+            !Array.isArray(jsonData.trickleMap) &&
+            jsonData.stepper !== undefined &&
             jsonData.revolutions !== undefined &&
             jsonData.rpm !== undefined;
       }
@@ -101,18 +101,18 @@
          if (!jsonData) {
             throw new Error('Profile must be a JSON object');
          }
-         if (Array.isArray(jsonData.rs232TrickleMap)) {
+         if (Array.isArray(jsonData.trickleMap)) {
             return cleanNewProfileJSON(jsonData);
          }
          if (isCalibrationProfileJSON(jsonData)) {
             return cleanCalibrationProfileJSON(jsonData);
          }
-         throw new Error('Profile must contain rs232TrickleMap array or calibration fields');
+         throw new Error('Profile must contain trickleMap array or calibration fields');
       }
 
       function cleanCalibrationProfileJSON(jsonData) {
          return {
-            actuator: cleanActuator(jsonData.actuator),
+            stepper: cleanStepper(jsonData.stepper),
             revolutions: Math.max(0.001, cleanNumber(jsonData.revolutions, 100)),
             rpm: cleanInteger(jsonData.rpm, 200, 1),
             measurements: cleanInteger(jsonData.measurements, 5, 0)
@@ -122,11 +122,11 @@
       function cleanNewProfileJSON(jsonData) {
          var cleanedData = {
             general: {},
-            actuator: {
+            steppers: {
                stepper1: {},
                stepper2: {}
             },
-            rs232TrickleMap: []
+            trickleMap: []
          };
 
          const general = jsonData.general || {};
@@ -134,25 +134,25 @@
          cleanedData.general.tolerance = cleanNumber(general.tolerance, 0.000);
          cleanedData.general.alarmThreshold = cleanNumber(general.alarmThreshold, 1.000);
          cleanedData.general.weightGap = cleanNumber(general.weightGap, 1.000);
-         cleanedData.general.actuator = cleanActuator(general.actuator);
+         cleanedData.general.bulkStepper = cleanStepper(general.bulkStepper);
          cleanedData.general.startAtZero = cleanBoolean(general.startAtZero, false);
          cleanedData.general.trickleCounter = cleanBoolean(general.trickleCounter, false);
          cleanedData.general.measurements = cleanInteger(general.measurements, 5, 0);
 
-         const actuator = jsonData.actuator || {};
+         const steppers = jsonData.steppers || {};
          ['stepper1', 'stepper2'].forEach(function (stepperName) {
-            const stepper = actuator[stepperName] || {};
+            const stepper = steppers[stepperName] || {};
             const defaults = stepperName === 'stepper1'
-               ? { enabled: true, unitsPerRev: 0.000, unitsPerRevRpm: 200 }
-               : { enabled: false, unitsPerRev: 10.000, unitsPerRevRpm: 200 };
-            cleanedData.actuator[stepperName].enabled = cleanBoolean(stepper.enabled, defaults.enabled);
-            cleanedData.actuator[stepperName].unitsPerRev = cleanNumber(stepper.unitsPerRev, defaults.unitsPerRev);
-            cleanedData.actuator[stepperName].unitsPerRevRpm = cleanInteger(stepper.unitsPerRevRpm, defaults.unitsPerRevRpm, 1);
+               ? { enabled: true, weightPerRev: 0.000, rpm: 200 }
+               : { enabled: false, weightPerRev: 10.000, rpm: 200 };
+            cleanedData.steppers[stepperName].enabled = cleanBoolean(stepper.enabled, defaults.enabled);
+            cleanedData.steppers[stepperName].weightPerRev = cleanNumber(stepper.weightPerRev, defaults.weightPerRev);
+            cleanedData.steppers[stepperName].rpm = cleanInteger(stepper.rpm, defaults.rpm, 1);
          });
 
-         if (Array.isArray(jsonData.rs232TrickleMap)) {
-            jsonData.rs232TrickleMap.forEach(function (entry) {
-               cleanedData.rs232TrickleMap.push(cleanProfileStep(entry || {}));
+         if (Array.isArray(jsonData.trickleMap)) {
+            jsonData.trickleMap.forEach(function (entry) {
+               cleanedData.trickleMap.push(cleanProfileStep(entry || {}));
             });
          }
 
@@ -162,7 +162,7 @@
       function cleanProfileStep(entry) {
          return {
             diffWeight: Math.max(0, cleanNumber(entry.diffWeight, 0.000)),
-            actuator: cleanActuator(entry.actuator),
+            stepper: cleanStepper(entry.stepper),
             steps: cleanInteger(entry.steps, 5, 1),
             rpm: cleanInteger(entry.rpm, 200, 1),
             measurements: cleanInteger(entry.measurements, 5, 0)
@@ -173,7 +173,7 @@
          var container = document.getElementById('container');
          container.innerHTML = ''; // Clear existing content
 
-         if (!Array.isArray(jsonData.rs232TrickleMap)) {
+         if (!Array.isArray(jsonData.trickleMap)) {
             addObjectFieldset(container, translatedProfileText('calibration', 'Calibration'), 'calibration', jsonData, calibrationProperties);
             document.getElementById("profileContainer").style.display = "block";
             return;
@@ -181,16 +181,16 @@
 
          addObjectFieldset(container, translatedProfileText('general', 'General'), 'general', jsonData.general, generalProperties);
 
-         var actuatorFieldset = document.createElement('fieldset');
-         container.appendChild(actuatorFieldset);
-         var actuatorLegend = document.createElement('legend');
-         actuatorLegend.textContent = translatedProfileText('actuator', 'Actuator');
-         actuatorFieldset.appendChild(actuatorLegend);
-         addObjectFieldset(actuatorFieldset, translatedProfileText('stepper', 'Stepper {number}', 1), 'actuator.stepper1', jsonData.actuator.stepper1, stepperProperties);
-         addObjectFieldset(actuatorFieldset, translatedProfileText('stepper', 'Stepper {number}', 2), 'actuator.stepper2', jsonData.actuator.stepper2, stepperProperties);
+         var steppersFieldset = document.createElement('fieldset');
+         container.appendChild(steppersFieldset);
+         var steppersLegend = document.createElement('legend');
+         steppersLegend.textContent = translatedProfileText('steppers', 'Steppers');
+         steppersFieldset.appendChild(steppersLegend);
+         addObjectFieldset(steppersFieldset, translatedProfileText('stepper', 'Stepper {number}', 1), 'steppers.stepper1', jsonData.steppers.stepper1, stepperProperties);
+         addObjectFieldset(steppersFieldset, translatedProfileText('stepper', 'Stepper {number}', 2), 'steppers.stepper2', jsonData.steppers.stepper2, stepperProperties);
 
-         jsonData.rs232TrickleMap.forEach(function (entry, index) {
-            addObjectFieldset(container, translatedProfileText('profileStep', 'Profile-Step {number}', index + 1), 'rs232TrickleMap.' + index, entry, profileStepProperties);
+         jsonData.trickleMap.forEach(function (entry, index) {
+            addObjectFieldset(container, translatedProfileText('profileStep', 'Profile-Step {number}', index + 1), 'trickleMap.' + index, entry, profileStepProperties);
          });
          document.getElementById("profileContainer").style.display = "block";
       }
@@ -230,7 +230,7 @@
                input = document.createElement('input');
                input.type = 'checkbox';
                input.checked = dataObject[property];
-            } else if (property === 'actuator') {
+            } else if (property === 'stepper' || property === 'bulkStepper') {
                input = document.createElement('select');
                ['stepper1', 'stepper2'].forEach(function (optionValue) {
                   var option = document.createElement('option');
@@ -242,7 +242,7 @@
             } else {
                input = document.createElement('input');
                input.type = 'number';
-               input.step = property === 'measurements' || property === 'steps' || property === 'rpm' || property === 'unitsPerRevRpm' ? '1' : '0.001';
+               input.step = property === 'measurements' || property === 'steps' || property === 'rpm' ? '1' : '0.001';
                input.value = dataObject[property];
             }
 
@@ -261,11 +261,11 @@
          var isCalibrationProfile = document.querySelector('[data-path="calibration"]') !== null;
          var newJSONData = isCalibrationProfile ? {} : {
             general: {},
-            actuator: {
+            steppers: {
                stepper1: {},
                stepper2: {}
             },
-            rs232TrickleMap: []
+            trickleMap: []
          };
 
          inputs.forEach(function (input) {

@@ -25,20 +25,20 @@
                 <input type="text" id="wifi_psk" name="wifi_psk" maxlength="64" placeholder="MyWifiPassword"><br>
                 <fieldset>
                     <legend data-i18n="config.ipSettings">IP Settings (optional)</legend>
-                    <label for="IPStatic" data-i18n="config.staticIp">Static IP:</label>
-                    <input type="text" id="IPStatic" name="IPStatic" maxlength="15" size="15"
+                    <label for="ipStatic" data-i18n="config.staticIp">Static IP:</label>
+                    <input type="text" id="ipStatic" name="ipStatic" maxlength="15" size="15"
                         placeholder="192.168.178.100"><br>
 
-                    <label for="IPGateway" data-i18n="config.gateway">Gateway:</label>
-                    <input type="text" id="IPGateway" name="IPGateway" maxlength="15" size="15"
+                    <label for="ipGateway" data-i18n="config.gateway">Gateway:</label>
+                    <input type="text" id="ipGateway" name="ipGateway" maxlength="15" size="15"
                         placeholder="192.168.178.1"><br>
 
-                    <label for="IPSubnet" data-i18n="config.subnet">Subnet:</label>
-                    <input type="text" id="IPSubnet" name="IPSubnet" maxlength="15" size="15"
+                    <label for="ipSubnet" data-i18n="config.subnet">Subnet:</label>
+                    <input type="text" id="ipSubnet" name="ipSubnet" maxlength="15" size="15"
                         placeholder="255.255.255.0"><br>
 
-                    <label for="IPDNS" data-i18n="config.dns">DNS:</label>
-                    <input type="text" id="IPDNS" name="IPDNS" maxlength="15" size="15" placeholder="8.8.8.8"><br>
+                    <label for="ipDns" data-i18n="config.dns">DNS:</label>
+                    <input type="text" id="ipDns" name="ipDns" maxlength="15" size="15" placeholder="8.8.8.8"><br>
                 </fieldset>
             </fieldset>
 
@@ -116,30 +116,30 @@
             if (!allowedScaleProtocols.includes(scaleProtocol)) {
                 scaleProtocol = 'GG';
             }
-            var fwUpdate = jsonObject.fw_update || {};
-            var profileName = String(jsonObject.profile || 'calibrate').trim();
+            var fwUpdate = jsonObject.fwUpdate || {};
+            var profileName = String(jsonObject.activeProfile || 'calibrate').trim();
             var customCode = scaleProtocol === 'CUSTOM' ? (jsonObject.scale && jsonObject.scale.customCode) || '' : '';
             return {
                 wifi: {
                     enabled: !jsonObject.wifi || jsonObject.wifi.enabled !== false,
                     ssid: (jsonObject.wifi && jsonObject.wifi.ssid) || '',
                     psk: (jsonObject.wifi && jsonObject.wifi.psk) || '',
-                    IPStatic: (jsonObject.wifi && jsonObject.wifi.IPStatic) || '',
-                    IPGateway: (jsonObject.wifi && jsonObject.wifi.IPGateway) || '',
-                    IPSubnet: (jsonObject.wifi && jsonObject.wifi.IPSubnet) || '',
-                    IPDNS: (jsonObject.wifi && jsonObject.wifi.IPDNS) || ''
+                    ipStatic: (jsonObject.wifi && jsonObject.wifi.ipStatic) || '',
+                    ipGateway: (jsonObject.wifi && jsonObject.wifi.ipGateway) || '',
+                    ipSubnet: (jsonObject.wifi && jsonObject.wifi.ipSubnet) || '',
+                    ipDns: (jsonObject.wifi && jsonObject.wifi.ipDns) || ''
                 },
                 scale: {
                     protocol: scaleProtocol,
                     customCode: customCode,
                     baud: (jsonObject.scale && jsonObject.scale.baud) || 9600
                 },
-                profile: profileName || 'calibrate',
+                activeProfile: profileName || 'calibrate',
                 beeper: jsonObject.beeper || 'done',
                 language: jsonObject.language || 'en',
                 trickleCounter: jsonObject.trickleCounter === true,
                 trickleCount: Math.max(0, parseInt(jsonObject.trickleCount, 10) || 0),
-                fw_update: {
+                fwUpdate: {
                     check: fwUpdate.check !== false
                 }
             };
@@ -154,22 +154,22 @@
                     enabled: document.getElementById('wifi_enabled').checked,
                     ssid: formData.get('wifi_ssid'),
                     psk: formData.get('wifi_psk'),
-                    IPStatic: formData.get('IPStatic'),
-                    IPGateway: formData.get('IPGateway'),
-                    IPSubnet: formData.get('IPSubnet'),
-                    IPDNS: formData.get('IPDNS')
+                    ipStatic: formData.get('ipStatic'),
+                    ipGateway: formData.get('ipGateway'),
+                    ipSubnet: formData.get('ipSubnet'),
+                    ipDns: formData.get('ipDns')
                 },
                 scale: {
                     protocol: scaleProtocol,
                     baud: parseInt(formData.get('scale_baud'), 10),
                     customCode: scaleProtocol === 'CUSTOM' ? formData.get('scale_customCode') : ''
                 },
-                profile: (formData.get('profile_name') || 'calibrate').trim() || 'calibrate',
+                activeProfile: (formData.get('profile_name') || 'calibrate').trim() || 'calibrate',
                 beeper: formData.get('beeper'),
                 language: formData.get('language'),
                 trickleCounter: document.getElementById('trickle_counter').checked,
                 trickleCount: Math.max(0, parseInt(formData.get('trickle_count'), 10) || 0),
-                fw_update: {
+                fwUpdate: {
                     check: document.getElementById('fw_check').checked
                 }
             };
@@ -186,10 +186,10 @@
                 configForm.wifi_enabled.checked = jsonObject.wifi.enabled !== false;
                 configForm.wifi_ssid.value = jsonObject.wifi.ssid || '';
                 configForm.wifi_psk.value = jsonObject.wifi.psk || '';
-                configForm.IPStatic.value = jsonObject.wifi.IPStatic || '';
-                configForm.IPGateway.value = jsonObject.wifi.IPGateway || '';
-                configForm.IPSubnet.value = jsonObject.wifi.IPSubnet || '';
-                configForm.IPDNS.value = jsonObject.wifi.IPDNS || '';
+                configForm.ipStatic.value = jsonObject.wifi.ipStatic || '';
+                configForm.ipGateway.value = jsonObject.wifi.ipGateway || '';
+                configForm.ipSubnet.value = jsonObject.wifi.ipSubnet || '';
+                configForm.ipDns.value = jsonObject.wifi.ipDns || '';
 
                 // Update Scale settings
                 configForm.scale_protocol.value = jsonObject.scale.protocol || 'GG';
@@ -199,10 +199,10 @@
 
                 configForm.beeper.value = jsonObject.beeper || 'done';
                 configForm.language.value = jsonObject.language || 'en';
-                configForm.profile_name.value = jsonObject.profile || 'calibrate';
+                configForm.profile_name.value = jsonObject.activeProfile || 'calibrate';
                 configForm.trickle_counter.checked = jsonObject.trickleCounter === true;
                 configForm.trickle_count.value = jsonObject.trickleCount || 0;
-                configForm.fw_check.checked = jsonObject.fw_update.check !== false;
+                configForm.fw_check.checked = jsonObject.fwUpdate.check !== false;
 
             } catch (e) {
                 console.error('Invalid JSON');

@@ -81,7 +81,7 @@ def generate_profile(
     weight_gap: float,
     rpm: int,
     measurements: int,
-    bulk_actuator: str,
+    bulk_stepper: str,
     calc_tolerance: float,
     unit: str,
     alarm_threshold: float,
@@ -92,12 +92,12 @@ def generate_profile(
     """Build a profile dict using the original generator algorithm.
 
     ``weight`` is the powder weight measured during a 20000-step calibration run;
-    it drives ``unitsPerRev`` and the per-entry step counts.
+    it drives ``weightPerRev`` and the per-entry step counts.
     """
     if weight <= 0:
         raise ValueError("calibration weight must be greater than 0")
 
-    bulk = "stepper2" if bulk_actuator == "stepper2" else "stepper1"
+    bulk = "stepper2" if bulk_stepper == "stepper2" else "stepper1"
 
     profile = {
         "general": {
@@ -105,24 +105,24 @@ def generate_profile(
             "tolerance": round3(tolerance),
             "alarmThreshold": round3(alarm_threshold),
             "weightGap": round3(weight_gap),
-            "actuator": bulk,
+            "bulkStepper": bulk,
             "startAtZero": start_at_zero,
             "trickleCounter": trickle_counter,
             "measurements": int(round(measurements)),
         },
-        "actuator": {
+        "steppers": {
             "stepper1": {
                 "enabled": True,
-                "unitsPerRev": round3(weight / 100.0),
-                "unitsPerRevRpm": rpm,
+                "weightPerRev": round3(weight / 100.0),
+                "rpm": rpm,
             },
             "stepper2": {
                 "enabled": bulk == "stepper2",
-                "unitsPerRev": 10.000,
-                "unitsPerRevRpm": rpm if bulk == "stepper2" else 200,
+                "weightPerRev": 10.000,
+                "rpm": rpm if bulk == "stepper2" else 200,
             },
         },
-        "rs232TrickleMap": [],
+        "trickleMap": [],
     }
 
     weights = list(DIFF_WEIGHTS_GRAIN)
@@ -135,10 +135,10 @@ def generate_profile(
         steps = js_round((diff_weight / weight) * ((20000 / 100) * calc_tolerance))
         steps = max(steps, 5)
         entry_measurements = max(MAP_MEASUREMENTS[i], general_measurements)
-        profile["rs232TrickleMap"].append(
+        profile["trickleMap"].append(
             {
                 "diffWeight": diff_weight,
-                "actuator": "stepper1",
+                "stepper": "stepper1",
                 "steps": steps,
                 "rpm": rpm,
                 "measurements": entry_measurements,
@@ -237,10 +237,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     gen.add_argument("--rpm", type=int, default=200, help="stepper speed (rpm)")
     gen.add_argument("--measurements", type=int, default=2, help="general measurement count")
     gen.add_argument(
-        "--bulk-actuator",
+        "--bulk-stepper",
         choices=["stepper1", "stepper2"],
         default="stepper1",
-        help="bulk actuator",
+        help="bulk stepper",
     )
     gen.add_argument(
         "--calc-tolerance",
@@ -274,7 +274,7 @@ def main(argv: list[str] | None = None) -> int:
             weight_gap=args.weight_gap,
             rpm=args.rpm,
             measurements=args.measurements,
-            bulk_actuator=args.bulk_actuator,
+            bulk_stepper=args.bulk_stepper,
             calc_tolerance=args.calc_tolerance,
             unit=args.unit,
             alarm_threshold=args.alarm_threshold,

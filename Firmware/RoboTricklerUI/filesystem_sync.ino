@@ -188,7 +188,7 @@ void finishFilesystemSyncConfirm(bool confirmed)
   if (direction == FILESYSTEM_SYNC_FLASH_TO_SD)
   {
     strlcat(message, langText("msg_sync_restarting"), sizeof(message));
-    restart_now = true;
+    restartNow = true;
   }
   successBox(message, false);
 }

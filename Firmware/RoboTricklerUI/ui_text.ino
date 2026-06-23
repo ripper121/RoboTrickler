@@ -215,15 +215,15 @@ static const char *languageFallback(const char *key)
   if (strcmp(key, "err_entry") == 0)
     return "\nEntry: ";
   if (strcmp(key, "err_required_profile_entry") == 0)
-    return "\nRequired: diffWeight, actuator, steps, rpm, measurements";
+    return "\nRequired: diffWeight, stepper, steps, rpm, measurements";
   if (strcmp(key, "err_invalid_profile_values") == 0)
     return "Invalid profile values:\n";
   if (strcmp(key, "err_calibration_profile_incomplete") == 0)
     return "Calibration profile is incomplete:\n";
   if (strcmp(key, "err_required_calibration_profile") == 0)
-    return "\nRequired: actuator, steps, rpm";
+    return "\nRequired: stepper, steps, rpm";
   if (strcmp(key, "err_profile_missing_map") == 0)
-    return "Profile has no rs232TrickleMap:\n";
+    return "Profile has no trickleMap:\n";
   if (strcmp(key, "err_profile_file_not_found") == 0)
     return "Profile file not found:\n";
   if (strcmp(key, "err_could_not_open_profile_file") == 0)

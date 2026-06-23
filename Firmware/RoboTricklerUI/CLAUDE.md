@@ -77,7 +77,7 @@ The main loop dispatches through `TricklerState` (`TRICKLER_IDLE`, `TRICKLER_RUN
 | `display_task.ino` | FreeRTOS task wrapping LVGL tick/handler on Core 0 |
 | `display_helpers.ino` | `updateDisplayLog()`, label helpers, thread-safe UI wrappers |
 | `rs232.ino` | Scale serial protocol (GG, AD, KERN, SBI, custom) |
-| `sd_config.ino` | `loadConfiguration()`, `saveConfiguration()`, profile I/O |
+| `sd_storage.ino` | `loadConfiguration()`, `saveConfiguration()`, profile I/O |
 | `web_server.ino` | HTTP server init, `/update`, `/fwupdate`, OTA handlers |
 | `web_api.ino` | REST endpoints: `/getTricklerState`, `/setTarget`, etc. |
 | `web_file_editor.ino` | SD file browser/editor API routes |
@@ -85,14 +85,14 @@ The main loop dispatches through `TricklerState` (`TRICKLER_IDLE`, `TRICKLER_RUN
 | `wifi_qr.ino` | Wi-Fi QR-code generation/display |
 | `stepper.ino` | I2S stepper driver, `stepperBeep()` |
 | `profile_actions.ino` | Profile list, load, save, delete |
-| `flash_filesystem.ino` | SD/LittleFS mounting, legacy-file cleanup |
+| `filesystem_mount.ino` | SD/LittleFS mounting, legacy-file cleanup |
 | `filesystem_sync.ino` | SD ↔ LittleFS file synchronization (display action) |
 | `ui.c` / `ui_Screen1.c` | SquareLine Studio-generated LVGL UI objects |
 | `ui_events.ino` | LVGL event callbacks wired to hardware actions |
 | `ui_dialogs.ino` | `messageBox()` + typed dialog helpers (`errorBox`, `successBox`, `warnBox`, `confirmBox`, `cancelInteractiveDialogs()`) |
 | `ui_text.ino` | `langText()` — localization lookup |
 | `firmware_check.ino` | OTA version check against remote endpoint |
-| `update.ino` | OTA firmware + LittleFS update handlers |
+| `ota_update.ino` | OTA firmware + LittleFS update handlers |
 | `screenshot.ino` | Display screenshot endpoint (gated by `ENABLE_SCREENSHOT`) |
 
 ### Localization
@@ -106,7 +106,7 @@ There are **two completely separate** translation stores — never mix them:
 **Rule of thumb:** if a string appears on the touchscreen → `SD-Files/lang/` (+ C fallback). If it appears in a browser (static *or* firmware-served page) → `SD-Files/system/lang/`. When adding a new firmware-served web string, add the key under `web.firmware` in **both** `SD-Files/system/lang/` files and pass an English fallback at the call site.
 
 ### SD File Rules
-- `fw_update.url` is internal to firmware (`DEFAULT_FW_UPDATE_URL` in `RoboTricklerUI.ino`). Do **not** expose it in SD files, `config.txt`, or docs. `fw_update.check` may stay user-configurable.
+- `fwUpdate.url` is internal to firmware (`DEFAULT_FW_UPDATE_URL` in `RoboTricklerUI.ino`). Do **not** expose it in SD files, `config.txt`, or docs. `fwUpdate.check` may stay user-configurable.
 - Files under `SD-Files/system/` are gzip-compressed into `SD-Files-Gz/system/` with `.gz` extension. Files under `SD-Files/profiles/` and `SD-Files/lang/` are copied uncompressed (parsed directly by firmware).
 - The web server transparently serves `.gz` variants when they exist.
 
@@ -124,8 +124,8 @@ Try to reuse UI Code to save Heap.
 
 ### Update checklist
 1. **Version line**: keep `Stand: Firmware X.XX` in sync with `FW_VERSION` in `RoboTricklerUI.ino`. Check `changelog.md` for what changed in the release.
-2. **Config fields**: cross-check every `config.txt` field documented in the *Konfiguration* section against `loadConfiguration()` / `saveConfiguration()` in `sd_config.ino`. Every field the firmware reads/writes must be documented with its default values; nothing extra.
-3. **Profile fields**: cross-check the *Aufbau eines Profils* section against `readProfile()` / `loadProfileEntries()` / `loadProfileEntry()` in `sd_config.ino` (`general`, `actuator.stepperN`, `rs232TrickleMap[]`, plus the `calibrate` shape).
+2. **Config fields**: cross-check every `config.txt` field documented in the *Konfiguration* section against `loadConfiguration()` / `saveConfiguration()` in `sd_storage.ino`. Every field the firmware reads/writes must be documented with its default values; nothing extra.
+3. **Profile fields**: cross-check the *Aufbau eines Profils* section against `loadProfile()` / `loadProfileEntries()` / `loadProfileEntry()` in `sd_storage.ino` (`general`, `steppers.stepperN`, `trickleMap[]`, plus the `calibrate` shape).
 4. **Display UI**: derive what's possible on the touchscreen from the event callbacks in `ui_events.ino`, `filesystem_sync.ino`, `ui_dialogs.ino` and their button wiring in `ui_Screen1.c` (`lv_obj_add_event_cb`). Confirm which tab a control lives on via its parent panel (`ui_PanelPageInfo` = Info tab, etc.). Runtime behavior (auto-refill, weight colors, over-trickle alarm, counters, diagnostics line) comes from `trickler_runtime.ino` and `trickler_control.ino`.
 5. **Web features**: list HTTP endpoints from the `server.on(...)` registrations in `web_server.ino`; the browser remote-control, `settings.html`, `profileEditor.html`, and file editor are the SD pages under `SD-Files/system/`. Bulk profile generation now lives in `tools/create_profiles.py` (uploads via the web file-editor API), not a browser generator page.
 6. **Scales**: the protocol list and request commands come from `SCALE_REQUEST_COMMANDS` in `rs232.ino` (empty protocol is shown as `STREAM`).
@@ -134,7 +134,7 @@ Try to reuse UI Code to save Heap.
 - **Table of contents**: the *Inhaltsverzeichnis* lists all `#` and `##` headings. GitHub anchors = lowercase, spaces→`-`, punctuation dropped (`G&G`→`#gg`, `(LittleFS)`→`…littlefs`), umlauts kept, consecutive dropped chars leave double hyphens (`Gramm / Grain`→`#gramm--grain`). Update the TOC whenever headings change.
 - **Heading hierarchy**: top-level chapters are `#`, subsections `##`. All scale brands (G&G, Sartorius, Kern, A&D, Steinberg) are `##` under `# Waagen` — keep them at the same level.
 - **Screenshot placeholders**: use the blockquote form `> 📸 **Screenshot – Display:** …` or `> 📸 **Screenshot – Webserver:** …`, naming the source and what the shot must contain. Search the file for `📸` to find open placeholders.
-- Do **not** expose `fw_update.url` (see SD File Rules).
+- Do **not** expose `fwUpdate.url` (see SD File Rules).
 
 ### How we went through it (June 2026, 2.13)
 Reference for how the current manual was brought up to date:

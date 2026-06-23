@@ -1,6 +1,6 @@
 bool initFilesystem()
 {
-  FILESYSTEM_ACTIVE = false;
+  filesystemActive = false;
   activeFS = NULL;
   activeFSIsSD = false;
   sdMounted = false;
@@ -16,7 +16,7 @@ bool initFilesystem()
     sdMounted = true;
     activeFS = &SD;
     activeFSIsSD = true;
-    FILESYSTEM_ACTIVE = true;
+    filesystemActive = true;
     DEBUG_PRINTLN("SD card mounted.");
   }
   else
@@ -31,11 +31,11 @@ bool initFilesystem()
   if (LittleFS.begin(false))
   {
     littleFSMounted = true;
-    if (!FILESYSTEM_ACTIVE)
+    if (!filesystemActive)
     {
       activeFS = &LittleFS;
       activeFSIsSD = false;
-      FILESYSTEM_ACTIVE = true;
+      filesystemActive = true;
     }
     DEBUG_PRINTLN("LittleFS mounted.");
   }
@@ -66,7 +66,7 @@ bool initFilesystem()
     DEBUG_PRINTLN(LittleFS.usedBytes());
   }
 #endif
-  return FILESYSTEM_ACTIVE;
+  return filesystemActive;
 }
 
 // Pre-2.13 firmware stored the active profile/calibration at the SD-card root as

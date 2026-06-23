@@ -12,7 +12,7 @@ void initSetup()
         ui_init();
         disableTouchGestures();
         disp_task_init();
-        restart_now = true;
+        restartNow = true;
         errorBox(langText("msg_filesystem_mount_failed"), true);
         return;
     }
@@ -65,17 +65,17 @@ void initSetup()
 
     infoText = langText("status_reading_profiles");
     updateDisplayLog(infoText, true);
-    getProfileList();
+    refreshProfileList();
 
     // If config.txt names a missing profile, fall back through loadSelectedProfile()
     // so the normal corruption handling and calibration profile recovery run.
     bool selectedProfileFound = false;
     for (int i = 0; i < profileListCount; i++)
     {
-        if (strcmp(config.profile, profileListBuff[i]) == 0)
+        if (strcmp(config.profileName, profileList[i]) == 0)
         {
             selectedProfileFound = true;
-            profileListCounter = i;
+            selectedProfileIndex = i;
             break;
         }
     }
@@ -93,9 +93,9 @@ void initSetup()
         saveConfiguration("/config.txt", config);
         for (int i = 0; i < profileListCount; i++)
         {
-            if (strcmp(config.profile, profileListBuff[i]) == 0)
+            if (strcmp(config.profileName, profileList[i]) == 0)
             {
-                profileListCounter = i;
+                selectedProfileIndex = i;
                 break;
             }
         }
@@ -114,7 +114,7 @@ void initSetup()
         updateDisplayLog("WIFI:" + WiFi.localIP().toString());
     }
 
-    if (WIFI_SETUP_AP_ACTIVE)
+    if (wifiSetupApActive)
     {
         showWifiSetupInfo();
     }
@@ -123,10 +123,10 @@ void initSetup()
         setLabelText(ui_LabelInfo, (String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
     }
     updateTargetWeightLabel();
-    setLabelText(ui_LabelProfile, config.profile);
+    setLabelText(ui_LabelProfile, config.profileName);
     updateProfileActionButtonVisibility();
 
-    tempTargetWeight = config.targetWeight;
+    pendingTargetWeight = config.targetWeight;
 
     infoText = langText("status_ready");
     updateDisplayLog(infoText, true);

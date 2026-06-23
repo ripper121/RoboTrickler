@@ -156,7 +156,7 @@ bool serialReq(const char *req)
   }
 
   #if DEBUG
-  if (strcmp(config.scale_protocol, "CUSTOM") == 0)
+  if (strcmp(config.scaleProtocol, "CUSTOM") == 0)
   {
     updateDisplayLog("TX:" + serialBytesToDisplay(bytes, byteCount) + " / " + serialBytesToHex(bytes, byteCount), false);
   }
@@ -169,7 +169,7 @@ bool serialReq(const char *req)
 
 void initRs232()
 {
-  Serial1.begin(config.scale_baud, SERIAL_8N1, SCALE_RX_PIN, SCALE_TX_PIN);
+  Serial1.begin(config.scaleBaud, SERIAL_8N1, SCALE_RX_PIN, SCALE_TX_PIN);
 }
 
 bool isWeightNumberChar(char c)
@@ -354,15 +354,15 @@ bool requestScaleWeight()
 {
   updateActiveProfileStepCounterDisplay(weightCounter);
 
-  if (strcmp(config.scale_protocol, "CUSTOM") == 0)
+  if (strcmp(config.scaleProtocol, "CUSTOM") == 0)
   {
-    return serialReq(config.scale_customCode);
+    return serialReq(config.scaleCustomCode);
   }
 
   for (size_t i = 0; i < SCALE_PROTOCOL_COUNT; i++)
   {
     if ((SCALE_REQUEST_COMMANDS[i].request != NULL) &&
-        (strcmp(config.scale_protocol, SCALE_REQUEST_COMMANDS[i].protocol) == 0))
+        (strcmp(config.scaleProtocol, SCALE_REQUEST_COMMANDS[i].protocol) == 0))
     {
       return serialReq(SCALE_REQUEST_COMMANDS[i].request);
     }
@@ -383,7 +383,7 @@ bool readScaleLine(float *parsedWeight, int *parsedDecimalPlaces, String *parsed
   buff[bytesRead] = '\0';
 
   #if DEBUG
-  if (strcmp(config.scale_protocol, "CUSTOM") == 0)
+  if (strcmp(config.scaleProtocol, "CUSTOM") == 0)
   {
     updateDisplayLog("RX:" + String(buff), false);
   }
@@ -434,7 +434,7 @@ void readWeight()
   int stableCount = 0;
   long previousRoundedWeight = 0;
   float stableWeight = -1.0;
-  int stableDecimalPlaces = DEC_PLACES;
+  int stableDecimalPlaces = DECIMAL_PLACES;
   String stableUnit = "";
 
   serialFlush();
@@ -448,7 +448,7 @@ void readWeight()
     }
 
     float candidateWeight = -1.0;
-    int candidateDecimalPlaces = DEC_PLACES;
+    int candidateDecimalPlaces = DECIMAL_PLACES;
     String candidateUnit = "";
     if (!readScaleLine(&candidateWeight, &candidateDecimalPlaces, &candidateUnit))
     {
@@ -496,23 +496,23 @@ void readWeight()
       }
     }
     weight = NAN;
-    newData = false;
+    newWeightData = false;
   }
   else
   {
     timeoutLogged = false;
     weight = stableWeight;
-    decPlaces = (stableDecimalPlaces > 0) ? stableDecimalPlaces : DEC_PLACES;
-    unit = stableUnit;
+    decimalPlaces = (stableDecimalPlaces > 0) ? stableDecimalPlaces : DECIMAL_PLACES;
+    weightUnit = stableUnit;
     lastWeight = weight;
     lastScaleWeightReadTime = millis();
     weightCounter = stableCount;
-    newData = isTricklerRunning() || isCalibrationProfilePromptPending();
+    newWeightData = isTricklerRunning() || isCalibrationProfilePromptPending();
 
     DEBUG_PRINT("Weight: ");
     DEBUG_PRINTLN(weight);
     DEBUG_PRINT("Decimal places: ");
-    DEBUG_PRINTLN(decPlaces);
+    DEBUG_PRINTLN(decimalPlaces);
   }
 
   setWeightLabel(ui_LabelTricklerWeight);
