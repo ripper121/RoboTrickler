@@ -11,7 +11,7 @@ static byte profileStepperNumber(int stepperId)
   return 0;
 }
 
-// JSON object keys are always strings, so the steppers map is keyed by "1"/"2".
+// JSON object keys are always strings, so the stepper map is keyed by "1"/"2".
 static const char *profileStepperName(byte stepperNumber)
 {
   return stepperNumber == 2 ? "2" : "1";
@@ -368,12 +368,12 @@ bool loadProfile(const char *filename, Config &config)
     }
   }
 
-  JsonObject steppers = doc["steppers"].as<JsonObject>();
-  if (!steppers.isNull())
+  JsonObject stepperMap = doc["stepper"].as<JsonObject>();
+  if (!stepperMap.isNull())
   {
     for (int stepperNumber = 1; stepperNumber <= 2; stepperNumber++)
     {
-      JsonObject stepper = steppers[profileStepperName(stepperNumber)].as<JsonObject>();
+      JsonObject stepper = stepperMap[profileStepperName(stepperNumber)].as<JsonObject>();
       if (!stepper.isNull())
       {
         config.profileStepperEnabled[stepperNumber] = stepper["enabled"] | true;
@@ -701,12 +701,12 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   general["sessionCounter"] = false;
   general["measurements"] = config.profileGeneralMeasurements > 0 ? config.profileGeneralMeasurements : 20;
 
-  JsonObject steppers = doc["steppers"].to<JsonObject>();
-  JsonObject stepper1 = steppers["1"].to<JsonObject>();
+  JsonObject stepperMap = doc["stepper"].to<JsonObject>();
+  JsonObject stepper1 = stepperMap["1"].to<JsonObject>();
   stepper1["enabled"] = true;
   stepper1["weightPerRev"] = serialized(String(unitsPerRev, 3));
   stepper1["rpm"] = profileRpm;
-  JsonObject stepper2 = steppers["2"].to<JsonObject>();
+  JsonObject stepper2 = stepperMap["2"].to<JsonObject>();
   stepper2["enabled"] = config.profileStepperEnabled[2];
   stepper2["weightPerRev"] = serialized(String(config.profileStepperWeightPerRev[2] > 0.0 ? config.profileStepperWeightPerRev[2] : 10.0, 3));
   stepper2["rpm"] = config.profileStepperRpm[2] > 0 ? config.profileStepperRpm[2] : 200;
@@ -794,15 +794,15 @@ bool tuneProfileUnitsPerRev(const char *profileName, float unitsPerRev)
     profileRpm = 200;
   }
 
-  JsonObject steppers = doc["steppers"].as<JsonObject>();
-  if (steppers.isNull())
+  JsonObject stepperMap = doc["stepper"].as<JsonObject>();
+  if (stepperMap.isNull())
   {
-    steppers = doc["steppers"].to<JsonObject>();
+    stepperMap = doc["stepper"].to<JsonObject>();
   }
-  JsonObject stepper1 = steppers["1"].as<JsonObject>();
+  JsonObject stepper1 = stepperMap["1"].as<JsonObject>();
   if (stepper1.isNull())
   {
-    stepper1 = steppers["1"].to<JsonObject>();
+    stepper1 = stepperMap["1"].to<JsonObject>();
   }
   stepper1["enabled"] = true;
   stepper1["weightPerRev"] = serialized(String(unitsPerRev, 3));

@@ -122,7 +122,7 @@ Das angezeigte Gewicht wechselt während des Trickelns die Farbe:
 ## Tab `Profil`
 
 * Mit den Pfeil-Buttons (oben/unten) wird durch die erkannten Profile geblättert; das gewählte Profil wird sofort geladen.
-* Der orangefarbene Button (Zahnrad) öffnet das Profil-Tuning und passt `steppers.1.weightPerRev` an (siehe [Profil-Tuning](#profil-tuning)).
+* Der orangefarbene Button (Zahnrad) öffnet das Profil-Tuning und passt `stepper.1.weightPerRev` an (siehe [Profil-Tuning](#profil-tuning)).
 * Der rote Button (Papierkorb) löscht das ausgewählte Profil nach einer Bestätigung.
 * Für das Profil `calibrate` werden Tuning- und Lösch-Button ausgeblendet.
 
@@ -252,7 +252,7 @@ Wechsle in den Tab `Profil` und wähle das Profil aus, das angepasst werden soll
 
 ### 2. Units / Rev anpassen
 
-Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Rev** anpassen (entspricht `steppers.1.weightPerRev`). Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
+Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Rev** anpassen (entspricht `stepper.1.weightPerRev`). Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
 
 ![Units / Rev anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
 
@@ -307,7 +307,7 @@ Klicke auf das **Löschen-Symbol**, um das ausgewählte Profil zu entfernen. Vor
 
 ## Pulverprofil-Editor
 
-Der Webserver enthält `profileEditor.html` als `Pulverprofil-Editor`. Damit können alle von der Firmware unterstützten Profilfelder (`general`, `steppers.1`/`2` und die `trickleMap`-Schritte sowie die Kalibrier-Profilform) bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` gespeichert werden. Auch `general.startAtZero` und `general.sessionCounter` sind eigene Eingabefelder.
+Der Webserver enthält `profileEditor.html` als `Pulverprofil-Editor`. Damit können alle von der Firmware unterstützten Profilfelder (`general`, `stepper.1`/`2` und die `trickleMap`-Schritte sowie die Kalibrier-Profilform) bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` gespeichert werden. Auch `general.startAtZero` und `general.sessionCounter` sind eigene Eingabefelder.
 
 Wenn du über den Webserver arbeitest, listet das Auswahlfeld `Profil laden:` alle vorhandenen Profile aus `/profiles` auf. Beim Auswählen wird das Profil vom Gerät geladen und in den Editor übernommen; mit `Speichern` wird es unter dem `Profilname` wieder in `/profiles` zurückgeschrieben. Profile lassen sich weiterhin per Drag&Drop oder Einfügen in das Textfeld laden. Starte den Trickler nach dem Speichern neu, damit die neue Profilliste geladen wird.
 
@@ -343,7 +343,7 @@ Beispiel für das neue Profilformat:
     "sessionCounter": false,
     "measurements": 5
   },
-  "steppers": {
+  "stepper": {
     "1": {
       "enabled": true,
       "weightPerRev": 0.375,
@@ -418,7 +418,7 @@ Beispiel für das neue Profilformat:
 
 Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `bulkStepper = 1`, `startAtZero = false`, `sessionCounter = false` und `measurements = 20`.
 
-### `steppers`
+### `stepper`
 
 * `1` und `2`: Einstellungen für Trickler 1 und Trickler 2 (die Objekt-Schlüssel sind die Stepper-Nummern).
 * `enabled`: aktiviert den jeweiligen Stepper für den automatischen ersten Grobwurf.
@@ -452,14 +452,14 @@ Die Firmware kann zwei Trickler (Stepper) unabhängig ansteuern. Das ist nützli
 
 **Hardware:**
 
-* Stepper 1 (`steppers.1`) wird über den **X-Motoranschluss** des Treiberboards angesteuert.
-* Stepper 2 (`steppers.2`) wird über den **Y-Motoranschluss** des Treiberboards angesteuert.
+* Stepper 1 (`stepper.1`) wird über den **X-Motoranschluss** des Treiberboards angesteuert.
+* Stepper 2 (`stepper.2`) wird über den **Y-Motoranschluss** des Treiberboards angesteuert.
 
 Beide Treiber teilen sich die gemeinsame Enable-Leitung; es ist immer nur ein Stepper gleichzeitig in Bewegung.
 
 **So werden die beiden Trickler verteilt:**
 
-1. **Beide Stepper aktivieren.** Setze im `steppers`-Block bei beiden, die du nutzen willst, `enabled: true` und trage jeweils `weightPerRev` (Pulvermenge pro Umdrehung) und `rpm` (Drehzahl in U/min) passend zum jeweiligen Trickler ein.
+1. **Beide Stepper aktivieren.** Setze im `stepper`-Block bei beiden, die du nutzen willst, `enabled: true` und trage jeweils `weightPerRev` (Pulvermenge pro Umdrehung) und `rpm` (Drehzahl in U/min) passend zum jeweiligen Trickler ein.
 2. **Grobwurf-Stepper wählen.** `general.bulkStepper` bestimmt, welcher Stepper den automatischen ersten Grobwurf ausführt (z.B. `2` als großer/schneller Trickler). Dieser Stepper muss `enabled: true` sein und ein gültiges `weightPerRev` größer `0` haben, sonst wird der Grobwurf übersprungen.
 3. **Feinwurf pro Tabelleneintrag zuweisen.** Jeder Eintrag in `trickleMap` hat ein eigenes `stepper.id`-Feld (`1` oder `2`). So kannst du je nach Abstand zum Zielgewicht (`diffWeight`) einen anderen Trickler verwenden – typischerweise der große Trickler für die größeren `diffWeight`-Bereiche und der feine Trickler für die letzten Einträge nahe `0`.
 
@@ -477,7 +477,7 @@ Damit übernimmt im folgenden Beispiel Stepper `2` den Grobwurf und den ersten F
     "sessionCounter": false,
     "measurements": 5
   },
-  "steppers": {
+  "stepper": {
     "1": {
       "enabled": true,
       "weightPerRev": 0.200,

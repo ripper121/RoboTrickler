@@ -110,7 +110,7 @@ def generate_profile(
             "sessionCounter": trickle_counter,
             "measurements": int(round(measurements)),
         },
-        "steppers": {
+        "stepper": {
             "1": {
                 "enabled": True,
                 "weightPerRev": round3(weight / 100.0),
