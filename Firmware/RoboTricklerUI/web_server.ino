@@ -312,7 +312,7 @@ bool startWebServerServices()
   updateDisplayLog("IP:" + WiFi.localIP().toString());
 
 
-  if (config.fwCheck)
+  if (config.fwUpdateCheck)
   {
     makeHttpGetRequest(firmwareCheckUrl());
   }

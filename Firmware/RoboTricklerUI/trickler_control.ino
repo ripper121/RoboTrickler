@@ -64,11 +64,11 @@ void stopTrickler()
 {
     stopMeasurement();
     setProfileTabEnabled(true);
-    if (config.trickleCounter)
+    if (config.totalCounterEnable)
     {
         saveConfiguration("/config.txt", config);
     }
-    trickleCounter = 0;
+    sessionCount = 0;
     setLabelText(ui_LabelToggleTrickler, UI_SYMBOL_START);
     setObjBgColor(ui_ButtonToggleTrickler, 0x00FF00);
     setLabelTextColor(ui_LabelTricklerWeight, 0xFFFFFF);

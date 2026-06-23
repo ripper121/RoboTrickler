@@ -97,7 +97,7 @@ def generate_profile(
     if weight <= 0:
         raise ValueError("calibration weight must be greater than 0")
 
-    bulk = "stepper2" if bulk_stepper == "stepper2" else "stepper1"
+    bulk = 2 if bulk_stepper == "stepper2" else 1
 
     profile = {
         "general": {
@@ -107,19 +107,19 @@ def generate_profile(
             "weightGap": round3(weight_gap),
             "bulkStepper": bulk,
             "startAtZero": start_at_zero,
-            "trickleCounter": trickle_counter,
+            "sessionCounter": trickle_counter,
             "measurements": int(round(measurements)),
         },
         "steppers": {
-            "stepper1": {
+            "1": {
                 "enabled": True,
                 "weightPerRev": round3(weight / 100.0),
                 "rpm": rpm,
             },
-            "stepper2": {
-                "enabled": bulk == "stepper2",
+            "2": {
+                "enabled": bulk == 2,
                 "weightPerRev": 10.000,
-                "rpm": rpm if bulk == "stepper2" else 200,
+                "rpm": rpm if bulk == 2 else 200,
             },
         },
         "trickleMap": [],
@@ -138,10 +138,12 @@ def generate_profile(
         profile["trickleMap"].append(
             {
                 "diffWeight": diff_weight,
-                "stepper": "stepper1",
-                "steps": steps,
-                "rpm": rpm,
                 "measurements": entry_measurements,
+                "stepper": {
+                    "id": 1,
+                    "steps": steps,
+                    "rpm": rpm,
+                },
             }
         )
 

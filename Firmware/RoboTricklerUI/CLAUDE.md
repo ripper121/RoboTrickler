@@ -106,7 +106,7 @@ There are **two completely separate** translation stores — never mix them:
 **Rule of thumb:** if a string appears on the touchscreen → `SD-Files/lang/` (+ C fallback). If it appears in a browser (static *or* firmware-served page) → `SD-Files/system/lang/`. When adding a new firmware-served web string, add the key under `web.firmware` in **both** `SD-Files/system/lang/` files and pass an English fallback at the call site.
 
 ### SD File Rules
-- `fwUpdate.url` is internal to firmware (`DEFAULT_FW_UPDATE_URL` in `RoboTricklerUI.ino`). Do **not** expose it in SD files, `config.txt`, or docs. `fwUpdate.check` may stay user-configurable.
+- `firmwareUpdate.url` is internal to firmware (`DEFAULT_FW_UPDATE_URL` in `RoboTricklerUI.ino`). Do **not** expose it in SD files, `config.txt`, or docs. `firmwareUpdate.check` may stay user-configurable.
 - Files under `SD-Files/system/` are gzip-compressed into `SD-Files-Gz/system/` with `.gz` extension. Files under `SD-Files/profiles/` and `SD-Files/lang/` are copied uncompressed (parsed directly by firmware).
 - The web server transparently serves `.gz` variants when they exist.
 
@@ -134,7 +134,7 @@ Try to reuse UI Code to save Heap.
 - **Table of contents**: the *Inhaltsverzeichnis* lists all `#` and `##` headings. GitHub anchors = lowercase, spaces→`-`, punctuation dropped (`G&G`→`#gg`, `(LittleFS)`→`…littlefs`), umlauts kept, consecutive dropped chars leave double hyphens (`Gramm / Grain`→`#gramm--grain`). Update the TOC whenever headings change.
 - **Heading hierarchy**: top-level chapters are `#`, subsections `##`. All scale brands (G&G, Sartorius, Kern, A&D, Steinberg) are `##` under `# Waagen` — keep them at the same level.
 - **Screenshot placeholders**: use the blockquote form `> 📸 **Screenshot – Display:** …` or `> 📸 **Screenshot – Webserver:** …`, naming the source and what the shot must contain. Search the file for `📸` to find open placeholders.
-- Do **not** expose `fwUpdate.url` (see SD File Rules).
+- Do **not** expose `firmwareUpdate.url` (see SD File Rules).
 
 ### How we went through it (June 2026, 2.13)
 Reference for how the current manual was brought up to date:

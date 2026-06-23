@@ -56,7 +56,7 @@ and compile with `python tools/compile_upload.py --cli --error --compile-only`.
 
 ## SD file rules
 
-- `fwUpdate.url` is for internal firmware use only. Keep the update URL in firmware code (`DEFAULT_FW_UPDATE_URL`) and do not add it to SD files, generated `config.txt`, the config generator UI, or SD-facing docs. `fwUpdate.check` may remain user-configurable.
+- `firmwareUpdate.url` is for internal firmware use only. Keep the update URL in firmware code (`DEFAULT_FW_UPDATE_URL`) and do not add it to SD files, generated `config.txt`, the config generator UI, or SD-facing docs. `firmwareUpdate.check` may remain user-configurable.
 
 ## SD file testing upload
 

@@ -1,28 +1,31 @@
-static byte profileStepperNumber(const char *stepperName)
+static byte profileStepperNumber(int stepperId)
 {
-  if ((stepperName == NULL) || (strcmp(stepperName, "stepper1") == 0))
+  if (stepperId == 1)
   {
     return 1;
   }
-  if (strcmp(stepperName, "stepper2") == 0)
+  if (stepperId == 2)
   {
     return 2;
   }
   return 0;
 }
 
+// JSON object keys are always strings, so the steppers map is keyed by "1"/"2".
 static const char *profileStepperName(byte stepperNumber)
 {
-  return stepperNumber == 2 ? "stepper2" : "stepper1";
+  return stepperNumber == 2 ? "2" : "1";
 }
 
 static bool hasRequiredProfileFields(JsonObject profileEntry)
 {
+  JsonObject stepper = profileEntry["stepper"].as<JsonObject>();
   return !profileEntry.isNull() &&
          !profileEntry["diffWeight"].isNull() &&
-         !profileEntry["stepper"].isNull() &&
-         !profileEntry["steps"].isNull() &&
-         !profileEntry["rpm"].isNull() &&
+         !stepper.isNull() &&
+         !stepper["id"].isNull() &&
+         !stepper["steps"].isNull() &&
+         !stepper["rpm"].isNull() &&
          !profileEntry["measurements"].isNull();
 }
 
@@ -31,10 +34,12 @@ static bool hasCalibrationProfileFields(JsonObject profileEntry)
   // The calibration profile is the one special case that expresses its throw in
   // motor revolutions (hardware-independent) instead of raw steps; steps are
   // derived from config.motorStepsPerRev when the entry is loaded.
+  JsonObject stepper = profileEntry["stepper"].as<JsonObject>();
   return !profileEntry.isNull() &&
-         !profileEntry["stepper"].isNull() &&
-         !profileEntry["revolutions"].isNull() &&
-         !profileEntry["rpm"].isNull();
+         !stepper.isNull() &&
+         !stepper["id"].isNull() &&
+         !stepper["revolutions"].isNull() &&
+         !stepper["rpm"].isNull();
 }
 
 static bool isCalibrationProfileFile(const char *filename)
@@ -72,8 +77,9 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
     return false;
   }
 
-  byte stepperNumber = profileStepperNumber(profileEntry["stepper"] | "stepper1");
-  int stepperRpm = profileEntry["rpm"] | 200;
+  JsonObject stepper = profileEntry["stepper"].as<JsonObject>();
+  byte stepperNumber = profileStepperNumber(stepper["id"] | 1);
+  int stepperRpm = stepper["rpm"] | 200;
   int measurements = profileEntry["measurements"] | 5;
   float profileWeight = profileEntry["diffWeight"] | 0.0;
   // The calibration profile is special: it stores its throw as motor
@@ -83,12 +89,12 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   long profileSteps;
   if (calibrationEntry)
   {
-    float profileRevolutions = profileEntry["revolutions"] | 0.0;
+    float profileRevolutions = stepper["revolutions"] | 0.0;
     profileSteps = lround((double)profileRevolutions * (double)config.motorStepsPerRev);
   }
   else
   {
-    profileSteps = profileEntry["steps"] | 0;
+    profileSteps = stepper["steps"] | 0;
   }
   if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperRpm <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
   {
@@ -202,11 +208,11 @@ void setDefaultConfiguration(Config &config)
   config.targetWeight = 40.0;
   strlcpy(config.beeper, "done", sizeof(config.beeper));
   strlcpy(config.language, "en", sizeof(config.language));
-  config.fwCheck = true;
-  config.trickleCounter = false;
-  config.trickleCount = 0;
+  config.fwUpdateCheck = true;
+  config.totalCounterEnable = false;
+  config.totalCount = 0;
   config.profileStartAtZero = false;
-  config.profileTrickleCounter = false;
+  config.profileSessionCounter = false;
 }
 
 // Recreate /profiles/calibrate.txt from the built-in template. The calibration
@@ -223,10 +229,11 @@ bool writeDefaultCalibrateProfile()
   }
 
   JsonDocument doc;
-  doc["stepper"] = "stepper1";
-  doc["revolutions"] = 100;
-  doc["rpm"] = 200;
   doc["measurements"] = 10;
+  JsonObject stepper = doc["stepper"].to<JsonObject>();
+  stepper["id"] = 1;
+  stepper["revolutions"] = 100;
+  stepper["rpm"] = 200;
 
   const char *filename = "/profiles/calibrate.txt";
   ACTIVE_FS.remove(filename);
@@ -321,7 +328,7 @@ bool loadProfile(const char *filename, Config &config)
   config.profileBulkStepper = 1;
   config.profileGeneralMeasurements = 20;
   config.profileStartAtZero = false;
-  config.profileTrickleCounter = false;
+  config.profileSessionCounter = false;
   config.profileEntryCount = 0;
   for (int i = 0; i < 3; i++)
   {
@@ -346,9 +353,9 @@ bool loadProfile(const char *filename, Config &config)
     config.profileTolerance = general["tolerance"] | 0.000;
     config.profileAlarmThreshold = general["alarmThreshold"] | 0.000;
     config.profileWeightGap = general["weightGap"] | 1.000;
-    config.profileBulkStepper = profileStepperNumber(general["bulkStepper"] | "stepper1");
+    config.profileBulkStepper = profileStepperNumber(general["bulkStepper"] | 1);
     config.profileStartAtZero = general["startAtZero"] | false;
-    config.profileTrickleCounter = general["trickleCounter"] | false;
+    config.profileSessionCounter = general["sessionCounter"] | false;
     if (config.profileBulkStepper == 0)
     {
       config.profileBulkStepper = 1;
@@ -441,7 +448,7 @@ bool loadConfiguration(const char *filename, Config &config)
   strlcpy(config.scaleProtocol, doc["scale"]["protocol"] | config.scaleProtocol, sizeof(config.scaleProtocol));
   strlcpy(config.scaleCustomCode, doc["scale"]["customCode"] | config.scaleCustomCode, sizeof(config.scaleCustomCode));
   config.scaleBaud = doc["scale"]["baud"] | config.scaleBaud;
-  config.motorStepsPerRev = doc["motorStepsPerRev"] | config.motorStepsPerRev;
+  config.motorStepsPerRev = doc["stepper"]["stepsPerRev"] | config.motorStepsPerRev;
   if (config.motorStepsPerRev <= 0)
   {
     config.motorStepsPerRev = DEFAULT_MOTOR_STEPS_PER_REV;
@@ -449,16 +456,15 @@ bool loadConfiguration(const char *filename, Config &config)
   strlcpy(config.profileName, doc["activeProfile"] | config.profileName, sizeof(config.profileName));
   strlcpy(config.beeper, doc["beeper"] | config.beeper, sizeof(config.beeper));
   strlcpy(config.language, doc["language"] | config.language, sizeof(config.language));
-  config.trickleCounter = doc["trickleCounter"] | config.trickleCounter;
-  config.trickleCount = doc["trickleCount"] | config.trickleCount;
-  if (config.trickleCount < 0)
+  config.totalCounterEnable = doc["totalCounter"]["enable"] | config.totalCounterEnable;
+  config.totalCount = doc["totalCounter"]["count"] | config.totalCount;
+  if (config.totalCount < 0)
   {
-    config.trickleCount = 0;
+    config.totalCount = 0;
   }
 
-  JsonObject fwUpdate = doc["fwUpdate"].as<JsonObject>();
-  // fwUpdate.url is intentionally firmware-only; only the check flag is configurable.
-  config.fwCheck = fwUpdate["check"] | config.fwCheck;
+  // firmwareUpdate.url is intentionally firmware-only; only the check flag is configurable.
+  config.fwUpdateCheck = doc["firmwareUpdate"]["check"] | config.fwUpdateCheck;
 
   file.close();
 
@@ -628,10 +634,11 @@ static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerRev, 
 
     JsonObject profileEntry = trickleMap.add<JsonObject>();
     profileEntry["diffWeight"] = serialized(String(diffWeights[i], 3));
-    profileEntry["stepper"] = "stepper1";
-    profileEntry["steps"] = steps;
-    profileEntry["rpm"] = profileRpm;
     profileEntry["measurements"] = measurements[i];
+    JsonObject stepper = profileEntry["stepper"].to<JsonObject>();
+    stepper["id"] = 1;
+    stepper["steps"] = steps;
+    stepper["rpm"] = profileRpm;
   }
 }
 
@@ -689,17 +696,17 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   general["tolerance"] = serialized(String(0.0, 3));
   general["alarmThreshold"] = serialized(String(1.0, 3));
   general["weightGap"] = serialized(String(1.0, 3));
-  general["bulkStepper"] = "stepper1";
+  general["bulkStepper"] = 1;
   general["startAtZero"] = false;
-  general["trickleCounter"] = false;
+  general["sessionCounter"] = false;
   general["measurements"] = config.profileGeneralMeasurements > 0 ? config.profileGeneralMeasurements : 20;
 
   JsonObject steppers = doc["steppers"].to<JsonObject>();
-  JsonObject stepper1 = steppers["stepper1"].to<JsonObject>();
+  JsonObject stepper1 = steppers["1"].to<JsonObject>();
   stepper1["enabled"] = true;
   stepper1["weightPerRev"] = serialized(String(unitsPerRev, 3));
   stepper1["rpm"] = profileRpm;
-  JsonObject stepper2 = steppers["stepper2"].to<JsonObject>();
+  JsonObject stepper2 = steppers["2"].to<JsonObject>();
   stepper2["enabled"] = config.profileStepperEnabled[2];
   stepper2["weightPerRev"] = serialized(String(config.profileStepperWeightPerRev[2] > 0.0 ? config.profileStepperWeightPerRev[2] : 10.0, 3));
   stepper2["rpm"] = config.profileStepperRpm[2] > 0 ? config.profileStepperRpm[2] : 200;
@@ -792,10 +799,10 @@ bool tuneProfileUnitsPerRev(const char *profileName, float unitsPerRev)
   {
     steppers = doc["steppers"].to<JsonObject>();
   }
-  JsonObject stepper1 = steppers["stepper1"].as<JsonObject>();
+  JsonObject stepper1 = steppers["1"].as<JsonObject>();
   if (stepper1.isNull())
   {
-    stepper1 = steppers["stepper1"].to<JsonObject>();
+    stepper1 = steppers["1"].to<JsonObject>();
   }
   stepper1["enabled"] = true;
   stepper1["weightPerRev"] = serialized(String(unitsPerRev, 3));
@@ -951,13 +958,13 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["scale"]["protocol"] = config.scaleProtocol;
   doc["scale"]["customCode"] = config.scaleCustomCode;
   doc["scale"]["baud"] = config.scaleBaud;
-  doc["motorStepsPerRev"] = config.motorStepsPerRev;
+  doc["stepper"]["stepsPerRev"] = config.motorStepsPerRev;
   doc["activeProfile"] = config.profileName;
   doc["beeper"] = config.beeper;
   doc["language"] = config.language;
-  doc["trickleCounter"] = config.trickleCounter;
-  doc["trickleCount"] = config.trickleCount;
-  doc["fwUpdate"]["check"] = config.fwCheck;
+  doc["totalCounter"]["enable"] = config.totalCounterEnable;
+  doc["totalCounter"]["count"] = config.totalCount;
+  doc["firmwareUpdate"]["check"] = config.fwUpdateCheck;
 
   // Serialize JSON to file
   if (serializeJsonPretty(doc, file) == 0)

@@ -43,7 +43,7 @@
          'weightGap',
          'bulkStepper',
          'startAtZero',
-         'trickleCounter',
+         'sessionCounter',
          'measurements'
       ];
       const stepperProperties = [
@@ -53,16 +53,20 @@
       ];
       const profileStepProperties = [
          'diffWeight',
-         'stepper',
-         'steps',
-         'rpm',
          'measurements'
       ];
+      const stepperStepProperties = [
+         'id',
+         'steps',
+         'rpm'
+      ];
       const calibrationProperties = [
-         'stepper',
-         'revolutions',
-         'rpm',
          'measurements'
+      ];
+      const calibrationStepperProperties = [
+         'id',
+         'revolutions',
+         'rpm'
       ];
 
       function cleanNumber(value, fallback) {
@@ -86,15 +90,15 @@
       }
 
       function cleanStepper(value) {
-         return value === 'stepper2' ? 'stepper2' : 'stepper1';
+         return Number(value) === 2 ? 2 : 1;
       }
 
       function isCalibrationProfileJSON(jsonData) {
          return jsonData &&
             !Array.isArray(jsonData.trickleMap) &&
-            jsonData.stepper !== undefined &&
-            jsonData.revolutions !== undefined &&
-            jsonData.rpm !== undefined;
+            jsonData.stepper && typeof jsonData.stepper === 'object' &&
+            jsonData.stepper.revolutions !== undefined &&
+            jsonData.stepper.rpm !== undefined;
       }
 
       function cleanProfileJSON(jsonData) {
@@ -111,11 +115,14 @@
       }
 
       function cleanCalibrationProfileJSON(jsonData) {
+         const stepper = jsonData.stepper || {};
          return {
-            stepper: cleanStepper(jsonData.stepper),
-            revolutions: Math.max(0.001, cleanNumber(jsonData.revolutions, 100)),
-            rpm: cleanInteger(jsonData.rpm, 200, 1),
-            measurements: cleanInteger(jsonData.measurements, 5, 0)
+            measurements: cleanInteger(jsonData.measurements, 5, 0),
+            stepper: {
+               id: cleanStepper(stepper.id),
+               revolutions: Math.max(0.001, cleanNumber(stepper.revolutions, 100)),
+               rpm: cleanInteger(stepper.rpm, 200, 1)
+            }
          };
       }
 
@@ -123,8 +130,8 @@
          var cleanedData = {
             general: {},
             steppers: {
-               stepper1: {},
-               stepper2: {}
+               "1": {},
+               "2": {}
             },
             trickleMap: []
          };
@@ -136,18 +143,18 @@
          cleanedData.general.weightGap = cleanNumber(general.weightGap, 1.000);
          cleanedData.general.bulkStepper = cleanStepper(general.bulkStepper);
          cleanedData.general.startAtZero = cleanBoolean(general.startAtZero, false);
-         cleanedData.general.trickleCounter = cleanBoolean(general.trickleCounter, false);
+         cleanedData.general.sessionCounter = cleanBoolean(general.sessionCounter, false);
          cleanedData.general.measurements = cleanInteger(general.measurements, 5, 0);
 
          const steppers = jsonData.steppers || {};
-         ['stepper1', 'stepper2'].forEach(function (stepperName) {
-            const stepper = steppers[stepperName] || {};
-            const defaults = stepperName === 'stepper1'
+         ['1', '2'].forEach(function (stepperId) {
+            const stepper = steppers[stepperId] || {};
+            const defaults = stepperId === '1'
                ? { enabled: true, weightPerRev: 0.000, rpm: 200 }
                : { enabled: false, weightPerRev: 10.000, rpm: 200 };
-            cleanedData.steppers[stepperName].enabled = cleanBoolean(stepper.enabled, defaults.enabled);
-            cleanedData.steppers[stepperName].weightPerRev = cleanNumber(stepper.weightPerRev, defaults.weightPerRev);
-            cleanedData.steppers[stepperName].rpm = cleanInteger(stepper.rpm, defaults.rpm, 1);
+            cleanedData.steppers[stepperId].enabled = cleanBoolean(stepper.enabled, defaults.enabled);
+            cleanedData.steppers[stepperId].weightPerRev = cleanNumber(stepper.weightPerRev, defaults.weightPerRev);
+            cleanedData.steppers[stepperId].rpm = cleanInteger(stepper.rpm, defaults.rpm, 1);
          });
 
          if (Array.isArray(jsonData.trickleMap)) {
@@ -160,12 +167,15 @@
       }
 
       function cleanProfileStep(entry) {
+         const stepper = entry.stepper || {};
          return {
             diffWeight: Math.max(0, cleanNumber(entry.diffWeight, 0.000)),
-            stepper: cleanStepper(entry.stepper),
-            steps: cleanInteger(entry.steps, 5, 1),
-            rpm: cleanInteger(entry.rpm, 200, 1),
-            measurements: cleanInteger(entry.measurements, 5, 0)
+            measurements: cleanInteger(entry.measurements, 5, 0),
+            stepper: {
+               id: cleanStepper(stepper.id),
+               steps: cleanInteger(stepper.steps, 5, 1),
+               rpm: cleanInteger(stepper.rpm, 200, 1)
+            }
          };
       }
 
@@ -174,7 +184,8 @@
          container.innerHTML = ''; // Clear existing content
 
          if (!Array.isArray(jsonData.trickleMap)) {
-            addObjectFieldset(container, translatedProfileText('calibration', 'Calibration'), 'calibration', jsonData, calibrationProperties);
+            addObjectFieldset(container, translatedProfileText('calibration', 'Calibration'), 'calibration', jsonData, calibrationProperties,
+               [{ name: 'stepper', properties: calibrationStepperProperties }]);
             document.getElementById("profileContainer").style.display = "block";
             return;
          }
@@ -186,11 +197,12 @@
          var steppersLegend = document.createElement('legend');
          steppersLegend.textContent = translatedProfileText('steppers', 'Steppers');
          steppersFieldset.appendChild(steppersLegend);
-         addObjectFieldset(steppersFieldset, translatedProfileText('stepper', 'Stepper {number}', 1), 'steppers.stepper1', jsonData.steppers.stepper1, stepperProperties);
-         addObjectFieldset(steppersFieldset, translatedProfileText('stepper', 'Stepper {number}', 2), 'steppers.stepper2', jsonData.steppers.stepper2, stepperProperties);
+         addObjectFieldset(steppersFieldset, translatedProfileText('stepper', 'Stepper {number}', 1), 'steppers.1', jsonData.steppers['1'], stepperProperties);
+         addObjectFieldset(steppersFieldset, translatedProfileText('stepper', 'Stepper {number}', 2), 'steppers.2', jsonData.steppers['2'], stepperProperties);
 
          jsonData.trickleMap.forEach(function (entry, index) {
-            addObjectFieldset(container, translatedProfileText('profileStep', 'Profile-Step {number}', index + 1), 'trickleMap.' + index, entry, profileStepProperties);
+            addObjectFieldset(container, translatedProfileText('profileStep', 'Profile-Step {number}', index + 1), 'trickleMap.' + index, entry, profileStepProperties,
+               [{ name: 'stepper', properties: stepperStepProperties }]);
          });
          document.getElementById("profileContainer").style.display = "block";
       }
@@ -208,7 +220,47 @@
          return window.rtT ? rtT('profileEditor.options.' + optionValue, optionValue) : optionValue;
       }
 
-      function addObjectFieldset(parent, legendText, path, dataObject, properties) {
+      function addField(fieldset, path, dataObject, property) {
+         var pairDiv = document.createElement('div');
+         pairDiv.className = 'label-input-pair';
+         fieldset.appendChild(pairDiv);
+
+         var label = document.createElement('label');
+         label.htmlFor = path + '-' + property;
+         label.textContent = translatedFieldLabel(property) + ': ';
+         pairDiv.appendChild(label);
+
+         var input;
+         if (typeof dataObject[property] === 'boolean') {
+            input = document.createElement('input');
+            input.type = 'checkbox';
+            input.checked = dataObject[property];
+         } else if (property === 'id' || property === 'bulkStepper') {
+            input = document.createElement('select');
+            [1, 2].forEach(function (optionValue) {
+               var option = document.createElement('option');
+               option.value = optionValue;
+               option.textContent = translatedOptionText(optionValue);
+               option.selected = Number(dataObject[property]) === optionValue;
+               input.appendChild(option);
+            });
+         } else {
+            input = document.createElement('input');
+            input.type = 'number';
+            input.step = property === 'measurements' || property === 'steps' || property === 'rpm' ? '1' : '0.001';
+            input.value = dataObject[property];
+         }
+
+         input.id = path + '-' + property;
+         input.name = property;
+         input.dataset.path = path;
+         input.dataset.property = property;
+         pairDiv.appendChild(input);
+         input.addEventListener('input', updateJSON);
+         input.addEventListener('change', updateJSON);
+      }
+
+      function addObjectFieldset(parent, legendText, path, dataObject, properties, nestedGroups) {
          var fieldset = document.createElement('fieldset');
          parent.appendChild(fieldset);
          var legend = document.createElement('legend');
@@ -216,43 +268,14 @@
          fieldset.appendChild(legend);
 
          properties.forEach(function (property) {
-            var pairDiv = document.createElement('div');
-            pairDiv.className = 'label-input-pair';
-            fieldset.appendChild(pairDiv);
+            addField(fieldset, path, dataObject, property);
+         });
 
-            var label = document.createElement('label');
-            label.htmlFor = path + '-' + property;
-            label.textContent = translatedFieldLabel(property) + ': ';
-            pairDiv.appendChild(label);
-
-            var input;
-            if (typeof dataObject[property] === 'boolean') {
-               input = document.createElement('input');
-               input.type = 'checkbox';
-               input.checked = dataObject[property];
-            } else if (property === 'stepper' || property === 'bulkStepper') {
-               input = document.createElement('select');
-               ['stepper1', 'stepper2'].forEach(function (optionValue) {
-                  var option = document.createElement('option');
-                  option.value = optionValue;
-                  option.textContent = translatedOptionText(optionValue);
-                  option.selected = dataObject[property] === optionValue;
-                  input.appendChild(option);
-               });
-            } else {
-               input = document.createElement('input');
-               input.type = 'number';
-               input.step = property === 'measurements' || property === 'steps' || property === 'rpm' ? '1' : '0.001';
-               input.value = dataObject[property];
-            }
-
-            input.id = path + '-' + property;
-            input.name = property;
-            input.dataset.path = path;
-            input.dataset.property = property;
-            pairDiv.appendChild(input);
-            input.addEventListener('input', updateJSON);
-            input.addEventListener('change', updateJSON);
+         (nestedGroups || []).forEach(function (group) {
+            var subData = dataObject[group.name] || {};
+            group.properties.forEach(function (property) {
+               addField(fieldset, path + '.' + group.name, subData, property);
+            });
          });
       }
 
@@ -262,8 +285,8 @@
          var newJSONData = isCalibrationProfile ? {} : {
             general: {},
             steppers: {
-               stepper1: {},
-               stepper2: {}
+               "1": {},
+               "2": {}
             },
             trickleMap: []
          };
@@ -285,7 +308,7 @@
             if (input.type === 'checkbox') {
                target[property] = input.checked;
             } else if (input.tagName === 'SELECT') {
-               target[property] = input.value;
+               target[property] = parseInt(input.value, 10);
             } else {
                target[property] = parseFloat(input.value);
             }

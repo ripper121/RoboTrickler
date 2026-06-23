@@ -80,9 +80,9 @@ window.rtLoadLanguage({
         "alarmThreshold": "Alarm threshold",
         "weightGap": "Weight gap",
         "bulkStepper": "Bulk stepper",
-        "stepper": "Stepper",
+        "id": "Stepper",
         "startAtZero": "Start at zero",
-        "trickleCounter": "Trickle counter",
+        "sessionCounter": "Session counter",
         "measurements": "Measurements",
         "enabled": "Enabled",
         "weightPerRev": "Weight per revolution",
@@ -92,8 +92,8 @@ window.rtLoadLanguage({
         "rpm": "RPM"
       },
       "options": {
-        "stepper1": "Stepper 1",
-        "stepper2": "Stepper 2"
+        "1": "Stepper 1",
+        "2": "Stepper 2"
       },
       "filenameTitle": "Filename must not contain < > : \" / \\ | ? *"
     },

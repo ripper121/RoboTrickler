@@ -89,9 +89,9 @@ struct Config
 
   char beeper[16];
   char language[8];
-  bool fwCheck;
-  bool trickleCounter;
-  long trickleCount;
+  bool fwUpdateCheck;
+  bool totalCounterEnable;
+  long totalCount;
   float targetWeight;
   char scaleProtocol[32];
   int scaleBaud;
@@ -107,7 +107,7 @@ struct Config
   byte profileBulkStepper;
   int profileGeneralMeasurements;
   bool profileStartAtZero;
-  bool profileTrickleCounter;
+  bool profileSessionCounter;
   double profileStepperWeightPerRev[3];
   int profileStepperRpm[3];
   bool profileStepperEnabled[3];
@@ -171,7 +171,7 @@ enum TricklerState
 };
 TricklerState tricklerState = TRICKLER_IDLE;
 bool firstProfileMovePending = true;
-int trickleCounter = 0;
+int sessionCount = 0;
 bool restartNow = false;
 // Track prompt start and fresh scale reads so stale weights are ignored.
 unsigned long calibrationProfilePromptTime = 0;

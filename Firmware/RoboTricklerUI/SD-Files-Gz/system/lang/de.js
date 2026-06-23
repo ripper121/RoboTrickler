@@ -80,9 +80,9 @@ window.rtLoadLanguage({
         "alarmThreshold": "Alarmgrenze",
         "weightGap": "Gewichtsabstand",
         "bulkStepper": "Grob-Stepper",
-        "stepper": "Stepper",
+        "id": "Stepper",
         "startAtZero": "Start bei Null",
-        "trickleCounter": "Trickle-Zaehler",
+        "sessionCounter": "Sitzungs-Zaehler",
         "measurements": "Messungen",
         "enabled": "Aktiviert",
         "weightPerRev": "Gewicht pro Umdrehung",
@@ -92,8 +92,8 @@ window.rtLoadLanguage({
         "rpm": "Drehzahl"
       },
       "options": {
-        "stepper1": "Stepper 1",
-        "stepper2": "Stepper 2"
+        "1": "Stepper 1",
+        "2": "Stepper 2"
       },
       "filenameTitle": "Dateiname darf folgende Zeichen nicht enthalten: < > : \" / \\ | ? *"
     },

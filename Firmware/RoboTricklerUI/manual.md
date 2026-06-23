@@ -122,7 +122,7 @@ Das angezeigte Gewicht wechselt während des Trickelns die Farbe:
 ## Tab `Profil`
 
 * Mit den Pfeil-Buttons (oben/unten) wird durch die erkannten Profile geblättert; das gewählte Profil wird sofort geladen.
-* Der orangefarbene Button (Zahnrad) öffnet das Profil-Tuning und passt `steppers.stepper1.weightPerRev` an (siehe [Profil-Tuning](#profil-tuning)).
+* Der orangefarbene Button (Zahnrad) öffnet das Profil-Tuning und passt `steppers.1.weightPerRev` an (siehe [Profil-Tuning](#profil-tuning)).
 * Der rote Button (Papierkorb) löscht das ausgewählte Profil nach einer Bestätigung.
 * Für das Profil `calibrate` werden Tuning- und Lösch-Button ausgeblendet.
 
@@ -145,8 +145,8 @@ Das angezeigte Gewicht wechselt während des Trickelns die Farbe:
 
 Der Trickler kann die Anzahl fertig dosierter Ladungen mitzählen. Es gibt zwei unabhängige Zähler:
 
-* **Sitzungszähler** (Profilfeld `general.trickleCounter`): zählt die fertigen Trickles seit dem letzten `Start`. Bei jeder fertigen Ladung innerhalb der Toleranz wird der Stand in der Statuszeile angezeigt (`Fertig … Anzahl: N`). Beim `Stop` wird er auf `0` zurückgesetzt.
-* **Gesamtzähler** (`trickleCounter`/`trickleCount` in `config.txt`): zählt dauerhaft über alle Sitzungen hinweg. Der Stand wird beim `Stop` in `config.txt` gespeichert.
+* **Sitzungszähler** (Profilfeld `general.sessionCounter`): zählt die fertigen Trickles seit dem letzten `Start`. Bei jeder fertigen Ladung innerhalb der Toleranz wird der Stand in der Statuszeile angezeigt (`Fertig … Anzahl: N`). Beim `Stop` wird er auf `0` zurückgesetzt.
+* **Gesamtzähler** (`totalCounter.enable`/`totalCounter.count` in `config.txt`): zählt dauerhaft über alle Sitzungen hinweg. Der Stand wird beim `Stop` in `config.txt` gespeichert.
 
 > 📸 **Screenshot – Display:** Statuszeile mit dem Sitzungszähler nach einer fertigen Ladung (`Fertig … Anzahl: N`).
 
@@ -192,14 +192,16 @@ Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte.
 
 ```json
 {
-  "stepper": "stepper1",
-  "revolutions": 100,
-  "rpm": 200,
-  "measurements": 10
+  "measurements": 10,
+  "stepper": {
+    "id": 1,
+    "revolutions": 100,
+    "rpm": 200
+  }
 }
 ```
 
-Anders als normale Profile (die ihre Würfe als `steps` angeben) ist `calibrate` ein Sonderfall und gibt den Kalibrierlauf in Motor-**Umdrehungen** an. Dieses Profil nutzt `revolutions: 100`. Die Firmware rechnet das beim Laden in STEP-Pulse um: `steps = revolutions × motorStepsPerRev`. Bei den Standard-`motorStepsPerRev: 200` ergibt das einen Kalibrierlauf über 100 Umdrehungen (20000 STEP-Pulse). Der Vorteil: Der Kalibrierlauf bleibt unabhängig von der Mikroschritt-Einstellung immer gleich lang.
+Anders als normale Profile (die ihre Würfe als `stepper.steps` angeben) ist `calibrate` ein Sonderfall und gibt den Kalibrierlauf in Motor-**Umdrehungen** an. Dieses Profil nutzt `stepper.revolutions: 100`. Die Firmware rechnet das beim Laden in STEP-Pulse um: `steps = revolutions × stepper.stepsPerRev`. Bei den Standard-`stepper.stepsPerRev: 200` ergibt das einen Kalibrierlauf über 100 Umdrehungen (20000 STEP-Pulse). Der Vorteil: Der Kalibrierlauf bleibt unabhängig von der Mikroschritt-Einstellung immer gleich lang.
 
 **Vorgehen:**
 
@@ -250,7 +252,7 @@ Wechsle in den Tab `Profil` und wähle das Profil aus, das angepasst werden soll
 
 ### 2. Units / Rev anpassen
 
-Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Rev** anpassen (entspricht `steppers.stepper1.weightPerRev`). Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
+Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Rev** anpassen (entspricht `steppers.1.weightPerRev`). Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
 
 ![Units / Rev anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
 
@@ -305,7 +307,7 @@ Klicke auf das **Löschen-Symbol**, um das ausgewählte Profil zu entfernen. Vor
 
 ## Pulverprofil-Editor
 
-Der Webserver enthält `profileEditor.html` als `Pulverprofil-Editor`. Damit können alle von der Firmware unterstützten Profilfelder (`general`, `steppers.stepper1`/`stepper2` und die `trickleMap`-Schritte sowie die Kalibrier-Profilform) bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` gespeichert werden. Auch `general.startAtZero` und `general.trickleCounter` sind eigene Eingabefelder.
+Der Webserver enthält `profileEditor.html` als `Pulverprofil-Editor`. Damit können alle von der Firmware unterstützten Profilfelder (`general`, `steppers.1`/`2` und die `trickleMap`-Schritte sowie die Kalibrier-Profilform) bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` gespeichert werden. Auch `general.startAtZero` und `general.sessionCounter` sind eigene Eingabefelder.
 
 Wenn du über den Webserver arbeitest, listet das Auswahlfeld `Profil laden:` alle vorhandenen Profile aus `/profiles` auf. Beim Auswählen wird das Profil vom Gerät geladen und in den Editor übernommen; mit `Speichern` wird es unter dem `Profilname` wieder in `/profiles` zurückgeschrieben. Profile lassen sich weiterhin per Drag&Drop oder Einfügen in das Textfeld laden. Starte den Trickler nach dem Speichern neu, damit die neue Profilliste geladen wird.
 
@@ -336,18 +338,18 @@ Beispiel für das neue Profilformat:
     "tolerance": 0.000,
     "alarmThreshold": 1.000,
     "weightGap": 1.000,
-    "bulkStepper": "stepper1",
+    "bulkStepper": 1,
     "startAtZero": false,
-    "trickleCounter": false,
+    "sessionCounter": false,
     "measurements": 5
   },
   "steppers": {
-    "stepper1": {
+    "1": {
       "enabled": true,
       "weightPerRev": 0.375,
       "rpm": 200
     },
-    "stepper2": {
+    "2": {
       "enabled": false,
       "weightPerRev": 10.000,
       "rpm": 200
@@ -356,38 +358,48 @@ Beispiel für das neue Profilformat:
   "trickleMap": [
     {
       "diffWeight": 1.929,
-      "stepper": "stepper1",
-      "steps": 669,
-      "rpm": 200,
-      "measurements": 2
+      "measurements": 2,
+      "stepper": {
+        "id": 1,
+        "steps": 669,
+        "rpm": 200
+      }
     },
     {
       "diffWeight": 0.965,
-      "stepper": "stepper1",
-      "steps": 335,
-      "rpm": 200,
-      "measurements": 2
+      "measurements": 2,
+      "stepper": {
+        "id": 1,
+        "steps": 335,
+        "rpm": 200
+      }
     },
     {
       "diffWeight": 0.482,
-      "stepper": "stepper1",
-      "steps": 167,
-      "rpm": 200,
-      "measurements": 5
+      "measurements": 5,
+      "stepper": {
+        "id": 1,
+        "steps": 167,
+        "rpm": 200
+      }
     },
     {
       "diffWeight": 0.241,
-      "stepper": "stepper1",
-      "steps": 84,
-      "rpm": 200,
-      "measurements": 10
+      "measurements": 10,
+      "stepper": {
+        "id": 1,
+        "steps": 84,
+        "rpm": 200
+      }
     },
     {
       "diffWeight": 0.000,
-      "stepper": "stepper1",
-      "steps": 5,
-      "rpm": 200,
-      "measurements": 15
+      "measurements": 15,
+      "stepper": {
+        "id": 1,
+        "steps": 5,
+        "rpm": 200
+      }
     }
   ]
 }
@@ -399,31 +411,32 @@ Beispiel für das neue Profilformat:
 * `tolerance`: erlaubte Abweichung zum Zielgewicht.
 * `alarmThreshold`: Überwurf-Grenze. Wenn `targetWeight + alarmThreshold` erreicht oder überschritten wird, stoppt die Firmware, piept mehrfach und zeigt eine Warnung an. Bei `0` ist der Alarm deaktiviert.
 * `weightGap`: Abstand zum Zielgewicht, bei dem der automatische erste Grobwurf enden soll.
-* `bulkStepper`: optionaler Grob-Stepper für den automatischen ersten Grobwurf. Erlaubt sind `stepper1` und `stepper2`. Wenn das Feld fehlt, leer oder ungültig ist, verwendet die Firmware `stepper1`.
+* `bulkStepper`: optionaler Grob-Stepper für den automatischen ersten Grobwurf. Erlaubt sind `1` und `2`. Wenn das Feld fehlt, leer oder ungültig ist, verwendet die Firmware `1`.
 * `startAtZero`: Wenn `true`, wartet die Firmware vor dem ersten Wurf auf exakt `0.000`. Wenn `false`, beginnt der erste Wurf bereits, sobald das Gewicht bei oder über `0.000` liegt – die Waage muss also nicht exakt genullt sein.
-* `trickleCounter`: Wenn `true`, zeigt die Anzahl der fertigen Trickles seit dem letzten Stop an. Standard ist `false`.
+* `sessionCounter`: Wenn `true`, zeigt die Anzahl der fertigen Trickles seit dem letzten Stop an. Standard ist `false`.
 * `measurements`: Anzahl stabiler Messwerte bevor der nächste Tricklevorgang gestartet wird (bei neu aufsetzen der Pulverpfanne).
 
-Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `bulkStepper = stepper1`, `startAtZero = false`, `trickleCounter = false` und `measurements = 20`.
+Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `bulkStepper = 1`, `startAtZero = false`, `sessionCounter = false` und `measurements = 20`.
 
 ### `steppers`
 
-* `stepper1` und `stepper2`: Einstellungen für Trickler 1 und Trickler 2.
+* `1` und `2`: Einstellungen für Trickler 1 und Trickler 2 (die Objekt-Schlüssel sind die Stepper-Nummern).
 * `enabled`: aktiviert den jeweiligen Stepper für den automatischen ersten Grobwurf.
 * `weightPerRev`: Pulvermenge pro Umdrehung bei `rpm`.
 * `rpm`: Motordrehzahl in U/min für den automatischen ersten Grobwurf.
 
-Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `weightPerRev` die benötigten STEP-Pulse. Es wird genau der in `general.bulkStepper` eingetragene Grob-Stepper verwendet; ohne gültigen Eintrag ist das `stepper1`. Wenn der gewählte Stepper nicht aktiviert ist oder `weightPerRev` fehlt bzw. `0` ist, wird der automatische Grobwurf übersprungen.
+Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `weightPerRev` die benötigten STEP-Pulse. Es wird genau der in `general.bulkStepper` eingetragene Grob-Stepper verwendet; ohne gültigen Eintrag ist das `1`. Wenn der gewählte Stepper nicht aktiviert ist oder `weightPerRev` fehlt bzw. `0` ist, wird der automatische Grobwurf übersprungen.
 
 ### `trickleMap`
 
 `trickleMap` ist die eigentliche Trickel-Tabelle. Es sind maximal 16 Einträge möglich.
 
 * `diffWeight`: Abstand zum Zielgewicht, ab dem dieser Eintrag verwendet wird.
-* `stepper`: `stepper1` oder `stepper2`.
-* `steps`: Anzahl direkter STEP-Pulse für diesen Wurf. Die Firmware gibt diesen Wert unverändert an den Stepper aus.
-* `rpm`: Motordrehzahl in U/min. Sinnvolle Werte liegen meist zwischen 5 und 300.
 * `measurements`: Anzahl stabiler Messwerte, die abgewartet werden, bis dieser Wurf ausgeführt wird.
+* `stepper`: gruppiert die Stepper-Bewegung dieses Eintrags:
+  * `stepper.id`: `1` oder `2`.
+  * `stepper.steps`: Anzahl direkter STEP-Pulse für diesen Wurf. Die Firmware gibt diesen Wert unverändert an den Stepper aus.
+  * `stepper.rpm`: Motordrehzahl in U/min. Sinnvolle Werte liegen meist zwischen 5 und 300.
 
 Die Firmware wählt den ersten Eintrag, dessen `diffWeight` noch zum Abstand zwischen aktuellem Gewicht und Zielgewicht passt. Je näher das Zielgewicht kommt, desto kleinere `diffWeight`-Einträge werden verwendet.
 
@@ -439,18 +452,18 @@ Die Firmware kann zwei Trickler (Stepper) unabhängig ansteuern. Das ist nützli
 
 **Hardware:**
 
-* `stepper1` wird über den **X-Motoranschluss** des Treiberboards angesteuert.
-* `stepper2` wird über den **Y-Motoranschluss** des Treiberboards angesteuert.
+* Stepper 1 (`steppers.1`) wird über den **X-Motoranschluss** des Treiberboards angesteuert.
+* Stepper 2 (`steppers.2`) wird über den **Y-Motoranschluss** des Treiberboards angesteuert.
 
 Beide Treiber teilen sich die gemeinsame Enable-Leitung; es ist immer nur ein Stepper gleichzeitig in Bewegung.
 
 **So werden die beiden Trickler verteilt:**
 
 1. **Beide Stepper aktivieren.** Setze im `steppers`-Block bei beiden, die du nutzen willst, `enabled: true` und trage jeweils `weightPerRev` (Pulvermenge pro Umdrehung) und `rpm` (Drehzahl in U/min) passend zum jeweiligen Trickler ein.
-2. **Grobwurf-Stepper wählen.** `general.bulkStepper` bestimmt, welcher Stepper den automatischen ersten Grobwurf ausführt (z.B. `stepper2` als großer/schneller Trickler). Dieser Stepper muss `enabled: true` sein und ein gültiges `weightPerRev` größer `0` haben, sonst wird der Grobwurf übersprungen.
-3. **Feinwurf pro Tabelleneintrag zuweisen.** Jeder Eintrag in `trickleMap` hat ein eigenes `stepper`-Feld (`stepper1` oder `stepper2`). So kannst du je nach Abstand zum Zielgewicht (`diffWeight`) einen anderen Trickler verwenden – typischerweise der große Trickler für die größeren `diffWeight`-Bereiche und der feine Trickler für die letzten Einträge nahe `0`.
+2. **Grobwurf-Stepper wählen.** `general.bulkStepper` bestimmt, welcher Stepper den automatischen ersten Grobwurf ausführt (z.B. `2` als großer/schneller Trickler). Dieser Stepper muss `enabled: true` sein und ein gültiges `weightPerRev` größer `0` haben, sonst wird der Grobwurf übersprungen.
+3. **Feinwurf pro Tabelleneintrag zuweisen.** Jeder Eintrag in `trickleMap` hat ein eigenes `stepper.id`-Feld (`1` oder `2`). So kannst du je nach Abstand zum Zielgewicht (`diffWeight`) einen anderen Trickler verwenden – typischerweise der große Trickler für die größeren `diffWeight`-Bereiche und der feine Trickler für die letzten Einträge nahe `0`.
 
-Damit übernimmt im folgenden Beispiel `stepper2` den Grobwurf und den ersten Feinwurf-Bereich (großer/schneller Trickler), während `stepper1` ab `diffWeight 0.250` die feine Annäherung an das Zielgewicht erledigt:
+Damit übernimmt im folgenden Beispiel Stepper `2` den Grobwurf und den ersten Feinwurf-Bereich (großer/schneller Trickler), während Stepper `1` ab `diffWeight 0.250` die feine Annäherung an das Zielgewicht erledigt:
 
 ```json
 {
@@ -459,18 +472,18 @@ Damit übernimmt im folgenden Beispiel `stepper2` den Grobwurf und den ersten Fe
     "tolerance": 0.000,
     "alarmThreshold": 1.000,
     "weightGap": 1.000,
-    "bulkStepper": "stepper2",
+    "bulkStepper": 2,
     "startAtZero": false,
-    "trickleCounter": false,
+    "sessionCounter": false,
     "measurements": 5
   },
   "steppers": {
-    "stepper1": {
+    "1": {
       "enabled": true,
       "weightPerRev": 0.200,
       "rpm": 200
     },
-    "stepper2": {
+    "2": {
       "enabled": true,
       "weightPerRev": 2.000,
       "rpm": 200
@@ -479,24 +492,30 @@ Damit übernimmt im folgenden Beispiel `stepper2` den Grobwurf und den ersten Fe
   "trickleMap": [
     {
       "diffWeight": 2.000,
-      "stepper": "stepper2",
-      "steps": 200,
-      "rpm": 200,
-      "measurements": 2
+      "measurements": 2,
+      "stepper": {
+        "id": 2,
+        "steps": 200,
+        "rpm": 200
+      }
     },
     {
       "diffWeight": 0.250,
-      "stepper": "stepper1",
-      "steps": 80,
-      "rpm": 200,
-      "measurements": 5
+      "measurements": 5,
+      "stepper": {
+        "id": 1,
+        "steps": 80,
+        "rpm": 200
+      }
     },
     {
       "diffWeight": 0.000,
-      "stepper": "stepper1",
-      "steps": 5,
-      "rpm": 200,
-      "measurements": 15
+      "measurements": 15,
+      "stepper": {
+        "id": 1,
+        "steps": 5,
+        "rpm": 200
+      }
     }
   ]
 }
@@ -534,13 +553,17 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
     "customCode": "0x1B 0x70 0x0D 0x0A",
     "baud": 9600
   },
-  "motorStepsPerRev": 200,
+  "stepper": {
+    "stepsPerRev": 200
+  },
   "activeProfile": "avg",
   "language": "de",
   "beeper": "both",
-  "trickleCounter": true,
-  "trickleCount": 128,
-  "fwUpdate": {
+  "totalCounter": {
+    "enable": true,
+    "count": 128
+  },
+  "firmwareUpdate": {
     "check": true
   }
 }
@@ -559,17 +582,17 @@ Die Werte im Beispiel oben dienen nur zur Veranschaulichung. In Klammern steht j
 * `scale.protocol`: unterstützte Werte sind `GG`, `SBI`, `KERN`, `KERN-ABT`, `KERN-ABS`, `AD`, `CUSTOM` und leer für kein aktives Anfragekommando. (Standard: `GG`)
 * `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden. (Standard: leer)
 * `scale.baud`: Baudrate der Waage, meistens `9600`. (Standard: `9600`)
-* `motorStepsPerRev`: Schritte pro voller Umdrehung des Schrittmotors. Bei einem 1,8°-Schrittmotor sind das `200`; bei anderen Motoren entsprechend anpassen. Beeinflusst die Schrittberechnung beim Trickeln und die Kalibrierung. (Standard: `200`)
+* `stepper.stepsPerRev`: Schritte pro voller Umdrehung der Schrittmotoren (gilt für Stepper1 und Stepper2). Bei einem 1,8°-Schrittmotor sind das `200`; bei anderen Motoren entsprechend anpassen. Beeinflusst die Schrittberechnung beim Trickeln und die Kalibrierung. (Standard: `200`)
 * `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil. (Standard: `calibrate`)
 * `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Die Display-Texte werden aus `/lang/<sprache>.json` geladen und fallen auf `/lang/en.json` sowie danach auf eingebaute englische Texte zurück. Die Weboberfläche verwendet getrennte Dateien unter `/system/lang`. (Standard: `en`)
 * `beeper`: `done` Beep wenn Trickle fertig, `button` Beep bei Touch betätigung, `both` beides aktiv oder `off` Beeper aus. (Standard: `done`)
-* `trickleCounter`: aktiviert den dauerhaften Gesamtzähler für fertige Trickles. (Standard: `false`)
-* `trickleCount`: gespeicherter Stand des dauerhaften Gesamtzählers. (Standard: `0`)
-* `fwUpdate.check`: aktiviert die automatische Prüfung auf neue Firmware. (Standard: `true`)
+* `totalCounter.enable`: aktiviert den dauerhaften Gesamtzähler für fertige Trickles. (Standard: `false`)
+* `totalCounter.count`: gespeicherter Stand des dauerhaften Gesamtzählers. (Standard: `0`)
+* `firmwareUpdate.check`: aktiviert die automatische Prüfung auf neue Firmware. (Standard: `true`)
 
 Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu.
 
-Auf der SD-Karte befindet sich `system/settings.html` (Menüpunkt `Einstellungen`), womit sich alle Konfigurationsfelder inklusive `trickleCounter`, `trickleCount` und `fwUpdate.check` erstellen lassen. Die Seite wird auch über den Webserver bereitgestellt und lässt sich zudem offline direkt von der SD-Karte öffnen (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
+Auf der SD-Karte befindet sich `system/settings.html` (Menüpunkt `Einstellungen`), womit sich alle Konfigurationsfelder inklusive `totalCounter.enable`, `totalCounter.count` und `firmwareUpdate.check` erstellen lassen. Die Seite wird auch über den Webserver bereitgestellt und lässt sich zudem offline direkt von der SD-Karte öffnen (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
 
 <img width="372" height="1220" alt="image" src="https://github.com/user-attachments/assets/bfb98107-4ebd-4d78-a6bd-ee829973a59f" />
 
@@ -588,7 +611,7 @@ Es gibt drei Update-Möglichkeiten:
 > 📸 **Screenshot – Display:** Statuszeile beim Start während eines SD-Updates (z.B. „Checking SD card updates..." bzw. „SD card update complete. Rebooting..."), bevor die Konfiguration geladen wird.
 3. Verwende für eine vollständige Neuinstallation die Anleitung unter [Flash via USB](#flash-via-usb).
 
-`fwUpdate.check` steuert nur die automatische Versionsprüfung bei bestehender Netzwerkverbindung. Wird eine neuere Firmware gefunden, zeigt der Trickler einen Hinweis mit der neuen Versionsnummer und der Download-Adresse an. Das eigentliche Update wird nicht automatisch heruntergeladen oder installiert.
+`firmwareUpdate.check` steuert nur die automatische Versionsprüfung bei bestehender Netzwerkverbindung. Wird eine neuere Firmware gefunden, zeigt der Trickler einen Hinweis mit der neuen Versionsnummer und der Download-Adresse an. Das eigentliche Update wird nicht automatisch heruntergeladen oder installiert.
 
 > 📸 **Screenshot – Display:** Der Hinweis-Dialog „Neue Firmware verfügbar" mit der neuen Versionsnummer und der Download-Adresse.
 

@@ -116,7 +116,8 @@
             if (!allowedScaleProtocols.includes(scaleProtocol)) {
                 scaleProtocol = 'GG';
             }
-            var fwUpdate = jsonObject.fwUpdate || {};
+            var firmwareUpdate = jsonObject.firmwareUpdate || {};
+            var totalCounter = jsonObject.totalCounter || {};
             var profileName = String(jsonObject.activeProfile || 'calibrate').trim();
             var customCode = scaleProtocol === 'CUSTOM' ? (jsonObject.scale && jsonObject.scale.customCode) || '' : '';
             return {
@@ -137,10 +138,12 @@
                 activeProfile: profileName || 'calibrate',
                 beeper: jsonObject.beeper || 'done',
                 language: jsonObject.language || 'en',
-                trickleCounter: jsonObject.trickleCounter === true,
-                trickleCount: Math.max(0, parseInt(jsonObject.trickleCount, 10) || 0),
-                fwUpdate: {
-                    check: fwUpdate.check !== false
+                totalCounter: {
+                    enable: totalCounter.enable === true,
+                    count: Math.max(0, parseInt(totalCounter.count, 10) || 0)
+                },
+                firmwareUpdate: {
+                    check: firmwareUpdate.check !== false
                 }
             };
         }
@@ -167,9 +170,11 @@
                 activeProfile: (formData.get('profile_name') || 'calibrate').trim() || 'calibrate',
                 beeper: formData.get('beeper'),
                 language: formData.get('language'),
-                trickleCounter: document.getElementById('trickle_counter').checked,
-                trickleCount: Math.max(0, parseInt(formData.get('trickle_count'), 10) || 0),
-                fwUpdate: {
+                totalCounter: {
+                    enable: document.getElementById('trickle_counter').checked,
+                    count: Math.max(0, parseInt(formData.get('trickle_count'), 10) || 0)
+                },
+                firmwareUpdate: {
                     check: document.getElementById('fw_check').checked
                 }
             };
@@ -200,9 +205,9 @@
                 configForm.beeper.value = jsonObject.beeper || 'done';
                 configForm.language.value = jsonObject.language || 'en';
                 configForm.profile_name.value = jsonObject.activeProfile || 'calibrate';
-                configForm.trickle_counter.checked = jsonObject.trickleCounter === true;
-                configForm.trickle_count.value = jsonObject.trickleCount || 0;
-                configForm.fw_check.checked = jsonObject.fwUpdate.check !== false;
+                configForm.trickle_counter.checked = jsonObject.totalCounter.enable === true;
+                configForm.trickle_count.value = jsonObject.totalCounter.count || 0;
+                configForm.fw_check.checked = jsonObject.firmwareUpdate.check !== false;
 
             } catch (e) {
                 console.error('Invalid JSON');

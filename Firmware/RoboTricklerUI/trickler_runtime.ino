@@ -198,9 +198,9 @@ static void handleOverTrickle()
   delay(250);
   beep("done");
   String messageText = langText("msg_over_trickle");
-  if (config.profileTrickleCounter)
+  if (config.profileSessionCounter)
   {
-    messageText += String(trickleCounter);
+    messageText += String(sessionCount);
   }
   stopTrickler();
   messageBox(messageText.c_str(), UI_FONT_LARGE, lv_color_hex(0xFF0000), true);
@@ -222,14 +222,14 @@ static void handleTargetReached(bool weightWithinTolerance)
   if (!isTricklerFinished())
   {
     beep("done");
-    if (config.trickleCounter)
+    if (config.totalCounterEnable)
     {
-      config.trickleCount++;
+      config.totalCount++;
     }
-    if (config.profileTrickleCounter && weightWithinTolerance)
+    if (config.profileSessionCounter && weightWithinTolerance)
     {
-      trickleCounter++;
-      updateDisplayLog(String(langText("status_done")) + langText("status_count") + String(trickleCounter), true);
+      sessionCount++;
+      updateDisplayLog(String(langText("status_done")) + langText("status_count") + String(sessionCount), true);
     }
     else
     {
