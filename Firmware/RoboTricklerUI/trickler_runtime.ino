@@ -128,7 +128,7 @@ static bool runBulkStepperMove(String &infoText)
   return true;
 }
 
-static int stepperRpmOld[3] = {0, 0, 0};
+static int lastStepperRpm[3] = {0, 0, 0};
 
 static void setStepperRpmIfChanged(byte stepperNum, int rpm)
 {
@@ -136,10 +136,10 @@ static void setStepperRpmIfChanged(byte stepperNum, int rpm)
   {
     return;
   }
-  if (stepperRpmOld[stepperNum] != rpm)
+  if (lastStepperRpm[stepperNum] != rpm)
   {
     setStepperRpm(stepperNum, rpm);
-    stepperRpmOld[stepperNum] = rpm;
+    lastStepperRpm[stepperNum] = rpm;
   }
 }
 

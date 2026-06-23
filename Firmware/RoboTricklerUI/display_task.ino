@@ -45,9 +45,8 @@ IRAM_ATTR void initDisplayTask(void)
                             "lvglTask",
                             DISP_TASK_STACK,
                             NULL,
-                            DISP_TASK_PRO,
+                            DISP_TASK_PRIORITY,
                             &lvDisplayTaskHandle,
                             DISP_TASK_CORE // Keep LVGL and web servicing on one core.
     );
 }
-

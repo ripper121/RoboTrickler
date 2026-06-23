@@ -114,12 +114,12 @@ String serialBytesToHex(const uint8_t *bytes, int byteCount)
   return data;
 }
 
-bool serialReq(const char *req)
+bool sendScaleSerialRequest(const char *requestText)
 {
 
   // Requests are stored as human-readable hex bytes in the profile/config files.
   char request[SCALE_SERIAL_REQUEST_TEXT_LEN];
-  strlcpy(request, req, sizeof(request));
+  strlcpy(request, requestText, sizeof(request));
 
   uint8_t bytes[SCALE_SERIAL_MAX_REQUEST_BYTES];
   int byteCount = 0;
@@ -151,7 +151,7 @@ bool serialReq(const char *req)
   if (!hexRequest || !hasToken)
   {
     DEBUG_PRINT("Invalid serial request hex string: ");
-    DEBUG_PRINTLN(req);
+    DEBUG_PRINTLN(requestText);
     return true;
   }
 
@@ -356,7 +356,7 @@ bool requestScaleWeight()
 
   if (strcmp(config.scaleProtocol, "CUSTOM") == 0)
   {
-    return serialReq(config.scaleCustomCode);
+    return sendScaleSerialRequest(config.scaleCustomCode);
   }
 
   for (size_t i = 0; i < SCALE_PROTOCOL_COUNT; i++)
@@ -364,7 +364,7 @@ bool requestScaleWeight()
     if ((SCALE_REQUEST_COMMANDS[i].request != NULL) &&
         (strcmp(config.scaleProtocol, SCALE_REQUEST_COMMANDS[i].protocol) == 0))
     {
-      return serialReq(SCALE_REQUEST_COMMANDS[i].request);
+      return sendScaleSerialRequest(SCALE_REQUEST_COMMANDS[i].request);
     }
   }
 
@@ -378,22 +378,22 @@ bool readScaleLine(float *parsedWeight, int *parsedDecimalPlaces, String *parsed
     return false;
   }
 
-  char buff[SCALE_SERIAL_LINE_LEN];
-  size_t bytesRead = Serial1.readBytesUntil(0x0A, buff, sizeof(buff) - 1);
-  buff[bytesRead] = '\0';
+  char lineBuffer[SCALE_SERIAL_LINE_LEN];
+  size_t bytesRead = Serial1.readBytesUntil(0x0A, lineBuffer, sizeof(lineBuffer) - 1);
+  lineBuffer[bytesRead] = '\0';
 
   #if DEBUG
   if (strcmp(config.scaleProtocol, "CUSTOM") == 0)
   {
-    updateDisplayLog("RX:" + String(buff), false);
+    updateDisplayLog("RX:" + String(lineBuffer), false);
   }
   #endif
 
-  DEBUG_PRINTLN(buff);
+  DEBUG_PRINTLN(lineBuffer);
 
   float candidateWeight = -1.0;
   int candidateDecimalPlaces = 0;
-  if (!stringToWeight(buff, &candidateWeight, &candidateDecimalPlaces))
+  if (!stringToWeight(lineBuffer, &candidateWeight, &candidateDecimalPlaces))
   {
     return false;
   }
@@ -401,10 +401,10 @@ bool readScaleLine(float *parsedWeight, int *parsedDecimalPlaces, String *parsed
   *parsedWeight = candidateWeight;
   *parsedDecimalPlaces = candidateDecimalPlaces;
   *parsedUnit = "";
-  if (containsIgnoreCase(buff, "g"))
+  if (containsIgnoreCase(lineBuffer, "g"))
   {
     *parsedUnit = " g";
-    if (containsIgnoreCase(buff, "gn") || containsIgnoreCase(buff, "gr"))
+    if (containsIgnoreCase(lineBuffer, "gn") || containsIgnoreCase(lineBuffer, "gr"))
     {
       *parsedUnit = " gn";
     }

@@ -29,14 +29,14 @@ void restoreFilesystemAfterFailedUpdate()
 #endif
 }
 
-void returnOK()
+void returnOk()
 {
   server.send(200, "text/plain", "");
 }
 
-void returnFail(String msg)
+void returnFail(String message)
 {
-  server.send(500, "text/plain", msg + "\r\n");
+  server.send(500, "text/plain", message + "\r\n");
 }
 
 String jsonEscape(const String &input)
@@ -94,7 +94,7 @@ void registerWebServerRoutes()
   // The web editor uses this endpoint for multipart uploads. The upload
   // handler writes directly to the LittleFS path supplied as the filename.
   server.on("/system/resources/edit", HTTP_POST, []()
-            { returnOK(); }, handleFileUpload);
+            { returnOk(); }, handleFileUpload);
   server.onNotFound(handleNotFound);
   server.on("/generate_204", handleNotFound);
   server.on("/favicon.ico", handleNotFound);

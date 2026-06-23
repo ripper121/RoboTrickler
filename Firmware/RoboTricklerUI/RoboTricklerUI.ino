@@ -67,7 +67,7 @@ Events Run On: "Core 0"
 #endif
 
 #define DISP_TASK_STACK 4096 * 2
-#define DISP_TASK_PRO 1
+#define DISP_TASK_PRIORITY 1
 #define DISP_TASK_CORE 0
 TaskHandle_t lvDisplayTaskHandle = NULL;
 SemaphoreHandle_t lvglMutex = NULL;

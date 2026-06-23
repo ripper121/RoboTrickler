@@ -207,7 +207,7 @@ void handleDelete()
     return;
   }
   deleteRecursive(path);
-  returnOK();
+  returnOk();
 }
 
 void handleCreate()
@@ -236,7 +236,7 @@ void handleCreate()
   {
     ACTIVE_FS.mkdir((char *)path.c_str());
   }
-  returnOK();
+  returnOk();
 }
 
 void printDirectory()
@@ -323,4 +323,3 @@ void handleNotFound()
   server.send(404, "text/plain", message);
   DEBUG_PRINT(message);
 }
-
