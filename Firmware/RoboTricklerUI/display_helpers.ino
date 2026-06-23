@@ -166,7 +166,7 @@ void updateWifiTabIndicator(bool forceUpdate)
     {
         strlcat(tabText, " " UI_SYMBOL_WIFI, sizeof(tabText));
     }
-    if (activeFSIsSD)
+    if (activeFsIsSd)
     {
         strlcat(tabText, " " UI_SYMBOL_SD_CARD, sizeof(tabText));
     }

@@ -1,8 +1,8 @@
 #if LV_USE_LOG != 0
 /* Serial debugging */
-void my_print(const char *buf)
+void lvglLogPrint(const char *message)
 {
-  Serial.printf(buf);
+  Serial.printf(message);
   Serial.flush();
 }
 #endif
@@ -63,7 +63,7 @@ void displayInit()
   lv_tick_set_cb(lvglMillis);
 
 #if LV_USE_LOG != 0
-  lv_log_register_print_cb(my_print); /* register print function for debugging */
+  lv_log_register_print_cb(lvglLogPrint); /* register print function for debugging */
 #endif
 
   pinMode(LCD_EN, OUTPUT);
@@ -85,7 +85,7 @@ void displayInit()
 #if ENABLE_SCREENSHOT
   lv_display_add_event_cb(disp, screenshotExpandInvalidatedArea, LV_EVENT_INVALIDATE_AREA, NULL);
 #endif
-  lv_display_set_buffers(disp, buf, NULL, sizeof(buf), LV_DISPLAY_RENDER_MODE_PARTIAL);
+  lv_display_set_buffers(disp, displayDrawBuffer, NULL, sizeof(displayDrawBuffer), LV_DISPLAY_RENDER_MODE_PARTIAL);
 
   /*Initialize the (dummy) input device driver*/
   lv_indev_t *indev = lv_indev_create();

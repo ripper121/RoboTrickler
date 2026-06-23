@@ -113,7 +113,7 @@ bool loadFromFilesystem(fs::FS &fs, const char *sourceName, String path)
 
 bool loadWebFile(String path)
 {
-  return filesystemActive && loadFromFilesystem(ACTIVE_FS, activeFSIsSD ? "SD" : "LittleFS", path);
+  return filesystemActive && loadFromFilesystem(ACTIVE_FS, activeFsIsSd ? "SD" : "LittleFS", path);
 }
 
 void handleFileUpload()

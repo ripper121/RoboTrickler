@@ -113,7 +113,7 @@ void updateFilesystemSyncControls()
     return;
   }
 
-  bool showControls = sdMounted && littleFSMounted;
+  bool showControls = sdMounted && littleFsMounted;
   if (lvglLock())
   {
     if (showControls)
@@ -144,7 +144,7 @@ void requestFilesystemSync(FilesystemSyncDirection direction)
     errorBox(langText("msg_stop_trickler_before_sync"), false);
     return;
   }
-  if (!sdMounted || !littleFSMounted)
+  if (!sdMounted || !littleFsMounted)
   {
     errorBox(langText("msg_sync_filesystems_unavailable"), false);
     updateFilesystemSyncControls();
@@ -166,7 +166,7 @@ void finishFilesystemSyncConfirm(bool confirmed)
   {
     return;
   }
-  if (!sdMounted || !littleFSMounted)
+  if (!sdMounted || !littleFsMounted)
   {
     errorBox(langText("msg_sync_filesystems_unavailable"), false);
     updateFilesystemSyncControls();

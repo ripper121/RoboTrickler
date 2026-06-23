@@ -15,7 +15,7 @@ void lvglUnlock()
   }
 }
 
-IRAM_ATTR void lvgl_disp_task(void *parg)
+IRAM_ATTR void lvglDisplayTask(void *parg)
 {
     // LVGL and the web server both need frequent service calls. Keeping them on
     // one pinned task avoids touching LVGL from multiple cores at once.
@@ -34,14 +34,14 @@ IRAM_ATTR void lvgl_disp_task(void *parg)
     }
 }
 
-IRAM_ATTR void disp_task_init(void)
+IRAM_ATTR void initDisplayTask(void)
 {
     if (lvglMutex == NULL)
     {
         lvglMutex = xSemaphoreCreateRecursiveMutex();
     }
 
-    xTaskCreatePinnedToCore(lvgl_disp_task,
+    xTaskCreatePinnedToCore(lvglDisplayTask,
                             "lvglTask",
                             DISP_TASK_STACK,
                             NULL,

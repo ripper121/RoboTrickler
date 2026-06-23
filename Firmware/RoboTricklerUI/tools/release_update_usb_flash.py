@@ -30,12 +30,12 @@ SKETCH_DIR = SCRIPT_DIR.parent
 DEFAULT_BUILD_DIR = SKETCH_DIR.parent / "build"
 DEFAULT_USB_FLASH_DIR = SKETCH_DIR.parent / "USB-Flash"
 SD_FILES_GZ_DIR = SKETCH_DIR / "SD-Files-Gz"
-SD_FILES_LEGACY_DIR = SKETCH_DIR / "Sd-Files-Legacy"
+SD_FILES_LEGACY_DIR = SKETCH_DIR / "SD-Files-Legacy"
 COMPILE_OPTIONS_FILE = SKETCH_DIR / "compile_options.h"
-COMPILE_UPLOAD = SCRIPT_DIR / "compile_upload.py"
-GZIP_SD_FILES = SCRIPT_DIR / "gzip_sd_files.py"
-CREATE_FLASH_DATA = SCRIPT_DIR / "create_flash_data.py"
-CREATE_FLASH_LITTLEFS_IMAGE = SCRIPT_DIR / "create_flash_littlefs_image.py"
+FIRMWARE_BUILD_UPLOAD_SCRIPT = SCRIPT_DIR / "firmware_build_upload.py"
+GENERATE_SD_TREES_SCRIPT = SCRIPT_DIR / "filesystem_generate_sd_trees.py"
+STAGE_LITTLEFS_DATA_SCRIPT = SCRIPT_DIR / "filesystem_stage_littlefs_data.py"
+BUILD_LITTLEFS_IMAGE_SCRIPT = SCRIPT_DIR / "filesystem_build_littlefs_image.py"
 
 BUILD_ARTIFACTS = (
     "RoboTricklerUI.ino.bin",
@@ -116,15 +116,15 @@ def regenerate_littlefs(build_dir: Path, legacy: bool = False) -> None:
         print(f"Removed {SD_FILES_GZ_DIR}", flush=True)
 
     steps = [
-        (GZIP_SD_FILES, []),
-        (CREATE_FLASH_DATA, []),
+        (GENERATE_SD_TREES_SCRIPT, []),
+        (STAGE_LITTLEFS_DATA_SCRIPT, []),
     ]
     # The 4 MB / min_spiffs build has no LittleFS, so skip the image build but
     # still regenerate the gzipped SD-Files-Gz output.
     if not legacy:
         steps.append(
             (
-                CREATE_FLASH_LITTLEFS_IMAGE,
+                BUILD_LITTLEFS_IMAGE_SCRIPT,
                 ["--output", str(build_dir / "littlefs.bin")],
             )
         )
@@ -165,11 +165,11 @@ def restore_compile_options(original: str | None) -> None:
 
 
 def compile_firmware(build_dir: Path, legacy: bool) -> None:
-    require_file(COMPILE_UPLOAD, "compile script")
-    print("Running compile_upload.py --cli...", flush=True)
+    require_file(FIRMWARE_BUILD_UPLOAD_SCRIPT, "compile script")
+    print("Running firmware_build_upload.py --cli...", flush=True)
     command = [
         sys.executable,
-        str(COMPILE_UPLOAD),
+        str(FIRMWARE_BUILD_UPLOAD_SCRIPT),
         "--cli",
         "--error",
         "--compile-only",

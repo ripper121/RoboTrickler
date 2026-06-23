@@ -91,7 +91,7 @@ static int updateFromSd(const char *path, int updateTarget, const char *label)
 
 void initUpdate()
 {
-  if (!activeFSIsSD)
+  if (!activeFsIsSd)
   {
     return;
   }

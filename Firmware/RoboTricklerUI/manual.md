@@ -307,13 +307,13 @@ Klicke auf das **Löschen-Symbol**, um das ausgewählte Profil zu entfernen. Vor
 
 ## Pulverprofil-Editor
 
-Der Webserver enthält `profileEditor.html` als `Pulverprofil-Editor`. Damit können alle von der Firmware unterstützten Profilfelder (`general`, `stepper.1`/`2` und die `trickleMap`-Schritte sowie die Kalibrier-Profilform) bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` gespeichert werden. Auch `general.startAtZero` und `general.sessionCounter` sind eigene Eingabefelder.
+Der Webserver enthält `profile_editor.html` als `Pulverprofil-Editor`. Damit können alle von der Firmware unterstützten Profilfelder (`general`, `stepper.1`/`2` und die `trickleMap`-Schritte sowie die Kalibrier-Profilform) bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` gespeichert werden. Auch `general.startAtZero` und `general.sessionCounter` sind eigene Eingabefelder.
 
 Wenn du über den Webserver arbeitest, listet das Auswahlfeld `Profil laden:` alle vorhandenen Profile aus `/profiles` auf. Beim Auswählen wird das Profil vom Gerät geladen und in den Editor übernommen; mit `Speichern` wird es unter dem `Profilname` wieder in `/profiles` zurückgeschrieben. Profile lassen sich weiterhin per Drag&Drop oder Einfügen in das Textfeld laden. Starte den Trickler nach dem Speichern neu, damit die neue Profilliste geladen wird.
 
 Der Editor lässt sich auch offline direkt von der SD-Karte öffnen. Offline fehlen das Auswahlfeld `Profil laden:` und das Speichern auf das Gerät; das bearbeitete Profil wird stattdessen über `Herunterladen` als Datei gesichert (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
 
-> 📸 **Screenshot – Webserver:** Der Pulverprofil-Editor (`profileEditor.html`) mit dem Auswahlfeld `Profil laden:`, einem geladenen Profil, sichtbaren `general`-Feldern, der `trickleMap`-Tabelle und den Buttons zum Herunterladen/Speichern.
+> 📸 **Screenshot – Webserver:** Der Pulverprofil-Editor (`profile_editor.html`) mit dem Auswahlfeld `Profil laden:`, einem geladenen Profil, sichtbaren `general`-Feldern, der `trickleMap`-Tabelle und den Buttons zum Herunterladen/Speichern.
 
 ## Gramm / Grain
 
@@ -706,9 +706,9 @@ Die Weboberfläche ist mehrsprachig. Die Texte werden aus `/system/lang/<sprache
 Die beiden Generator-Seiten lassen sich auch ohne Gerät und ohne WLAN nutzen: Öffne dazu `system/index.html` von der SD-Karte direkt im Browser (z.B. per Doppelklick). In diesem lokalen Modus zeigt die Startseite nur die beiden eigenständigen Werkzeuge an:
 
 * **Einstellungen** (`settings.html`): erzeugt eine `config.txt` zum Herunterladen.
-* **Pulverprofil-Editor** (`profileEditor.html`): bearbeitet ein Profil und lädt es als Datei herunter. Das Auswahlfeld `Profil laden:` und das Speichern direkt auf das Gerät stehen offline nicht zur Verfügung – lade ein Profil per Drag&Drop oder Einfügen in das Textfeld und sichere das Ergebnis über `Herunterladen`.
+* **Pulverprofil-Editor** (`profile_editor.html`): bearbeitet ein Profil und lädt es als Datei herunter. Das Auswahlfeld `Profil laden:` und das Speichern direkt auf das Gerät stehen offline nicht zur Verfügung – lade ein Profil per Drag&Drop oder Einfügen in das Textfeld und sichere das Ergebnis über `Herunterladen`.
 
-Die gerätegebundenen Funktionen (Trickler-Fernsteuerung, Dateibrowser, `WLAN verbinden`, Firmware-Update, Neustart) werden offline ausgeblendet. Die beiden Werkzeuge können auch direkt geöffnet werden (`system/settings.html` bzw. `system/profileEditor.html`).
+Die gerätegebundenen Funktionen (Trickler-Fernsteuerung, Dateibrowser, `WLAN verbinden`, Firmware-Update, Neustart) werden offline ausgeblendet. Die beiden Werkzeuge können auch direkt geöffnet werden (`system/settings.html` bzw. `system/profile_editor.html`).
 
 Die Sprache der offline geöffneten Seiten richtet sich nach der Spracheinstellung des Browsers (mit Rückfall auf Englisch); eine `config.txt` wird dafür nicht benötigt.
 

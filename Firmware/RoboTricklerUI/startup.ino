@@ -11,7 +11,7 @@ void initSetup()
     {
         ui_init();
         disableTouchGestures();
-        disp_task_init();
+        initDisplayTask();
         restartNow = true;
         errorBox(langText("msg_filesystem_mount_failed"), true);
         return;
@@ -19,7 +19,7 @@ void initSetup()
 
     ui_init();
     disableTouchGestures();
-    disp_task_init();
+    initDisplayTask();
 
     updateDisplayLog((String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
 
@@ -27,7 +27,7 @@ void initSetup()
     // also works from a bare SD card that only contains firmware.bin /
     // littlefs.bin. The display task is already up, so progress is shown on
     // screen (config/language are not loaded yet, so messages use the built-in
-    // English fallback). initUpdate() self-guards on activeFSIsSD.
+    // English fallback). initUpdate() self-guards on activeFsIsSd.
     initUpdate();
 
     String infoText = langText("status_init_steppers");
@@ -61,7 +61,7 @@ void initSetup()
     applyLanguage();
     updateScaleProtocolButtonLabel();
     updateFilesystemSyncControls();
-    updateDisplayLog(langText(activeFSIsSD ? "status_storage_sd" : "status_storage_flash"));
+    updateDisplayLog(langText(activeFsIsSd ? "status_storage_sd" : "status_storage_flash"));
 
     infoText = langText("status_reading_profiles");
     updateDisplayLog(infoText, true);

@@ -296,7 +296,7 @@ void initWebServer()
     }
 
     WiFi.persistent(false);
-    WiFi.setHostname(host);
+    WiFi.setHostname(MDNS_HOST);
     WiFi.mode(WIFI_STA);
     WiFi.setAutoReconnect(true);
 

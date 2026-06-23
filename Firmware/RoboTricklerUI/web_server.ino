@@ -1,4 +1,4 @@
-const char *host = "robo-trickler";
+const char *const MDNS_HOST = "robo-trickler";
 
 static bool webUpdateStarted = false;
 static bool webUpdateSucceeded = false;
@@ -14,18 +14,18 @@ void restoreFilesystemAfterFailedUpdate()
   }
 
   webUpdateFilesystemUnmounted = false;
-  littleFSMounted = LittleFS.begin(false);
-  if (!littleFSMounted)
+  littleFsMounted = LittleFS.begin(false);
+  if (!littleFsMounted)
   {
     DEBUG_PRINTLN("LittleFS remount failed after update error.");
     return;
   }
 
-  if (!activeFSIsSD)
+  if (!activeFsIsSd)
   {
-    activeFS = &LittleFS;
+    activeFs = &LittleFS;
   }
-  filesystemActive = sdMounted || littleFSMounted;
+  filesystemActive = sdMounted || littleFsMounted;
 #endif
 }
 
@@ -181,14 +181,14 @@ void registerWebServerRoutes()
           updateDisplayLog(infoText);
 
 #if ENABLE_LITTLEFS
-          if (webUpdateFilesystem && littleFSMounted)
+          if (webUpdateFilesystem && littleFsMounted)
           {
             LittleFS.end();
-            littleFSMounted = false;
-            if (!activeFSIsSD)
+            littleFsMounted = false;
+            if (!activeFsIsSd)
             {
               filesystemActive = false;
-              activeFS = NULL;
+              activeFs = NULL;
             }
             webUpdateFilesystemUnmounted = true;
           }
@@ -293,7 +293,7 @@ bool startWebServerServices()
 
   applyWifiDnsIfNeeded();
   updateDisplayLog(langText("status_wifi_connected"));
-  bool mdnsStarted = MDNS.begin(host);
+  bool mdnsStarted = MDNS.begin(MDNS_HOST);
   if (!mdnsStarted)
   {
     DEBUG_PRINTLN("mDNS responder failed to start.");
@@ -306,7 +306,7 @@ bool startWebServerServices()
   if (mdnsStarted)
   {
     MDNS.addService("http", "tcp", 80);
-    updateDisplayLog(String(langText("status_open_browser_prefix")) + host + langText("status_open_browser_suffix"));
+    updateDisplayLog(String(langText("status_open_browser_prefix")) + MDNS_HOST + langText("status_open_browser_suffix"));
   }
 
   updateDisplayLog("IP:" + WiFi.localIP().toString());
@@ -319,4 +319,3 @@ bool startWebServerServices()
 
   return true;
 }
-

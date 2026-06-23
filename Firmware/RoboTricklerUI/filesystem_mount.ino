@@ -1,21 +1,21 @@
 bool initFilesystem()
 {
   filesystemActive = false;
-  activeFS = NULL;
-  activeFSIsSD = false;
+  activeFs = NULL;
+  activeFsIsSd = false;
   sdMounted = false;
-  littleFSMounted = false;
+  littleFsMounted = false;
 
-  SDspi = new SPIClass(HSPI);
-  SDspi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
+  sdSpi = new SPIClass(HSPI);
+  sdSpi->begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
   delay(100); // give the SD card time to initialize before querying it
-  bool sdBegan = SD.begin(GRBL_SPI_SS, *SDspi, SD_SPI_FREQ, "/sd", 5);
+  bool sdBegan = SD.begin(GRBL_SPI_SS, *sdSpi, SD_SPI_FREQ, "/sd", 5);
   delay(100); // give the SD card time to initialize before querying it
   if (sdBegan && (SD.cardType() != CARD_NONE))
   {
     sdMounted = true;
-    activeFS = &SD;
-    activeFSIsSD = true;
+    activeFs = &SD;
+    activeFsIsSd = true;
     filesystemActive = true;
     DEBUG_PRINTLN("SD card mounted.");
   }
@@ -23,18 +23,18 @@ bool initFilesystem()
   {
     DEBUG_PRINTLN("SD card mount failed or card not present.");
     SD.end();
-    delete SDspi;
-    SDspi = NULL;
+    delete sdSpi;
+    sdSpi = NULL;
   }
 
 #if ENABLE_LITTLEFS
   if (LittleFS.begin(false))
   {
-    littleFSMounted = true;
+    littleFsMounted = true;
     if (!filesystemActive)
     {
-      activeFS = &LittleFS;
-      activeFSIsSD = false;
+      activeFs = &LittleFS;
+      activeFsIsSd = false;
       filesystemActive = true;
     }
     DEBUG_PRINTLN("LittleFS mounted.");
@@ -58,7 +58,7 @@ bool initFilesystem()
     DEBUG_PRINTLN(SD.usedBytes());
   }
 #if ENABLE_LITTLEFS
-  if (littleFSMounted)
+  if (littleFsMounted)
   {
     DEBUG_PRINT("LittleFS total bytes: ");
     DEBUG_PRINTLN(LittleFS.totalBytes());

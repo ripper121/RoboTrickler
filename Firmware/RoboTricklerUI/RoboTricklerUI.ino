@@ -18,7 +18,7 @@ Events Run On: "Core 0"
 */
 
 #include "compile_options.h"
-#include "pindef.h"
+#include "hardware_pins.h"
 #include <FS.h>
 #if ENABLE_LITTLEFS
 #include <LittleFS.h>
@@ -74,7 +74,7 @@ SemaphoreHandle_t lvglMutex = NULL;
 //#define LV_DRAW_BUF_ROWS ((LV_VER_RES_MAX + 9) / 10)
 #define LV_DRAW_BUF_ROWS 16
 #define DISPLAY_DRAW_BUF_SIZE (LV_HOR_RES_MAX * LV_DRAW_BUF_ROWS * (LV_COLOR_DEPTH / 8))
-static uint32_t buf[DISPLAY_DRAW_BUF_SIZE / sizeof(uint32_t)];
+static uint32_t displayDrawBuffer[DISPLAY_DRAW_BUF_SIZE / sizeof(uint32_t)];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 
 struct Config
@@ -124,12 +124,12 @@ bool wifiSetupApActive = false;
 bool webServerActive = false;
 bool webServerRoutesRegistered = false;
 bool filesystemActive = false;
-fs::FS *activeFS = NULL;
-bool activeFSIsSD = false;
+fs::FS *activeFs = NULL;
+bool activeFsIsSd = false;
 bool sdMounted = false;
-bool littleFSMounted = false;
-SPIClass *SDspi = NULL;
-#define ACTIVE_FS (*activeFS)
+bool littleFsMounted = false;
+SPIClass *sdSpi = NULL;
+#define ACTIVE_FS (*activeFs)
 
 enum FilesystemSyncDirection
 {
@@ -252,12 +252,12 @@ void logRuntimeStats()
 
 void loop()
 {
-  static uint32_t writeETime = millis();
+  static uint32_t lastRuntimeMaintenanceTime = millis();
   static uint32_t readWeightTime = millis();
 
-  if (millis() - writeETime >= 1000)
+  if (millis() - lastRuntimeMaintenanceTime >= 1000)
   {
-    writeETime = millis();
+    lastRuntimeMaintenanceTime = millis();
     logRuntimeStats();    
     maintainWifiConnection();
   }

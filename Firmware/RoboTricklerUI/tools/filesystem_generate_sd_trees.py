@@ -29,7 +29,7 @@ LITTLEFS_EXCLUDED_FILES = {
     "start.html"
 }
 # Assets the offline web UI loads via <link>/<script> when index.html /
-# settings.html / profileEditor.html are opened from a file:// URL or localhost
+# settings.html / profile_editor.html are opened from a file:// URL or localhost
 # (see the `location.hostname === "localhost" || ... === ""` checks in those
 # pages and in lang.js). <link>/<script> work over file://, but the browser
 # cannot transparently gunzip a file:// response (no `Content-Encoding: gzip`
@@ -39,7 +39,7 @@ LITTLEFS_EXCLUDED_FILES = {
 LOCAL_UNCOMPRESSED_FILES = {
     "system/index.html",
     "system/settings.html",
-    "system/profileEditor.html",
+    "system/profile_editor.html",
     "system/lang.js",
     "system/resources/style.css",
     "system/resources/favicon.ico",

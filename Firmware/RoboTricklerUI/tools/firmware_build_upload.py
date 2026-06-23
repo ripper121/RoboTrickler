@@ -29,9 +29,9 @@ SKETCH_DIR = find_sketch_dir()
 SKETCH_FILE = SKETCH_DIR / "RoboTricklerUI.ino"
 COMPILE_OPTIONS_FILE = SKETCH_DIR / "compile_options.h"
 ARDUINO_JSON = SKETCH_DIR / ".vscode" / "arduino.json"
-GZIP_FILES = SCRIPT_DIR / "gzip_sd_files.py"
-CREATE_FLASH_DATA = SCRIPT_DIR / "create_flash_data.py"
-CREATE_LITTLEFS_IMAGE = SCRIPT_DIR / "create_flash_littlefs_image.py"
+GENERATE_SD_TREES_SCRIPT = SCRIPT_DIR / "filesystem_generate_sd_trees.py"
+STAGE_LITTLEFS_DATA_SCRIPT = SCRIPT_DIR / "filesystem_stage_littlefs_data.py"
+BUILD_LITTLEFS_IMAGE_SCRIPT = SCRIPT_DIR / "filesystem_build_littlefs_image.py"
 FLASH_DATA_DIR = SKETCH_DIR / "data"
 
 DEFAULT_BUILD_DIR = SKETCH_DIR.parent / "build"
@@ -376,19 +376,19 @@ def find_firmware_bin(build_dir: Path) -> Path:
 
 
 def build_littlefs_image(build_dir: Path, timeout: int) -> Path:
-    require_path(GZIP_FILES, "GZ file generation script")
-    require_path(CREATE_FLASH_DATA, "LittleFS staging script")
-    require_path(CREATE_LITTLEFS_IMAGE, "LittleFS image script")
+    require_path(GENERATE_SD_TREES_SCRIPT, "SD tree generation script")
+    require_path(STAGE_LITTLEFS_DATA_SCRIPT, "LittleFS staging script")
+    require_path(BUILD_LITTLEFS_IMAGE_SCRIPT, "LittleFS image script")
 
     image_path = build_dir / "littlefs.bin"
     subprocess.run(
-        [sys.executable, str(GZIP_FILES)],
+        [sys.executable, str(GENERATE_SD_TREES_SCRIPT)],
         cwd=SKETCH_DIR,
         check=True,
         timeout=timeout,
     )
     subprocess.run(
-        [sys.executable, str(CREATE_FLASH_DATA)],
+        [sys.executable, str(STAGE_LITTLEFS_DATA_SCRIPT)],
         cwd=SKETCH_DIR,
         check=True,
         timeout=timeout,
@@ -396,7 +396,7 @@ def build_littlefs_image(build_dir: Path, timeout: int) -> Path:
     subprocess.run(
         [
             sys.executable,
-            str(CREATE_LITTLEFS_IMAGE),
+            str(BUILD_LITTLEFS_IMAGE_SCRIPT),
             "--output",
             str(image_path),
         ],
