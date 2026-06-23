@@ -265,7 +265,7 @@ static const char *languageFallback(const char *key)
   if (strcmp(key, "msg_cannot_tune_profile") == 0)
     return "Cannot tune profile";
   if (strcmp(key, "msg_tune_profile_title") == 0)
-    return "units/rev";
+    return "weight/rev";
   if (strcmp(key, "msg_could_not_tune_profile") == 0)
     return "Could not tune profile";
   if (strcmp(key, "msg_profile_tuned") == 0)

@@ -4,6 +4,7 @@ A portable runbook for auditing and fixing naming + consistency in any C / C++ /
 Arduino / ESP project. Copy this file into the project, fill in the
 **project specifics** blocks, and work top to bottom. Nothing below is tied to one
 codebase — the concrete examples are in `[brackets]` and meant to be replaced.
+No Migration / fallback needed!
 
 ---
 

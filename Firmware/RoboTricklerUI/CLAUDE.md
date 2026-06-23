@@ -76,7 +76,7 @@ The main loop dispatches through `TricklerState` (`TRICKLER_IDLE`, `TRICKLER_RUN
 | `display_driver.ino` | TFT_eSPI + LVGL init, flush callback |
 | `display_task.ino` | FreeRTOS task wrapping LVGL tick/handler on Core 0 |
 | `display_helpers.ino` | `updateDisplayLog()`, label helpers, thread-safe UI wrappers |
-| `rs232.ino` | Scale serial protocol (GG, AD, KERN, SBI, custom) |
+| `scale_rs232.ino` | Scale serial protocol (GG, AD, KERN, SBI, custom) |
 | `sd_storage.ino` | `loadConfiguration()`, `saveConfiguration()`, profile I/O |
 | `web_server.ino` | HTTP server init, `/update`, `/fwupdate`, OTA handlers |
 | `web_api.ino` | REST endpoints: `/getTricklerState`, `/setTarget`, etc. |
@@ -128,7 +128,7 @@ Try to reuse UI Code to save Heap.
 3. **Profile fields**: cross-check the *Aufbau eines Profils* section against `loadProfile()` / `loadProfileEntries()` / `loadProfileEntry()` in `sd_storage.ino` (`general`, `stepper.stepperN`, `trickleMap[]`, plus the `calibrate` shape).
 4. **Display UI**: derive what's possible on the touchscreen from the event callbacks in `ui_events.ino`, `filesystem_sync.ino`, `ui_dialogs.ino` and their button wiring in `ui_Screen1.c` (`lv_obj_add_event_cb`). Confirm which tab a control lives on via its parent panel (`ui_PanelPageInfo` = Info tab, etc.). Runtime behavior (auto-refill, weight colors, over-trickle alarm, counters, diagnostics line) comes from `trickler_runtime.ino` and `trickler_control.ino`.
 5. **Web features**: list HTTP endpoints from the `server.on(...)` registrations in `web_server.ino`; the browser remote-control, `settings.html`, `profileEditor.html`, and file editor are the SD pages under `SD-Files/system/`. Bulk profile generation now lives in `tools/create_profiles.py` (uploads via the web file-editor API), not a browser generator page.
-6. **Scales**: the protocol list and request commands come from `SCALE_REQUEST_COMMANDS` in `rs232.ino` (empty protocol is shown as `STREAM`).
+6. **Scales**: the protocol list and request commands come from `SCALE_REQUEST_COMMANDS` in `scale_rs232.ino` (empty protocol is shown as `STREAM`).
 
 ### Conventions to keep consistent
 - **Table of contents**: the *Inhaltsverzeichnis* lists all `#` and `##` headings. GitHub anchors = lowercase, spaces→`-`, punctuation dropped (`G&G`→`#gg`, `(LittleFS)`→`…littlefs`), umlauts kept, consecutive dropped chars leave double hyphens (`Gramm / Grain`→`#gramm--grain`). Update the TOC whenever headings change.

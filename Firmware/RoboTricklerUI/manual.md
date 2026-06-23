@@ -250,11 +250,11 @@ Wechsle in den Tab `Profil` und wähle das Profil aus, das angepasst werden soll
 
 ![Profil auswählen](https://github.com/user-attachments/assets/b4ba4f5b-84c8-492e-a2bc-4d74446d9ba5)
 
-### 2. Units / Rev anpassen
+### 2. Gewicht / Umdr anpassen
 
-Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Units / Rev** anpassen (entspricht `stepper.1.weightPerRev`). Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
+Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Gewicht / Umdr** anpassen (entspricht `stepper.1.weightPerRev`). Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
 
-![Units / Rev anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
+![Gewicht / Umdr anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
 
 #### Hinweise
 
@@ -583,7 +583,7 @@ Die Werte im Beispiel oben dienen nur zur Veranschaulichung. In Klammern steht j
 * `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden. (Standard: leer)
 * `scale.baud`: Baudrate der Waage, meistens `9600`. (Standard: `9600`)
 * `stepper.stepsPerRev`: Schritte pro voller Umdrehung der Schrittmotoren (gilt für Stepper1 und Stepper2). Bei einem 1,8°-Schrittmotor sind das `200`; bei anderen Motoren entsprechend anpassen. Beeinflusst die Schrittberechnung beim Trickeln und die Kalibrierung. (Standard: `200`)
-* `profile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil. (Standard: `calibrate`)
+* `activeProfile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil. (Standard: `calibrate`)
 * `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Die Display-Texte werden aus `/lang/<sprache>.json` geladen und fallen auf `/lang/en.json` sowie danach auf eingebaute englische Texte zurück. Die Weboberfläche verwendet getrennte Dateien unter `/system/lang`. (Standard: `en`)
 * `beeper`: `done` Beep wenn Trickle fertig, `button` Beep bei Touch betätigung, `both` beides aktiv oder `off` Beeper aus. (Standard: `done`)
 * `totalCounter.enable`: aktiviert den dauerhaften Gesamtzähler für fertige Trickles. (Standard: `false`)

@@ -614,7 +614,7 @@ String nextCalibrationProfileName()
   return "";
 }
 
-static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerRev, int profileRpm)
+static void populateCalibrationTrickleMap(JsonDocument &doc, float weightPerRev, int profileRpm)
 {
   const float diffWeights[8] = {1.929, 0.965, 0.482, 0.241, 0.121, 0.060, 0.030, 0.000};
   const size_t diffWeightsCount = sizeof(diffWeights) / sizeof(diffWeights[0]);
@@ -624,8 +624,8 @@ static void populateCalibrationTrickleMap(JsonDocument &doc, float unitsPerRev, 
   JsonArray trickleMap = doc["trickleMap"].to<JsonArray>();
   for (int i = 0; i < diffWeightsCount; i++)
   {
-    long steps = (unitsPerRev > 0.0)
-                     ? lround(((diffWeights[i] * (double)config.motorStepsPerRev) / unitsPerRev) * rs232LimitFactor)
+    long steps = (weightPerRev > 0.0)
+                     ? lround(((diffWeights[i] * (double)config.motorStepsPerRev) / weightPerRev) * rs232LimitFactor)
                      : 5;
     if (steps < 5)
     {
@@ -671,7 +671,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   String infoText = String(langText("status_creating_profile")) + profileName;
   updateDisplayLog(infoText, true);
 
-  // unitsPerRev is the dispensed weight per full motor revolution. The
+  // weightPerRev is the dispensed weight per full motor revolution. The
   // calibration throw runs config.profileSteps[0] steps (calibrate profile),
   // so the number of revolutions depends on config.motorStepsPerRev. With the
   // defaults (20000 steps / 200 steps-per-rev) this resolves to 100 revolutions.
@@ -681,7 +681,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
     calibrationSteps = 20000;
   }
   double calibrationRevolutions = (double)calibrationSteps / (double)config.motorStepsPerRev;
-  const float unitsPerRev = calibrationRevolutions > 0.0
+  const float weightPerRev = calibrationRevolutions > 0.0
                                 ? (float)(calibrationWeight / calibrationRevolutions)
                                 : calibrationWeight;
   int profileRpm = config.profileRpm[0];
@@ -704,14 +704,14 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   JsonObject stepperMap = doc["stepper"].to<JsonObject>();
   JsonObject stepper1 = stepperMap["1"].to<JsonObject>();
   stepper1["enabled"] = true;
-  stepper1["weightPerRev"] = serialized(String(unitsPerRev, 3));
+  stepper1["weightPerRev"] = serialized(String(weightPerRev, 3));
   stepper1["rpm"] = profileRpm;
   JsonObject stepper2 = stepperMap["2"].to<JsonObject>();
   stepper2["enabled"] = config.profileStepperEnabled[2];
   stepper2["weightPerRev"] = serialized(String(config.profileStepperWeightPerRev[2] > 0.0 ? config.profileStepperWeightPerRev[2] : 10.0, 3));
   stepper2["rpm"] = config.profileStepperRpm[2] > 0 ? config.profileStepperRpm[2] : 200;
 
-  populateCalibrationTrickleMap(doc, unitsPerRev, profileRpm);
+  populateCalibrationTrickleMap(doc, weightPerRev, profileRpm);
 
   if (!ACTIVE_FS.exists("/profiles") && !ACTIVE_FS.mkdir("/profiles"))
   {
@@ -754,9 +754,9 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   return true;
 }
 
-bool tuneProfileUnitsPerRev(const char *profileName, float unitsPerRev)
+bool tuneProfileWeightPerRev(const char *profileName, float weightPerRev)
 {
-  if (unitsPerRev <= 0.0)
+  if (weightPerRev <= 0.0)
   {
     updateDisplayLog(langText("msg_calibration_weight_invalid"), true);
     return false;
@@ -805,10 +805,10 @@ bool tuneProfileUnitsPerRev(const char *profileName, float unitsPerRev)
     stepper1 = stepperMap["1"].to<JsonObject>();
   }
   stepper1["enabled"] = true;
-  stepper1["weightPerRev"] = serialized(String(unitsPerRev, 3));
+  stepper1["weightPerRev"] = serialized(String(weightPerRev, 3));
   stepper1["rpm"] = profileRpm;
 
-  populateCalibrationTrickleMap(doc, unitsPerRev, profileRpm);
+  populateCalibrationTrickleMap(doc, weightPerRev, profileRpm);
 
   if (!writeProfileDocument(filename, doc))
   {

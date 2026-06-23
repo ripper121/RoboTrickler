@@ -211,14 +211,14 @@ void resetConfirmBoxButtons()
 // ---------------------------------------------------------------------------
 // Profile tune dialog
 //
-// A custom modal (built lazily) for adjusting a profile's units-per-rev.
+// A custom modal (built lazily) for adjusting a profile's weight-per-rev.
 // Moved here from profile_actions.ino so it lives next to the other dialogs;
 // the profile data side (load/save/delete) stays in profile_actions.ino.
 // isProfileTuneDialogOpen/closeProfileTuneDialog/clearProfileTuneState are
 // non-static because deleteSelectedProfile() (profile_actions.ino) calls them.
 // ---------------------------------------------------------------------------
 String profileTuneName = "";
-float profileTuneUnitsPerRev = 0.0;
+float profileTuneWeightPerRev = 0.0;
 float profileTuneStepSize = 0.001;
 byte profileTuneStepIndex = 0;
 lv_obj_t *ui_PanelProfileTune = NULL;
@@ -245,7 +245,7 @@ bool isProfileTuneDialogOpen()
 void clearProfileTuneState()
 {
     profileTuneName = "";
-    profileTuneUnitsPerRev = 0.0;
+    profileTuneWeightPerRev = 0.0;
 }
 
 static void updateProfileTuneValueLabel()
@@ -253,7 +253,7 @@ static void updateProfileTuneValueLabel()
     if (ui_LabelProfileTuneValue != NULL)
     {
         char text[16];
-        snprintf(text, sizeof(text), "%.3f", profileTuneUnitsPerRev);
+        snprintf(text, sizeof(text), "%.3f", profileTuneWeightPerRev);
         lv_label_set_text(ui_LabelProfileTuneValue, text);
     }
 }
@@ -273,7 +273,7 @@ static void updateProfileTuneStepLabel()
     }
 }
 
-static float currentProfileTuneUnitsPerRev()
+static float currentProfileTuneWeightPerRev()
 {
     if (config.profileStepperWeightPerRev[1] > 0.0)
     {
@@ -300,12 +300,12 @@ static void saveProfileTune()
     String profileName = profileTuneName;
     if (ui_LabelProfileTuneValue != NULL)
     {
-        profileTuneUnitsPerRev = String(lv_label_get_text(ui_LabelProfileTuneValue)).toFloat();
+        profileTuneWeightPerRev = String(lv_label_get_text(ui_LabelProfileTuneValue)).toFloat();
     }
-    float unitsPerRev = profileTuneUnitsPerRev;
+    float weightPerRev = profileTuneWeightPerRev;
     closeProfileTuneDialog();
     profileTuneName = "";
-    profileTuneUnitsPerRev = 0.0;
+    profileTuneWeightPerRev = 0.0;
 
     if (isTricklerRunning())
     {
@@ -313,14 +313,14 @@ static void saveProfileTune()
         return;
     }
 
-    if ((profileName.length() <= 0) || (profileName == "calibrate") || (unitsPerRev <= 0.0))
+    if ((profileName.length() <= 0) || (profileName == "calibrate") || (weightPerRev <= 0.0))
     {
         errorBox(langText("msg_cannot_tune_profile"), false);
         return;
     }
 
     updateDisplayLog(String(langText("status_tuning_profile")) + profileName, true);
-    if (!tuneProfileUnitsPerRev(profileName.c_str(), unitsPerRev))
+    if (!tuneProfileWeightPerRev(profileName.c_str(), weightPerRev))
     {
         String errorText = getSdReadError();
         if (errorText.length() <= 0)
@@ -344,20 +344,20 @@ static void saveProfileTune()
 
 void profileTuneMinus_event_cb(lv_event_t *e)
 {
-    profileTuneUnitsPerRev -= profileTuneStepSize;
-    if (profileTuneUnitsPerRev < 0.001)
+    profileTuneWeightPerRev -= profileTuneStepSize;
+    if (profileTuneWeightPerRev < 0.001)
     {
-        profileTuneUnitsPerRev = 0.001;
+        profileTuneWeightPerRev = 0.001;
     }
     updateProfileTuneValueLabel();
 }
 
 void profileTunePlus_event_cb(lv_event_t *e)
 {
-    profileTuneUnitsPerRev += profileTuneStepSize;
-    if (profileTuneUnitsPerRev > 99.999)
+    profileTuneWeightPerRev += profileTuneStepSize;
+    if (profileTuneWeightPerRev > 99.999)
     {
-        profileTuneUnitsPerRev = 99.999;
+        profileTuneWeightPerRev = 99.999;
     }
     updateProfileTuneValueLabel();
 }
@@ -435,7 +435,7 @@ static void showProfileTuneDialog()
     if (lvglLock())
     {
         createProfileTuneDialog();
-        profileTuneUnitsPerRev = currentProfileTuneUnitsPerRev();
+        profileTuneWeightPerRev = currentProfileTuneWeightPerRev();
         updateProfileTuneStepLabel();
         const char *title = langText("msg_tune_profile_title");
         if (strcmp(lv_label_get_text(ui_LabelProfileTuneTitle), title) != 0)

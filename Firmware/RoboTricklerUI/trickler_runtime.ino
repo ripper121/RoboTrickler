@@ -52,27 +52,27 @@ static bool canStartFirstThrowAtCurrentWeight()
   return weightAtOrAbove(weight, 0.0f);
 }
 
-static long calculateStepperStepsForUnits(double remainingUnits, double unitsPerRev, double *outUnits)
+static long calculateStepperStepsForWeight(double remainingWeight, double weightPerRev, double *outWeight)
 {
-  if (outUnits != NULL)
+  if (outWeight != NULL)
   {
-    *outUnits = 0.0;
+    *outWeight = 0.0;
   }
-  if ((remainingUnits <= 0.0) || (unitsPerRev <= 0.0))
+  if ((remainingWeight <= 0.0) || (weightPerRev <= 0.0))
   {
     return 0;
   }
 
-  double exactSteps = remainingUnits * ((double)config.motorStepsPerRev / unitsPerRev);
+  double exactSteps = remainingWeight * ((double)config.motorStepsPerRev / weightPerRev);
   if ((exactSteps <= 0.0) || (exactSteps > 2147483647.0))
   {
     return 0;
   }
 
   long steps = (long)exactSteps;
-  if (outUnits != NULL)
+  if (outWeight != NULL)
   {
-    *outUnits = ((double)steps * unitsPerRev) / (double)config.motorStepsPerRev;
+    *outWeight = ((double)steps * weightPerRev) / (double)config.motorStepsPerRev;
   }
   return steps;
 }
@@ -81,8 +81,8 @@ static bool runBulkStepperMove(String &infoText)
 {
   // The optional bulk move removes most remaining weight first; profile steps
   // then handle the fine approach to target.
-  double remainingUnits = (double)config.targetWeight - (double)weight - (double)config.profileWeightGap;
-  if (remainingUnits <= 0.0)
+  double remainingWeight = (double)config.targetWeight - (double)weight - (double)config.profileWeightGap;
+  if (remainingWeight <= 0.0)
   {
     return true;
   }
@@ -104,8 +104,8 @@ static bool runBulkStepperMove(String &infoText)
     rpm = 200;
   }
 
-  double units = 0.0;
-  long stepsToMove = calculateStepperStepsForUnits(remainingUnits, config.profileStepperWeightPerRev[stepperNum], &units);
+  double dispensedWeight = 0.0;
+  long stepsToMove = calculateStepperStepsForWeight(remainingWeight, config.profileStepperWeightPerRev[stepperNum], &dispensedWeight);
   if (stepsToMove <= 0)
   {
     return true;
@@ -113,10 +113,10 @@ static bool runBulkStepperMove(String &infoText)
 
   setStepperRpm(stepperNum, rpm);
   step(stepperNum, stepsToMove);
-  remainingUnits -= units;
-  if (remainingUnits < 0.0)
+  remainingWeight -= dispensedWeight;
+  if (remainingWeight < 0.0)
   {
-    remainingUnits = 0.0;
+    remainingWeight = 0.0;
   }
 
   infoText += "B";
@@ -415,4 +415,3 @@ void handleIdleWeightRead(uint32_t &readWeightTime)
     readWeight();
   }
 }
-
