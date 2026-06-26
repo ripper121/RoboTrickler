@@ -36,6 +36,7 @@ FIRMWARE_BUILD_UPLOAD_SCRIPT = SCRIPT_DIR / "firmware_build_upload.py"
 GENERATE_SD_TREES_SCRIPT = SCRIPT_DIR / "filesystem_generate_sd_trees.py"
 STAGE_LITTLEFS_DATA_SCRIPT = SCRIPT_DIR / "filesystem_stage_littlefs_data.py"
 BUILD_LITTLEFS_IMAGE_SCRIPT = SCRIPT_DIR / "filesystem_build_littlefs_image.py"
+MANUAL_GENERATE_PDF_SCRIPT = SCRIPT_DIR / "manual_generate_pdf.py"
 
 BUILD_ARTIFACTS = (
     "RoboTricklerUI.ino.bin",
@@ -89,6 +90,13 @@ def parse_args() -> argparse.Namespace:
         dest="prod",
         action="store_true",
         help="Production build: force DEBUG 0 and ENABLE_SCREENSHOT 0 for the build.",
+    )
+    parser.add_argument(
+        "-pdf",
+        "--pdf",
+        dest="pdf",
+        action="store_true",
+        help="Render manual.md into SD-Files-Gz/Manual.pdf (uncompressed).",
     )
     parser.add_argument(
         "-flash",
@@ -267,6 +275,27 @@ def export_legacy_update(build_dir: Path) -> None:
         print(f"Exported {source.name} ({destination.stat().st_size} bytes)")
 
 
+def generate_manual_pdf() -> None:
+    """Render manual.md into SD-Files-Gz/Manual.pdf (uncompressed) for release.
+
+    Runs after regenerate_littlefs (which rebuilds SD-Files-Gz) and after the
+    LittleFS image is built, so the large PDF ships in the SD-card file tree
+    without being gzipped or packed into the 1.5 MB LittleFS image."""
+    require_file(MANUAL_GENERATE_PDF_SCRIPT, "manual PDF script")
+    output_path = SD_FILES_GZ_DIR / "Manual.pdf"
+    print(f"Running {MANUAL_GENERATE_PDF_SCRIPT.name}...", flush=True)
+    subprocess.run(
+        [
+            sys.executable,
+            str(MANUAL_GENERATE_PDF_SCRIPT),
+            "--output",
+            str(output_path),
+        ],
+        cwd=SKETCH_DIR,
+        check=True,
+    )
+
+
 def run_flash_bat(output_dir: Path) -> None:
     flash_bat = require_file(output_dir / "flash.bat", "flash script flash.bat")
     print(f"Running {flash_bat.name}...", flush=True)
@@ -344,6 +373,8 @@ def main() -> int:
             export_legacy_update(build_dir)
         if args.prod:
             export_prod_images(build_dir)
+        if args.pdf:
+            generate_manual_pdf()
         print("USB-Flash package updated successfully")
         if args.flash:
             run_flash_bat(output_dir)

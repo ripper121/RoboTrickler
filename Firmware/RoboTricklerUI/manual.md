@@ -329,6 +329,13 @@ Empfehlung: Lege für jedes Pulver getrennte Profile für Gramm und Grain an, z.
 
 ## Aufbau eines Profils
 
+Ein Trickelvorgang läuft in zwei Phasen:
+
+1. **Grobwurf (automatisch, einmalig):** Beim ersten Wurf rechnet die Firmware aus dem `stepper`-Block (`weightPerRev`) aus, wie viele Schritte nötig sind, um bis auf `weightGap` an das Zielgewicht heranzukommen, und dosiert diese Menge in einem Zug.
+2. **Feinwürfe (wiederholt):** Den Rest erledigt die `trickleMap`. Hier sind die Würfe nicht berechnet, sondern als feste `steps` hinterlegt. Je näher das Gewicht ans Ziel kommt, desto kleinere Einträge (kleineres `diffWeight`) werden gewählt.
+
+Kurz: Der `stepper`-Block steuert nur den **berechneten** Grobwurf, die `trickleMap` die **fest eingestellten** Feinwürfe. Deshalb tauchen die Stepper an zwei Stellen auf.
+
 Beispiel für das neue Profilformat:
 
 ```json
@@ -410,11 +417,11 @@ Beispiel für das neue Profilformat:
 * `targetWeight`: Wird beim Laden des Profils übernommen. Änderungen am Display werden beim Starten des Trickelns wieder in dieses Profil geschrieben.
 * `tolerance`: erlaubte Abweichung zum Zielgewicht.
 * `alarmThreshold`: Überwurf-Grenze. Wenn `targetWeight + alarmThreshold` erreicht oder überschritten wird, stoppt die Firmware, piept mehrfach und zeigt eine Warnung an. Bei `0` ist der Alarm deaktiviert.
-* `weightGap`: Abstand zum Zielgewicht, bei dem der automatische erste Grobwurf enden soll.
+* `weightGap`: Sicherheitsabstand zum Zielgewicht, den der Grobwurf bewusst frei lässt. Der berechnete Grobwurf bringt das Gewicht also nur bis `Zielgewicht − weightGap` heran, damit er nie überwirft; die restlichen `weightGap` Gramm/Grain schließen danach die Feinwürfe. Größerer Wert = mehr Reserve für die Feinphase (sicherer, aber langsamer).
 * `bulkStepper`: optionaler Grob-Stepper für den automatischen ersten Grobwurf. Erlaubt sind `1` und `2`. Wenn das Feld fehlt, leer oder ungültig ist, verwendet die Firmware `1`.
 * `startAtZero`: Wenn `true`, wartet die Firmware vor dem ersten Wurf auf exakt `0.000`. Wenn `false`, beginnt der erste Wurf bereits, sobald das Gewicht bei oder über `0.000` liegt – die Waage muss also nicht exakt genullt sein.
 * `sessionCounter`: Wenn `true`, zeigt die Anzahl der fertigen Trickles seit dem letzten Stop an. Standard ist `false`.
-* `measurements`: Anzahl stabiler Messwerte bevor der nächste Tricklevorgang gestartet wird (bei neu aufsetzen der Pulverpfanne).
+* `measurements`: Wie viele aufeinanderfolgende Gewichtswerte die Firmware von der Waage abwartet, bevor sie den nächsten Wurf auslöst. Das gibt der Waage Zeit zum Einschwingen, damit nicht auf einen noch zappelnden Wert dosiert wird. Mehr Messungen = ruhiger/genauer, aber langsamer. Dieser Wert gilt für den Start eines Trickelvorgangs (bei neu aufgesetzter Pulverpfanne); die einzelnen `trickleMap`-Einträge haben ihren eigenen `measurements`-Wert.
 
 Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `bulkStepper = 1`, `startAtZero = false`, `sessionCounter = false` und `measurements = 20`.
 
@@ -432,13 +439,21 @@ Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet au
 `trickleMap` ist die eigentliche Trickel-Tabelle. Es sind maximal 16 Einträge möglich.
 
 * `diffWeight`: Abstand zum Zielgewicht, ab dem dieser Eintrag verwendet wird.
-* `measurements`: Anzahl stabiler Messwerte, die abgewartet werden, bis dieser Wurf ausgeführt wird.
+* `measurements`: Anzahl abzuwartender Gewichtswerte vor diesem Wurf (gleiche Bedeutung wie `general.measurements`, aber pro Eintrag).
 * `stepper`: gruppiert die Stepper-Bewegung dieses Eintrags:
   * `stepper.id`: `1` oder `2`.
   * `stepper.steps`: Anzahl direkter STEP-Pulse für diesen Wurf. Die Firmware gibt diesen Wert unverändert an den Stepper aus.
   * `stepper.rpm`: Motordrehzahl in U/min. Sinnvolle Werte liegen meist zwischen 5 und 300.
 
 Die Firmware wählt den ersten Eintrag, dessen `diffWeight` noch zum Abstand zwischen aktuellem Gewicht und Zielgewicht passt. Je näher das Zielgewicht kommt, desto kleinere `diffWeight`-Einträge werden verwendet.
+
+Beispiel (Zielgewicht `40.000`): Ein Eintrag kommt infrage, sobald der Restabstand `Zielgewicht − aktuelles Gewicht` mindestens so groß ist wie sein `diffWeight`. Verwendet wird der oberste passende Eintrag:
+
+* Gewicht `37.000` (Rest `3.000`) → Eintrag `diffWeight 1.929` (großer Feinwurf)
+* Gewicht `39.600` (Rest `0.400`) → Eintrag `diffWeight 0.241`
+* Gewicht `39.970` (Rest `0.030`) → letzter Eintrag `diffWeight 0.000` (kleinster Wurf)
+
+Deshalb gehören die Einträge **absteigend nach `diffWeight`** sortiert.
 
 Hinweise:
 
@@ -582,7 +597,7 @@ Die Werte im Beispiel oben dienen nur zur Veranschaulichung. In Klammern steht j
 * `scale.protocol`: unterstützte Werte sind `GG`, `SBI`, `KERN`, `KERN-ABT`, `KERN-ABS`, `AD`, `CUSTOM` und leer für kein aktives Anfragekommando. (Standard: `GG`)
 * `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden. (Standard: leer)
 * `scale.baud`: Baudrate der Waage, meistens `9600`. (Standard: `9600`)
-* `stepper.stepsPerRev`: Schritte pro voller Umdrehung der Schrittmotoren (gilt für Stepper1 und Stepper2). Bei einem 1,8°-Schrittmotor sind das `200`; bei anderen Motoren entsprechend anpassen. Beeinflusst die Schrittberechnung beim Trickeln und die Kalibrierung. (Standard: `200`)
+* `stepper.stepsPerRev`: Schritte pro voller Umdrehung der Schrittmotoren (gilt für Stepper1 und Stepper2). Bei einem 1,8°-Schrittmotor sind das `200`; bei anderen Motoren entsprechend anpassen. Für Mikroschritt-Treiber den Gesamtwert eintragen: Vollschritte pro Umdrehung × Mikroschritt-Faktor. Beispiel: 1,8°-Motor (`200` Vollschritte) bei 1/8-Mikroschritt → `200 × 8 = 1600`. Beeinflusst die Schrittberechnung beim Trickeln und die Kalibrierung. (Standard: `200`)
 * `activeProfile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil. (Standard: `calibrate`)
 * `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Die Display-Texte werden aus `/lang/<sprache>.json` geladen und fallen auf `/lang/en.json` sowie danach auf eingebaute englische Texte zurück. Die Weboberfläche verwendet getrennte Dateien unter `/system/lang`. (Standard: `en`)
 * `beeper`: `done` Beep wenn Trickle fertig, `button` Beep bei Touch betätigung, `both` beides aktiv oder `off` Beeper aus. (Standard: `done`)

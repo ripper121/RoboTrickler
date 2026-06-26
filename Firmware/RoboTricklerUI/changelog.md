@@ -2,9 +2,12 @@
 
 ## 2.14
 
+### Overview
+The biggest changes are in how trickling is calculated and stored: profiles now work in **weight per revolution**, and **steps-per-revolution is configurable** so you can run **microstepping** drivers. The **config and profile file format changed** (breaking — old files need updating), the **calibration profile is now hardware-independent and self-healing**, and profile saves are **atomic**. On top of that: a **Wi-Fi on/off toggle** and **setup QR code**, **Flash↔SD sync** from the display, **on-device scale-protocol switching**, plus storage/heap/stability fixes. A broad **naming cleanup** of files and identifiers also makes the codebase, profiles and config easier to read and understand.
+
 ### Trickling model: weight-per-revolution
 - The per-stepper metric changed from `unitsPerThrow` to **weight per revolution** (`weightPerRev`). The trickle math now computes `steps = remainingWeight * motorStepsPerRev / weightPerRev` (`trickler_runtime.ino`).
-- Steps-per-revolution is now **configurable** via `stepper.stepsPerRev` in `config.txt` (`config.motorStepsPerRev`, default 200) instead of the hard-coded `MOTOR_REV_STEPS`.
+- Steps-per-revolution is now **configurable** via `stepper.stepsPerRev` in `config.txt` (`config.motorStepsPerRev`, default 200) instead of the hard-coded `MOTOR_REV_STEPS`. This enables **microstepping**: set `stepsPerRev` to the total (micro)steps your driver needs for one full revolution — i.e. the motor's full steps per revolution × the driver's microstep factor (e.g. a 1.8° motor = 200 full steps; at 1/8 microstepping → `200 × 8 = 1600`).
 - The stepper `speed` field was renamed to `rpm` everywhere (config, profiles, runtime, web editor).
 
 ### Config & profile file format (breaking)
@@ -35,7 +38,7 @@
 ### Naming & tooling
 - Source files renamed: `pindef.h`→`hardware_pins.h`, `rs232.ino`→`scale_rs232.ino`, `sd_config.ino`→`sd_storage.ino`, `update.ino`→`ota_update.ino`; `flash_filesystem.ino` reorganized into `filesystem_mount.ino`.
 - Build tools renamed/reorganized: `compile_upload.py`→`firmware_build_upload.py`, `gzip_sd_files.py`→`filesystem_generate_sd_trees.py`, `create_flash_*`→`filesystem_stage_littlefs_data.py`/`filesystem_build_littlefs_image.py`, `update_usb_flash.py`→`release_update_usb_flash.py`.
-- Broad identifier cleanup (e.g. `steppers`→`stepper`, UPPER_CASE globals → camelCase).
+- Broad identifier cleanup (e.g. `steppers`→`stepper`, UPPER_CASE globals → camelCase). The consistent file and identifier naming makes the overall codebase easier to read and understand.
 
 ### WiFi
 - Added a **Wi-Fi enable/disable toggle** on the display (`config.wifiEnabled`, `ui_ButtonWifi`), with `stopWifiServices()`/`applyWifiEnabled()` to bring the web server, DNS and mDNS up or down at runtime.
@@ -50,5 +53,8 @@
 - Multiple dialog bug fixes and button repositioning; `cancelInteractiveDialogs()` replaces the single delete-confirm cancel.
 - Removed the BMP boot **splash screen** (`splash.ino`).
 
+### Web
+- Firmware-served web pages (`/fwupdate`, status pages) are now **localized server-side** via `loadWebLang()`/`webFwText()`, reading the `web.firmware.*` keys from `SD-Files/system/lang/` per request (parsed and freed each call, never heap-resident).
+
 ### Other
-- Removed the in-browser profile generator page.
+- Removed the in-browser profile generator page; bulk profile creation now lives in `tools/create_profiles.py` (uploads via the web file-editor API).
