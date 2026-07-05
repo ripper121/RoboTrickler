@@ -21,6 +21,11 @@ void startTrickler()
         return;
     }
 
+    // Capture any on-screen target-weight edit (the +/- buttons only change
+    // config.targetWeight in RAM) before the reload below overwrites it.
+    bool targetEdited = (pendingTargetWeight != config.targetWeight);
+    float displayTarget = config.targetWeight;
+
     // Always reload the selected profile from the filesystem on Start so the
     // run uses the on-disk values even if the file changed since it was picked.
     if (!loadSelectedProfile(false))
@@ -43,13 +48,15 @@ void startTrickler()
     String selectedText = String(langText("placeholder_profile")) + ": " + config.profileName + langText("status_profile_selected_suffix");
     updateDisplayLog(selectedText);
 
-    if (pendingTargetWeight != config.targetWeight)
+    // Honor an on-screen target edit made since the profile was picked: re-apply
+    // it over the just-reloaded profile value and persist it. saveTargetWeight()
+    // also resyncs pendingTargetWeight, so no separate assignment is needed here.
+    if (targetEdited && displayTarget != config.targetWeight)
     {
         String infoText = langText("status_saving_target");
         updateDisplayLog(infoText, true);
-        saveTargetWeight(config.targetWeight);
+        saveTargetWeight(displayTarget);
     }
-    pendingTargetWeight = config.targetWeight;
 
     String infoText = langText("status_starting_trickler");
     updateDisplayLog(infoText, true);
