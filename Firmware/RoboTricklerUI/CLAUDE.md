@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Git Commits
+
+- Commit with the repository owner as the **sole author**. Do **not** add a `Co-Authored-By: Claude` trailer (or any other co-author) to commit messages.
+
 ## Project Overview
 
 RoboTricklerUI is Arduino/ESP32 firmware for a precision powder trickler (used in ammunition reloading). It runs on an ESP32 Dev Module with an LVGL touchscreen UI, RS232 scale communication, stepper motor control via I2S, WiFi, and an SD card web server.
