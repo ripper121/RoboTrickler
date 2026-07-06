@@ -10,23 +10,23 @@ RoboTricklerUI is Arduino/ESP32 firmware for a precision powder trickler (used i
 
 **Preferred compile check** (no upload):
 ```
-python tools/compile_upload.py --cli --error --compile-only
+python tools/firmware_build_upload.py --cli --error --compile-only
 ```
 
 **Compile and upload via web** (device must be on network as `robo-trickler.local`):
 ```
-python tools/compile_upload.py --cli --error
+python tools/firmware_build_upload.py --cli --error
 ```
 
 **Compile and flash via serial** (first-time or partition change):
 ```
-python tools/compile_upload.py --cli --error --port COM36 --full
+python tools/firmware_build_upload.py --cli --error --port COM36 --full
 ```
 
 The script automatically:
-1. Runs `gzip_sd_files.py` (SD-Files → SD-Files-Gz)
-2. Runs `create_flash_data.py` (SD-Files-Gz → data/)
-3. Runs `create_flash_littlefs_image.py` (data/ → littlefs.bin)
+1. Runs `filesystem_generate_sd_trees.py` (SD-Files → SD-Files-Gz)
+2. Runs `filesystem_stage_littlefs_data.py` (SD-Files-Gz → data/)
+3. Runs `filesystem_build_littlefs_image.py` (data/ → littlefs.bin)
 4. Compiles with arduino-cli
 5. Uploads firmware and LittleFS over HTTP or serial
 
