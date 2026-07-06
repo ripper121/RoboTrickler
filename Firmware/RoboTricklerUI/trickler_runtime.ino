@@ -236,7 +236,7 @@ static int selectProfileStep()
   int profileStep = config.profileEntryCount - 1;
   for (int i = 0; i < config.profileEntryCount; i++)
   {
-    if (weight <= (config.targetWeight - config.profileDiffWeight[i]))
+    if (weightAtOrBelow(weight, config.targetWeight - config.profileDiffWeight[i]))
     {
       profileStep = i;
       break;

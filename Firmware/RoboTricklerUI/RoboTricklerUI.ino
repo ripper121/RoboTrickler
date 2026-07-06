@@ -167,7 +167,9 @@ WEIGHT_DECIMALS	epsilon	safe WEIGHT_MAX
 #define WEIGHT_EPSILON (WEIGHT_RESOLUTION * 0.5f)
 #define IDLE_SCALE_READ_INTERVAL 1000 // Interval for reading the scale weight in idle state (milliseconds).
 
-const float WEIGHT_STEP_SIZES[] = {WEIGHT_RESOLUTION, 0.001, 0.01, 0.1, 1.0, 10.0};
+// UI increment ladder (decades). Kept independent of the comparison-tolerance
+// constants above; the smallest step is a plain literal at display precision.
+const float WEIGHT_STEP_SIZES[] = {0.001f, 0.01f, 0.1f, 1.0f, 10.0f};
 const byte WEIGHT_STEP_COUNT = sizeof(WEIGHT_STEP_SIZES) / sizeof(WEIGHT_STEP_SIZES[0]);
 
 float weight = NAN;
