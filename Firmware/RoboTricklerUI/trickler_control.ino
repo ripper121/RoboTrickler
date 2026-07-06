@@ -91,7 +91,6 @@ void startMeasurement()
     weightCounter = 0;
     activeProfileStep = -1;
     measurementCount = config.profileGeneralMeasurements;
-    lastWeight = weight;
     firstProfileMovePending = true;
     setTricklerState(TRICKLER_RUNNING);
     beep("button");

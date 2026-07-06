@@ -26,11 +26,9 @@ Events Run On: "Core 0"
 #include <SD.h>
 #include <SPI.h>
 #include <WiFi.h>
-#include <WiFiClient.h>
 #include <WebServer.h>
 #include <DNSServer.h>
 #include <ESPmDNS.h>
-#include <WiFiUdp.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <Update.h>
@@ -158,7 +156,6 @@ WEIGHT_DECIMALS	epsilon	safe WEIGHT_MAX
 #define WEIGHT_DECIMALS 4        // display/entry/storage precision (i.e. 0.0000)
 #define WEIGHT_MIN 0.0f          // minimum settable weight (0.0000)
 #define WEIGHT_MAX 500.0f        // maximum settable weight (500.0000)
-#define MAX_TARGET_WEIGHT WEIGHT_MAX // legacy name kept for existing call sites
 // Smallest representable weight step (= 10^-WEIGHT_DECIMALS; keep in sync). Weight
 // comparisons are done directly on floats — two values closer than half a step
 // would display identically, so WEIGHT_EPSILON is the "equal" tolerance. This is
@@ -175,7 +172,6 @@ const byte WEIGHT_STEP_COUNT = sizeof(WEIGHT_STEP_SIZES) / sizeof(WEIGHT_STEP_SI
 float weight = NAN;
 int decimalPlaces = WEIGHT_DECIMALS;
 String weightUnit = "";
-float lastWeight = 0;
 int weightCounter = 0;
 int measurementCount = 0;
 int activeProfileStep = -1;
@@ -222,19 +218,13 @@ static void handleTricklerState(uint32_t &readWeightTime)
   switch (tricklerState)
   {
     case TRICKLER_IDLE:
+    case TRICKLER_CALIBRATION_PROMPT:
       handleIdleWeightRead(readWeightTime);
       break;
 
     case TRICKLER_RUNNING:
-      handleRunningTrickler();
-      break;
-
     case TRICKLER_FINISHED:
       handleRunningTrickler();
-      break;
-
-    case TRICKLER_CALIBRATION_PROMPT:
-      handleIdleWeightRead(readWeightTime);
       break;
   }
 }

@@ -295,11 +295,11 @@ const char *langText(const char *key)
   return languageFallback(key);
 }
 
-bool loadLanguage()
+// Normalize config.language to a lowercase base code: trim, lowercase, and drop
+// any region suffix ("en-US"/"en_US" -> "en"), defaulting to "en" when empty.
+// Shared by the display (loadLanguage) and web (loadWebLang) language loaders.
+String normalizedLanguageCode()
 {
-  activeUiLangFilename = "";
-  activeUiLangDoc.clear();
-
   String language = String(config.language);
   language.trim();
   language.toLowerCase();
@@ -317,6 +317,15 @@ bool loadLanguage()
   {
     language = "en";
   }
+  return language;
+}
+
+bool loadLanguage()
+{
+  activeUiLangFilename = "";
+  activeUiLangDoc.clear();
+
+  String language = normalizedLanguageCode();
   strlcpy(config.language, language.c_str(), sizeof(config.language));
 
   String candidates[] = {

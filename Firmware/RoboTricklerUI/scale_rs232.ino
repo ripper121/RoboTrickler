@@ -505,7 +505,6 @@ void readWeight()
     weight = stableWeight;
     decimalPlaces = (stableDecimalPlaces > 0) ? stableDecimalPlaces : WEIGHT_DECIMALS;
     weightUnit = stableUnit;
-    lastWeight = weight;
     lastScaleWeightReadTime = millis();
     weightCounter = stableCount;
     newWeightData = isTricklerRunning() || isCalibrationProfilePromptPending();

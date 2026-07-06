@@ -474,9 +474,10 @@ bool loadConfiguration(const char *filename, Config &config)
   return 1;
 }
 
-bool saveProfileTargetWeight(const char *profileName, float targetWeight)
+// Open a profile file and parse it into doc. Sets the SD read error and returns
+// false on open/parse failure. Shared by the read-modify-write profile helpers.
+static bool loadProfileDocument(const String &filename, JsonDocument &doc)
 {
-  String filename = profileFilename(profileName);
   File file = ACTIVE_FS.open(filename.c_str());
   if (!file)
   {
@@ -486,59 +487,21 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
     return false;
   }
 
-  JsonDocument doc;
   DeserializationError error = deserializeJson(doc, file);
   file.close();
   if (error || !doc.is<JsonObject>())
   {
     String errorText = error ? String(error.c_str()) : String(langText("err_root_not_json"));
     setSdReadError(sdFilenameError("err_profile_json_parse_failed", filename.c_str()) + "\n" + errorText);
-    DEBUG_PRINT("deserializeJson() failed on profile target save: ");
+    DEBUG_PRINT("deserializeJson() failed on profile: ");
     DEBUG_PRINTLN(errorText);
     return false;
   }
-
-  JsonObject general = doc["general"].as<JsonObject>();
-  if (general.isNull())
-  {
-    general = doc["general"].to<JsonObject>();
-  }
-  general["targetWeight"] = serialized(weightToString(targetWeight));
-
-  String tempFilename = filename + ".tmp";
-  ACTIVE_FS.remove(tempFilename.c_str());
-  file = ACTIVE_FS.open(tempFilename.c_str(), FILE_WRITE);
-  if (!file)
-  {
-    setSdReadError(sdFilenameError("err_could_not_write_profile_file", tempFilename.c_str()));
-    DEBUG_PRINT("Failed to create profile temp file: ");
-    DEBUG_PRINTLN(tempFilename);
-    return false;
-  }
-
-  bool written = serializeJsonPretty(doc, file) > 0;
-  file.close();
-  if (!written)
-  {
-    ACTIVE_FS.remove(tempFilename.c_str());
-    setSdReadError(sdFilenameError("err_could_not_write_profile_file", filename.c_str()));
-    DEBUG_PRINTLN("Failed to write profile target weight");
-    return false;
-  }
-
-  ACTIVE_FS.remove(filename.c_str());
-  if (!ACTIVE_FS.rename(tempFilename.c_str(), filename.c_str()))
-  {
-    ACTIVE_FS.remove(tempFilename.c_str());
-    setSdReadError(sdFilenameError("err_could_not_replace_profile_file", filename.c_str()));
-    DEBUG_PRINT("Failed to replace profile file: ");
-    DEBUG_PRINTLN(filename);
-    return false;
-  }
-
   return true;
 }
 
+// Persist doc back over filename via a temp-file swap so a write that fails
+// partway cannot corrupt the existing profile.
 static bool writeProfileDocument(const String &filename, JsonDocument &doc)
 {
   String tempFilename = filename + ".tmp";
@@ -573,6 +536,25 @@ static bool writeProfileDocument(const String &filename, JsonDocument &doc)
   }
 
   return true;
+}
+
+bool saveProfileTargetWeight(const char *profileName, float targetWeight)
+{
+  String filename = profileFilename(profileName);
+  JsonDocument doc;
+  if (!loadProfileDocument(filename, doc))
+  {
+    return false;
+  }
+
+  JsonObject general = doc["general"].as<JsonObject>();
+  if (general.isNull())
+  {
+    general = doc["general"].to<JsonObject>();
+  }
+  general["targetWeight"] = serialized(weightToString(targetWeight));
+
+  return writeProfileDocument(filename, doc);
 }
 
 bool isValidProfileFile(const char *filename)
@@ -766,24 +748,9 @@ bool tuneProfileWeightPerRev(const char *profileName, float weightPerRev)
   }
 
   String filename = profileFilename(profileName);
-  File file = ACTIVE_FS.open(filename.c_str());
-  if (!file)
-  {
-    setSdReadError(sdFilenameError("err_could_not_open_profile_file", filename.c_str()));
-    DEBUG_PRINT("Failed to open profile: ");
-    DEBUG_PRINTLN(filename);
-    return false;
-  }
-
   JsonDocument doc;
-  DeserializationError error = deserializeJson(doc, file);
-  file.close();
-  if (error || !doc.is<JsonObject>())
+  if (!loadProfileDocument(filename, doc))
   {
-    String errorText = error ? String(error.c_str()) : String(langText("err_root_not_json"));
-    setSdReadError(sdFilenameError("err_profile_json_parse_failed", filename.c_str()) + "\n" + errorText);
-    DEBUG_PRINT("deserializeJson() failed on profile tune: ");
-    DEBUG_PRINTLN(errorText);
     return false;
   }
 

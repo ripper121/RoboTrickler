@@ -93,7 +93,7 @@ The main loop dispatches through `TricklerState` (`TRICKLER_IDLE`, `TRICKLER_RUN
 | `filesystem_sync.ino` | SD ↔ LittleFS file synchronization (display action) |
 | `ui.c` / `ui_Screen1.c` | SquareLine Studio-generated LVGL UI objects |
 | `ui_events.ino` | LVGL event callbacks wired to hardware actions |
-| `ui_dialogs.ino` | `messageBox()` + typed dialog helpers (`errorBox`, `successBox`, `warnBox`, `confirmBox`, `cancelInteractiveDialogs()`) |
+| `ui_dialogs.ino` | `messageBox()` + typed dialog helpers (`errorBox`, `successBox`, `confirmBox`, `cancelInteractiveDialogs()`) |
 | `ui_text.ino` | `langText()` — localization lookup |
 | `firmware_check.ino` | OTA version check against remote endpoint |
 | `ota_update.ino` | OTA firmware + LittleFS update handlers |

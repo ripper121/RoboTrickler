@@ -75,22 +75,7 @@ void handleWifiSave()
 // it never sits resident in heap. Use loadWebLang() once per page, then webFwText().
 bool loadWebLang(JsonDocument &doc)
 {
-  String language = String(config.language);
-  language.trim();
-  language.toLowerCase();
-  int separator = language.indexOf('-');
-  if (separator < 0)
-  {
-    separator = language.indexOf('_');
-  }
-  if (separator > 0)
-  {
-    language = language.substring(0, separator);
-  }
-  if (language.length() <= 0)
-  {
-    language = "en";
-  }
+  String language = normalizedLanguageCode();
 
   String candidates[] = {
       "/system/lang/" + language + ".json",

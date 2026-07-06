@@ -4,17 +4,26 @@ volatile bool confirmBoxResult = false;
 lv_obj_t *ui_ButtonMessageNo = NULL;
 lv_obj_t *ui_LabelMessageNo = NULL;
 
+// Hide the shared message/confirm panel and dispatch the pending confirm
+// actions. `confirmed` is the user's answer (true = OK/Yes, false = No/cancel);
+// finishProfileDeleteConfirm/finishFilesystemSyncConfirm early-out when nothing
+// is pending, so this is safe for plain message boxes too.
+static void dismissMessageDialog(bool confirmed)
+{
+  confirmBoxResult = confirmed;
+  closeDialog(&ui_PanelMessages, false);
+  messageBoxOpen = false;
+  confirmBoxOpen = false;
+  resetConfirmBoxButtons();
+  finishProfileDeleteConfirm(confirmed);
+  finishFilesystemSyncConfirm(confirmed);
+}
+
 void cancelInteractiveDialogs()
 {
   if (confirmBoxOpen)
   {
-    confirmBoxResult = false;
-    closeDialog(&ui_PanelMessages, false);
-    messageBoxOpen = false;
-    confirmBoxOpen = false;
-    resetConfirmBoxButtons();
-    finishProfileDeleteConfirm(false);
-    finishFilesystemSyncConfirm(false);
+    dismissMessageDialog(false);
   }
 
   if (isProfileTuneDialogOpen())
@@ -108,21 +117,8 @@ void messageOk_event_cb(lv_event_t *e)
 {
   // The OK button is shared by message and confirm boxes. Confirm actions are
   // dispatched after the panel is hidden so follow-up dialogs can open cleanly.
-  bool confirmed = false;
-  if (confirmBoxOpen)
-  {
-    confirmBoxResult = true;
-    confirmed = true;
-  }
-  closeDialog(&ui_PanelMessages, false);
-  messageBoxOpen = false;
-  confirmBoxOpen = false;
-  if (confirmed)
-  {
-    resetConfirmBoxButtons();
-    finishProfileDeleteConfirm(true);
-    finishFilesystemSyncConfirm(true);
-  }
+  bool confirmed = confirmBoxOpen;
+  dismissMessageDialog(confirmed);
   if (restartNow && !messageBoxOpen)
   {
     delay(1000);
@@ -132,13 +128,7 @@ void messageOk_event_cb(lv_event_t *e)
 
 void messageNo_event_cb(lv_event_t *e)
 {
-  confirmBoxResult = false;
-  closeDialog(&ui_PanelMessages, false);
-  messageBoxOpen = false;
-  confirmBoxOpen = false;
-  resetConfirmBoxButtons();
-  finishProfileDeleteConfirm(false);
-  finishFilesystemSyncConfirm(false);
+  dismissMessageDialog(false);
 }
 
 void messageBox(const String &message, const lv_font_t *font, lv_color_t color, bool wait)
@@ -157,9 +147,8 @@ void messageBox(const String &message, const lv_font_t *font, lv_color_t color, 
 // every call site.
 #define COLOR_MSG_ERROR 0xFF0000
 #define COLOR_MSG_SUCCESS 0x00FF00
-#define COLOR_MSG_WARNING 0xFF9900
 
-// Convenience wrappers for the three common message styles. They all use
+// Convenience wrappers for the two common message styles. They both use
 // UI_FONT_NORMAL; the rare large-font message (over-trickle safety warning)
 // still calls messageBox() directly. `wait` blocks until the user dismisses it.
 void errorBox(const String &message, bool wait)
@@ -170,11 +159,6 @@ void errorBox(const String &message, bool wait)
 void successBox(const String &message, bool wait)
 {
   messageBox(message, UI_FONT_NORMAL, lv_color_hex(COLOR_MSG_SUCCESS), wait);
-}
-
-void warnBox(const String &message, bool wait)
-{
-  messageBox(message, UI_FONT_NORMAL, lv_color_hex(COLOR_MSG_WARNING), wait);
 }
 
 bool confirmBox(const String &message, const lv_font_t *font, lv_color_t color)

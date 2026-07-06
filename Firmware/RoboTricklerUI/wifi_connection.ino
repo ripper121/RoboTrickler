@@ -1,14 +1,3 @@
-IPAddress stringToIPAddress(const String &ipAddressString)
-{
-  IPAddress ipAddress;
-  if (!ipAddress.fromString(ipAddressString))
-  {
-    DEBUG_PRINTLN("Invalid IP Address format.");
-  }
-
-  return ipAddress;
-}
-
 bool configStringHasValue(const char *value)
 {
   String text(value);
