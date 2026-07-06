@@ -322,6 +322,7 @@ bool loadProfile(const char *filename, Config &config)
 
   // Reset profile-only fields before applying the selected JSON file so values
   // from the previous profile cannot leak into a partially specified profile.
+  config.targetWeight = 40.0;
   config.profileTolerance = 0.000;
   config.profileAlarmThreshold = 0.000;
   config.profileWeightGap = 1.000;
