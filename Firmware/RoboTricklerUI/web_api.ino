@@ -194,6 +194,15 @@ void handleGetTricklerState()
 
 void handleSetTarget()
 {
+  // Rewriting the target weight (and its profile file) mid-run races the Core 1
+  // state machine that is actively reading config.targetWeight, so refuse while
+  // trickling, matching handleSetProfile()/handleStart().
+  if (isTricklerRunning())
+  {
+    server.send(409, "text/html", webStatusPage("running", "Running..."));
+    return;
+  }
+
   // Browser/UI clients pass targetWeight as a query/form argument; the profile
   // file is updated only when the value actually changes.
   for (uint8_t i = 0; i < server.args(); i++)

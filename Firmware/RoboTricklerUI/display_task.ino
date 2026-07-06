@@ -29,6 +29,12 @@ IRAM_ATTR void lvglDisplayTask(void *parg)
         if (webServerActive && ((WiFi.status() == WL_CONNECTED) || wifiSetupApActive))
         {
             server.handleClient();
+            // The captive-portal DNS responder only answers queries while it is
+            // pumped, so service it alongside the web server in AP setup mode.
+            if (wifiSetupApActive)
+            {
+                dnsServer.processNextRequest();
+            }
         }
         vTaskDelay(pdMS_TO_TICKS(5));
     }
