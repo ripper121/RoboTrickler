@@ -128,21 +128,6 @@ static bool runBulkStepperMove(String &infoText)
   return true;
 }
 
-static int lastStepperRpm[3] = {0, 0, 0};
-
-static void setStepperRpmIfChanged(byte stepperNum, int rpm)
-{
-  if ((stepperNum < 1) || (stepperNum > 2))
-  {
-    return;
-  }
-  if (lastStepperRpm[stepperNum] != rpm)
-  {
-    setStepperRpm(stepperNum, rpm);
-    lastStepperRpm[stepperNum] = rpm;
-  }
-}
-
 void startCalibrationProfilePrompt()
 {
   stopTrickler();
@@ -295,7 +280,10 @@ static bool runProfileStep(bool calibrationProfile, int actualWeightCounter)
     return false;
   }
 
-  setStepperRpmIfChanged(stepperNum, config.profileRpm[profileStep]);
+  // setStepperRpm() is a plain assignment that step() reads, so set it every
+  // step. A cached "if changed" guard would go stale after the bulk move (which
+  // calls setStepperRpm directly) and could run a fine step at the bulk RPM.
+  setStepperRpm(stepperNum, config.profileRpm[profileStep]);
   step(stepperNum, config.profileSteps[profileStep]);
 
   measurementCount = config.profileMeasurements[profileStep];
