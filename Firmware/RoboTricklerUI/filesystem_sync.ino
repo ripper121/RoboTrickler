@@ -158,6 +158,40 @@ void requestFilesystemSync(FilesystemSyncDirection direction)
   showConfirmBox(langText(messageKey), UI_FONT_NORMAL, lv_color_hex(0xFFFFFF));
 }
 
+// Format the "<n> files copied" status line without ever handing the (user-editable,
+// translatable) template to a printf-family function as its format string. Only a
+// literal "%d" is substituted with the count; every other character — including a
+// stray "%" or an unsupported specifier a translator might introduce — is copied
+// verbatim. This keeps translators in control of wording/placement while removing
+// the format-string hazard (a bad template would otherwise be undefined behavior).
+static void formatSyncCompleteMessage(char *dest, size_t destSize, const char *templateText, int count)
+{
+  if ((dest == NULL) || (destSize == 0))
+  {
+    return;
+  }
+
+  size_t out = 0;
+  bool countWritten = false;
+  for (size_t i = 0; (templateText[i] != '\0') && (out + 1 < destSize); i++)
+  {
+    if (!countWritten && (templateText[i] == '%') && (templateText[i + 1] == 'd'))
+    {
+      char number[12];
+      int numberLen = snprintf(number, sizeof(number), "%d", count);
+      for (int n = 0; (n < numberLen) && (out + 1 < destSize); n++)
+      {
+        dest[out++] = number[n];
+      }
+      countWritten = true;
+      i++; // also consume the 'd'
+      continue;
+    }
+    dest[out++] = templateText[i];
+  }
+  dest[out] = '\0';
+}
+
 void finishFilesystemSyncConfirm(bool confirmed)
 {
   FilesystemSyncDirection direction = pendingFilesystemSync;
@@ -184,7 +218,7 @@ void finishFilesystemSyncConfirm(bool confirmed)
   }
 
   char message[96];
-  snprintf(message, sizeof(message), langText("msg_sync_complete"), copiedFiles);
+  formatSyncCompleteMessage(message, sizeof(message), langText("msg_sync_complete"), copiedFiles);
   if (direction == FILESYSTEM_SYNC_FLASH_TO_SD)
   {
     strlcat(message, langText("msg_sync_restarting"), sizeof(message));

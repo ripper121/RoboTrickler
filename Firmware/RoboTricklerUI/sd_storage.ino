@@ -368,6 +368,8 @@ bool loadProfile(const char *filename, Config &config)
       config.profileGeneralMeasurements = 20;
     }
   }
+  // Keep a profile file with an out-of-range targetWeight inside the weight domain.
+  config.targetWeight = clampWeight(config.targetWeight);
 
   JsonObject stepperMap = doc["stepper"].as<JsonObject>();
   if (!stepperMap.isNull())
@@ -501,7 +503,7 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
   {
     general = doc["general"].to<JsonObject>();
   }
-  general["targetWeight"] = serialized(String(targetWeight, 3));
+  general["targetWeight"] = serialized(weightToString(targetWeight));
 
   String tempFilename = filename + ".tmp";
   ACTIVE_FS.remove(tempFilename.c_str());
@@ -634,7 +636,7 @@ static void populateCalibrationTrickleMap(JsonDocument &doc, float weightPerRev,
     }
 
     JsonObject profileEntry = trickleMap.add<JsonObject>();
-    profileEntry["diffWeight"] = serialized(String(diffWeights[i], 3));
+    profileEntry["diffWeight"] = serialized(weightToString(diffWeights[i]));
     profileEntry["measurements"] = measurements[i];
     JsonObject stepper = profileEntry["stepper"].to<JsonObject>();
     stepper["id"] = 1;
@@ -693,10 +695,10 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
 
   JsonDocument doc;
   JsonObject general = doc["general"].to<JsonObject>();
-  general["targetWeight"] = serialized(String(config.targetWeight, 3));
-  general["tolerance"] = serialized(String(0.0, 3));
-  general["alarmThreshold"] = serialized(String(1.0, 3));
-  general["weightGap"] = serialized(String(1.0, 3));
+  general["targetWeight"] = serialized(weightToString(config.targetWeight));
+  general["tolerance"] = serialized(weightToString(0.0f));
+  general["alarmThreshold"] = serialized(weightToString(1.0f));
+  general["weightGap"] = serialized(weightToString(1.0f));
   general["bulkStepper"] = 1;
   general["startAtZero"] = false;
   general["sessionCounter"] = false;
@@ -705,11 +707,11 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   JsonObject stepperMap = doc["stepper"].to<JsonObject>();
   JsonObject stepper1 = stepperMap["1"].to<JsonObject>();
   stepper1["enabled"] = true;
-  stepper1["weightPerRev"] = serialized(String(weightPerRev, 3));
+  stepper1["weightPerRev"] = serialized(weightToString(weightPerRev));
   stepper1["rpm"] = profileRpm;
   JsonObject stepper2 = stepperMap["2"].to<JsonObject>();
   stepper2["enabled"] = config.profileStepperEnabled[2];
-  stepper2["weightPerRev"] = serialized(String(config.profileStepperWeightPerRev[2] > 0.0 ? config.profileStepperWeightPerRev[2] : 10.0, 3));
+  stepper2["weightPerRev"] = serialized(weightToString(config.profileStepperWeightPerRev[2] > 0.0 ? config.profileStepperWeightPerRev[2] : 10.0));
   stepper2["rpm"] = config.profileStepperRpm[2] > 0 ? config.profileStepperRpm[2] : 200;
 
   populateCalibrationTrickleMap(doc, weightPerRev, profileRpm);
@@ -806,7 +808,7 @@ bool tuneProfileWeightPerRev(const char *profileName, float weightPerRev)
     stepper1 = stepperMap["1"].to<JsonObject>();
   }
   stepper1["enabled"] = true;
-  stepper1["weightPerRev"] = serialized(String(weightPerRev, 3));
+  stepper1["weightPerRev"] = serialized(weightToString(weightPerRev));
   stepper1["rpm"] = profileRpm;
 
   populateCalibrationTrickleMap(doc, weightPerRev, profileRpm);

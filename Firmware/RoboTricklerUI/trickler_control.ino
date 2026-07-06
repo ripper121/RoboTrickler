@@ -106,7 +106,7 @@ void stopMeasurement()
 
 void saveTargetWeight(float weight)
 {
-    config.targetWeight = weight;
+    config.targetWeight = clampWeight(weight);
     updateTargetWeightLabel();
     String infoText = langText("status_saving_target");
     updateDisplayLog(infoText, true);

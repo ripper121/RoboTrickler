@@ -11,7 +11,7 @@ void updateAddWeightLabel()
   if (ui_LabelAddWeightCycle != NULL)
   {
     char text[16];
-    snprintf(text, sizeof(text), "%.3f", addWeight);
+    formatWeight(text, sizeof(text), addWeight);
     setLabelText(ui_LabelAddWeightCycle, text);
   }
 }
@@ -38,30 +38,45 @@ void cycleAddWeight_event_cb(lv_event_t *e)
   beep("button");
 }
 
+// The Core 1 trickler state machine reads config.targetWeight live while a run is
+// active, so an on-screen edit from the Core 0 display task would race that reader
+// and change the target of an in-progress throw. Refuse edits while running, the
+// same way the web API does in handleSetTarget().
+static bool targetWeightEditAllowed()
+{
+  return !isTricklerRunning();
+}
+
 void increaseTargetWeight_event_cb(lv_event_t *e)
 {
-  config.targetWeight += addWeight;
-  if (config.targetWeight > MAX_TARGET_WEIGHT)
+  if (!targetWeightEditAllowed())
   {
-    config.targetWeight = MAX_TARGET_WEIGHT;
+    return;
   }
+  config.targetWeight = clampWeight(config.targetWeight + addWeight);
   beep("button");
   updateTargetWeightLabel();
 }
 
 void decreaseTargetWeight_event_cb(lv_event_t *e)
 {
-  config.targetWeight -= addWeight;
-  if (config.targetWeight < 0)
+  if (!targetWeightEditAllowed())
   {
-    config.targetWeight = 0.0;
+    return;
   }
+  config.targetWeight = clampWeight(config.targetWeight - addWeight);
   beep("button");
   updateTargetWeightLabel();
 }
 
 void selectPreviousProfile_event_cb(lv_event_t *e)
 {
+  // Nothing to select (and wrapping to profileListCount - 1 would be -1) when the
+  // list is empty, so skip the pointless loadProfile()/saveConfiguration() cycle.
+  if (profileListCount <= 0)
+  {
+    return;
+  }
   selectedProfileIndex--;
   if (selectedProfileIndex < 0)
     selectedProfileIndex = (profileListCount - 1);
@@ -80,6 +95,10 @@ void requestProfileDelete_event_cb(lv_event_t *e)
 
 void selectNextProfile_event_cb(lv_event_t *e)
 {
+  if (profileListCount <= 0)
+  {
+    return;
+  }
   selectedProfileIndex++;
   if (selectedProfileIndex > (profileListCount - 1))
     selectedProfileIndex = 0;

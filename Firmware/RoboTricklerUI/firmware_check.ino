@@ -1,11 +1,6 @@
 String firmwareCheckUrl()
 {
-  String serverPath = DEFAULT_FW_UPDATE_URL;
-  if (serverPath == DEFAULT_FW_UPDATE_URL)
-  {
-    serverPath += "?mac=" + String(WiFi.macAddress()) + "&version=" + String(FW_VERSION);
-  }
-  return serverPath;
+  return String(DEFAULT_FW_UPDATE_URL) + "?mac=" + String(WiFi.macAddress()) + "&version=" + String(FW_VERSION);
 }
 
 String normalizeFirmwareVersion(String version)

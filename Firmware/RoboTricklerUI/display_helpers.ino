@@ -222,12 +222,39 @@ void setLabelText(lv_obj_t *label, const char *text)
   lvglUnlock();
 }
 
+// --- Weight domain helpers --------------------------------------------------
+// One place that knows how a weight becomes text or gets bounded, driven by the
+// WEIGHT_DECIMALS / WEIGHT_MIN / WEIGHT_MAX constants. Call these instead of
+// hardcoding a precision ("%.3f", String(x, 3)) or a range literal at each site.
+float clampWeight(float value)
+{
+  if (value < WEIGHT_MIN)
+  {
+    return WEIGHT_MIN;
+  }
+  if (value > WEIGHT_MAX)
+  {
+    return WEIGHT_MAX;
+  }
+  return value;
+}
+
+void formatWeight(char *buffer, size_t size, float value)
+{
+  snprintf(buffer, size, "%.*f", WEIGHT_DECIMALS, value);
+}
+
+String weightToString(float value)
+{
+  return String(value, WEIGHT_DECIMALS);
+}
+
 // The target weight label is rewritten from config.targetWeight in several
 // places (boot, +/- buttons, profile load/tune); keep that formatting in one spot.
 void updateTargetWeightLabel()
 {
   char text[16];
-  snprintf(text, sizeof(text), "%.3f", config.targetWeight);
+  formatWeight(text, sizeof(text), config.targetWeight);
   setLabelText(ui_LabelTarget, text);
 }
 
@@ -245,9 +272,9 @@ void setWeightLabel(lv_obj_t *label)
   {
     decimals = 0;
   }
-  else if (decimals > 6)
+  else if (decimals > WEIGHT_DECIMALS)
   {
-    decimals = 6;
+    decimals = WEIGHT_DECIMALS;
   }
   snprintf(text, sizeof(text), "%.*f%s", decimals, weight, weightUnit.c_str());
   setLabelText(label, text);

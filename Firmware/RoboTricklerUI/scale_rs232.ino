@@ -432,9 +432,9 @@ void readWeight()
   bool timeout = false;
   bool gotValidWeight = false;
   int stableCount = 0;
-  long previousRoundedWeight = 0;
+  float previousStableWeight = 0.0;
   float stableWeight = -1.0;
-  int stableDecimalPlaces = DECIMAL_PLACES;
+  int stableDecimalPlaces = WEIGHT_DECIMALS;
   String stableUnit = "";
 
   serialFlush();
@@ -448,15 +448,16 @@ void readWeight()
     }
 
     float candidateWeight = -1.0;
-    int candidateDecimalPlaces = DECIMAL_PLACES;
+    int candidateDecimalPlaces = WEIGHT_DECIMALS;
     String candidateUnit = "";
     if (!readScaleLine(&candidateWeight, &candidateDecimalPlaces, &candidateUnit))
     {
       continue;
     }
 
-    long candidateRoundedWeight = lroundf(candidateWeight * WEIGHT_SCALE_FACTOR);
-    if (gotValidWeight && (candidateRoundedWeight == previousRoundedWeight))
+    // "Stable" means two consecutive readings equal at the display precision,
+    // using the same weightsEqual() tolerance the state machine compares with.
+    if (gotValidWeight && weightsEqual(candidateWeight, previousStableWeight))
     {
       stableCount++;
     }
@@ -466,7 +467,7 @@ void readWeight()
     }
 
     gotValidWeight = true;
-    previousRoundedWeight = candidateRoundedWeight;
+    previousStableWeight = candidateWeight;
     stableWeight = candidateWeight;
     stableDecimalPlaces = candidateDecimalPlaces;
     stableUnit = candidateUnit;
@@ -502,7 +503,7 @@ void readWeight()
   {
     timeoutLogged = false;
     weight = stableWeight;
-    decimalPlaces = (stableDecimalPlaces > 0) ? stableDecimalPlaces : DECIMAL_PLACES;
+    decimalPlaces = (stableDecimalPlaces > 0) ? stableDecimalPlaces : WEIGHT_DECIMALS;
     weightUnit = stableUnit;
     lastWeight = weight;
     lastScaleWeightReadTime = millis();

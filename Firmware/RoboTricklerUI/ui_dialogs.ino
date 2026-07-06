@@ -253,7 +253,7 @@ static void updateProfileTuneValueLabel()
     if (ui_LabelProfileTuneValue != NULL)
     {
         char text[16];
-        snprintf(text, sizeof(text), "%.3f", profileTuneWeightPerRev);
+        formatWeight(text, sizeof(text), profileTuneWeightPerRev);
         lv_label_set_text(ui_LabelProfileTuneValue, text);
     }
 }
@@ -268,7 +268,7 @@ static void updateProfileTuneStepLabel()
     if (ui_LabelProfileTuneStep != NULL)
     {
         char text[16];
-        snprintf(text, sizeof(text), "%.3f", profileTuneStepSize);
+        formatWeight(text, sizeof(text), profileTuneStepSize);
         lv_label_set_text(ui_LabelProfileTuneStep, text);
     }
 }
@@ -279,7 +279,7 @@ static float currentProfileTuneWeightPerRev()
     {
         return config.profileStepperWeightPerRev[1];
     }
-    return 0.001;
+    return WEIGHT_RESOLUTION;
 }
 
 void closeProfileTuneDialog()
@@ -345,9 +345,9 @@ static void saveProfileTune()
 void profileTuneMinus_event_cb(lv_event_t *e)
 {
     profileTuneWeightPerRev -= profileTuneStepSize;
-    if (profileTuneWeightPerRev < 0.001)
+    if (profileTuneWeightPerRev < WEIGHT_RESOLUTION)
     {
-        profileTuneWeightPerRev = 0.001;
+        profileTuneWeightPerRev = WEIGHT_RESOLUTION;
     }
     updateProfileTuneValueLabel();
 }
@@ -355,9 +355,9 @@ void profileTuneMinus_event_cb(lv_event_t *e)
 void profileTunePlus_event_cb(lv_event_t *e)
 {
     profileTuneWeightPerRev += profileTuneStepSize;
-    if (profileTuneWeightPerRev > 99.999)
+    if (profileTuneWeightPerRev > 99.9999)
     {
-        profileTuneWeightPerRev = 99.999;
+        profileTuneWeightPerRev = 99.9999;
     }
     updateProfileTuneValueLabel();
 }
@@ -411,7 +411,7 @@ static void createProfileTuneDialog()
     lv_obj_set_height(ui_LabelProfileTuneValue, 50);
     lv_obj_set_y(ui_LabelProfileTuneValue, -42);
     lv_obj_set_align(ui_LabelProfileTuneValue, LV_ALIGN_CENTER);
-    lv_label_set_text_static(ui_LabelProfileTuneValue, "0.000");
+    lv_label_set_text_static(ui_LabelProfileTuneValue, "0.0000");
     lv_obj_set_style_text_align(ui_LabelProfileTuneValue, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_set_style_text_font(ui_LabelProfileTuneValue, UI_FONT_LARGE, LV_PART_MAIN);
     lv_obj_set_style_bg_color(ui_LabelProfileTuneValue, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
@@ -424,7 +424,7 @@ static void createProfileTuneDialog()
 
     ui_ButtonProfileTuneMinus = createDialogButton(ui_PanelProfileTune, 115, -42, 60, 45, "-", UI_FONT_NORMAL, profileTuneMinus_event_cb);
     ui_ButtonProfileTunePlus = createDialogButton(ui_PanelProfileTune, -115, -42, 60, 45, "+", UI_FONT_NORMAL, profileTunePlus_event_cb);
-    ui_ButtonProfileTuneStep = createDialogButton(ui_PanelProfileTune, 0, 22, 110, 45, "0.001", UI_FONT_NORMAL, profileTuneStep_event_cb);
+    ui_ButtonProfileTuneStep = createDialogButton(ui_PanelProfileTune, 0, 22, 110, 45, "0.0001", UI_FONT_NORMAL, profileTuneStep_event_cb);
     ui_LabelProfileTuneStep = lv_obj_get_child(ui_ButtonProfileTuneStep, 0);
     ui_ButtonProfileTuneCancel = createDialogButton(ui_PanelProfileTune, 70, 88, 110, 45, UI_SYMBOL_CANCEL, UI_FONT_NORMAL, profileTuneCancel_event_cb);
     ui_ButtonProfileTuneSave = createDialogButton(ui_PanelProfileTune, -70, 88, 110, 45, UI_SYMBOL_SAVE, UI_FONT_NORMAL, profileTuneSave_event_cb);

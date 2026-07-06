@@ -145,16 +145,33 @@ unsigned long wifiInterval = 10000;
 
 #define DEFAULT_MOTOR_STEPS_PER_REV 200 // Default number of steps for a full revolution of the stepper motor (config.motorStepsPerRev). This is typically 200 for a 1.8 degree stepper, but may be different for other motors.
 
-#define MAX_TARGET_WEIGHT 999
-#define DECIMAL_PLACES 3
-#define WEIGHT_SCALE_FACTOR 100000.0f // Scale factor to convert weight to an integer for comparison, based on the number of decimal places (e.g., 10000 for 4 decimal places).
+// Weight domain — the single source of truth for how weights are ranged and
+// formatted. Every place that stores, shows, enters, or compares a weight goes
+// through these and the weightToString()/formatWeight()/clampWeight() helpers,
+// so changing precision or range means editing only this block.
+/*
+WEIGHT_DECIMALS	epsilon	safe WEIGHT_MAX
+4               5e-5    ~512
+3               5e-4    ~8192
+2               5e-3    ~65536
+*/
+#define WEIGHT_DECIMALS 4        // display/entry/storage precision (i.e. 0.0000)
+#define WEIGHT_MIN 0.0f          // minimum settable weight (0.0000)
+#define WEIGHT_MAX 500.0f        // maximum settable weight (500.0000)
+#define MAX_TARGET_WEIGHT WEIGHT_MAX // legacy name kept for existing call sites
+// Smallest representable weight step (= 10^-WEIGHT_DECIMALS; keep in sync). Weight
+// comparisons are done directly on floats — two values closer than half a step
+// would display identically, so WEIGHT_EPSILON is the "equal" tolerance. This is
+// all the machinery weight comparisons need; no scale-to-integer conversion.
+#define WEIGHT_RESOLUTION 0.0001f
+#define WEIGHT_EPSILON (WEIGHT_RESOLUTION * 0.5f)
 #define IDLE_SCALE_READ_INTERVAL 1000 // Interval for reading the scale weight in idle state (milliseconds).
 
-const float WEIGHT_STEP_SIZES[] = {0.001, 0.01, 0.1, 1.0, 10.0};
+const float WEIGHT_STEP_SIZES[] = {WEIGHT_RESOLUTION, 0.001, 0.01, 0.1, 1.0, 10.0};
 const byte WEIGHT_STEP_COUNT = sizeof(WEIGHT_STEP_SIZES) / sizeof(WEIGHT_STEP_SIZES[0]);
 
 float weight = NAN;
-int decimalPlaces = DECIMAL_PLACES;
+int decimalPlaces = WEIGHT_DECIMALS;
 String weightUnit = "";
 float lastWeight = 0;
 int weightCounter = 0;

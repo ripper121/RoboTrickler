@@ -13,29 +13,35 @@ bool isCalibrationProfilePromptPending()
   return tricklerState == TRICKLER_CALIBRATION_PROMPT;
 }
 
-static long weightTicks(float value)
+// Weight comparisons run directly on floats. IEEE-754 ordering is already exact,
+// so >=/<=/< need no scaling; the only care is that two values which would render
+// identically (within half a WEIGHT_RESOLUTION step) count as equal. fabsf() gives
+// that tolerance, and isgreaterequal()/islessequal()/isless() are the standard
+// NaN-quiet <math.h> comparison macros (a NaN weight compares false, never traps),
+// which is exactly why the old scale-to-integer trick is unnecessary.
+static bool weightsEqual(float a, float b)
 {
-  return lroundf(value * WEIGHT_SCALE_FACTOR);
+  return fabsf(a - b) < WEIGHT_EPSILON;
 }
 
 static bool weightIsZero(float value)
 {
-  return weightTicks(value) == 0;
+  return weightsEqual(value, 0.0f);
 }
 
 static bool weightAtOrAbove(float value, float threshold)
 {
-  return weightTicks(value) >= weightTicks(threshold);
+  return isgreaterequal(value, threshold - WEIGHT_EPSILON);
 }
 
 static bool weightAtOrBelow(float value, float threshold)
 {
-  return weightTicks(value) <= weightTicks(threshold);
+  return islessequal(value, threshold + WEIGHT_EPSILON);
 }
 
 static bool weightBelow(float value, float threshold)
 {
-  return weightTicks(value) < weightTicks(threshold);
+  return isless(value, threshold - WEIGHT_EPSILON);
 }
 
 void setTricklerState(TricklerState state)
@@ -154,7 +160,7 @@ void handleCalibrationProfilePrompt()
     setTricklerState(TRICKLER_IDLE);
     newWeightData = false;
     weightCounter = 0;
-    if (confirmBox(String(langText("msg_create_profile_prompt")) + String(weight, 3) + " gn", UI_FONT_NORMAL, lv_color_hex(0xFFFFFF)))
+    if (confirmBox(String(langText("msg_create_profile_prompt")) + weightToString(weight) + " gn", UI_FONT_NORMAL, lv_color_hex(0xFFFFFF)))
     {
       String profileName = "";
       if (createProfileFromCalibration(weight, profileName))
@@ -252,7 +258,8 @@ void updateActiveProfileStepCounterDisplay(int actualWeightCounter)
   char infoLine[64];
   snprintf(infoLine,
            sizeof(infoLine),
-           "W%.3f ST%ld RPM%d M%d/%d",
+           "W%.*f ST%ld RPM%d M%d/%d",
+           WEIGHT_DECIMALS,
            config.profileDiffWeight[activeProfileStep],
            config.profileSteps[activeProfileStep],
            config.profileRpm[activeProfileStep],

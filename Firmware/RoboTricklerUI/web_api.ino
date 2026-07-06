@@ -170,7 +170,7 @@ void handleReboot()
 
 void handleGetTarget()
 {
-  server.send(200, "text/plain", String(config.targetWeight, 3));
+  server.send(200, "text/plain", weightToString(config.targetWeight));
 }
 
 void handleGetTricklerState()
@@ -181,7 +181,7 @@ void handleGetTricklerState()
   char weightText[16];
   if (isfinite(weight))
   {
-    snprintf(weightText, sizeof(weightText), "%.3f", weight);
+    formatWeight(weightText, sizeof(weightText), weight);
   }
   else
   {
@@ -209,11 +209,12 @@ void handleSetTarget()
   {
     if (server.argName(i) == "targetWeight")
     {
-      if ((server.arg(i).toFloat() > 0) && (server.arg(i).toFloat() < MAX_TARGET_WEIGHT))
+      float requestedWeight = server.arg(i).toFloat();
+      if ((requestedWeight > WEIGHT_MIN) && (requestedWeight <= WEIGHT_MAX))
       {
-        if (config.targetWeight != server.arg(i).toFloat())
+        if (config.targetWeight != requestedWeight)
         {
-          saveTargetWeight(server.arg(i).toFloat());
+          saveTargetWeight(requestedWeight);
         }
       }
     }
