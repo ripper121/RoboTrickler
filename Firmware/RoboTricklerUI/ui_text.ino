@@ -1,277 +1,161 @@
+// Built-in English fallback strings, used when the active SD lang file is
+// missing or lacks a key. Kept as a flat lookup table instead of a strcmp
+// if-chain: less code, and adding a key is one line.
+struct LangFallbackEntry
+{
+  const char *key;
+  const char *value;
+};
+
+static const LangFallbackEntry LANG_FALLBACKS[] = {
+    {"tab_trickler", "Trickler"},
+    {"tab_profile", "Profile"},
+    {"tab_info", "Info"},
+    {"placeholder_profile", "Profile"},
+    {"label_scale", "Scale"},
+    {"status_ready", "Ready"},
+    {"status_stopped", "Stopped"},
+    {"status_get_weight", "Get Weight..."},
+    {"status_running", "Running..."},
+    {"status_waiting_zero", "Waiting for 0.000..."},
+    {"status_done", "Done :)"},
+    {"status_count", " Count:"},
+    {"status_init_steppers", "Init steppers..."},
+    {"status_stepper_i2s_failed", "Stepper I2S init failed!"},
+    {"status_loading_config", "Loading config..."},
+    {"status_reading_profiles", "Reading profiles..."},
+    {"status_starting_scale", "Starting scale serial..."},
+    {"status_saving_target", "Writing target to profile..."},
+    {"status_target_saved", "Target saved"},
+    {"status_search_profiles", "Search Profiles..."},
+    {"status_refresh_profile_list", "Refreshing profile list..."},
+    {"status_saving_target_failed", "Target weight save failed!"},
+    {"status_timeout", "Timeout! Check RS232 Wiring & Settings!"},
+    {"status_bulk_failed", "Bulk trickle failed!"},
+    {"status_invalid_profile", "Invalid profile!"},
+    {"status_invalid_stepper", "Invalid stepper number!"},
+    {"status_reconnecting_wifi", "Reconnecting to WiFi..."},
+    {"status_storage_sd", "Storage: SD Card"},
+    {"status_storage_flash", "Storage: Internal Flash"},
+    {"label_sync_flash_to_sd", "Upload Flash > SD"},
+    {"label_sync_sd_to_flash", "Download SD > Flash"},
+    {"msg_sync_flash_to_sd_confirm", "Copy config and profiles\nfrom Flash to SD?"},
+    {"msg_sync_sd_to_flash_confirm", "Copy config and profiles\nfrom SD to Flash?"},
+    {"msg_stop_trickler_before_sync", "Stop trickler before syncing files"},
+    {"msg_sync_filesystems_unavailable", "SD card and LittleFS must both be mounted"},
+    {"msg_sync_failed", "Config/profile sync failed"},
+    {"msg_sync_complete", "Sync complete: %d files copied"},
+    {"msg_sync_restarting", "\n\nRestarting to load SD files."},
+    {"status_wifi_ap", "WiFi AP: "},
+    {"status_wifi_password", "WiFi password: "},
+    {"status_wifi_open", "Open http://"},
+    {"wifi_setup_mode", "WiFi setup mode"},
+    {"wifi_connect_to", "Connect to:"},
+    {"wifi_password", "Password:"},
+    {"wifi_open", "Open:"},
+    {"wifi_select_and_save", "Select your WiFi and save."},
+    {"wifi_qr_click_to_hide", "Click to Hide"},
+    {"msg_filesystem_mount_failed", "Filesystem mount failed"},
+    {"msg_config_default", "Default Config generated."},
+    {"msg_profile_corrupted", "Profile Corrupted / Not Found:\n\n"},
+    {"msg_calibration_profile_loaded", "\n\nCalibration Profile Loaded."},
+    {"msg_unknown_config_read_error", "Unknown config read error"},
+#if ENABLE_LITTLEFS
+    {"msg_sd_card_not_connected", "SD card not connected!\n\nInternal Flash will be used instead!"},
+#else
+    {"msg_sd_card_not_connected", "SD card not connected!"},
+#endif
+    {"msg_config_corrupted", "Config File Corrupted / Not Found!\n\n"},
+    {"msg_over_trickle", "!Over trickle!\n!Check weight!"},
+    {"msg_create_profile_prompt", "Create profile from calibration?\n\nWeight: "},
+    {"msg_profile_created", "Profile created:\n\n"},
+    {"msg_create_profile_failed", "Could not create profile!"},
+    {"msg_calibration_weight_invalid", "Calibration weight invalid!"},
+    {"msg_no_free_profile_name", "No free powder profile name!"},
+    {"msg_max_profiles_reached", "Profile limit reached!\nCannot calibrate."},
+    {"msg_profiles_folder_failed", "Failed to create profiles folder!"},
+    {"msg_profile_file_create_failed", "Failed to create profile!"},
+    {"msg_profile_file_write_failed", "Failed to write profile!"},
+    {"msg_invalid_profiles_found", "Invalid profiles found:"},
+    {"msg_invalid_profiles_ignored", "\n\nThey were ignored."},
+    {"status_invalid_profile_ignored", "Invalid profile ignored: "},
+    {"status_profile_created", "Profile created: "},
+    {"status_creating_profile", "Creating profile: "},
+    {"status_writing_profile", "Writing profile: "},
+    {"status_selecting_profile", "Selecting profile: "},
+    {"status_loading_profile", "Loading profile: "},
+    {"status_profile_ready", "Profile ready: "},
+    {"status_tuning_profile", "Tuning profile: "},
+    {"status_starting_trickler", "Starting trickler..."},
+    {"status_profile_selected_suffix", " selected!"},
+    {"status_connect_wifi", "Connect to Wifi: "},
+    {"status_static_ip_failed", "Static IP Failed to configure!"},
+    {"status_dns_failed", "DNS Failed to configure!"},
+    {"status_wifi_connected", "Wifi Connected"},
+    {"status_no_wifi", "No Wifi"},
+    {"status_open_browser_prefix", "Open http://"},
+    {"status_open_browser_suffix", ".local in your browser"},
+    {"msg_new_firmware", "New firmware available:\n\nv"},
+    {"msg_check_url", "\n\nCheck: https://robo-trickler.de"},
+    {"status_update_failed", "Update failed: "},
+    {"status_update_upload", "Update: "},
+    {"status_update_success", "Update Success: "},
+    {"status_update_write_failed", "Update write failed: "},
+    {"status_update_end_failed", "Update end failed: "},
+    {"status_update_unexpected", "Update Failed Unexpectedly (likely broken connection)"},
+    {"status_update_begin_failed_suffix", " update begin failed: "},
+    {"status_update_write_failed_suffix", " update write failed: "},
+    {"status_update_failed_suffix", " update failed: "},
+    {"status_update_not_finished_suffix", " update was not finished"},
+    {"status_update_completed_suffix", " update completed"},
+    {"status_update_not_file_suffix", " update is not a file: "},
+    {"status_update_empty_suffix", " update file is empty: "},
+    {"status_update_start_prefix", "Starting "},
+    {"status_update_start_suffix", " update from "},
+    {"status_update_delete_failed", "Could not delete completed update file: "},
+    {"status_check_sd_updates", "Checking SD card updates..."},
+    {"status_sd_update_complete", "SD card update complete. Rebooting..."},
+    {"err_incomplete_profile_entry", "Incomplete profile entry:\n"},
+    {"err_entry", "\nEntry: "},
+    {"err_required_profile_entry", "\nRequired: diffWeight, stepper, steps, rpm, measurements"},
+    {"err_invalid_profile_values", "Invalid profile values:\n"},
+    {"err_calibration_profile_incomplete", "Calibration profile is incomplete:\n"},
+    {"err_required_calibration_profile", "\nRequired: stepper, steps, rpm"},
+    {"err_profile_missing_map", "Profile has no trickleMap:\n"},
+    {"err_profile_file_not_found", "Profile file not found:\n"},
+    {"err_could_not_open_profile_file", "Could not open profile file:\n"},
+    {"err_root_not_json", "Root is not a JSON object"},
+    {"err_profile_json_parse_failed", "Profile JSON parse failed:\n"},
+    {"err_profile_has_no_entries", "Profile has no entries:\n"},
+    {"err_could_not_open_config_file", "Could not open config file:\n"},
+    {"err_config_json_parse_failed", "Config JSON parse failed:\n"},
+    {"err_could_not_write_profile_file", "Could not write profile file:\n"},
+    {"err_could_not_replace_profile_file", "Could not replace profile file:\n"},
+    {"msg_cannot_delete_calibrate_profile", "Cannot delete calibrate profile"},
+    {"msg_delete_profile_file_not_found", "Profile file not found: "},
+    {"msg_delete_profile_confirm_prefix", "Delete profile "},
+    {"msg_delete_profile_confirm_suffix", "?"},
+    {"msg_cannot_delete_profile", "Cannot delete profile"},
+    {"msg_delete_profile_calibrate_missing", "Cannot delete profile: calibrate profile missing"},
+    {"msg_delete_profile_calibrate_load_failed", "Cannot delete profile: failed to load calibrate"},
+    {"msg_could_not_delete_profile", "Could not delete profile: "},
+    {"msg_profile_deleted", "Profile deleted: "},
+    {"msg_stop_trickler_before_tune_profile", "Stop trickler before tuning profile"},
+    {"msg_cannot_tune_profile", "Cannot tune profile"},
+    {"msg_tune_profile_title", "weight/rev"},
+    {"msg_could_not_tune_profile", "Could not tune profile"},
+    {"msg_profile_tuned", "Profile tuned: "},
+};
+
 static const char *languageFallback(const char *key)
 {
-  if (strcmp(key, "tab_trickler") == 0)
-    return "Trickler";
-  if (strcmp(key, "tab_profile") == 0)
-    return "Profile";
-  if (strcmp(key, "tab_info") == 0)
-    return "Info";
-  if (strcmp(key, "placeholder_profile") == 0)
-    return "Profile";
-  if (strcmp(key, "label_scale") == 0)
-    return "Scale";
-  if (strcmp(key, "status_ready") == 0)
-    return "Ready";
-  if (strcmp(key, "status_stopped") == 0)
-    return "Stopped";
-  if (strcmp(key, "status_get_weight") == 0)
-    return "Get Weight...";
-  if (strcmp(key, "status_running") == 0)
-    return "Running...";
-  if (strcmp(key, "status_waiting_zero") == 0)
-    return "Waiting for 0.000...";
-  if (strcmp(key, "status_done") == 0)
-    return "Done :)";
-  if (strcmp(key, "status_count") == 0)
-    return " Count:";
-  if (strcmp(key, "status_init_steppers") == 0)
-    return "Init steppers...";
-  if (strcmp(key, "status_stepper_i2s_failed") == 0)
-    return "Stepper I2S init failed!";
-  if (strcmp(key, "status_loading_config") == 0)
-    return "Loading config...";
-  if (strcmp(key, "status_reading_profiles") == 0)
-    return "Reading profiles...";
-  if (strcmp(key, "status_starting_scale") == 0)
-    return "Starting scale serial...";
-  if (strcmp(key, "status_saving_target") == 0)
-    return "Writing target to profile...";
-  if (strcmp(key, "status_target_saved") == 0)
-    return "Target saved";
-  if (strcmp(key, "status_search_profiles") == 0)
-    return "Search Profiles...";
-  if (strcmp(key, "status_refresh_profile_list") == 0)
-    return "Refreshing profile list...";
-  if (strcmp(key, "status_saving_target_failed") == 0)
-    return "Target weight save failed!";
-  if (strcmp(key, "status_timeout") == 0)
-    return "Timeout! Check RS232 Wiring & Settings!";
-  if (strcmp(key, "status_bulk_failed") == 0)
-    return "Bulk trickle failed!";
-  if (strcmp(key, "status_invalid_profile") == 0)
-    return "Invalid profile!";
-  if (strcmp(key, "status_invalid_stepper") == 0)
-    return "Invalid stepper number!";
-  if (strcmp(key, "status_reconnecting_wifi") == 0)
-    return "Reconnecting to WiFi...";
-  if (strcmp(key, "status_storage_sd") == 0)
-    return "Storage: SD Card";
-  if (strcmp(key, "status_storage_flash") == 0)
-    return "Storage: Internal Flash";
-  if (strcmp(key, "label_sync_flash_to_sd") == 0)
-    return "Upload Flash > SD";
-  if (strcmp(key, "label_sync_sd_to_flash") == 0)
-    return "Download SD > Flash";
-  if (strcmp(key, "msg_sync_flash_to_sd_confirm") == 0)
-    return "Copy config and profiles\nfrom Flash to SD?";
-  if (strcmp(key, "msg_sync_sd_to_flash_confirm") == 0)
-    return "Copy config and profiles\nfrom SD to Flash?";
-  if (strcmp(key, "msg_stop_trickler_before_sync") == 0)
-    return "Stop trickler before syncing files";
-  if (strcmp(key, "msg_sync_filesystems_unavailable") == 0)
-    return "SD card and LittleFS must both be mounted";
-  if (strcmp(key, "msg_sync_failed") == 0)
-    return "Config/profile sync failed";
-  if (strcmp(key, "msg_sync_complete") == 0)
-    return "Sync complete: %d files copied";
-  if (strcmp(key, "msg_sync_restarting") == 0)
-    return "\n\nRestarting to load SD files.";
-  if (strcmp(key, "status_wifi_ap") == 0)
-    return "WiFi AP: ";
-  if (strcmp(key, "status_wifi_password") == 0)
-    return "WiFi password: ";
-  if (strcmp(key, "status_wifi_open") == 0)
-    return "Open http://";
-  if (strcmp(key, "wifi_setup_mode") == 0)
-    return "WiFi setup mode";
-  if (strcmp(key, "wifi_connect_to") == 0)
-    return "Connect to:";
-  if (strcmp(key, "wifi_password") == 0)
-    return "Password:";
-  if (strcmp(key, "wifi_open") == 0)
-    return "Open:";
-  if (strcmp(key, "wifi_select_and_save") == 0)
-    return "Select your WiFi and save.";
-  if (strcmp(key, "wifi_qr_click_to_hide") == 0)
-    return "Click to Hide";
-  if (strcmp(key, "msg_filesystem_mount_failed") == 0)
-    return "Filesystem mount failed";
-  if (strcmp(key, "msg_config_default") == 0)
-    return "Default Config generated.";
-  if (strcmp(key, "msg_profile_corrupted") == 0)
-    return "Profile Corrupted / Not Found:\n\n";
-  if (strcmp(key, "msg_calibration_profile_loaded") == 0)
-    return "\n\nCalibration Profile Loaded.";
-  if (strcmp(key, "msg_unknown_config_read_error") == 0)
-    return "Unknown config read error";
-  if (strcmp(key, "msg_sd_card_not_connected") == 0)
+  for (size_t i = 0; i < sizeof(LANG_FALLBACKS) / sizeof(LANG_FALLBACKS[0]); i++)
   {
-#if ENABLE_LITTLEFS
-    return "SD card not connected!\n\nInternal Flash will be used instead!";
-#else
-    return "SD card not connected!";
-#endif
+    if (strcmp(key, LANG_FALLBACKS[i].key) == 0)
+    {
+      return LANG_FALLBACKS[i].value;
+    }
   }
-  if (strcmp(key, "msg_config_corrupted") == 0)
-    return "Config File Corrupted / Not Found!\n\n";
-  if (strcmp(key, "msg_over_trickle") == 0)
-    return "!Over trickle!\n!Check weight!";
-  if (strcmp(key, "msg_create_profile_prompt") == 0)
-    return "Create profile from calibration?\n\nWeight: ";
-  if (strcmp(key, "msg_profile_created") == 0)
-    return "Profile created:\n\n";
-  if (strcmp(key, "msg_create_profile_failed") == 0)
-    return "Could not create profile!";
-  if (strcmp(key, "msg_calibration_weight_invalid") == 0)
-    return "Calibration weight invalid!";
-  if (strcmp(key, "msg_no_free_profile_name") == 0)
-    return "No free powder profile name!";
-  if (strcmp(key, "msg_max_profiles_reached") == 0)
-    return "Profile limit reached!\nCannot calibrate.";
-  if (strcmp(key, "msg_profiles_folder_failed") == 0)
-    return "Failed to create profiles folder!";
-  if (strcmp(key, "msg_profile_file_create_failed") == 0)
-    return "Failed to create profile!";
-  if (strcmp(key, "msg_profile_file_write_failed") == 0)
-    return "Failed to write profile!";
-  if (strcmp(key, "msg_invalid_profiles_found") == 0)
-    return "Invalid profiles found:";
-  if (strcmp(key, "msg_invalid_profiles_ignored") == 0)
-    return "\n\nThey were ignored.";
-  if (strcmp(key, "status_invalid_profile_ignored") == 0)
-    return "Invalid profile ignored: ";
-  if (strcmp(key, "status_profile_created") == 0)
-    return "Profile created: ";
-  if (strcmp(key, "status_creating_profile") == 0)
-    return "Creating profile: ";
-  if (strcmp(key, "status_writing_profile") == 0)
-    return "Writing profile: ";
-  if (strcmp(key, "status_selecting_profile") == 0)
-    return "Selecting profile: ";
-  if (strcmp(key, "status_loading_profile") == 0)
-    return "Loading profile: ";
-  if (strcmp(key, "status_profile_ready") == 0)
-    return "Profile ready: ";
-  if (strcmp(key, "status_tuning_profile") == 0)
-    return "Tuning profile: ";
-  if (strcmp(key, "status_starting_trickler") == 0)
-    return "Starting trickler...";
-  if (strcmp(key, "status_profile_selected_suffix") == 0)
-    return " selected!";
-  if (strcmp(key, "status_connect_wifi") == 0)
-    return "Connect to Wifi: ";
-  if (strcmp(key, "status_static_ip_failed") == 0)
-    return "Static IP Failed to configure!";
-  if (strcmp(key, "status_dns_failed") == 0)
-    return "DNS Failed to configure!";
-  if (strcmp(key, "status_wifi_connected") == 0)
-    return "Wifi Connected";
-  if (strcmp(key, "status_no_wifi") == 0)
-    return "No Wifi";
-  if (strcmp(key, "status_open_browser_prefix") == 0)
-    return "Open http://";
-  if (strcmp(key, "status_open_browser_suffix") == 0)
-    return ".local in your browser";
-  if (strcmp(key, "msg_new_firmware") == 0)
-    return "New firmware available:\n\nv";
-  if (strcmp(key, "msg_check_url") == 0)
-    return "\n\nCheck: https://robo-trickler.de";
-  if (strcmp(key, "status_update_failed") == 0)
-    return "Update failed: ";
-  if (strcmp(key, "status_update_upload") == 0)
-    return "Update: ";
-  if (strcmp(key, "status_update_success") == 0)
-    return "Update Success: ";
-  if (strcmp(key, "status_update_write_failed") == 0)
-    return "Update write failed: ";
-  if (strcmp(key, "status_update_end_failed") == 0)
-    return "Update end failed: ";
-  if (strcmp(key, "status_update_unexpected") == 0)
-    return "Update Failed Unexpectedly (likely broken connection)";
-  if (strcmp(key, "status_update_begin_failed_suffix") == 0)
-    return " update begin failed: ";
-  if (strcmp(key, "status_update_write_failed_suffix") == 0)
-    return " update write failed: ";
-  if (strcmp(key, "status_update_failed_suffix") == 0)
-    return " update failed: ";
-  if (strcmp(key, "status_update_not_finished_suffix") == 0)
-    return " update was not finished";
-  if (strcmp(key, "status_update_completed_suffix") == 0)
-    return " update completed";
-  if (strcmp(key, "status_update_not_file_suffix") == 0)
-    return " update is not a file: ";
-  if (strcmp(key, "status_update_empty_suffix") == 0)
-    return " update file is empty: ";
-  if (strcmp(key, "status_update_start_prefix") == 0)
-    return "Starting ";
-  if (strcmp(key, "status_update_start_suffix") == 0)
-    return " update from ";
-  if (strcmp(key, "status_update_delete_failed") == 0)
-    return "Could not delete completed update file: ";
-  if (strcmp(key, "status_check_sd_updates") == 0)
-    return "Checking SD card updates...";
-  if (strcmp(key, "status_sd_update_complete") == 0)
-    return "SD card update complete. Rebooting...";
-  if (strcmp(key, "err_incomplete_profile_entry") == 0)
-    return "Incomplete profile entry:\n";
-  if (strcmp(key, "err_entry") == 0)
-    return "\nEntry: ";
-  if (strcmp(key, "err_required_profile_entry") == 0)
-    return "\nRequired: diffWeight, stepper, steps, rpm, measurements";
-  if (strcmp(key, "err_invalid_profile_values") == 0)
-    return "Invalid profile values:\n";
-  if (strcmp(key, "err_calibration_profile_incomplete") == 0)
-    return "Calibration profile is incomplete:\n";
-  if (strcmp(key, "err_required_calibration_profile") == 0)
-    return "\nRequired: stepper, steps, rpm";
-  if (strcmp(key, "err_profile_missing_map") == 0)
-    return "Profile has no trickleMap:\n";
-  if (strcmp(key, "err_profile_file_not_found") == 0)
-    return "Profile file not found:\n";
-  if (strcmp(key, "err_could_not_open_profile_file") == 0)
-    return "Could not open profile file:\n";
-  if (strcmp(key, "err_root_not_json") == 0)
-    return "Root is not a JSON object";
-  if (strcmp(key, "err_profile_json_parse_failed") == 0)
-    return "Profile JSON parse failed:\n";
-  if (strcmp(key, "err_profile_has_no_entries") == 0)
-    return "Profile has no entries:\n";
-  if (strcmp(key, "err_could_not_open_config_file") == 0)
-    return "Could not open config file:\n";
-  if (strcmp(key, "err_config_json_parse_failed") == 0)
-    return "Config JSON parse failed:\n";
-  if (strcmp(key, "err_could_not_write_profile_file") == 0)
-    return "Could not write profile file:\n";
-  if (strcmp(key, "err_could_not_replace_profile_file") == 0)
-    return "Could not replace profile file:\n";
-  if (strcmp(key, "msg_cannot_delete_calibrate_profile") == 0)
-    return "Cannot delete calibrate profile";
-  if (strcmp(key, "msg_delete_profile_file_not_found") == 0)
-    return "Profile file not found: ";
-  if (strcmp(key, "msg_delete_profile_confirm_prefix") == 0)
-    return "Delete profile ";
-  if (strcmp(key, "msg_delete_profile_confirm_suffix") == 0)
-    return "?";
-  if (strcmp(key, "msg_cannot_delete_profile") == 0)
-    return "Cannot delete profile";
-  if (strcmp(key, "msg_delete_profile_calibrate_missing") == 0)
-    return "Cannot delete profile: calibrate profile missing";
-  if (strcmp(key, "msg_delete_profile_calibrate_load_failed") == 0)
-    return "Cannot delete profile: failed to load calibrate";
-  if (strcmp(key, "msg_could_not_delete_profile") == 0)
-    return "Could not delete profile: ";
-  if (strcmp(key, "msg_profile_deleted") == 0)
-    return "Profile deleted: ";
-  if (strcmp(key, "msg_stop_trickler_before_tune_profile") == 0)
-    return "Stop trickler before tuning profile";
-  if (strcmp(key, "msg_cannot_tune_profile") == 0)
-    return "Cannot tune profile";
-  if (strcmp(key, "msg_tune_profile_title") == 0)
-    return "weight/rev";
-  if (strcmp(key, "msg_could_not_tune_profile") == 0)
-    return "Could not tune profile";
-  if (strcmp(key, "msg_profile_tuned") == 0)
-    return "Profile tuned: ";
   return key;
 }
 

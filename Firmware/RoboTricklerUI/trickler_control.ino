@@ -95,7 +95,9 @@ void stopTrickler()
 {
     stopMeasurement();
     setProfileTabEnabled(true);
-    if (config.totalCounterEnable)
+    // Persist the total counter only when a charge actually finished since the
+    // last save; a manual stop without a completed throw changes nothing.
+    if (config.totalCounterEnable && (config.totalCount != persistedTotalCount))
     {
         saveConfiguration("/config.txt", config);
     }

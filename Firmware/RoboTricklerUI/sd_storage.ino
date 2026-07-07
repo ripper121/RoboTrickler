@@ -460,6 +460,7 @@ bool loadConfiguration(const char *filename, Config &config)
 
   file.close();
 
+  persistedTotalCount = config.totalCount;
   return 1;
 }
 
@@ -933,6 +934,10 @@ void saveConfiguration(const char *filename, const Config &config)
   if (serializeJsonPretty(doc, file) == 0)
   {
     DEBUG_PRINTLN("Failed to write to file");
+  }
+  else
+  {
+    persistedTotalCount = config.totalCount;
   }
 
   // Close the file

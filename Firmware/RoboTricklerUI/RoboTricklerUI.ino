@@ -215,6 +215,10 @@ int selectedProfileIndex;
 // per tap) until a run starts; paths where the selection must survive a reboot
 // immediately (profile delete/create) save explicitly and clear this.
 bool profileSelectionUnsaved = false;
+// config.totalCount as last written to (or read from) config.txt. Lets
+// stopTrickler() skip the config rewrite when no charge finished since the
+// last save (manual stop without a completed throw).
+long persistedTotalCount = 0;
 
 void disableRuntimeWatchdogs()
 {

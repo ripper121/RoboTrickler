@@ -86,7 +86,7 @@ static void ensureNoButton()
 // Shared renderer for both message and confirm boxes. Callers set the
 // messageBoxOpen/confirmBoxOpen state flags before calling so the dialog is
 // already armed by the time the panel becomes visible.
-static void presentDialog(const String &message, const lv_font_t *font,
+static void presentDialog(const char *message, const lv_font_t *font,
                           lv_color_t color, bool showNo)
 {
   if (!lvglLock())
@@ -108,7 +108,7 @@ static void presentDialog(const String &message, const lv_font_t *font,
   }
   lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN);
   lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN);
-  lv_label_set_text(ui_LabelMessages, message.c_str());
+  lv_label_set_text(ui_LabelMessages, message);
   showDialog(ui_PanelMessages);
   lvglUnlock();
 }
@@ -131,7 +131,7 @@ void messageNo_event_cb(lv_event_t *e)
   dismissMessageDialog(false);
 }
 
-void messageBox(const String &message, const lv_font_t *font, lv_color_t color, bool wait)
+void messageBox(const char *message, const lv_font_t *font, lv_color_t color, bool wait)
 {
   cancelInteractiveDialogs();
   messageBoxOpen = true;
@@ -143,6 +143,11 @@ void messageBox(const String &message, const lv_font_t *font, lv_color_t color, 
   }
 }
 
+void messageBox(const String &message, const lv_font_t *font, lv_color_t color, bool wait)
+{
+  messageBox(message.c_str(), font, color, wait);
+}
+
 // Semantic message-box colors, defined once instead of repeating raw hex at
 // every call site.
 #define COLOR_MSG_ERROR 0xFF0000
@@ -151,14 +156,24 @@ void messageBox(const String &message, const lv_font_t *font, lv_color_t color, 
 // Convenience wrappers for the two common message styles. They both use
 // UI_FONT_NORMAL; the rare large-font message (over-trickle safety warning)
 // still calls messageBox() directly. `wait` blocks until the user dismisses it.
-void errorBox(const String &message, bool wait)
+void errorBox(const char *message, bool wait)
 {
   messageBox(message, UI_FONT_NORMAL, lv_color_hex(COLOR_MSG_ERROR), wait);
 }
 
-void successBox(const String &message, bool wait)
+void errorBox(const String &message, bool wait)
+{
+  errorBox(message.c_str(), wait);
+}
+
+void successBox(const char *message, bool wait)
 {
   messageBox(message, UI_FONT_NORMAL, lv_color_hex(COLOR_MSG_SUCCESS), wait);
+}
+
+void successBox(const String &message, bool wait)
+{
+  successBox(message.c_str(), wait);
 }
 
 bool confirmBox(const String &message, const lv_font_t *font, lv_color_t color)
@@ -175,7 +190,7 @@ void showConfirmBox(const String &message, const lv_font_t *font, lv_color_t col
   cancelInteractiveDialogs();
   messageBoxOpen = true;
   confirmBoxOpen = true;
-  presentDialog(message, font, color, true);
+  presentDialog(message.c_str(), font, color, true);
 }
 
 void resetConfirmBoxButtons()

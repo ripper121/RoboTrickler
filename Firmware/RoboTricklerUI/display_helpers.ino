@@ -293,7 +293,7 @@ void setObjBgColor(lv_obj_t *obj, uint32_t colorHex)
   }
 }
 
-void updateDisplayLog(const String &logOutput, bool noLog = false)
+void updateDisplayLog(const char *logOutput, bool noLog = false)
 {
   if (!noLog)
   {
@@ -304,7 +304,7 @@ void updateDisplayLog(const String &logOutput, bool noLog = false)
       // overflow, so we only need to ensure each entry ends with exactly one
       // "\n" to keep it on its own row once refreshLogLabel() concatenates them.
       char line[LOG_LINE_LEN];
-      snprintf(line, sizeof(line) - 1, "%s", logOutput.c_str());
+      snprintf(line, sizeof(line) - 1, "%s", logOutput);
       size_t len = strlen(line);
       // Strip any newlines already in the message so we end with exactly one.
       while (len > 0 && line[len - 1] == '\n')
@@ -321,11 +321,16 @@ void updateDisplayLog(const String &logOutput, bool noLog = false)
   else
   {
     char text[LOG_LINE_LEN];
-    snprintf(text, sizeof(text), "%s", logOutput.c_str());
+    snprintf(text, sizeof(text), "%s", logOutput);
     trimInPlace(text);
     setLabelText(ui_LabelInfo, text);
   }
   DEBUG_PRINTLN(logOutput);
+}
+
+void updateDisplayLog(const String &logOutput, bool noLog = false)
+{
+  updateDisplayLog(logOutput.c_str(), noLog);
 }
 
 void refreshLogLabel()
