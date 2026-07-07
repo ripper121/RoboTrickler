@@ -26,6 +26,8 @@ static const char *languageFallback(const char *key)
     return " Count:";
   if (strcmp(key, "status_init_steppers") == 0)
     return "Init steppers...";
+  if (strcmp(key, "status_stepper_i2s_failed") == 0)
+    return "Stepper I2S init failed!";
   if (strcmp(key, "status_loading_config") == 0)
     return "Loading config...";
   if (strcmp(key, "status_reading_profiles") == 0)
