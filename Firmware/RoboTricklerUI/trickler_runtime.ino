@@ -175,9 +175,9 @@ void handleCalibrationProfilePrompt()
   }
 }
 
-static bool isCalibrationProfile()
+bool isCalibrationProfile()
 {
-  return strcmp(config.profileName, "calibrate") == 0;
+  return strcmp(config.profileName, CALIBRATE_PROFILE_NAME) == 0;
 }
 
 static void handleOverTrickle()
@@ -194,7 +194,7 @@ static void handleOverTrickle()
     messageText += String(sessionCount);
   }
   stopTrickler();
-  messageBox(messageText.c_str(), UI_FONT_LARGE, lv_color_hex(0xFF0000), true);
+  messageBox(messageText, UI_FONT_LARGE, lv_color_hex(0xFF0000), true);
 }
 
 static void handleTargetReached(bool weightWithinTolerance)

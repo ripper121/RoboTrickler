@@ -63,6 +63,7 @@ void serialFlush()
   }
 }
 
+#if DEBUG
 String serialBytesToDisplay(const uint8_t *bytes, int byteCount)
 {
   String data = "";
@@ -113,6 +114,7 @@ String serialBytesToHex(const uint8_t *bytes, int byteCount)
 
   return data;
 }
+#endif
 
 bool sendScaleSerialRequest(const char *requestText)
 {
@@ -371,7 +373,7 @@ bool requestScaleWeight()
   return serialWait();
 }
 
-bool readScaleLine(float *parsedWeight, int *parsedDecimalPlaces, String *parsedUnit)
+bool readScaleLine(float *parsedWeight, int *parsedDecimalPlaces, char *parsedUnit, size_t parsedUnitSize)
 {
   if (!Serial1.available())
   {
@@ -400,13 +402,13 @@ bool readScaleLine(float *parsedWeight, int *parsedDecimalPlaces, String *parsed
 
   *parsedWeight = candidateWeight;
   *parsedDecimalPlaces = candidateDecimalPlaces;
-  *parsedUnit = "";
+  strlcpy(parsedUnit, "", parsedUnitSize);
   if (containsIgnoreCase(lineBuffer, "g"))
   {
-    *parsedUnit = " g";
+    strlcpy(parsedUnit, " g", parsedUnitSize);
     if (containsIgnoreCase(lineBuffer, "gn") || containsIgnoreCase(lineBuffer, "gr"))
     {
-      *parsedUnit = " gn";
+      strlcpy(parsedUnit, " gn", parsedUnitSize);
     }
   }
 
@@ -435,7 +437,7 @@ void readWeight()
   float previousStableWeight = 0.0;
   float stableWeight = -1.0;
   int stableDecimalPlaces = WEIGHT_DECIMALS;
-  String stableUnit = "";
+  char stableUnit[WEIGHT_UNIT_LEN] = "";
 
   serialFlush();
 
@@ -449,8 +451,8 @@ void readWeight()
 
     float candidateWeight = -1.0;
     int candidateDecimalPlaces = WEIGHT_DECIMALS;
-    String candidateUnit = "";
-    if (!readScaleLine(&candidateWeight, &candidateDecimalPlaces, &candidateUnit))
+    char candidateUnit[WEIGHT_UNIT_LEN] = "";
+    if (!readScaleLine(&candidateWeight, &candidateDecimalPlaces, candidateUnit, sizeof(candidateUnit)))
     {
       continue;
     }
@@ -470,7 +472,7 @@ void readWeight()
     previousStableWeight = candidateWeight;
     stableWeight = candidateWeight;
     stableDecimalPlaces = candidateDecimalPlaces;
-    stableUnit = candidateUnit;
+    strlcpy(stableUnit, candidateUnit, sizeof(stableUnit));
 
     DEBUG_PRINT("Weight Counter: ");
     DEBUG_PRINTLN(stableCount);
@@ -504,7 +506,7 @@ void readWeight()
     timeoutLogged = false;
     weight = stableWeight;
     decimalPlaces = (stableDecimalPlaces > 0) ? stableDecimalPlaces : WEIGHT_DECIMALS;
-    weightUnit = stableUnit;
+    strlcpy(weightUnit, stableUnit, sizeof(weightUnit));
     lastScaleWeightReadTime = millis();
     weightCounter = stableCount;
     newWeightData = isTricklerRunning() || isCalibrationProfilePromptPending();

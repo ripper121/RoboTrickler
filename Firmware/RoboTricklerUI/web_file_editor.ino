@@ -225,10 +225,11 @@ void handleCreate()
 
   if (path.indexOf('.') > 0)
   {
+    // Create an empty file. (The upstream SDWebServer example wrote a stray
+    // NUL byte here, which broke newly created files parsed as JSON/text.)
     File file = ACTIVE_FS.open((char *)path.c_str(), FILE_WRITE);
     if (file)
     {
-      file.write(0);
       file.close();
     }
   }

@@ -297,7 +297,7 @@ static void saveProfileTune()
         return;
     }
 
-    if ((profileName.length() <= 0) || (profileName == "calibrate") || (weightPerRev <= 0.0))
+    if ((profileName.length() <= 0) || (profileName == CALIBRATE_PROFILE_NAME) || (weightPerRev <= 0.0))
     {
         errorBox(langText("msg_cannot_tune_profile"), false);
         return;

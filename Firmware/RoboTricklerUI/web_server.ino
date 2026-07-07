@@ -254,16 +254,6 @@ void registerWebServerRoutes()
           webUpdateStarted = false;
           Serial.setDebugOutput(false);
         }
-        else if (upload.status == UPLOAD_FILE_ABORTED)
-        {
-          Update.abort();
-          webUpdateStarted = false;
-          webUpdateSucceeded = false;
-          restoreFilesystemAfterFailedUpdate();
-          Serial.setDebugOutput(false);
-          Serial.printf("Update Failed Unexpectedly (likely broken connection): status=%d\n", upload.status);
-          updateDisplayLog(langText("status_update_unexpected"));
-        }
         else
         {
           Update.abort();

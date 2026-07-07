@@ -54,12 +54,26 @@
          ssidSelect.add(new Option(translated('wifiSetup.scanning', 'Scanning...'), ''));
 
          try {
-            const response = await fetch('/api/wifi/scan', { cache: 'no-store' });
-            if (!response.ok) {
-               throw new Error('Scan failed');
+            // The firmware scans asynchronously and answers 202 {"scanning":true}
+            // until the result array is ready; poll until it arrives.
+            let networks = null;
+            for (let attempt = 0; attempt < 30; attempt++) {
+               const response = await fetch('/api/wifi/scan', { cache: 'no-store' });
+               if (!response.ok && response.status !== 202) {
+                  throw new Error('Scan failed');
+               }
+
+               const data = await response.json();
+               if (Array.isArray(data)) {
+                  networks = data;
+                  break;
+               }
+               await new Promise(function (resolve) { setTimeout(resolve, 1000); });
+            }
+            if (!networks) {
+               throw new Error('Scan timed out');
             }
 
-            const networks = await response.json();
             networks.sort((a, b) => b.rssi - a.rssi);
             ssidSelect.innerHTML = '';
             ssidSelect.add(new Option(translated('wifiSetup.selectNetwork', 'Select a network'), ''));

@@ -55,9 +55,10 @@ bool recoverCorruptProfile(String badFilename, bool blocking)
     // resets every profile field before applying the values, so config ends up
     // fully consistent.
     strlcpy(config.profileName,          // <- destination
-            "calibrate",             // <- source
+            CALIBRATE_PROFILE_NAME,      // <- source
             sizeof(config.profileName)); // <- destination's capacity
     saveConfiguration("/config.txt", config);
+    profileSelectionUnsaved = false;
 
     if (ensureCalibrateProfile(config))
     {
@@ -68,7 +69,7 @@ bool recoverCorruptProfile(String badFilename, bool blocking)
         // the current state rather than the stale buffer.
         refreshProfileList();
 
-        int calibrateIndex = findProfileIndex("calibrate");
+        int calibrateIndex = findProfileIndex(CALIBRATE_PROFILE_NAME);
         if (calibrateIndex >= 0)
         {
             selectedProfileIndex = calibrateIndex;
@@ -124,7 +125,10 @@ void setProfile(int index)
     String infoText = String(langText("status_selecting_profile")) + config.profileName;
     updateDisplayLog(infoText, true);
 
-    saveConfiguration("/config.txt", config);
+    // Defer the config.txt write: browsing prev/next would otherwise rewrite
+    // the file on every tap. startTrickler() persists the selection when a run
+    // starts; delete/create persist explicitly right after calling setProfile().
+    profileSelectionUnsaved = true;
 
     if (!loadSelectedProfile(false))
     {
@@ -169,7 +173,7 @@ bool deleteSelectedProfile()
     }
 
     String profileName = config.profileName;
-    if (profileName == "calibrate")
+    if (profileName == CALIBRATE_PROFILE_NAME)
     {
         errorBox(langText("msg_cannot_delete_calibrate_profile"), false);
         return false;
@@ -208,7 +212,7 @@ void finishProfileDeleteConfirm(bool confirmed)
         return;
     }
 
-    if ((profileName.length() <= 0) || (profileName == "calibrate"))
+    if ((profileName.length() <= 0) || (profileName == CALIBRATE_PROFILE_NAME))
     {
         errorBox(langText("msg_cannot_delete_profile"), false);
         return;
@@ -221,7 +225,7 @@ void finishProfileDeleteConfirm(bool confirmed)
         return;
     }
 
-    int calibrateIndex = findProfileIndex("calibrate");
+    int calibrateIndex = findProfileIndex(CALIBRATE_PROFILE_NAME);
     if (calibrateIndex < 0)
     {
         errorBox(langText("msg_delete_profile_calibrate_missing"), false);
@@ -229,11 +233,16 @@ void finishProfileDeleteConfirm(bool confirmed)
     }
 
     setProfile(calibrateIndex);
-    if (strcmp(config.profileName, "calibrate") != 0)
+    if (!isCalibrationProfile())
     {
         errorBox(langText("msg_delete_profile_calibrate_load_failed"), false);
         return;
     }
+
+    // setProfile() defers config saves; persist the calibrate selection before
+    // the file disappears so config.txt never names a deleted profile.
+    saveConfiguration("/config.txt", config);
+    profileSelectionUnsaved = false;
 
     if (!ACTIVE_FS.remove(filename.c_str()))
     {

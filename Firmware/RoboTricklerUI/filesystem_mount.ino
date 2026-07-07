@@ -48,10 +48,6 @@ bool initFilesystem()
   if (sdMounted)
   {
     removeLegacyRootFiles();
-  }
-
-  if (sdMounted)
-  {
     DEBUG_PRINT("SD total bytes: ");
     DEBUG_PRINTLN(SD.totalBytes());
     DEBUG_PRINT("SD used bytes: ");

@@ -273,7 +273,6 @@ static const char *languageFallback(const char *key)
   return key;
 }
 
-String activeUiLangFilename = "";
 JsonDocument activeUiLangDoc;
 
 const char *langText(const char *key)
@@ -322,7 +321,6 @@ String normalizedLanguageCode()
 
 bool loadLanguage()
 {
-  activeUiLangFilename = "";
   activeUiLangDoc.clear();
 
   String language = normalizedLanguageCode();
@@ -355,7 +353,6 @@ bool loadLanguage()
     DEBUG_PRINTLN(filename);
     return false;
   }
-  activeUiLangFilename = filename;
 
   // Parse straight from the file stream. ArduinoJson copies keys/values into the
   // document's own pool, so there is no need to keep the raw JSON text in heap.
@@ -372,7 +369,7 @@ bool loadLanguage()
   DEBUG_PRINT("Loaded language: ");
   DEBUG_PRINT(config.language);
   DEBUG_PRINT(" from ");
-  DEBUG_PRINTLN(activeUiLangFilename);
+  DEBUG_PRINTLN(filename);
   return true;
 }
 

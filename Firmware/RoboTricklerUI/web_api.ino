@@ -16,10 +16,18 @@ void handleWifiSetupPortal()
 
 void handleWifiScan()
 {
-  int networkCount = WiFi.scanNetworks(false, true);
+  // Asynchronous scan: a blocking scanNetworks() freezes the display task for
+  // several seconds because LVGL and server.handleClient() share that task.
+  // Kick off the scan and answer 202 until results are ready; the AP setup
+  // page polls until it receives the result array.
+  int networkCount = WiFi.scanComplete();
   if (networkCount < 0)
   {
-    server.send(500, "application/json", "{\"error\":\"WiFi scan failed\"}");
+    if (networkCount != WIFI_SCAN_RUNNING)
+    {
+      WiFi.scanNetworks(true, true);
+    }
+    server.send(202, "application/json", "{\"scanning\":true}");
     return;
   }
 

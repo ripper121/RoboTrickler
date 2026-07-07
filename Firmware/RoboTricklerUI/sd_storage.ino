@@ -47,8 +47,8 @@ static bool isCalibrationProfileFile(const char *filename)
   String normalized = String(filename);
   normalized.replace("\\", "/");
   normalized.toLowerCase();
-  return (normalized == "calibrate.txt") ||
-         normalized.endsWith("/calibrate.txt");
+  return (normalized == CALIBRATE_PROFILE_NAME ".txt") ||
+         normalized.endsWith("/" CALIBRATE_PROFILE_NAME ".txt");
 }
 
 static String sdFilenameError(const char *key, const char *filename)
@@ -107,7 +107,7 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
     return false;
   }
 
-  if (config.profileEntryCount >= 16)
+  if (config.profileEntryCount >= PROFILE_MAX_ENTRIES)
   {
     return true;
   }
@@ -165,17 +165,6 @@ static bool loadProfileEntries(JsonObject doc, const char *filename, Config &con
 
 String profileFilename(const char *profileName)
 {
-  const char *directories[] = {"/profiles/"};
-
-  for (int dirIndex = 0; dirIndex < (int)(sizeof(directories) / sizeof(directories[0])); dirIndex++)
-  {
-    String candidate = String(directories[dirIndex]) + String(profileName) + ".txt";
-    if (ACTIVE_FS.exists(candidate.c_str()))
-    {
-      return candidate;
-    }
-  }
-
   return "/profiles/" + String(profileName) + ".txt";
 }
 
@@ -204,7 +193,7 @@ void setDefaultConfiguration(Config &config)
   strlcpy(config.scaleCustomCode, "", sizeof(config.scaleCustomCode));
   config.scaleBaud = 9600;
   config.motorStepsPerRev = DEFAULT_MOTOR_STEPS_PER_REV;
-  strlcpy(config.profileName, "calibrate", sizeof(config.profileName));
+  strlcpy(config.profileName, CALIBRATE_PROFILE_NAME, sizeof(config.profileName));
   config.targetWeight = 40.0;
   strlcpy(config.beeper, "done", sizeof(config.beeper));
   strlcpy(config.language, "en", sizeof(config.language));
@@ -262,7 +251,7 @@ bool writeDefaultCalibrateProfile()
 // true only when config ends up holding a valid calibration profile.
 bool ensureCalibrateProfile(Config &config)
 {
-  if (loadProfile(profileFilename("calibrate").c_str(), config))
+  if (loadProfile(profileFilename(CALIBRATE_PROFILE_NAME).c_str(), config))
   {
     return true;
   }
@@ -273,7 +262,7 @@ bool ensureCalibrateProfile(Config &config)
     return false;
   }
   refreshProfileList();
-  return loadProfile(profileFilename("calibrate").c_str(), config);
+  return loadProfile(profileFilename(CALIBRATE_PROFILE_NAME).c_str(), config);
 }
 
 bool loadProfile(const char *filename, Config &config)
@@ -337,7 +326,7 @@ bool loadProfile(const char *filename, Config &config)
     config.profileStepperWeightPerRev[i] = 0.0;
     config.profileStepperRpm[i] = 0;
   }
-  for (int i = 0; i < 16; i++)
+  for (int i = 0; i < PROFILE_MAX_ENTRIES; i++)
   {
     config.profileStepper[i] = 1;
     config.profileDiffWeight[i] = 0;
@@ -731,6 +720,10 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
     if (strcmp(profileList[i], profileName.c_str()) == 0)
     {
       setProfile(i);
+      // setProfile() defers config saves; persist the freshly created profile
+      // as the active one so it survives a reboot without a run in between.
+      saveConfiguration("/config.txt", config);
+      profileSelectionUnsaved = false;
       break;
     }
   }
@@ -885,7 +878,7 @@ void refreshProfileList()
   DEBUG_PRINT("  profileListCount: ");
   DEBUG_PRINTLN(profileListCount);
 
-  updateDisplayLog(String(langText("status_search_profiles")) + " " + String(profileListCount) + " / 30");
+  updateDisplayLog(String(langText("status_search_profiles")) + " " + String(profileListCount) + " / " + String(PROFILE_LIST_MAX));
 
   for (int i = 0; i < profileListCount; i++)
   {

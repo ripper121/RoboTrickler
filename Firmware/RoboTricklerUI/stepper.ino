@@ -113,6 +113,15 @@ void step(int stepperNum, long steps)
 {
   // A positive move always uses the configured direction pin level. Profiles
   // encode direction through actuator choice, not signed step counts.
+  //
+  // Practical step-rate ceiling: every pulse performs two full 32-bit
+  // shift-register flushes (~200 digitalWrite() calls inside a critical
+  // section), which costs on the order of tens of microseconds per step. The
+  // 2 µs minimum below is therefore never the real floor — requested intervals
+  // shorter than the flush time cannot be met, and high RPM combined with a
+  // large motorStepsPerRev (microstepping) silently runs slower than
+  // configured. Raising the ceiling would need a step-bit-only fast path or
+  // the real I2S peripheral instead of bit-banging.
   if ((stepperNum < 1) || (stepperNum > 2) || (steps <= 0))
   {
     return;

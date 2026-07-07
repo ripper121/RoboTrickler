@@ -28,21 +28,45 @@ void startTrickler()
 
     // Always reload the selected profile from the filesystem on Start so the
     // run uses the on-disk values even if the file changed since it was picked.
+    char requestedProfile[sizeof(config.profileName)];
+    strlcpy(requestedProfile, config.profileName, sizeof(requestedProfile));
     if (!loadSelectedProfile(false))
+    {
+        return;
+    }
+    // loadSelectedProfile() recovers onto the calibration profile when the
+    // selected file is corrupt or missing. Never carry that recovery straight
+    // into a run: the calibrate profile would immediately dispense a full
+    // calibration throw the user never asked for. Abort behind the recovery
+    // error box and require an explicit new Start on the recovered profile.
+    if (strcmp(requestedProfile, config.profileName) != 0)
     {
         return;
     }
     // The calibration throw is only useful if a powder profile can be created
     // from it afterwards. Bail out before wasting a throw when the profile list
     // is already full (createProfileFromCalibration would refuse later anyway).
-    if (strcmp(config.profileName, "calibrate") == 0)
+    if (isCalibrationProfile())
     {
         refreshProfileList();
         if (profileListCount >= PROFILE_LIST_MAX)
         {
-            errorBox(langText("msg_max_profiles_reached"), true);
+            // Non-blocking: startTrickler() is also reached from the web handler
+            // (/system/start), which runs inside server.handleClient() on the
+            // display task. A waiting dialog there stalls all web serving until
+            // the touchscreen is tapped.
+            errorBox(langText("msg_max_profiles_reached"), false);
             return;
         }
+    }
+
+    // Deferred from setProfile(): browsing profiles no longer rewrites
+    // config.txt on every prev/next tap; persist the final selection once a
+    // run actually starts.
+    if (profileSelectionUnsaved)
+    {
+        saveConfiguration("/config.txt", config);
+        profileSelectionUnsaved = false;
     }
 
     String selectedText = String(langText("placeholder_profile")) + ": " + config.profileName + langText("status_profile_selected_suffix");

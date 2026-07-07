@@ -75,6 +75,13 @@ SemaphoreHandle_t lvglMutex = NULL;
 static uint32_t displayDrawBuffer[DISPLAY_DRAW_BUF_SIZE / sizeof(uint32_t)];
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 
+// Maximum number of trickle-map / per-step entries a profile can hold. Ties the
+// Config array bounds below to the parse loops in sd_storage.ino.
+#define PROFILE_MAX_ENTRIES 16
+
+// Reserved profile name that drives the scale-calibration workflow.
+#define CALIBRATE_PROFILE_NAME "calibrate"
+
 struct Config
 {
   bool wifiEnabled;
@@ -97,8 +104,8 @@ struct Config
   int motorStepsPerRev;
   char profileName[32];
 
-  byte profileStepper[16];
-  float profileDiffWeight[16];
+  byte profileStepper[PROFILE_MAX_ENTRIES];
+  float profileDiffWeight[PROFILE_MAX_ENTRIES];
   float profileTolerance;
   float profileAlarmThreshold;
   float profileWeightGap;
@@ -109,9 +116,9 @@ struct Config
   double profileStepperWeightPerRev[3];
   int profileStepperRpm[3];
   bool profileStepperEnabled[3];
-  int profileMeasurements[16];
-  long profileSteps[16];
-  int profileRpm[16];
+  int profileMeasurements[PROFILE_MAX_ENTRIES];
+  long profileSteps[PROFILE_MAX_ENTRIES];
+  int profileRpm[PROFILE_MAX_ENTRIES];
   int profileEntryCount;
 };
 // Single source of truth for flash-backed settings and the active trickling profile.
@@ -171,7 +178,10 @@ const byte WEIGHT_STEP_COUNT = sizeof(WEIGHT_STEP_SIZES) / sizeof(WEIGHT_STEP_SI
 
 float weight = NAN;
 int decimalPlaces = WEIGHT_DECIMALS;
-String weightUnit = "";
+// Unit suffix parsed from the scale line ("", " g", " gn"). Fixed buffer so the
+// per-attempt copies in readWeight() never touch the heap.
+#define WEIGHT_UNIT_LEN 8
+char weightUnit[WEIGHT_UNIT_LEN] = "";
 int weightCounter = 0;
 int measurementCount = 0;
 int activeProfileStep = -1;
@@ -200,6 +210,11 @@ unsigned long lastScaleWeightReadTime = 0;
 char profileList[PROFILE_LIST_MAX][PROFILE_NAME_LEN];
 byte profileListCount;
 int selectedProfileIndex;
+// Set when the active profile selection changed in RAM but was not written to
+// config.txt yet. Browsing profiles defers the save (SD/flash wear + UI latency
+// per tap) until a run starts; paths where the selection must survive a reboot
+// immediately (profile delete/create) save explicitly and clear this.
+bool profileSelectionUnsaved = false;
 
 void disableRuntimeWatchdogs()
 {
