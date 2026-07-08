@@ -44,6 +44,8 @@ window.rtLoadLanguage({
       "protocol": "Protokoll:",
       "baud": "Baud:",
       "customCode": "Benutzerdefinierte Anfrage (Zeichen in Hexformat 0x00):",
+      "stepper": "Stepper-Einstellungen",
+      "stepsPerRev": "Schritte pro Umdrehung:",
       "general": "Allgemeine Einstellungen",
       "beeper": "Summer:",
       "done": "Fertig",
@@ -72,7 +74,9 @@ window.rtLoadLanguage({
       "calibration": "Kalibrierung",
       "general": "Allgemein",
       "stepperGroup": "Schrittmotoren",
+      "stepperDetails": "Stepper",
       "stepper": "Stepper {number}",
+      "trickleMap": "Trickle Map",
       "profileStep": "Profil-Schritt {number}",
       "fields": {
         "targetWeight": "Zielgewicht",
@@ -103,6 +107,8 @@ window.rtLoadLanguage({
       "rebootSent": "Neustart wurde gesendet. Das Gerät ist kurz nicht erreichbar.",
       "profileSaved": "Profil gespeichert!",
       "profileLoadFailed": "Profil konnte nicht geladen werden.",
+      "profileNameRequired": "Bitte Profilnamen eingeben.",
+      "calibrationProfileNameRequired": "Kalibrierprofile muessen calibrate heissen.",
       "configSaved": "Konfiguration gespeichert!\nBitte Robo-Trickler neu starten, damit config.txt geladen wird",
       "fileSaved": "Gespeichert!",
       "deleteConfirm": "Diese Datei löschen?"

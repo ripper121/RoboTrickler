@@ -71,7 +71,7 @@ Der Robo-Trickler startet mit dem zuletzt gewählten Profil. Auf der vollständi
 
 Wähle im Tab `Profil` ein passendes Pulver aus. Falls das gewünschte Pulver nicht vorhanden ist, kann zum Testen das `avg` Pulverprofil genommen werden. `avg` ist ein Durchschnittsprofil und funktioniert mit vielen Pulvern, ist aber nicht optimal. Für gutes und schnelles Trickeln sollte jedes Pulver ein eigenes Profil bekommen.
 
-Stelle anschließend im Tab `Trickler` das Zielgewicht ein und drücke `Start`. Starte erst, wenn die Waage mit leerer Pulverpfanne auf `0.000` steht. Nach dem ersten Wurf läuft der Trickler automatisch weiter: Sobald du die gefüllte Pfanne abnimmst und die Waage wieder auf `0.000` zurückgeht, dosiert er die nächste Ladung – ein erneutes Drücken von `Start` ist nicht nötig. Zum Beenden drücke `Stop`. Eine Übersicht aller Bedienelemente findest du unter [Bedienung am Display](#bedienung-am-display).
+Stelle anschließend im Tab `Trickler` das Zielgewicht ein und drücke `Start`. Starte für normale Profile am besten erst, wenn die Waage mit leerer Pulverpfanne auf `0.000` steht. Erzwingt ein Profil `general.startAtZero: true`, wartet die Firmware vor dem ersten Wurf auf `0.000`; sonst beginnt sie bereits bei einem nicht-negativen Gewicht. Nach dem ersten Wurf läuft der Trickler automatisch weiter: Sobald du die gefüllte Pfanne abnimmst und die Waage wieder auf `0.000` zurückgeht, dosiert er die nächste Ladung – ein erneutes Drücken von `Start` ist nicht nötig. Zum Beenden drücke `Stop`. Eine Übersicht aller Bedienelemente findest du unter [Bedienung am Display](#bedienung-am-display).
 
 Optional kannst du den Trickler auch über WLAN und den Webbrowser bedienen. Trage dazu deine WLAN-Daten ein oder nutze die [Access-Point-Einrichtung](#access-point-einrichtung) am Display.
 
@@ -91,7 +91,7 @@ Die Oberfläche ist in drei Tabs unterteilt: `Trickler`, `Profil` und `Info`. Al
 ## Tab `Trickler`
 
 * Oben wird das Zielgewicht angezeigt, darunter das aktuell von der Waage gemessene Gewicht.
-* Mit `+` und `-` wird das Zielgewicht verändert. Der mittlere Button schaltet die Schrittweite zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000` um. Das Zielgewicht ist auf maximal `999` begrenzt.
+* Mit `+` und `-` wird das Zielgewicht verändert. Der mittlere Button schaltet die Schrittweite zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000` um. Das Zielgewicht ist auf maximal `500.000` begrenzt.
 * Der große Start/Stop-Button startet bzw. stoppt das Trickeln. Beim Starten wird der Button rot und zeigt `Stop`, im Ruhezustand ist er grün und zeigt `Start`.
 * Am unteren Rand zeigt eine Statuszeile die Firmware-Version bzw. aktuelle Meldungen an.
 
@@ -103,7 +103,7 @@ Das geänderte Zielgewicht wird beim Starten des Trickelns in das aktive Profil 
 
 Nach dem Drücken von `Start` läuft der Trickler im Dauerbetrieb:
 
-1. Die Firmware wartet auf eine leere Pulverpfanne (`0.000`) und dosiert die erste Ladung.
+1. Beim ersten Wurf wartet die Firmware nur dann auf eine leere Pulverpfanne (`0.000`), wenn `general.startAtZero` im Profil auf `true` steht. Bei `false` startet sie, sobald die Waage ein nicht-negatives Gewicht liefert.
 2. Ist das Zielgewicht erreicht, ertönt der `done`-Beep und das Gewicht bleibt stehen.
 3. Nimm die volle Pfanne ab. Sobald die Waage wieder auf `0.000` zurückgeht, startet automatisch die nächste Ladung – ein erneutes `Start` ist nicht nötig.
 4. Zum Beenden drücke `Stop`.
@@ -122,11 +122,11 @@ Das angezeigte Gewicht wechselt während des Trickelns die Farbe:
 ## Tab `Profil`
 
 * Mit den Pfeil-Buttons (oben/unten) wird durch die erkannten Profile geblättert; das gewählte Profil wird sofort geladen.
-* Der orangefarbene Button (Zahnrad) öffnet das Profil-Tuning und passt `stepper.1.weightPerRev` an (siehe [Profil-Tuning](#profil-tuning)).
+* Der orangefarbene Button (Zahnrad) öffnet das Profil-Tuning. Dort können `stepper.1.weightPerRev` und die `measurements`-Werte der `trickleMap` angepasst werden (siehe [Profil-Tuning](#profil-tuning)).
 * Der rote Button (Papierkorb) löscht das ausgewählte Profil nach einer Bestätigung.
 * Für das Profil `calibrate` werden Tuning- und Lösch-Button ausgeblendet.
 
-**Während des Trickelns ist der Tab `Profil` gesperrt.** Um das Profil zu wechseln, muss der Trickler zuerst gestoppt werden.
+**Während des Trickelns sind die Tabs `Profil` und `Info` gesperrt.** Die Firmware springt auf `Trickler` zurück, damit während eines laufenden Wurfs kein Profil gewechselt oder Dialog geöffnet wird. Um das Profil zu wechseln oder die Info-Seite zu nutzen, muss der Trickler zuerst gestoppt werden.
 
 > 📸 **Screenshot – Display:** Tab `Profil` mit einem geladenen Profil (z.B. `avg`). Sichtbar: Profilname in der Mitte, orangefarbener Zahnrad-Button (Tuning) links, roter Papierkorb-Button (Löschen) rechts und die Pfeil-Buttons oben/unten.
 
@@ -134,7 +134,7 @@ Das angezeigte Gewicht wechselt während des Trickelns die Farbe:
 
 * Zeigt den Log-Bereich mit Status- und Fehlermeldungen sowie die IP-Adresse bei aktivem WLAN.
 * Beim Start wird hier außerdem angezeigt, ob der Trickler von der SD-Karte oder vom internen Flash gestartet ist.
-* WLAN-Button: schaltet WLAN ein/aus (`wifi.enabled`), grün bei aktivem WLAN.
+* WLAN-Button: schaltet WLAN ein/aus (`wifi.enabled`), grün bei eingeschaltetem WLAN.
 * Waagen-Button (`Scale: …`): schaltet das Abfrageprotokoll der Waage durch (`GG`, `SBI`, `KERN`, `KERN-ABT`, `KERN-ABS`, `AD`, `CUSTOM`, `STREAM`) und speichert es sofort in `scale.protocol`.
 * Sind sowohl SD-Karte als auch internes LittleFS verfügbar, erscheinen zwei zusätzliche Buttons zum Synchronisieren von `config.txt` und `/profiles` (siehe [Konfiguration und Profile zwischen Flash und SD synchronisieren](#konfiguration-und-profile-zwischen-flash-und-sd-synchronisieren)).
 * Im Access-Point-Modus wird hier der WLAN-QR-Code für die Einrichtung angezeigt.
@@ -166,7 +166,7 @@ Die Firmware blendet bei Bedarf Dialoge ein, z.B. die Abfrage `Profil aus Kalibr
 
 ## Speicherort
 
-Pulverprofile liegen in diesem Ordner auf der SD-Karte:
+Pulverprofile liegen im aktiven Dateisystem in diesem Ordner:
 
 * `/profiles`
 
@@ -184,11 +184,11 @@ dazu gehört die Datei:
 /profiles/avg.txt
 ```
 
-Die Profilliste im Display und über die Web-API enthält nur gültige Profile. Es werden bis zu 32 gültige `.txt`-Profile angezeigt; Dateien mit `.cor.txt` im Namen werden ignoriert. Ungültige Profile werden beim Scannen ignoriert und im Display gemeldet. Wenn das aktuell ausgewählte Profil beim Start oder beim Starten des Trickelns nicht geladen werden kann, benennt die Firmware die Datei nach `.cor.txt` um, stellt auf `calibrate` um und startet neu.
+Die Profilliste im Display und über die Web-API enthält nur gültige Profile. Es werden bis zu 32 gültige `.txt`-Profile angezeigt; Dateien mit `.cor.txt` im Namen werden ignoriert. Ungültige Profile werden beim Scannen ignoriert und im Display gemeldet. Wenn das aktuell ausgewählte Profil beim Start oder beim Umschalten nicht geladen werden kann, benennt die Firmware eine vorhandene defekte Datei nach `.cor.txt` um, stellt auf `calibrate` um und lädt dieses Profil direkt. Nur wenn auch das Wiederherstellen des Kalibrierprofils scheitert, startet der Trickler zur Wiederherstellung neu.
 
 ## Automatisches Profil aus Kalibrierlauf erstellen
 
-Das `calibrate` Profil liegt als `/profiles/calibrate.txt` auf der SD-Karte.
+Das `calibrate` Profil liegt als `/profiles/calibrate.txt` im aktiven Dateisystem. Fehlt diese Datei oder ist sie defekt, legt die Firmware sie aus einer eingebauten Vorlage neu an.
 
 ```json
 {
@@ -238,7 +238,7 @@ Die automatische Erstellung verwendet die Namen `powder_000.txt` bis `powder_999
 
 Ist dieses Limit von 32 Profilen bereits erreicht, prüft die Firmware das schon **vor** dem Kalibrierlauf: Beim Druck auf `Start` (mit gewähltem `calibrate`-Profil) erscheint dann die Meldung `Profillimit erreicht! Kalibrierung nicht möglich.`, und der Kalibrierlauf wird gar nicht erst gestartet. Lösche in diesem Fall zuerst ein nicht mehr benötigtes Profil.
 
-Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro 100 Umdrehungen. `weightPerRev` wird aus `Kalibriergewicht / 100` berechnet. Die Firmware legt acht Feinwurf-Einträge an (`1.929`, `0.965`, `0.482`, `0.241`, `0.121`, `0.060`, `0.030`, `0.000` gn mit `2`, `2`, `5`, `5`, `10`, `10`, `15`, `20` Messungen) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten STEP-Pulse. Jeder Eintrag erhält mindestens `5` STEP-Pulse.
+Der automatisch erzeugte Profilaufbau basiert auf der gemessenen Pulvermenge pro Kalibrierlauf. `weightPerRev` wird aus `Kalibriergewicht / Kalibrierumdrehungen` berechnet. Mit dem mitgelieferten `calibrate`-Profil sind das `100` Umdrehungen, also `Kalibriergewicht / 100`. Die Firmware legt acht Feinwurf-Einträge an (`1.929`, `0.965`, `0.482`, `0.241`, `0.121`, `0.060`, `0.030`, `0.000` gn mit `2`, `2`, `5`, `5`, `10`, `10`, `15`, `20` Messungen) und verwendet dabei einen Sicherheitsfaktor von 65 % für die berechneten STEP-Pulse. Jeder Eintrag erhält mindestens `5` STEP-Pulse.
 
 ## Profil-Tuning
 
@@ -250,11 +250,18 @@ Wechsle in den Tab `Profil` und wähle das Profil aus, das angepasst werden soll
 
 ![Profil auswählen](https://github.com/user-attachments/assets/b4ba4f5b-84c8-492e-a2bc-4d74446d9ba5)
 
-### 2. Gewicht / Umdr anpassen
+### 2. Tuning-Art wählen
 
-Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Gewicht / Umdr** anpassen (entspricht `stepper.1.weightPerRev`). Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
+Klicke auf das **Zahnrad-Symbol**. Die Firmware zeigt zuerst eine Auswahl:
 
-![Gewicht / Umdr anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
+* **Gewicht / Umdr**: passt `stepper.1.weightPerRev` an und berechnet daraus die acht Standard-Feinwürfe neu.
+* **Messwerte**: passt die `measurements`-Werte der vorhandenen `trickleMap`-Einträge an, ohne die STEP-Pulse zu ändern.
+
+Das Profil `calibrate` kann nicht getunt werden. Der Trickler muss für beide Tuning-Funktionen gestoppt sein.
+
+### 3. Gewicht / Umdr anpassen
+
+Wähle **Gewicht / Umdr**, um den Wert `stepper.1.weightPerRev` zu ändern. Die Schrittweite des Eingabefelds wechselt zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`; zulässig sind Werte von `0.001` bis `99.999`.
 
 #### Hinweise
 
@@ -262,15 +269,23 @@ Klicke auf das **Zahnrad-Symbol**. Nun kannst du den Wert **Gewicht / Umdr** anp
 - Übertrickelt der Trickler regelmäßig, erhöhe den Wert.
 - Verringere den Wert schrittweise, bis der Trickler gerade nicht mehr übertrickelt.
 - So erreichst du einen guten Kompromiss zwischen Geschwindigkeit und Genauigkeit.
-- Für eine optimale Feinabstimmung empfiehlt es sich, das Profil anschließend manuell anzupassen (siehe [Aufbau eines Profils](#aufbau-eines-profils); bearbeiten lässt es sich über den [Pulverprofil-Editor](#pulverprofil-editor) oder den [Dateibrowser](#dateibrowser)).
+- Beim Speichern berechnet die Firmware die acht Einträge der `trickleMap` neu. Vorhandene `measurements`-Werte werden dabei beibehalten, soweit es für die neu erzeugten Einträge passende Positionen gibt.
 
-### 3. Einstellungen speichern
+![Gewicht / Umdr anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
 
-Klicke auf **Speichern**, um die Änderungen zu übernehmen. Beim Speichern berechnet die Firmware die acht Einträge der `trickleMap` neu und schreibt das Profil direkt auf die SD-Karte. Der Trickler muss dafür gestoppt sein.
+### 4. Messwerte anpassen
+
+Wähle **Messwerte**, um die Stabilitätszählung pro `trickleMap`-Eintrag anzupassen. Der mittlere Button zeigt den `diffWeight`-Eintrag, der gerade bearbeitet wird; mit jedem Druck wechselst du zum nächsten Eintrag. Mit `+` und `-` wird die Anzahl der Messwerte für diesen Eintrag geändert. Zulässig sind Werte von `0` bis `99`.
+
+Mehr Messwerte geben der Waage mehr Zeit zum Einschwingen und machen das Dosieren ruhiger, kosten aber Zeit. Weniger Messwerte beschleunigen den Ablauf, können bei unruhigen Waagen aber zu frühen Würfen führen.
+
+### 5. Einstellungen speichern
+
+Klicke auf **Speichern**, um die Änderungen zu übernehmen. Die Firmware schreibt das Profil direkt in das aktive Dateisystem. Läuft der Trickler von SD, ist das die SD-Karte; läuft er ohne SD von LittleFS, ist es der interne Flash.
 
 ![Einstellungen speichern](https://github.com/user-attachments/assets/7a7d0735-f0f2-4740-8e7b-fcf7f4df550e)
 
-### 4. Ergebnis testen
+### 6. Ergebnis testen
 
 Wechsle zurück in den Tab `Trickler` und teste die neuen Einstellungen.
 
@@ -278,7 +293,7 @@ Wechsle zurück in den Tab `Trickler` und teste die neuen Einstellungen.
 
 #### Diagnose-Anzeige beim Trickeln
 
-Während des Trickelns zeigt die Statuszeile (im Tab `Info`) den gerade aktiven Tabelleneintrag an, z.B.:
+Während des Trickelns zeigt die Statuszeile den gerade aktiven Tabelleneintrag an, z.B.:
 
 ```text
 W0.482 ST167 RPM200 M5/3
@@ -286,7 +301,7 @@ W0.482 ST167 RPM200 M5/3
 
 Das bedeutet: `W` = `diffWeight` des aktiven Eintrags, `ST` = `steps`, `RPM` = `rpm`, `M` = benötigte / aktuelle Anzahl stabiler Messwerte. Diese Anzeige hilft beim Feinabstimmen der `trickleMap`.
 
-> 📸 **Screenshot – Display:** Tab `Info` während eines laufenden Trickelvorgangs mit sichtbarer Diagnosezeile (z.B. `W0.482 ST167 RPM200 M5/3`).
+> 📸 **Screenshot – Display:** Tab `Trickler` während eines laufenden Trickelvorgangs mit sichtbarer Diagnosezeile (z.B. `W0.482 ST167 RPM200 M5/3`) in der Statuszeile.
 
 ## Profil löschen
 
@@ -307,7 +322,7 @@ Klicke auf das **Löschen-Symbol**, um das ausgewählte Profil zu entfernen. Vor
 
 ## Pulverprofil-Editor
 
-Der Webserver enthält `profile_editor.html` als `Pulverprofil-Editor`. Damit können alle von der Firmware unterstützten Profilfelder (`general`, `stepper.1`/`2` und die `trickleMap`-Schritte sowie die Kalibrier-Profilform) bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` gespeichert werden. Auch `general.startAtZero` und `general.sessionCounter` sind eigene Eingabefelder.
+Der Webserver enthält `profile_editor.html` als `Pulverprofil-Editor`. Damit können alle von der Firmware unterstützten Profilfelder (`general`, `stepper.1`/`2` und die `trickleMap`-Schritte sowie die Kalibrier-Profilform) bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` des aktiven Dateisystems gespeichert werden. Auch `general.startAtZero`, `general.sessionCounter` und `general.measurements` sind eigene Eingabefelder.
 
 Wenn du über den Webserver arbeitest, listet das Auswahlfeld `Profil laden:` alle vorhandenen Profile aus `/profiles` auf. Beim Auswählen wird das Profil vom Gerät geladen und in den Editor übernommen; mit `Speichern` wird es unter dem `Profilname` wieder in `/profiles` zurückgeschrieben. Profile lassen sich weiterhin per Drag&Drop oder Einfügen in das Textfeld laden. Starte den Trickler nach dem Speichern neu, damit die neue Profilliste geladen wird.
 
@@ -550,7 +565,7 @@ https://www.simon42.com/grosse-sd-karte-formatieren-fat32/
 
 ## Konfiguration
 
-Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis der SD-Karte.
+Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis des aktiven Dateisystems. Mit eingelegter SD-Karte ist das die SD-Karte; ohne SD-Karte nutzt die Firmware das interne LittleFS, sofern ein LittleFS-Image vorhanden ist.
 
 ```json
 {
@@ -594,20 +609,22 @@ Die Werte im Beispiel oben dienen nur zur Veranschaulichung. In Klammern steht j
 * `wifi.ipSubnet`: Subnetzmaske, nötig bei statischer IP. (Standard: leer)
 * `wifi.ipDns`: optionaler DNS-Server. Wenn leer, nutzt die Firmware `8.8.8.8`. (Standard: leer)
 * Falls DHCP verwendet werden soll, lasse `wifi.ipStatic`, `wifi.ipGateway`, `wifi.ipSubnet` und `wifi.ipDns` leer.
-* `scale.protocol`: unterstützte Werte sind `GG`, `SBI`, `KERN`, `KERN-ABT`, `KERN-ABS`, `AD`, `CUSTOM` und leer für kein aktives Anfragekommando. (Standard: `GG`)
+* `scale.protocol`: unterstützte Werte sind `GG`, `SBI`, `KERN`, `KERN-ABT`, `KERN-ABS`, `AD`, `CUSTOM` und leer für kein aktives Anfragekommando (`STREAM`). (Standard: `GG`)
 * `scale.customCode`: nur bei `CUSTOM`; Hex-Bytefolge wie `0x51 0x0D 0x0A`, mit der Messwerte von der Waage angefordert werden. (Standard: leer)
 * `scale.baud`: Baudrate der Waage, meistens `9600`. (Standard: `9600`)
 * `stepper.stepsPerRev`: Schritte pro voller Umdrehung der Schrittmotoren (gilt für Stepper1 und Stepper2). Bei einem 1,8°-Schrittmotor sind das `200`; bei anderen Motoren entsprechend anpassen. Für Mikroschritt-Treiber den Gesamtwert eintragen: Vollschritte pro Umdrehung × Mikroschritt-Faktor. Beispiel: 1,8°-Motor (`200` Vollschritte) bei 1/8-Mikroschritt → `200 × 8 = 1600`. Beeinflusst die Schrittberechnung beim Trickeln und die Kalibrierung. (Standard: `200`)
 * `activeProfile`: Profilname ohne `.txt`. Das Zielgewicht kommt aus `general.targetWeight` im gewählten Profil. (Standard: `calibrate`)
-* `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Die Display-Texte werden aus `/lang/<sprache>.json` geladen und fallen auf `/lang/en.json` sowie danach auf eingebaute englische Texte zurück. Die Weboberfläche verwendet getrennte Dateien unter `/system/lang`. (Standard: `en`)
+* `language`: Sprache der Oberfläche. Die Firmware normalisiert Werte wie `de-DE` zu `de`. Die Display-Texte werden aus `/lang/<sprache>.json` geladen und fallen auf `/lang/en.json` sowie danach auf eingebaute englische Texte zurück. Die Weboberfläche verwendet getrennte Dateien unter `/system/lang`. (Firmware-Standard: `en`; die mitgelieferte SD-/LittleFS-Konfiguration ist auf `de` gesetzt.)
 * `beeper`: `done` Beep wenn Trickle fertig, `button` Beep bei Touch betätigung, `both` beides aktiv oder `off` Beeper aus. (Standard: `done`)
 * `totalCounter.enable`: aktiviert den dauerhaften Gesamtzähler für fertige Trickles. (Standard: `false`)
 * `totalCounter.count`: gespeicherter Stand des dauerhaften Gesamtzählers. (Standard: `0`)
 * `firmwareUpdate.check`: aktiviert die automatische Prüfung auf neue Firmware. (Standard: `true`)
 
-Wenn `config.txt` fehlt oder nicht gelesen werden kann, erzeugt die Firmware eine Standard-Konfiguration, zeigt eine Fehlermeldung an und startet neu.
+Wenn `config.txt` fehlt oder nicht gelesen werden kann, verwendet die Firmware eine Standard-Konfiguration. Falls nötig, wird außerdem das Profil `calibrate` aus der eingebauten Vorlage neu angelegt.
 
-Auf der SD-Karte befindet sich `system/settings.html` (Menüpunkt `Einstellungen`), womit sich alle Konfigurationsfelder inklusive `totalCounter.enable`, `totalCounter.count` und `firmwareUpdate.check` erstellen lassen. Die Seite wird auch über den Webserver bereitgestellt und lässt sich zudem offline direkt von der SD-Karte öffnen (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
+Auf der SD-Karte und im LittleFS-Image befindet sich `system/settings.html` (Menüpunkt `Einstellungen`), womit sich die üblichen Benutzer-Einstellungen inklusive WLAN, Waage, `stepper.stepsPerRev`, Sprache, `totalCounter.enable`, `totalCounter.count` und `firmwareUpdate.check` erstellen lassen. Die Seite wird auch über den Webserver bereitgestellt und lässt sich zudem offline direkt von der SD-Karte öffnen (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
+
+Nicht alle technischen Felder sind im Generator sichtbar; die interne Firmware-Update-URL gehört bewusst nicht in `config.txt`. Der STREAM-Modus entspricht einem leeren `scale.protocol` und kann in `settings.html` über die Protokoll-Auswahl **None** gesetzt werden.
 
 <img width="372" height="1220" alt="image" src="https://github.com/user-attachments/assets/bfb98107-4ebd-4d78-a6bd-ee829973a59f" />
 
@@ -658,7 +675,7 @@ Beim Start zeigt der Trickler `Mit WLAN verbinden:` an. Bei erfolgreicher Verbin
 
 ## WLAN am Display steuern
 
-Im Tab `Info` lässt sich WLAN über den WLAN-Button direkt am Touchscreen ein- und ausschalten. Der Button wird grün, wenn WLAN aktiv ist. Die Einstellung wird in `wifi.enabled` gespeichert und sofort angewendet.
+Im Tab `Info` lässt sich WLAN über den WLAN-Button direkt am Touchscreen ein- und ausschalten. Der Button wird grün, wenn WLAN eingeschaltet ist. Die Einstellung wird in `wifi.enabled` gespeichert und sofort angewendet.
 
 > 📸 **Screenshot – Display:** WLAN-Button im Tab `Info` – am besten zwei Bilder: grün (WLAN ein) und grau (WLAN aus).
 
@@ -699,7 +716,7 @@ http://192.168.178.22
 
 ## Weboberfläche
 
-Die Startseite lädt `/system/index.html` von der SD-Karte. Von dort erreichst du:
+Die Startseite lädt `/system/index.html` aus dem aktiven Dateisystem. Mit eingelegter SD-Karte kommt die Weboberfläche von der SD-Karte, sonst aus dem internen LittleFS. Von dort erreichst du:
 
 * Trickler
 * Dateibrowser
@@ -733,21 +750,21 @@ Die Sprache der offline geöffneten Seiten richtet sich nach der Spracheinstellu
 Über den Menüpunkt `Trickler` lässt sich der Trickler komplett aus dem Webbrowser bedienen – praktisch vom Smartphone oder PC aus:
 
 * Pulverprofil aus einer Auswahlliste wählen.
-* Zielgewicht mit `+` und `-` einstellen.
+* Zielgewicht mit `+` und `-` in `0.001`-Schritten einstellen oder direkt in das Eingabefeld schreiben.
 * Trickeln mit `Start`/`Stop` steuern.
 * Das aktuell gemessene Gewicht wird laufend angezeigt.
 
-Das Setzen von Zielgewicht und Profil wirkt sofort über dieselbe Firmware-Logik wie am Display (`/setTarget` bzw. `/setProfile`); ein Neustart ist dafür nicht nötig.
+Das Setzen von Zielgewicht und Profil wirkt sofort über dieselbe Firmware-Logik wie am Display (`/setTarget` bzw. `/setProfile`); ein Neustart ist dafür nicht nötig. Das Zielgewicht wird sofort in das aktive Profil geschrieben. Eine Profilwahl wird sofort geladen, aber erst beim Starten eines Wurfs in `config.txt` dauerhaft gespeichert.
 
 > 📸 **Screenshot – Webserver:** Die Trickler-Fernsteuerung (`trickler.html`) mit Profil-Auswahlliste, Zielgewicht-Eingabe mit `+`/`-`, dem `Start`/`Stop`-Button und der Live-Gewichtsanzeige.
 
 ## Dateibrowser
 
-Mit dem `Dateibrowser` kannst du Dateien auf der SD-Karte über den Webbrowser bearbeiten. Änderungen an `config.txt` oder Pulverprofilen werden erst nach einem Neustart übernommen.
+Mit dem `Dateibrowser` kannst du Dateien im aktiven Dateisystem über den Webbrowser bearbeiten. Mit eingelegter SD-Karte bearbeitest du die SD-Karte; ohne SD-Karte bearbeitest du das interne LittleFS. Änderungen an `config.txt` oder Pulverprofilen werden erst nach einem Neustart bzw. nach erneutem Laden des Profils übernommen.
 
-**Jede Änderung an einer Konfigurationsdatei oder einem Pulverprofil wird erst nach einem Neustart des Tricklers übernommen.**
+**Jede Änderung an einer Konfigurationsdatei oder einem Pulverprofil über den Dateibrowser wird erst nach einem Neustart des Tricklers oder nach erneutem Laden des Profils übernommen.**
 
-Ausnahmen sind die Web-API-Funktionen `/setTarget` und `/setProfile`: Sie speichern das Zielgewicht bzw. Profil sofort über die Firmware-Logik.
+Ausnahmen sind die Web-API-Funktionen `/setTarget` und `/setProfile`: `/setTarget` schreibt das Zielgewicht sofort in das aktive Profil, `/setProfile` lädt das gewählte Profil sofort. Die dauerhafte `activeProfile`-Speicherung erfolgt wie am Display beim Starten eines Wurfs.
 
 ![image](https://github.com/ripper121/RoboTrickler/assets/11836272/e3c420b0-bd87-42ac-ae9b-8e6ad72f0107)
 
@@ -757,22 +774,22 @@ Diese Endpunkte können im Browser oder aus einer eigenen Steuerung aufgerufen w
 
 * `GET /getTricklerState`: aktuelles Gewicht und Laufstatus als JSON lesen, z. B. `{"weight":40.000,"running":true}`.
 * `GET /getTarget`: Zielgewicht lesen.
-* `GET /setTarget?targetWeight=WERT`: Zielgewicht setzen und im aktuellen Profil speichern. Erlaubt sind Werte größer `0` und kleiner `999`. Beispiel: `/setTarget?targetWeight=40`.
+* `GET /setTarget?targetWeight=WERT`: Zielgewicht setzen und im aktuellen Profil speichern. Erlaubt sind Werte größer `0` bis maximal `500.000`. Während eines laufenden Trickelvorgangs antwortet die Firmware mit `409`. Beispiel: `/setTarget?targetWeight=40`.
 * `GET /getProfile`: aktuelles Profil lesen.
 * `GET /getLanguage`: aktuell geladene Sprache lesen.
 * `GET /getProfileList`: Liste der erkannten Profile als JSON lesen.
-* `GET /setProfile?profileNumber=NUMMER`: Profil über die Nummer aus der Profilliste wählen.
-* `GET /system/start`: Trickeln starten.
+* `GET /setProfile?profileNumber=NUMMER`: Profil über die nullbasierte Nummer aus der Profilliste wählen und sofort laden. Während eines laufenden Trickelvorgangs antwortet die Firmware mit `409`; die Auswahl wird beim Starten eines Wurfs dauerhaft in `config.txt` gespeichert.
+* `GET /system/start`: Trickeln starten. Wenn kein gültiges Profil geladen werden kann, antwortet die Firmware mit `409`.
 * `GET /system/stop`: Trickeln stoppen.
 * `GET /reboot`: Trickler neu starten.
 * `GET /fwupdate`: Firmware-Update-Seite öffnen.
-* `POST /update`: Firmware-Datei hochladen.
+* `POST /update`: Firmware-Datei hochladen. Das Upload-Feld `firmware` schreibt die Firmware, das Upload-Feld `filesystem` schreibt bei aktivem LittleFS das interne Dateisystem-Image.
 * `GET /list?dir=/PFAD`: Dateien im aktiven Dateisystem auflisten.
 * `PUT /system/resources/edit?path`: Datei oder Ordner anlegen.
-* `POST /system/resources/edit`: Datei hochladen.
+* `POST /system/resources/edit`: Datei hochladen. Bei Multipart-Uploads bestimmt der übergebene Dateiname den Zielpfad im aktiven Dateisystem, z.B. `filename=/profiles/avg.txt`.
 * `DELETE /system/resources/edit?path`: Datei oder Ordner löschen.
 * `GET /system/ap`: Access-Point-Einrichtungsseite öffnen.
-* `GET /api/wifi/scan`: verfügbare WLAN-Netzwerke als JSON lesen.
+* `GET /api/wifi/scan`: verfügbare WLAN-Netzwerke als JSON lesen. Während ein Scan noch läuft, antwortet die Firmware mit `202` und `{"scanning":true}`; danach kommt eine JSON-Liste mit SSID, RSSI, Kanal und Verschlüsselungsstatus.
 * `POST /api/wifi/save`: WLAN-Zugangsdaten speichern (von der Einrichtungsseite verwendet).
 
 # Waagen
@@ -1203,15 +1220,17 @@ Gib vor der Montage der Lager einen Tropfen Sekundenkleber an die Stelle, an der
 
 **Verpolung beschädigt den RS232 Stecker.**
 
-Korrekte Verkabelung:
+Die Firmware startet die Waagen-Schnittstelle mit `RX = SCL` und `TX = SDA`. Bei TTL-RS232-Konvertern werden UART-Leitungen normalerweise gekreuzt: Der TX-Ausgang des Konverters geht an den RX-Eingang der Steuerung, der RX-Eingang des Konverters an den TX-Ausgang der Steuerung.
+
+Korrekte Verkabelung zur TTL-Seite des RS232-Konverters:
 
 ```text
-| Steuerung | RS232 Stecker |
-|-----------|---------------|
-| 3V3       | VCC           |
-| GND       | GND           |
-| SDA       | TXD           |
-| SCL       | RXD           |
+| Steuerung | Firmware-Rolle | RS232-Konverter |
+|-----------|----------------|-----------------|
+| 3V3       | Versorgung     | VCC             |
+| GND       | Masse          | GND             |
+| SCL       | RX             | TXD             |
+| SDA       | TX             | RXD             |
 ```
 
 ![image](https://github.com/user-attachments/assets/7d2dbbee-4da4-4fb7-a685-2082077151fe)

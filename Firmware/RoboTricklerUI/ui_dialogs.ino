@@ -491,9 +491,9 @@ void profileTuneMinus_event_cb(lv_event_t *e)
 void profileTunePlus_event_cb(lv_event_t *e)
 {
     profileTuneWeightPerRev += profileTuneStepSize;
-    if (profileTuneWeightPerRev > 99.9999)
+    if (profileTuneWeightPerRev > 99.999)
     {
-        profileTuneWeightPerRev = 99.9999;
+        profileTuneWeightPerRev = 99.999;
     }
     updateProfileTuneValueLabel();
 }

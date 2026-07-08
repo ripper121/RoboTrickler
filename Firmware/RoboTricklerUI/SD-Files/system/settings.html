@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <div class="card">
+    <div class="card settings-card">
         <h2 data-i18n="config.title">Settings</h2>
         <form id="configForm">
             <fieldset>
@@ -19,10 +19,10 @@
                 <input type="checkbox" id="wifi_enabled" name="wifi_enabled" checked><br>
 
                 <label for="wifi_ssid" data-i18n="config.ssid">Name / SSID:</label>
-                <input type="text" id="wifi_ssid" name="wifi_ssid" maxlength="32" placeholder="MyWifiName"><br>
+                <input type="text" id="wifi_ssid" name="wifi_ssid" maxlength="63" placeholder="MyWifiName"><br>
 
                 <label for="wifi_psk" data-i18n="config.password">Password / PSK:</label>
-                <input type="text" id="wifi_psk" name="wifi_psk" maxlength="64" placeholder="MyWifiPassword"><br>
+                <input type="text" id="wifi_psk" name="wifi_psk" maxlength="63" placeholder="MyWifiPassword"><br>
                 <fieldset>
                     <legend data-i18n="config.ipSettings">IP Settings (optional)</legend>
                     <label for="ipStatic" data-i18n="config.staticIp">Static IP:</label>
@@ -44,8 +44,8 @@
 
             <fieldset>
                 <legend data-i18n="config.scale">Scale Settings</legend>
-                <span data-i18n="config.protocol">Protocol:</span>
-                <select name="scale_protocol">
+                <label for="scale_protocol" data-i18n="config.protocol">Protocol:</label>
+                <select id="scale_protocol" name="scale_protocol">
                     <option value="GG" selected>G&G</option>
                     <option value="SBI">Sartorius</option>
                     <option value="KERN">Kern</option>
@@ -55,7 +55,8 @@
                     <option value="CUSTOM">Custom</option>
                     <option value="">None</option>
                 </select><br>
-                <span data-i18n="config.baud">Baud:</span> <input type="number" name="scale_baud" value="9600"><br>
+                <label for="scale_baud" data-i18n="config.baud">Baud:</label>
+                <input type="number" id="scale_baud" name="scale_baud" value="9600"><br>
                 <div id="customRequestRow">
                     <label for="scale_customCode" data-i18n="config.customCode">Custom request (String in Hexformat 0x00):</label>
                     <input type="text" id="scale_customCode" name="scale_customCode" maxlength="31"
@@ -64,9 +65,15 @@
             </fieldset>
 
             <fieldset>
+                <legend data-i18n="config.stepper">Stepper Settings</legend>
+                <label for="stepsPerRev" data-i18n="config.stepsPerRev">Steps per revolution:</label>
+                <input type="number" id="stepsPerRev" name="stepsPerRev" value="200" min="1" step="1"><br>
+            </fieldset>
+
+            <fieldset>
                 <legend data-i18n="config.general">General Settings</legend>
                 <label for="beeper" data-i18n="config.beeper">Beeper:</label>
-                <select name="beeper">
+                <select id="beeper" name="beeper">
                     <option value="done" selected data-i18n="config.done">Done</option>
                     <option value="button" data-i18n="config.button">Button</option>
                     <option value="both" data-i18n="config.both">Both</option>
@@ -74,13 +81,13 @@
                 </select><br>
 
                 <label for="language" data-i18n="config.language">Language:</label>
-                <select name="language">
-                    <option value="en" data-i18n="config.english">English</option>
-                    <option value="de" selected data-i18n="config.german">Deutsch</option>
+                <select id="language" name="language">
+                    <option value="en" selected data-i18n="config.english">English</option>
+                    <option value="de" data-i18n="config.german">Deutsch</option>
                 </select><br>
 
                 <label for="profile_name" data-i18n="config.profile">Profile:</label>
-                <input type="text" id="profile_name" name="profile_name" maxlength="31" value="avg"><br>
+                <input type="text" id="profile_name" name="profile_name" maxlength="31" value="calibrate"><br>
 
                 <label for="trickle_counter" data-i18n="config.totalCounter">Trickle counter:</label>
                 <input type="checkbox" id="trickle_counter" name="trickle_counter"><br>
@@ -106,38 +113,58 @@
         const configForm = document.getElementById('configForm');
         const jsonOutput = document.getElementById('jsonOutput');
         const allowedScaleProtocols = ['GG', 'SBI', 'KERN', 'KERN-ABT', 'KERN-ABS', 'AD', 'CUSTOM', ''];
+        const allowedBeepers = ['done', 'button', 'both', 'off'];
+        const allowedLanguages = ['en', 'de'];
+
+        function cleanText(value, fallback, maxLength) {
+            var text = value === undefined || value === null ? fallback : String(value);
+            return text.substring(0, maxLength);
+        }
+
+        function cleanOption(value, allowedValues, fallback) {
+            return allowedValues.includes(value) ? value : fallback;
+        }
+
+        function cleanStepsPerRev(value) {
+            var stepsPerRev = parseInt(value, 10);
+            return stepsPerRev > 0 ? stepsPerRev : 200;
+        }
 
         function updateCustomRequestVisibility() {
             document.getElementById('customRequestRow').style.display = configForm.scale_protocol.value === 'CUSTOM' ? 'block' : 'none';
         }
 
         function cleanConfigJSON(jsonObject) {
-            var scaleProtocol = (jsonObject.scale && jsonObject.scale.protocol) || 'GG';
+            var scaleProtocol = jsonObject.scale && Object.prototype.hasOwnProperty.call(jsonObject.scale, 'protocol') ? jsonObject.scale.protocol : 'GG';
             if (!allowedScaleProtocols.includes(scaleProtocol)) {
                 scaleProtocol = 'GG';
             }
             var firmwareUpdate = jsonObject.firmwareUpdate || {};
             var totalCounter = jsonObject.totalCounter || {};
-            var profileName = String(jsonObject.activeProfile || 'calibrate').trim();
-            var customCode = scaleProtocol === 'CUSTOM' ? (jsonObject.scale && jsonObject.scale.customCode) || '' : '';
+            var stepper = jsonObject.stepper || {};
+            var profileName = cleanText(jsonObject.activeProfile || 'calibrate', 'calibrate', 31).trim();
+            var customCode = scaleProtocol === 'CUSTOM' ? cleanText(jsonObject.scale && jsonObject.scale.customCode, '', 31) : '';
             return {
                 wifi: {
                     enabled: !jsonObject.wifi || jsonObject.wifi.enabled !== false,
-                    ssid: (jsonObject.wifi && jsonObject.wifi.ssid) || '',
-                    psk: (jsonObject.wifi && jsonObject.wifi.psk) || '',
-                    ipStatic: (jsonObject.wifi && jsonObject.wifi.ipStatic) || '',
-                    ipGateway: (jsonObject.wifi && jsonObject.wifi.ipGateway) || '',
-                    ipSubnet: (jsonObject.wifi && jsonObject.wifi.ipSubnet) || '',
-                    ipDns: (jsonObject.wifi && jsonObject.wifi.ipDns) || ''
+                    ssid: cleanText(jsonObject.wifi && jsonObject.wifi.ssid, '', 63),
+                    psk: cleanText(jsonObject.wifi && jsonObject.wifi.psk, '', 63),
+                    ipStatic: cleanText(jsonObject.wifi && jsonObject.wifi.ipStatic, '', 15),
+                    ipGateway: cleanText(jsonObject.wifi && jsonObject.wifi.ipGateway, '', 15),
+                    ipSubnet: cleanText(jsonObject.wifi && jsonObject.wifi.ipSubnet, '', 15),
+                    ipDns: cleanText(jsonObject.wifi && jsonObject.wifi.ipDns, '', 15)
                 },
                 scale: {
                     protocol: scaleProtocol,
                     customCode: customCode,
                     baud: (jsonObject.scale && jsonObject.scale.baud) || 9600
                 },
+                stepper: {
+                    stepsPerRev: cleanStepsPerRev(stepper.stepsPerRev)
+                },
                 activeProfile: profileName || 'calibrate',
-                beeper: jsonObject.beeper || 'done',
-                language: jsonObject.language || 'en',
+                beeper: cleanOption(jsonObject.beeper, allowedBeepers, 'done'),
+                language: cleanOption(jsonObject.language, allowedLanguages, 'en'),
                 totalCounter: {
                     enable: totalCounter.enable === true,
                     count: Math.max(0, parseInt(totalCounter.count, 10) || 0)
@@ -166,6 +193,9 @@
                     protocol: scaleProtocol,
                     baud: parseInt(formData.get('scale_baud'), 10),
                     customCode: scaleProtocol === 'CUSTOM' ? formData.get('scale_customCode') : ''
+                },
+                stepper: {
+                    stepsPerRev: cleanStepsPerRev(formData.get('stepsPerRev'))
                 },
                 activeProfile: (formData.get('profile_name') || 'calibrate').trim() || 'calibrate',
                 beeper: formData.get('beeper'),
@@ -197,11 +227,12 @@
                 configForm.ipDns.value = jsonObject.wifi.ipDns || '';
 
                 // Update Scale settings
-                configForm.scale_protocol.value = jsonObject.scale.protocol || 'GG';
+                configForm.scale_protocol.value = jsonObject.scale.protocol;
                 configForm.scale_baud.value = jsonObject.scale.baud || 9600;
                 configForm.scale_customCode.value = jsonObject.scale.customCode || '';
                 updateCustomRequestVisibility();
 
+                configForm.stepsPerRev.value = jsonObject.stepper.stepsPerRev || 200;
                 configForm.beeper.value = jsonObject.beeper || 'done';
                 configForm.language.value = jsonObject.language || 'en';
                 configForm.profile_name.value = jsonObject.activeProfile || 'calibrate';

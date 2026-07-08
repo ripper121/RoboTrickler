@@ -10,7 +10,7 @@
 </head>
 
 <body>
-   <div class="card">
+   <div class="card profile-editor-card">
       <fieldset>
          <legend data-i18n="profileEditor.profile">Profile</legend>
          <fieldset id="loadProfileContainer">
@@ -22,7 +22,7 @@
          <textarea id="jsonInput" placeholder="Paste or Drag&Drop Profile here" data-i18n-placeholder="profileEditor.placeholder"></textarea><br>
 
          <label for="profileName" data-i18n="profileEditor.profileName">Profile Name:</label>
-         <input type="text" id="profileName" value="my_profile_name" maxlength="16" required data-i18n-title="profileEditor.filenameTitle"
+         <input type="text" id="profileName" value="my_profile_name" maxlength="31" required data-i18n-title="profileEditor.filenameTitle"
             title="Filename must not contain < > : \" / \\ | ? *"><br>
          <button id="download-btn" class="button" data-i18n="profileEditor.download">Download</button><br><br>
          <button id="save-btn" class="button" data-i18n="profileEditor.save">Save</button><br><br>
@@ -68,10 +68,13 @@
          'revolutions',
          'rpm'
       ];
+      const PROFILE_MAX_ENTRIES = 16;
+      const WEIGHT_MAX = 500.000;
+      const CALIBRATE_PROFILE_NAME = 'calibrate';
 
       function cleanNumber(value, fallback) {
          const number = parseFloat(value);
-         return isNaN(number) ? fallback : number;
+         return Number.isFinite(number) ? number : fallback;
       }
 
       function cleanBoolean(value, fallback) {
@@ -117,7 +120,7 @@
       function cleanCalibrationProfileJSON(jsonData) {
          const stepper = jsonData.stepper || {};
          return {
-            measurements: cleanInteger(jsonData.measurements, 5, 0),
+            measurements: cleanInteger(jsonData.measurements, 10, 0),
             stepper: {
                id: cleanStepper(stepper.id),
                revolutions: Math.max(0.001, cleanNumber(stepper.revolutions, 100)),
@@ -137,14 +140,14 @@
          };
 
          const general = jsonData.general || {};
-         cleanedData.general.targetWeight = cleanNumber(general.targetWeight, 40.000);
+         cleanedData.general.targetWeight = Math.min(WEIGHT_MAX, Math.max(0, cleanNumber(general.targetWeight, 40.000)));
          cleanedData.general.tolerance = cleanNumber(general.tolerance, 0.000);
-         cleanedData.general.alarmThreshold = cleanNumber(general.alarmThreshold, 1.000);
+         cleanedData.general.alarmThreshold = cleanNumber(general.alarmThreshold, 0.000);
          cleanedData.general.weightGap = cleanNumber(general.weightGap, 1.000);
          cleanedData.general.bulkStepper = cleanStepper(general.bulkStepper);
          cleanedData.general.startAtZero = cleanBoolean(general.startAtZero, false);
          cleanedData.general.sessionCounter = cleanBoolean(general.sessionCounter, false);
-         cleanedData.general.measurements = cleanInteger(general.measurements, 5, 0);
+         cleanedData.general.measurements = cleanInteger(general.measurements, 20, 0);
 
          const stepperMap = jsonData.stepper || {};
          ['1', '2'].forEach(function (stepperId) {
@@ -158,9 +161,12 @@
          });
 
          if (Array.isArray(jsonData.trickleMap)) {
-            jsonData.trickleMap.forEach(function (entry) {
+            jsonData.trickleMap.slice(0, PROFILE_MAX_ENTRIES).forEach(function (entry) {
                cleanedData.trickleMap.push(cleanProfileStep(entry || {}));
             });
+         }
+         if (cleanedData.trickleMap.length <= 0) {
+            throw new Error('Profile must contain at least one trickleMap entry');
          }
 
          return cleanedData;
@@ -193,16 +199,30 @@
          addObjectFieldset(container, translatedProfileText('general', 'General'), 'general', jsonData.general, generalProperties);
 
          var stepperFieldset = document.createElement('fieldset');
+         stepperFieldset.className = 'profile-section';
          container.appendChild(stepperFieldset);
          var stepperLegend = document.createElement('legend');
          stepperLegend.textContent = translatedProfileText('stepperGroup', 'Steppers');
          stepperFieldset.appendChild(stepperLegend);
-         addObjectFieldset(stepperFieldset, translatedProfileText('stepper', 'Stepper {number}', 1), 'stepper.1', jsonData.stepper['1'], stepperProperties);
-         addObjectFieldset(stepperFieldset, translatedProfileText('stepper', 'Stepper {number}', 2), 'stepper.2', jsonData.stepper['2'], stepperProperties);
+         var stepperGrid = document.createElement('div');
+         stepperGrid.className = 'profile-stepper-grid';
+         stepperFieldset.appendChild(stepperGrid);
+         addObjectFieldset(stepperGrid, translatedProfileText('stepper', 'Stepper {number}', 1), 'stepper.1', jsonData.stepper['1'], stepperProperties, null, 'profile-subsection');
+         addObjectFieldset(stepperGrid, translatedProfileText('stepper', 'Stepper {number}', 2), 'stepper.2', jsonData.stepper['2'], stepperProperties, null, 'profile-subsection');
+
+         var trickleMapFieldset = document.createElement('fieldset');
+         trickleMapFieldset.className = 'profile-section';
+         container.appendChild(trickleMapFieldset);
+         var trickleMapLegend = document.createElement('legend');
+         trickleMapLegend.textContent = translatedProfileText('trickleMap', 'Trickle Map');
+         trickleMapFieldset.appendChild(trickleMapLegend);
+         var trickleMap = document.createElement('div');
+         trickleMap.className = 'profile-map-grid';
+         trickleMapFieldset.appendChild(trickleMap);
 
          jsonData.trickleMap.forEach(function (entry, index) {
-            addObjectFieldset(container, translatedProfileText('profileStep', 'Profile-Step {number}', index + 1), 'trickleMap.' + index, entry, profileStepProperties,
-               [{ name: 'stepper', properties: stepperStepProperties }]);
+            addObjectFieldset(trickleMap, translatedProfileText('profileStep', 'Profile-Step {number}', index + 1), 'trickleMap.' + index, entry, profileStepProperties,
+               [{ name: 'stepper', legend: translatedProfileText('stepperDetails', 'Stepper'), properties: stepperStepProperties }], 'profile-section');
          });
          document.getElementById("profileContainer").style.display = "block";
       }
@@ -248,6 +268,16 @@
             input = document.createElement('input');
             input.type = 'number';
             input.step = property === 'measurements' || property === 'steps' || property === 'rpm' ? '1' : '0.001';
+            if (property === 'targetWeight') {
+               input.min = '0';
+               input.max = String(WEIGHT_MAX);
+            } else if (property === 'diffWeight' || property === 'measurements') {
+               input.min = '0';
+            } else if (property === 'steps' || property === 'rpm') {
+               input.min = '1';
+            } else if (property === 'revolutions') {
+               input.min = '0.001';
+            }
             input.value = dataObject[property];
          }
 
@@ -260,8 +290,9 @@
          input.addEventListener('change', updateJSON);
       }
 
-      function addObjectFieldset(parent, legendText, path, dataObject, properties, nestedGroups) {
+      function addObjectFieldset(parent, legendText, path, dataObject, properties, nestedGroups, className) {
          var fieldset = document.createElement('fieldset');
+         fieldset.className = className || 'profile-section';
          parent.appendChild(fieldset);
          var legend = document.createElement('legend');
          legend.textContent = legendText;
@@ -273,8 +304,14 @@
 
          (nestedGroups || []).forEach(function (group) {
             var subData = dataObject[group.name] || {};
+            var subFieldset = document.createElement('fieldset');
+            subFieldset.className = 'profile-subsection';
+            fieldset.appendChild(subFieldset);
+            var subLegend = document.createElement('legend');
+            subLegend.textContent = group.legend || group.name;
+            subFieldset.appendChild(subLegend);
             group.properties.forEach(function (property) {
-               addField(fieldset, path + '.' + group.name, subData, property);
+               addField(subFieldset, path + '.' + group.name, subData, property);
             });
          });
       }
@@ -322,6 +359,28 @@
          var jsonData = cleanProfileJSON(JSON.parse(text));
          textArea.value = JSON.stringify(jsonData, null, 4);
          generateFormFromJSON(jsonData);
+      }
+
+      function currentCleanProfileJSON() {
+         return cleanProfileJSON(JSON.parse(document.getElementById('jsonInput').value));
+      }
+
+      function cleanProfileNameInput() {
+         return document.getElementById('profileName').value.trim().toLowerCase();
+      }
+
+      function validateProfileFilename(profileData, profileName) {
+         if (isCalibrationProfileJSON(profileData) && profileName !== CALIBRATE_PROFILE_NAME) {
+            alert(window.rtT
+               ? rtT('alerts.calibrationProfileNameRequired', 'Calibration profiles must be named calibrate.')
+               : 'Calibration profiles must be named calibrate.');
+            return false;
+         }
+         if (!profileName) {
+            alert(window.rtT ? rtT('alerts.profileNameRequired', 'Please enter a profile name.') : 'Please enter a profile name.');
+            return false;
+         }
+         return true;
       }
 
       document.addEventListener('DOMContentLoaded', function () {
@@ -391,9 +450,20 @@
       }
 
       document.getElementById("download-btn").addEventListener("click", function () {
-         const fileName = document.getElementById('profileName').value;
+         let profileData;
+         try {
+            profileData = currentCleanProfileJSON();
+         } catch (e) {
+            alert((window.rtT ? rtT('alerts.errorPrefix', 'ERROR') : 'ERROR') + ': ' + e.message);
+            return;
+         }
+         const fileName = cleanProfileNameInput();
+         if (!validateProfileFilename(profileData, fileName)) {
+            return;
+         }
          // Get the content from the textarea
-         var text = document.getElementById('jsonInput').value;
+         var text = JSON.stringify(profileData, null, 4);
+         document.getElementById('jsonInput').value = text;
 
          // Convert the content to a Blob
          var blob = new Blob([text], { type: 'text/plain' });
@@ -410,8 +480,20 @@
       }, false);
 
       document.getElementById("save-btn").addEventListener("click", function () {
-         const fileName = convertToLegalFAT32Filename(document.getElementById('profileName').value.toLowerCase() + '.txt');
-         const text = document.getElementById('jsonInput').value;
+         let profileData;
+         try {
+            profileData = currentCleanProfileJSON();
+         } catch (e) {
+            alert((window.rtT ? rtT('alerts.errorPrefix', 'ERROR') : 'ERROR') + ': ' + e.message);
+            return;
+         }
+         const profileName = cleanProfileNameInput();
+         if (!validateProfileFilename(profileData, profileName)) {
+            return;
+         }
+         const fileName = convertToLegalFAT32Filename(profileName + '.txt');
+         const text = JSON.stringify(profileData, null, 4);
+         document.getElementById('jsonInput').value = text;
          httpPost("/profiles/" + fileName, text);
       }, false);
 
