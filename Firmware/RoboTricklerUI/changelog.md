@@ -2,9 +2,6 @@
 
 ## 2.14
 
-Compared to commit `c8135a8360d31e9675034d064b770f972df11b61`.
-Latest compared commit: `7bd914f7c7591c6473d1d75d5b3bb901a283e85e`.
-
 ### Highlights
 - Updated firmware version from `2.13` to `2.14`.
 - Reworked the trickling model from `unitsPerThrow` to configurable **weight per revolution** (`weightPerRev`).

@@ -279,6 +279,10 @@ Wähle **Messwerte**, um die Stabilitätszählung pro `trickleMap`-Eintrag anzup
 
 Mehr Messwerte geben der Waage mehr Zeit zum Einschwingen und machen das Dosieren ruhiger, kosten aber Zeit. Weniger Messwerte beschleunigen den Ablauf, können bei unruhigen Waagen aber zu frühen Würfen führen.
 
+Beim Speichern werden nur die `measurements`-Werte der vorhandenen `trickleMap`-Einträge überschrieben; `diffWeight`, STEP-Pulse, Drehzahl und Stepper-Auswahl bleiben unverändert.
+
+> 📸 **Screenshot – Display:** Dialog `Messungen` mit aktuellem Messwert, `+`/`-`, dem mittleren `diffWeight`-Button zum Wechseln des Eintrags sowie Abbrechen- und Speichern-Button.
+
 ### 5. Einstellungen speichern
 
 Klicke auf **Speichern**, um die Änderungen zu übernehmen. Die Firmware schreibt das Profil direkt in das aktive Dateisystem. Läuft der Trickler von SD, ist das die SD-Karte; läuft er ohne SD von LittleFS, ist es der interne Flash.
