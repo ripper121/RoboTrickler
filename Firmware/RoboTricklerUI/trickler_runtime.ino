@@ -160,7 +160,7 @@ void handleCalibrationProfilePrompt()
     setTricklerState(TRICKLER_IDLE);
     newWeightData = false;
     weightCounter = 0;
-    if (confirmBox(String(langText("msg_create_profile_prompt")) + weightToString(weight) + " gn", UI_FONT_NORMAL, lv_color_hex(0xFFFFFF)))
+    if (confirmBox(String(langText("msg_create_profile_prompt")) + weightToString(weight) + " gn", UI_FONT_LARGE, lv_color_hex(0xFFFFFF)))
     {
       String profileName = "";
       if (createProfileFromCalibration(weight, profileName))

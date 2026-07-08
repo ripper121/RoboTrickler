@@ -155,7 +155,7 @@ void requestFilesystemSync(FilesystemSyncDirection direction)
   const char *messageKey = (direction == FILESYSTEM_SYNC_FLASH_TO_SD)
                                ? "msg_sync_flash_to_sd_confirm"
                                : "msg_sync_sd_to_flash_confirm";
-  showConfirmBox(langText(messageKey), UI_FONT_NORMAL, lv_color_hex(0xFFFFFF));
+  showConfirmBox(langText(messageKey), UI_FONT_LARGE, lv_color_hex(0xFFFFFF));
 }
 
 // Format the "<n> files copied" status line without ever handing the (user-editable,
