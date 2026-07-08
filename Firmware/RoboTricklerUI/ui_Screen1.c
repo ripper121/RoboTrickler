@@ -300,37 +300,9 @@ lv_label_set_long_mode(ui_LabelSyncSdToFlash, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelSyncSdToFlash, LV_SYMBOL_UPLOAD);
 lv_obj_set_style_text_font(ui_LabelSyncSdToFlash, UI_FONT_NORMAL, LV_PART_MAIN);
 
-ui_PanelMessages = lv_obj_create(ui_Screen1);
-lv_obj_set_width( ui_PanelMessages, lv_pct(90));
-lv_obj_set_height( ui_PanelMessages, lv_pct(90));
-lv_obj_set_align( ui_PanelMessages, LV_ALIGN_CENTER );
-lv_obj_add_flag( ui_PanelMessages, LV_OBJ_FLAG_HIDDEN );   /// Flags
-lv_obj_clear_flag( ui_PanelMessages, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-
-ui_ButtonMessageOk = lv_btn_create(ui_PanelMessages);
-lv_obj_set_width( ui_ButtonMessageOk, 100);
-lv_obj_set_height( ui_ButtonMessageOk, 50);
-lv_obj_set_x( ui_ButtonMessageOk, 0 );
-lv_obj_set_y( ui_ButtonMessageOk, 100 );
-lv_obj_set_align( ui_ButtonMessageOk, LV_ALIGN_CENTER );
-lv_obj_add_flag( ui_ButtonMessageOk, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
-lv_obj_clear_flag( ui_ButtonMessageOk, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-
-ui_LabelMessageOk = lv_label_create(ui_ButtonMessageOk);
-lv_obj_set_align( ui_LabelMessageOk, LV_ALIGN_CENTER );
-lv_label_set_long_mode(ui_LabelMessageOk, LV_LABEL_LONG_CLIP);
-lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_OK);
-lv_obj_set_style_text_font(ui_LabelMessageOk, UI_FONT_LARGE, LV_PART_MAIN);
-
-ui_LabelMessages = lv_label_create(ui_PanelMessages);
-lv_obj_set_width( ui_LabelMessages, lv_pct(100));
-lv_obj_set_height( ui_LabelMessages, lv_pct(70));
-lv_obj_set_align( ui_LabelMessages, LV_ALIGN_TOP_MID );
-lv_label_set_text(ui_LabelMessages,"Test Info");
-lv_label_set_long_mode(ui_LabelMessages, LV_LABEL_LONG_MODE_DOTS);
-lv_obj_set_style_text_align(ui_LabelMessages, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-lv_obj_set_style_text_font(ui_LabelMessages, UI_FONT_LARGE, LV_PART_MAIN);
-lv_obj_set_style_text_color(ui_LabelMessages, lv_color_hex(0xFF0000), LV_PART_MAIN);
+/* The message/confirm dialog (ui_PanelMessages and its children) is built
+   lazily in ui_dialogs.ino and deleted on close to keep the LVGL pool free
+   while no dialog is shown. */
 
 lv_obj_add_event_cb(ui_ButtonToggleTrickler, toggleTrickler_event_cb, LV_EVENT_CLICKED, NULL);
 lv_obj_add_event_cb(ui_ButtonAddWeightCycle, cycleAddWeight_event_cb, LV_EVENT_CLICKED, NULL);
@@ -344,6 +316,5 @@ lv_obj_add_event_cb(ui_ButtonScaleProtocol, cycleScaleProtocol_event_cb, LV_EVEN
 lv_obj_add_event_cb(ui_ButtonWifi, toggleWifi_event_cb, LV_EVENT_CLICKED, NULL);
 lv_obj_add_event_cb(ui_ButtonSyncFlashToSd, syncFlashToSd_event_cb, LV_EVENT_CLICKED, NULL);
 lv_obj_add_event_cb(ui_ButtonSyncSdToFlash, syncSdToFlash_event_cb, LV_EVENT_CLICKED, NULL);
-lv_obj_add_event_cb(ui_ButtonMessageOk, messageOk_event_cb, LV_EVENT_CLICKED, NULL);
 
 }

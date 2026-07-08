@@ -4,17 +4,23 @@ volatile bool confirmBoxResult = false;
 lv_obj_t *ui_ButtonMessageNo = NULL;
 lv_obj_t *ui_LabelMessageNo = NULL;
 
-// Hide the shared message/confirm panel and dispatch the pending confirm
+// Delete the shared message/confirm panel and dispatch the pending confirm
 // actions. `confirmed` is the user's answer (true = OK/Yes, false = No/cancel);
 // finishProfileDeleteConfirm/finishFilesystemSyncConfirm early-out when nothing
-// is pending, so this is safe for plain message boxes too.
+// is pending, so this is safe for plain message boxes too. The panel is built
+// fresh on every show (see createMessageDialog) and freed here so it costs no
+// LVGL pool memory while closed.
 static void dismissMessageDialog(bool confirmed)
 {
   confirmBoxResult = confirmed;
-  closeDialog(&ui_PanelMessages, false);
+  closeDialog(&ui_PanelMessages, true);
+  ui_LabelMessages = NULL;
+  ui_ButtonMessageOk = NULL;
+  ui_LabelMessageOk = NULL;
+  ui_ButtonMessageNo = NULL;
+  ui_LabelMessageNo = NULL;
   messageBoxOpen = false;
   confirmBoxOpen = false;
-  resetConfirmBoxButtons();
   finishProfileDeleteConfirm(confirmed);
   finishFilesystemSyncConfirm(confirmed);
 }
@@ -104,6 +110,36 @@ static void ensureNoButton()
   ui_LabelMessageNo = lv_obj_get_child(ui_ButtonMessageNo, 0);
 }
 
+// Lazily build the shared message/confirm panel. Mirrors the tune dialogs'
+// lifecycle: created when a box is shown, deleted in dismissMessageDialog(),
+// so it occupies LVGL pool memory only while visible. (It used to be a
+// persistent panel created by ui_Screen1.c at boot.)
+static void createMessageDialog()
+{
+  if (ui_PanelMessages != NULL)
+  {
+    return;
+  }
+
+  ui_PanelMessages = lv_obj_create(ui_Screen1);
+  lv_obj_set_width(ui_PanelMessages, lv_pct(90));
+  lv_obj_set_height(ui_PanelMessages, lv_pct(90));
+  lv_obj_set_align(ui_PanelMessages, LV_ALIGN_CENTER);
+  lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_clear_flag(ui_PanelMessages, LV_OBJ_FLAG_SCROLLABLE);
+
+  ui_ButtonMessageOk = createDialogButton(ui_PanelMessages, 0, 100, 100, 50,
+                                          UI_SYMBOL_OK, UI_FONT_LARGE, messageOk_event_cb);
+  ui_LabelMessageOk = lv_obj_get_child(ui_ButtonMessageOk, 0);
+
+  ui_LabelMessages = lv_label_create(ui_PanelMessages);
+  lv_obj_set_width(ui_LabelMessages, lv_pct(100));
+  lv_obj_set_height(ui_LabelMessages, lv_pct(70));
+  lv_obj_set_align(ui_LabelMessages, LV_ALIGN_TOP_MID);
+  lv_label_set_long_mode(ui_LabelMessages, LV_LABEL_LONG_MODE_DOTS);
+  lv_obj_set_style_text_align(ui_LabelMessages, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+}
+
 // Shared renderer for both message and confirm boxes. Callers set the
 // messageBoxOpen/confirmBoxOpen state flags before calling so the dialog is
 // already armed by the time the panel becomes visible.
@@ -114,16 +150,22 @@ static void presentDialog(const char *message, const lv_font_t *font,
   {
     return;
   }
-  ensureNoButton();
+  createMessageDialog();
   if (showNo)
   {
+    ensureNoButton();
     lv_obj_set_x(ui_ButtonMessageOk, -70);
     lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_YES);
     lv_obj_clear_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
   }
   else
   {
-    lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
+    // The panel can be reused when one message box replaces another, so undo
+    // any confirm-box layout it may still carry.
+    if (ui_ButtonMessageNo != NULL)
+    {
+      lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
+    }
     lv_obj_set_x(ui_ButtonMessageOk, 0);
     lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_OK);
   }
@@ -202,7 +244,6 @@ bool confirmBox(const String &message, const lv_font_t *font, lv_color_t color)
   confirmBoxResult = false;
   showConfirmBox(message, font, color);
   pumpUntil(messageBoxOpen);
-  resetConfirmBoxButtons();
   return confirmBoxResult;
 }
 
@@ -212,20 +253,6 @@ void showConfirmBox(const String &message, const lv_font_t *font, lv_color_t col
   messageBoxOpen = true;
   confirmBoxOpen = true;
   presentDialog(message.c_str(), font, color, true);
-}
-
-void resetConfirmBoxButtons()
-{
-  if (lvglLock())
-  {
-    if (ui_ButtonMessageNo != NULL)
-    {
-      lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
-    }
-    lv_obj_set_x(ui_ButtonMessageOk, 0);
-    lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_OK);
-    lvglUnlock();
-  }
 }
 
 // ---------------------------------------------------------------------------
