@@ -758,6 +758,24 @@ bool tuneProfileWeightPerRev(const char *profileName, float weightPerRev)
     profileRpm = 200;
   }
 
+  int existingMeasurements[PROFILE_MAX_ENTRIES];
+  bool hasExistingMeasurements[PROFILE_MAX_ENTRIES];
+  int existingMeasurementCount = 0;
+  JsonArray existingTrickleMap = doc["trickleMap"].as<JsonArray>();
+  if (!existingTrickleMap.isNull())
+  {
+    for (JsonVariant item : existingTrickleMap)
+    {
+      if (existingMeasurementCount >= PROFILE_MAX_ENTRIES)
+      {
+        break;
+      }
+      hasExistingMeasurements[existingMeasurementCount] = !item["measurements"].isNull();
+      existingMeasurements[existingMeasurementCount] = item["measurements"] | 0;
+      existingMeasurementCount++;
+    }
+  }
+
   JsonObject stepperMap = doc["stepper"].as<JsonObject>();
   if (stepperMap.isNull())
   {
@@ -773,6 +791,20 @@ bool tuneProfileWeightPerRev(const char *profileName, float weightPerRev)
   stepper1["rpm"] = profileRpm;
 
   populateCalibrationTrickleMap(doc, weightPerRev, profileRpm);
+  JsonArray tunedTrickleMap = doc["trickleMap"].as<JsonArray>();
+  int entryIndex = 0;
+  for (JsonVariant item : tunedTrickleMap)
+  {
+    if (entryIndex >= existingMeasurementCount)
+    {
+      break;
+    }
+    if (hasExistingMeasurements[entryIndex])
+    {
+      item["measurements"] = existingMeasurements[entryIndex];
+    }
+    entryIndex++;
+  }
 
   if (!writeProfileDocument(filename, doc))
   {
