@@ -71,6 +71,27 @@ static lv_obj_t *createDialogButton(lv_obj_t *parent, int x, int y, int width, i
   return button;
 }
 
+// Shared factory for the white bordered value box used by the tune dialogs.
+static lv_obj_t *createDialogValueLabel(lv_obj_t *parent, int y)
+{
+  lv_obj_t *label = lv_label_create(parent);
+  lv_obj_set_width(label, 140);
+  lv_obj_set_height(label, 50);
+  lv_obj_set_y(label, y);
+  lv_obj_set_align(label, LV_ALIGN_CENTER);
+  lv_label_set_text_static(label, "");
+  lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+  lv_obj_set_style_text_font(label, UI_FONT_LARGE, LV_PART_MAIN);
+  lv_obj_set_style_bg_color(label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+  lv_obj_set_style_bg_opa(label, 255, LV_PART_MAIN);
+  lv_obj_set_style_text_color(label, lv_color_hex(0x000000), LV_PART_MAIN);
+  lv_obj_set_style_border_color(label, lv_color_hex(0x808080), LV_PART_MAIN);
+  lv_obj_set_style_border_width(label, 2, LV_PART_MAIN);
+  lv_obj_set_style_pad_top(label, 5, LV_PART_MAIN);
+  lv_obj_clear_flag(label, LV_OBJ_FLAG_SCROLLABLE);
+  return label;
+}
+
 // Lazily build the shared "No" button the first time a confirm box is shown.
 static void ensureNoButton()
 {
@@ -208,19 +229,36 @@ void resetConfirmBoxButtons()
 }
 
 // ---------------------------------------------------------------------------
-// Profile tune dialog
+// Profile tune dialogs
 //
-// A custom modal (built lazily) for adjusting a profile's weight-per-rev.
-// Moved here from profile_actions.ino so it lives next to the other dialogs;
-// the profile data side (load/save/delete) stays in profile_actions.ino.
+// Custom modals (built lazily, deleted on close) for tuning a profile. The
+// Tune button opens a chooser between two editors: weight-per-rev and the
+// per-entry trickleMap measurements. Moved here from profile_actions.ino so
+// they live next to the other dialogs; the profile data side (load/save/
+// delete) stays in profile_actions.ino.
 // isProfileTuneDialogOpen/closeProfileTuneDialog/clearProfileTuneState are
-// non-static because deleteSelectedProfile() (profile_actions.ino) calls them.
+// non-static because deleteSelectedProfile() (profile_actions.ino) calls them;
+// they cover all three tune dialogs.
 // ---------------------------------------------------------------------------
 String profileTuneName = "";
 float profileTuneWeightPerRev = 0.0;
 float profileTuneStepSize = 0.001;
 byte profileTuneStepIndex = 0;
 lv_obj_t *ui_PanelProfileTune = NULL;
+lv_obj_t *ui_PanelProfileTuneChoice = NULL;
+// Working copy of the trickleMap measurements while the editor is open.
+int profileMeasTuneValues[PROFILE_MAX_ENTRIES];
+int profileMeasTuneCount = 0;
+int profileMeasTuneSelected = 0;
+lv_obj_t *ui_PanelProfileTuneMeas = NULL;
+lv_obj_t *ui_LabelProfileTuneMeasTitle = NULL;
+lv_obj_t *ui_LabelProfileTuneMeasValue = NULL;
+lv_obj_t *ui_ButtonProfileTuneMeasEntry = NULL;
+lv_obj_t *ui_LabelProfileTuneMeasEntry = NULL;
+lv_obj_t *ui_ButtonProfileTuneMeasMinus = NULL;
+lv_obj_t *ui_ButtonProfileTuneMeasPlus = NULL;
+lv_obj_t *ui_ButtonProfileTuneMeasCancel = NULL;
+lv_obj_t *ui_ButtonProfileTuneMeasSave = NULL;
 lv_obj_t *ui_LabelProfileTuneTitle = NULL;
 lv_obj_t *ui_LabelProfileTuneValue = NULL;
 lv_obj_t *ui_ButtonProfileTuneStep = NULL;
@@ -232,10 +270,24 @@ lv_obj_t *ui_ButtonProfileTuneSave = NULL;
 
 bool isProfileTuneDialogOpen()
 {
-    bool open = false;
-    if ((ui_PanelProfileTune != NULL) && lvglLock())
+    if ((ui_PanelProfileTune == NULL) && (ui_PanelProfileTuneChoice == NULL) &&
+        (ui_PanelProfileTuneMeas == NULL))
     {
-        open = !lv_obj_has_flag(ui_PanelProfileTune, LV_OBJ_FLAG_HIDDEN);
+        return false;
+    }
+
+    bool open = false;
+    if (lvglLock())
+    {
+        lv_obj_t *panels[] = {ui_PanelProfileTune, ui_PanelProfileTuneChoice, ui_PanelProfileTuneMeas};
+        for (lv_obj_t *panel : panels)
+        {
+            if ((panel != NULL) && !lv_obj_has_flag(panel, LV_OBJ_FLAG_HIDDEN))
+            {
+                open = true;
+                break;
+            }
+        }
         lvglUnlock();
     }
     return open;
@@ -292,6 +344,16 @@ void closeProfileTuneDialog()
     ui_ButtonProfileTunePlus = NULL;
     ui_ButtonProfileTuneCancel = NULL;
     ui_ButtonProfileTuneSave = NULL;
+    closeDialog(&ui_PanelProfileTuneChoice, true);
+    closeDialog(&ui_PanelProfileTuneMeas, true);
+    ui_LabelProfileTuneMeasTitle = NULL;
+    ui_LabelProfileTuneMeasValue = NULL;
+    ui_ButtonProfileTuneMeasEntry = NULL;
+    ui_LabelProfileTuneMeasEntry = NULL;
+    ui_ButtonProfileTuneMeasMinus = NULL;
+    ui_ButtonProfileTuneMeasPlus = NULL;
+    ui_ButtonProfileTuneMeasCancel = NULL;
+    ui_ButtonProfileTuneMeasSave = NULL;
 }
 
 static void saveProfileTune()
@@ -405,21 +467,7 @@ static void createProfileTuneDialog()
     lv_obj_set_style_text_align(ui_LabelProfileTuneTitle, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_set_style_text_font(ui_LabelProfileTuneTitle, UI_FONT_NORMAL, LV_PART_MAIN);
 
-    ui_LabelProfileTuneValue = lv_label_create(ui_PanelProfileTune);
-    lv_obj_set_width(ui_LabelProfileTuneValue, 140);
-    lv_obj_set_height(ui_LabelProfileTuneValue, 50);
-    lv_obj_set_y(ui_LabelProfileTuneValue, -42);
-    lv_obj_set_align(ui_LabelProfileTuneValue, LV_ALIGN_CENTER);
-    lv_label_set_text_static(ui_LabelProfileTuneValue, "0.0000");
-    lv_obj_set_style_text_align(ui_LabelProfileTuneValue, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_set_style_text_font(ui_LabelProfileTuneValue, UI_FONT_LARGE, LV_PART_MAIN);
-    lv_obj_set_style_bg_color(ui_LabelProfileTuneValue, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
-    lv_obj_set_style_bg_opa(ui_LabelProfileTuneValue, 255, LV_PART_MAIN);
-    lv_obj_set_style_text_color(ui_LabelProfileTuneValue, lv_color_hex(0x000000), LV_PART_MAIN);
-    lv_obj_set_style_border_color(ui_LabelProfileTuneValue, lv_color_hex(0x808080), LV_PART_MAIN);
-    lv_obj_set_style_border_width(ui_LabelProfileTuneValue, 2, LV_PART_MAIN);
-    lv_obj_set_style_pad_top(ui_LabelProfileTuneValue, 5, LV_PART_MAIN);
-    lv_obj_clear_flag(ui_LabelProfileTuneValue, LV_OBJ_FLAG_SCROLLABLE);
+    ui_LabelProfileTuneValue = createDialogValueLabel(ui_PanelProfileTune, -42);
 
     ui_ButtonProfileTuneMinus = createDialogButton(ui_PanelProfileTune, 115, -42, 60, 45, "-", UI_FONT_NORMAL, profileTuneMinus_event_cb);
     ui_ButtonProfileTunePlus = createDialogButton(ui_PanelProfileTune, -115, -42, 60, 45, "+", UI_FONT_NORMAL, profileTunePlus_event_cb);
@@ -447,6 +495,267 @@ static void showProfileTuneDialog()
     }
 }
 
+// --- Measurements editor ----------------------------------------------------
+// Structured exactly like the weight-per-rev dialog above: the white value box
+// with -/+ edits the selected entry's measurements, and the center button
+// (the step-size button's slot) shows the entry's diffWeight and cycles to the
+// next trickleMap entry when tapped.
+
+static void updateProfileTuneMeasValueLabel()
+{
+    if (ui_LabelProfileTuneMeasValue != NULL)
+    {
+        char text[16];
+        snprintf(text, sizeof(text), "%d", profileMeasTuneValues[profileMeasTuneSelected]);
+        lv_label_set_text(ui_LabelProfileTuneMeasValue, text);
+    }
+}
+
+static void updateProfileTuneMeasEntryLabel()
+{
+    if (profileMeasTuneSelected >= profileMeasTuneCount)
+    {
+        profileMeasTuneSelected = 0;
+    }
+    if (ui_LabelProfileTuneMeasEntry != NULL)
+    {
+        char text[16];
+        formatWeight(text, sizeof(text), config.profileDiffWeight[profileMeasTuneSelected]);
+        lv_label_set_text(ui_LabelProfileTuneMeasEntry, text);
+    }
+}
+
+static void saveProfileTuneMeas()
+{
+    String profileName = profileTuneName;
+    if (ui_LabelProfileTuneMeasValue != NULL)
+    {
+        profileMeasTuneValues[profileMeasTuneSelected] = String(lv_label_get_text(ui_LabelProfileTuneMeasValue)).toInt();
+    }
+    int values[PROFILE_MAX_ENTRIES];
+    memcpy(values, profileMeasTuneValues, sizeof(values));
+    int count = profileMeasTuneCount;
+    closeProfileTuneDialog();
+    profileTuneName = "";
+
+    if (isTricklerRunning())
+    {
+        errorBox(langText("msg_stop_trickler_before_tune_profile"), false);
+        return;
+    }
+
+    if ((profileName.length() <= 0) || (profileName == CALIBRATE_PROFILE_NAME) || (count <= 0))
+    {
+        errorBox(langText("msg_cannot_tune_profile"), false);
+        return;
+    }
+
+    updateDisplayLog(String(langText("status_tuning_profile")) + profileName, true);
+    if (!tuneProfileMeasurements(profileName.c_str(), values, count))
+    {
+        String errorText = getSdReadError();
+        if (errorText.length() <= 0)
+        {
+            errorText = langText("msg_could_not_tune_profile");
+        }
+        errorBox(errorText, false);
+        return;
+    }
+
+    if (!loadSelectedProfile(false))
+    {
+        return;
+    }
+
+    setLabelText(ui_LabelProfile, config.profileName);
+    updateProfileActionButtonVisibility();
+    updateTargetWeightLabel();
+    successBox(String(langText("msg_profile_tuned")) + profileName, false);
+}
+
+void profileTuneMeasMinus_event_cb(lv_event_t *e)
+{
+    profileMeasTuneValues[profileMeasTuneSelected] -= 1;
+    if (profileMeasTuneValues[profileMeasTuneSelected] < 0)
+    {
+        profileMeasTuneValues[profileMeasTuneSelected] = 0;
+    }
+    updateProfileTuneMeasValueLabel();
+}
+
+void profileTuneMeasPlus_event_cb(lv_event_t *e)
+{
+    profileMeasTuneValues[profileMeasTuneSelected] += 1;
+    if (profileMeasTuneValues[profileMeasTuneSelected] > 99)
+    {
+        profileMeasTuneValues[profileMeasTuneSelected] = 99;
+    }
+    updateProfileTuneMeasValueLabel();
+}
+
+void profileTuneMeasEntry_event_cb(lv_event_t *e)
+{
+    profileMeasTuneSelected++;
+    if (profileMeasTuneSelected >= profileMeasTuneCount)
+    {
+        profileMeasTuneSelected = 0;
+    }
+    updateProfileTuneMeasEntryLabel();
+    updateProfileTuneMeasValueLabel();
+}
+
+void profileTuneMeasCancel_event_cb(lv_event_t *e)
+{
+    closeProfileTuneDialog();
+    clearProfileTuneState();
+}
+
+void profileTuneMeasSave_event_cb(lv_event_t *e)
+{
+    saveProfileTuneMeas();
+}
+
+static void createProfileTuneMeasDialog()
+{
+    if (ui_PanelProfileTuneMeas != NULL)
+    {
+        return;
+    }
+
+    ui_PanelProfileTuneMeas = lv_obj_create(ui_Screen1);
+    lv_obj_set_width(ui_PanelProfileTuneMeas, lv_pct(86));
+    lv_obj_set_height(ui_PanelProfileTuneMeas, lv_pct(84));
+    lv_obj_set_align(ui_PanelProfileTuneMeas, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_PanelProfileTuneMeas, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(ui_PanelProfileTuneMeas, LV_OBJ_FLAG_SCROLLABLE);
+
+    ui_LabelProfileTuneMeasTitle = lv_label_create(ui_PanelProfileTuneMeas);
+    lv_obj_set_width(ui_LabelProfileTuneMeasTitle, lv_pct(100));
+    lv_obj_set_height(ui_LabelProfileTuneMeasTitle, LV_SIZE_CONTENT);
+    lv_obj_set_y(ui_LabelProfileTuneMeasTitle, -95);
+    lv_obj_set_align(ui_LabelProfileTuneMeasTitle, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_LabelProfileTuneMeasTitle, langText("msg_tune_measurements_title"));
+    lv_obj_set_style_text_align(ui_LabelProfileTuneMeasTitle, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_set_style_text_font(ui_LabelProfileTuneMeasTitle, UI_FONT_NORMAL, LV_PART_MAIN);
+
+    ui_LabelProfileTuneMeasValue = createDialogValueLabel(ui_PanelProfileTuneMeas, -42);
+
+    ui_ButtonProfileTuneMeasMinus = createDialogButton(ui_PanelProfileTuneMeas, 115, -42, 60, 45, "-", UI_FONT_NORMAL, profileTuneMeasMinus_event_cb);
+    ui_ButtonProfileTuneMeasPlus = createDialogButton(ui_PanelProfileTuneMeas, -115, -42, 60, 45, "+", UI_FONT_NORMAL, profileTuneMeasPlus_event_cb);
+    // Spans from the inner edge of the "+" button to the inner edge of the "-"
+    // button (both 60 wide at +/-115), and uses the value-box font.
+    ui_ButtonProfileTuneMeasEntry = createDialogButton(ui_PanelProfileTuneMeas, 0, 22, 170, 45, "0.0000", UI_FONT_LARGE, profileTuneMeasEntry_event_cb);
+    ui_LabelProfileTuneMeasEntry = lv_obj_get_child(ui_ButtonProfileTuneMeasEntry, 0);
+    ui_ButtonProfileTuneMeasCancel = createDialogButton(ui_PanelProfileTuneMeas, 70, 88, 110, 45, UI_SYMBOL_CANCEL, UI_FONT_NORMAL, profileTuneMeasCancel_event_cb);
+    ui_ButtonProfileTuneMeasSave = createDialogButton(ui_PanelProfileTuneMeas, -70, 88, 110, 45, UI_SYMBOL_SAVE, UI_FONT_NORMAL, profileTuneMeasSave_event_cb);
+}
+
+static void showProfileTuneMeasDialog()
+{
+    if (lvglLock())
+    {
+        createProfileTuneMeasDialog();
+        profileMeasTuneCount = config.profileEntryCount;
+        if (profileMeasTuneCount > PROFILE_MAX_ENTRIES)
+        {
+            profileMeasTuneCount = PROFILE_MAX_ENTRIES;
+        }
+        profileMeasTuneSelected = 0;
+        for (int i = 0; i < profileMeasTuneCount; i++)
+        {
+            profileMeasTuneValues[i] = config.profileMeasurements[i];
+        }
+        updateProfileTuneMeasEntryLabel();
+        const char *title = langText("msg_tune_measurements_title");
+        if (strcmp(lv_label_get_text(ui_LabelProfileTuneMeasTitle), title) != 0)
+        {
+            lv_label_set_text(ui_LabelProfileTuneMeasTitle, title);
+        }
+        updateProfileTuneMeasValueLabel();
+        showDialog(ui_PanelProfileTuneMeas);
+        lvglUnlock();
+    }
+}
+
+// --- Tune chooser ------------------------------------------------------------
+// Small modal shown by the Tune button: pick which editor to open.
+//
+// The editor is opened via lv_async_call instead of directly from the button
+// callback: closeDialog() frees the chooser with lv_obj_delete_async(), so a
+// direct open would allocate the editor while the chooser still occupies the
+// LVGL pool. The async call is queued after the pending delete, so by the time
+// it runs the chooser memory has been returned to the pool.
+
+static void openProfileTuneWeightAsync(void *param)
+{
+    (void)param;
+    showProfileTuneDialog();
+}
+
+static void openProfileTuneMeasAsync(void *param)
+{
+    (void)param;
+    showProfileTuneMeasDialog();
+}
+
+void profileTuneChoiceWeight_event_cb(lv_event_t *e)
+{
+    closeDialog(&ui_PanelProfileTuneChoice, true);
+    lv_async_call(openProfileTuneWeightAsync, NULL);
+}
+
+void profileTuneChoiceMeas_event_cb(lv_event_t *e)
+{
+    closeDialog(&ui_PanelProfileTuneChoice, true);
+    lv_async_call(openProfileTuneMeasAsync, NULL);
+}
+
+void profileTuneChoiceCancel_event_cb(lv_event_t *e)
+{
+    closeDialog(&ui_PanelProfileTuneChoice, true);
+    clearProfileTuneState();
+}
+
+static void createProfileTuneChoiceDialog()
+{
+    if (ui_PanelProfileTuneChoice != NULL)
+    {
+        return;
+    }
+
+    ui_PanelProfileTuneChoice = lv_obj_create(ui_Screen1);
+    lv_obj_set_width(ui_PanelProfileTuneChoice, lv_pct(60));
+    lv_obj_set_height(ui_PanelProfileTuneChoice, lv_pct(76));
+    lv_obj_set_align(ui_PanelProfileTuneChoice, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_PanelProfileTuneChoice, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(ui_PanelProfileTuneChoice, LV_OBJ_FLAG_SCROLLABLE);
+
+    lv_obj_t *title = lv_label_create(ui_PanelProfileTuneChoice);
+    lv_obj_set_width(title, lv_pct(100));
+    lv_obj_set_height(title, LV_SIZE_CONTENT);
+    lv_obj_set_y(title, -85);
+    lv_obj_set_align(title, LV_ALIGN_CENTER);
+    lv_label_set_text(title, langText("msg_tune_choose_title"));
+    lv_obj_set_style_text_align(title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_set_style_text_font(title, UI_FONT_NORMAL, LV_PART_MAIN);
+
+    lv_obj_t *weightButton = createDialogButton(ui_PanelProfileTuneChoice, 0, -30, 200, 50, "", UI_FONT_NORMAL, profileTuneChoiceWeight_event_cb);
+    lv_label_set_text(lv_obj_get_child(weightButton, 0), langText("msg_tune_profile_title"));
+    lv_obj_t *measButton = createDialogButton(ui_PanelProfileTuneChoice, 0, 30, 200, 50, "", UI_FONT_NORMAL, profileTuneChoiceMeas_event_cb);
+    lv_label_set_text(lv_obj_get_child(measButton, 0), langText("msg_tune_measurements_title"));
+    createDialogButton(ui_PanelProfileTuneChoice, 0, 90, 110, 45, UI_SYMBOL_CANCEL, UI_FONT_NORMAL, profileTuneChoiceCancel_event_cb);
+}
+
+static void showProfileTuneChoiceDialog()
+{
+    if (lvglLock())
+    {
+        createProfileTuneChoiceDialog();
+        showDialog(ui_PanelProfileTuneChoice);
+        lvglUnlock();
+    }
+}
+
 bool tuneSelectedProfile()
 {
     if (messageBoxOpen)
@@ -470,6 +779,6 @@ bool tuneSelectedProfile()
     }
 
     profileTuneName = profileName;
-    showProfileTuneDialog();
+    showProfileTuneChoiceDialog();
     return true;
 }

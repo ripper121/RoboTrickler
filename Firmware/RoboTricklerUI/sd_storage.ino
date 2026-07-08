@@ -782,6 +782,39 @@ bool tuneProfileWeightPerRev(const char *profileName, float weightPerRev)
   return true;
 }
 
+// Rewrite the per-entry measurements of a profile's trickleMap. `measurements`
+// holds one value per map entry in file order (same order loadProfileEntries()
+// filled config with); entries beyond `count` are left untouched.
+bool tuneProfileMeasurements(const char *profileName, const int *measurements, int count)
+{
+  String filename = profileFilename(profileName);
+  JsonDocument doc;
+  if (!loadProfileDocument(filename, doc))
+  {
+    return false;
+  }
+
+  JsonArray trickleMap = doc["trickleMap"].as<JsonArray>();
+  if (trickleMap.isNull())
+  {
+    setSdReadError(sdFilenameError("err_profile_missing_map", filename.c_str()));
+    return false;
+  }
+
+  int entryIndex = 0;
+  for (JsonVariant item : trickleMap)
+  {
+    if (entryIndex >= count)
+    {
+      break;
+    }
+    item["measurements"] = measurements[entryIndex];
+    entryIndex++;
+  }
+
+  return writeProfileDocument(filename, doc);
+}
+
 void scanProfileDirectory(const char *directory, byte &profileCounter, byte &invalidProfileCounter, String &invalidProfiles)
 {
   File root = ACTIVE_FS.open(directory);

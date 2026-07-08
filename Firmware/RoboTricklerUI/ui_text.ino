@@ -145,6 +145,8 @@ static const LangFallbackEntry LANG_FALLBACKS[] = {
     {"msg_tune_profile_title", "weight/rev"},
     {"msg_could_not_tune_profile", "Could not tune profile"},
     {"msg_profile_tuned", "Profile tuned: "},
+    {"msg_tune_choose_title", "Tune profile"},
+    {"msg_tune_measurements_title", "Measurements"},
 };
 
 static const char *languageFallback(const char *key)
