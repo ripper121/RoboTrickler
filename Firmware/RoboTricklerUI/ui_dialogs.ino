@@ -77,6 +77,33 @@ static lv_obj_t *createDialogButton(lv_obj_t *parent, int x, int y, int width, i
   return button;
 }
 
+// Shared factory for the dialog panels so every dialog has the same screen
+// size (90% x 90%, centered, hidden until shown, not scrollable).
+static lv_obj_t *createDialogPanel()
+{
+  lv_obj_t *panel = lv_obj_create(ui_Screen1);
+  lv_obj_set_width(panel, lv_pct(90));
+  lv_obj_set_height(panel, lv_pct(90));
+  lv_obj_set_align(panel, LV_ALIGN_CENTER);
+  lv_obj_add_flag(panel, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_clear_flag(panel, LV_OBJ_FLAG_SCROLLABLE);
+  return panel;
+}
+
+// Shared factory for the centered title row at the top of a dialog.
+static lv_obj_t *createDialogTitle(lv_obj_t *parent, int y, const char *text)
+{
+  lv_obj_t *label = lv_label_create(parent);
+  lv_obj_set_width(label, lv_pct(100));
+  lv_obj_set_height(label, LV_SIZE_CONTENT);
+  lv_obj_set_y(label, y);
+  lv_obj_set_align(label, LV_ALIGN_CENTER);
+  lv_label_set_text(label, text);
+  lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+  lv_obj_set_style_text_font(label, UI_FONT_NORMAL, LV_PART_MAIN);
+  return label;
+}
+
 // Shared factory for the white bordered value box used by the tune dialogs.
 static lv_obj_t *createDialogValueLabel(lv_obj_t *parent, int y)
 {
@@ -121,12 +148,7 @@ static void createMessageDialog()
     return;
   }
 
-  ui_PanelMessages = lv_obj_create(ui_Screen1);
-  lv_obj_set_width(ui_PanelMessages, lv_pct(90));
-  lv_obj_set_height(ui_PanelMessages, lv_pct(90));
-  lv_obj_set_align(ui_PanelMessages, LV_ALIGN_CENTER);
-  lv_obj_add_flag(ui_PanelMessages, LV_OBJ_FLAG_HIDDEN);
-  lv_obj_clear_flag(ui_PanelMessages, LV_OBJ_FLAG_SCROLLABLE);
+  ui_PanelMessages = createDialogPanel();
 
   ui_ButtonMessageOk = createDialogButton(ui_PanelMessages, 0, 100, 100, 50,
                                           UI_SYMBOL_OK, UI_FONT_LARGE, messageOk_event_cb);
@@ -278,7 +300,6 @@ int profileMeasTuneValues[PROFILE_MAX_ENTRIES];
 int profileMeasTuneCount = 0;
 int profileMeasTuneSelected = 0;
 lv_obj_t *ui_PanelProfileTuneMeas = NULL;
-lv_obj_t *ui_LabelProfileTuneMeasTitle = NULL;
 lv_obj_t *ui_LabelProfileTuneMeasValue = NULL;
 lv_obj_t *ui_ButtonProfileTuneMeasEntry = NULL;
 lv_obj_t *ui_LabelProfileTuneMeasEntry = NULL;
@@ -286,7 +307,6 @@ lv_obj_t *ui_ButtonProfileTuneMeasMinus = NULL;
 lv_obj_t *ui_ButtonProfileTuneMeasPlus = NULL;
 lv_obj_t *ui_ButtonProfileTuneMeasCancel = NULL;
 lv_obj_t *ui_ButtonProfileTuneMeasSave = NULL;
-lv_obj_t *ui_LabelProfileTuneTitle = NULL;
 lv_obj_t *ui_LabelProfileTuneValue = NULL;
 lv_obj_t *ui_ButtonProfileTuneStep = NULL;
 lv_obj_t *ui_LabelProfileTuneStep = NULL;
@@ -363,7 +383,6 @@ static float currentProfileTuneWeightPerRev()
 void closeProfileTuneDialog()
 {
     closeDialog(&ui_PanelProfileTune, true);
-    ui_LabelProfileTuneTitle = NULL;
     ui_LabelProfileTuneValue = NULL;
     ui_ButtonProfileTuneStep = NULL;
     ui_LabelProfileTuneStep = NULL;
@@ -373,7 +392,6 @@ void closeProfileTuneDialog()
     ui_ButtonProfileTuneSave = NULL;
     closeDialog(&ui_PanelProfileTuneChoice, true);
     closeDialog(&ui_PanelProfileTuneMeas, true);
-    ui_LabelProfileTuneMeasTitle = NULL;
     ui_LabelProfileTuneMeasValue = NULL;
     ui_ButtonProfileTuneMeasEntry = NULL;
     ui_LabelProfileTuneMeasEntry = NULL;
@@ -381,6 +399,52 @@ void closeProfileTuneDialog()
     ui_ButtonProfileTuneMeasPlus = NULL;
     ui_ButtonProfileTuneMeasCancel = NULL;
     ui_ButtonProfileTuneMeasSave = NULL;
+}
+
+// Shared pieces of both tune-save flows (weight/rev and measurements). Every
+// save follows: guard checks -> write the profile file -> reload -> confirm.
+
+// Common guards. `valid` carries the dialog-specific value check; the same
+// error message covers a bad name and a bad value, as before.
+static bool canTuneProfile(const String &profileName, bool valid)
+{
+    if (isTricklerRunning())
+    {
+        errorBox(langText("msg_stop_trickler_before_tune_profile"), false);
+        return false;
+    }
+
+    if ((profileName.length() <= 0) || (profileName == CALIBRATE_PROFILE_NAME) || !valid)
+    {
+        errorBox(langText("msg_cannot_tune_profile"), false);
+        return false;
+    }
+
+    return true;
+}
+
+static void reportProfileTuneError()
+{
+    String errorText = getSdReadError();
+    if (errorText.length() <= 0)
+    {
+        errorText = langText("msg_could_not_tune_profile");
+    }
+    errorBox(errorText, false);
+}
+
+// Reload the tuned profile so config reflects the new file, and confirm.
+static void finishProfileTune(const String &profileName)
+{
+    if (!loadSelectedProfile(false))
+    {
+        return;
+    }
+
+    setLabelText(ui_LabelProfile, config.profileName);
+    updateProfileActionButtonVisibility();
+    updateTargetWeightLabel();
+    successBox(String(langText("msg_profile_tuned")) + profileName, false);
 }
 
 static void saveProfileTune()
@@ -395,39 +459,19 @@ static void saveProfileTune()
     profileTuneName = "";
     profileTuneWeightPerRev = 0.0;
 
-    if (isTricklerRunning())
+    if (!canTuneProfile(profileName, weightPerRev > 0.0))
     {
-        errorBox(langText("msg_stop_trickler_before_tune_profile"), false);
-        return;
-    }
-
-    if ((profileName.length() <= 0) || (profileName == CALIBRATE_PROFILE_NAME) || (weightPerRev <= 0.0))
-    {
-        errorBox(langText("msg_cannot_tune_profile"), false);
         return;
     }
 
     updateDisplayLog(String(langText("status_tuning_profile")) + profileName, true);
     if (!tuneProfileWeightPerRev(profileName.c_str(), weightPerRev))
     {
-        String errorText = getSdReadError();
-        if (errorText.length() <= 0)
-        {
-            errorText = langText("msg_could_not_tune_profile");
-        }
-        errorBox(errorText, false);
+        reportProfileTuneError();
         return;
     }
 
-    if (!loadSelectedProfile(false))
-    {
-        return;
-    }
-
-    setLabelText(ui_LabelProfile, config.profileName);
-    updateProfileActionButtonVisibility();
-    updateTargetWeightLabel();
-    successBox(String(langText("msg_profile_tuned")) + profileName, false);
+    finishProfileTune(profileName);
 }
 
 void profileTuneMinus_event_cb(lv_event_t *e)
@@ -460,6 +504,8 @@ void profileTuneStep_event_cb(lv_event_t *e)
     updateProfileTuneStepLabel();
 }
 
+// Shared by the cancel buttons of all three tune dialogs:
+// closeProfileTuneDialog() closes whichever of them is open.
 void profileTuneCancel_event_cb(lv_event_t *e)
 {
     closeProfileTuneDialog();
@@ -478,21 +524,11 @@ static void createProfileTuneDialog()
         return;
     }
 
-    ui_PanelProfileTune = lv_obj_create(ui_Screen1);
-    lv_obj_set_width(ui_PanelProfileTune, lv_pct(86));
-    lv_obj_set_height(ui_PanelProfileTune, lv_pct(84));
-    lv_obj_set_align(ui_PanelProfileTune, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_PanelProfileTune, LV_OBJ_FLAG_HIDDEN);
-    lv_obj_clear_flag(ui_PanelProfileTune, LV_OBJ_FLAG_SCROLLABLE);
+    ui_PanelProfileTune = createDialogPanel();
 
-    ui_LabelProfileTuneTitle = lv_label_create(ui_PanelProfileTune);
-    lv_obj_set_width(ui_LabelProfileTuneTitle, lv_pct(100));
-    lv_obj_set_height(ui_LabelProfileTuneTitle, LV_SIZE_CONTENT);
-    lv_obj_set_y(ui_LabelProfileTuneTitle, -95);
-    lv_obj_set_align(ui_LabelProfileTuneTitle, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_LabelProfileTuneTitle, langText("msg_tune_profile_title"));
-    lv_obj_set_style_text_align(ui_LabelProfileTuneTitle, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_set_style_text_font(ui_LabelProfileTuneTitle, UI_FONT_NORMAL, LV_PART_MAIN);
+    // The panel is deleted on close and rebuilt per show, so the title text is
+    // always current; no re-translation on reuse is needed.
+    createDialogTitle(ui_PanelProfileTune, -95, langText("msg_tune_profile_title"));
 
     ui_LabelProfileTuneValue = createDialogValueLabel(ui_PanelProfileTune, -42);
 
@@ -511,11 +547,6 @@ static void showProfileTuneDialog()
         createProfileTuneDialog();
         profileTuneWeightPerRev = currentProfileTuneWeightPerRev();
         updateProfileTuneStepLabel();
-        const char *title = langText("msg_tune_profile_title");
-        if (strcmp(lv_label_get_text(ui_LabelProfileTuneTitle), title) != 0)
-        {
-            lv_label_set_text(ui_LabelProfileTuneTitle, title);
-        }
         updateProfileTuneValueLabel();
         showDialog(ui_PanelProfileTune);
         lvglUnlock();
@@ -565,39 +596,19 @@ static void saveProfileTuneMeas()
     closeProfileTuneDialog();
     profileTuneName = "";
 
-    if (isTricklerRunning())
+    if (!canTuneProfile(profileName, count > 0))
     {
-        errorBox(langText("msg_stop_trickler_before_tune_profile"), false);
-        return;
-    }
-
-    if ((profileName.length() <= 0) || (profileName == CALIBRATE_PROFILE_NAME) || (count <= 0))
-    {
-        errorBox(langText("msg_cannot_tune_profile"), false);
         return;
     }
 
     updateDisplayLog(String(langText("status_tuning_profile")) + profileName, true);
     if (!tuneProfileMeasurements(profileName.c_str(), values, count))
     {
-        String errorText = getSdReadError();
-        if (errorText.length() <= 0)
-        {
-            errorText = langText("msg_could_not_tune_profile");
-        }
-        errorBox(errorText, false);
+        reportProfileTuneError();
         return;
     }
 
-    if (!loadSelectedProfile(false))
-    {
-        return;
-    }
-
-    setLabelText(ui_LabelProfile, config.profileName);
-    updateProfileActionButtonVisibility();
-    updateTargetWeightLabel();
-    successBox(String(langText("msg_profile_tuned")) + profileName, false);
+    finishProfileTune(profileName);
 }
 
 void profileTuneMeasMinus_event_cb(lv_event_t *e)
@@ -631,12 +642,6 @@ void profileTuneMeasEntry_event_cb(lv_event_t *e)
     updateProfileTuneMeasValueLabel();
 }
 
-void profileTuneMeasCancel_event_cb(lv_event_t *e)
-{
-    closeProfileTuneDialog();
-    clearProfileTuneState();
-}
-
 void profileTuneMeasSave_event_cb(lv_event_t *e)
 {
     saveProfileTuneMeas();
@@ -649,21 +654,9 @@ static void createProfileTuneMeasDialog()
         return;
     }
 
-    ui_PanelProfileTuneMeas = lv_obj_create(ui_Screen1);
-    lv_obj_set_width(ui_PanelProfileTuneMeas, lv_pct(86));
-    lv_obj_set_height(ui_PanelProfileTuneMeas, lv_pct(84));
-    lv_obj_set_align(ui_PanelProfileTuneMeas, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_PanelProfileTuneMeas, LV_OBJ_FLAG_HIDDEN);
-    lv_obj_clear_flag(ui_PanelProfileTuneMeas, LV_OBJ_FLAG_SCROLLABLE);
+    ui_PanelProfileTuneMeas = createDialogPanel();
 
-    ui_LabelProfileTuneMeasTitle = lv_label_create(ui_PanelProfileTuneMeas);
-    lv_obj_set_width(ui_LabelProfileTuneMeasTitle, lv_pct(100));
-    lv_obj_set_height(ui_LabelProfileTuneMeasTitle, LV_SIZE_CONTENT);
-    lv_obj_set_y(ui_LabelProfileTuneMeasTitle, -95);
-    lv_obj_set_align(ui_LabelProfileTuneMeasTitle, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_LabelProfileTuneMeasTitle, langText("msg_tune_measurements_title"));
-    lv_obj_set_style_text_align(ui_LabelProfileTuneMeasTitle, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_set_style_text_font(ui_LabelProfileTuneMeasTitle, UI_FONT_NORMAL, LV_PART_MAIN);
+    createDialogTitle(ui_PanelProfileTuneMeas, -95, langText("msg_tune_measurements_title"));
 
     ui_LabelProfileTuneMeasValue = createDialogValueLabel(ui_PanelProfileTuneMeas, -42);
 
@@ -673,7 +666,7 @@ static void createProfileTuneMeasDialog()
     // button (both 60 wide at +/-115), and uses the value-box font.
     ui_ButtonProfileTuneMeasEntry = createDialogButton(ui_PanelProfileTuneMeas, 0, 22, 170, 45, "0.0000", UI_FONT_LARGE, profileTuneMeasEntry_event_cb);
     ui_LabelProfileTuneMeasEntry = lv_obj_get_child(ui_ButtonProfileTuneMeasEntry, 0);
-    ui_ButtonProfileTuneMeasCancel = createDialogButton(ui_PanelProfileTuneMeas, 70, 88, 110, 45, UI_SYMBOL_CANCEL, UI_FONT_NORMAL, profileTuneMeasCancel_event_cb);
+    ui_ButtonProfileTuneMeasCancel = createDialogButton(ui_PanelProfileTuneMeas, 70, 88, 110, 45, UI_SYMBOL_CANCEL, UI_FONT_NORMAL, profileTuneCancel_event_cb);
     ui_ButtonProfileTuneMeasSave = createDialogButton(ui_PanelProfileTuneMeas, -70, 88, 110, 45, UI_SYMBOL_SAVE, UI_FONT_NORMAL, profileTuneMeasSave_event_cb);
 }
 
@@ -693,11 +686,6 @@ static void showProfileTuneMeasDialog()
             profileMeasTuneValues[i] = config.profileMeasurements[i];
         }
         updateProfileTuneMeasEntryLabel();
-        const char *title = langText("msg_tune_measurements_title");
-        if (strcmp(lv_label_get_text(ui_LabelProfileTuneMeasTitle), title) != 0)
-        {
-            lv_label_set_text(ui_LabelProfileTuneMeasTitle, title);
-        }
         updateProfileTuneMeasValueLabel();
         showDialog(ui_PanelProfileTuneMeas);
         lvglUnlock();
@@ -737,12 +725,6 @@ void profileTuneChoiceMeas_event_cb(lv_event_t *e)
     lv_async_call(openProfileTuneMeasAsync, NULL);
 }
 
-void profileTuneChoiceCancel_event_cb(lv_event_t *e)
-{
-    closeDialog(&ui_PanelProfileTuneChoice, true);
-    clearProfileTuneState();
-}
-
 static void createProfileTuneChoiceDialog()
 {
     if (ui_PanelProfileTuneChoice != NULL)
@@ -750,27 +732,15 @@ static void createProfileTuneChoiceDialog()
         return;
     }
 
-    ui_PanelProfileTuneChoice = lv_obj_create(ui_Screen1);
-    lv_obj_set_width(ui_PanelProfileTuneChoice, lv_pct(60));
-    lv_obj_set_height(ui_PanelProfileTuneChoice, lv_pct(76));
-    lv_obj_set_align(ui_PanelProfileTuneChoice, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_PanelProfileTuneChoice, LV_OBJ_FLAG_HIDDEN);
-    lv_obj_clear_flag(ui_PanelProfileTuneChoice, LV_OBJ_FLAG_SCROLLABLE);
+    ui_PanelProfileTuneChoice = createDialogPanel();
 
-    lv_obj_t *title = lv_label_create(ui_PanelProfileTuneChoice);
-    lv_obj_set_width(title, lv_pct(100));
-    lv_obj_set_height(title, LV_SIZE_CONTENT);
-    lv_obj_set_y(title, -85);
-    lv_obj_set_align(title, LV_ALIGN_CENTER);
-    lv_label_set_text(title, langText("msg_tune_choose_title"));
-    lv_obj_set_style_text_align(title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_set_style_text_font(title, UI_FONT_NORMAL, LV_PART_MAIN);
+    createDialogTitle(ui_PanelProfileTuneChoice, -95, langText("msg_tune_choose_title"));
 
     lv_obj_t *weightButton = createDialogButton(ui_PanelProfileTuneChoice, 0, -30, 200, 50, "", UI_FONT_NORMAL, profileTuneChoiceWeight_event_cb);
     lv_label_set_text(lv_obj_get_child(weightButton, 0), langText("msg_tune_profile_title"));
     lv_obj_t *measButton = createDialogButton(ui_PanelProfileTuneChoice, 0, 30, 200, 50, "", UI_FONT_NORMAL, profileTuneChoiceMeas_event_cb);
     lv_label_set_text(lv_obj_get_child(measButton, 0), langText("msg_tune_measurements_title"));
-    createDialogButton(ui_PanelProfileTuneChoice, 0, 90, 110, 45, UI_SYMBOL_CANCEL, UI_FONT_NORMAL, profileTuneChoiceCancel_event_cb);
+    createDialogButton(ui_PanelProfileTuneChoice, 0, 90, 110, 45, UI_SYMBOL_CANCEL, UI_FONT_NORMAL, profileTuneCancel_event_cb);
 }
 
 static void showProfileTuneChoiceDialog()
