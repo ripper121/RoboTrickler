@@ -160,7 +160,7 @@ WEIGHT_DECIMALS	epsilon	safe WEIGHT_MAX
 3               5e-4    ~8192
 2               5e-3    ~65536
 */
-#define WEIGHT_DECIMALS 4        // display/entry/storage precision (i.e. 0.0000)
+#define WEIGHT_DECIMALS 3        // display/entry/storage precision (i.e. 0.0000)
 #define WEIGHT_MIN 0.0f          // minimum settable weight (0.0000)
 #define WEIGHT_MAX 500.0f        // maximum settable weight (500.0000)
 // Smallest representable weight step (= 10^-WEIGHT_DECIMALS; keep in sync). Weight
