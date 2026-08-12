@@ -6,6 +6,8 @@
 #ifndef _ROBOTRICKLERUI_UI_H
 #define _ROBOTRICKLERUI_UI_H
 
+#include "compile_options.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

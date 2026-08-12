@@ -163,7 +163,13 @@ static void ensureWifiQrObject()
 
   wifiQrObject = lv_obj_create(ui_PanelPageInfo);
   lv_obj_set_size(wifiQrObject, WIFI_QR_OBJECT_SIZE, WIFI_QR_OBJECT_SIZE);
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS24
+  // The hint sits underneath; raise the QR slightly while keeping it centered
+  // in the actual TS24 Info viewport.
+  lv_obj_align(wifiQrObject, LV_ALIGN_CENTER, 0, -12);
+#else
   lv_obj_align(wifiQrObject, LV_ALIGN_CENTER, 0, 0);
+#endif
   lv_obj_set_style_bg_color(wifiQrObject, lv_color_white(), LV_PART_MAIN);
   lv_obj_set_style_bg_opa(wifiQrObject, LV_OPA_COVER, LV_PART_MAIN);
   lv_obj_set_style_border_width(wifiQrObject, 0, LV_PART_MAIN);

@@ -1,1 +1,2 @@
 -DHTTPCLIENT_NOSECURE
+-include tft_setup.h

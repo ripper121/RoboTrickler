@@ -8,10 +8,17 @@
 #ifndef LV_CONF_H
 #define LV_CONF_H
 
+#include "compile_options.h"
+
 /* Project display dimensions. LVGL 9 configures these at runtime, but the
  * firmware also uses these constants for its TFT and draw buffers. */
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS24
+#define LV_HOR_RES_MAX 320
+#define LV_VER_RES_MAX 240
+#else
 #define LV_HOR_RES_MAX 480
 #define LV_VER_RES_MAX 320
+#endif
 
 /*====================
    COLOR SETTINGS
@@ -110,17 +117,33 @@
 #define LV_FONT_MONTSERRAT_8 0
 #define LV_FONT_MONTSERRAT_10 0
 #define LV_FONT_MONTSERRAT_12 0
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS24
+#define LV_FONT_MONTSERRAT_14 1
+#else
 #define LV_FONT_MONTSERRAT_14 0
+#endif
 #define LV_FONT_MONTSERRAT_16 0
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS35
 #define LV_FONT_MONTSERRAT_18 1
+#else
+#define LV_FONT_MONTSERRAT_18 0
+#endif
 #define LV_FONT_MONTSERRAT_20 0
 #define LV_FONT_MONTSERRAT_22 0
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS24
+#define LV_FONT_MONTSERRAT_24 1
+#else
 #define LV_FONT_MONTSERRAT_24 0
+#endif
 #define LV_FONT_MONTSERRAT_26 0
 #define LV_FONT_MONTSERRAT_28 0
 #define LV_FONT_MONTSERRAT_30 0
 #define LV_FONT_MONTSERRAT_32 0
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS35
 #define LV_FONT_MONTSERRAT_34 1
+#else
+#define LV_FONT_MONTSERRAT_34 0
+#endif
 #define LV_FONT_MONTSERRAT_36 0
 #define LV_FONT_MONTSERRAT_38 0
 #define LV_FONT_MONTSERRAT_40 0
@@ -134,7 +157,11 @@
 #define LV_FONT_UNSCII_8 0
 #define LV_FONT_UNSCII_16 0
 #define LV_FONT_CUSTOM_DECLARE
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS24
+#define LV_FONT_DEFAULT &lv_font_montserrat_14
+#else
 #define LV_FONT_DEFAULT &lv_font_montserrat_18
+#endif
 #define LV_FONT_FMT_TXT_LARGE 0
 #define LV_USE_FONT_COMPRESSED 0
 #define LV_USE_FONT_PLACEHOLDER 0

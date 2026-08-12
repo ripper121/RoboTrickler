@@ -1,6 +1,32 @@
 // Uniform height for all dialog UI elements (buttons and value boxes). The
 // factories below apply it, so no dialog element can end up with its own height.
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS24
+#define DIALOG_ELEMENT_HEIGHT 40
+#define DIALOG_TUNE_TITLE_Y -76
+#define DIALOG_TUNE_VALUE_Y -34
+#define DIALOG_TUNE_STEP_Y 16
+#define DIALOG_TUNE_ACTION_Y 78
+#define DIALOG_TUNE_SIDE_X 100
+#define DIALOG_TUNE_SIDE_WIDTH 55
+#define DIALOG_TUNE_STEP_WIDTH 250
+#define DIALOG_TUNE_ACTION_X 65
+#define DIALOG_TUNE_ACTION_WIDTH 100
+#define DIALOG_TUNE_CHOICE_WIDTH 250
+#define DIALOG_MESSAGE_ACTION_Y 76
+#else
 #define DIALOG_ELEMENT_HEIGHT 50
+#define DIALOG_TUNE_TITLE_Y -95
+#define DIALOG_TUNE_VALUE_Y -42
+#define DIALOG_TUNE_STEP_Y 22
+#define DIALOG_TUNE_ACTION_Y 88
+#define DIALOG_TUNE_SIDE_X 115
+#define DIALOG_TUNE_SIDE_WIDTH 60
+#define DIALOG_TUNE_STEP_WIDTH 290
+#define DIALOG_TUNE_ACTION_X 70
+#define DIALOG_TUNE_ACTION_WIDTH 110
+#define DIALOG_TUNE_CHOICE_WIDTH 400
+#define DIALOG_MESSAGE_ACTION_Y 100
+#endif
 
 volatile bool messageBoxOpen = false;
 volatile bool confirmBoxOpen = false;
@@ -136,7 +162,7 @@ static void ensureNoButton()
   {
     return;
   }
-  ui_ButtonMessageNo = createDialogButton(ui_PanelMessages, 70, 100, 100,
+  ui_ButtonMessageNo = createDialogButton(ui_PanelMessages, 70, DIALOG_MESSAGE_ACTION_Y, 100,
                                           UI_SYMBOL_NO, UI_FONT_LARGE, messageNo_event_cb);
   ui_LabelMessageNo = lv_obj_get_child(ui_ButtonMessageNo, 0);
 }
@@ -154,7 +180,7 @@ static void createMessageDialog()
 
   ui_PanelMessages = createDialogPanel();
 
-  ui_ButtonMessageOk = createDialogButton(ui_PanelMessages, 0, 100, 100,
+  ui_ButtonMessageOk = createDialogButton(ui_PanelMessages, 0, DIALOG_MESSAGE_ACTION_Y, 100,
                                           UI_SYMBOL_OK, UI_FONT_LARGE, messageOk_event_cb);
   ui_LabelMessageOk = lv_obj_get_child(ui_ButtonMessageOk, 0);
 
@@ -532,16 +558,16 @@ static void createProfileTuneDialog()
 
     // The panel is deleted on close and rebuilt per show, so the title text is
     // always current; no re-translation on reuse is needed.
-    createDialogTitle(ui_PanelProfileTune, -95, langText("msg_tune_profile_title"));
+    createDialogTitle(ui_PanelProfileTune, DIALOG_TUNE_TITLE_Y, langText("msg_tune_profile_title"));
 
-    ui_LabelProfileTuneValue = createDialogValueLabel(ui_PanelProfileTune, -42);
+    ui_LabelProfileTuneValue = createDialogValueLabel(ui_PanelProfileTune, DIALOG_TUNE_VALUE_Y);
 
-    ui_ButtonProfileTuneMinus = createDialogButton(ui_PanelProfileTune, 115, -42, 60, "-", UI_FONT_LARGE, profileTuneMinus_event_cb);
-    ui_ButtonProfileTunePlus = createDialogButton(ui_PanelProfileTune, -115, -42, 60, "+", UI_FONT_LARGE, profileTunePlus_event_cb);
-    ui_ButtonProfileTuneStep = createDialogButton(ui_PanelProfileTune, 0, 22, 290, "0.001", UI_FONT_LARGE, profileTuneStep_event_cb);
+    ui_ButtonProfileTuneMinus = createDialogButton(ui_PanelProfileTune, DIALOG_TUNE_SIDE_X, DIALOG_TUNE_VALUE_Y, DIALOG_TUNE_SIDE_WIDTH, "-", UI_FONT_LARGE, profileTuneMinus_event_cb);
+    ui_ButtonProfileTunePlus = createDialogButton(ui_PanelProfileTune, -DIALOG_TUNE_SIDE_X, DIALOG_TUNE_VALUE_Y, DIALOG_TUNE_SIDE_WIDTH, "+", UI_FONT_LARGE, profileTunePlus_event_cb);
+    ui_ButtonProfileTuneStep = createDialogButton(ui_PanelProfileTune, 0, DIALOG_TUNE_STEP_Y, DIALOG_TUNE_STEP_WIDTH, "0.001", UI_FONT_LARGE, profileTuneStep_event_cb);
     ui_LabelProfileTuneStep = lv_obj_get_child(ui_ButtonProfileTuneStep, 0);
-    ui_ButtonProfileTuneCancel = createDialogButton(ui_PanelProfileTune, 70, 88, 110, UI_SYMBOL_CANCEL, UI_FONT_LARGE, profileTuneCancel_event_cb);
-    ui_ButtonProfileTuneSave = createDialogButton(ui_PanelProfileTune, -70, 88, 110, UI_SYMBOL_SAVE, UI_FONT_LARGE, profileTuneSave_event_cb);
+    ui_ButtonProfileTuneCancel = createDialogButton(ui_PanelProfileTune, DIALOG_TUNE_ACTION_X, DIALOG_TUNE_ACTION_Y, DIALOG_TUNE_ACTION_WIDTH, UI_SYMBOL_CANCEL, UI_FONT_LARGE, profileTuneCancel_event_cb);
+    ui_ButtonProfileTuneSave = createDialogButton(ui_PanelProfileTune, -DIALOG_TUNE_ACTION_X, DIALOG_TUNE_ACTION_Y, DIALOG_TUNE_ACTION_WIDTH, UI_SYMBOL_SAVE, UI_FONT_LARGE, profileTuneSave_event_cb);
 }
 
 static void showProfileTuneDialog()
@@ -660,18 +686,18 @@ static void createProfileTuneMeasDialog()
 
     ui_PanelProfileTuneMeas = createDialogPanel();
 
-    createDialogTitle(ui_PanelProfileTuneMeas, -95, langText("msg_tune_measurements_title"));
+    createDialogTitle(ui_PanelProfileTuneMeas, DIALOG_TUNE_TITLE_Y, langText("msg_tune_measurements_title"));
 
-    ui_LabelProfileTuneMeasValue = createDialogValueLabel(ui_PanelProfileTuneMeas, -42);
+    ui_LabelProfileTuneMeasValue = createDialogValueLabel(ui_PanelProfileTuneMeas, DIALOG_TUNE_VALUE_Y);
 
-    ui_ButtonProfileTuneMeasMinus = createDialogButton(ui_PanelProfileTuneMeas, 115, -42, 60, "-", UI_FONT_LARGE, profileTuneMeasMinus_event_cb);
-    ui_ButtonProfileTuneMeasPlus = createDialogButton(ui_PanelProfileTuneMeas, -115, -42, 60, "+", UI_FONT_LARGE, profileTuneMeasPlus_event_cb);
+    ui_ButtonProfileTuneMeasMinus = createDialogButton(ui_PanelProfileTuneMeas, DIALOG_TUNE_SIDE_X, DIALOG_TUNE_VALUE_Y, DIALOG_TUNE_SIDE_WIDTH, "-", UI_FONT_LARGE, profileTuneMeasMinus_event_cb);
+    ui_ButtonProfileTuneMeasPlus = createDialogButton(ui_PanelProfileTuneMeas, -DIALOG_TUNE_SIDE_X, DIALOG_TUNE_VALUE_Y, DIALOG_TUNE_SIDE_WIDTH, "+", UI_FONT_LARGE, profileTuneMeasPlus_event_cb);
     // Spans from the inner edge of the "+" button to the inner edge of the "-"
     // button (both 60 wide at +/-115), and uses the value-box font.
-    ui_ButtonProfileTuneMeasEntry = createDialogButton(ui_PanelProfileTuneMeas, 0, 22, 290, "0.000", UI_FONT_LARGE, profileTuneMeasEntry_event_cb);
+    ui_ButtonProfileTuneMeasEntry = createDialogButton(ui_PanelProfileTuneMeas, 0, DIALOG_TUNE_STEP_Y, DIALOG_TUNE_STEP_WIDTH, "0.000", UI_FONT_LARGE, profileTuneMeasEntry_event_cb);
     ui_LabelProfileTuneMeasEntry = lv_obj_get_child(ui_ButtonProfileTuneMeasEntry, 0);
-    ui_ButtonProfileTuneMeasCancel = createDialogButton(ui_PanelProfileTuneMeas, 70, 88, 110, UI_SYMBOL_CANCEL, UI_FONT_LARGE, profileTuneCancel_event_cb);
-    ui_ButtonProfileTuneMeasSave = createDialogButton(ui_PanelProfileTuneMeas, -70, 88, 110, UI_SYMBOL_SAVE, UI_FONT_LARGE, profileTuneMeasSave_event_cb);
+    ui_ButtonProfileTuneMeasCancel = createDialogButton(ui_PanelProfileTuneMeas, DIALOG_TUNE_ACTION_X, DIALOG_TUNE_ACTION_Y, DIALOG_TUNE_ACTION_WIDTH, UI_SYMBOL_CANCEL, UI_FONT_LARGE, profileTuneCancel_event_cb);
+    ui_ButtonProfileTuneMeasSave = createDialogButton(ui_PanelProfileTuneMeas, -DIALOG_TUNE_ACTION_X, DIALOG_TUNE_ACTION_Y, DIALOG_TUNE_ACTION_WIDTH, UI_SYMBOL_SAVE, UI_FONT_LARGE, profileTuneMeasSave_event_cb);
 }
 
 static void showProfileTuneMeasDialog()
@@ -738,13 +764,13 @@ static void createProfileTuneChoiceDialog()
 
     ui_PanelProfileTuneChoice = createDialogPanel();
 
-    createDialogTitle(ui_PanelProfileTuneChoice, -95, langText("msg_tune_choose_title"));
+    createDialogTitle(ui_PanelProfileTuneChoice, DIALOG_TUNE_TITLE_Y, langText("msg_tune_choose_title"));
 
-    lv_obj_t *weightButton = createDialogButton(ui_PanelProfileTuneChoice, 0, -30, 400, "", UI_FONT_LARGE, profileTuneChoiceWeight_event_cb);
+    lv_obj_t *weightButton = createDialogButton(ui_PanelProfileTuneChoice, 0, -30, DIALOG_TUNE_CHOICE_WIDTH, "", UI_FONT_LARGE, profileTuneChoiceWeight_event_cb);
     lv_label_set_text(lv_obj_get_child(weightButton, 0), langText("msg_tune_profile_title"));
-    lv_obj_t *measButton = createDialogButton(ui_PanelProfileTuneChoice, 0, 30, 400, "", UI_FONT_LARGE, profileTuneChoiceMeas_event_cb);
+    lv_obj_t *measButton = createDialogButton(ui_PanelProfileTuneChoice, 0, 30, DIALOG_TUNE_CHOICE_WIDTH, "", UI_FONT_LARGE, profileTuneChoiceMeas_event_cb);
     lv_label_set_text(lv_obj_get_child(measButton, 0), langText("msg_tune_measurements_title"));
-    createDialogButton(ui_PanelProfileTuneChoice, 0, 90, 110, UI_SYMBOL_CANCEL, UI_FONT_LARGE, profileTuneCancel_event_cb);
+    createDialogButton(ui_PanelProfileTuneChoice, 0, DIALOG_TUNE_ACTION_Y, DIALOG_TUNE_ACTION_WIDTH, UI_SYMBOL_CANCEL, UI_FONT_LARGE, profileTuneCancel_event_cb);
 }
 
 static void showProfileTuneChoiceDialog()

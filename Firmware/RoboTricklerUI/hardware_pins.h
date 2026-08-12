@@ -32,9 +32,22 @@
 #define LCD_RST					    GPIO_NUM_27     
 #define LCD_CS					    GPIO_NUM_25
 
+#ifndef TOUCH_CS
 #define TOUCH_CS				    GPIO_NUM_26
+#endif
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS24
+// The TS24-R is a 320 x 240 panel mounted in landscape orientation.
+#define DISPLAY_ROTATION            1
+#define LCD_BACKLIGHT_ON             LOW
+#define LCD_BACKLIGHT_OFF            HIGH
+// Captured on the TS24-R panel. TFT_eSPI flags are rotate + invert X.
+#define TOUCH_CAL_DATA              {388, 3482, 313, 3525, 3}
+#else
 #define DISPLAY_ROTATION            0
+#define LCD_BACKLIGHT_ON             HIGH
+#define LCD_BACKLIGHT_OFF            LOW
 #define TOUCH_CAL_DATA              {248, 3571, 202, 3647, 5}
+#endif
 #define I2S_BEEPER					    7
 
 #define IIC_SCL                     GPIO_NUM_4

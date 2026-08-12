@@ -39,8 +39,12 @@ void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data)
 {
   (void)indev;
   uint16_t touchX, touchY;
-
   bool touched = tft.getTouch(&touchX, &touchY, 1);
+  if (touched)
+  {
+    data->point.x = touchX;
+    data->point.y = touchY;
+  }
 
   if (!touched)
   {
@@ -49,10 +53,6 @@ void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data)
   else
   {
     data->state = LV_INDEV_STATE_PR;
-
-    /*Set the coordinates*/
-    data->point.x = touchX;
-    data->point.y = touchY;
   }
 }
 
@@ -67,11 +67,18 @@ void displayInit()
 #endif
 
   pinMode(LCD_EN, OUTPUT);
-  digitalWrite(LCD_EN, LOW);
+  digitalWrite(LCD_EN, LCD_BACKLIGHT_OFF);
 
   tft.init();
   tft.setRotation(DISPLAY_ROTATION);
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS24
+  tft.invertDisplay(true);
+#endif
   tft.initDMA();
+
+  // GPIO 5 enables the panel backlight. TS24-R and TS35-R use opposite logic
+  // levels, so keep this hardware property in hardware_pins.h.
+  digitalWrite(LCD_EN, LCD_BACKLIGHT_ON);
 
   /*Set the touchscreen calibration data,
     the actual data for your display can be acquired using

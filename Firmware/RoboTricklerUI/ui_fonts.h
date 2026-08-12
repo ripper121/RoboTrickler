@@ -2,9 +2,15 @@
 #define _ROBOTRICKLERUI_UI_FONTS_H
 
 #include "lvgl.h"
+#include "compile_options.h"
 
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS24
+#define UI_FONT_NORMAL (&lv_font_montserrat_14)
+#define UI_FONT_LARGE (&lv_font_montserrat_24)
+#else
 #define UI_FONT_NORMAL (&lv_font_montserrat_18)
 #define UI_FONT_LARGE (&lv_font_montserrat_34)
+#endif
 
 #define UI_SYMBOL_START LV_SYMBOL_PLAY
 #define UI_SYMBOL_STOP LV_SYMBOL_STOP

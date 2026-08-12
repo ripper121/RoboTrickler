@@ -51,9 +51,6 @@ Events Run On: "Core 0"
 #include <lvgl.h>
 #include "ui.h"
 
-#ifdef TOUCH_CS
-#undef TOUCH_CS
-#endif
 #include <TFT_eSPI.h>
 
 #if DEBUG
@@ -73,7 +70,13 @@ SemaphoreHandle_t lvglMutex = NULL;
 #define LV_DRAW_BUF_ROWS 16
 #define DISPLAY_DRAW_BUF_SIZE (LV_HOR_RES_MAX * LV_DRAW_BUF_ROWS * (LV_COLOR_DEPTH / 8))
 static uint32_t displayDrawBuffer[DISPLAY_DRAW_BUF_SIZE / sizeof(uint32_t)];
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS24
+// ILI9341-compatible TS24-R is natively portrait; rotation 1 yields its
+// physical 320 x 240 landscape viewport.
+TFT_eSPI tft = TFT_eSPI(240, 320);
+#else
 TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
+#endif
 
 // Maximum number of trickle-map / per-step entries a profile can hold. Ties the
 // Config array bounds below to the parse loops in sd_storage.ino.

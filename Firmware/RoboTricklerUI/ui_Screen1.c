@@ -5,6 +5,40 @@
 
 #include "ui.h"
 
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS24
+// SquareLine generated the base UI for the TS35. Keep those generated values
+// intact and apply the compact TS24 layout after object creation.
+static void applyTs24Layout(void)
+{
+lv_tabview_set_tab_bar_size(ui_TabView, 40);
+
+// Trickler page: five compact, non-overlapping rows within the 200 px tab.
+lv_obj_set_height(ui_PanelTarget, 32); lv_obj_set_y(ui_PanelTarget, -82);
+lv_obj_set_width(ui_ButtonAddWeightCycle, 96); lv_obj_set_height(ui_ButtonAddWeightCycle, 38); lv_obj_set_y(ui_ButtonAddWeightCycle, -41);
+lv_obj_set_width(ui_ButtonIncreaseTargetWeight, 96); lv_obj_set_height(ui_ButtonIncreaseTargetWeight, 38); lv_obj_set_x(ui_ButtonIncreaseTargetWeight, -105); lv_obj_set_y(ui_ButtonIncreaseTargetWeight, -41);
+lv_obj_set_width(ui_ButtonDecreaseTargetWeight, 96); lv_obj_set_height(ui_ButtonDecreaseTargetWeight, 38); lv_obj_set_x(ui_ButtonDecreaseTargetWeight, 105); lv_obj_set_y(ui_ButtonDecreaseTargetWeight, -41);
+lv_obj_set_height(ui_PanelTricklerWeight, 32); lv_obj_set_y(ui_PanelTricklerWeight, -2);
+lv_obj_set_height(ui_ButtonToggleTrickler, 38); lv_obj_set_y(ui_ButtonToggleTrickler, 37);
+lv_obj_set_height(ui_PanelInfo, 22); lv_obj_set_y(ui_PanelInfo, 77); lv_obj_set_height(ui_LabelInfo, 20);
+
+// Profile page: keep the TS35 order (up, selected profile, down) with explicit
+// positions so the generated center/top/bottom layout cannot clip at 240 px.
+lv_obj_set_align(ui_PanelProfile, LV_ALIGN_TOP_MID); lv_obj_set_y(ui_PanelProfile, 64); lv_obj_set_height(ui_PanelProfile, 55); lv_obj_set_width(ui_LabelProfile, 180); lv_obj_set_height(ui_LabelProfile, 40);
+lv_obj_set_width(ui_ButtonProfileTune, 55); lv_obj_set_height(ui_ButtonProfileTune, 55);
+lv_obj_set_width(ui_ButtonProfileDelete, 55); lv_obj_set_height(ui_ButtonProfileDelete, 55);
+lv_obj_set_align(ui_ButtonProfilePrev, LV_ALIGN_TOP_MID); lv_obj_set_height(ui_ButtonProfilePrev, 55); lv_obj_set_y(ui_ButtonProfilePrev, 4);
+lv_obj_set_align(ui_ButtonProfileNext, LV_ALIGN_TOP_MID); lv_obj_set_height(ui_ButtonProfileNext, 55); lv_obj_set_y(ui_ButtonProfileNext, 124);
+
+lv_obj_set_width(ui_PanelPageInfo, lv_pct(100)); lv_obj_set_height(ui_PanelPageInfo, lv_pct(100));
+
+// Compact and left-align the Info-page action row for the 320 px TS24 view.
+lv_obj_set_width(ui_ButtonScaleProtocol, 140); lv_obj_set_height(ui_ButtonScaleProtocol, 34); lv_obj_set_x(ui_ButtonScaleProtocol, -8); lv_obj_set_y(ui_ButtonScaleProtocol, 0);
+lv_obj_set_width(ui_ButtonWifi, 34); lv_obj_set_height(ui_ButtonWifi, 34); lv_obj_set_x(ui_ButtonWifi, 138); lv_obj_set_y(ui_ButtonWifi, 0);
+lv_obj_set_width(ui_ButtonSyncFlashToSd, 34); lv_obj_set_height(ui_ButtonSyncFlashToSd, 34); lv_obj_set_x(ui_ButtonSyncFlashToSd, 180); lv_obj_set_y(ui_ButtonSyncFlashToSd, 0);
+lv_obj_set_width(ui_ButtonSyncSdToFlash, 34); lv_obj_set_height(ui_ButtonSyncSdToFlash, 34); lv_obj_set_x(ui_ButtonSyncSdToFlash, 222); lv_obj_set_y(ui_ButtonSyncSdToFlash, 0);
+}
+#endif
+
 void ui_Screen1_screen_init(void)
 {
 ui_Screen1 = lv_obj_create(NULL);
@@ -303,6 +337,10 @@ lv_obj_set_style_text_font(ui_LabelSyncSdToFlash, UI_FONT_NORMAL, LV_PART_MAIN);
 /* The message/confirm dialog (ui_PanelMessages and its children) is built
    lazily in ui_dialogs.ino and deleted on close to keep the LVGL pool free
    while no dialog is shown. */
+
+#if DISPLAY_MODEL == DISPLAY_MODEL_TS24
+applyTs24Layout();
+#endif
 
 lv_obj_add_event_cb(ui_ButtonToggleTrickler, toggleTrickler_event_cb, LV_EVENT_CLICKED, NULL);
 lv_obj_add_event_cb(ui_ButtonAddWeightCycle, cycleAddWeight_event_cb, LV_EVENT_CLICKED, NULL);
