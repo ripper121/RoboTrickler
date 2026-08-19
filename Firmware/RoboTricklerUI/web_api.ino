@@ -84,6 +84,8 @@ void handleWifiSave()
 bool loadWebLang(JsonDocument &doc)
 {
   String language = normalizedLanguageCode();
+  JsonDocument filter;
+  filter["web"]["firmware"] = true;
 
   String candidates[] = {
       "/system/lang/" + language + ".json",
@@ -100,7 +102,8 @@ bool loadWebLang(JsonDocument &doc)
     {
       continue;
     }
-    DeserializationError error = deserializeJson(doc, file);
+    DeserializationError error = deserializeJson(
+        doc, file, DeserializationOption::Filter(filter));
     file.close();
     if (!error && doc["web"]["firmware"].is<JsonObject>())
     {
@@ -277,4 +280,3 @@ void handleStop()
   stopTrickler();
   server.send(200, "text/html", webStatusPage("stopped", "Stopped..."));
 }
-

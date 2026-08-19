@@ -59,7 +59,6 @@ static SemaphoreHandle_t i2sOutMutex = NULL;
 // step() holding i2sOutMutex).
 static uint32_t i2sOutBatch[I2S_OUT_BLOCK_FRAMES * 2];
 static size_t i2sOutBatchFrames = 0;
-static uint32_t i2sOutFeederBlock[I2S_OUT_BLOCK_FRAMES * 2];
 
 static bool i2sOutWrite(const uint32_t *words, size_t frames)
 {
@@ -116,10 +115,10 @@ static void i2sOutFeederTask(void *unused)
       uint32_t state = shiftRegisterSnapshot();
       for (size_t i = 0; i < I2S_OUT_BLOCK_FRAMES; i++)
       {
-        i2sOutFeederBlock[i * 2] = state;
-        i2sOutFeederBlock[(i * 2) + 1] = state;
+        i2sOutBatch[i * 2] = state;
+        i2sOutBatch[(i * 2) + 1] = state;
       }
-      i2sOutWrite(i2sOutFeederBlock, I2S_OUT_BLOCK_FRAMES);
+      i2sOutWrite(i2sOutBatch, I2S_OUT_BLOCK_FRAMES);
       xSemaphoreGive(i2sOutMutex);
     }
     vTaskDelay(1);
@@ -197,14 +196,14 @@ static void shiftRegisterInit()
   // enable the motors: the disable bit is active-high).
   for (size_t i = 0; i < I2S_OUT_BLOCK_FRAMES; i++)
   {
-    i2sOutFeederBlock[i * 2] = shiftRegisterState;
-    i2sOutFeederBlock[(i * 2) + 1] = shiftRegisterState;
+    i2sOutBatch[i * 2] = shiftRegisterState;
+    i2sOutBatch[(i * 2) + 1] = shiftRegisterState;
   }
   size_t preloaded = 1;
   while (preloaded > 0)
   {
-    if (i2s_channel_preload_data(i2sOutChannel, i2sOutFeederBlock,
-                                 sizeof(i2sOutFeederBlock), &preloaded) != ESP_OK)
+    if (i2s_channel_preload_data(i2sOutChannel, i2sOutBatch,
+                                 sizeof(i2sOutBatch), &preloaded) != ESP_OK)
     {
       break;
     }

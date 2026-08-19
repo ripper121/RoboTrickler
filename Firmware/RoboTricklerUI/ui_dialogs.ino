@@ -300,7 +300,7 @@ byte profileTuneStepIndex = 0;
 lv_obj_t *ui_PanelProfileTune = NULL;
 lv_obj_t *ui_PanelProfileTuneChoice = NULL;
 // Working copy of the trickleMap measurements while the editor is open.
-int profileMeasTuneValues[PROFILE_MAX_ENTRIES];
+uint8_t profileMeasTuneValues[PROFILE_MAX_ENTRIES];
 int profileMeasTuneCount = 0;
 int profileMeasTuneSelected = 0;
 lv_obj_t *ui_PanelProfileTuneMeas = NULL;
@@ -592,10 +592,17 @@ static void saveProfileTuneMeas()
     String profileName = profileTuneName;
     if (ui_LabelProfileTuneMeasValue != NULL)
     {
-        profileMeasTuneValues[profileMeasTuneSelected] = String(lv_label_get_text(ui_LabelProfileTuneMeasValue)).toInt();
+        int measurements = String(lv_label_get_text(ui_LabelProfileTuneMeasValue)).toInt();
+        if (measurements < 0)
+        {
+            measurements = 0;
+        }
+        else if (measurements > 99)
+        {
+            measurements = 99;
+        }
+        profileMeasTuneValues[profileMeasTuneSelected] = (uint8_t)measurements;
     }
-    int values[PROFILE_MAX_ENTRIES];
-    memcpy(values, profileMeasTuneValues, sizeof(values));
     int count = profileMeasTuneCount;
     closeProfileTuneDialog();
     profileTuneName = "";
@@ -606,7 +613,7 @@ static void saveProfileTuneMeas()
     }
 
     updateDisplayLog(String(langText("status_tuning_profile")) + profileName, true);
-    if (!tuneProfileMeasurements(profileName.c_str(), values, count))
+    if (!tuneProfileMeasurements(profileName.c_str(), profileMeasTuneValues, count))
     {
         reportProfileTuneError();
         return;
@@ -617,20 +624,18 @@ static void saveProfileTuneMeas()
 
 void profileTuneMeasMinus_event_cb(lv_event_t *e)
 {
-    profileMeasTuneValues[profileMeasTuneSelected] -= 1;
-    if (profileMeasTuneValues[profileMeasTuneSelected] < 0)
+    if (profileMeasTuneValues[profileMeasTuneSelected] > 0)
     {
-        profileMeasTuneValues[profileMeasTuneSelected] = 0;
+        profileMeasTuneValues[profileMeasTuneSelected]--;
     }
     updateProfileTuneMeasValueLabel();
 }
 
 void profileTuneMeasPlus_event_cb(lv_event_t *e)
 {
-    profileMeasTuneValues[profileMeasTuneSelected] += 1;
-    if (profileMeasTuneValues[profileMeasTuneSelected] > 99)
+    if (profileMeasTuneValues[profileMeasTuneSelected] < 99)
     {
-        profileMeasTuneValues[profileMeasTuneSelected] = 99;
+        profileMeasTuneValues[profileMeasTuneSelected]++;
     }
     updateProfileTuneMeasValueLabel();
 }
@@ -687,7 +692,16 @@ static void showProfileTuneMeasDialog()
         profileMeasTuneSelected = 0;
         for (int i = 0; i < profileMeasTuneCount; i++)
         {
-            profileMeasTuneValues[i] = config.profileMeasurements[i];
+            int measurements = config.profileMeasurements[i];
+            if (measurements < 0)
+            {
+                measurements = 0;
+            }
+            else if (measurements > 99)
+            {
+                measurements = 99;
+            }
+            profileMeasTuneValues[i] = (uint8_t)measurements;
         }
         updateProfileTuneMeasEntryLabel();
         updateProfileTuneMeasValueLabel();

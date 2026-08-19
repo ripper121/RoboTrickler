@@ -1,16 +1,10 @@
 float pendingTargetWeight = 0.0;
 
-void beep(const char *beepMode)
+void beep(BeeperMode requestedMode)
 {
-    bool requestDone = strstr(beepMode, "done") != NULL;
-    bool requestButton = strstr(beepMode, "button") != NULL;
-    bool enableDone = strstr(config.beeper, "done") != NULL;
-    bool enableButton = strstr(config.beeper, "button") != NULL;
-    bool enableBoth = strstr(config.beeper, "both") != NULL;
-
-    if (requestDone && (enableDone || enableBoth))
+    if ((requestedMode & BEEPER_DONE) && (config.beeperMode & BEEPER_DONE))
         stepperBeep(500);
-    if (requestButton && (enableButton || enableBoth))
+    if ((requestedMode & BEEPER_BUTTON) && (config.beeperMode & BEEPER_BUTTON))
         stepperBeep(100);
 }
 
@@ -119,14 +113,14 @@ void startMeasurement()
     measurementCount = config.profileGeneralMeasurements;
     firstProfileMovePending = true;
     setTricklerState(TRICKLER_RUNNING);
-    beep("button");
+    beep(BEEPER_BUTTON);
 }
 
 void stopMeasurement()
 {
     activeProfileStep = -1;
     setTricklerState(TRICKLER_IDLE);
-    beep("button");
+    beep(BEEPER_BUTTON);
 }
 
 void saveTargetWeight(float weight)
@@ -147,4 +141,3 @@ void saveTargetWeight(float weight)
     }
     pendingTargetWeight = config.targetWeight;
 }
-

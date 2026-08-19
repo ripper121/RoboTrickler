@@ -183,11 +183,11 @@ bool isCalibrationProfile()
 static void handleOverTrickle()
 {
   setLabelTextColor(ui_LabelTricklerWeight, 0xFF0000);
-  beep("done");
+  beep(BEEPER_DONE);
   delay(250);
-  beep("done");
+  beep(BEEPER_DONE);
   delay(250);
-  beep("done");
+  beep(BEEPER_DONE);
   String messageText = langText("msg_over_trickle");
   if (config.profileSessionCounter)
   {
@@ -212,7 +212,7 @@ static void handleTargetReached(bool weightWithinTolerance)
 
   if (!isTricklerFinished())
   {
-    beep("done");
+    beep(BEEPER_DONE);
     if (config.totalCounterEnable)
     {
       config.totalCount++;

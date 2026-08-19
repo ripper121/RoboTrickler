@@ -3,7 +3,6 @@ extern int selectedProfileIndex;
 extern volatile bool messageBoxOpen;
 bool profileDeleteConfirmPending = false;
 String profileDeleteName = "";
-String profileDeleteFilename = "";
 
 // The profile tune dialog (its state, widgets, and event callbacks) lives in
 // ui_dialogs.ino next to the other dialogs. Only the profile data side stays
@@ -188,7 +187,6 @@ bool deleteSelectedProfile()
     }
 
     profileDeleteName = profileName;
-    profileDeleteFilename = filename;
     profileDeleteConfirmPending = true;
     showConfirmBox(String(langText("msg_delete_profile_confirm_prefix")) + profileName + langText("msg_delete_profile_confirm_suffix"), UI_FONT_LARGE, lv_color_hex(0xFFFFFF));
     return true;
@@ -202,10 +200,9 @@ void finishProfileDeleteConfirm(bool confirmed)
     }
 
     String profileName = profileDeleteName;
-    String filename = profileDeleteFilename;
+    String filename = profileFilename(profileName.c_str());
     profileDeleteConfirmPending = false;
     profileDeleteName = "";
-    profileDeleteFilename = "";
 
     if (!confirmed)
     {
