@@ -463,6 +463,7 @@ Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet au
   * `stepper.id`: `1` oder `2`.
   * `stepper.steps`: Anzahl direkter STEP-Pulse für diesen Wurf. Die Firmware gibt diesen Wert unverändert an den Stepper aus.
   * `stepper.rpm`: Motordrehzahl in U/min. Sinnvolle Werte liegen meist zwischen 5 und 300.
+  * `stepper.reverse`: Optional. Bei `true` läuft der Stepper nur für diesen Eintrag in die entgegengesetzte Richtung. Fehlt das Feld oder ist es `false`, bleibt die normale Richtung erhalten.
 
 Die Firmware wählt den ersten Eintrag, dessen `diffWeight` noch zum Abstand zwischen aktuellem Gewicht und Zielgewicht passt. Je näher das Zielgewicht kommt, desto kleinere `diffWeight`-Einträge werden verwendet.
 

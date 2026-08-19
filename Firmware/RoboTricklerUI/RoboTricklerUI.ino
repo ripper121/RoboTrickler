@@ -119,6 +119,7 @@ struct Config
   int profileMeasurements[PROFILE_MAX_ENTRIES];
   long profileSteps[PROFILE_MAX_ENTRIES];
   int profileRpm[PROFILE_MAX_ENTRIES];
+  uint16_t profileReverseMask;
   int profileEntryCount;
 };
 // Single source of truth for flash-backed settings and the active trickling profile.

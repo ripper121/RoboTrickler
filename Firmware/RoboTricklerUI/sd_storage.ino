@@ -118,6 +118,10 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   config.profileSteps[entryIndex] = profileSteps;
   config.profileRpm[entryIndex] = stepperRpm;
   config.profileMeasurements[entryIndex] = measurements;
+  if (stepper["reverse"] | false)
+  {
+    config.profileReverseMask |= (uint16_t)(1U << entryIndex);
+  }
   config.profileEntryCount++;
   return true;
 }
@@ -334,6 +338,7 @@ bool loadProfile(const char *filename, Config &config)
     config.profileRpm[i] = 0;
     config.profileMeasurements[i] = 0;
   }
+  config.profileReverseMask = 0;
 
   JsonObject general = doc["general"].as<JsonObject>();
   bool hasGeneralMeasurements = false;
@@ -614,6 +619,7 @@ static void populateCalibrationTrickleMap(JsonDocument &doc, float weightPerRev,
     stepper["id"] = 1;
     stepper["steps"] = steps;
     stepper["rpm"] = profileRpm;
+    stepper["reverse"] = false;
   }
 }
 
@@ -760,6 +766,7 @@ bool tuneProfileWeightPerRev(const char *profileName, float weightPerRev)
 
   int existingMeasurements[PROFILE_MAX_ENTRIES];
   bool hasExistingMeasurements[PROFILE_MAX_ENTRIES];
+  bool existingReverse[PROFILE_MAX_ENTRIES];
   int existingMeasurementCount = 0;
   JsonArray existingTrickleMap = doc["trickleMap"].as<JsonArray>();
   if (!existingTrickleMap.isNull())
@@ -772,6 +779,7 @@ bool tuneProfileWeightPerRev(const char *profileName, float weightPerRev)
       }
       hasExistingMeasurements[existingMeasurementCount] = !item["measurements"].isNull();
       existingMeasurements[existingMeasurementCount] = item["measurements"] | 0;
+      existingReverse[existingMeasurementCount] = item["stepper"]["reverse"] | false;
       existingMeasurementCount++;
     }
   }
@@ -803,6 +811,7 @@ bool tuneProfileWeightPerRev(const char *profileName, float weightPerRev)
     {
       item["measurements"] = existingMeasurements[entryIndex];
     }
+    item["stepper"]["reverse"] = existingReverse[entryIndex];
     entryIndex++;
   }
 

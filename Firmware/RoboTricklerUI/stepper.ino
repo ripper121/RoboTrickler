@@ -258,10 +258,8 @@ void initStepper()
   stepperEnableAll(false);
 }
 
-void step(int stepperNum, long steps)
+void step(int stepperNum, long steps, bool reverse)
 {
-  // A positive move always uses the configured direction pin level. Profiles
-  // encode direction through actuator choice, not signed step counts.
   if ((stepperNum < 1) || (stepperNum > 2) || (steps <= 0))
   {
     return;
@@ -283,7 +281,7 @@ void step(int stepperNum, long steps)
   }
 
   stepperEnableAll(true);
-  shiftRegisterWrite(motor->dir, HIGH);
+  shiftRegisterWrite(motor->dir, reverse ? LOW : HIGH);
   uint32_t stepMask = 1UL << motor->step;
 
   // Stream the whole move as one pulse train. i2s_channel_write() blocks while

@@ -93,7 +93,8 @@ window.rtLoadLanguage({
         "diffWeight": "Differenzgewicht",
         "steps": "Schritte",
         "revolutions": "Umdrehungen",
-        "rpm": "Drehzahl"
+        "rpm": "Drehzahl",
+        "reverse": "Richtung umkehren"
       },
       "options": {
         "1": "Stepper 1",

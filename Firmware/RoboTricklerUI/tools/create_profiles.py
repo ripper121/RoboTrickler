@@ -143,6 +143,7 @@ def generate_profile(
                     "id": 1,
                     "steps": steps,
                     "rpm": rpm,
+                    "reverse": False,
                 },
             }
         )

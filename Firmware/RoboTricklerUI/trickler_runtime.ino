@@ -118,7 +118,7 @@ static bool runBulkStepperMove(String &infoText)
   }
 
   setStepperRpm(stepperNum, rpm);
-  step(stepperNum, stepsToMove);
+  step(stepperNum, stepsToMove, false);
   remainingWeight -= dispensedWeight;
   if (remainingWeight < 0.0)
   {
@@ -291,7 +291,8 @@ static bool runProfileStep(bool calibrationProfile, int actualWeightCounter)
   // step. A cached "if changed" guard would go stale after the bulk move (which
   // calls setStepperRpm directly) and could run a fine step at the bulk RPM.
   setStepperRpm(stepperNum, config.profileRpm[profileStep]);
-  step(stepperNum, config.profileSteps[profileStep]);
+  bool reverse = (config.profileReverseMask & (uint16_t)(1U << profileStep)) != 0;
+  step(stepperNum, config.profileSteps[profileStep], reverse);
 
   measurementCount = config.profileMeasurements[profileStep];
 

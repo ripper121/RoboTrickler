@@ -22,6 +22,7 @@
 - Per-stepper calibration changed from `unitsPerThrow` to `weightPerRev`.
 
 ### Added
+- Added optional per-entry `stepper.reverse` direction control to `trickleMap` profiles and the web profile editor.
 - Added `compile_options.h` for compile-time feature switches.
 - Added simultaneous SD and LittleFS mounting with `activeFs` runtime selection.
 - Added Flash-to-SD and SD-to-Flash sync for `config.txt` and profiles, using atomic temporary-file replacement.
