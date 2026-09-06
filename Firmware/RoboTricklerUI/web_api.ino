@@ -196,8 +196,8 @@ void handleSetTarget()
     return;
   }
 
-  // Browser/UI clients pass targetWeight as a query/form argument; the profile
-  // file is updated only when the value actually changes.
+  // Browser clients keep the documented immediate-save behavior. Mark the
+  // in-memory edit dirty first so a failed web save is retried on the next Start.
   for (uint8_t i = 0; i < server.args(); i++)
   {
     if (server.argName(i) == "targetWeight")
@@ -207,6 +207,7 @@ void handleSetTarget()
       {
         if (config.targetWeight != requestedWeight)
         {
+          targetWeightUnsaved = true;
           saveTargetWeight(requestedWeight);
         }
       }

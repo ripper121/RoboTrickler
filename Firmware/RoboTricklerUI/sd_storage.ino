@@ -635,17 +635,6 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
   JsonObject general = doc["general"].as<JsonObject>();
   char targetWeightText[32];
   formatWeight(targetWeightText, sizeof(targetWeightText), targetWeight);
-  if (general["targetWeight"].is<float>())
-  {
-    // Compare at storage precision so repeated Start presses do not rewrite
-    // the file for equivalent values (for example 40 and 40.000).
-    char savedWeightText[32];
-    formatWeight(savedWeightText, sizeof(savedWeightText), general["targetWeight"].as<float>());
-    if (strcmp(savedWeightText, targetWeightText) == 0)
-    {
-      return true;
-    }
-  }
   if (general.isNull())
   {
     general = doc["general"].to<JsonObject>();

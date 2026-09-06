@@ -2,6 +2,7 @@
 
 ## 2.14
 
+
 ### Highlights
 - Updated firmware version from `2.13` to `2.14`.
 - Reworked the trickling model from `unitsPerThrow` to configurable **weight per revolution** (`weightPerRev`).
@@ -36,7 +37,6 @@
 - Added setup-AP Wi-Fi QR-code generation and display using a fixed module buffer.
 - Added asynchronous Wi-Fi scanning for the setup page so scans do not stall the display task.
 - Added localized firmware web status pages backed by SD-hosted `web.firmware.*` language keys.
-- Added a portable naming audit document and project-specific naming conventions.
 
 ### Changed
 - Updated the build/upload tooling for Arduino-ESP32 3.3.11 and its bundled esptool 5.3.1.
@@ -71,6 +71,8 @@
 - Fixed Wi-Fi setup and AP web behavior after Wi-Fi service state changes.
 - Fixed profile tuning measurement handling.
 - Fixed dialog cancellation and confirmation state issues.
+- Fixed Stop so an active I2S/DMA stepper move is cancelled promptly and cannot resume after a quick restart.
+- Fixed repeated Start presses from rewriting an unchanged profile target weight by tracking unsaved target edits, and kept calibration profiles free of unsupported target-weight fields.
 - Fixed SD file and manual content to match the current firmware/web UI.
 
 ### Removed

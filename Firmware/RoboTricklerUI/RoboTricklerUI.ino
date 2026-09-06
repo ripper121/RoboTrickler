@@ -216,6 +216,10 @@ int selectedProfileIndex;
 // per tap) until a run starts; paths where the selection must survive a reboot
 // immediately (profile delete/create) save explicitly and clear this.
 bool profileSelectionUnsaved = false;
+// Set by on-screen/API target edits and cleared only after the active profile
+// has been saved or reloaded. This avoids opening and parsing the profile on
+// every Start just to compare the stored target weight.
+bool targetWeightUnsaved = false;
 // config.totalCount as last written to (or read from) config.txt. Lets
 // stopTrickler() skip the config rewrite when no charge finished since the
 // last save (manual stop without a completed throw).

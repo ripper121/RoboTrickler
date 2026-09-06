@@ -53,7 +53,12 @@ void increaseTargetWeight_event_cb(lv_event_t *e)
   {
     return;
   }
-  config.targetWeight = clampWeight(config.targetWeight + addWeight);
+  float editedWeight = clampWeight(config.targetWeight + addWeight);
+  if (editedWeight != config.targetWeight)
+  {
+    config.targetWeight = editedWeight;
+    targetWeightUnsaved = true;
+  }
   beep("button");
   updateTargetWeightLabel();
 }
@@ -64,7 +69,12 @@ void decreaseTargetWeight_event_cb(lv_event_t *e)
   {
     return;
   }
-  config.targetWeight = clampWeight(config.targetWeight - addWeight);
+  float editedWeight = clampWeight(config.targetWeight - addWeight);
+  if (editedWeight != config.targetWeight)
+  {
+    config.targetWeight = editedWeight;
+    targetWeightUnsaved = true;
+  }
   beep("button");
   updateTargetWeightLabel();
 }

@@ -59,6 +59,7 @@ bool recoverCorruptProfile(String badFilename, bool blocking)
 
     if (ensureCalibrateProfile(config))
     {
+        targetWeightUnsaved = false;
         message += langText("msg_calibration_profile_loaded");
         // Refresh the list from the filesystem so the quarantined/missing
         // profile drops out of the selection and findProfileIndex() searches
@@ -99,6 +100,7 @@ bool loadSelectedProfile(bool blocking)
         // when that succeeds so the caller can continue without a reboot.
         return recoverCorruptProfile(selectedProfileFilename, blocking);
     }
+    targetWeightUnsaved = false;
     return true;
 }
 

@@ -19,13 +19,19 @@ void startTrickler()
         return;
     }
 
-    // Persist only the displayed target weight before reloading the complete
-    // profile. The reload below then guarantees the run uses the saved file.
+    // Persist an edited target before reloading the complete profile. A clean
+    // target skips all profile-file I/O here; failed saves remain dirty so a
+    // later Start can retry without losing the displayed value.
     char requestedProfile[sizeof(config.profileName)];
     strlcpy(requestedProfile, config.profileName, sizeof(requestedProfile));
-    bool targetSaved = saveTargetWeight(config.targetWeight);
+    if (targetWeightUnsaved && !saveTargetWeight(config.targetWeight))
+    {
+        updateTargetWeightLabel();
+        updateDisplayLog(langText("status_saving_target_failed"), true);
+        return;
+    }
 
-    // Always reload the selected profile from the filesystem after saving so
+    // Always reload the selected profile from the filesystem so
     // every runtime value comes from the same on-disk profile.
     if (!loadSelectedProfile(false))
     {
@@ -38,12 +44,6 @@ void startTrickler()
     // error box and require an explicit new Start on the recovered profile.
     if (strcmp(requestedProfile, config.profileName) != 0)
     {
-        return;
-    }
-    if (!targetSaved)
-    {
-        updateTargetWeightLabel();
-        updateDisplayLog(langText("status_saving_target_failed"), true);
         return;
     }
     // The calibration throw is only useful if a powder profile can be created
@@ -136,6 +136,7 @@ bool saveTargetWeight(float weight)
         updateDisplayLog(readError.length() > 0 ? readError : langText("status_saving_target_failed"), true);
         return false;
     }
+    targetWeightUnsaved = false;
     infoText = langText("status_target_saved");
     updateDisplayLog(infoText, true);
     return true;
