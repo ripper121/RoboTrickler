@@ -2,9 +2,7 @@
 
 ## 2.14
 
-
 ### Highlights
-- Updated firmware version from `2.13` to `2.14`.
 - Reworked the trickling model from `unitsPerThrow` to configurable **weight per revolution** (`weightPerRev`).
 - Added device-side Wi-Fi enable/disable, scale-protocol cycling, setup-AP QR code display, and Flash/SD synchronization controls.
 - Reorganized SD/LittleFS packaging and renamed the SD-hosted profile editor to `profile_editor.html`.
