@@ -1,10 +1,14 @@
-float pendingTargetWeight = 0.0;
-
-void beep(BeeperMode requestedMode)
+void beep(const char *beepMode)
 {
-    if ((requestedMode & BEEPER_DONE) && (config.beeperMode & BEEPER_DONE))
+    bool requestDone = strstr(beepMode, "done") != NULL;
+    bool requestButton = strstr(beepMode, "button") != NULL;
+    bool enableDone = strstr(config.beeper, "done") != NULL;
+    bool enableButton = strstr(config.beeper, "button") != NULL;
+    bool enableBoth = strstr(config.beeper, "both") != NULL;
+
+    if (requestDone && (enableDone || enableBoth))
         stepperBeep(500);
-    if ((requestedMode & BEEPER_BUTTON) && (config.beeperMode & BEEPER_BUTTON))
+    if (requestButton && (enableButton || enableBoth))
         stepperBeep(100);
 }
 
@@ -15,15 +19,14 @@ void startTrickler()
         return;
     }
 
-    // Capture any on-screen target-weight edit (the +/- buttons only change
-    // config.targetWeight in RAM) before the reload below overwrites it.
-    bool targetEdited = (pendingTargetWeight != config.targetWeight);
-    float displayTarget = config.targetWeight;
-
-    // Always reload the selected profile from the filesystem on Start so the
-    // run uses the on-disk values even if the file changed since it was picked.
+    // Persist only the displayed target weight before reloading the complete
+    // profile. The reload below then guarantees the run uses the saved file.
     char requestedProfile[sizeof(config.profileName)];
     strlcpy(requestedProfile, config.profileName, sizeof(requestedProfile));
+    bool targetSaved = saveTargetWeight(config.targetWeight);
+
+    // Always reload the selected profile from the filesystem after saving so
+    // every runtime value comes from the same on-disk profile.
     if (!loadSelectedProfile(false))
     {
         return;
@@ -35,6 +38,12 @@ void startTrickler()
     // error box and require an explicit new Start on the recovered profile.
     if (strcmp(requestedProfile, config.profileName) != 0)
     {
+        return;
+    }
+    if (!targetSaved)
+    {
+        updateTargetWeightLabel();
+        updateDisplayLog(langText("status_saving_target_failed"), true);
         return;
     }
     // The calibration throw is only useful if a powder profile can be created
@@ -65,16 +74,6 @@ void startTrickler()
 
     String selectedText = String(langText("placeholder_profile")) + ": " + config.profileName + langText("status_profile_selected_suffix");
     updateDisplayLog(selectedText);
-
-    // Honor an on-screen target edit made since the profile was picked: re-apply
-    // it over the just-reloaded profile value and persist it. saveTargetWeight()
-    // also resyncs pendingTargetWeight, so no separate assignment is needed here.
-    if (targetEdited && displayTarget != config.targetWeight)
-    {
-        String infoText = langText("status_saving_target");
-        updateDisplayLog(infoText, true);
-        saveTargetWeight(displayTarget);
-    }
 
     String infoText = langText("status_starting_trickler");
     updateDisplayLog(infoText, true);
@@ -112,18 +111,20 @@ void startMeasurement()
     activeProfileStep = -1;
     measurementCount = config.profileGeneralMeasurements;
     firstProfileMovePending = true;
+    setStepperRunEnabled(true);
     setTricklerState(TRICKLER_RUNNING);
-    beep(BEEPER_BUTTON);
+    beep("button");
 }
 
 void stopMeasurement()
 {
+    setStepperRunEnabled(false);
     activeProfileStep = -1;
     setTricklerState(TRICKLER_IDLE);
-    beep(BEEPER_BUTTON);
+    beep("button");
 }
 
-void saveTargetWeight(float weight)
+bool saveTargetWeight(float weight)
 {
     config.targetWeight = clampWeight(weight);
     updateTargetWeightLabel();
@@ -133,11 +134,10 @@ void saveTargetWeight(float weight)
     {
         String readError = getSdReadError();
         updateDisplayLog(readError.length() > 0 ? readError : langText("status_saving_target_failed"), true);
+        return false;
     }
-    else
-    {
-        infoText = langText("status_target_saved");
-        updateDisplayLog(infoText, true);
-    }
-    pendingTargetWeight = config.targetWeight;
+    infoText = langText("status_target_saved");
+    updateDisplayLog(infoText, true);
+    return true;
 }
+

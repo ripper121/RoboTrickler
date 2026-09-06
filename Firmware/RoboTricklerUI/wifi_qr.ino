@@ -7,9 +7,9 @@
 static lv_obj_t *wifiQrObject = NULL;
 static lv_obj_t *wifiQrHintLabel = NULL;
 static uint8_t wifiQrModules[WIFI_QR_MODULE_BYTES];
-static uint8_t *wifiQrGenerationModules = NULL;
+static uint8_t wifiQrPendingModules[WIFI_QR_MODULE_BYTES];
 static uint8_t wifiQrModuleCount = 0;
-static uint8_t wifiQrGenerationModuleCount = 0;
+static uint8_t wifiQrPendingModuleCount = 0;
 static bool wifiQrDismissed = false;
 
 static bool wifiQrModuleIsSet(const uint8_t *modules, uint8_t moduleCount, int x, int y)
@@ -26,14 +26,14 @@ static bool wifiQrModuleIsSet(const uint8_t *modules, uint8_t moduleCount, int x
 static void storeWifiQrModules(esp_qrcode_handle_t qrcode)
 {
   int size = esp_qrcode_get_size(qrcode);
-  if ((wifiQrGenerationModules == NULL) || (size <= 0) || (size > WIFI_QR_MAX_MODULES))
+  if ((size <= 0) || (size > WIFI_QR_MAX_MODULES))
   {
-    wifiQrGenerationModuleCount = 0;
+    wifiQrPendingModuleCount = 0;
     return;
   }
 
-  memset(wifiQrGenerationModules, 0, WIFI_QR_MODULE_BYTES);
-  wifiQrGenerationModuleCount = (uint8_t)size;
+  memset(wifiQrPendingModules, 0, sizeof(wifiQrPendingModules));
+  wifiQrPendingModuleCount = (uint8_t)size;
   for (int y = 0; y < size; y++)
   {
     for (int x = 0; x < size; x++)
@@ -41,7 +41,7 @@ static void storeWifiQrModules(esp_qrcode_handle_t qrcode)
       if (esp_qrcode_get_module(qrcode, x, y))
       {
         size_t bitIndex = ((size_t)y * size) + x;
-        wifiQrGenerationModules[bitIndex >> 3] |= 1U << (bitIndex & 7);
+        wifiQrPendingModules[bitIndex >> 3] |= 1U << (bitIndex & 7);
       }
     }
   }
@@ -223,23 +223,12 @@ bool generateWifiSetupQrCode(const char *ssid, const char *password)
     return false;
   }
 
-  if (wifiQrGenerationModules != NULL)
-  {
-    return false;
-  }
-
-  uint8_t generatedModules[WIFI_QR_MODULE_BYTES] = {};
-  wifiQrGenerationModules = generatedModules;
-  wifiQrGenerationModuleCount = 0;
+  wifiQrPendingModuleCount = 0;
   esp_qrcode_config_t qrConfig = ESP_QRCODE_CONFIG_DEFAULT();
   qrConfig.display_func = storeWifiQrModules;
   qrConfig.max_qrcode_version = WIFI_QR_MAX_VERSION;
   qrConfig.qrcode_ecc_level = ESP_QRCODE_ECC_LOW;
-  esp_err_t result = esp_qrcode_generate(&qrConfig, payload);
-  uint8_t generatedModuleCount = wifiQrGenerationModuleCount;
-  wifiQrGenerationModules = NULL;
-  wifiQrGenerationModuleCount = 0;
-  if ((result != ESP_OK) || (generatedModuleCount == 0))
+  if ((esp_qrcode_generate(&qrConfig, payload) != ESP_OK) || (wifiQrPendingModuleCount == 0))
   {
     return false;
   }
@@ -248,8 +237,8 @@ bool generateWifiSetupQrCode(const char *ssid, const char *password)
   {
     return false;
   }
-  memcpy(wifiQrModules, generatedModules, sizeof(wifiQrModules));
-  wifiQrModuleCount = generatedModuleCount;
+  memcpy(wifiQrModules, wifiQrPendingModules, sizeof(wifiQrModules));
+  wifiQrModuleCount = wifiQrPendingModuleCount;
   wifiQrDismissed = false;
   lvglUnlock();
   updateWifiSetupQrCode();

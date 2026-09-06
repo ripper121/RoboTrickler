@@ -84,8 +84,6 @@ void handleWifiSave()
 bool loadWebLang(JsonDocument &doc)
 {
   String language = normalizedLanguageCode();
-  JsonDocument filter;
-  filter["web"]["firmware"] = true;
 
   String candidates[] = {
       "/system/lang/" + language + ".json",
@@ -102,8 +100,7 @@ bool loadWebLang(JsonDocument &doc)
     {
       continue;
     }
-    DeserializationError error = deserializeJson(
-        doc, file, DeserializationOption::Filter(filter));
+    DeserializationError error = deserializeJson(doc, file);
     file.close();
     if (!error && doc["web"]["firmware"].is<JsonObject>())
     {
@@ -251,20 +248,17 @@ void handleGetLanguage()
 
 void handleGetProfileList()
 {
-  // Keep this legacy object shape for the filesystem-hosted pages: {"0":"name", ...}.
   // Stream the entries instead of concatenating one growing String in heap.
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
   server.send(200, "text/json", "");
-  server.sendContent("{");
+  server.sendContent("[");
   for (int i = 0; i < profileListCount; i++)
   {
-    char prefix[16];
-    snprintf(prefix, sizeof(prefix), "%s\"%d\":\"", (i > 0) ? "," : "", i);
-    server.sendContent(prefix);
+    server.sendContent((i > 0) ? ",\"" : "\"");
     server.sendContent(jsonEscape(String(profileList[i])));
     server.sendContent("\"");
   }
-  server.sendContent("}");
+  server.sendContent("]");
 }
 
 void handleStart()
@@ -280,3 +274,4 @@ void handleStop()
   stopTrickler();
   server.send(200, "text/html", webStatusPage("stopped", "Stopped..."));
 }
+

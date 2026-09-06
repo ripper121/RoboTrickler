@@ -126,11 +126,8 @@ void initSetup()
     setLabelText(ui_LabelProfile, config.profileName);
     updateProfileActionButtonVisibility();
 
-    pendingTargetWeight = config.targetWeight;
-
     infoText = langText("status_ready");
     updateDisplayLog(infoText, true);
 
     DEBUG_PRINTLN("Setup done.");
 }
-

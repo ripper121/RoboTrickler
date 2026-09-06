@@ -67,11 +67,46 @@
       const calibrationStepperProperties = [
          'id',
          'revolutions',
-         'rpm'
+         'rpm',
+         'reverse'
       ];
       const PROFILE_MAX_ENTRIES = 16;
       const WEIGHT_MAX = 500.000;
       const CALIBRATE_PROFILE_NAME = 'calibrate';
+
+      function requireExactObject(value, requiredKeys, name) {
+         if (!value || typeof value !== 'object' || Array.isArray(value)) {
+            throw new Error(name + ' must be an object');
+         }
+         const actualKeys = Object.keys(value);
+         if (actualKeys.length !== requiredKeys.length ||
+             !requiredKeys.every(key => Object.prototype.hasOwnProperty.call(value, key))) {
+            throw new Error(name + ' does not match the current schema');
+         }
+         return value;
+      }
+
+      function requireCurrentCalibrationProfile(jsonData) {
+         requireExactObject(jsonData, ['measurements', 'stepper'], 'Calibration profile');
+         requireExactObject(jsonData.stepper, ['id', 'revolutions', 'rpm', 'reverse'], 'Calibration stepper');
+      }
+
+      function requireCurrentNormalProfile(jsonData) {
+         requireExactObject(jsonData, ['general', 'stepper', 'trickleMap'], 'Profile');
+         requireExactObject(jsonData.general, generalProperties, 'general');
+         requireExactObject(jsonData.stepper, ['1', '2'], 'stepper');
+         ['1', '2'].forEach(function (stepperId) {
+            requireExactObject(jsonData.stepper[stepperId], stepperProperties, 'stepper.' + stepperId);
+         });
+         if (!Array.isArray(jsonData.trickleMap) || jsonData.trickleMap.length < 1 ||
+             jsonData.trickleMap.length > PROFILE_MAX_ENTRIES) {
+            throw new Error('trickleMap must contain 1 to ' + PROFILE_MAX_ENTRIES + ' entries');
+         }
+         jsonData.trickleMap.forEach(function (entry, index) {
+            requireExactObject(entry, ['diffWeight', 'measurements', 'stepper'], 'trickleMap.' + index);
+            requireExactObject(entry.stepper, stepperStepProperties, 'trickleMap.' + index + '.stepper');
+         });
+      }
 
       function cleanNumber(value, fallback) {
          const number = parseFloat(value);
@@ -110,9 +145,11 @@
             throw new Error('Profile must be a JSON object');
          }
          if (Array.isArray(jsonData.trickleMap)) {
+            requireCurrentNormalProfile(jsonData);
             return cleanNewProfileJSON(jsonData);
          }
          if (isCalibrationProfileJSON(jsonData)) {
+            requireCurrentCalibrationProfile(jsonData);
             return cleanCalibrationProfileJSON(jsonData);
          }
          throw new Error('Profile must contain trickleMap array or calibration fields');
@@ -125,7 +162,8 @@
             stepper: {
                id: cleanStepper(stepper.id),
                revolutions: Math.max(0.001, cleanNumber(stepper.revolutions, 100)),
-               rpm: cleanInteger(stepper.rpm, 200, 1)
+               rpm: cleanInteger(stepper.rpm, 200, 1),
+               reverse: cleanBoolean(stepper.reverse, false)
             }
          };
       }
@@ -531,7 +569,7 @@
                while (dropdown.options.length > 1) {
                   dropdown.remove(1);
                }
-               Object.values(data).forEach(function (name) {
+               data.forEach(function (name) {
                   var option = document.createElement('option');
                   option.value = name;
                   option.textContent = name;

@@ -35,7 +35,7 @@ lv_obj_clear_flag( ui_PanelTarget, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_LabelTarget = lv_label_create(ui_PanelTarget);
 lv_obj_set_x( ui_LabelTarget, 0 );
-lv_obj_set_y( ui_LabelTarget, -4 );
+lv_obj_set_y( ui_LabelTarget, 0 );
 lv_obj_set_align( ui_LabelTarget, LV_ALIGN_CENTER );
 lv_label_set_long_mode(ui_LabelTarget, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelTarget,"0.000");
@@ -114,7 +114,7 @@ lv_obj_clear_flag( ui_PanelTricklerWeight, LV_OBJ_FLAG_SCROLLABLE );    /// Flag
 
 ui_LabelTricklerWeight = lv_label_create(ui_PanelTricklerWeight);
 lv_obj_set_x( ui_LabelTricklerWeight, 0 );
-lv_obj_set_y( ui_LabelTricklerWeight, -4 );
+lv_obj_set_y( ui_LabelTricklerWeight, 0 );
 lv_obj_set_align( ui_LabelTricklerWeight, LV_ALIGN_CENTER );
 lv_label_set_long_mode(ui_LabelTricklerWeight, LV_LABEL_LONG_CLIP);
 lv_label_set_text_static(ui_LabelTricklerWeight,"-.-");

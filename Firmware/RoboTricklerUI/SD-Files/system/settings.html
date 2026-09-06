@@ -91,7 +91,9 @@
 
                 <label for="trickle_counter" data-i18n="config.totalCounter">Trickle counter:</label>
                 <input type="checkbox" id="trickle_counter" name="trickle_counter"><br>
-                <input type="hidden" id="trickle_count" name="trickle_count" value="0">
+
+                <label for="trickle_count" data-i18n="config.totalCount">Counter value:</label>
+                <input type="number" id="trickle_count" name="trickle_count" value="0" min="0" step="1"><br>
             </fieldset>
 
             <fieldset>
@@ -116,6 +118,18 @@
         const allowedBeepers = ['done', 'button', 'both', 'off'];
         const allowedLanguages = ['en', 'de'];
 
+        function requireExactObject(value, requiredKeys, name) {
+            if (!value || typeof value !== 'object' || Array.isArray(value)) {
+                throw new Error(name + ' must be an object');
+            }
+            const actualKeys = Object.keys(value);
+            if (actualKeys.length !== requiredKeys.length ||
+                !requiredKeys.every(key => Object.prototype.hasOwnProperty.call(value, key))) {
+                throw new Error(name + ' does not match the current schema');
+            }
+            return value;
+        }
+
         function cleanText(value, fallback, maxLength) {
             var text = value === undefined || value === null ? fallback : String(value);
             return text.substring(0, maxLength);
@@ -135,29 +149,35 @@
         }
 
         function cleanConfigJSON(jsonObject) {
-            var scaleProtocol = jsonObject.scale && Object.prototype.hasOwnProperty.call(jsonObject.scale, 'protocol') ? jsonObject.scale.protocol : 'GG';
+            jsonObject = requireExactObject(jsonObject,
+                ['wifi', 'scale', 'stepper', 'activeProfile', 'beeper', 'language', 'totalCounter', 'firmwareUpdate'], 'Config');
+            var wifi = requireExactObject(jsonObject.wifi,
+                ['enabled', 'ssid', 'psk', 'ipStatic', 'ipGateway', 'ipSubnet', 'ipDns'], 'wifi');
+            var scale = requireExactObject(jsonObject.scale,
+                ['protocol', 'customCode', 'baud'], 'scale');
+            var stepper = requireExactObject(jsonObject.stepper, ['stepsPerRev'], 'stepper');
+            var totalCounter = requireExactObject(jsonObject.totalCounter, ['enable', 'count'], 'totalCounter');
+            var firmwareUpdate = requireExactObject(jsonObject.firmwareUpdate, ['check'], 'firmwareUpdate');
+            var scaleProtocol = scale.protocol;
             if (!allowedScaleProtocols.includes(scaleProtocol)) {
                 scaleProtocol = 'GG';
             }
-            var firmwareUpdate = jsonObject.firmwareUpdate || {};
-            var totalCounter = jsonObject.totalCounter || {};
-            var stepper = jsonObject.stepper || {};
             var profileName = cleanText(jsonObject.activeProfile || 'calibrate', 'calibrate', 31).trim();
-            var customCode = scaleProtocol === 'CUSTOM' ? cleanText(jsonObject.scale && jsonObject.scale.customCode, '', 31) : '';
+            var customCode = scaleProtocol === 'CUSTOM' ? cleanText(scale.customCode, '', 31) : '';
             return {
                 wifi: {
-                    enabled: !jsonObject.wifi || jsonObject.wifi.enabled !== false,
-                    ssid: cleanText(jsonObject.wifi && jsonObject.wifi.ssid, '', 63),
-                    psk: cleanText(jsonObject.wifi && jsonObject.wifi.psk, '', 63),
-                    ipStatic: cleanText(jsonObject.wifi && jsonObject.wifi.ipStatic, '', 15),
-                    ipGateway: cleanText(jsonObject.wifi && jsonObject.wifi.ipGateway, '', 15),
-                    ipSubnet: cleanText(jsonObject.wifi && jsonObject.wifi.ipSubnet, '', 15),
-                    ipDns: cleanText(jsonObject.wifi && jsonObject.wifi.ipDns, '', 15)
+                    enabled: wifi.enabled !== false,
+                    ssid: cleanText(wifi.ssid, '', 63),
+                    psk: cleanText(wifi.psk, '', 63),
+                    ipStatic: cleanText(wifi.ipStatic, '', 15),
+                    ipGateway: cleanText(wifi.ipGateway, '', 15),
+                    ipSubnet: cleanText(wifi.ipSubnet, '', 15),
+                    ipDns: cleanText(wifi.ipDns, '', 15)
                 },
                 scale: {
                     protocol: scaleProtocol,
                     customCode: customCode,
-                    baud: (jsonObject.scale && jsonObject.scale.baud) || 9600
+                    baud: scale.baud || 9600
                 },
                 stepper: {
                     stepsPerRev: cleanStepsPerRev(stepper.stepsPerRev)

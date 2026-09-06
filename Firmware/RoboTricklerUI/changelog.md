@@ -20,9 +20,12 @@
 - Profiles now use `general`, a `stepper` map keyed by `"1"`/`"2"`, and `trickleMap[]` entries with `diffWeight`, `measurements`, and nested stepper settings.
 - Per-stepper `speed` fields were renamed to `rpm`.
 - Per-stepper calibration changed from `unitsPerThrow` to `weightPerRev`.
+- Config and profile readers now require the exact current schemas; incomplete, extended, and legacy documents are rejected.
+- `/getProfileList` now returns a JSON array instead of the legacy numeric-key object.
 
 ### Added
-- Added optional per-entry `stepper.reverse` direction control to `trickleMap` profiles and the web profile editor.
+- Added on-device tuning of each `trickleMap[].stepper.steps` value using the same per-entry flow as measurement tuning.
+- Added required per-entry `stepper.reverse` direction control to `trickleMap` profiles and the web profile editor.
 - Added `compile_options.h` for compile-time feature switches.
 - Added simultaneous SD and LittleFS mounting with `activeFs` runtime selection.
 - Added Flash-to-SD and SD-to-Flash sync for `config.txt` and profiles, using atomic temporary-file replacement.
@@ -36,6 +39,9 @@
 - Added a portable naming audit document and project-specific naming conventions.
 
 ### Changed
+- Updated the build/upload tooling for Arduino-ESP32 3.3.11 and its bundled esptool 5.3.1.
+- Save now commits all profile tuning modes together; explicit step edits take precedence over weight/rev recalculation, with existing map entries preserved.
+- Unified profile tuning into one shared dialog with left/right arrows to cycle weight/rev, measurements, and steps.
 - Renamed source files to the current naming convention, including `pindef.h` to `hardware_pins.h`, `rs232.ino` to `scale_rs232.ino`, `sd_config.ino` to `sd_storage.ino`, and `update.ino` to `ota_update.ino`.
 - Split filesystem mounting and sync logic into `filesystem_mount.ino` and `filesystem_sync.ino`.
 - Reorganized SD assets into `SD-Files`, `SD-Files-Gz`, `SD-Files-LittleFS`, and `SD-Files-Legacy`.

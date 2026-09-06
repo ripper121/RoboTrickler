@@ -59,6 +59,7 @@ static const LangFallbackEntry LANG_FALLBACKS[] = {
     {"msg_config_default", "Default Config generated."},
     {"msg_profile_corrupted", "Profile Corrupted / Not Found:\n\n"},
     {"msg_calibration_profile_loaded", "\n\nCalibration Profile Loaded."},
+    {"msg_calibration_profile_recovery_failed", "\n\nCalibration Profile Recovery Failed."},
     {"msg_unknown_config_read_error", "Unknown config read error"},
 #if ENABLE_LITTLEFS
     {"msg_sd_card_not_connected", "SD card not connected!\n\nInternal Flash will be used instead!"},
@@ -117,10 +118,11 @@ static const LangFallbackEntry LANG_FALLBACKS[] = {
     {"status_sd_update_complete", "SD card update complete. Rebooting..."},
     {"err_incomplete_profile_entry", "Incomplete profile entry:\n"},
     {"err_entry", "\nEntry: "},
-    {"err_required_profile_entry", "\nRequired: diffWeight, stepper, steps, rpm, measurements"},
+    {"err_required_profile_entry", "\nRequired: diffWeight, measurements, stepper.id, steps, rpm, reverse"},
     {"err_invalid_profile_values", "Invalid profile values:\n"},
     {"err_calibration_profile_incomplete", "Calibration profile is incomplete:\n"},
-    {"err_required_calibration_profile", "\nRequired: stepper, steps, rpm"},
+    {"err_required_calibration_profile", "\nRequired: measurements, stepper.id, revolutions, rpm, reverse"},
+    {"err_profile_schema_invalid", "Profile does not match the current schema:\n"},
     {"err_profile_missing_map", "Profile has no trickleMap:\n"},
     {"err_profile_file_not_found", "Profile file not found:\n"},
     {"err_could_not_open_profile_file", "Could not open profile file:\n"},
@@ -129,6 +131,7 @@ static const LangFallbackEntry LANG_FALLBACKS[] = {
     {"err_profile_has_no_entries", "Profile has no entries:\n"},
     {"err_could_not_open_config_file", "Could not open config file:\n"},
     {"err_config_json_parse_failed", "Config JSON parse failed:\n"},
+    {"err_config_schema_invalid", "Config does not match the current schema:\n"},
     {"err_could_not_write_profile_file", "Could not write profile file:\n"},
     {"err_could_not_replace_profile_file", "Could not replace profile file:\n"},
     {"msg_cannot_delete_calibrate_profile", "Cannot delete calibrate profile"},
@@ -147,6 +150,7 @@ static const LangFallbackEntry LANG_FALLBACKS[] = {
     {"msg_profile_tuned", "Profile tuned: "},
     {"msg_tune_choose_title", "Tune profile"},
     {"msg_tune_measurements_title", "Measurements"},
+    {"msg_tune_steps_title", "Steps"},
 };
 
 static const char *languageFallback(const char *key)
@@ -242,12 +246,9 @@ bool loadLanguage()
     return false;
   }
 
-  // Keep only display strings in the long-lived document so any unrelated
-  // language-file sections are discarded instead of being retained in heap.
-  JsonDocument filter;
-  filter["ui"] = true;
-  DeserializationError error = deserializeJson(
-      activeUiLangDoc, file, DeserializationOption::Filter(filter));
+  // Parse straight from the file stream. ArduinoJson copies keys/values into the
+  // document's own pool, so there is no need to keep the raw JSON text in heap.
+  DeserializationError error = deserializeJson(activeUiLangDoc, file);
   file.close();
   if (error || !activeUiLangDoc["ui"].is<JsonObject>())
   {

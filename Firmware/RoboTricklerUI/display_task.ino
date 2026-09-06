@@ -15,7 +15,7 @@ void lvglUnlock()
   }
 }
 
-void lvglDisplayTask(void *parg)
+IRAM_ATTR void lvglDisplayTask(void *parg)
 {
     // LVGL and the web server both need frequent service calls. Keeping them on
     // one pinned task avoids touching LVGL from multiple cores at once.
@@ -40,7 +40,7 @@ void lvglDisplayTask(void *parg)
     }
 }
 
-void initDisplayTask(void)
+IRAM_ATTR void initDisplayTask(void)
 {
     if (lvglMutex == NULL)
     {

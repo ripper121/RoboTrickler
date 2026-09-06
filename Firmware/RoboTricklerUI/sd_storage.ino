@@ -17,54 +17,17 @@ static const char *profileStepperName(byte stepperNumber)
   return stepperNumber == 2 ? "2" : "1";
 }
 
-static BeeperMode beeperModeFromName(const char *name)
-{
-  if (name == NULL)
-  {
-    return BEEPER_NONE;
-  }
-  if (strstr(name, "both") != NULL)
-  {
-    return BEEPER_BOTH;
-  }
-
-  uint8_t mode = BEEPER_NONE;
-  if (strstr(name, "done") != NULL)
-  {
-    mode |= BEEPER_DONE;
-  }
-  if (strstr(name, "button") != NULL)
-  {
-    mode |= BEEPER_BUTTON;
-  }
-  return (BeeperMode)mode;
-}
-
-static const char *beeperModeName(BeeperMode mode)
-{
-  switch (mode)
-  {
-    case BEEPER_DONE:
-      return "done";
-    case BEEPER_BUTTON:
-      return "button";
-    case BEEPER_BOTH:
-      return "both";
-    default:
-      return "off";
-  }
-}
-
 static bool hasRequiredProfileFields(JsonObject profileEntry)
 {
   JsonObject stepper = profileEntry["stepper"].as<JsonObject>();
-  return !profileEntry.isNull() &&
+  return !profileEntry.isNull() && (profileEntry.size() == 3) &&
          !profileEntry["diffWeight"].isNull() &&
-         !stepper.isNull() &&
+         !profileEntry["measurements"].isNull() &&
+         !stepper.isNull() && (stepper.size() == 4) &&
          !stepper["id"].isNull() &&
          !stepper["steps"].isNull() &&
          !stepper["rpm"].isNull() &&
-         !profileEntry["measurements"].isNull();
+         !stepper["reverse"].isNull();
 }
 
 static bool hasCalibrationProfileFields(JsonObject profileEntry)
@@ -73,11 +36,75 @@ static bool hasCalibrationProfileFields(JsonObject profileEntry)
   // motor revolutions (hardware-independent) instead of raw steps; steps are
   // derived from config.motorStepsPerRev when the entry is loaded.
   JsonObject stepper = profileEntry["stepper"].as<JsonObject>();
-  return !profileEntry.isNull() &&
-         !stepper.isNull() &&
+  return !profileEntry.isNull() && (profileEntry.size() == 2) &&
+         !profileEntry["measurements"].isNull() &&
+         !stepper.isNull() && (stepper.size() == 4) &&
          !stepper["id"].isNull() &&
          !stepper["revolutions"].isNull() &&
-         !stepper["rpm"].isNull();
+         !stepper["rpm"].isNull() &&
+         !stepper["reverse"].isNull();
+}
+
+static bool hasRequiredNormalProfileFields(JsonObject profile)
+{
+  JsonObject general = profile["general"].as<JsonObject>();
+  JsonObject stepperMap = profile["stepper"].as<JsonObject>();
+  JsonObject stepper1 = stepperMap["1"].as<JsonObject>();
+  JsonObject stepper2 = stepperMap["2"].as<JsonObject>();
+  JsonArray trickleMap = profile["trickleMap"].as<JsonArray>();
+  return !profile.isNull() && (profile.size() == 3) &&
+         !general.isNull() && (general.size() == 8) &&
+         !general["targetWeight"].isNull() &&
+         !general["tolerance"].isNull() &&
+         !general["alarmThreshold"].isNull() &&
+         !general["weightGap"].isNull() &&
+         !general["bulkStepper"].isNull() &&
+         !general["startAtZero"].isNull() &&
+         !general["sessionCounter"].isNull() &&
+         !general["measurements"].isNull() &&
+         !stepperMap.isNull() && (stepperMap.size() == 2) &&
+         !stepper1.isNull() && (stepper1.size() == 3) &&
+         !stepper1["enabled"].isNull() &&
+         !stepper1["weightPerRev"].isNull() &&
+         !stepper1["rpm"].isNull() &&
+         !stepper2.isNull() && (stepper2.size() == 3) &&
+         !stepper2["enabled"].isNull() &&
+         !stepper2["weightPerRev"].isNull() &&
+         !stepper2["rpm"].isNull() &&
+         !trickleMap.isNull() && (trickleMap.size() > 0) &&
+         (trickleMap.size() <= PROFILE_MAX_ENTRIES);
+}
+
+static bool hasRequiredConfigurationFields(JsonObject doc)
+{
+  JsonObject wifi = doc["wifi"].as<JsonObject>();
+  JsonObject scale = doc["scale"].as<JsonObject>();
+  JsonObject stepper = doc["stepper"].as<JsonObject>();
+  JsonObject totalCounter = doc["totalCounter"].as<JsonObject>();
+  JsonObject firmwareUpdate = doc["firmwareUpdate"].as<JsonObject>();
+  return !doc.isNull() && (doc.size() == 8) &&
+         !wifi.isNull() && (wifi.size() == 7) &&
+         !wifi["enabled"].isNull() &&
+         !wifi["ssid"].isNull() &&
+         !wifi["psk"].isNull() &&
+         !wifi["ipStatic"].isNull() &&
+         !wifi["ipGateway"].isNull() &&
+         !wifi["ipSubnet"].isNull() &&
+         !wifi["ipDns"].isNull() &&
+         !scale.isNull() && (scale.size() == 3) &&
+         !scale["protocol"].isNull() &&
+         !scale["customCode"].isNull() &&
+         !scale["baud"].isNull() &&
+         !stepper.isNull() && (stepper.size() == 1) &&
+         !stepper["stepsPerRev"].isNull() &&
+         !doc["activeProfile"].isNull() &&
+         !doc["beeper"].isNull() &&
+         !doc["language"].isNull() &&
+         !totalCounter.isNull() && (totalCounter.size() == 2) &&
+         !totalCounter["enable"].isNull() &&
+         !totalCounter["count"].isNull() &&
+         !firmwareUpdate.isNull() && (firmwareUpdate.size() == 1) &&
+         !firmwareUpdate["check"].isNull();
 }
 
 static bool isCalibrationProfileFile(const char *filename)
@@ -100,17 +127,17 @@ static String sdProfileEntryError(const char *key, const char *filename, int ite
 }
 
 static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char *filename,
-                             Config *targetConfig, int motorStepsPerRev, int &entryCount,
-                             bool showErrors, bool allowCalibrationDefaults)
+                             Config *destination, int motorStepsPerRev, int &entryCount,
+                             bool showErrors, bool calibrationEntry)
 {
-  // Calibration profiles can omit diffWeight and measurements; normal profiles
-  // must provide the full map used by the automatic trickling loop.
-  bool hasRequiredFields = hasRequiredProfileFields(profileEntry);
-  if (!hasRequiredFields && (!allowCalibrationDefaults || !hasCalibrationProfileFields(profileEntry)))
+  bool hasRequiredFields = calibrationEntry ? hasCalibrationProfileFields(profileEntry)
+                                            : hasRequiredProfileFields(profileEntry);
+  if (!hasRequiredFields)
   {
     if (showErrors)
     {
-      setSdReadError(sdProfileEntryError("err_incomplete_profile_entry", filename, itemNumber) + langText("err_required_profile_entry"));
+      const char *errorKey = calibrationEntry ? "err_required_calibration_profile" : "err_required_profile_entry";
+      setSdReadError(sdProfileEntryError("err_incomplete_profile_entry", filename, itemNumber) + langText(errorKey));
       DEBUG_PRINT("Incomplete profile entry: ");
       DEBUG_PRINTLN(itemNumber);
     }
@@ -121,11 +148,10 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   byte stepperNumber = profileStepperNumber(stepper["id"] | 1);
   int stepperRpm = stepper["rpm"] | 200;
   int measurements = profileEntry["measurements"] | 5;
-  float profileWeight = profileEntry["diffWeight"] | 0.0;
+  float profileWeight = calibrationEntry ? 0.0 : (profileEntry["diffWeight"] | 0.0);
   // The calibration profile is special: it stores its throw as motor
   // revolutions, which we convert to steps using the configured steps-per-rev.
   // Normal map entries continue to carry raw steps.
-  bool calibrationEntry = allowCalibrationDefaults && !hasRequiredFields;
   long profileSteps;
   if (calibrationEntry)
   {
@@ -153,64 +179,67 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   }
 
   int entryIndex = entryCount;
-  if (targetConfig != NULL)
+  if (destination != NULL)
   {
-    targetConfig->profileStepper[entryIndex] = stepperNumber;
-    targetConfig->profileDiffWeight[entryIndex] = profileWeight;
-    targetConfig->profileSteps[entryIndex] = profileSteps;
-    targetConfig->profileRpm[entryIndex] = stepperRpm;
-    targetConfig->profileMeasurements[entryIndex] = measurements;
+    destination->profileStepper[entryIndex] = stepperNumber;
+    destination->profileDiffWeight[entryIndex] = profileWeight;
+    destination->profileSteps[entryIndex] = profileSteps;
+    destination->profileRpm[entryIndex] = stepperRpm;
+    destination->profileMeasurements[entryIndex] = measurements;
     if (stepper["reverse"] | false)
     {
-      targetConfig->profileReverseMask |= (uint16_t)(1U << entryIndex);
+      destination->profileReverseMask |= (uint16_t)(1U << entryIndex);
     }
   }
   entryCount++;
+  if (destination != NULL)
+  {
+    destination->profileEntryCount = entryCount;
+  }
   return true;
 }
 
-static bool loadProfileEntries(JsonObject doc, const char *filename, Config *targetConfig,
-                               int motorStepsPerRev, int &entryCount, bool showErrors)
+static bool loadProfileEntries(JsonObject doc, const char *filename, Config *destination,
+                               int motorStepsPerRev, bool showErrors)
 {
-  bool allowCalibrationDefaults = isCalibrationProfileFile(filename);
-  JsonArray trickleMap = doc["trickleMap"].as<JsonArray>();
-  if (!trickleMap.isNull())
+  int entryCount = destination != NULL ? destination->profileEntryCount : 0;
+  if (isCalibrationProfileFile(filename))
   {
-    int itemNumber = 1;
-    for (JsonVariant item : trickleMap)
+    if (!hasCalibrationProfileFields(doc))
     {
-      if (!loadProfileEntry(item.as<JsonObject>(), itemNumber, filename, targetConfig,
-                            motorStepsPerRev, entryCount, showErrors, allowCalibrationDefaults))
+      if (showErrors)
       {
-        return false;
+        setSdReadError(sdFilenameError("err_calibration_profile_incomplete", filename) + langText("err_required_calibration_profile"));
+        DEBUG_PRINTLN("Calibration profile does not match the current schema");
       }
-      itemNumber++;
+      return false;
     }
-    return entryCount > 0;
+    return loadProfileEntry(doc, 1, filename, destination, motorStepsPerRev,
+                            entryCount, showErrors, true);
   }
 
-  if (allowCalibrationDefaults)
+  if (!hasRequiredNormalProfileFields(doc))
   {
-    if (hasCalibrationProfileFields(doc))
-    {
-      return loadProfileEntry(doc, 1, filename, targetConfig,
-                              motorStepsPerRev, entryCount, showErrors, true);
-    }
-
     if (showErrors)
     {
-      setSdReadError(sdFilenameError("err_calibration_profile_incomplete", filename) + langText("err_required_calibration_profile"));
-      DEBUG_PRINTLN("Calibration profile is incomplete");
+      setSdReadError(sdFilenameError("err_profile_schema_invalid", filename));
+      DEBUG_PRINTLN("Profile does not match the current schema");
     }
     return false;
   }
 
-  if (showErrors)
+  JsonArray trickleMap = doc["trickleMap"].as<JsonArray>();
+  int itemNumber = 1;
+  for (JsonVariant item : trickleMap)
   {
-    setSdReadError(sdFilenameError("err_profile_missing_map", filename));
-    DEBUG_PRINTLN("Profile has no trickleMap");
+    if (!loadProfileEntry(item.as<JsonObject>(), itemNumber, filename, destination,
+                          motorStepsPerRev, entryCount, showErrors, false))
+    {
+      return false;
+    }
+    itemNumber++;
   }
-  return false;
+  return entryCount > 0;
 }
 
 String profileFilename(const char *profileName)
@@ -239,13 +268,13 @@ void setDefaultConfiguration(Config &config)
   strlcpy(config.wifiIpGateway, "", sizeof(config.wifiIpGateway));
   strlcpy(config.wifiIpSubnet, "", sizeof(config.wifiIpSubnet));
   strlcpy(config.wifiIpDns, "", sizeof(config.wifiIpDns));
-  config.scaleProtocol = SCALE_PROTOCOL_GG;
+  strlcpy(config.scaleProtocol, "GG", sizeof(config.scaleProtocol));
   strlcpy(config.scaleCustomCode, "", sizeof(config.scaleCustomCode));
   config.scaleBaud = 9600;
   config.motorStepsPerRev = DEFAULT_MOTOR_STEPS_PER_REV;
   strlcpy(config.profileName, CALIBRATE_PROFILE_NAME, sizeof(config.profileName));
   config.targetWeight = 40.0;
-  config.beeperMode = BEEPER_DONE;
+  strlcpy(config.beeper, "done", sizeof(config.beeper));
   strlcpy(config.language, "en", sizeof(config.language));
   config.fwUpdateCheck = true;
   config.totalCounterEnable = false;
@@ -273,6 +302,7 @@ bool writeDefaultCalibrateProfile()
   stepper["id"] = 1;
   stepper["revolutions"] = 100;
   stepper["rpm"] = 200;
+  stepper["reverse"] = false;
 
   const char *filename = "/profiles/calibrate.txt";
   ACTIVE_FS.remove(filename);
@@ -426,8 +456,7 @@ bool loadProfile(const char *filename, Config &config)
     }
   }
 
-  if (!loadProfileEntries(doc.as<JsonObject>(), filename, &config,
-                          config.motorStepsPerRev, config.profileEntryCount, true))
+  if (!loadProfileEntries(doc.as<JsonObject>(), filename, &config, config.motorStepsPerRev, true))
   {
     if (getSdReadError().length() <= 0)
     {
@@ -482,6 +511,14 @@ bool loadConfiguration(const char *filename, Config &config)
     return 0;
   }
 
+  if (!hasRequiredConfigurationFields(doc.as<JsonObject>()))
+  {
+    setSdReadError(sdFilenameError("err_config_schema_invalid", filename));
+    DEBUG_PRINTLN("Configuration does not match the current schema");
+    file.close();
+    return 0;
+  }
+
   config.wifiEnabled = doc["wifi"]["enabled"] | config.wifiEnabled;
   strlcpy(config.wifiSsid, doc["wifi"]["ssid"] | config.wifiSsid, sizeof(config.wifiSsid));
   strlcpy(config.wifiPsk, doc["wifi"]["psk"] | config.wifiPsk, sizeof(config.wifiPsk));
@@ -489,8 +526,7 @@ bool loadConfiguration(const char *filename, Config &config)
   strlcpy(config.wifiIpGateway, doc["wifi"]["ipGateway"] | config.wifiIpGateway, sizeof(config.wifiIpGateway));
   strlcpy(config.wifiIpSubnet, doc["wifi"]["ipSubnet"] | config.wifiIpSubnet, sizeof(config.wifiIpSubnet));
   strlcpy(config.wifiIpDns, doc["wifi"]["ipDns"] | config.wifiIpDns, sizeof(config.wifiIpDns));
-  config.scaleProtocol = scaleProtocolFromName(
-      doc["scale"]["protocol"] | scaleProtocolName(config.scaleProtocol));
+  strlcpy(config.scaleProtocol, doc["scale"]["protocol"] | config.scaleProtocol, sizeof(config.scaleProtocol));
   strlcpy(config.scaleCustomCode, doc["scale"]["customCode"] | config.scaleCustomCode, sizeof(config.scaleCustomCode));
   config.scaleBaud = doc["scale"]["baud"] | config.scaleBaud;
   config.motorStepsPerRev = doc["stepper"]["stepsPerRev"] | config.motorStepsPerRev;
@@ -499,8 +535,7 @@ bool loadConfiguration(const char *filename, Config &config)
     config.motorStepsPerRev = DEFAULT_MOTOR_STEPS_PER_REV;
   }
   strlcpy(config.profileName, doc["activeProfile"] | config.profileName, sizeof(config.profileName));
-  config.beeperMode = beeperModeFromName(
-      doc["beeper"] | beeperModeName(config.beeperMode));
+  strlcpy(config.beeper, doc["beeper"] | config.beeper, sizeof(config.beeper));
   strlcpy(config.language, doc["language"] | config.language, sizeof(config.language));
   config.totalCounterEnable = doc["totalCounter"]["enable"] | config.totalCounterEnable;
   config.totalCount = doc["totalCounter"]["count"] | config.totalCount;
@@ -585,6 +620,12 @@ static bool writeProfileDocument(const String &filename, JsonDocument &doc)
 bool saveProfileTargetWeight(const char *profileName, float targetWeight)
 {
   String filename = profileFilename(profileName);
+  // Calibration dispenses fixed revolutions and has no target-weight field.
+  // Adding general.targetWeight would invalidate its strict two-field schema.
+  if (isCalibrationProfileFile(filename.c_str()))
+  {
+    return true;
+  }
   JsonDocument doc;
   if (!loadProfileDocument(filename, doc))
   {
@@ -592,11 +633,24 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
   }
 
   JsonObject general = doc["general"].as<JsonObject>();
+  char targetWeightText[32];
+  formatWeight(targetWeightText, sizeof(targetWeightText), targetWeight);
+  if (general["targetWeight"].is<float>())
+  {
+    // Compare at storage precision so repeated Start presses do not rewrite
+    // the file for equivalent values (for example 40 and 40.000).
+    char savedWeightText[32];
+    formatWeight(savedWeightText, sizeof(savedWeightText), general["targetWeight"].as<float>());
+    if (strcmp(savedWeightText, targetWeightText) == 0)
+    {
+      return true;
+    }
+  }
   if (general.isNull())
   {
     general = doc["general"].to<JsonObject>();
   }
-  general["targetWeight"] = serialized(weightToString(targetWeight));
+  general["targetWeight"] = serialized(targetWeightText);
 
   return writeProfileDocument(filename, doc);
 }
@@ -622,9 +676,7 @@ bool isValidProfileFile(const char *filename)
     return false;
   }
 
-  int validationEntryCount = 0;
-  return loadProfileEntries(doc.as<JsonObject>(), filename, NULL,
-                            config.motorStepsPerRev, validationEntryCount, false);
+  return loadProfileEntries(doc.as<JsonObject>(), filename, NULL, config.motorStepsPerRev, false);
 }
 
 String nextCalibrationProfileName()
@@ -788,120 +840,66 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   return true;
 }
 
-bool tuneProfileWeightPerRev(const char *profileName, float weightPerRev)
+// Apply the entire tuning session to one document and commit it once.
+// Keep map positions stable so edits made before switching modes still refer
+// to the same entries. Explicit step edits override weight/rev recalculation.
+bool tuneProfileValues(const char *profileName, float weightPerRev,
+                       const int *measurements, const long *steps, int count)
 {
-  if (weightPerRev <= 0.0)
+  if (!measurements || !steps || count <= 0 || count > PROFILE_MAX_ENTRIES ||
+      !isfinite(weightPerRev) || weightPerRev <= 0.0)
   {
-    updateDisplayLog(langText("msg_calibration_weight_invalid"), true);
     return false;
   }
-
   String filename = profileFilename(profileName);
   JsonDocument doc;
   if (!loadProfileDocument(filename, doc))
   {
     return false;
   }
-
-  int profileRpm = config.profileStepperRpm[1];
-  if (profileRpm <= 0)
-  {
-    profileRpm = config.profileRpm[0];
-  }
-  if (profileRpm <= 0)
-  {
-    profileRpm = 200;
-  }
-
-  int existingMeasurements[PROFILE_MAX_ENTRIES];
-  bool hasExistingMeasurements[PROFILE_MAX_ENTRIES];
-  bool existingReverse[PROFILE_MAX_ENTRIES];
-  int existingMeasurementCount = 0;
-  JsonArray existingTrickleMap = doc["trickleMap"].as<JsonArray>();
-  if (!existingTrickleMap.isNull())
-  {
-    for (JsonVariant item : existingTrickleMap)
-    {
-      if (existingMeasurementCount >= PROFILE_MAX_ENTRIES)
-      {
-        break;
-      }
-      hasExistingMeasurements[existingMeasurementCount] = !item["measurements"].isNull();
-      existingMeasurements[existingMeasurementCount] = item["measurements"] | 0;
-      existingReverse[existingMeasurementCount] = item["stepper"]["reverse"] | false;
-      existingMeasurementCount++;
-    }
-  }
-
-  JsonObject stepperMap = doc["stepper"].as<JsonObject>();
-  if (stepperMap.isNull())
-  {
-    stepperMap = doc["stepper"].to<JsonObject>();
-  }
-  JsonObject stepper1 = stepperMap["1"].as<JsonObject>();
-  if (stepper1.isNull())
-  {
-    stepper1 = stepperMap["1"].to<JsonObject>();
-  }
-  stepper1["enabled"] = true;
-  stepper1["weightPerRev"] = serialized(weightToString(weightPerRev));
-  stepper1["rpm"] = profileRpm;
-
-  populateCalibrationTrickleMap(doc, weightPerRev, profileRpm);
-  JsonArray tunedTrickleMap = doc["trickleMap"].as<JsonArray>();
-  int entryIndex = 0;
-  for (JsonVariant item : tunedTrickleMap)
-  {
-    if (entryIndex >= existingMeasurementCount)
-    {
-      break;
-    }
-    if (hasExistingMeasurements[entryIndex])
-    {
-      item["measurements"] = existingMeasurements[entryIndex];
-    }
-    item["stepper"]["reverse"] = existingReverse[entryIndex];
-    entryIndex++;
-  }
-
-  if (!writeProfileDocument(filename, doc))
-  {
-    return false;
-  }
-
-  return true;
-}
-
-// Rewrite the per-entry measurements of a profile's trickleMap. `measurements`
-// holds one value per map entry in file order (same order loadProfileEntries()
-// filled config with); entries beyond `count` are left untouched.
-bool tuneProfileMeasurements(const char *profileName, const uint8_t *measurements, int count)
-{
-  String filename = profileFilename(profileName);
-  JsonDocument doc;
-  if (!loadProfileDocument(filename, doc))
-  {
-    return false;
-  }
-
   JsonArray trickleMap = doc["trickleMap"].as<JsonArray>();
   if (trickleMap.isNull())
   {
     setSdReadError(sdFilenameError("err_profile_missing_map", filename.c_str()));
     return false;
   }
-
-  int entryIndex = 0;
-  for (JsonVariant item : trickleMap)
+  if (trickleMap.size() < (size_t)count)
   {
-    if (entryIndex >= count)
-    {
-      break;
-    }
-    item["measurements"] = measurements[entryIndex];
-    entryIndex++;
+    setSdReadError(sdFilenameError("err_invalid_profile_values", filename.c_str()));
+    return false;
   }
-
+  // Compare at the displayed precision, avoiding float rounding changes when
+  // Save is pressed without editing weight/rev.
+  bool weightChanged = weightToString(weightPerRev) !=
+                       weightToString(config.profileStepperWeightPerRev[1]);
+  if (weightChanged)
+  {
+    doc["stepper"]["1"]["weightPerRev"] = serialized(weightToString(weightPerRev));
+  }
+  for (int i = 0; i < count; i++)
+  {
+    JsonObject entry = trickleMap[i].as<JsonObject>();
+    if (!hasRequiredProfileFields(entry) || measurements[i] < 0 || steps[i] <= 0)
+    {
+      setSdReadError(sdProfileEntryError("err_invalid_profile_values", filename.c_str(), i + 1));
+      return false;
+    }
+    if (measurements[i] != config.profileMeasurements[i])
+    {
+      entry["measurements"] = measurements[i];
+    }
+    if (steps[i] != config.profileSteps[i])
+    {
+      entry["stepper"]["steps"] = steps[i];
+    }
+    else if (weightChanged && config.profileStepper[i] == 1)
+    {
+      // Same fine-throw formula as calibration, applied to existing entries.
+      long recalculatedSteps = lround(((config.profileDiffWeight[i] *
+                               (double)config.motorStepsPerRev) / weightPerRev) * 0.65);
+      entry["stepper"]["steps"] = max(5L, recalculatedSteps);
+    }
+  }
   return writeProfileDocument(filename, doc);
 }
 
@@ -1042,12 +1040,12 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["wifi"]["ipGateway"] = config.wifiIpGateway;
   doc["wifi"]["ipSubnet"] = config.wifiIpSubnet;
   doc["wifi"]["ipDns"] = config.wifiIpDns;
-  doc["scale"]["protocol"] = scaleProtocolName(config.scaleProtocol);
+  doc["scale"]["protocol"] = config.scaleProtocol;
   doc["scale"]["customCode"] = config.scaleCustomCode;
   doc["scale"]["baud"] = config.scaleBaud;
   doc["stepper"]["stepsPerRev"] = config.motorStepsPerRev;
   doc["activeProfile"] = config.profileName;
-  doc["beeper"] = beeperModeName(config.beeperMode);
+  doc["beeper"] = config.beeper;
   doc["language"] = config.language;
   doc["totalCounter"]["enable"] = config.totalCounterEnable;
   doc["totalCounter"]["count"] = config.totalCount;

@@ -1,10 +1,9 @@
-// Fixed-size packed log storage. Kept in BSS instead of the heap so logging
-// cannot fragment the heap. Lines are truncated to LOG_LINE_LEN and stored
-// consecutively so no second buffer is needed to assemble the LVGL label text.
+// Fixed-size log storage. Kept in BSS instead of the heap so logging cannot
+// fragment the heap (the previous String[] + concatenation churned malloc on
+// every one of the ~70 log call sites). Lines are truncated to LOG_LINE_LEN.
 #define LOG_LINE_COUNT 8
 #define LOG_LINE_LEN 48
-static char infoMessageBuffer[LOG_LINE_COUNT * LOG_LINE_LEN];
-static uint8_t infoMessageLineCount = 0;
+static char infoMessageBuffer[LOG_LINE_COUNT][LOG_LINE_LEN];
 static lv_obj_t *dialogBackdrop = NULL;
 static lv_obj_t *activeDialog = NULL;
 
@@ -82,27 +81,12 @@ void closeDialog(lv_obj_t **dialog, bool deleteAfterClose)
 
 void insertLine(const char *newLine)
 {
-    if (infoMessageLineCount >= LOG_LINE_COUNT)
-    {
-        char *firstNewline = strchr(infoMessageBuffer, '\n');
-        if (firstNewline != NULL)
-        {
-            size_t removeLength = (size_t)(firstNewline - infoMessageBuffer) + 1;
-            memmove(infoMessageBuffer, infoMessageBuffer + removeLength,
-                    strlen(infoMessageBuffer + removeLength) + 1);
-        }
-        else
-        {
-            infoMessageBuffer[0] = '\0';
-            infoMessageLineCount = 0;
-        }
-    }
-
-    strlcat(infoMessageBuffer, newLine, sizeof(infoMessageBuffer));
-    if (infoMessageLineCount < LOG_LINE_COUNT)
-    {
-        infoMessageLineCount++;
-    }
+    // Shift all lines up by one position (contiguous 2D array -> single memmove).
+    memmove(infoMessageBuffer[0], infoMessageBuffer[1],
+            (LOG_LINE_COUNT - 1) * LOG_LINE_LEN);
+    // Add new line at the bottom
+    strncpy(infoMessageBuffer[LOG_LINE_COUNT - 1], newLine, LOG_LINE_LEN - 1);
+    infoMessageBuffer[LOG_LINE_COUNT - 1][LOG_LINE_LEN - 1] = '\0';
 }
 
 void setLabelTextColor(lv_obj_t *label, uint32_t colorHex)
@@ -351,5 +335,12 @@ void updateDisplayLog(const String &logOutput, bool noLog = false)
 
 void refreshLogLabel()
 {
-  setLabelText(ui_LabelLog, infoMessageBuffer);
+  static char logText[LOG_LINE_COUNT * LOG_LINE_LEN];
+  logText[0] = '\0';
+  for (int i = 0; i < LOG_LINE_COUNT; i++)
+  {
+    strncat(logText, infoMessageBuffer[i], sizeof(logText) - strlen(logText) - 1);
+  }
+  setLabelText(ui_LabelLog, logText);
 }
+

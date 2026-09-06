@@ -1,8 +1,8 @@
-extern float pendingTargetWeight;
 extern int selectedProfileIndex;
 extern volatile bool messageBoxOpen;
 bool profileDeleteConfirmPending = false;
 String profileDeleteName = "";
+String profileDeleteFilename = "";
 
 // The profile tune dialog (its state, widgets, and event callbacks) lives in
 // ui_dialogs.ino next to the other dialogs. Only the profile data side stays
@@ -29,8 +29,6 @@ bool recoverCorruptProfile(String badFilename, bool blocking)
         message += "\n\n";
         message += readError;
     }
-    message += langText("msg_calibration_profile_loaded");
-
     // Quarantine a genuinely corrupt file so it is not picked again. A missing
     // file simply does not exist, so nothing is renamed in that case.
     if (ACTIVE_FS.exists(badFilename))
@@ -61,8 +59,7 @@ bool recoverCorruptProfile(String badFilename, bool blocking)
 
     if (ensureCalibrateProfile(config))
     {
-        pendingTargetWeight = config.targetWeight;
-
+        message += langText("msg_calibration_profile_loaded");
         // Refresh the list from the filesystem so the quarantined/missing
         // profile drops out of the selection and findProfileIndex() searches
         // the current state rather than the stale buffer.
@@ -85,6 +82,7 @@ bool recoverCorruptProfile(String badFilename, bool blocking)
     // Even regenerating the calibration profile failed (the filesystem is
     // unwritable), so there is no good in-memory state to fall back to. Reboot
     // to recover through the normal boot path.
+    message += langText("msg_calibration_profile_recovery_failed");
     DEBUG_PRINTLN("Calibration profile recovery failed; rebooting");
     delay(100);
     restartNow = true;
@@ -101,7 +99,6 @@ bool loadSelectedProfile(bool blocking)
         // when that succeeds so the caller can continue without a reboot.
         return recoverCorruptProfile(selectedProfileFilename, blocking);
     }
-    pendingTargetWeight = config.targetWeight;
     return true;
 }
 
@@ -187,6 +184,7 @@ bool deleteSelectedProfile()
     }
 
     profileDeleteName = profileName;
+    profileDeleteFilename = filename;
     profileDeleteConfirmPending = true;
     showConfirmBox(String(langText("msg_delete_profile_confirm_prefix")) + profileName + langText("msg_delete_profile_confirm_suffix"), UI_FONT_LARGE, lv_color_hex(0xFFFFFF));
     return true;
@@ -200,9 +198,10 @@ void finishProfileDeleteConfirm(bool confirmed)
     }
 
     String profileName = profileDeleteName;
-    String filename = profileFilename(profileName.c_str());
+    String filename = profileDeleteFilename;
     profileDeleteConfirmPending = false;
     profileDeleteName = "";
+    profileDeleteFilename = "";
 
     if (!confirmed)
     {

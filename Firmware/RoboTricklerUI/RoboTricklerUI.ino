@@ -1,7 +1,7 @@
 /*
 Legacy Arduino IDE 1.8.19
 
-Boards-Manager esp32 - Espressif Systems version 3.3.10
+Boards-Manager esp32 - Espressif Systems version 3.3.11
 
 Tools
 Board: "ESP32 Dev Module"
@@ -82,46 +82,23 @@ TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 // Reserved profile name that drives the scale-calibration workflow.
 #define CALIBRATE_PROFILE_NAME "calibrate"
 
-enum BeeperMode : uint8_t
-{
-  BEEPER_NONE = 0,
-  BEEPER_DONE = 1U << 0,
-  BEEPER_BUTTON = 1U << 1,
-  BEEPER_BOTH = BEEPER_DONE | BEEPER_BUTTON
-};
-
-enum ScaleProtocol : uint8_t
-{
-  SCALE_PROTOCOL_GG,
-  SCALE_PROTOCOL_SBI,
-  SCALE_PROTOCOL_KERN,
-  SCALE_PROTOCOL_KERN_ABT,
-  SCALE_PROTOCOL_KERN_ABS,
-  SCALE_PROTOCOL_AD,
-  SCALE_PROTOCOL_CUSTOM,
-  SCALE_PROTOCOL_STREAM,
-  SCALE_PROTOCOL_COUNT
-};
-
-#define WIFI_SSID_LEN 33
-
 struct Config
 {
   bool wifiEnabled;
-  char wifiSsid[WIFI_SSID_LEN];
+  char wifiSsid[64];
   char wifiPsk[64];
   char wifiIpStatic[16];
   char wifiIpGateway[16];
   char wifiIpSubnet[16];
   char wifiIpDns[16];
 
-  BeeperMode beeperMode;
+  char beeper[16];
   char language[8];
   bool fwUpdateCheck;
   bool totalCounterEnable;
   long totalCount;
   float targetWeight;
-  ScaleProtocol scaleProtocol;
+  char scaleProtocol[32];
   int scaleBaud;
   char scaleCustomCode[32];
   int motorStepsPerRev;

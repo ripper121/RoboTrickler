@@ -282,63 +282,35 @@ void showConfirmBox(const String &message, const lv_font_t *font, lv_color_t col
 }
 
 // ---------------------------------------------------------------------------
-// Profile tune dialogs
-//
-// Custom modals (built lazily, deleted on close) for tuning a profile. The
-// Tune button opens a chooser between two editors: weight-per-rev and the
-// per-entry trickleMap measurements. Moved here from profile_actions.ino so
-// they live next to the other dialogs; the profile data side (load/save/
-// delete) stays in profile_actions.ino.
-// isProfileTuneDialogOpen/closeProfileTuneDialog/clearProfileTuneState are
-// non-static because deleteSelectedProfile() (profile_actions.ino) calls them;
-// they cover all three tune dialogs.
+// One lazily allocated editor shared by all profile tuning modes.
 // ---------------------------------------------------------------------------
 String profileTuneName = "";
 float profileTuneWeightPerRev = 0.0;
-float profileTuneStepSize = 0.001;
 byte profileTuneStepIndex = 0;
+enum ProfileTuneMode
+{
+    PROFILE_TUNE_WEIGHT,
+    PROFILE_TUNE_MEASUREMENTS,
+    PROFILE_TUNE_STEPS,
+    PROFILE_TUNE_MODE_COUNT
+};
+byte profileTuneMode = PROFILE_TUNE_WEIGHT;
+int profileTuneEntryCount = 0;
+int profileTuneSelectedEntry = 0;
+int profileTuneMeasurements[PROFILE_MAX_ENTRIES];
+long profileTuneSteps[PROFILE_MAX_ENTRIES];
 lv_obj_t *ui_PanelProfileTune = NULL;
-lv_obj_t *ui_PanelProfileTuneChoice = NULL;
-// Working copy of the trickleMap measurements while the editor is open.
-uint8_t profileMeasTuneValues[PROFILE_MAX_ENTRIES];
-int profileMeasTuneCount = 0;
-int profileMeasTuneSelected = 0;
-lv_obj_t *ui_PanelProfileTuneMeas = NULL;
-lv_obj_t *ui_LabelProfileTuneMeasValue = NULL;
-lv_obj_t *ui_ButtonProfileTuneMeasEntry = NULL;
-lv_obj_t *ui_LabelProfileTuneMeasEntry = NULL;
-lv_obj_t *ui_ButtonProfileTuneMeasMinus = NULL;
-lv_obj_t *ui_ButtonProfileTuneMeasPlus = NULL;
-lv_obj_t *ui_ButtonProfileTuneMeasCancel = NULL;
-lv_obj_t *ui_ButtonProfileTuneMeasSave = NULL;
-lv_obj_t *ui_LabelProfileTuneValue = NULL;
-lv_obj_t *ui_ButtonProfileTuneStep = NULL;
-lv_obj_t *ui_LabelProfileTuneStep = NULL;
-lv_obj_t *ui_ButtonProfileTuneMinus = NULL;
-lv_obj_t *ui_ButtonProfileTunePlus = NULL;
-lv_obj_t *ui_ButtonProfileTuneCancel = NULL;
-lv_obj_t *ui_ButtonProfileTuneSave = NULL;
+lv_obj_t *profileTuneTitleLabel = NULL;
+lv_obj_t *profileTuneValueLabel = NULL;
+lv_obj_t *profileTuneEntryLabel = NULL;
 
 bool isProfileTuneDialogOpen()
 {
-    if ((ui_PanelProfileTune == NULL) && (ui_PanelProfileTuneChoice == NULL) &&
-        (ui_PanelProfileTuneMeas == NULL))
-    {
-        return false;
-    }
-
     bool open = false;
     if (lvglLock())
     {
-        lv_obj_t *panels[] = {ui_PanelProfileTune, ui_PanelProfileTuneChoice, ui_PanelProfileTuneMeas};
-        for (lv_obj_t *panel : panels)
-        {
-            if ((panel != NULL) && !lv_obj_has_flag(panel, LV_OBJ_FLAG_HIDDEN))
-            {
-                open = true;
-                break;
-            }
-        }
+        open = ui_PanelProfileTune != NULL &&
+               !lv_obj_has_flag(ui_PanelProfileTune, LV_OBJ_FLAG_HIDDEN);
         lvglUnlock();
     }
     return open;
@@ -348,68 +320,18 @@ void clearProfileTuneState()
 {
     profileTuneName = "";
     profileTuneWeightPerRev = 0.0;
-}
-
-static void updateProfileTuneValueLabel()
-{
-    if (ui_LabelProfileTuneValue != NULL)
-    {
-        char text[16];
-        formatWeight(text, sizeof(text), profileTuneWeightPerRev);
-        lv_label_set_text(ui_LabelProfileTuneValue, text);
-    }
-}
-
-static void updateProfileTuneStepLabel()
-{
-    if (profileTuneStepIndex >= WEIGHT_STEP_COUNT)
-    {
-        profileTuneStepIndex = 0;
-    }
-    profileTuneStepSize = WEIGHT_STEP_SIZES[profileTuneStepIndex];
-    if (ui_LabelProfileTuneStep != NULL)
-    {
-        char text[16];
-        formatWeight(text, sizeof(text), profileTuneStepSize);
-        lv_label_set_text(ui_LabelProfileTuneStep, text);
-    }
-}
-
-static float currentProfileTuneWeightPerRev()
-{
-    if (config.profileStepperWeightPerRev[1] > 0.0)
-    {
-        return config.profileStepperWeightPerRev[1];
-    }
-    return WEIGHT_RESOLUTION;
+    profileTuneEntryCount = 0;
+    profileTuneSelectedEntry = 0;
 }
 
 void closeProfileTuneDialog()
 {
     closeDialog(&ui_PanelProfileTune, true);
-    ui_LabelProfileTuneValue = NULL;
-    ui_ButtonProfileTuneStep = NULL;
-    ui_LabelProfileTuneStep = NULL;
-    ui_ButtonProfileTuneMinus = NULL;
-    ui_ButtonProfileTunePlus = NULL;
-    ui_ButtonProfileTuneCancel = NULL;
-    ui_ButtonProfileTuneSave = NULL;
-    closeDialog(&ui_PanelProfileTuneChoice, true);
-    closeDialog(&ui_PanelProfileTuneMeas, true);
-    ui_LabelProfileTuneMeasValue = NULL;
-    ui_ButtonProfileTuneMeasEntry = NULL;
-    ui_LabelProfileTuneMeasEntry = NULL;
-    ui_ButtonProfileTuneMeasMinus = NULL;
-    ui_ButtonProfileTuneMeasPlus = NULL;
-    ui_ButtonProfileTuneMeasCancel = NULL;
-    ui_ButtonProfileTuneMeasSave = NULL;
+    profileTuneTitleLabel = NULL;
+    profileTuneValueLabel = NULL;
+    profileTuneEntryLabel = NULL;
 }
 
-// Shared pieces of both tune-save flows (weight/rev and measurements). Every
-// save follows: guard checks -> write the profile file -> reload -> confirm.
-
-// Common guards. `valid` carries the dialog-specific value check; the same
-// error message covers a bad name and a bad value, as before.
 static bool canTuneProfile(const String &profileName, bool valid)
 {
     if (isTricklerRunning())
@@ -451,340 +373,147 @@ static void finishProfileTune(const String &profileName)
     successBox(String(langText("msg_profile_tuned")) + profileName, false);
 }
 
-static void saveProfileTune()
+
+static void updateProfileTuneLabels()
 {
-    String profileName = profileTuneName;
-    if (ui_LabelProfileTuneValue != NULL)
+    const char *key = profileTuneMode == PROFILE_TUNE_WEIGHT ? "msg_tune_profile_title" :
+                      profileTuneMode == PROFILE_TUNE_MEASUREMENTS ? "msg_tune_measurements_title" :
+                      "msg_tune_steps_title";
+    lv_label_set_text(profileTuneTitleLabel, langText(key));
+    char text[16];
+    if (profileTuneMode == PROFILE_TUNE_WEIGHT)
     {
-        profileTuneWeightPerRev = String(lv_label_get_text(ui_LabelProfileTuneValue)).toFloat();
+        formatWeight(text, sizeof(text), profileTuneWeightPerRev);
     }
-    float weightPerRev = profileTuneWeightPerRev;
-    closeProfileTuneDialog();
-    profileTuneName = "";
-    profileTuneWeightPerRev = 0.0;
-
-    if (!canTuneProfile(profileName, weightPerRev > 0.0))
+    else if (profileTuneMode == PROFILE_TUNE_MEASUREMENTS)
     {
-        return;
+        snprintf(text, sizeof(text), "%d", profileTuneMeasurements[profileTuneSelectedEntry]);
     }
-
-    updateDisplayLog(String(langText("status_tuning_profile")) + profileName, true);
-    if (!tuneProfileWeightPerRev(profileName.c_str(), weightPerRev))
+    else
     {
-        reportProfileTuneError();
-        return;
+        snprintf(text, sizeof(text), "%ld", profileTuneSteps[profileTuneSelectedEntry]);
     }
-
-    finishProfileTune(profileName);
+    lv_label_set_text(profileTuneValueLabel, text);
+    lv_obj_set_style_text_font(profileTuneValueLabel,
+                              strlen(text) > 6 ? UI_FONT_NORMAL : UI_FONT_LARGE, LV_PART_MAIN);
+    formatWeight(text, sizeof(text), profileTuneMode == PROFILE_TUNE_WEIGHT ?
+                 WEIGHT_STEP_SIZES[profileTuneStepIndex] :
+                 config.profileDiffWeight[profileTuneSelectedEntry]);
+    lv_label_set_text(profileTuneEntryLabel, text);
 }
 
-void profileTuneMinus_event_cb(lv_event_t *e)
+void selectPreviousTuneMode_event_cb(lv_event_t *e)
 {
-    profileTuneWeightPerRev -= profileTuneStepSize;
-    if (profileTuneWeightPerRev < WEIGHT_RESOLUTION)
-    {
-        profileTuneWeightPerRev = WEIGHT_RESOLUTION;
-    }
-    updateProfileTuneValueLabel();
+    profileTuneMode = (profileTuneMode + PROFILE_TUNE_MODE_COUNT - 1) % PROFILE_TUNE_MODE_COUNT;
+    updateProfileTuneLabels();
 }
 
-void profileTunePlus_event_cb(lv_event_t *e)
+void selectNextTuneMode_event_cb(lv_event_t *e)
 {
-    profileTuneWeightPerRev += profileTuneStepSize;
-    if (profileTuneWeightPerRev > 99.999)
-    {
-        profileTuneWeightPerRev = 99.999;
-    }
-    updateProfileTuneValueLabel();
+    profileTuneMode = (profileTuneMode + 1) % PROFILE_TUNE_MODE_COUNT;
+    updateProfileTuneLabels();
 }
 
-void profileTuneStep_event_cb(lv_event_t *e)
+static void adjustProfileTuneValue(int direction)
 {
-    profileTuneStepIndex++;
-    if (profileTuneStepIndex >= WEIGHT_STEP_COUNT)
+    if (profileTuneMode == PROFILE_TUNE_WEIGHT)
     {
-        profileTuneStepIndex = 0;
+        profileTuneWeightPerRev += direction * WEIGHT_STEP_SIZES[profileTuneStepIndex];
+        profileTuneWeightPerRev = constrain(profileTuneWeightPerRev, WEIGHT_RESOLUTION, 99.999f);
     }
-    updateProfileTuneStepLabel();
+    else if (profileTuneMode == PROFILE_TUNE_MEASUREMENTS)
+    {
+        profileTuneMeasurements[profileTuneSelectedEntry] =
+            constrain(profileTuneMeasurements[profileTuneSelectedEntry] + direction, 0, 99);
+    }
+    else
+    {
+        long &value = profileTuneSteps[profileTuneSelectedEntry];
+        if ((direction < 0 && value > 1) || (direction > 0 && value < LONG_MAX))
+        {
+            value += direction;
+        }
+    }
+    updateProfileTuneLabels();
 }
 
-// Shared by the cancel buttons of all three tune dialogs:
-// closeProfileTuneDialog() closes whichever of them is open.
-void profileTuneCancel_event_cb(lv_event_t *e)
+void decreaseTuneValue_event_cb(lv_event_t *e)
+{
+    adjustProfileTuneValue(-1);
+}
+
+void increaseTuneValue_event_cb(lv_event_t *e)
+{
+    adjustProfileTuneValue(1);
+}
+
+void selectTuneEntry_event_cb(lv_event_t *e)
+{
+    if (profileTuneMode == PROFILE_TUNE_WEIGHT)
+    {
+        profileTuneStepIndex = (profileTuneStepIndex + 1) % WEIGHT_STEP_COUNT;
+    }
+    else
+    {
+        profileTuneSelectedEntry = (profileTuneSelectedEntry + 1) % profileTuneEntryCount;
+    }
+    updateProfileTuneLabels();
+}
+
+void cancelProfileTune_event_cb(lv_event_t *e)
 {
     closeProfileTuneDialog();
     clearProfileTuneState();
 }
 
-void profileTuneSave_event_cb(lv_event_t *e)
-{
-    saveProfileTune();
-}
-
-static void createProfileTuneDialog()
-{
-    if (ui_PanelProfileTune != NULL)
-    {
-        return;
-    }
-
-    ui_PanelProfileTune = createDialogPanel();
-
-    // The panel is deleted on close and rebuilt per show, so the title text is
-    // always current; no re-translation on reuse is needed.
-    createDialogTitle(ui_PanelProfileTune, -95, langText("msg_tune_profile_title"));
-
-    ui_LabelProfileTuneValue = createDialogValueLabel(ui_PanelProfileTune, -42);
-
-    ui_ButtonProfileTuneMinus = createDialogButton(ui_PanelProfileTune, 115, -42, 60, "-", UI_FONT_LARGE, profileTuneMinus_event_cb);
-    ui_ButtonProfileTunePlus = createDialogButton(ui_PanelProfileTune, -115, -42, 60, "+", UI_FONT_LARGE, profileTunePlus_event_cb);
-    ui_ButtonProfileTuneStep = createDialogButton(ui_PanelProfileTune, 0, 22, 290, "0.001", UI_FONT_LARGE, profileTuneStep_event_cb);
-    ui_LabelProfileTuneStep = lv_obj_get_child(ui_ButtonProfileTuneStep, 0);
-    ui_ButtonProfileTuneCancel = createDialogButton(ui_PanelProfileTune, 70, 88, 110, UI_SYMBOL_CANCEL, UI_FONT_LARGE, profileTuneCancel_event_cb);
-    ui_ButtonProfileTuneSave = createDialogButton(ui_PanelProfileTune, -70, 88, 110, UI_SYMBOL_SAVE, UI_FONT_LARGE, profileTuneSave_event_cb);
-}
-
-static void showProfileTuneDialog()
-{
-    if (lvglLock())
-    {
-        createProfileTuneDialog();
-        profileTuneWeightPerRev = currentProfileTuneWeightPerRev();
-        updateProfileTuneStepLabel();
-        updateProfileTuneValueLabel();
-        showDialog(ui_PanelProfileTune);
-        lvglUnlock();
-    }
-}
-
-// --- Measurements editor ----------------------------------------------------
-// Structured exactly like the weight-per-rev dialog above: the white value box
-// with -/+ edits the selected entry's measurements, and the center button
-// (the step-size button's slot) shows the entry's diffWeight and cycles to the
-// next trickleMap entry when tapped.
-
-static void updateProfileTuneMeasValueLabel()
-{
-    if (ui_LabelProfileTuneMeasValue != NULL)
-    {
-        char text[16];
-        snprintf(text, sizeof(text), "%d", profileMeasTuneValues[profileMeasTuneSelected]);
-        lv_label_set_text(ui_LabelProfileTuneMeasValue, text);
-    }
-}
-
-static void updateProfileTuneMeasEntryLabel()
-{
-    if (profileMeasTuneSelected >= profileMeasTuneCount)
-    {
-        profileMeasTuneSelected = 0;
-    }
-    if (ui_LabelProfileTuneMeasEntry != NULL)
-    {
-        char text[16];
-        formatWeight(text, sizeof(text), config.profileDiffWeight[profileMeasTuneSelected]);
-        lv_label_set_text(ui_LabelProfileTuneMeasEntry, text);
-    }
-}
-
-static void saveProfileTuneMeas()
+void saveProfileTune_event_cb(lv_event_t *e)
 {
     String profileName = profileTuneName;
-    if (ui_LabelProfileTuneMeasValue != NULL)
-    {
-        int measurements = String(lv_label_get_text(ui_LabelProfileTuneMeasValue)).toInt();
-        if (measurements < 0)
-        {
-            measurements = 0;
-        }
-        else if (measurements > 99)
-        {
-            measurements = 99;
-        }
-        profileMeasTuneValues[profileMeasTuneSelected] = (uint8_t)measurements;
-    }
-    int count = profileMeasTuneCount;
-    closeProfileTuneDialog();
-    profileTuneName = "";
-
-    if (!canTuneProfile(profileName, count > 0))
+    if (!canTuneProfile(profileName, profileTuneEntryCount > 0 && profileTuneWeightPerRev > 0.0))
     {
         return;
     }
-
+    // Commit every mode together, regardless of which mode is visible.
+    closeProfileTuneDialog();
     updateDisplayLog(String(langText("status_tuning_profile")) + profileName, true);
-    if (!tuneProfileMeasurements(profileName.c_str(), profileMeasTuneValues, count))
+    bool saved = tuneProfileValues(profileName.c_str(), profileTuneWeightPerRev,
+                                   profileTuneMeasurements, profileTuneSteps, profileTuneEntryCount);
+    clearProfileTuneState();
+    if (!saved)
     {
         reportProfileTuneError();
         return;
     }
-
     finishProfileTune(profileName);
 }
 
-void profileTuneMeasMinus_event_cb(lv_event_t *e)
+static void createProfileTuneDialog()
 {
-    if (profileMeasTuneValues[profileMeasTuneSelected] > 0)
-    {
-        profileMeasTuneValues[profileMeasTuneSelected]--;
-    }
-    updateProfileTuneMeasValueLabel();
-}
-
-void profileTuneMeasPlus_event_cb(lv_event_t *e)
-{
-    if (profileMeasTuneValues[profileMeasTuneSelected] < 99)
-    {
-        profileMeasTuneValues[profileMeasTuneSelected]++;
-    }
-    updateProfileTuneMeasValueLabel();
-}
-
-void profileTuneMeasEntry_event_cb(lv_event_t *e)
-{
-    profileMeasTuneSelected++;
-    if (profileMeasTuneSelected >= profileMeasTuneCount)
-    {
-        profileMeasTuneSelected = 0;
-    }
-    updateProfileTuneMeasEntryLabel();
-    updateProfileTuneMeasValueLabel();
-}
-
-void profileTuneMeasSave_event_cb(lv_event_t *e)
-{
-    saveProfileTuneMeas();
-}
-
-static void createProfileTuneMeasDialog()
-{
-    if (ui_PanelProfileTuneMeas != NULL)
-    {
-        return;
-    }
-
-    ui_PanelProfileTuneMeas = createDialogPanel();
-
-    createDialogTitle(ui_PanelProfileTuneMeas, -95, langText("msg_tune_measurements_title"));
-
-    ui_LabelProfileTuneMeasValue = createDialogValueLabel(ui_PanelProfileTuneMeas, -42);
-
-    ui_ButtonProfileTuneMeasMinus = createDialogButton(ui_PanelProfileTuneMeas, 115, -42, 60, "-", UI_FONT_LARGE, profileTuneMeasMinus_event_cb);
-    ui_ButtonProfileTuneMeasPlus = createDialogButton(ui_PanelProfileTuneMeas, -115, -42, 60, "+", UI_FONT_LARGE, profileTuneMeasPlus_event_cb);
-    // Spans from the inner edge of the "+" button to the inner edge of the "-"
-    // button (both 60 wide at +/-115), and uses the value-box font.
-    ui_ButtonProfileTuneMeasEntry = createDialogButton(ui_PanelProfileTuneMeas, 0, 22, 290, "0.000", UI_FONT_LARGE, profileTuneMeasEntry_event_cb);
-    ui_LabelProfileTuneMeasEntry = lv_obj_get_child(ui_ButtonProfileTuneMeasEntry, 0);
-    ui_ButtonProfileTuneMeasCancel = createDialogButton(ui_PanelProfileTuneMeas, 70, 88, 110, UI_SYMBOL_CANCEL, UI_FONT_LARGE, profileTuneCancel_event_cb);
-    ui_ButtonProfileTuneMeasSave = createDialogButton(ui_PanelProfileTuneMeas, -70, 88, 110, UI_SYMBOL_SAVE, UI_FONT_LARGE, profileTuneMeasSave_event_cb);
-}
-
-static void showProfileTuneMeasDialog()
-{
-    if (lvglLock())
-    {
-        createProfileTuneMeasDialog();
-        profileMeasTuneCount = config.profileEntryCount;
-        if (profileMeasTuneCount > PROFILE_MAX_ENTRIES)
-        {
-            profileMeasTuneCount = PROFILE_MAX_ENTRIES;
-        }
-        profileMeasTuneSelected = 0;
-        for (int i = 0; i < profileMeasTuneCount; i++)
-        {
-            int measurements = config.profileMeasurements[i];
-            if (measurements < 0)
-            {
-                measurements = 0;
-            }
-            else if (measurements > 99)
-            {
-                measurements = 99;
-            }
-            profileMeasTuneValues[i] = (uint8_t)measurements;
-        }
-        updateProfileTuneMeasEntryLabel();
-        updateProfileTuneMeasValueLabel();
-        showDialog(ui_PanelProfileTuneMeas);
-        lvglUnlock();
-    }
-}
-
-// --- Tune chooser ------------------------------------------------------------
-// Small modal shown by the Tune button: pick which editor to open.
-//
-// The editor is opened via lv_async_call instead of directly from the button
-// callback: closeDialog() frees the chooser with lv_obj_delete_async(), so a
-// direct open would allocate the editor while the chooser still occupies the
-// LVGL pool. The async call is queued after the pending delete, so by the time
-// it runs the chooser memory has been returned to the pool.
-
-static void openProfileTuneWeightAsync(void *param)
-{
-    (void)param;
-    showProfileTuneDialog();
-}
-
-static void openProfileTuneMeasAsync(void *param)
-{
-    (void)param;
-    showProfileTuneMeasDialog();
-}
-
-void profileTuneChoiceWeight_event_cb(lv_event_t *e)
-{
-    closeDialog(&ui_PanelProfileTuneChoice, true);
-    lv_async_call(openProfileTuneWeightAsync, NULL);
-}
-
-void profileTuneChoiceMeas_event_cb(lv_event_t *e)
-{
-    closeDialog(&ui_PanelProfileTuneChoice, true);
-    lv_async_call(openProfileTuneMeasAsync, NULL);
-}
-
-static void createProfileTuneChoiceDialog()
-{
-    if (ui_PanelProfileTuneChoice != NULL)
-    {
-        return;
-    }
-
-    ui_PanelProfileTuneChoice = createDialogPanel();
-
-    createDialogTitle(ui_PanelProfileTuneChoice, -95, langText("msg_tune_choose_title"));
-
-    lv_obj_t *weightButton = createDialogButton(ui_PanelProfileTuneChoice, 0, -30, 400, "", UI_FONT_LARGE, profileTuneChoiceWeight_event_cb);
-    lv_label_set_text(lv_obj_get_child(weightButton, 0), langText("msg_tune_profile_title"));
-    lv_obj_t *measButton = createDialogButton(ui_PanelProfileTuneChoice, 0, 30, 400, "", UI_FONT_LARGE, profileTuneChoiceMeas_event_cb);
-    lv_label_set_text(lv_obj_get_child(measButton, 0), langText("msg_tune_measurements_title"));
-    createDialogButton(ui_PanelProfileTuneChoice, 0, 90, 110, UI_SYMBOL_CANCEL, UI_FONT_LARGE, profileTuneCancel_event_cb);
-}
-
-static void showProfileTuneChoiceDialog()
-{
-    if (lvglLock())
-    {
-        createProfileTuneChoiceDialog();
-        showDialog(ui_PanelProfileTuneChoice);
-        lvglUnlock();
-    }
+    ui_PanelProfileTune = createDialogPanel();
+    profileTuneTitleLabel = createDialogTitle(ui_PanelProfileTune, -95, "");
+    lv_obj_set_width(profileTuneTitleLabel, 290);
+    createDialogButton(ui_PanelProfileTune, -180, -95, 50, LV_SYMBOL_LEFT, UI_FONT_LARGE, selectPreviousTuneMode_event_cb);
+    createDialogButton(ui_PanelProfileTune, 180, -95, 50, LV_SYMBOL_RIGHT, UI_FONT_LARGE, selectNextTuneMode_event_cb);
+    profileTuneValueLabel = createDialogValueLabel(ui_PanelProfileTune, -42);
+    createDialogButton(ui_PanelProfileTune, 115, -42, 60, "-", UI_FONT_LARGE, decreaseTuneValue_event_cb);
+    createDialogButton(ui_PanelProfileTune, -115, -42, 60, "+", UI_FONT_LARGE, increaseTuneValue_event_cb);
+    lv_obj_t *entryButton = createDialogButton(ui_PanelProfileTune, 0, 22, 290, "", UI_FONT_LARGE, selectTuneEntry_event_cb);
+    profileTuneEntryLabel = lv_obj_get_child(entryButton, 0);
+    createDialogButton(ui_PanelProfileTune, 70, 88, 110, UI_SYMBOL_CANCEL, UI_FONT_LARGE, cancelProfileTune_event_cb);
+    createDialogButton(ui_PanelProfileTune, -70, 88, 110, UI_SYMBOL_SAVE, UI_FONT_LARGE, saveProfileTune_event_cb);
 }
 
 bool tuneSelectedProfile()
 {
-    if (messageBoxOpen)
+    if (messageBoxOpen || isProfileTuneDialogOpen())
     {
         return false;
     }
-
-    if (isTricklerRunning())
-    {
-        errorBox(langText("msg_stop_trickler_before_tune_profile"), false);
-        return false;
-    }
-
     String profileName = config.profileName;
+    if (!canTuneProfile(profileName, config.profileEntryCount > 0))
+    {
+        return false;
+    }
     String filename = profileFilename(profileName.c_str());
     if (!ACTIVE_FS.exists(filename.c_str()))
     {
@@ -792,8 +521,24 @@ bool tuneSelectedProfile()
         refreshProfileList();
         return false;
     }
-
+    if (!lvglLock())
+    {
+        return false;
+    }
     profileTuneName = profileName;
-    showProfileTuneChoiceDialog();
+    profileTuneMode = PROFILE_TUNE_WEIGHT;
+    profileTuneWeightPerRev = config.profileStepperWeightPerRev[1] > 0.0 ?
+                              config.profileStepperWeightPerRev[1] : WEIGHT_RESOLUTION;
+    profileTuneEntryCount = min(config.profileEntryCount, PROFILE_MAX_ENTRIES);
+    profileTuneSelectedEntry = 0;
+    for (int i = 0; i < profileTuneEntryCount; i++)
+    {
+        profileTuneMeasurements[i] = config.profileMeasurements[i];
+        profileTuneSteps[i] = config.profileSteps[i];
+    }
+    createProfileTuneDialog();
+    updateProfileTuneLabels();
+    showDialog(ui_PanelProfileTune);
+    lvglUnlock();
     return true;
 }

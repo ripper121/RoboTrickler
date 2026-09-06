@@ -38,6 +38,29 @@ static StepperPins steppers[3] = {
 static uint32_t shiftRegisterState = 0;
 static bool shiftRegisterReady = false;
 static portMUX_TYPE shiftRegisterMux = portMUX_INITIALIZER_UNLOCKED;
+// Bit 0 permits moves; the remaining bits identify a Start/Stop generation.
+// A quick Stop/Start must never resume an old move.
+static uint32_t stepperRunId = 0;
+
+static uint32_t getStepperRunId()
+{
+  portENTER_CRITICAL(&shiftRegisterMux);
+  uint32_t runId = stepperRunId;
+  portEXIT_CRITICAL(&shiftRegisterMux);
+  return runId;
+}
+
+static void setStepperRunEnabled(bool enabled)
+{
+  portENTER_CRITICAL(&shiftRegisterMux);
+  stepperRunId = ((stepperRunId + 2U) & ~1U) | (enabled ? 1U : 0U);
+  portEXIT_CRITICAL(&shiftRegisterMux);
+}
+
+static bool isStepperRunCurrent(uint32_t runId)
+{
+  return (runId & 1U) && (getStepperRunId() == runId);
+}
 
 // Initial register state: motors disabled (bit is active-high), both direction
 // lines at their configured positive level.
@@ -59,6 +82,7 @@ static SemaphoreHandle_t i2sOutMutex = NULL;
 // step() holding i2sOutMutex).
 static uint32_t i2sOutBatch[I2S_OUT_BLOCK_FRAMES * 2];
 static size_t i2sOutBatchFrames = 0;
+static uint32_t i2sOutFeederBlock[I2S_OUT_BLOCK_FRAMES * 2];
 
 static bool i2sOutWrite(const uint32_t *words, size_t frames)
 {
@@ -78,12 +102,17 @@ static void i2sOutBatchFlush()
   }
 }
 
-static void i2sOutBatchAppend(uint32_t word, long frames)
+static bool i2sOutBatchAppend(uint32_t word, long frames, uint32_t runId)
 {
   while (frames > 0)
   {
     if (i2sOutBatchFrames >= I2S_OUT_BLOCK_FRAMES)
     {
+      // Check once per ~2 ms block, never alter the DMA pulse timing.
+      if (!isStepperRunCurrent(runId))
+      {
+        return false;
+      }
       i2sOutBatchFlush();
     }
     i2sOutBatch[i2sOutBatchFrames * 2] = word;
@@ -91,6 +120,7 @@ static void i2sOutBatchAppend(uint32_t word, long frames)
     i2sOutBatchFrames++;
     frames--;
   }
+  return true;
 }
 
 static uint32_t shiftRegisterSnapshot()
@@ -115,10 +145,10 @@ static void i2sOutFeederTask(void *unused)
       uint32_t state = shiftRegisterSnapshot();
       for (size_t i = 0; i < I2S_OUT_BLOCK_FRAMES; i++)
       {
-        i2sOutBatch[i * 2] = state;
-        i2sOutBatch[(i * 2) + 1] = state;
+        i2sOutFeederBlock[i * 2] = state;
+        i2sOutFeederBlock[(i * 2) + 1] = state;
       }
-      i2sOutWrite(i2sOutBatch, I2S_OUT_BLOCK_FRAMES);
+      i2sOutWrite(i2sOutFeederBlock, I2S_OUT_BLOCK_FRAMES);
       xSemaphoreGive(i2sOutMutex);
     }
     vTaskDelay(1);
@@ -196,14 +226,14 @@ static void shiftRegisterInit()
   // enable the motors: the disable bit is active-high).
   for (size_t i = 0; i < I2S_OUT_BLOCK_FRAMES; i++)
   {
-    i2sOutBatch[i * 2] = shiftRegisterState;
-    i2sOutBatch[(i * 2) + 1] = shiftRegisterState;
+    i2sOutFeederBlock[i * 2] = shiftRegisterState;
+    i2sOutFeederBlock[(i * 2) + 1] = shiftRegisterState;
   }
   size_t preloaded = 1;
   while (preloaded > 0)
   {
-    if (i2s_channel_preload_data(i2sOutChannel, i2sOutBatch,
-                                 sizeof(i2sOutBatch), &preloaded) != ESP_OK)
+    if (i2s_channel_preload_data(i2sOutChannel, i2sOutFeederBlock,
+                                 sizeof(i2sOutFeederBlock), &preloaded) != ESP_OK)
     {
       break;
     }
@@ -257,18 +287,18 @@ void initStepper()
   stepperEnableAll(false);
 }
 
-void step(int stepperNum, long steps, bool reverse)
+bool step(int stepperNum, long steps, bool reverse, uint32_t runId)
 {
-  if ((stepperNum < 1) || (stepperNum > 2) || (steps <= 0))
+  if ((stepperNum < 1) || (stepperNum > 2) || (steps <= 0) || !isStepperRunCurrent(runId))
   {
-    return;
+    return false;
   }
 
   shiftRegisterInit();
   if (!shiftRegisterReady)
   {
     updateDisplayLog(langText("status_stepper_i2s_failed"));
-    return;
+    return false;
   }
 
   StepperPins *motor = &steppers[stepperNum];
@@ -286,23 +316,44 @@ void step(int stepperNum, long steps, bool reverse)
   // Stream the whole move as one pulse train. i2s_channel_write() blocks while
   // the DMA buffers are full, so this paces itself to the frame clock; the
   // physical move finishes up to one DMA depth (~8 ms) after the last write.
+  bool completed = false;
   if (xSemaphoreTake(i2sOutMutex, portMAX_DELAY) == pdTRUE)
   {
-    i2sOutBatchAppend(shiftRegisterSnapshot(), I2S_OUT_DIR_SETTLE_FRAMES);
-    for (long i = 0; i < steps; i++)
+    completed = isStepperRunCurrent(runId) &&
+                i2sOutBatchAppend(shiftRegisterSnapshot(), I2S_OUT_DIR_SETTLE_FRAMES, runId);
+    for (long i = 0; completed && (i < steps); i++)
     {
       // Re-read the state each step so a concurrent beeper/enable write from
       // the other core still reaches the hardware mid-move.
       uint32_t base = shiftRegisterSnapshot();
-      i2sOutBatchAppend(base | stepMask, 1);
-      i2sOutBatchAppend(base, framesPerStep - 1);
+      completed = i2sOutBatchAppend(base | stepMask, 1, runId) &&
+                  i2sOutBatchAppend(base, framesPerStep - 1, runId);
     }
-    i2sOutBatchAppend(shiftRegisterSnapshot(), I2S_OUT_TAIL_FRAMES);
-    i2sOutBatchFlush();
+    completed = completed && isStepperRunCurrent(runId);
+    if (completed)
+    {
+      completed = i2sOutBatchAppend(shiftRegisterSnapshot(), I2S_OUT_TAIL_FRAMES, runId);
+    }
+    if (completed)
+    {
+      i2sOutBatchFlush();
+    }
+    else
+    {
+      // Discard unsent pulses. Already queued DMA data drains normally.
+      i2sOutBatchFrames = 0;
+    }
+    // Explicit low STEP / disabled output also ends a pulse if cancellation
+    // discarded its low half at a block boundary. Keep the shared I2S alive.
+    stepperEnableAll(false);
+    uint32_t idle[2] = {shiftRegisterSnapshot(), 0};
+    idle[1] = idle[0];
+    i2sOutWrite(idle, 1);
     xSemaphoreGive(i2sOutMutex);
   }
 
   stepperEnableAll(false);
+  return completed && isStepperRunCurrent(runId);
 }
 
 void stepperBeep(unsigned long timeMs)

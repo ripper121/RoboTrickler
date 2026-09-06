@@ -57,6 +57,7 @@ window.rtLoadLanguage({
       "german": "Deutsch",
       "profile": "Profile:",
       "totalCounter": "Trickle counter:",
+      "totalCount": "Counter value:",
       "firmwareUpdate": "Firmware Update",
       "firmwareCheck": "Check for new Firmware:",
       "generated": "Generated config.txt:",

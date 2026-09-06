@@ -48,7 +48,7 @@ DEFAULT_ESPTOOL = (
     / "esp32"
     / "tools"
     / "esptool_py"
-    / "5.3.0"
+    / "5.3.1"
     / "esptool.exe"
 )
 DEFAULT_CONFIGURATION = (

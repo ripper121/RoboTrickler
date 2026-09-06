@@ -35,7 +35,7 @@ void cycleAddWeight_event_cb(lv_event_t *e)
   // updateAddWeightLabel() wraps the index past WEIGHT_STEP_COUNT itself.
   addWeightIndex++;
   updateAddWeightLabel();
-  beep(BEEPER_BUTTON);
+  beep("button");
 }
 
 // The Core 1 trickler state machine reads config.targetWeight live while a run is
@@ -54,7 +54,7 @@ void increaseTargetWeight_event_cb(lv_event_t *e)
     return;
   }
   config.targetWeight = clampWeight(config.targetWeight + addWeight);
-  beep(BEEPER_BUTTON);
+  beep("button");
   updateTargetWeightLabel();
 }
 
@@ -65,7 +65,7 @@ void decreaseTargetWeight_event_cb(lv_event_t *e)
     return;
   }
   config.targetWeight = clampWeight(config.targetWeight - addWeight);
-  beep(BEEPER_BUTTON);
+  beep("button");
   updateTargetWeightLabel();
 }
 
@@ -119,11 +119,11 @@ void updateScaleProtocolButtonLabel()
 
 void cycleScaleProtocol_event_cb(lv_event_t *e)
 {
-  config.scaleProtocol = nextScaleProtocol(config.scaleProtocol);
+  strlcpy(config.scaleProtocol, nextScaleProtocol(config.scaleProtocol), sizeof(config.scaleProtocol));
   serialFlush();
   saveConfiguration("/config.txt", config);
   updateScaleProtocolButtonLabel();
-  beep(BEEPER_BUTTON);
+  beep("button");
 }
 
 void toggleWifi_event_cb(lv_event_t *e)
@@ -132,5 +132,5 @@ void toggleWifi_event_cb(lv_event_t *e)
   config.wifiEnabled = !config.wifiEnabled;
   saveConfiguration("/config.txt", config);
   applyWifiEnabled();
-  beep(BEEPER_BUTTON);
+  beep("button");
 }

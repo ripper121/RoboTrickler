@@ -18,45 +18,24 @@ const ScaleRequestCommand SCALE_REQUEST_COMMANDS[] = {
     {"AD", "0x53 0x49 0x0D 0x0A"},
     {"CUSTOM", NULL},
     {"", NULL}};
-static_assert((sizeof(SCALE_REQUEST_COMMANDS) / sizeof(SCALE_REQUEST_COMMANDS[0])) == SCALE_PROTOCOL_COUNT,
-              "ScaleProtocol must match SCALE_REQUEST_COMMANDS");
 
-const char *scaleProtocolName(ScaleProtocol protocol)
+const size_t SCALE_PROTOCOL_COUNT = sizeof(SCALE_REQUEST_COMMANDS) / sizeof(SCALE_REQUEST_COMMANDS[0]);
+
+const char *scaleProtocolDisplayName(const char *protocol)
 {
-  if (protocol >= SCALE_PROTOCOL_COUNT)
-  {
-    return "";
-  }
-  return SCALE_REQUEST_COMMANDS[(uint8_t)protocol].protocol;
+  return ((protocol == NULL) || (protocol[0] == '\0')) ? "STREAM" : protocol;
 }
 
-ScaleProtocol scaleProtocolFromName(const char *protocol)
+const char *nextScaleProtocol(const char *currentProtocol)
 {
-  if (protocol != NULL)
+  for (size_t i = 0; i < SCALE_PROTOCOL_COUNT; i++)
   {
-    for (uint8_t i = 0; i < SCALE_PROTOCOL_COUNT; i++)
+    if (strcmp(currentProtocol, SCALE_REQUEST_COMMANDS[i].protocol) == 0)
     {
-      if (strcmp(protocol, SCALE_REQUEST_COMMANDS[i].protocol) == 0)
-      {
-        return (ScaleProtocol)i;
-      }
+      return SCALE_REQUEST_COMMANDS[(i + 1) % SCALE_PROTOCOL_COUNT].protocol;
     }
   }
-  return SCALE_PROTOCOL_STREAM;
-}
-
-const char *scaleProtocolDisplayName(ScaleProtocol protocol)
-{
-  return protocol == SCALE_PROTOCOL_STREAM ? "STREAM" : scaleProtocolName(protocol);
-}
-
-ScaleProtocol nextScaleProtocol(ScaleProtocol currentProtocol)
-{
-  if (currentProtocol >= SCALE_PROTOCOL_COUNT)
-  {
-    return SCALE_PROTOCOL_GG;
-  }
-  return (ScaleProtocol)(((uint8_t)currentProtocol + 1U) % SCALE_PROTOCOL_COUNT);
+  return SCALE_REQUEST_COMMANDS[0].protocol;
 }
 
 bool serialWait()
@@ -179,7 +158,7 @@ bool sendScaleSerialRequest(const char *requestText)
   }
 
   #if DEBUG
-  if (config.scaleProtocol == SCALE_PROTOCOL_CUSTOM)
+  if (strcmp(config.scaleProtocol, "CUSTOM") == 0)
   {
     updateDisplayLog("TX:" + serialBytesToDisplay(bytes, byteCount) + " / " + serialBytesToHex(bytes, byteCount), false);
   }
@@ -377,17 +356,17 @@ bool requestScaleWeight()
 {
   updateActiveProfileStepCounterDisplay(weightCounter);
 
-  if (config.scaleProtocol == SCALE_PROTOCOL_CUSTOM)
+  if (strcmp(config.scaleProtocol, "CUSTOM") == 0)
   {
     return sendScaleSerialRequest(config.scaleCustomCode);
   }
 
-  if (config.scaleProtocol < SCALE_PROTOCOL_COUNT)
+  for (size_t i = 0; i < SCALE_PROTOCOL_COUNT; i++)
   {
-    const char *request = SCALE_REQUEST_COMMANDS[(uint8_t)config.scaleProtocol].request;
-    if (request != NULL)
+    if ((SCALE_REQUEST_COMMANDS[i].request != NULL) &&
+        (strcmp(config.scaleProtocol, SCALE_REQUEST_COMMANDS[i].protocol) == 0))
     {
-      return sendScaleSerialRequest(request);
+      return sendScaleSerialRequest(SCALE_REQUEST_COMMANDS[i].request);
     }
   }
 
@@ -406,7 +385,7 @@ bool readScaleLine(float *parsedWeight, int *parsedDecimalPlaces, char *parsedUn
   lineBuffer[bytesRead] = '\0';
 
   #if DEBUG
-  if (config.scaleProtocol == SCALE_PROTOCOL_CUSTOM)
+  if (strcmp(config.scaleProtocol, "CUSTOM") == 0)
   {
     updateDisplayLog("RX:" + String(lineBuffer), false);
   }

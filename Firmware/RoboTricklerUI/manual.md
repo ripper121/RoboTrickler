@@ -122,7 +122,7 @@ Das angezeigte Gewicht wechselt während des Trickelns die Farbe:
 ## Tab `Profil`
 
 * Mit den Pfeil-Buttons (oben/unten) wird durch die erkannten Profile geblättert; das gewählte Profil wird sofort geladen.
-* Der orangefarbene Button (Zahnrad) öffnet das Profil-Tuning. Dort können `stepper.1.weightPerRev` und die `measurements`-Werte der `trickleMap` angepasst werden (siehe [Profil-Tuning](#profil-tuning)).
+* Der orangefarbene Button (Zahnrad) öffnet das Profil-Tuning. Dort können `stepper.1.weightPerRev` sowie die `measurements`- und `stepper.steps`-Werte der `trickleMap` angepasst werden (siehe [Profil-Tuning](#profil-tuning)).
 * Der rote Button (Papierkorb) löscht das ausgewählte Profil nach einer Bestätigung.
 * Für das Profil `calibrate` werden Tuning- und Lösch-Button ausgeblendet.
 
@@ -193,11 +193,12 @@ Das `calibrate` Profil liegt als `/profiles/calibrate.txt` im aktiven Dateisyste
 ```json
 {
   "measurements": 10,
-  "stepper": {
-    "id": 1,
-    "revolutions": 100,
-    "rpm": 200
-  }
+    "stepper": {
+        "id": 1,
+        "revolutions": 100,
+        "rpm": 200,
+        "reverse": false
+    }
 }
 ```
 
@@ -252,12 +253,13 @@ Wechsle in den Tab `Profil` und wähle das Profil aus, das angepasst werden soll
 
 ### 2. Tuning-Art wählen
 
-Klicke auf das **Zahnrad-Symbol**. Die Firmware zeigt zuerst eine Auswahl:
+Klicke auf das **Zahnrad-Symbol**. Der gemeinsame Tuning-Dialog startet mit **Gewicht / Umdr**. Mit den beiden Pfeilen neben dem Titel wechselst du vorwärts oder rückwärts durch die drei Tuning-Arten:
 
-* **Gewicht / Umdr**: passt `stepper.1.weightPerRev` an und berechnet daraus die acht Standard-Feinwürfe neu.
+* **Gewicht / Umdr**: passt `stepper.1.weightPerRev` an und berechnet die nicht manuell geänderten Schrittzahlen für Stepper 1 neu.
 * **Messwerte**: passt die `measurements`-Werte der vorhandenen `trickleMap`-Einträge an, ohne die STEP-Pulse zu ändern.
+* **Schritte**: passt die STEP-Pulse (`stepper.steps`) der vorhandenen `trickleMap`-Einträge einzeln an.
 
-Das Profil `calibrate` kann nicht getunt werden. Der Trickler muss für beide Tuning-Funktionen gestoppt sein.
+Das Profil `calibrate` kann nicht getunt werden. Der Trickler muss für alle Tuning-Funktionen gestoppt sein.
 
 ### 3. Gewicht / Umdr anpassen
 
@@ -269,7 +271,7 @@ Wähle **Gewicht / Umdr**, um den Wert `stepper.1.weightPerRev` zu ändern. Die 
 - Übertrickelt der Trickler regelmäßig, erhöhe den Wert.
 - Verringere den Wert schrittweise, bis der Trickler gerade nicht mehr übertrickelt.
 - So erreichst du einen guten Kompromiss zwischen Geschwindigkeit und Genauigkeit.
-- Beim Speichern berechnet die Firmware die acht Einträge der `trickleMap` neu. Vorhandene `measurements`-Werte werden dabei beibehalten, soweit es für die neu erzeugten Einträge passende Positionen gibt.
+- Beim Speichern bleiben alle vorhandenen `trickleMap`-Einträge erhalten. Wenn Gewicht/Umdr geändert wurde, berechnet die Firmware die Schrittzahlen für Stepper 1 anhand der vorhandenen `diffWeight`-Werte neu. Im selben Dialog manuell geänderte Schrittzahlen haben Vorrang; Messwertänderungen werden ebenfalls gespeichert.
 
 ![Gewicht / Umdr anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
 
@@ -279,17 +281,25 @@ Wähle **Messwerte**, um die Stabilitätszählung pro `trickleMap`-Eintrag anzup
 
 Mehr Messwerte geben der Waage mehr Zeit zum Einschwingen und machen das Dosieren ruhiger, kosten aber Zeit. Weniger Messwerte beschleunigen den Ablauf, können bei unruhigen Waagen aber zu frühen Würfen führen.
 
-Beim Speichern werden nur die `measurements`-Werte der vorhandenen `trickleMap`-Einträge überschrieben; `diffWeight`, STEP-Pulse, Drehzahl und Stepper-Auswahl bleiben unverändert.
+Wenn du ausschließlich Messwerte änderst, werden nur diese Werte gespeichert; `diffWeight`, STEP-Pulse, Drehzahl und Stepper-Auswahl bleiben unverändert.
 
 > 📸 **Screenshot – Display:** Dialog `Messungen` mit aktuellem Messwert, `+`/`-`, dem mittleren `diffWeight`-Button zum Wechseln des Eintrags sowie Abbrechen- und Speichern-Button.
 
-### 5. Einstellungen speichern
+### 5. Schritte anpassen
 
-Klicke auf **Speichern**, um die Änderungen zu übernehmen. Die Firmware schreibt das Profil direkt in das aktive Dateisystem. Läuft der Trickler von SD, ist das die SD-Karte; läuft er ohne SD von LittleFS, ist es der interne Flash.
+Wähle **Schritte**, um die STEP-Pulse pro `trickleMap`-Eintrag anzupassen. Der mittlere Button zeigt wie beim Messwerte-Dialog den gerade bearbeiteten `diffWeight`-Eintrag und wechselt beim Drücken zum nächsten Eintrag. Mit `+` und `-` wird die Schrittzahl jeweils um eins geändert; der kleinste zulässige Wert ist `1`.
+
+Wenn du ausschließlich Schritte änderst, werden nur die `stepper.steps`-Werte überschrieben. Änderst du im selben Dialog auch Gewicht/Umdr, haben deine manuell geänderten Schrittzahlen Vorrang vor der Neuberechnung. Änderungen an Messwerten werden ebenfalls übernommen. Eine spätere Änderung von Gewicht/Umdr in einer neuen Tuning-Sitzung berechnet die Schrittzahlen erneut.
+
+> 📸 **Screenshot – Display:** Dialog `Schritte` mit aktueller Schrittzahl, `+`/`-`, dem mittleren `diffWeight`-Button zum Wechseln des Eintrags sowie Abbrechen- und Speichern-Button.
+
+### 6. Einstellungen speichern
+
+Beim Wechseln der Tuning-Art bleiben die Eingaben im geöffneten Dialog erhalten. **Speichern** übernimmt alle Änderungen aus allen drei Tuning-Arten gemeinsam und schließt den Dialog, unabhängig vom gerade angezeigten Modus. **Abbrechen** verwirft alle ungespeicherten Eingaben. Die Firmware schreibt das Profil einmalig in das aktive Dateisystem. Läuft der Trickler von SD, ist das die SD-Karte; läuft er ohne SD von LittleFS, ist es der interne Flash.
 
 ![Einstellungen speichern](https://github.com/user-attachments/assets/7a7d0735-f0f2-4740-8e7b-fcf7f4df550e)
 
-### 6. Ergebnis testen
+### 7. Ergebnis testen
 
 Wechsle zurück in den Tab `Trickler` und teste die neuen Einstellungen.
 
@@ -388,7 +398,8 @@ Beispiel für das neue Profilformat:
       "stepper": {
         "id": 1,
         "steps": 669,
-        "rpm": 200
+        "rpm": 200,
+        "reverse": false
       }
     },
     {
@@ -397,7 +408,8 @@ Beispiel für das neue Profilformat:
       "stepper": {
         "id": 1,
         "steps": 335,
-        "rpm": 200
+        "rpm": 200,
+        "reverse": false
       }
     },
     {
@@ -406,7 +418,8 @@ Beispiel für das neue Profilformat:
       "stepper": {
         "id": 1,
         "steps": 167,
-        "rpm": 200
+        "rpm": 200,
+        "reverse": false
       }
     },
     {
@@ -415,7 +428,8 @@ Beispiel für das neue Profilformat:
       "stepper": {
         "id": 1,
         "steps": 84,
-        "rpm": 200
+        "rpm": 200,
+        "reverse": false
       }
     },
     {
@@ -424,7 +438,8 @@ Beispiel für das neue Profilformat:
       "stepper": {
         "id": 1,
         "steps": 5,
-        "rpm": 200
+        "rpm": 200,
+        "reverse": false
       }
     }
   ]
@@ -437,12 +452,12 @@ Beispiel für das neue Profilformat:
 * `tolerance`: erlaubte Abweichung zum Zielgewicht.
 * `alarmThreshold`: Überwurf-Grenze. Wenn `targetWeight + alarmThreshold` erreicht oder überschritten wird, stoppt die Firmware, piept mehrfach und zeigt eine Warnung an. Bei `0` ist der Alarm deaktiviert.
 * `weightGap`: Sicherheitsabstand zum Zielgewicht, den der Grobwurf bewusst frei lässt. Der berechnete Grobwurf bringt das Gewicht also nur bis `Zielgewicht − weightGap` heran, damit er nie überwirft; die restlichen `weightGap` Gramm/Grain schließen danach die Feinwürfe. Größerer Wert = mehr Reserve für die Feinphase (sicherer, aber langsamer).
-* `bulkStepper`: optionaler Grob-Stepper für den automatischen ersten Grobwurf. Erlaubt sind `1` und `2`. Wenn das Feld fehlt, leer oder ungültig ist, verwendet die Firmware `1`.
+* `bulkStepper`: Grob-Stepper für den automatischen ersten Grobwurf. Erlaubt sind `1` und `2`.
 * `startAtZero`: Wenn `true`, wartet die Firmware vor dem ersten Wurf auf exakt `0.000`. Wenn `false`, beginnt der erste Wurf bereits, sobald das Gewicht bei oder über `0.000` liegt – die Waage muss also nicht exakt genullt sein.
 * `sessionCounter`: Wenn `true`, zeigt die Anzahl der fertigen Trickles seit dem letzten Stop an. Standard ist `false`.
 * `measurements`: Wie viele aufeinanderfolgende Gewichtswerte die Firmware von der Waage abwartet, bevor sie den nächsten Wurf auslöst. Das gibt der Waage Zeit zum Einschwingen, damit nicht auf einen noch zappelnden Wert dosiert wird. Mehr Messungen = ruhiger/genauer, aber langsamer. Dieser Wert gilt für den Start eines Trickelvorgangs (bei neu aufgesetzter Pulverpfanne); die einzelnen `trickleMap`-Einträge haben ihren eigenen `measurements`-Wert.
 
-Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `alarmThreshold = 0.000`, `weightGap = 1.000`, `bulkStepper = 1`, `startAtZero = false`, `sessionCounter = false` und `measurements = 20`.
+Alle gezeigten `general`-Felder sind erforderlich. Fehlende oder zusätzliche Felder machen das Profil ungültig.
 
 ### `stepper`
 
@@ -451,7 +466,7 @@ Wenn `general` fehlt, bleiben die Standardwerte aktiv: `tolerance = 0.000`, `ala
 * `weightPerRev`: Pulvermenge pro Umdrehung bei `rpm`.
 * `rpm`: Motordrehzahl in U/min für den automatischen ersten Grobwurf.
 
-Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `weightPerRev` die benötigten STEP-Pulse. Es wird genau der in `general.bulkStepper` eingetragene Grob-Stepper verwendet; ohne gültigen Eintrag ist das `1`. Wenn der gewählte Stepper nicht aktiviert ist oder `weightPerRev` fehlt bzw. `0` ist, wird der automatische Grobwurf übersprungen.
+Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `weightPerRev` die benötigten STEP-Pulse. Es wird genau der in `general.bulkStepper` eingetragene Grob-Stepper verwendet. Wenn der gewählte Stepper nicht aktiviert ist oder `weightPerRev` den Wert `0` hat, wird der automatische Grobwurf übersprungen.
 
 ### `trickleMap`
 
@@ -463,7 +478,7 @@ Der automatische Grobwurf läuft nur beim ersten Wurf. Die Firmware berechnet au
   * `stepper.id`: `1` oder `2`.
   * `stepper.steps`: Anzahl direkter STEP-Pulse für diesen Wurf. Die Firmware gibt diesen Wert unverändert an den Stepper aus.
   * `stepper.rpm`: Motordrehzahl in U/min. Sinnvolle Werte liegen meist zwischen 5 und 300.
-  * `stepper.reverse`: Optional. Bei `true` läuft der Stepper nur für diesen Eintrag in die entgegengesetzte Richtung. Fehlt das Feld oder ist es `false`, bleibt die normale Richtung erhalten.
+  * `stepper.reverse`: Bei `true` läuft der Stepper nur für diesen Eintrag in die entgegengesetzte Richtung; bei `false` bleibt die normale Richtung erhalten. Das Feld ist erforderlich.
 
 Die Firmware wählt den ersten Eintrag, dessen `diffWeight` noch zum Abstand zwischen aktuellem Gewicht und Zielgewicht passt. Je näher das Zielgewicht kommt, desto kleinere `diffWeight`-Einträge werden verwendet.
 
@@ -531,7 +546,8 @@ Damit übernimmt im folgenden Beispiel Stepper `2` den Grobwurf und den ersten F
       "stepper": {
         "id": 2,
         "steps": 200,
-        "rpm": 200
+        "rpm": 200,
+        "reverse": false
       }
     },
     {
@@ -540,7 +556,8 @@ Damit übernimmt im folgenden Beispiel Stepper `2` den Grobwurf und den ersten F
       "stepper": {
         "id": 1,
         "steps": 80,
-        "rpm": 200
+        "rpm": 200,
+        "reverse": false
       }
     },
     {
@@ -549,7 +566,8 @@ Damit übernimmt im folgenden Beispiel Stepper `2` den Grobwurf und den ersten F
       "stepper": {
         "id": 1,
         "steps": 5,
-        "rpm": 200
+        "rpm": 200,
+        "reverse": false
       }
     }
   ]
@@ -604,7 +622,7 @@ Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis des aktiven Dateis
 }
 ```
 
-Die Werte im Beispiel oben dienen nur zur Veranschaulichung. In Klammern steht jeweils der Standardwert, den die Firmware verwendet, wenn `config.txt` fehlt oder das Feld nicht gesetzt ist.
+Die Werte im Beispiel oben dienen nur zur Veranschaulichung. Alle gezeigten Objekte und Felder sind erforderlich; fehlende oder zusätzliche Felder führen dazu, dass die Firmware `config.txt` verwirft und vollständig durch ihre Standardkonfiguration ersetzt. Die Angaben in Klammern sind die Werte dieser neu erzeugten Standardkonfiguration.
 
 * `wifi.enabled`: aktiviert WLAN, Webserver und alle Netzwerkdienste. Bei `false` startet der Trickler ohne WLAN. Lässt sich auch direkt am Display im Tab `Info` ein- und ausschalten. (Standard: `true`)
 * `wifi.ssid`: WLAN-Name. Nur 2.4 GHz WLAN wird unterstützt. (Standard: leer)
@@ -782,7 +800,7 @@ Diese Endpunkte können im Browser oder aus einer eigenen Steuerung aufgerufen w
 * `GET /setTarget?targetWeight=WERT`: Zielgewicht setzen und im aktuellen Profil speichern. Erlaubt sind Werte größer `0` bis maximal `500.000`. Während eines laufenden Trickelvorgangs antwortet die Firmware mit `409`. Beispiel: `/setTarget?targetWeight=40`.
 * `GET /getProfile`: aktuelles Profil lesen.
 * `GET /getLanguage`: aktuell geladene Sprache lesen.
-* `GET /getProfileList`: Liste der erkannten Profile als JSON lesen.
+* `GET /getProfileList`: Liste der erkannten Profile als JSON-Array lesen, z.B. `["avg","calibrate"]`.
 * `GET /setProfile?profileNumber=NUMMER`: Profil über die nullbasierte Nummer aus der Profilliste wählen und sofort laden. Während eines laufenden Trickelvorgangs antwortet die Firmware mit `409`; die Auswahl wird beim Starten eines Wurfs dauerhaft in `config.txt` gespeichert.
 * `GET /system/start`: Trickeln starten. Wenn kein gültiges Profil geladen werden kann, antwortet die Firmware mit `409`.
 * `GET /system/stop`: Trickeln stoppen.
