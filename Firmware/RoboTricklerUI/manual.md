@@ -176,24 +176,6 @@ Die Profilliste im Display und über die Web-API enthält nur gültige Profile. 
 
 ## Automatisches Profil aus Kalibrierlauf erstellen
 
-Das `calibrate` Profil liegt als `/profiles/calibrate.txt` im aktiven Dateisystem. Fehlt diese Datei oder ist sie defekt, legt die Firmware sie aus einer eingebauten Vorlage neu an.
-
-```json
-{
-  "measurements": 10,
-    "stepper": {
-        "id": 1,
-        "revolutions": 100,
-        "rpm": 200,
-        "reverse": false
-    }
-}
-```
-
-Anders als normale Profile (die ihre Würfe als `stepper.steps` angeben) ist `calibrate` ein Sonderfall und gibt den Kalibrierlauf in Motor-**Umdrehungen** an. Dieses Profil nutzt `stepper.revolutions: 100`. Die Firmware rechnet das beim Laden in STEP-Pulse um: `steps = revolutions × stepper.stepsPerRev`. Bei den Standard-`stepper.stepsPerRev: 200` ergibt das einen Kalibrierlauf über 100 Umdrehungen (20000 STEP-Pulse). Der Vorteil: Der Kalibrierlauf bleibt unabhängig von der Mikroschritt-Einstellung immer gleich lang.
-
-Auch im Kalibrierprofil ist `stepper.reverse` erforderlich. Mit `true` kann der komplette Kalibrierwurf in Gegenrichtung ausgeführt werden; die automatisch erzeugten Pulverprofile verwenden zunächst `reverse: false`.
-
 **Vorgehen:**
 
 1. Wähle im Tab `Profil` `calibrate`.
