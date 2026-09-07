@@ -30,6 +30,8 @@ SKETCH_DIR = SCRIPT_DIR.parent
 DEFAULT_BUILD_DIR = SKETCH_DIR.parent / "build"
 DEFAULT_USB_FLASH_DIR = SKETCH_DIR.parent / "USB-Flash"
 SD_FILES_GZ_DIR = SKETCH_DIR / "SD-Files-Gz"
+SD_FILES_LITTLEFS_DIR = SKETCH_DIR / "SD-Files-LittleFS"
+LITTLEFS_DATA_DIR = SKETCH_DIR / "data"
 SD_FILES_LEGACY_DIR = SKETCH_DIR / "SD-Files-Legacy"
 COMPILE_OPTIONS_FILE = SKETCH_DIR / "compile_options.h"
 FIRMWARE_BUILD_UPLOAD_SCRIPT = SCRIPT_DIR / "firmware_build_upload.py"
@@ -52,6 +54,12 @@ LEGACY_SKIP_ARTIFACTS = ("littlefs.bin",)
 STATIC_FILES = (
     "esptool.exe",
     "flash.bat",
+)
+
+GENERATED_DIRECTORIES = (
+    SD_FILES_GZ_DIR,
+    SD_FILES_LITTLEFS_DIR,
+    LITTLEFS_DATA_DIR,
 )
 
 
@@ -89,7 +97,10 @@ def parse_args() -> argparse.Namespace:
         "--prod",
         dest="prod",
         action="store_true",
-        help="Production build: force DEBUG 0 and ENABLE_SCREENSHOT 0 for the build.",
+        help=(
+            "Production build: clean the build directory and force DEBUG 0 and "
+            "ENABLE_SCREENSHOT 0 for the build."
+        ),
     )
     parser.add_argument(
         "-pdf",
@@ -114,14 +125,58 @@ def require_file(path: Path, description: str) -> Path:
     return path
 
 
-def regenerate_littlefs(build_dir: Path, legacy: bool = False) -> None:
-    if SD_FILES_GZ_DIR.exists():
-        if not SD_FILES_GZ_DIR.is_dir():
+def clean_generated_outputs(output_dir: Path) -> None:
+    """Remove generated filesystem trees and stale USB package binaries."""
+    sketch_dir = SKETCH_DIR.resolve()
+    for directory in GENERATED_DIRECTORIES:
+        resolved_directory = directory.resolve()
+        if resolved_directory.parent != sketch_dir:
             raise RuntimeError(
-                f"Refusing to replace non-directory output: {SD_FILES_GZ_DIR}"
+                f"Refusing to remove generated directory outside {SKETCH_DIR}: "
+                f"{resolved_directory}"
             )
-        shutil.rmtree(SD_FILES_GZ_DIR)
-        print(f"Removed {SD_FILES_GZ_DIR}", flush=True)
+        if not resolved_directory.exists():
+            continue
+        if not resolved_directory.is_dir():
+            raise RuntimeError(
+                f"Refusing to replace non-directory output: {resolved_directory}"
+            )
+        shutil.rmtree(resolved_directory)
+        print(f"Removed {resolved_directory}", flush=True)
+
+    if output_dir.exists() and not output_dir.is_dir():
+        raise RuntimeError(f"USB-Flash output is not a directory: {output_dir}")
+    if output_dir.is_dir():
+        for binary in sorted(output_dir.glob("*.bin")):
+            if binary.is_file():
+                binary.unlink()
+                print(f"Removed stale {binary}", flush=True)
+
+
+def clean_build_directory(build_dir: Path) -> None:
+    """Remove the selected build directory without risking source directories."""
+    resolved_build_dir = build_dir.resolve()
+    resolved_sketch_dir = SKETCH_DIR.resolve()
+    filesystem_root = Path(resolved_build_dir.anchor)
+    home_dir = Path.home().resolve()
+    if (
+        resolved_build_dir in (filesystem_root, home_dir)
+        or resolved_build_dir == resolved_sketch_dir
+        or resolved_sketch_dir.is_relative_to(resolved_build_dir)
+    ):
+        raise RuntimeError(
+            f"Refusing to use protected directory as clean build output: "
+            f"{resolved_build_dir}"
+        )
+    if not resolved_build_dir.exists():
+        return
+    if not resolved_build_dir.is_dir():
+        raise RuntimeError(f"Build output is not a directory: {resolved_build_dir}")
+    shutil.rmtree(resolved_build_dir)
+    print(f"Removed build directory {resolved_build_dir}", flush=True)
+
+
+def regenerate_littlefs(build_dir: Path, legacy: bool = False) -> None:
 
     steps = [
         (GENERATE_SD_TREES_SCRIPT, []),
@@ -365,6 +420,9 @@ def main() -> int:
             original_compile_options = set_compile_defines(define_overrides)
         if args.legacy:
             print("Legacy mode: 4 MB / Minimal SPIFFS, skipping LittleFS image.", flush=True)
+        if args.prod:
+            clean_build_directory(build_dir)
+        clean_generated_outputs(output_dir)
         regenerate_littlefs(build_dir, args.legacy)
         compile_firmware(build_dir, args.legacy)
         copy_package_files(build_dir, output_dir, args.legacy)
