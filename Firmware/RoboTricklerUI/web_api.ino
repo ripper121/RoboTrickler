@@ -85,6 +85,12 @@ bool loadWebLang(JsonDocument &doc)
 {
   String language = normalizedLanguageCode();
 
+  // Firmware-generated pages only consume web.firmware. Filtering while the
+  // stream is parsed prevents all other web-page translations from ever being
+  // copied into the JsonDocument's heap pool.
+  JsonDocument filter;
+  filter["web"]["firmware"] = true;
+
   String candidates[] = {
       "/system/lang/" + language + ".json",
       "/system/lang/en.json"};
@@ -100,7 +106,8 @@ bool loadWebLang(JsonDocument &doc)
     {
       continue;
     }
-    DeserializationError error = deserializeJson(doc, file);
+    DeserializationError error = deserializeJson(
+        doc, file, DeserializationOption::Filter(filter));
     file.close();
     if (!error && doc["web"]["firmware"].is<JsonObject>())
     {

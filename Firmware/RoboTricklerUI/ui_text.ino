@@ -246,9 +246,13 @@ bool loadLanguage()
     return false;
   }
 
-  // Parse straight from the file stream. ArduinoJson copies keys/values into the
-  // document's own pool, so there is no need to keep the raw JSON text in heap.
-  DeserializationError error = deserializeJson(activeUiLangDoc, file);
+  // Parse straight from the file stream and retain only the section used by
+  // langText(). The same JSON format may gain other consumers later; they must
+  // not increase the UI language document's resident heap usage.
+  JsonDocument filter;
+  filter["ui"] = true;
+  DeserializationError error = deserializeJson(
+      activeUiLangDoc, file, DeserializationOption::Filter(filter));
   file.close();
   if (error || !activeUiLangDoc["ui"].is<JsonObject>())
   {
