@@ -17,17 +17,38 @@ static const char *profileStepperName(byte stepperNumber)
   return stepperNumber == 2 ? "2" : "1";
 }
 
+static bool hasOnlyFields(JsonObject object, const char *const *allowedFields, size_t allowedCount)
+{
+  for (JsonPair field : object)
+  {
+    const char *fieldName = field.key().c_str();
+    bool allowed = false;
+    for (size_t i = 0; i < allowedCount; i++)
+    {
+      if (strcmp(fieldName, allowedFields[i]) == 0)
+      {
+        allowed = true;
+        break;
+      }
+    }
+    if (!allowed)
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
 static bool hasRequiredProfileFields(JsonObject profileEntry)
 {
+  static const char *const stepperFields[] = {"id", "steps", "rpm", "reverse"};
   JsonObject stepper = profileEntry["stepper"].as<JsonObject>();
   return !profileEntry.isNull() && (profileEntry.size() == 3) &&
          !profileEntry["diffWeight"].isNull() &&
          !profileEntry["measurements"].isNull() &&
-         !stepper.isNull() && (stepper.size() == 4) &&
-         !stepper["id"].isNull() &&
+         !stepper.isNull() && (stepper.size() > 0) && (stepper.size() <= 4) &&
          !stepper["steps"].isNull() &&
-         !stepper["rpm"].isNull() &&
-         !stepper["reverse"].isNull();
+         hasOnlyFields(stepper, stepperFields, sizeof(stepperFields) / sizeof(stepperFields[0]));
 }
 
 static bool hasCalibrationProfileFields(JsonObject profileEntry)
@@ -47,30 +68,28 @@ static bool hasCalibrationProfileFields(JsonObject profileEntry)
 
 static bool hasRequiredNormalProfileFields(JsonObject profile)
 {
+  static const char *const generalFields[] = {
+      "targetWeight", "tolerance", "alarmThreshold", "weightGap",
+      "trickleMapLimitFactor", "bulkStepper", "startAtZero",
+      "sessionCounter", "measurements"};
+  static const char *const stepperMapFields[] = {"1", "2"};
+  static const char *const stepperFields[] = {"enabled", "weightPerRev", "rpm"};
   JsonObject general = profile["general"].as<JsonObject>();
   JsonObject stepperMap = profile["stepper"].as<JsonObject>();
   JsonObject stepper1 = stepperMap["1"].as<JsonObject>();
   JsonObject stepper2 = stepperMap["2"].as<JsonObject>();
   JsonArray trickleMap = profile["trickleMap"].as<JsonArray>();
   return !profile.isNull() && (profile.size() == 3) &&
-         !general.isNull() && (general.size() == 8) &&
+         !general.isNull() && (general.size() > 0) && (general.size() <= 9) &&
          !general["targetWeight"].isNull() &&
-         !general["tolerance"].isNull() &&
-         !general["alarmThreshold"].isNull() &&
-         !general["weightGap"].isNull() &&
-         !general["bulkStepper"].isNull() &&
-         !general["startAtZero"].isNull() &&
-         !general["sessionCounter"].isNull() &&
-         !general["measurements"].isNull() &&
-         !stepperMap.isNull() && (stepperMap.size() == 2) &&
-         !stepper1.isNull() && (stepper1.size() == 3) &&
-         !stepper1["enabled"].isNull() &&
+         hasOnlyFields(general, generalFields, sizeof(generalFields) / sizeof(generalFields[0])) &&
+         !stepperMap.isNull() && (stepperMap.size() > 0) && (stepperMap.size() <= 2) &&
+         hasOnlyFields(stepperMap, stepperMapFields, sizeof(stepperMapFields) / sizeof(stepperMapFields[0])) &&
+         !stepper1.isNull() && (stepper1.size() > 0) && (stepper1.size() <= 3) &&
          !stepper1["weightPerRev"].isNull() &&
-         !stepper1["rpm"].isNull() &&
-         !stepper2.isNull() && (stepper2.size() == 3) &&
-         !stepper2["enabled"].isNull() &&
-         !stepper2["weightPerRev"].isNull() &&
-         !stepper2["rpm"].isNull() &&
+         hasOnlyFields(stepper1, stepperFields, sizeof(stepperFields) / sizeof(stepperFields[0])) &&
+         (stepper2.isNull() || ((stepper2.size() <= 3) &&
+          hasOnlyFields(stepper2, stepperFields, sizeof(stepperFields) / sizeof(stepperFields[0])))) &&
          !trickleMap.isNull() && (trickleMap.size() > 0) &&
          (trickleMap.size() <= PROFILE_MAX_ENTRIES);
 }
@@ -279,6 +298,7 @@ void setDefaultConfiguration(Config &config)
   config.fwUpdateCheck = true;
   config.totalCounterEnable = false;
   config.totalCount = 0;
+  config.profileTrickleMapLimitFactor = DEFAULT_TRICKLE_MAP_LIMIT_FACTOR;
   config.profileStartAtZero = false;
   config.profileSessionCounter = false;
 }
@@ -395,6 +415,7 @@ bool loadProfile(const char *filename, Config &config)
   config.profileTolerance = 0.000;
   config.profileAlarmThreshold = 0.000;
   config.profileWeightGap = 1.000;
+  config.profileTrickleMapLimitFactor = DEFAULT_TRICKLE_MAP_LIMIT_FACTOR;
   config.profileBulkStepper = 1;
   config.profileGeneralMeasurements = 20;
   config.profileStartAtZero = false;
@@ -406,6 +427,10 @@ bool loadProfile(const char *filename, Config &config)
     config.profileStepperWeightPerRev[i] = 0.0;
     config.profileStepperRpm[i] = 0;
   }
+  config.profileStepperEnabled[1] = true;
+  config.profileStepperRpm[1] = 200;
+  config.profileStepperWeightPerRev[2] = 10.0;
+  config.profileStepperRpm[2] = 200;
   for (int i = 0; i < PROFILE_MAX_ENTRIES; i++)
   {
     config.profileStepper[i] = 1;
@@ -424,6 +449,7 @@ bool loadProfile(const char *filename, Config &config)
     config.profileTolerance = general["tolerance"] | 0.000;
     config.profileAlarmThreshold = general["alarmThreshold"] | 0.000;
     config.profileWeightGap = general["weightGap"] | 1.000;
+    config.profileTrickleMapLimitFactor = general["trickleMapLimitFactor"] | DEFAULT_TRICKLE_MAP_LIMIT_FACTOR;
     config.profileBulkStepper = profileStepperNumber(general["bulkStepper"] | 1);
     config.profileStartAtZero = general["startAtZero"] | false;
     config.profileSessionCounter = general["sessionCounter"] | false;
@@ -437,6 +463,12 @@ bool loadProfile(const char *filename, Config &config)
     {
       config.profileGeneralMeasurements = 20;
     }
+    if (!isfinite(config.profileTrickleMapLimitFactor) ||
+        config.profileTrickleMapLimitFactor < MIN_TRICKLE_MAP_LIMIT_FACTOR ||
+        config.profileTrickleMapLimitFactor > MAX_TRICKLE_MAP_LIMIT_FACTOR)
+    {
+      config.profileTrickleMapLimitFactor = DEFAULT_TRICKLE_MAP_LIMIT_FACTOR;
+    }
   }
   // Keep a profile file with an out-of-range targetWeight inside the weight domain.
   config.targetWeight = clampWeight(config.targetWeight);
@@ -449,9 +481,9 @@ bool loadProfile(const char *filename, Config &config)
       JsonObject stepper = stepperMap[profileStepperName(stepperNumber)].as<JsonObject>();
       if (!stepper.isNull())
       {
-        config.profileStepperEnabled[stepperNumber] = stepper["enabled"] | true;
-        config.profileStepperWeightPerRev[stepperNumber] = stepper["weightPerRev"] | 0.0;
-        config.profileStepperRpm[stepperNumber] = stepper["rpm"] | 0;
+        config.profileStepperEnabled[stepperNumber] = stepper["enabled"] | config.profileStepperEnabled[stepperNumber];
+        config.profileStepperWeightPerRev[stepperNumber] = stepper["weightPerRev"] | config.profileStepperWeightPerRev[stepperNumber];
+        config.profileStepperRpm[stepperNumber] = stepper["rpm"] | config.profileStepperRpm[stepperNumber];
       }
     }
   }
@@ -670,10 +702,10 @@ bool isValidProfileFile(const char *filename)
 
 String nextCalibrationProfileName()
 {
-  for (int i = 0; i <= 999; i++)
+  for (int i = 1; i <= PROFILE_LIST_MAX; i++)
   {
     char profileName[16];
-    snprintf(profileName, sizeof(profileName), "powder_%03d", i);
+    snprintf(profileName, sizeof(profileName), "powder_%d", i);
     String filename = "/profiles/" + String(profileName) + ".txt";
     if (!ACTIVE_FS.exists(filename.c_str()))
     {
@@ -684,13 +716,12 @@ String nextCalibrationProfileName()
   return "";
 }
 
-static void populateCalibrationTrickleMap(JsonDocument &doc, float weightPerRev, int profileRpm)
+static void populateCalibrationTrickleMap(JsonDocument &doc, float weightPerRev, int profileRpm,
+                                          float trickleMapLimitFactor)
 {
   const float diffWeights[8] = {1.929, 0.965, 0.482, 0.241, 0.121, 0.060, 0.030, 0.000};
   const size_t diffWeightsCount = sizeof(diffWeights) / sizeof(diffWeights[0]);
   const int measurements[8] = {2, 2, 5, 5, 10, 10, 15, 20};
-  const float trickleMapLimitFactor = 0.65;
-
   JsonArray trickleMap = doc["trickleMap"].to<JsonArray>();
   for (int i = 0; i < diffWeightsCount; i++)
   {
@@ -767,6 +798,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   general["tolerance"] = serialized(weightToString(0.0f));
   general["alarmThreshold"] = serialized(weightToString(1.0f));
   general["weightGap"] = serialized(weightToString(1.0f));
+  general["trickleMapLimitFactor"] = serialized(weightToString(DEFAULT_TRICKLE_MAP_LIMIT_FACTOR));
   general["bulkStepper"] = 1;
   general["startAtZero"] = false;
   general["sessionCounter"] = false;
@@ -782,7 +814,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   stepper2["weightPerRev"] = serialized(weightToString(config.profileStepperWeightPerRev[2] > 0.0 ? config.profileStepperWeightPerRev[2] : 10.0));
   stepper2["rpm"] = config.profileStepperRpm[2] > 0 ? config.profileStepperRpm[2] : 200;
 
-  populateCalibrationTrickleMap(doc, weightPerRev, profileRpm);
+  populateCalibrationTrickleMap(doc, weightPerRev, profileRpm, DEFAULT_TRICKLE_MAP_LIMIT_FACTOR);
 
   if (!ACTIVE_FS.exists("/profiles") && !ACTIVE_FS.mkdir("/profiles"))
   {
@@ -831,12 +863,15 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
 
 // Apply the entire tuning session to one document and commit it once.
 // Keep map positions stable so edits made before switching modes still refer
-// to the same entries. Explicit step edits override weight/rev recalculation.
-bool tuneProfileValues(const char *profileName, float weightPerRev,
+// to the same entries. Explicit step edits override weight/factor recalculation.
+bool tuneProfileValues(const char *profileName, float weightPerRev, float trickleMapLimitFactor,
                        const int *measurements, const long *steps, int count)
 {
   if (!measurements || !steps || count <= 0 || count > PROFILE_MAX_ENTRIES ||
-      !isfinite(weightPerRev) || weightPerRev <= 0.0)
+      !isfinite(weightPerRev) || weightPerRev <= 0.0 ||
+      !isfinite(trickleMapLimitFactor) ||
+      trickleMapLimitFactor < MIN_TRICKLE_MAP_LIMIT_FACTOR ||
+      trickleMapLimitFactor > MAX_TRICKLE_MAP_LIMIT_FACTOR)
   {
     return false;
   }
@@ -861,9 +896,15 @@ bool tuneProfileValues(const char *profileName, float weightPerRev,
   // Save is pressed without editing weight/rev.
   bool weightChanged = weightToString(weightPerRev) !=
                        weightToString(config.profileStepperWeightPerRev[1]);
+  bool limitFactorChanged = weightToString(trickleMapLimitFactor) !=
+                            weightToString(config.profileTrickleMapLimitFactor);
   if (weightChanged)
   {
     doc["stepper"]["1"]["weightPerRev"] = serialized(weightToString(weightPerRev));
+  }
+  if (limitFactorChanged)
+  {
+    doc["general"]["trickleMapLimitFactor"] = serialized(weightToString(trickleMapLimitFactor));
   }
   for (int i = 0; i < count; i++)
   {
@@ -881,11 +922,11 @@ bool tuneProfileValues(const char *profileName, float weightPerRev,
     {
       entry["stepper"]["steps"] = steps[i];
     }
-    else if (weightChanged && config.profileStepper[i] == 1)
+    else if ((weightChanged || limitFactorChanged) && config.profileStepper[i] == 1)
     {
       // Same fine-throw formula as calibration, applied to existing entries.
       long recalculatedSteps = lround(((config.profileDiffWeight[i] *
-                               (double)config.motorStepsPerRev) / weightPerRev) * 0.65);
+                               (double)config.motorStepsPerRev) / weightPerRev) * trickleMapLimitFactor);
       entry["stepper"]["steps"] = max(5L, recalculatedSteps);
     }
   }
@@ -929,7 +970,7 @@ void scanProfileDirectory(const char *directory, byte &profileCounter, byte &inv
       {
         fileName = fileName.substring(slashIndex + 1);
       }
-      bool isProfileCandidate = fileName.endsWith(".txt") && !fileName.endsWith("config.txt") && (fileName.indexOf(".cor") == -1);
+      bool isProfileCandidate = fileName.endsWith(".txt") && (fileName.indexOf(".cor") == -1);
       if (isProfileCandidate && isValidProfileFile(file.path()))
       {
         String filename = fileName;

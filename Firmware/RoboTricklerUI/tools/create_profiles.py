@@ -96,6 +96,8 @@ def generate_profile(
     """
     if weight <= 0:
         raise ValueError("calibration weight must be greater than 0")
+    if not 1.0 <= calc_tolerance <= 100.0:
+        raise ValueError("calculation tolerance must be between 1 and 100 percent")
 
     bulk = 2 if bulk_stepper == "stepper2" else 1
 
@@ -105,6 +107,7 @@ def generate_profile(
             "tolerance": round3(tolerance),
             "alarmThreshold": round3(alarm_threshold),
             "weightGap": round3(weight_gap),
+            "trickleMapLimitFactor": round3(calc_tolerance / 100.0),
             "bulkStepper": bulk,
             "startAtZero": start_at_zero,
             "sessionCounter": trickle_counter,

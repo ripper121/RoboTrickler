@@ -82,6 +82,12 @@ TFT_eSPI tft = TFT_eSPI(LV_HOR_RES_MAX, LV_VER_RES_MAX); /* TFT instance */
 // Reserved profile name that drives the scale-calibration workflow.
 #define CALIBRATE_PROFILE_NAME "calibrate"
 
+// Safety multiplier used when converting a trickle-map difference weight into
+// Stepper 1 pulses. Profiles persist this value so it can be tuned per powder.
+#define DEFAULT_TRICKLE_MAP_LIMIT_FACTOR 0.65f
+#define MIN_TRICKLE_MAP_LIMIT_FACTOR 0.01f
+#define MAX_TRICKLE_MAP_LIMIT_FACTOR 1.0f
+
 struct Config
 {
   bool wifiEnabled;
@@ -109,6 +115,7 @@ struct Config
   float profileTolerance;
   float profileAlarmThreshold;
   float profileWeightGap;
+  float profileTrickleMapLimitFactor;
   byte profileBulkStepper;
   int profileGeneralMeasurements;
   bool profileStartAtZero;
@@ -176,6 +183,8 @@ WEIGHT_DECIMALS	epsilon	safe WEIGHT_MAX
 // constants above; the smallest step is a plain literal at display precision.
 const float WEIGHT_STEP_SIZES[] = {0.001f, 0.01f, 0.1f, 1.0f, 10.0f};
 const byte WEIGHT_STEP_COUNT = sizeof(WEIGHT_STEP_SIZES) / sizeof(WEIGHT_STEP_SIZES[0]);
+const float FACTOR_STEP_SIZES[] = {0.001f, 0.01f, 0.1f};
+const byte FACTOR_STEP_COUNT = sizeof(FACTOR_STEP_SIZES) / sizeof(FACTOR_STEP_SIZES[0]);
 
 float weight = NAN;
 int decimalPlaces = WEIGHT_DECIMALS;

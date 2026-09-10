@@ -19,10 +19,12 @@
 - Profiles now use `general`, a `stepper` map keyed by `"1"`/`"2"`, and `trickleMap[]` entries with `diffWeight`, `measurements`, and nested stepper settings.
 - Per-stepper `speed` fields were renamed to `rpm`.
 - Per-stepper calibration changed from `unitsPerThrow` to `weightPerRev`.
-- Config and profile readers now require the exact current schemas; incomplete, extended, and legacy documents are rejected.
+- The config reader requires its exact current schema. Normal profiles accept the documented compact schema and fill omitted optional fields with defaults while still rejecting unknown fields.
 - `/getProfileList` now returns a JSON array instead of the legacy numeric-key object.
 
 ### Added
+- Added compact normal-profile support with defaults for omitted optional general, stepper, and trickle-map fields.
+- Added per-profile `general.trickleMapLimitFactor` tuning with automatic Stepper 1 trickle-map recalculation.
 - Added on-device tuning of each `trickleMap[].stepper.steps` value using the same per-entry flow as measurement tuning.
 - Added required per-entry `stepper.reverse` direction control to `trickleMap` profiles and the web profile editor.
 - Added `compile_options.h` for compile-time feature switches.

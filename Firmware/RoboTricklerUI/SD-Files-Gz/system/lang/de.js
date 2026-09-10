@@ -84,6 +84,7 @@ window.rtLoadLanguage({
         "tolerance": "Toleranz",
         "alarmThreshold": "Alarmgrenze",
         "weightGap": "Gewichtsabstand",
+        "trickleMapLimitFactor": "Trickle-Map-Limit-Faktor",
         "bulkStepper": "Grob-Stepper",
         "id": "Stepper",
         "startAtZero": "Start bei Null",

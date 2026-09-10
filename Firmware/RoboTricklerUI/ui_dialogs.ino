@@ -286,10 +286,13 @@ void showConfirmBox(const String &message, const lv_font_t *font, lv_color_t col
 // ---------------------------------------------------------------------------
 String profileTuneName = "";
 float profileTuneWeightPerRev = 0.0;
+float profileTuneTrickleMapLimitFactor = DEFAULT_TRICKLE_MAP_LIMIT_FACTOR;
 byte profileTuneStepIndex = 0;
+byte profileTuneFactorStepIndex = 0;
 enum ProfileTuneMode
 {
     PROFILE_TUNE_WEIGHT,
+    PROFILE_TUNE_LIMIT_FACTOR,
     PROFILE_TUNE_MEASUREMENTS,
     PROFILE_TUNE_STEPS,
     PROFILE_TUNE_MODE_COUNT
@@ -320,6 +323,7 @@ void clearProfileTuneState()
 {
     profileTuneName = "";
     profileTuneWeightPerRev = 0.0;
+    profileTuneTrickleMapLimitFactor = DEFAULT_TRICKLE_MAP_LIMIT_FACTOR;
     profileTuneEntryCount = 0;
     profileTuneSelectedEntry = 0;
 }
@@ -377,6 +381,7 @@ static void finishProfileTune(const String &profileName)
 static void updateProfileTuneLabels()
 {
     const char *key = profileTuneMode == PROFILE_TUNE_WEIGHT ? "msg_tune_profile_title" :
+                      profileTuneMode == PROFILE_TUNE_LIMIT_FACTOR ? "msg_tune_limit_factor_title" :
                       profileTuneMode == PROFILE_TUNE_MEASUREMENTS ? "msg_tune_measurements_title" :
                       "msg_tune_steps_title";
     lv_label_set_text(profileTuneTitleLabel, langText(key));
@@ -384,6 +389,10 @@ static void updateProfileTuneLabels()
     if (profileTuneMode == PROFILE_TUNE_WEIGHT)
     {
         formatWeight(text, sizeof(text), profileTuneWeightPerRev);
+    }
+    else if (profileTuneMode == PROFILE_TUNE_LIMIT_FACTOR)
+    {
+        formatWeight(text, sizeof(text), profileTuneTrickleMapLimitFactor);
     }
     else if (profileTuneMode == PROFILE_TUNE_MEASUREMENTS)
     {
@@ -396,9 +405,16 @@ static void updateProfileTuneLabels()
     lv_label_set_text(profileTuneValueLabel, text);
     lv_obj_set_style_text_font(profileTuneValueLabel,
                               strlen(text) > 6 ? UI_FONT_NORMAL : UI_FONT_LARGE, LV_PART_MAIN);
-    formatWeight(text, sizeof(text), profileTuneMode == PROFILE_TUNE_WEIGHT ?
-                 WEIGHT_STEP_SIZES[profileTuneStepIndex] :
-                 config.profileDiffWeight[profileTuneSelectedEntry]);
+    float entryValue = config.profileDiffWeight[profileTuneSelectedEntry];
+    if (profileTuneMode == PROFILE_TUNE_WEIGHT)
+    {
+        entryValue = WEIGHT_STEP_SIZES[profileTuneStepIndex];
+    }
+    else if (profileTuneMode == PROFILE_TUNE_LIMIT_FACTOR)
+    {
+        entryValue = FACTOR_STEP_SIZES[profileTuneFactorStepIndex];
+    }
+    formatWeight(text, sizeof(text), entryValue);
     lv_label_set_text(profileTuneEntryLabel, text);
 }
 
@@ -420,6 +436,13 @@ static void adjustProfileTuneValue(int direction)
     {
         profileTuneWeightPerRev += direction * WEIGHT_STEP_SIZES[profileTuneStepIndex];
         profileTuneWeightPerRev = constrain(profileTuneWeightPerRev, WEIGHT_RESOLUTION, 99.999f);
+    }
+    else if (profileTuneMode == PROFILE_TUNE_LIMIT_FACTOR)
+    {
+        profileTuneTrickleMapLimitFactor += direction * FACTOR_STEP_SIZES[profileTuneFactorStepIndex];
+        profileTuneTrickleMapLimitFactor = constrain(profileTuneTrickleMapLimitFactor,
+                                                     MIN_TRICKLE_MAP_LIMIT_FACTOR,
+                                                     MAX_TRICKLE_MAP_LIMIT_FACTOR);
     }
     else if (profileTuneMode == PROFILE_TUNE_MEASUREMENTS)
     {
@@ -453,6 +476,10 @@ void selectTuneEntry_event_cb(lv_event_t *e)
     {
         profileTuneStepIndex = (profileTuneStepIndex + 1) % WEIGHT_STEP_COUNT;
     }
+    else if (profileTuneMode == PROFILE_TUNE_LIMIT_FACTOR)
+    {
+        profileTuneFactorStepIndex = (profileTuneFactorStepIndex + 1) % FACTOR_STEP_COUNT;
+    }
     else
     {
         profileTuneSelectedEntry = (profileTuneSelectedEntry + 1) % profileTuneEntryCount;
@@ -477,6 +504,7 @@ void saveProfileTune_event_cb(lv_event_t *e)
     closeProfileTuneDialog();
     updateDisplayLog(String(langText("status_tuning_profile")) + profileName, true);
     bool saved = tuneProfileValues(profileName.c_str(), profileTuneWeightPerRev,
+                                   profileTuneTrickleMapLimitFactor,
                                    profileTuneMeasurements, profileTuneSteps, profileTuneEntryCount);
     clearProfileTuneState();
     if (!saved)
@@ -529,6 +557,7 @@ bool tuneSelectedProfile()
     profileTuneMode = PROFILE_TUNE_WEIGHT;
     profileTuneWeightPerRev = config.profileStepperWeightPerRev[1] > 0.0 ?
                               config.profileStepperWeightPerRev[1] : WEIGHT_RESOLUTION;
+    profileTuneTrickleMapLimitFactor = config.profileTrickleMapLimitFactor;
     profileTuneEntryCount = min(config.profileEntryCount, PROFILE_MAX_ENTRIES);
     profileTuneSelectedEntry = 0;
     for (int i = 0; i < profileTuneEntryCount; i++)
