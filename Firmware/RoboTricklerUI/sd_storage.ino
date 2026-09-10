@@ -689,13 +689,13 @@ static void populateCalibrationTrickleMap(JsonDocument &doc, float weightPerRev,
   const float diffWeights[8] = {1.929, 0.965, 0.482, 0.241, 0.121, 0.060, 0.030, 0.000};
   const size_t diffWeightsCount = sizeof(diffWeights) / sizeof(diffWeights[0]);
   const int measurements[8] = {2, 2, 5, 5, 10, 10, 15, 20};
-  const float rs232LimitFactor = 0.65;
+  const float trickleMapLimitFactor = 0.65;
 
   JsonArray trickleMap = doc["trickleMap"].to<JsonArray>();
   for (int i = 0; i < diffWeightsCount; i++)
   {
     long steps = (weightPerRev > 0.0)
-                     ? lround(((diffWeights[i] * (double)config.motorStepsPerRev) / weightPerRev) * rs232LimitFactor)
+                     ? lround(((diffWeights[i] * (double)config.motorStepsPerRev) / weightPerRev) * trickleMapLimitFactor)
                      : 5;
     if (steps < 5)
     {
