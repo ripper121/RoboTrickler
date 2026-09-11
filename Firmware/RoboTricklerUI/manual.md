@@ -69,11 +69,15 @@ Dieser Abschnitt gilt für eine fertig aufgebaute Steuerung mit installierter Fi
 
 **Das Gewicht auf der Steuerung muss mit der Waage übereinstimmen.** Falls nicht, wähle im Tab `Info` über den Waagen-Button das passende Protokoll aus. Prüfe bei `NaN...` oder `Timeout!` zuerst die Verbindung und die [Waagen-Einstellungen](#waagen).
 
-## 2. Profil auswählen
+## 2. Neues Profil erstellen und auswählen
 
-Öffne den Tab `Profil` und wähle mit den Pfeilen dein passendes Pulverprofil.
+Erstelle zuerst ein neues Profil für dein Pulver. Folge dazu der Anleitung unter [Automatisches Profil aus Kalibrierlauf erstellen](#automatisches-profil-aus-kalibrierlauf-erstellen).
 
-**Achtung:** Eine neue Installation startet mit `calibrate`. Das ist ein Sonderprofil für die Profilerstellung, kein normales Dosierprofil. Fehlt dein Profil, folge zuerst der Anleitung unter [Automatisches Profil aus Kalibrierlauf erstellen](#automatisches-profil-aus-kalibrierlauf-erstellen).
+**Video-Anleitung**
+
+[![Video zur Profilerstellung ansehen](https://img.youtube.com/vi/G3YXN6MKb8g/hqdefault.jpg)](https://www.youtube.com/watch?v=G3YXN6MKb8g)
+
+Öffne anschließend den Tab `Profil` und wähle mit den Pfeilen dein neu erstelltes Pulverprofil.
 
 Die Einheit des Profils muss zur Waage passen: **Gramm und Grain werden nicht automatisch umgerechnet.**
 
@@ -208,6 +212,10 @@ Die Profilliste im Display und über die Web-API enthält nur gültige Profile. 
 Ungültige Profile werden beim Scannen ignoriert und im Display gemeldet. Wenn das aktuell ausgewählte Profil beim Start oder beim Umschalten nicht geladen werden kann, benennt die Firmware eine vorhandene defekte Datei nach `.cor.txt` um, stellt auf `calibrate` um und lädt dieses Profil direkt. Ein dabei angeforderter Start wird abgebrochen; die Wiederherstellung startet keinen Lauf automatisch. Nur wenn auch das Wiederherstellen des Kalibrierprofils scheitert, fordert die Firmware einen Neustart an.
 
 ## Automatisches Profil aus Kalibrierlauf erstellen
+
+**Video-Anleitung**
+
+[![Video zur Profilerstellung ansehen](https://img.youtube.com/vi/G3YXN6MKb8g/hqdefault.jpg)](https://www.youtube.com/watch?v=G3YXN6MKb8g)
 
 **Vorgehen:**
 
