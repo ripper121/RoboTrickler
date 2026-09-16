@@ -909,7 +909,7 @@ Falls nach einer Änderung weiterhin die alte Weboberfläche erscheint, prüfe, 
 
 Diese Endpunkte können im Browser oder aus einer eigenen Steuerung aufgerufen werden:
 
-* `GET /getTricklerState`: aktuelles Gewicht und Laufstatus als JSON lesen, z. B. `{"weight":40.000,"running":true}`. Ohne gültigen Messwert ist `weight` gleich `null`. `running` beschreibt den aktiven Betrieb einschließlich Wartephasen, nicht die momentane Motorbewegung.
+* `GET /getTricklerState`: aktuelles Gewicht und Laufstatus als JSON lesen, z. B. `{"weight":40.000,"running":true,"trickle":1}`. Ohne gültigen Messwert ist `weight` gleich `null`. `running` beschreibt den aktiven Betrieb einschließlich Wartephasen, nicht die momentane Motorbewegung. `trickle` ist `0` im Stillstand, `1` beim Dosieren oder Warten und `2`, wenn das Ziel erreicht ist und auf das Entfernen der Ladung gewartet wird.
 * `GET /getTarget`: Zielgewicht lesen.
 * `GET /setTarget?targetWeight=WERT`: Zielgewicht setzen und im aktuellen Profil speichern. Erlaubt sind Werte größer `0` bis maximal `500.000`. Während eines laufenden Trickelvorgangs antwortet die Firmware mit `409`. Beispiel: `/setTarget?targetWeight=40`.
 * `GET /getProfile`: aktuelles Profil lesen.
