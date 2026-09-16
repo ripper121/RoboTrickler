@@ -52,7 +52,9 @@ Dieses Handbuch beginnt mit einer kurzen Anleitung für die erste Inbetriebnahme
   - [RS232 Konverter](#rs232-konverter)
   - [Motor Treiber Anschluss](#motor-treiber-anschluss)
   - [Motor Treiber Einstellungen](#motor-treiber-einstellungen)
-  - [Gehäuse Aufbau](#gehäuse-aufbau)
+  - [Trickler-Schrittmotor anschließen](#trickler-schrittmotor-anschließen)
+  - [Display anschließen](#display-anschließen)
+  - [Gehäuse-Aufbau](#gehäuse-aufbau)
   - [Alurohr Passung](#alurohr-passung)
 
 # Erste Schritte
@@ -76,6 +78,8 @@ Erstelle zuerst ein neues Profil für dein Pulver. Folge dazu der Anleitung unte
 **Video-Anleitung**
 
 [![Video zur Profilerstellung ansehen](https://img.youtube.com/vi/G3YXN6MKb8g/hqdefault.jpg)](https://www.youtube.com/watch?v=G3YXN6MKb8g)
+
+YouTube-Link: https://www.youtube.com/watch?v=G3YXN6MKb8g
 
 Öffne anschließend den Tab `Profil` und wähle mit den Pfeilen dein neu erstelltes Pulverprofil.
 
@@ -216,6 +220,8 @@ Ungültige Profile werden beim Scannen ignoriert und im Display gemeldet. Wenn d
 **Video-Anleitung**
 
 [![Video zur Profilerstellung ansehen](https://img.youtube.com/vi/G3YXN6MKb8g/hqdefault.jpg)](https://www.youtube.com/watch?v=G3YXN6MKb8g)
+
+YouTube-Link: https://www.youtube.com/watch?v=G3YXN6MKb8g
 
 **Vorgehen:**
 
@@ -1001,6 +1007,8 @@ Video Anleitung:
 
 [![youtube video](https://img.youtube.com/vi/GhTdLqd6Yn4/0.jpg)](https://www.youtube.com/watch?v=GhTdLqd6Yn4)
 
+YouTube-Link: https://www.youtube.com/watch?v=GhTdLqd6Yn4
+
 ### RS232 Converter
 
 Male Adapter
@@ -1423,9 +1431,30 @@ Einstellung für andere Treiber:
 
 ![image](https://github.com/ripper121/RoboTrickler/assets/11836272/1617481f-c859-44ee-93a6-0f5c7c211055)
 
+## Trickler-Schrittmotor anschließen
+
+1. Schalte die Steuerung aus und trenne sie von der Stromversorgung.
+2. Stecke das 4-polige Kabel des Trickler-Schrittmotors in den mit `X-MOTOR` beschrifteten Motorausgang der MKS-DLC32-Steuerung.
+3. Prüfe, ob der Stecker vollständig sitzt und das Kabel beim Zusammenbau nicht eingeklemmt oder auf Zug belastet wird.
+
+**Wichtig:** Schließe den Schrittmotor niemals bei eingeschalteter Steuerung an und ziehe den Stecker im Betrieb nicht ab. Dadurch kann der Motortreiber beschädigt werden.
+
+<img width="1000" height="1000" alt="X-MOTOR-Anschluss für den Trickler-Schrittmotor an der MKS-DLC32-Steuerung" src="https://github.com/user-attachments/assets/88b08f1f-74b2-4587-a600-72a13c42735c" />
+
+## Display anschließen
+
+1. Schalte die Steuerung aus und trenne sie von der Stromversorgung.
+2. Verbinde den Anschluss `EXP1` des MKS-TS35-Displays mit `EXP1` auf der MKS-DLC32-Steuerung.
+3. Verbinde anschließend `EXP2` des Displays mit `EXP2` auf der Steuerung.
+4. Prüfe, ob beide Stecker gerade und vollständig sitzen. Achte beim Einbau darauf, dass die Flachbandkabel nicht geknickt, eingeklemmt oder auf Zug belastet werden.
+
+**Wichtig:** Vertausche `EXP1` und `EXP2` nicht und versetze die Stecker nicht seitlich auf den Stiftleisten. Schließe das Display nur bei ausgeschalteter und vom Netzteil getrennter Steuerung an.
+
+<img width="1000" height="1520" alt="Verbindung der Anschlüsse EXP1 und EXP2 zwischen MKS-TS35-Display und MKS-DLC32-Steuerung" src="https://github.com/user-attachments/assets/40ab732c-2a6c-4c6c-9c13-9be0396fc787" />
+
 <a id="gehäuse-aufbau"></a>
 
-## Gehäuse Aufbau
+## Gehäuse-Aufbau
 
 Du kannst das Gehäuse verschrauben oder mit Sekundenkleber verkleben.
 
