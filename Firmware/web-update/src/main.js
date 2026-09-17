@@ -2,6 +2,13 @@ import { ESPLoader, Transport } from "esptool-js";
 import { FLASH_FILES } from "./flash-layout.js";
 import { createTranslator, detectLanguage } from "./i18n.js";
 import { loadFlashableReleases } from "./releases.js";
+import {
+  FIRMWARE_BAUD_RATE,
+  FORMAT_SD_COMMAND,
+  FORMAT_SD_ERROR,
+  FORMAT_SD_OK,
+  FORMAT_SD_START,
+} from "./serial-protocol.js";
 import "./styles.css";
 
 const FLASH_BAUD_RATE = 921600;
@@ -144,6 +151,85 @@ async function disconnect() {
   }
 }
 
+function wait(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+async function openFirmwareSerial(port) {
+  let lastError;
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    try {
+      await port.open({ baudRate: FIRMWARE_BAUD_RATE, bufferSize: 1024 });
+      return;
+    } catch (error) {
+      lastError = error;
+      await wait(250);
+    }
+  }
+  throw new Error(t("serialReconnectFailed", { message: lastError?.message ?? "" }));
+}
+
+async function formatSdCard(port) {
+  setProgress(99, t("reconnectingForFormat"), t("doNotDisconnect"));
+  await wait(500);
+  await openFirmwareSerial(port);
+
+  let reader;
+  let timeout;
+  try {
+    const writer = port.writable.getWriter();
+    try {
+      await writer.write(new TextEncoder().encode(FORMAT_SD_COMMAND));
+    } finally {
+      writer.releaseLock();
+    }
+
+    reader = port.readable.getReader();
+    const decoder = new TextDecoder();
+    let responseText = "";
+    const response = (async () => {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) throw new Error(t("formatResponseLost"));
+        const responseChunk = decoder.decode(value, { stream: true });
+        responseText += responseChunk;
+        appendLog(responseChunk);
+        if (responseText.includes(FORMAT_SD_START)) {
+          setProgress(99, t("formattingSd"), t("doNotDisconnect"));
+        }
+        if (responseText.includes(FORMAT_SD_OK)) return;
+        const errorIndex = responseText.indexOf(FORMAT_SD_ERROR);
+        if (errorIndex >= 0) {
+          const code = responseText.slice(errorIndex + FORMAT_SD_ERROR.length).split(/\r?\n/)[0];
+          throw new Error(t("formatDeviceError", { code }));
+        }
+      }
+    })();
+    const timedOut = new Promise((_, reject) => {
+      timeout = setTimeout(() => {
+        reader.cancel().catch(() => {});
+        reject(new Error(t("formatTimedOut")));
+      }, 90000);
+    });
+    await Promise.race([response, timedOut]);
+  } finally {
+    clearTimeout(timeout);
+    if (reader) {
+      try {
+        await reader.cancel();
+      } catch {
+        // The device may reset immediately after sending the success response.
+      }
+      reader.releaseLock();
+    }
+    try {
+      await port.close();
+    } catch {
+      // A firmware reboot can close the port before the browser does.
+    }
+  }
+}
+
 async function installSelectedRelease() {
   const release = selectedRelease();
   if (!release) return;
@@ -155,6 +241,7 @@ async function installSelectedRelease() {
   terminal.clean();
   setProgress(0, t("choosePort"));
 
+  let firmwareInstalled = false;
   try {
     const port = await navigator.serial.requestPort();
     transport = new Transport(port, true);
@@ -206,17 +293,27 @@ async function installSelectedRelease() {
 
     setProgress(99, t("restarting"));
     await loader.after("hard_reset");
+    firmwareInstalled = true;
+    await disconnect();
+    await formatSdCard(port);
     setProgress(100, t("installationComplete"), t("unplugCable"));
-    showResult(t("installedSuccessfully", { release: release.name }), "success");
+    showResult(t("installedAndFormatted", { release: release.name }), "success");
   } catch (error) {
     const cancelled = error?.name === "NotFoundError";
-    setProgress(0, cancelled ? t("noPortSelected") : t("installationStopped"));
-    showResult(
+    setProgress(
+      0,
       cancelled
-        ? t("noDeviceSelected")
-        : t("installationFailed", { message: error.message || error }),
-      "error",
+        ? t("noPortSelected")
+        : firmwareInstalled
+          ? t("formattingFailed")
+          : t("installationStopped"),
     );
+    const message = cancelled
+      ? t("noDeviceSelected")
+      : firmwareInstalled
+        ? t("formatFailedAfterInstall", { message: error.message || error })
+        : t("installationFailed", { message: error.message || error });
+    showResult(message, "error");
     appendLog(`\n${t("errorLog", { message: error.stack || error })}\n`);
   } finally {
     await disconnect();

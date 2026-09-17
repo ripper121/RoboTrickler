@@ -43,7 +43,10 @@ The installer erases the whole chip and then restores:
 - LittleFS at `0x670000`
 
 This is a complete factory-style installation for the RoboTrickler 8 MB layout.
-All settings and files currently stored in flash are erased.
+All settings and files currently stored in flash are erased. After flashing, the
+page reconnects to the firmware at 115200 baud and sends
+`RTUI:FORMAT_SD:FAT32`. The firmware formats an inserted SD card as FAT32 with
+FatFs automatic allocation-unit sizing, reports the result, and reboots.
 
 Release binaries are not linked in the UI, but a browser must download bytes in
 order to flash them. They therefore cannot be cryptographically hidden from a

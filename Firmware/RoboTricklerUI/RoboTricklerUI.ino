@@ -24,6 +24,7 @@ Events Run On: "Core 0"
 #include <LittleFS.h>
 #endif
 #include <SD.h>
+#include <sd_diskio.h>
 #include <SPI.h>
 #include <WiFi.h>
 #include <WebServer.h>
@@ -40,6 +41,7 @@ Events Run On: "Core 0"
 #include <freertos/semphr.h>
 #include <ctype.h>
 #include <string.h>
+#include <new>
 #include <math.h>
 
 #define FW_VERSION "2.14"
@@ -296,6 +298,8 @@ void loop()
 {
   static uint32_t lastRuntimeMaintenanceTime = millis();
   static uint32_t readWeightTime = millis();
+
+  handleSerialCommands();
 
   if (millis() - lastRuntimeMaintenanceTime >= 1000)
   {
