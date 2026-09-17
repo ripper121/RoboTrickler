@@ -267,7 +267,7 @@ void handleGetProfileList()
 {
   // Stream the entries instead of concatenating one growing String in heap.
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
-  server.send(200, "text/json", "");
+  server.send(200, "application/json", "");
   server.sendContent("[");
   for (int i = 0; i < profileListCount; i++)
   {

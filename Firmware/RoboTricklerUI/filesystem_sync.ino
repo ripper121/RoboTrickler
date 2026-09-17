@@ -1,8 +1,6 @@
 extern volatile bool messageBoxOpen;
 FilesystemSyncDirection pendingFilesystemSync = FILESYSTEM_SYNC_NONE;
 
-#if ENABLE_LITTLEFS
-
 bool copyFilesystemFile(fs::FS &source, fs::FS &destination, const char *path)
 {
   File sourceFile = source.open(path, FILE_READ);
@@ -236,31 +234,3 @@ void syncSdToFlash_event_cb(lv_event_t *e)
 {
   requestFilesystemSync(FILESYSTEM_SYNC_SD_TO_FLASH);
 }
-
-#else
-
-void updateFilesystemSyncControls()
-{
-  if ((ui_ButtonSyncFlashToSd == NULL) || (ui_ButtonSyncSdToFlash == NULL) || !lvglLock())
-  {
-    return;
-  }
-  lv_obj_add_flag(ui_ButtonSyncFlashToSd, LV_OBJ_FLAG_HIDDEN);
-  lv_obj_add_flag(ui_ButtonSyncSdToFlash, LV_OBJ_FLAG_HIDDEN);
-  lvglUnlock();
-}
-
-void finishFilesystemSyncConfirm(bool confirmed)
-{
-  pendingFilesystemSync = FILESYSTEM_SYNC_NONE;
-}
-
-void syncFlashToSd_event_cb(lv_event_t *e)
-{
-}
-
-void syncSdToFlash_event_cb(lv_event_t *e)
-{
-}
-
-#endif

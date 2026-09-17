@@ -27,7 +27,6 @@ bool initFilesystem()
     sdSpi = NULL;
   }
 
-#if ENABLE_LITTLEFS
   if (LittleFS.begin(false))
   {
     littleFsMounted = true;
@@ -43,7 +42,6 @@ bool initFilesystem()
   {
     DEBUG_PRINTLN("LittleFS mount failed.");
   }
-#endif
 
   if (sdMounted)
   {
@@ -52,7 +50,6 @@ bool initFilesystem()
     DEBUG_PRINT("SD used bytes: ");
     DEBUG_PRINTLN(SD.usedBytes());
   }
-#if ENABLE_LITTLEFS
   if (littleFsMounted)
   {
     DEBUG_PRINT("LittleFS total bytes: ");
@@ -60,6 +57,5 @@ bool initFilesystem()
     DEBUG_PRINT("LittleFS used bytes: ");
     DEBUG_PRINTLN(LittleFS.usedBytes());
   }
-#endif
   return filesystemActive;
 }

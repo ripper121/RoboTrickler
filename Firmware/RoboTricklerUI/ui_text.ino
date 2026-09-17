@@ -61,11 +61,7 @@ static const LangFallbackEntry LANG_FALLBACKS[] = {
     {"msg_calibration_profile_loaded", "\n\nCalibration Profile Loaded."},
     {"msg_calibration_profile_recovery_failed", "\n\nCalibration Profile Recovery Failed."},
     {"msg_unknown_config_read_error", "Unknown config read error"},
-#if ENABLE_LITTLEFS
     {"msg_sd_card_not_connected", "SD card not connected!\n\nInternal Flash will be used instead!"},
-#else
-    {"msg_sd_card_not_connected", "SD card not connected!"},
-#endif
     {"msg_config_corrupted", "Config File Corrupted / Not Found!\n\n"},
     {"msg_over_trickle", "!Over trickle!\n!Check weight!"},
     {"msg_create_profile_prompt", "Create profile from calibration?\n\nWeight: "},

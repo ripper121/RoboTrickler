@@ -5,7 +5,6 @@ import { fileURLToPath } from "node:url";
 import { unzipSync } from "fflate";
 import { FLASH_FILES, FLASH_SIZE } from "../src/flash-layout.js";
 import { RELEASES_API, selectFlashableReleases } from "../src/releases.js";
-import { firmwareSupportsSdFormat } from "../src/serial-protocol.js";
 
 const MAXIMUM_USB_PACKAGE_SIZE = 32 * 1024 * 1024;
 const MERGED_IMAGE_NAME = "RoboTricklerUI.ino.merged.bin";
@@ -144,11 +143,6 @@ async function main() {
       firmware,
       littlefs,
     );
-    const supportsSdFormat = firmwareSupportsSdFormat(firmware);
-    process.stdout.write(
-      `${release.tag}: post-flash SD formatting ${supportsSdFormat ? "enabled" : "not supported"}.\n`,
-    );
-
     await Promise.all(
       files.map((file) => writeFile(path.join(releaseDirectory, file.outputName), file.data)),
     );
@@ -159,7 +153,6 @@ async function main() {
       tag: release.tag,
       prerelease: release.prerelease,
       publishedAt: release.publishedAt,
-      supportsSdFormat,
       sdFilesUrl: release.sdFiles.browser_download_url,
       files: files.map((file) => ({
         ...assetManifest(

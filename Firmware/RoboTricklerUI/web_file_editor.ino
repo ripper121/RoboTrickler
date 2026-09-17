@@ -10,11 +10,7 @@ bool loadFromFilesystem(fs::FS &fs, const char *sourceName, String path)
     path += "system/index.html";
   }
 
-  if (path.endsWith(".src"))
-  {
-    path = path.substring(0, path.lastIndexOf("."));
-  }
-  else if (path.endsWith(".html") || path.endsWith(".htm"))
+  if (path.endsWith(".html") || path.endsWith(".htm"))
   {
     dataType = "text/html";
   }
@@ -260,7 +256,7 @@ void printDirectory()
   }
   dir.rewindDirectory();
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
-  server.send(200, "text/json", "");
+  server.send(200, "application/json", "");
   bool firstEntry = true;
 
   server.sendContent("[");
@@ -272,24 +268,20 @@ void printDirectory()
       break;
     }
 
-    if (strcmp(entry.path(), "/resources/css") != 0)
+    String output;
+    if (!firstEntry)
     {
-
-      String output;
-      if (!firstEntry)
-      {
-        output = ',';
-      }
-      firstEntry = false;
-
-      output += "{\"type\":\"";
-      output += (entry.isDirectory()) ? "dir" : "file";
-      output += "\",\"name\":\"";
-      output += jsonEscape(String(entry.path()));
-      output += "\"";
-      output += "}";
-      server.sendContent(output);
+      output = ',';
     }
+    firstEntry = false;
+
+    output += "{\"type\":\"";
+    output += (entry.isDirectory()) ? "dir" : "file";
+    output += "\",\"name\":\"";
+    output += jsonEscape(String(entry.path()));
+    output += "\"";
+    output += "}";
+    server.sendContent(output);
     entry.close();
   }
   server.sendContent("]");

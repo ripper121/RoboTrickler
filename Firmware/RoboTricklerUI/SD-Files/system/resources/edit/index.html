@@ -319,17 +319,6 @@
       input.onchange = function (e) {
         if (input.files.length === 0) return;
         var filename = input.files[0].name;
-        var ext = /(?:\.([^.]+))?$/.exec(filename)[1];
-        var name = /(.*)\.[^.]+$/.exec(filename)[1];
-        if (typeof name !== undefined) {
-          if (name.length > 8) name = name.substring(0, 8);
-          filename = name;
-        }
-        if (typeof ext !== undefined) {
-          if (ext === "html") ext = "htm";
-          else if (ext === "jpeg") ext = "jpg";
-          filename = filename + "." + ext;
-        }
         if (path.value === "/" || path.value.lastIndexOf("/") === 0) {
           path.value = "/" + filename;
         } else {
@@ -357,8 +346,6 @@
       function fillFolderMenu(el, path) {
         var list = document.createElement("ul");
         el.appendChild(list);
-        var action = document.createElement("li");
-        list.appendChild(action);
         var isChecked = document.getElementById(path).checked;
         var expnd = document.createElement("li");
         list.appendChild(expnd);
@@ -464,11 +451,11 @@
         };
       }
 
-      function createTreeLeaf(path, name, size) {
+      function createTreeLeaf(name) {
         var leaf = document.createElement("li");
-        leaf.id = name.toLowerCase();
+        leaf.id = name;
         var label = document.createElement("span");
-        label.textContent = name.toLowerCase();
+        label.textContent = name;
         leaf.appendChild(label);
         leaf.onclick = function (e) {
           if (isTextFile(leaf.id)) {
@@ -489,12 +476,12 @@
         var leaf = document.createElement("li");
         var check = document.createElement("input");
         check.type = "checkbox";
-        check.id = name.toLowerCase();
+        check.id = name;
         if (typeof disabled !== "undefined" && disabled) check.disabled = "disabled";
         leaf.appendChild(check);
         var label = document.createElement("label");
         label.for = check.id;
-        label.textContent = name.toLowerCase();
+        label.textContent = name;
         leaf.appendChild(label);
         check.onchange = function (e) {
           if (check.checked) {
@@ -529,7 +516,7 @@
           console.log(item);
           if (item.name != "/system" && item.name != "/lang" && item.name != "/System Volume Information" && !item.name.includes(".htm") && !item.name.includes(".ico") && !item.name.includes(".html")) {
             if (item.type === "file") {
-              itemEl = createTreeLeaf(path, item.name, item.size);
+              itemEl = createTreeLeaf(item.name);
             } else {
               itemEl = createTreeBranch(path, item.name);
             }
@@ -541,7 +528,8 @@
 
       function isTextFile(path) {
         var ext = /(?:\.([^.]+))?$/.exec(path)[1];
-        if (typeof ext !== undefined) {
+        if (typeof ext !== "undefined") {
+          ext = ext.toLowerCase();
           switch (ext) {
             case "txt":
             case "htm":
@@ -562,7 +550,8 @@
 
       function isImageFile(path) {
         var ext = /(?:\.([^.]+))?$/.exec(path)[1];
-        if (typeof ext !== undefined) {
+        if (typeof ext !== "undefined") {
+          ext = ext.toLowerCase();
           switch (ext) {
             case "png":
             case "jpg":
@@ -627,7 +616,7 @@
       }
 
       function httpGet(parent, path) {
-        xmlHttp = new XMLHttpRequest(parent, path);
+        xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = getCb(parent, path);
         xmlHttp.open("GET", "/list?dir=" + path, true);
         xmlHttp.send(null);
@@ -665,7 +654,7 @@
       if (typeof theme === "undefined") theme = "textmate";
 
       if (typeof type === "undefined") {
-        type = "text/" + lang;
+        type = lang === "json" ? "application/json" : "text/" + lang;
       }
 
       var xmlHttp = null;
@@ -740,7 +729,7 @@
       editor.loadUrl = function (filename) {
         file = filename;
         lang = getLangFromFilename(file);
-        type = "text/" + lang;
+        type = lang === "json" ? "application/json" : "text/" + lang;
         if (lang !== "plain") editor.getSession().setMode("ace/mode/" + lang);
         httpGet(file);
       }

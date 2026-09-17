@@ -31,12 +31,16 @@ static const char *WIFI_SETUP_AP_SSID = "Robo-Trickler-AP";
 static const IPAddress WIFI_SETUP_AP_IP(192, 168, 4, 1);
 static const IPAddress WIFI_SETUP_AP_SUBNET(255, 255, 255, 0);
 static char wifiSetupApPassword[13];
+#if DEBUG
 static bool wifiEventLoggingRegistered = false;
+#endif
 static IPAddress wifiConfiguredDNS = IPAddress(8, 8, 8, 8);
 static bool wifiUsesStaticIp = false;
 static unsigned long wifiConnectStartedMillis = 0;
 static bool wifiConnectTimeoutReported = false;
+#if DEBUG
 static wl_status_t wifiLastLoggedStatus = WL_NO_SHIELD;
+#endif
 
 bool createWifiSetupPassword()
 {
@@ -61,6 +65,7 @@ bool createWifiSetupPassword()
   return true;
 }
 
+#if DEBUG
 const char *wifiStatusName(wl_status_t status)
 {
   switch (status)
@@ -95,16 +100,12 @@ void logWifiDisconnectReason(WiFiEvent_t event, WiFiEventInfo_t info)
     return;
   }
 
-#if DEBUG
   uint8_t reason = info.wifi_sta_disconnected.reason;
   DEBUG_PRINT("WiFi disconnected, reason ");
   DEBUG_PRINT(reason);
   DEBUG_PRINT(" (");
   DEBUG_PRINT(WiFi.disconnectReasonName((wifi_err_reason_t)reason));
   DEBUG_PRINTLN(")");
-#else
-  (void)info;
-#endif
 }
 
 void registerWifiDebugLogging()
@@ -126,6 +127,7 @@ void logWifiStatusChange()
     wifiLastLoggedStatus = status;
   }
 }
+#endif
 
 void applyWifiDnsIfNeeded()
 {
@@ -152,7 +154,9 @@ void maintainWifiConnection()
   if (WiFi.status() == WL_CONNECTED)
   {
     wifiConnectTimeoutReported = false;
+#if DEBUG
     wifiLastLoggedStatus = WL_CONNECTED;
+#endif
     if (!webServerActive)
     {
       startWebServerServices();
@@ -160,7 +164,9 @@ void maintainWifiConnection()
     return;
   }
 
+#if DEBUG
   logWifiStatusChange();
+#endif
   if (!wifiConnectTimeoutReported && ((millis() - wifiConnectStartedMillis) >= WIFI_CONNECT_TIMEOUT_MS))
   {
     updateDisplayLog(langText("status_no_wifi"));
@@ -264,9 +270,9 @@ void initWebServer()
     updateDisplayLog(langText("status_connect_wifi"));
     updateDisplayLog(config.wifiSsid);
 
-    #if DEBUG
-      registerWifiDebugLogging();
-    #endif
+#if DEBUG
+    registerWifiDebugLogging();
+#endif
     // Only reset interfaces that are already running. esp_wifi_disconnect()
     // reports ESP_ERR_WIFI_NOT_INIT when called during a normal cold start.
     wifi_mode_t currentMode = WiFi.getMode();
@@ -335,7 +341,9 @@ void initWebServer()
     wifiPreviousMillis = millis();
     wifiConnectStartedMillis = wifiPreviousMillis;
     wifiConnectTimeoutReported = false;
+#if DEBUG
     wifiLastLoggedStatus = WL_NO_SHIELD;
+#endif
   }
 }
 

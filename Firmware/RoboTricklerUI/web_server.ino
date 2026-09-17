@@ -7,7 +7,6 @@ static bool webUpdateFilesystemUnmounted = false;
 
 void restoreFilesystemAfterFailedUpdate()
 {
-#if ENABLE_LITTLEFS
   if (!webUpdateFilesystemUnmounted)
   {
     return;
@@ -26,7 +25,6 @@ void restoreFilesystemAfterFailedUpdate()
     activeFs = &LittleFS;
   }
   filesystemActive = sdMounted || littleFsMounted;
-#endif
 }
 
 void returnOk()
@@ -131,7 +129,6 @@ void registerWebServerRoutes()
                                "<input class='button' type='submit' value='");
             server.sendContent(webFwText(langDoc, "updateFirmware", "Update Firmware"));
             server.sendContent("'></form><br>");
-#if ENABLE_LITTLEFS
             server.sendContent("<h3>");
             server.sendContent(webFwText(langDoc, "littlefsImage", "LittleFS image"));
             server.sendContent("</h3><p>");
@@ -141,7 +138,6 @@ void registerWebServerRoutes()
                                "<input class='button' type='submit' value='");
             server.sendContent(webFwText(langDoc, "updateLittlefs", "Update LittleFS"));
             server.sendContent("'></form><br>");
-#endif
             server.sendContent(webBackButtonHtml(langDoc));
             server.sendContent(webPageFoot()); });
 
@@ -180,7 +176,6 @@ void registerWebServerRoutes()
           String infoText = String(langText("status_update_upload")) + String(upload.filename);
           updateDisplayLog(infoText);
 
-#if ENABLE_LITTLEFS
           if (webUpdateFilesystem && littleFsMounted)
           {
             LittleFS.end();
@@ -192,14 +187,6 @@ void registerWebServerRoutes()
             }
             webUpdateFilesystemUnmounted = true;
           }
-#else
-          if (webUpdateFilesystem)
-          {
-            updateDisplayLog(langText("status_update_failed"));
-            Serial.setDebugOutput(false);
-            return;
-          }
-#endif
 
           int updateTarget = webUpdateFilesystem ? U_FLASHFS : U_FLASH;
           if (Update.begin(UPDATE_SIZE_UNKNOWN, updateTarget))

@@ -165,7 +165,7 @@ def build_multipart(device_path: str, body_text: str) -> tuple[bytes, str]:
     head = (
         f"--{boundary}\r\n"
         f'Content-Disposition: form-data; name="data"; filename="{device_path}"\r\n'
-        f"Content-Type: text/json\r\n\r\n"
+        f"Content-Type: application/json\r\n\r\n"
     ).encode("utf-8")
     tail = f"\r\n--{boundary}--\r\n".encode("utf-8")
     return head + payload + tail, f"multipart/form-data; boundary={boundary}"

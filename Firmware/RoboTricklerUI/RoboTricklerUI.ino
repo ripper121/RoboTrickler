@@ -20,11 +20,8 @@ Events Run On: "Core 0"
 #include "compile_options.h"
 #include "hardware_pins.h"
 #include <FS.h>
-#if ENABLE_LITTLEFS
 #include <LittleFS.h>
-#endif
 #include <SD.h>
-#include <sd_diskio.h>
 #include <SPI.h>
 #include <WiFi.h>
 #include <WebServer.h>
@@ -264,9 +261,9 @@ static void handleTricklerState(uint32_t &readWeightTime)
   }
 }
 
+#if DEBUG
 void logRuntimeStats()
 {
-#if DEBUG
   lv_mem_monitor_t lvglMemory;
   memset(&lvglMemory, 0, sizeof(lvglMemory));
   if (lvglLock())
@@ -291,21 +288,22 @@ void logRuntimeStats()
          (unsigned long)lvglMemory.max_used,
          (unsigned long)(DISP_TASK_STACK - uxTaskGetStackHighWaterMark(lvDisplayTaskHandle)),
          (unsigned long)(getArduinoLoopTaskStackSize() - uxTaskGetStackHighWaterMark(NULL)));
-#endif
 }
+#endif
 
 void loop()
 {
   static uint32_t lastRuntimeMaintenanceTime = millis();
   static uint32_t readWeightTime = millis();
 
-  handleSerialCommands();
   handleProfileTuneStepTest();
 
   if (millis() - lastRuntimeMaintenanceTime >= 1000)
   {
     lastRuntimeMaintenanceTime = millis();
-    logRuntimeStats();    
+#if DEBUG
+    logRuntimeStats();
+#endif
     maintainWifiConnection();
   }
 

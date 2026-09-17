@@ -19,6 +19,10 @@ DEFAULT_OUTPUT = Path(__file__).resolve().parent.parent / "SD-Files-Gz"
 DEFAULT_OUTPUT_LITTLEFS = Path(__file__).resolve().parent.parent / "SD-Files-LittleFS"
 EXCLUDED_TOP_LEVEL_DIRECTORIES = {"profiles","lang"}
 EXCLUDED_FILES = {"avg.txt", "calibrate.txt"}
+# Release packaging adds these files after generating the full SD-card tree.
+# Preserve them during ordinary regeneration (including compile-only checks),
+# while the release pipeline's explicit clean step still starts from scratch.
+FULL_OUTPUT_PRESERVED_FILES = {"Manual.pdf", "firmware.bin", "littlefs.bin"}
 # Dropped from the minimal LittleFS tree only. LittleFS is the fallback
 # filesystem served exclusively by the webserver (which can serve .gz
 # transparently), so the offline file:// landing page is dead weight there.
@@ -135,6 +139,8 @@ def create_output_tree(
     changed = 0
     removed = 0
     expected_files: set[Path] = set()
+    if not minimal:
+        expected_files.update(output / name for name in FULL_OUTPUT_PRESERVED_FILES)
 
     def emit(output_relative_path: Path, output_data: bytes, is_compressed: bool) -> None:
         nonlocal processed, changed

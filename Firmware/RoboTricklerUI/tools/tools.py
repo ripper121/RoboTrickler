@@ -62,7 +62,6 @@ COMMANDS = {
         (
             value("--build-dir", "Compiled artifact directory", "Firmware/build"),
             value("--output-dir", "USB-Flash package directory", "Firmware/USB-Flash"),
-            toggle("--legacy", "Build legacy 4 MB package"),
             toggle("--prod", "Production build with clean build directory"),
             toggle("--pdf", "Generate PDF manual"),
             toggle("--flash", "Flash a connected device after packaging"),
@@ -80,7 +79,6 @@ COMMANDS = {
             value("--baud", "Serial upload baud rate", "921600"),
             value("--esptool", "Path to esptool.exe", "automatic"),
             toggle("--full", "Erase flash and write the bootloader"),
-            toggle("--legacy-partition", "Use legacy 4 MB partition layout"),
             flag_choice(
                 "Compiler",
                 (("--cli", "Arduino CLI"), ("--legacy-ide", "Legacy Arduino IDE")),

@@ -13,10 +13,7 @@ from pathlib import Path
 
 from partition_layout import require_partition, selected_partitions_csv
 
-LEGACY_PARTITION_SCHEME = "min_spiffs"
-LEGACY_FLASH_BYTES = 4 * 1024 * 1024
 DEFAULT_FLASH_BYTES = 8 * 1024 * 1024
-PARTITION_SCHEME_ENV = "RTUI_PARTITION_SCHEME"
 # Defines forced to 0 for a production package build.
 PROD_DEFINES = {"DEBUG": 0, "ENABLE_SCREENSHOT": 0}
 
@@ -32,7 +29,6 @@ DEFAULT_USB_FLASH_DIR = SKETCH_DIR.parent / "USB-Flash"
 SD_FILES_GZ_DIR = SKETCH_DIR / "SD-Files-Gz"
 SD_FILES_LITTLEFS_DIR = SKETCH_DIR / "SD-Files-LittleFS"
 LITTLEFS_DATA_DIR = SKETCH_DIR / "data"
-SD_FILES_LEGACY_DIR = SKETCH_DIR / "SD-Files-Legacy"
 COMPILE_OPTIONS_FILE = SKETCH_DIR / "compile_options.h"
 FIRMWARE_BUILD_UPLOAD_SCRIPT = SCRIPT_DIR / "firmware_build_upload.py"
 GENERATE_SD_TREES_SCRIPT = SCRIPT_DIR / "filesystem_generate_sd_trees.py"
@@ -47,10 +43,7 @@ BUILD_ARTIFACTS = (
     "RoboTricklerUI.ino.merged.bin",
     "boot_app0.bin",
     "littlefs.bin",
-    "sdkconfig",
 )
-# In legacy (4 MB / min_spiffs) mode the LittleFS image is not built or flashed.
-LEGACY_SKIP_ARTIFACTS = ("littlefs.bin",)
 STATIC_FILES = (
     "esptool.exe",
     "flash.bat",
@@ -81,16 +74,6 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=DEFAULT_USB_FLASH_DIR,
         help=f"USB flash package directory (default: {DEFAULT_USB_FLASH_DIR})",
-    )
-    parser.add_argument(
-        "-legacy",
-        "--legacy",
-        dest="legacy",
-        action="store_true",
-        help=(
-            "Build the 4 MB / Minimal SPIFFS (min_spiffs) package without a "
-            "LittleFS image instead of the default 8 MB layout."
-        ),
     )
     parser.add_argument(
         "-prod",
@@ -176,21 +159,15 @@ def clean_build_directory(build_dir: Path) -> None:
     print(f"Removed build directory {resolved_build_dir}", flush=True)
 
 
-def regenerate_littlefs(build_dir: Path, legacy: bool = False) -> None:
-
+def regenerate_littlefs(build_dir: Path) -> None:
     steps = [
         (GENERATE_SD_TREES_SCRIPT, []),
         (STAGE_LITTLEFS_DATA_SCRIPT, []),
+        (
+            BUILD_LITTLEFS_IMAGE_SCRIPT,
+            ["--output", str(build_dir / "littlefs.bin")],
+        ),
     ]
-    # The 4 MB / min_spiffs build has no LittleFS, so skip the image build but
-    # still regenerate the gzipped SD-Files-Gz output.
-    if not legacy:
-        steps.append(
-            (
-                BUILD_LITTLEFS_IMAGE_SCRIPT,
-                ["--output", str(build_dir / "littlefs.bin")],
-            )
-        )
     for script, arguments in steps:
         require_file(script, f"generation script {script.name}")
         print(f"Running {script.name}...", flush=True)
@@ -227,7 +204,7 @@ def restore_compile_options(original: str | None) -> None:
     print(f"Restored {COMPILE_OPTIONS_FILE.name}", flush=True)
 
 
-def compile_firmware(build_dir: Path, legacy: bool) -> None:
+def compile_firmware(build_dir: Path) -> None:
     require_file(FIRMWARE_BUILD_UPLOAD_SCRIPT, "compile script")
     print("Running firmware_build_upload.py --cli...", flush=True)
     command = [
@@ -239,8 +216,6 @@ def compile_firmware(build_dir: Path, legacy: bool) -> None:
         "--build-dir",
         str(build_dir),
     ]
-    if legacy:
-        command.append("--legacy-partition")
     subprocess.run(
         command,
         cwd=SKETCH_DIR,
@@ -248,40 +223,22 @@ def compile_firmware(build_dir: Path, legacy: bool) -> None:
     )
 
 
-def copy_package_files(build_dir: Path, output_dir: Path, legacy: bool) -> None:
+def copy_package_files(build_dir: Path, output_dir: Path) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
-    obsolete_zip = output_dir / "USB-Flash.zip"
-    if obsolete_zip.exists():
-        obsolete_zip.unlink()
-        print(f"Removed obsolete {obsolete_zip.name}")
+    for obsolete_name in ("USB-Flash.zip", "sdkconfig"):
+        obsolete = output_dir / obsolete_name
+        if obsolete.exists():
+            obsolete.unlink()
+            print(f"Removed obsolete {obsolete.name}")
 
     for name in STATIC_FILES:
         require_file(output_dir / name, f"static package file {name}")
 
-    artifacts = BUILD_ARTIFACTS
-    if legacy:
-        artifacts = tuple(name for name in artifacts if name not in LEGACY_SKIP_ARTIFACTS)
-        # Drop a stale 8 MB LittleFS image so the legacy package stays consistent.
-        for name in LEGACY_SKIP_ARTIFACTS:
-            stale = output_dir / name
-            if stale.exists():
-                stale.unlink()
-                print(f"Removed {stale.name} (not used in legacy mode)")
-
-    for name in artifacts:
+    for name in BUILD_ARTIFACTS:
         source = require_file(build_dir / name, f"build artifact {name}")
         destination = output_dir / name
         shutil.copy2(source, destination)
         print(f"Copied {source.name} ({destination.stat().st_size} bytes)")
-
-    if legacy:
-        # Provide the firmware image under the OTA update filename as well.
-        update_source = require_file(
-            build_dir / "RoboTricklerUI.ino.bin", "build artifact RoboTricklerUI.ino.bin"
-        )
-        update_dest = output_dir / "update.bin"
-        shutil.copy2(update_source, update_dest)
-        print(f"Copied {update_source.name} as {update_dest.name} ({update_dest.stat().st_size} bytes)")
 
     partition_source = selected_partitions_csv()
     shutil.copy2(partition_source, output_dir / "partitions.csv")
@@ -304,30 +261,6 @@ def export_prod_images(build_dir: Path) -> None:
         littlefs_dest = SD_FILES_GZ_DIR / "littlefs.bin"
         shutil.copy2(littlefs_source, littlefs_dest)
         print(f"Exported {littlefs_dest.name} ({littlefs_dest.stat().st_size} bytes)")
-
-
-def export_legacy_update(build_dir: Path) -> None:
-    """Export the legacy OTA firmware and SD-card files into SD-Files-Gz."""
-    SD_FILES_GZ_DIR.mkdir(parents=True, exist_ok=True)
-    firmware_source = require_file(
-        build_dir / "RoboTricklerUI.ino.bin", "firmware binary"
-    )
-    update_dest = SD_FILES_GZ_DIR / "update.bin"
-    shutil.copy2(firmware_source, update_dest)
-    print(f"Exported {update_dest.name} ({update_dest.stat().st_size} bytes)")
-
-    # Bundle the legacy SD-card files (e.g. profile/calibration files) so the
-    # release folder has everything the 4 MB build needs.
-    if not SD_FILES_LEGACY_DIR.is_dir():
-        raise FileNotFoundError(
-            f"legacy SD files directory not found: {SD_FILES_LEGACY_DIR}"
-        )
-    for source in sorted(SD_FILES_LEGACY_DIR.glob("*")):
-        if not source.is_file():
-            continue
-        destination = SD_FILES_GZ_DIR / source.name
-        shutil.copy2(source, destination)
-        print(f"Exported {source.name} ({destination.stat().st_size} bytes)")
 
 
 def generate_manual_pdf() -> None:
@@ -361,10 +294,10 @@ def run_flash_bat(output_dir: Path) -> None:
     )
 
 
-def validate_merged_image(output_dir: Path, legacy: bool) -> None:
+def validate_merged_image(output_dir: Path) -> None:
     merged_path = output_dir / "RoboTricklerUI.ino.merged.bin"
     flash_size = merged_path.stat().st_size
-    expected_size = LEGACY_FLASH_BYTES if legacy else DEFAULT_FLASH_BYTES
+    expected_size = DEFAULT_FLASH_BYTES
     if flash_size != expected_size:
         raise ValueError(
             f"Merged image is {flash_size} bytes; expected a "
@@ -377,8 +310,7 @@ def validate_merged_image(output_dir: Path, legacy: bool) -> None:
         (0xE000, "boot_app0.bin"),
         (0x10000, "RoboTricklerUI.ino.bin"),
     ]
-    if not legacy:
-        checks.append((require_partition("spiffs").offset, "littlefs.bin"))
+    checks.append((require_partition("spiffs").offset, "littlefs.bin"))
 
     with merged_path.open("rb") as merged_file:
         for offset, name in checks:
@@ -388,10 +320,7 @@ def validate_merged_image(output_dir: Path, legacy: bool) -> None:
                 raise ValueError(
                     f"Merged image does not contain {name} at {offset:#x}"
                 )
-    if legacy:
-        print("Validated 4 MiB merged image (Minimal SPIFFS, no LittleFS)")
-    else:
-        print("Validated 8 MiB merged image, including LittleFS")
+    print("Validated 8 MiB merged image, including LittleFS")
 
 
 def main() -> int:
@@ -399,17 +328,12 @@ def main() -> int:
     build_dir = args.build_dir.resolve()
     output_dir = args.output_dir.resolve()
 
-    # partition_layout reads this env var to pick the matching partitions.csv.
-    if args.legacy:
-        os.environ[PARTITION_SCHEME_ENV] = LEGACY_PARTITION_SCHEME
-    else:
-        os.environ.pop(PARTITION_SCHEME_ENV, None)
+    # Releases always use the 8 MB partition scheme from .vscode/arduino.json.
+    os.environ.pop("RTUI_PARTITION_SCHEME", None)
 
     # Collect every compile_options.h define override into one patch so a single
     # restore in the finally block reverts them all.
     define_overrides: dict[str, int] = {}
-    if args.legacy:
-        define_overrides["ENABLE_LITTLEFS"] = 0
     if args.prod:
         define_overrides.update(PROD_DEFINES)
 
@@ -418,17 +342,13 @@ def main() -> int:
         if define_overrides:
             # Restored in the finally block.
             original_compile_options = set_compile_defines(define_overrides)
-        if args.legacy:
-            print("Legacy mode: 4 MB / Minimal SPIFFS, skipping LittleFS image.", flush=True)
         if args.prod:
             clean_build_directory(build_dir)
         clean_generated_outputs(output_dir)
-        regenerate_littlefs(build_dir, args.legacy)
-        compile_firmware(build_dir, args.legacy)
-        copy_package_files(build_dir, output_dir, args.legacy)
-        validate_merged_image(output_dir, args.legacy)
-        if args.legacy:
-            export_legacy_update(build_dir)
+        regenerate_littlefs(build_dir)
+        compile_firmware(build_dir)
+        copy_package_files(build_dir, output_dir)
+        validate_merged_image(output_dir)
         if args.prod:
             export_prod_images(build_dir)
         if args.pdf:

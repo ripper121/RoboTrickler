@@ -380,7 +380,9 @@ bool loadProfile(const char *filename, Config &config)
   }
 
   // Dump config file
+#if DEBUG
   printFile(filename);
+#endif
 
   // Open file for reading
   File file = ACTIVE_FS.open(filename);
@@ -516,7 +518,9 @@ bool loadConfiguration(const char *filename, Config &config)
   setSdReadError("");
   setDefaultConfiguration(config);
   // Dump config file
+#if DEBUG
   printFile(filename);
+#endif
 
   // Open file for reading
   File file = ACTIVE_FS.open(filename);
@@ -1096,9 +1100,9 @@ void saveConfiguration(const char *filename, const Config &config)
 }
 
 // Prints the content of a file to the Serial
+#if DEBUG
 void printFile(const char *filename)
 {
-#if DEBUG
   // Open file for reading
   File file = ACTIVE_FS.open(filename);
 
@@ -1119,7 +1123,5 @@ void printFile(const char *filename)
 
   // Close the file
   file.close();
-#else
-  (void)filename;
-#endif
 }
+#endif
