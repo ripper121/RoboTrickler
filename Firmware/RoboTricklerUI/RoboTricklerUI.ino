@@ -300,6 +300,7 @@ void loop()
   static uint32_t readWeightTime = millis();
 
   handleSerialCommands();
+  handleProfileTuneStepTest();
 
   if (millis() - lastRuntimeMaintenanceTime >= 1000)
   {

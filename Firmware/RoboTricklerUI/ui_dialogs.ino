@@ -306,6 +306,43 @@ lv_obj_t *ui_PanelProfileTune = NULL;
 lv_obj_t *profileTuneTitleLabel = NULL;
 lv_obj_t *profileTuneValueLabel = NULL;
 lv_obj_t *profileTuneEntryLabel = NULL;
+lv_obj_t *profileTuneTestButton = NULL;
+
+struct ProfileTuneTestRequest
+{
+    byte stepperNum;
+    int rpm;
+    long steps;
+    bool reverse;
+};
+
+static ProfileTuneTestRequest profileTuneTestRequest;
+static volatile bool profileTuneTestPending = false;
+static volatile bool profileTuneTestRunning = false;
+static volatile bool profileTuneTestCancelled = false;
+static portMUX_TYPE profileTuneTestMux = portMUX_INITIALIZER_UNLOCKED;
+
+bool isProfileTuneTestActive()
+{
+    portENTER_CRITICAL(&profileTuneTestMux);
+    bool active = profileTuneTestPending || profileTuneTestRunning;
+    portEXIT_CRITICAL(&profileTuneTestMux);
+    return active;
+}
+
+static void cancelProfileTuneTest()
+{
+    portENTER_CRITICAL(&profileTuneTestMux);
+    profileTuneTestPending = false;
+    profileTuneTestCancelled = true;
+    bool running = profileTuneTestRunning;
+    portEXIT_CRITICAL(&profileTuneTestMux);
+
+    if (running)
+    {
+        setStepperRunEnabled(false);
+    }
+}
 
 bool isProfileTuneDialogOpen()
 {
@@ -330,10 +367,12 @@ void clearProfileTuneState()
 
 void closeProfileTuneDialog()
 {
+    cancelProfileTuneTest();
     closeDialog(&ui_PanelProfileTune, true);
     profileTuneTitleLabel = NULL;
     profileTuneValueLabel = NULL;
     profileTuneEntryLabel = NULL;
+    profileTuneTestButton = NULL;
 }
 
 static bool canTuneProfile(const String &profileName, bool valid)
@@ -416,6 +455,14 @@ static void updateProfileTuneLabels()
     }
     formatWeight(text, sizeof(text), entryValue);
     lv_label_set_text(profileTuneEntryLabel, text);
+    if (profileTuneMode == PROFILE_TUNE_STEPS)
+    {
+        lv_obj_clear_flag(profileTuneTestButton, LV_OBJ_FLAG_HIDDEN);
+    }
+    else
+    {
+        lv_obj_add_flag(profileTuneTestButton, LV_OBJ_FLAG_HIDDEN);
+    }
 }
 
 void selectPreviousTuneMode_event_cb(lv_event_t *e)
@@ -487,6 +534,85 @@ void selectTuneEntry_event_cb(lv_event_t *e)
     updateProfileTuneLabels();
 }
 
+void testProfileTuneSteps_event_cb(lv_event_t *e)
+{
+    if ((profileTuneMode != PROFILE_TUNE_STEPS) ||
+        (profileTuneSelectedEntry < 0) ||
+        (profileTuneSelectedEntry >= profileTuneEntryCount) ||
+        isTricklerRunning())
+    {
+        return;
+    }
+
+    int entry = profileTuneSelectedEntry;
+    bool queued = false;
+    portENTER_CRITICAL(&profileTuneTestMux);
+    if (!profileTuneTestPending && !profileTuneTestRunning)
+    {
+        profileTuneTestRequest.stepperNum = config.profileStepper[entry];
+        profileTuneTestRequest.rpm = config.profileRpm[entry];
+        profileTuneTestRequest.steps = profileTuneSteps[entry];
+        profileTuneTestRequest.reverse =
+            (config.profileReverseMask & (uint16_t)(1U << entry)) != 0;
+        profileTuneTestCancelled = false;
+        profileTuneTestPending = true;
+        queued = true;
+    }
+    portEXIT_CRITICAL(&profileTuneTestMux);
+    if (queued)
+    {
+        lv_obj_add_state(profileTuneTestButton, LV_STATE_DISABLED);
+    }
+}
+
+// Run the test from the Arduino loop task. Motor moves are blocking, so doing
+// this in the LVGL click callback would freeze touch and web handling.
+void handleProfileTuneStepTest()
+{
+    ProfileTuneTestRequest request;
+    bool runTest = false;
+
+    portENTER_CRITICAL(&profileTuneTestMux);
+    if (profileTuneTestPending)
+    {
+        request = profileTuneTestRequest;
+        profileTuneTestPending = false;
+        profileTuneTestRunning = true;
+        runTest = true;
+    }
+    portEXIT_CRITICAL(&profileTuneTestMux);
+
+    if (!runTest)
+    {
+        return;
+    }
+
+    setStepperRpm(request.stepperNum, request.rpm);
+    setStepperRunEnabled(true);
+    uint32_t runId = getStepperRunId();
+    portENTER_CRITICAL(&profileTuneTestMux);
+    bool cancelled = profileTuneTestCancelled;
+    portEXIT_CRITICAL(&profileTuneTestMux);
+    if (!cancelled)
+    {
+        step(request.stepperNum, request.steps, request.reverse, runId);
+    }
+    setStepperRunEnabled(false);
+
+    portENTER_CRITICAL(&profileTuneTestMux);
+    profileTuneTestRunning = false;
+    portEXIT_CRITICAL(&profileTuneTestMux);
+
+    if (lvglLock())
+    {
+        if (profileTuneTestButton != NULL)
+        {
+            lv_obj_clear_state(profileTuneTestButton, LV_STATE_DISABLED);
+        }
+        lvglUnlock();
+    }
+}
+
 void cancelProfileTune_event_cb(lv_event_t *e)
 {
     closeProfileTuneDialog();
@@ -527,6 +653,7 @@ static void createProfileTuneDialog()
     createDialogButton(ui_PanelProfileTune, -115, -42, 60, "+", UI_FONT_LARGE, increaseTuneValue_event_cb);
     lv_obj_t *entryButton = createDialogButton(ui_PanelProfileTune, 0, 22, 290, "", UI_FONT_LARGE, selectTuneEntry_event_cb);
     profileTuneEntryLabel = lv_obj_get_child(entryButton, 0);
+    profileTuneTestButton = createDialogButton(ui_PanelProfileTune, 180, 22, 50, "T", UI_FONT_LARGE, testProfileTuneSteps_event_cb);
     createDialogButton(ui_PanelProfileTune, 70, 88, 110, UI_SYMBOL_CANCEL, UI_FONT_LARGE, cancelProfileTune_event_cb);
     createDialogButton(ui_PanelProfileTune, -70, 88, 110, UI_SYMBOL_SAVE, UI_FONT_LARGE, saveProfileTune_event_cb);
 }

@@ -43,6 +43,12 @@ bool serialWait()
   unsigned long start = millis();
   while ((millis() - start) < SCALE_SERIAL_WAIT_MS)
   {
+    // Profile-tune test moves are queued from the LVGL task and executed by
+    // loop(). Do not make a T-button press wait for this blocking scale poll.
+    if (isProfileTuneTestActive())
+    {
+      return true;
+    }
     if (Serial1.available())
     {
       return false;
@@ -446,6 +452,12 @@ void readWeight()
     timeout = requestScaleWeight();
     if (timeout)
     {
+      // This was an intentional interruption for a tune test, not a scale
+      // communication timeout. Return immediately so loop() can run the move.
+      if (isProfileTuneTestActive())
+      {
+        return;
+      }
       break;
     }
 

@@ -14,7 +14,7 @@ void beep(const char *beepMode)
 
 void startTrickler()
 {
-    if (isTricklerRunning())
+    if (isTricklerRunning() || isProfileTuneTestActive())
     {
         return;
     }
