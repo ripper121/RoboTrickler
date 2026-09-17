@@ -14,18 +14,20 @@ function release(overrides = {}) {
       { name: "firmware.bin", size: 10, browser_download_url: "firmware" },
       { name: "littlefs.bin", size: 20, browser_download_url: "littlefs" },
       { name: "USB-Flash.zip", size: 30, browser_download_url: "usb-flash" },
+      { name: "SD-Files.zip", size: 40, browser_download_url: "sd-files" },
     ],
     ...overrides,
   };
 }
 
-test("keeps releases containing both binaries and the full USB package", () => {
+test("keeps releases containing all installation and SD-card assets", () => {
   const result = selectFlashableReleases([release()]);
 
   assert.equal(result.length, 1);
   assert.equal(result[0].firmware.browser_download_url, "firmware");
   assert.equal(result[0].littlefs.browser_download_url, "littlefs");
   assert.equal(result[0].usbFlash.browser_download_url, "usb-flash");
+  assert.equal(result[0].sdFiles.browser_download_url, "sd-files");
 });
 
 test("accepts the historical littleFS.bin capitalization", () => {
@@ -35,6 +37,7 @@ test("accepts the historical littleFS.bin capitalization", () => {
         { name: "firmware.bin", size: 10, browser_download_url: "firmware" },
         { name: "littleFS.bin", size: 20, browser_download_url: "littlefs" },
         { name: "USB-Flash.zip", size: 30, browser_download_url: "usb-flash" },
+        { name: "SD-Files.zip", size: 40, browser_download_url: "sd-files" },
       ],
     }),
   ]);

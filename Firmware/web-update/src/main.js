@@ -25,6 +25,11 @@ const elements = {
   progressPercent: document.querySelector("#progress-percent"),
   releaseDetails: document.querySelector("#release-details"),
   resultMessage: document.querySelector("#result-message"),
+  pageShell: document.querySelector(".page-shell"),
+  sdCardOverlay: document.querySelector("#sd-card-overlay"),
+  sdCardOverlayClose: document.querySelector("#sd-card-overlay-close"),
+  sdCardOverlayMessage: document.querySelector("#sd-card-overlay-message"),
+  sdFilesDownload: document.querySelector("#sd-files-download"),
   statusText: document.querySelector("#status-text"),
   statusDetail: document.querySelector("#status-detail"),
   terminal: document.querySelector("#terminal"),
@@ -32,6 +37,7 @@ const elements = {
 
 let releases = [];
 let transport;
+let overlayReturnFocus;
 
 function translatePage() {
   document.documentElement.lang = language;
@@ -155,8 +161,23 @@ function wait(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-function showSdCardInstructions(wasFormatted) {
-  window.alert(t(wasFormatted ? "sdCardFilesAfterFormat" : "sdCardFilesManual"));
+function showSdCardInstructions(release, wasFormatted) {
+  overlayReturnFocus = document.activeElement;
+  elements.sdCardOverlayMessage.textContent = t(
+    wasFormatted ? "sdCardFilesAfterFormat" : "sdCardFilesManual",
+  );
+  elements.sdFilesDownload.href = release.sdFilesUrl;
+  elements.sdCardOverlay.hidden = false;
+  elements.pageShell.inert = true;
+  document.body.classList.add("overlay-open");
+  elements.sdFilesDownload.focus();
+}
+
+function closeSdCardInstructions() {
+  elements.sdCardOverlay.hidden = true;
+  elements.pageShell.inert = false;
+  document.body.classList.remove("overlay-open");
+  overlayReturnFocus?.focus();
 }
 
 async function openFirmwareSerial(port) {
@@ -309,7 +330,7 @@ async function installSelectedRelease() {
       }),
       "success",
     );
-    showSdCardInstructions(release.supportsSdFormat);
+    showSdCardInstructions(release, release.supportsSdFormat);
   } catch (error) {
     const cancelled = error?.name === "NotFoundError";
     setProgress(
@@ -326,7 +347,7 @@ async function installSelectedRelease() {
         ? t("formatFailedAfterInstall", { message: error.message || error })
         : t("installationFailed", { message: error.message || error });
     showResult(message, "error");
-    if (firmwareInstalled) showSdCardInstructions(false);
+    if (firmwareInstalled) showSdCardInstructions(release, false);
     appendLog(`\n${t("errorLog", { message: error.stack || error })}\n`);
   } finally {
     await disconnect();
@@ -354,5 +375,14 @@ async function start() {
 
 elements.firmwareSelect.addEventListener("change", updateReleaseDetails);
 elements.installButton.addEventListener("click", installSelectedRelease);
+elements.sdCardOverlayClose.addEventListener("click", closeSdCardInstructions);
+elements.sdCardOverlay.addEventListener("click", (event) => {
+  if (event.target === elements.sdCardOverlay) closeSdCardInstructions();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !elements.sdCardOverlay.hidden) {
+    closeSdCardInstructions();
+  }
+});
 translatePage();
 start();

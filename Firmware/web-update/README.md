@@ -1,10 +1,11 @@
 # Robo-Trickler web updater
 
 A small Web Serial installer for complete RoboTrickler release images. The build
-requires `firmware.bin`, `littlefs.bin`, and `USB-Flash.zip`, verifies that the
-files inside the package match the standalone release binaries and merged 8 MB
-image, and synchronizes the five required images into the static site. There are
-no local firmware file inputs or download links in the interface.
+requires `firmware.bin`, `littlefs.bin`, `USB-Flash.zip`, and `SD-Files.zip`,
+verifies that the files inside the USB package match the standalone release
+binaries and merged 8 MB image, and synchronizes the five required images into
+the static site. There are no local firmware file inputs or firmware download
+links in the interface.
 
 ## Run locally
 
@@ -53,10 +54,10 @@ FatFs automatic allocation-unit sizing, reports the result, and reboots. Older
 releases remain installable, but the page skips SD formatting when the firmware
 does not contain this serial command.
 
-After installation, a localized popup tells the user to extract `SD-Files.zip`
-and copy its contents into the SD-card root. For older releases or a failed
-automatic format, it also tells the user to format the card as FAT32 with the
-default allocation-unit size first.
+After installation, a localized overlay links directly to the selected
+release's `SD-Files.zip` and tells the user to extract its contents into the
+SD-card root. For older releases or a failed automatic format, it also tells the
+user to format the card as FAT32 with the default allocation-unit size first.
 
 Release binaries are not linked in the UI, but a browser must download bytes in
 order to flash them. They therefore cannot be cryptographically hidden from a

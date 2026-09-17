@@ -116,7 +116,9 @@ async function main() {
 
   const releases = selectFlashableReleases(await response.json());
   if (releases.length === 0) {
-    throw new Error("No release contains both firmware.bin and littlefs.bin.");
+    throw new Error(
+      "No release contains firmware.bin, littlefs.bin, USB-Flash.zip, and SD-Files.zip.",
+    );
   }
 
   validateGeneratedPath(firmwareDirectory);
@@ -158,6 +160,7 @@ async function main() {
       prerelease: release.prerelease,
       publishedAt: release.publishedAt,
       supportsSdFormat,
+      sdFilesUrl: release.sdFiles.browser_download_url,
       files: files.map((file) => ({
         ...assetManifest(
           { name: file.outputName },

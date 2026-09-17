@@ -2,7 +2,12 @@ export const RELEASES_API =
   "https://api.github.com/repos/ripper121/RoboTrickler/releases?per_page=100";
 export const RELEASES_MANIFEST = "./releases.json";
 
-const REQUIRED_ASSETS = ["firmware.bin", "littlefs.bin", "usb-flash.zip"];
+const REQUIRED_ASSETS = [
+  "firmware.bin",
+  "littlefs.bin",
+  "usb-flash.zip",
+  "sd-files.zip",
+];
 
 function findAsset(assets, expectedName) {
   return assets.find(
@@ -31,6 +36,7 @@ export function selectFlashableReleases(releases) {
         firmware: assets["firmware.bin"],
         littlefs: assets["littlefs.bin"],
         usbFlash: assets["usb-flash.zip"],
+        sdFiles: assets["sd-files.zip"],
       };
     })
     .filter(Boolean)
