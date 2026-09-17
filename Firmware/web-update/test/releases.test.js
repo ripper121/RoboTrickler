@@ -13,17 +13,19 @@ function release(overrides = {}) {
     assets: [
       { name: "firmware.bin", size: 10, browser_download_url: "firmware" },
       { name: "littlefs.bin", size: 20, browser_download_url: "littlefs" },
+      { name: "USB-Flash.zip", size: 30, browser_download_url: "usb-flash" },
     ],
     ...overrides,
   };
 }
 
-test("keeps releases containing both required binaries", () => {
+test("keeps releases containing both binaries and the full USB package", () => {
   const result = selectFlashableReleases([release()]);
 
   assert.equal(result.length, 1);
   assert.equal(result[0].firmware.browser_download_url, "firmware");
   assert.equal(result[0].littlefs.browser_download_url, "littlefs");
+  assert.equal(result[0].usbFlash.browser_download_url, "usb-flash");
 });
 
 test("accepts the historical littleFS.bin capitalization", () => {
@@ -32,6 +34,7 @@ test("accepts the historical littleFS.bin capitalization", () => {
       assets: [
         { name: "firmware.bin", size: 10, browser_download_url: "firmware" },
         { name: "littleFS.bin", size: 20, browser_download_url: "littlefs" },
+        { name: "USB-Flash.zip", size: 30, browser_download_url: "usb-flash" },
       ],
     }),
   ]);

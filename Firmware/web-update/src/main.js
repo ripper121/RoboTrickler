@@ -1,10 +1,13 @@
 import { ESPLoader, Transport } from "esptool-js";
+import { FLASH_FILES } from "./flash-layout.js";
+import { createTranslator, detectLanguage } from "./i18n.js";
 import { loadFlashableReleases } from "./releases.js";
 import "./styles.css";
 
-const APP_OFFSET = 0x10000;
-const LITTLEFS_OFFSET = 0x670000;
 const FLASH_BAUD_RATE = 921600;
+const language = detectLanguage();
+const locale = language === "de" ? "de-DE" : "en";
+const t = createTranslator(language);
 
 const elements = {
   browserWarning: document.querySelector("#browser-warning"),
@@ -22,6 +25,18 @@ const elements = {
 
 let releases = [];
 let transport;
+
+function translatePage() {
+  document.documentElement.lang = language;
+  document.title = t("pageTitle");
+  document.querySelector("#page-description").content = t("pageDescription");
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+    element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
+  });
+}
 
 const terminal = {
   clean() {
@@ -41,14 +56,14 @@ function appendLog(data) {
 }
 
 function formatDate(date) {
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(locale, {
     year: "numeric",
     month: "long",
     day: "numeric",
   }).format(new Date(date));
 }
 
-function setProgress(value, label, detail = "Keep the device connected.") {
+function setProgress(value, label, detail = t("keepConnected")) {
   const rounded = Math.max(0, Math.min(100, Math.round(value)));
   elements.progress.value = rounded;
   elements.progress.textContent = `${rounded}%`;
@@ -72,7 +87,7 @@ function selectedRelease() {
 function updateReleaseDetails() {
   const release = selectedRelease();
   elements.releaseDetails.textContent = release
-    ? `Published ${formatDate(release.publishedAt)}${release.prerelease ? " · Pre-release" : ""}`
+    ? `${t("published", { date: formatDate(release.publishedAt) })}${release.prerelease ? ` · ${t("prerelease")}` : ""}`
     : "";
 }
 
@@ -82,7 +97,7 @@ function populateReleases() {
   for (const release of releases) {
     const option = document.createElement("option");
     option.value = release.id;
-    option.textContent = `${release.name}${release.prerelease ? " (pre-release)" : ""}`;
+    option.textContent = `${release.name}${release.prerelease ? ` (${t("prerelease")})` : ""}`;
     elements.firmwareSelect.append(option);
   }
 
@@ -91,17 +106,21 @@ function populateReleases() {
   updateReleaseDetails();
 }
 
-async function downloadBinary(asset, label) {
-  setProgress(4, `Downloading ${label}…`);
+async function downloadBinary(asset, label, progress) {
+  setProgress(progress, t("downloading", { file: label }));
   const response = await fetch(asset.url, { cache: "no-store" });
   if (!response.ok) {
-    throw new Error(`Could not download ${label} (${response.status}).`);
+    throw new Error(t("downloadFailed", { file: label, status: response.status }));
   }
 
   const data = new Uint8Array(await response.arrayBuffer());
   if (data.length !== asset.size) {
     throw new Error(
-      `${label} download is incomplete (received ${data.length} of ${asset.size} bytes).`,
+      t("downloadIncomplete", {
+        file: label,
+        received: data.length,
+        expected: asset.size,
+      }),
     );
   }
   const digest = Array.from(
@@ -109,7 +128,7 @@ async function downloadBinary(asset, label) {
     (byte) => byte.toString(16).padStart(2, "0"),
   ).join("");
   if (digest !== asset.sha256) {
-    throw new Error(`${label} failed its integrity check.`);
+    throw new Error(t("integrityFailed", { file: label }));
   }
   return data;
 }
@@ -119,7 +138,7 @@ async function disconnect() {
   try {
     await transport.disconnect();
   } catch (error) {
-    appendLog(`Disconnect warning: ${error.message}\n`);
+    appendLog(`${t("disconnectWarning", { message: error.message })}\n`);
   } finally {
     transport = undefined;
   }
@@ -134,7 +153,7 @@ async function installSelectedRelease() {
   elements.resultMessage.hidden = true;
   elements.progressPanel.hidden = false;
   terminal.clean();
-  setProgress(0, "Choose the Robo-Trickler USB port…");
+  setProgress(0, t("choosePort"));
 
   try {
     const port = await navigator.serial.requestPort();
@@ -146,23 +165,30 @@ async function installSelectedRelease() {
       debugLogging: false,
     });
 
-    setProgress(2, "Connecting to the device…");
+    setProgress(2, t("connecting"));
     const chipName = await loader.main();
     if (!/^ESP32(?:$|[-\s])/i.test(chipName)) {
-      throw new Error(`Unsupported device detected: ${chipName}. Expected an ESP32.`);
+      throw new Error(t("unsupportedDevice", { chip: chipName }));
     }
 
-    const firmware = await downloadBinary(release.firmware, "firmware");
-    const littlefs = await downloadBinary(release.littlefs, "LittleFS");
-    const totalBytes = firmware.length + littlefs.length;
-    const fileSizes = [firmware.length, littlefs.length];
+    const downloadedFiles = [];
+    for (const [index, layout] of FLASH_FILES.entries()) {
+      const asset = release.files.find((file) => file.role === layout.role);
+      if (!asset) throw new Error(t("missingFlashFile", { file: layout.archiveName }));
+      downloadedFiles.push({
+        data: await downloadBinary(asset, t(layout.role), 3 + index),
+        address: layout.address,
+        role: layout.role,
+      });
+    }
+    const totalBytes = downloadedFiles.reduce((sum, file) => sum + file.data.length, 0);
+    const fileSizes = downloadedFiles.map((file) => file.data.length);
 
-    setProgress(5, `Installing ${release.name}…`);
+    setProgress(8, t("erasingFlash"), t("doNotDisconnect"));
+    await loader.eraseFlash();
+    setProgress(12, t("installingRelease", { release: release.name }));
     await loader.writeFlash({
-      fileArray: [
-        { data: firmware, address: APP_OFFSET },
-        { data: littlefs, address: LITTLEFS_OFFSET },
-      ],
+      fileArray: downloadedFiles.map(({ data, address }) => ({ data, address })),
       flashMode: "dio",
       flashFreq: "80m",
       flashSize: "8MB",
@@ -172,26 +198,26 @@ async function installSelectedRelease() {
         const completedBytes = fileSizes
           .slice(0, fileIndex)
           .reduce((sum, size) => sum + size, 0);
-        const percent = 5 + ((completedBytes + written) / totalBytes) * 93;
-        const currentFile = fileIndex === 0 ? "firmware" : "LittleFS";
-        setProgress(percent, `Installing ${currentFile}…`);
+        const percent = 12 + ((completedBytes + written) / totalBytes) * 86;
+        const currentFile = t(downloadedFiles[fileIndex].role);
+        setProgress(percent, t("installingFile", { file: currentFile }));
       },
     });
 
-    setProgress(99, "Restarting the Robo-Trickler…");
+    setProgress(99, t("restarting"));
     await loader.after("hard_reset");
-    setProgress(100, "Installation complete", "You can unplug the USB cable.");
-    showResult(`${release.name} was installed successfully.`, "success");
+    setProgress(100, t("installationComplete"), t("unplugCable"));
+    showResult(t("installedSuccessfully", { release: release.name }), "success");
   } catch (error) {
     const cancelled = error?.name === "NotFoundError";
-    setProgress(0, cancelled ? "No USB port selected" : "Installation stopped");
+    setProgress(0, cancelled ? t("noPortSelected") : t("installationStopped"));
     showResult(
       cancelled
-        ? "No device was selected. Connect the Robo-Trickler and try again."
-        : `Installation failed: ${error.message || error}`,
+        ? t("noDeviceSelected")
+        : t("installationFailed", { message: error.message || error }),
       "error",
     );
-    appendLog(`\nError: ${error.stack || error}\n`);
+    appendLog(`\n${t("errorLog", { message: error.stack || error })}\n`);
   } finally {
     await disconnect();
     elements.firmwareSelect.disabled = false;
@@ -207,15 +233,16 @@ async function start() {
   try {
     releases = await loadFlashableReleases();
     if (releases.length === 0) {
-      throw new Error("No release contains both firmware.bin and littlefs.bin.");
+      throw new Error(t("noCompatibleRelease"));
     }
     populateReleases();
   } catch (error) {
-    elements.firmwareSelect.replaceChildren(new Option("Releases unavailable"));
-    showResult(`Could not load firmware releases: ${error.message}`, "error");
+    elements.firmwareSelect.replaceChildren(new Option(t("releasesUnavailable")));
+    showResult(t("releaseLoadFailed", { message: error.message }), "error");
   }
 }
 
 elements.firmwareSelect.addEventListener("change", updateReleaseDetails);
 elements.installButton.addEventListener("click", installSelectedRelease);
+translatePage();
 start();

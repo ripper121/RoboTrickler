@@ -2,10 +2,12 @@ import { createHash } from "node:crypto";
 import { mkdir, rename, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { unzipSync } from "fflate";
+import { FLASH_FILES, FLASH_SIZE } from "../src/flash-layout.js";
 import { RELEASES_API, selectFlashableReleases } from "../src/releases.js";
 
-const APP_PARTITION_SIZE = 0x330000;
-const LITTLEFS_PARTITION_SIZE = 0x180000;
+const MAXIMUM_USB_PACKAGE_SIZE = 32 * 1024 * 1024;
+const MERGED_IMAGE_NAME = "RoboTricklerUI.ino.merged.bin";
 const projectDirectory = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "..",
@@ -50,6 +52,52 @@ function assetManifest(asset, data, url) {
   };
 }
 
+function findArchiveFile(archive, expectedName) {
+  const matches = Object.entries(archive).filter(([name]) => {
+    const basename = name.replaceAll("\\", "/").split("/").at(-1);
+    return basename.toLocaleLowerCase() === expectedName.toLocaleLowerCase();
+  });
+  if (matches.length !== 1) {
+    throw new Error(`Expected exactly one ${expectedName} in USB-Flash.zip.`);
+  }
+  return matches[0][1];
+}
+
+function bytesEqual(first, second) {
+  return first.length === second.length && first.every((byte, index) => byte === second[index]);
+}
+
+function validatePackage(release, archive, releaseFirmware, releaseLittlefs) {
+  const merged = findArchiveFile(archive, MERGED_IMAGE_NAME);
+  if (merged.length !== FLASH_SIZE) {
+    throw new Error(`${release.tag} merged image is not exactly 8 MiB.`);
+  }
+
+  const files = FLASH_FILES.map((layout) => {
+    const data = findArchiveFile(archive, layout.archiveName);
+    if (data.length < 1 || data.length > layout.maximumSize) {
+      throw new Error(`${layout.archiveName} has an invalid size: ${data.length}.`);
+    }
+    if (!bytesEqual(merged.subarray(layout.address, layout.address + data.length), data)) {
+      throw new Error(`${layout.archiveName} does not match the merged image.`);
+    }
+    return { ...layout, data };
+  });
+
+  const firmware = files.find((file) => file.role === "firmware").data;
+  const littlefs = files.find((file) => file.role === "littlefs").data;
+  if (!bytesEqual(firmware, releaseFirmware)) {
+    throw new Error(`${release.tag} firmware.bin differs from USB-Flash.zip.`);
+  }
+  if (!bytesEqual(littlefs, releaseLittlefs)) {
+    throw new Error(`${release.tag} littlefs.bin differs from USB-Flash.zip.`);
+  }
+  if (firmware[0] !== 0xe9 || files[0].data[0] !== 0xe9) {
+    throw new Error(`${release.tag} contains an invalid ESP32 image.`);
+  }
+  return files;
+}
+
 async function main() {
   const apiHeaders = {
     Accept: "application/vnd.github+json",
@@ -82,18 +130,21 @@ async function main() {
     const releaseDirectory = path.join(stagingDirectory, String(release.id));
     await mkdir(releaseDirectory);
 
-    const [firmware, littlefs] = await Promise.all([
-      downloadAsset(release.firmware, APP_PARTITION_SIZE),
-      downloadAsset(release.littlefs, LITTLEFS_PARTITION_SIZE),
+    const [firmware, littlefs, usbPackage] = await Promise.all([
+      downloadAsset(release.firmware, FLASH_FILES.find((file) => file.role === "firmware").maximumSize),
+      downloadAsset(release.littlefs, FLASH_FILES.find((file) => file.role === "littlefs").maximumSize),
+      downloadAsset(release.usbFlash, MAXIMUM_USB_PACKAGE_SIZE),
     ]);
-    if (firmware[0] !== 0xe9) {
-      throw new Error(`${release.tag} firmware.bin is not an ESP application image.`);
-    }
+    const files = validatePackage(
+      release,
+      unzipSync(usbPackage),
+      firmware,
+      littlefs,
+    );
 
-    await Promise.all([
-      writeFile(path.join(releaseDirectory, "firmware.bin"), firmware),
-      writeFile(path.join(releaseDirectory, "littlefs.bin"), littlefs),
-    ]);
+    await Promise.all(
+      files.map((file) => writeFile(path.join(releaseDirectory, file.outputName), file.data)),
+    );
 
     manifest.push({
       id: release.id,
@@ -101,16 +152,14 @@ async function main() {
       tag: release.tag,
       prerelease: release.prerelease,
       publishedAt: release.publishedAt,
-      firmware: assetManifest(
-        release.firmware,
-        firmware,
-        `./firmware/${release.id}/firmware.bin`,
-      ),
-      littlefs: assetManifest(
-        release.littlefs,
-        littlefs,
-        `./firmware/${release.id}/littlefs.bin`,
-      ),
+      files: files.map((file) => ({
+        ...assetManifest(
+          { name: file.outputName },
+          file.data,
+          `./firmware/${release.id}/${file.outputName}`,
+        ),
+        role: file.role,
+      })),
     });
   }
 

@@ -1,10 +1,10 @@
 # Robo-Trickler web updater
 
-A small Web Serial installer for the `firmware.bin` and `littlefs.bin` assets in
-RoboTrickler GitHub releases. The build synchronizes compatible releases into
-the static site because GitHub's release-asset host does not allow direct
-cross-origin browser downloads. There are no local firmware file inputs or
-download links in the interface.
+A small Web Serial installer for complete RoboTrickler release images. The build
+requires `firmware.bin`, `littlefs.bin`, and `USB-Flash.zip`, verifies that the
+files inside the package match the standalone release binaries and merged 8 MB
+image, and synchronizes the five required images into the static site. There are
+no local firmware file inputs or download links in the interface.
 
 ## Run locally
 
@@ -34,15 +34,16 @@ once before the first deployment.
 
 ## Flash layout
 
-The updater intentionally does not erase the whole chip. It updates:
+The installer erases the whole chip and then restores:
 
-- Application (`firmware.bin`) at `0x10000`
-- LittleFS (`littlefs.bin`, matched case-insensitively) at `0x670000`
+- Bootloader at `0x1000`
+- Partition table at `0x8000`
+- OTA boot data at `0xe000`
+- Application at `0x10000`
+- LittleFS at `0x670000`
 
-This preserves the existing bootloader and 8 MB partition table. It is an
-updater for an already provisioned Robo-Trickler, not a blank-device factory
-installer. Writing LittleFS replaces files and settings stored in that
-partition.
+This is a complete factory-style installation for the RoboTrickler 8 MB layout.
+All settings and files currently stored in flash are erased.
 
 Release binaries are not linked in the UI, but a browser must download bytes in
 order to flash them. They therefore cannot be cryptographically hidden from a
