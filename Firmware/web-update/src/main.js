@@ -295,9 +295,16 @@ async function installSelectedRelease() {
     await loader.after("hard_reset");
     firmwareInstalled = true;
     await disconnect();
-    await formatSdCard(port);
+    if (release.supportsSdFormat) {
+      await formatSdCard(port);
+    }
     setProgress(100, t("installationComplete"), t("unplugCable"));
-    showResult(t("installedAndFormatted", { release: release.name }), "success");
+    showResult(
+      t(release.supportsSdFormat ? "installedAndFormatted" : "installedWithoutFormat", {
+        release: release.name,
+      }),
+      "success",
+    );
   } catch (error) {
     const cancelled = error?.name === "NotFoundError";
     setProgress(

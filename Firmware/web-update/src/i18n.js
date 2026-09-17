@@ -53,6 +53,8 @@ const translations = {
     unplugCable: "You can unplug the USB cable.",
     installedSuccessfully: "{release} was installed successfully.",
     installedAndFormatted: "{release} was installed and the SD card was formatted successfully.",
+    installedWithoutFormat:
+      "{release} was installed successfully. This older firmware does not support automatic SD formatting.",
     noPortSelected: "No USB port selected",
     installationStopped: "Installation stopped",
     noDeviceSelected: "No device was selected. Connect the Robo-Trickler and try again.",
@@ -116,6 +118,8 @@ const translations = {
     unplugCable: "Sie können das USB-Kabel abziehen.",
     installedSuccessfully: "{release} wurde erfolgreich installiert.",
     installedAndFormatted: "{release} wurde installiert und die SD-Karte erfolgreich formatiert.",
+    installedWithoutFormat:
+      "{release} wurde erfolgreich installiert. Diese ältere Firmware unterstützt die automatische SD-Formatierung noch nicht.",
     noPortSelected: "Kein USB-Anschluss ausgewählt",
     installationStopped: "Installation angehalten",
     noDeviceSelected: "Es wurde kein Gerät ausgewählt. Verbinden Sie den Robo-Trickler und versuchen Sie es erneut.",

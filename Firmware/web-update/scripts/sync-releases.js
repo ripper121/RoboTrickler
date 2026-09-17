@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { unzipSync } from "fflate";
 import { FLASH_FILES, FLASH_SIZE } from "../src/flash-layout.js";
 import { RELEASES_API, selectFlashableReleases } from "../src/releases.js";
-import { FORMAT_SD_COMMAND_TEXT } from "../src/serial-protocol.js";
+import { firmwareSupportsSdFormat } from "../src/serial-protocol.js";
 
 const MAXIMUM_USB_PACKAGE_SIZE = 32 * 1024 * 1024;
 const MERGED_IMAGE_NAME = "RoboTricklerUI.ino.merged.bin";
@@ -66,16 +66,6 @@ function findArchiveFile(archive, expectedName) {
 
 function bytesEqual(first, second) {
   return first.length === second.length && first.every((byte, index) => byte === second[index]);
-}
-
-function containsBytes(data, expected) {
-  outer: for (let offset = 0; offset <= data.length - expected.length; offset += 1) {
-    for (let index = 0; index < expected.length; index += 1) {
-      if (data[offset + index] !== expected[index]) continue outer;
-    }
-    return true;
-  }
-  return false;
 }
 
 function validatePackage(release, archive, releaseFirmware, releaseLittlefs) {
@@ -152,12 +142,10 @@ async function main() {
       firmware,
       littlefs,
     );
-    const commandMarker = new TextEncoder().encode(FORMAT_SD_COMMAND_TEXT);
-    if (!containsBytes(firmware, commandMarker)) {
-      process.stdout.write(`Skipping ${release.tag}: SD format serial command is not present.\n`);
-      await rm(releaseDirectory, { recursive: true, force: true });
-      continue;
-    }
+    const supportsSdFormat = firmwareSupportsSdFormat(firmware);
+    process.stdout.write(
+      `${release.tag}: post-flash SD formatting ${supportsSdFormat ? "enabled" : "not supported"}.\n`,
+    );
 
     await Promise.all(
       files.map((file) => writeFile(path.join(releaseDirectory, file.outputName), file.data)),
@@ -169,6 +157,7 @@ async function main() {
       tag: release.tag,
       prerelease: release.prerelease,
       publishedAt: release.publishedAt,
+      supportsSdFormat,
       files: files.map((file) => ({
         ...assetManifest(
           { name: file.outputName },
@@ -178,12 +167,6 @@ async function main() {
         role: file.role,
       })),
     });
-  }
-
-  if (manifest.length === 0) {
-    process.stdout.write(
-      "No published release currently supports post-flash SD formatting.\n",
-    );
   }
 
   await rm(firmwareDirectory, { recursive: true, force: true });
