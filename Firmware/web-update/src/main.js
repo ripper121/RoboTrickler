@@ -12,6 +12,10 @@ import {
 import "./styles.css";
 
 const FLASH_BAUD_RATE = 921600;
+// Keep GPIO0 released while pulsing EN low/high. esptool-js 0.6.1's built-in
+// hard_reset only releases RTS, which is not a reset edge when RTS is already
+// released after flashing (observed with the CH340 1a86:7523 adapter).
+const POST_FLASH_RESET_SEQUENCE = "D0|R1|W100|R0|W500";
 const language = detectLanguage();
 const locale = language === "de" ? "de-DE" : "en";
 const t = createTranslator(language);
@@ -317,7 +321,7 @@ async function installSelectedRelease() {
     });
 
     setProgress(99, t("restarting"));
-    await loader.after("hard_reset");
+    await loader.after("custom_reset", false, POST_FLASH_RESET_SEQUENCE);
     firmwareInstalled = true;
     await disconnect();
     if (release.supportsSdFormat) {
