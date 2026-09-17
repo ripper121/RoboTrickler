@@ -55,6 +55,10 @@ const translations = {
     installedAndFormatted: "{release} was installed and the SD card was formatted successfully.",
     installedWithoutFormat:
       "{release} was installed successfully. This older firmware does not support automatic SD formatting.",
+    sdCardFilesAfterFormat:
+      "The SD card was formatted as FAT32. Extract SD-Files.zip and copy its contents directly into the root of the SD card.",
+    sdCardFilesManual:
+      "Format the SD card as FAT32 using the default allocation size. Then extract SD-Files.zip and copy its contents directly into the root of the SD card.",
     noPortSelected: "No USB port selected",
     installationStopped: "Installation stopped",
     noDeviceSelected: "No device was selected. Connect the Robo-Trickler and try again.",
@@ -120,6 +124,10 @@ const translations = {
     installedAndFormatted: "{release} wurde installiert und die SD-Karte erfolgreich formatiert.",
     installedWithoutFormat:
       "{release} wurde erfolgreich installiert. Diese ältere Firmware unterstützt die automatische SD-Formatierung noch nicht.",
+    sdCardFilesAfterFormat:
+      "Die SD-Karte wurde als FAT32 formatiert. Entpacken Sie SD-Files.zip und kopieren Sie den Inhalt direkt in das Hauptverzeichnis der SD-Karte.",
+    sdCardFilesManual:
+      "Formatieren Sie die SD-Karte als FAT32 mit der Standardgröße für Zuordnungseinheiten. Entpacken Sie anschließend SD-Files.zip und kopieren Sie den Inhalt direkt in das Hauptverzeichnis der SD-Karte.",
     noPortSelected: "Kein USB-Anschluss ausgewählt",
     installationStopped: "Installation angehalten",
     noDeviceSelected: "Es wurde kein Gerät ausgewählt. Verbinden Sie den Robo-Trickler und versuchen Sie es erneut.",

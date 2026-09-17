@@ -32,6 +32,9 @@ pushed, a release is published, or its daily schedule runs. In the repository
 settings, set **Pages → Build and deployment → Source** to **GitHub Actions**
 once before the first deployment.
 
+The production build keeps esptool's chip modules in one JavaScript bundle so a
+browser-cached page cannot reference a chunk removed by a newer Pages deployment.
+
 ## Flash layout
 
 The installer erases the whole chip and then restores:
@@ -49,6 +52,11 @@ page reconnects to the firmware at 115200 baud and sends
 FatFs automatic allocation-unit sizing, reports the result, and reboots. Older
 releases remain installable, but the page skips SD formatting when the firmware
 does not contain this serial command.
+
+After installation, a localized popup tells the user to extract `SD-Files.zip`
+and copy its contents into the SD-card root. For older releases or a failed
+automatic format, it also tells the user to format the card as FAT32 with the
+default allocation-unit size first.
 
 Release binaries are not linked in the UI, but a browser must download bytes in
 order to flash them. They therefore cannot be cryptographically hidden from a

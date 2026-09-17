@@ -155,6 +155,10 @@ function wait(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
+function showSdCardInstructions(wasFormatted) {
+  window.alert(t(wasFormatted ? "sdCardFilesAfterFormat" : "sdCardFilesManual"));
+}
+
 async function openFirmwareSerial(port) {
   let lastError;
   for (let attempt = 0; attempt < 20; attempt += 1) {
@@ -305,6 +309,7 @@ async function installSelectedRelease() {
       }),
       "success",
     );
+    showSdCardInstructions(release.supportsSdFormat);
   } catch (error) {
     const cancelled = error?.name === "NotFoundError";
     setProgress(
@@ -321,6 +326,7 @@ async function installSelectedRelease() {
         ? t("formatFailedAfterInstall", { message: error.message || error })
         : t("installationFailed", { message: error.message || error });
     showResult(message, "error");
+    if (firmwareInstalled) showSdCardInstructions(false);
     appendLog(`\n${t("errorLog", { message: error.stack || error })}\n`);
   } finally {
     await disconnect();

@@ -44,7 +44,7 @@ Events Run On: "Core 0"
 #include <new>
 #include <math.h>
 
-#define FW_VERSION "2.14"
+#define FW_VERSION "2.15"
 // Internal firmware update check endpoint. Do not mirror this value into SD files.
 #define DEFAULT_FW_UPDATE_URL "http://strenuous.dev/roboTrickler/userTracker.php"
 
