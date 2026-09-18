@@ -23,6 +23,7 @@ const elements = {
   releaseDetails: document.querySelector("#release-details"),
   resultMessage: document.querySelector("#result-message"),
   pageShell: document.querySelector(".page-shell"),
+  sdCardButton: document.querySelector("#sd-card-button"),
   sdCardOverlay: document.querySelector("#sd-card-overlay"),
   sdCardOverlayClose: document.querySelector("#sd-card-overlay-close"),
   sdFilesDownload: document.querySelector("#sd-files-download"),
@@ -112,6 +113,7 @@ function populateReleases() {
 
   elements.firmwareSelect.disabled = false;
   elements.installButton.disabled = !navigator.serial;
+  elements.sdCardButton.disabled = false;
   updateReleaseDetails();
 }
 
@@ -175,6 +177,7 @@ async function installSelectedRelease() {
 
   elements.installButton.disabled = true;
   elements.firmwareSelect.disabled = true;
+  elements.sdCardButton.disabled = true;
   elements.resultMessage.hidden = true;
   elements.progressPanel.hidden = false;
   terminal.clean();
@@ -250,6 +253,7 @@ async function installSelectedRelease() {
     await disconnect();
     elements.firmwareSelect.disabled = false;
     elements.installButton.disabled = !navigator.serial;
+    elements.sdCardButton.disabled = false;
   }
 }
 
@@ -272,6 +276,10 @@ async function start() {
 
 elements.firmwareSelect.addEventListener("change", updateReleaseDetails);
 elements.installButton.addEventListener("click", installSelectedRelease);
+elements.sdCardButton.addEventListener("click", () => {
+  const release = selectedRelease();
+  if (release) showSdCardInstructions(release);
+});
 elements.sdCardOverlayClose.addEventListener("click", closeSdCardInstructions);
 elements.sdCardOverlay.addEventListener("click", (event) => {
   if (event.target === elements.sdCardOverlay) closeSdCardInstructions();
