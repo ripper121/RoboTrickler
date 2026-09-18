@@ -103,6 +103,7 @@ int compareFirmwareVersions(const String &leftVersion, const String &rightVersio
 
   int leftIndex = 0;
   int rightIndex = 0;
+  int comparison = 0;
   while ((leftIndex < left.length()) || (rightIndex < right.length()))
   {
     unsigned long leftSegment = 0;
@@ -117,17 +118,19 @@ int compareFirmwareVersions(const String &leftVersion, const String &rightVersio
       return 0;
     }
 
-    if (leftSegment > rightSegment)
+    // Keep parsing after finding a difference so malformed trailing segments
+    // cannot turn a bad payload such as "3.bad" into an accepted update.
+    if ((comparison == 0) && (leftSegment > rightSegment))
     {
-      return 1;
+      comparison = 1;
     }
-    if (leftSegment < rightSegment)
+    else if ((comparison == 0) && (leftSegment < rightSegment))
     {
-      return -1;
+      comparison = -1;
     }
   }
 
-  return 0;
+  return comparison;
 }
 
 bool isRemoteFirmwareNewer(const String &remoteVersion)
@@ -152,7 +155,7 @@ void makeHttpGetRequest(String serverPath)
   {
     int httpResponseCode = http.GET();
 
-    if (httpResponseCode > 0)
+    if (httpResponseCode == HTTP_CODE_OK)
     {
       DEBUG_PRINT("HTTP Response code: ");
       DEBUG_PRINTLN(httpResponseCode);

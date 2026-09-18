@@ -2,9 +2,9 @@
 // factories below apply it, so no dialog element can end up with its own height.
 #define DIALOG_ELEMENT_HEIGHT 50
 
-volatile bool messageBoxOpen = false;
-volatile bool confirmBoxOpen = false;
-volatile bool confirmBoxResult = false;
+std::atomic<bool> messageBoxOpen(false);
+std::atomic<bool> confirmBoxOpen(false);
+std::atomic<bool> confirmBoxResult(false);
 lv_obj_t *ui_ButtonMessageNo = NULL;
 lv_obj_t *ui_LabelMessageNo = NULL;
 
@@ -31,7 +31,7 @@ static void dismissMessageDialog(bool confirmed)
 
 void cancelInteractiveDialogs()
 {
-  if (confirmBoxOpen)
+  if (confirmBoxOpen.load())
   {
     dismissMessageDialog(false);
   }
@@ -46,9 +46,9 @@ void cancelInteractiveDialogs()
 // Block the caller until a dialog button clears the flag. The Core 0 display
 // task normally drives LVGL, but it can stall while servicing the web server,
 // so pump the handler here too to keep the blocking dialog responsive.
-static void pumpUntil(volatile bool &flag)
+static void pumpUntil(std::atomic<bool> &flag)
 {
-  while (flag)
+  while (flag.load())
   {
     if (lvglLock())
     {
@@ -206,9 +206,9 @@ void messageOk_event_cb(lv_event_t *e)
 {
   // The OK button is shared by message and confirm boxes. Confirm actions are
   // dispatched after the panel is hidden so follow-up dialogs can open cleanly.
-  bool confirmed = confirmBoxOpen;
+  bool confirmed = confirmBoxOpen.load();
   dismissMessageDialog(confirmed);
-  if (restartNow && !messageBoxOpen)
+  if (restartNow && !messageBoxOpen.load())
   {
     delay(1000);
     ESP.restart();
@@ -270,7 +270,7 @@ bool confirmBox(const String &message, const lv_font_t *font, lv_color_t color)
   confirmBoxResult = false;
   showConfirmBox(message, font, color);
   pumpUntil(messageBoxOpen);
-  return confirmBoxResult;
+  return confirmBoxResult.load();
 }
 
 void showConfirmBox(const String &message, const lv_font_t *font, lv_color_t color)
@@ -662,7 +662,7 @@ bool tuneSelectedProfile()
 {
     FilesystemLockGuard filesystemGuard;
     if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable() ||
-        messageBoxOpen || isProfileTuneDialogOpen())
+        messageBoxOpen.load() || isProfileTuneDialogOpen())
     {
         return false;
     }

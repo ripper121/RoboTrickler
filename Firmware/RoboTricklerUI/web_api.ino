@@ -69,9 +69,10 @@ void handleWifiSave()
     server.send(400, "application/json", "{\"error\":\"invalid request\"}");
     return;
   }
-  if (isWebFileUploadActive())
+  if (isTricklerRunning() || isCalibrationProfilePromptPending() ||
+      isProfileTuneTestActive() || isWebFileUploadActive())
   {
-    server.send(409, "application/json", "{\"error\":\"filesystem busy\"}");
+    server.send(409, "application/json", "{\"error\":\"device busy\"}");
     return;
   }
   String ssid = server.arg("ssid");
@@ -212,7 +213,9 @@ void handleGetTricklerState()
   char response[64];
   char weightText[16];
   uint8_t trickle = 0;
-  TricklerState state = getTricklerState();
+  TricklerState state;
+  float currentWeight;
+  getTricklerRuntimeSnapshot(state, currentWeight);
   if (state == TRICKLER_RUNNING)
   {
     trickle = 1;
@@ -221,16 +224,18 @@ void handleGetTricklerState()
   {
     trickle = 2;
   }
-  if (isfinite(weight))
+  if (isfinite(currentWeight))
   {
-    formatWeight(weightText, sizeof(weightText), weight);
+    formatWeight(weightText, sizeof(weightText), currentWeight);
   }
   else
   {
     strlcpy(weightText, "null", sizeof(weightText));
   }
   snprintf(response, sizeof(response), "{\"weight\":%s,\"running\":%s,\"trickle\":%u}",
-           weightText, isTricklerRunning() ? "true" : "false", (unsigned int)trickle);
+           weightText,
+           ((state == TRICKLER_RUNNING) || (state == TRICKLER_FINISHED)) ? "true" : "false",
+           (unsigned int)trickle);
   server.send(200, "application/json", response);
 }
 

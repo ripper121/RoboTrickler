@@ -53,6 +53,21 @@ TricklerState getTricklerState()
   return state;
 }
 
+void getTricklerRuntimeSnapshot(TricklerState &state, float &currentWeight)
+{
+  portENTER_CRITICAL(&tricklerStateMux);
+  state = tricklerState;
+  currentWeight = weight;
+  portEXIT_CRITICAL(&tricklerStateMux);
+}
+
+void setRuntimeWeight(float currentWeight)
+{
+  portENTER_CRITICAL(&tricklerStateMux);
+  weight = currentWeight;
+  portEXIT_CRITICAL(&tricklerStateMux);
+}
+
 void setTricklerState(TricklerState state)
 {
   portENTER_CRITICAL(&tricklerStateMux);

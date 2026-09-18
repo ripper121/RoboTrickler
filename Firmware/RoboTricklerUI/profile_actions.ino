@@ -1,5 +1,5 @@
 extern int selectedProfileIndex;
-extern volatile bool messageBoxOpen;
+extern std::atomic<bool> messageBoxOpen;
 bool profileDeleteConfirmPending = false;
 String profileDeleteName = "";
 String profileDeleteFilename = "";
@@ -165,7 +165,7 @@ bool deleteSelectedProfile()
     // Deletion is two-stage so the LVGL confirm dialog can return through its
     // normal event callback instead of blocking the UI task.
     FilesystemLockGuard filesystemGuard;
-    if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable() || messageBoxOpen)
+    if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable() || messageBoxOpen.load())
     {
         return false;
     }

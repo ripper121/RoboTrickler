@@ -1272,6 +1272,15 @@ bool saveConfiguration(const char *filename, const Config &config)
     updateDisplayLog(langText("status_saving_config_failed"));
     return false;
   }
+  // The completion counter is written by the loop task. Snapshot it under the
+  // same lock used by that writer, then mark exactly that value as persisted
+  // after the file replacement. A completion during file I/O remains dirty and
+  // will be saved by the next stop instead of being mistaken for saved data.
+  long totalCountSnapshot;
+  portENTER_CRITICAL(&tricklerStateMux);
+  totalCountSnapshot = config.totalCount;
+  portEXIT_CRITICAL(&tricklerStateMux);
+
   String targetFilename(filename);
   String tempFilename = targetFilename + ".tmp";
   ACTIVE_FS.remove(tempFilename.c_str());
@@ -1300,7 +1309,7 @@ bool saveConfiguration(const char *filename, const Config &config)
   doc["beeper"] = config.beeper;
   doc["language"] = config.language;
   doc["totalCounter"]["enable"] = config.totalCounterEnable;
-  doc["totalCounter"]["count"] = config.totalCount;
+  doc["totalCounter"]["count"] = totalCountSnapshot;
   doc["firmwareUpdate"]["check"] = config.fwUpdateCheck;
 
   // Serialize JSON to file
@@ -1323,7 +1332,9 @@ bool saveConfiguration(const char *filename, const Config &config)
     return false;
   }
 
-  persistedTotalCount = config.totalCount;
+  portENTER_CRITICAL(&tricklerStateMux);
+  persistedTotalCount = totalCountSnapshot;
+  portEXIT_CRITICAL(&tricklerStateMux);
   return true;
 }
 

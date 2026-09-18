@@ -143,8 +143,10 @@ void cycleScaleProtocol_event_cb(lv_event_t *e)
 void toggleWifi_event_cb(lv_event_t *e)
 {
   (void)e;
-  if (isWebFileUploadActive())
+  if (isTricklerRunning() || isCalibrationProfilePromptPending() ||
+      isProfileTuneTestActive() || isWebFileUploadActive())
   {
+    updateWifiButtonState();
     return;
   }
   config.wifiEnabled = !config.wifiEnabled;

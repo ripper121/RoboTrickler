@@ -510,13 +510,13 @@ void readWeight()
         timeoutLogged = true;
       }
     }
-    weight = NAN;
+    setRuntimeWeight(NAN);
     newWeightData = false;
   }
   else
   {
     timeoutLogged = false;
-    weight = stableWeight;
+    setRuntimeWeight(stableWeight);
     decimalPlaces = (stableDecimalPlaces > 0) ? stableDecimalPlaces : WEIGHT_DECIMALS;
     strlcpy(weightUnit, stableUnit, sizeof(weightUnit));
     lastScaleWeightReadTime = millis();

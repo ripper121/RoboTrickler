@@ -1,4 +1,4 @@
-extern volatile bool messageBoxOpen;
+extern std::atomic<bool> messageBoxOpen;
 FilesystemSyncDirection pendingFilesystemSync = FILESYSTEM_SYNC_NONE;
 
 bool copyFilesystemFile(fs::FS &source, fs::FS &destination, const char *path)
@@ -175,7 +175,7 @@ void updateFilesystemSyncControls()
 
 void requestFilesystemSync(FilesystemSyncDirection direction)
 {
-  if (messageBoxOpen)
+  if (messageBoxOpen.load())
   {
     return;
   }
