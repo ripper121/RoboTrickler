@@ -25,7 +25,6 @@ const elements = {
   pageShell: document.querySelector(".page-shell"),
   sdCardOverlay: document.querySelector("#sd-card-overlay"),
   sdCardOverlayClose: document.querySelector("#sd-card-overlay-close"),
-  sdCardOverlayMessage: document.querySelector("#sd-card-overlay-message"),
   sdFilesDownload: document.querySelector("#sd-files-download"),
   statusText: document.querySelector("#status-text"),
   statusDetail: document.querySelector("#status-detail"),
@@ -156,7 +155,6 @@ async function disconnect() {
 
 function showSdCardInstructions(release) {
   overlayReturnFocus = document.activeElement;
-  elements.sdCardOverlayMessage.textContent = t("sdCardFilesManual");
   elements.sdFilesDownload.href = release.sdFilesUrl;
   elements.sdCardOverlay.hidden = false;
   elements.pageShell.inert = true;
