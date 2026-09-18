@@ -82,11 +82,27 @@ static int updateFromSd(const char *path, int updateTarget, const char *label)
   }
 
   logSdUpdateStatus(String(langText("status_update_start_prefix")) + label + langText("status_update_start_suffix") + path);
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard)
+  {
+    updateFile.close();
+    return SD_UPDATE_FAILED;
+  }
+  bool unmountedLittleFs = (updateTarget == U_FLASHFS) && littleFsMounted;
+  if (unmountedLittleFs)
+  {
+    LittleFS.end();
+    littleFsMounted = false;
+  }
   bool updateSucceeded = performSdUpdate(updateFile, updateSize, updateTarget, label);
   updateFile.close();
 
   if (!updateSucceeded)
   {
+    if (unmountedLittleFs)
+    {
+      littleFsMounted = LittleFS.begin(false);
+    }
     return SD_UPDATE_FAILED;
   }
 

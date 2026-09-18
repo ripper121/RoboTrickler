@@ -110,7 +110,7 @@ bool loadSelectedProfile(bool blocking)
 
 void setProfile(int index)
 {
-    if (isWebFileUploadActive() || !activeFilesystemAvailable() ||
+    if (isTricklerRunning() || isWebFileUploadActive() || !activeFilesystemAvailable() ||
         (index < 0) || (index >= profileListCount))
     {
         DEBUG_PRINT("Invalid profile index: ");

@@ -42,6 +42,8 @@ Events Run On: "Core 0"
 #include <string.h>
 #include <new>
 #include <math.h>
+#include <limits.h>
+#include <atomic>
 
 #define FW_VERSION "2.15"
 // Internal firmware update check endpoint. Do not mirror this value into SD files.
@@ -133,9 +135,9 @@ struct Config
 // Single source of truth for flash-backed settings and the active trickling profile.
 Config config;
 
-bool wifiActive = false;
-bool wifiSetupApActive = false;
-bool webServerActive = false;
+std::atomic<bool> wifiActive(false);
+std::atomic<bool> wifiSetupApActive(false);
+std::atomic<bool> webServerActive(false);
 bool webServerRoutesRegistered = false;
 bool filesystemActive = false;
 fs::FS *activeFs = NULL;
@@ -159,6 +161,9 @@ unsigned long wifiPreviousMillis = 0;
 unsigned long wifiInterval = 10000;
 
 #define DEFAULT_MOTOR_STEPS_PER_REV 200 // Default number of steps for a full revolution of the stepper motor (config.motorStepsPerRev). This is typically 200 for a 1.8 degree stepper, but may be different for other motors.
+#define MAX_MOTOR_STEPS_PER_REV 100000
+// I2S needs at least two 8 us frames per pulse: at most 62,500 steps/s.
+#define MAX_MOTOR_STEPS_RPM_PRODUCT 3750000ULL
 
 // Weight domain — the single source of truth for how weights are ranged and
 // formatted. Every place that stores, shows, enters, or compares a weight goes
@@ -232,7 +237,7 @@ bool profileSelectionUnsaved = false;
 // has been saved or reloaded. This avoids opening and parsing the profile on
 // every Start just to compare the stored target weight.
 bool targetWeightUnsaved = false;
-bool stepperReady = false;
+std::atomic<bool> stepperReady(false);
 // config.totalCount as last written to (or read from) config.txt. Lets
 // stopTrickler() skip the config rewrite when no charge finished since the
 // last save (manual stop without a completed throw).

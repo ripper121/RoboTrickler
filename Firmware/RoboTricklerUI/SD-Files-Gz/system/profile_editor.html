@@ -72,6 +72,7 @@
          'reverse'
       ];
       const PROFILE_MAX_ENTRIES = 16;
+      const MAX_PROFILE_RPM = 18750; // 200 steps/rev at the 62,500 steps/s I2S limit
       const WEIGHT_MAX = 500.000;
       const CALIBRATE_PROFILE_NAME = 'calibrate';
 
@@ -134,10 +135,13 @@
          return fallback;
       }
 
-      function cleanInteger(value, fallback, minimum) {
+      function cleanInteger(value, fallback, minimum, maximum) {
          const number = Math.round(cleanNumber(value, fallback));
          if (minimum !== undefined && number < minimum) {
             return minimum;
+         }
+         if (maximum !== undefined && number > maximum) {
+            return maximum;
          }
          return number;
       }
@@ -176,7 +180,7 @@
             stepper: {
                id: cleanStepper(stepper.id),
                revolutions: Math.max(0.001, cleanNumber(stepper.revolutions, 100)),
-               rpm: cleanInteger(stepper.rpm, 200, 1),
+               rpm: cleanInteger(stepper.rpm, 200, 1, MAX_PROFILE_RPM),
                reverse: cleanBoolean(stepper.reverse, false)
             }
          };
@@ -212,7 +216,7 @@
                : { enabled: false, weightPerRev: 10.000, rpm: 200 };
             cleanedData.stepper[stepperId].enabled = cleanBoolean(stepper.enabled, defaults.enabled);
             cleanedData.stepper[stepperId].weightPerRev = cleanNumber(stepper.weightPerRev, defaults.weightPerRev);
-            cleanedData.stepper[stepperId].rpm = cleanInteger(stepper.rpm, defaults.rpm, 1);
+            cleanedData.stepper[stepperId].rpm = cleanInteger(stepper.rpm, defaults.rpm, 1, MAX_PROFILE_RPM);
          });
 
          if (Array.isArray(jsonData.trickleMap)) {
@@ -235,7 +239,7 @@
             stepper: {
                id: cleanStepper(stepper.id),
                steps: cleanInteger(stepper.steps, 5, 1),
-               rpm: cleanInteger(stepper.rpm, 200, 1),
+               rpm: cleanInteger(stepper.rpm, 200, 1, MAX_PROFILE_RPM),
                reverse: cleanBoolean(stepper.reverse, false)
             }
          };
@@ -334,6 +338,7 @@
                input.max = '1';
             } else if (property === 'steps' || property === 'rpm') {
                input.min = '1';
+               if (property === 'rpm') input.max = String(MAX_PROFILE_RPM);
             } else if (property === 'revolutions') {
                input.min = '0.001';
             }

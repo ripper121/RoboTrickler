@@ -129,7 +129,7 @@ void updateScaleProtocolButtonLabel()
 
 void cycleScaleProtocol_event_cb(lv_event_t *e)
 {
-  if (isWebFileUploadActive())
+  if (isTricklerRunning() || isWebFileUploadActive())
   {
     return;
   }

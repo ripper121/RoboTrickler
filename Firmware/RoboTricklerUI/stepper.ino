@@ -37,6 +37,7 @@ static StepperPins steppers[3] = {
 
 static uint32_t shiftRegisterState = 0;
 static bool shiftRegisterReady = false;
+static std::atomic<bool> i2sOutFault(false);
 static portMUX_TYPE shiftRegisterMux = portMUX_INITIALIZER_UNLOCKED;
 // Bit 0 permits moves; the remaining bits identify a Start/Stop generation.
 // A quick Stop/Start must never resume an old move.
@@ -88,9 +89,24 @@ static bool i2sOutWrite(const uint32_t *words, size_t frames)
 {
   size_t bytesWritten = 0;
   size_t bytes = frames * 2 * sizeof(uint32_t);
-  return i2s_channel_write(i2sOutChannel, words, bytes, &bytesWritten,
-                           I2S_OUT_WRITE_TIMEOUT_MS) == ESP_OK &&
-         bytesWritten == bytes;
+  esp_err_t result = i2s_channel_write(i2sOutChannel, words, bytes, &bytesWritten,
+                                       I2S_OUT_WRITE_TIMEOUT_MS);
+  if ((result == ESP_OK) && (bytesWritten == bytes))
+  {
+    return true;
+  }
+  // Do not accept another move after a failed/partial DMA write. Only a
+  // reboot can reinitialize this stream; electrical safety still depends on
+  // the board's motor-disable behavior when I2S output stops or underruns.
+  portENTER_CRITICAL(&shiftRegisterMux);
+  i2sOutFault = true;
+  shiftRegisterState |= (1UL << I2S_X_DISABLE_PIN);
+  stepperRunId = (stepperRunId + 2U) & ~1U;
+  portEXIT_CRITICAL(&shiftRegisterMux);
+  stepperReady = false;
+  DEBUG_PRINT("I2S output write failed: ");
+  DEBUG_PRINTLN((int)result);
+  return false;
 }
 
 static bool i2sOutBatchFlush()
@@ -154,8 +170,13 @@ static void i2sOutFeederTask(void *unused)
         i2sOutFeederBlock[i * 2] = state;
         i2sOutFeederBlock[(i * 2) + 1] = state;
       }
-      i2sOutWrite(i2sOutFeederBlock, I2S_OUT_BLOCK_FRAMES);
+      bool writeOk = i2sOutWrite(i2sOutFeederBlock, I2S_OUT_BLOCK_FRAMES);
       xSemaphoreGive(i2sOutMutex);
+      if (!writeOk)
+      {
+        updateDisplayLog(langText("status_stepper_i2s_failed"));
+        vTaskDelete(NULL);
+      }
     }
     vTaskDelay(1);
   }
@@ -192,9 +213,9 @@ static void shiftRegisterInit()
   i2s_chan_config_t channelConfig = I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_0, I2S_ROLE_MASTER);
   channelConfig.dma_desc_num = I2S_OUT_DMA_DESC_NUM;
   channelConfig.dma_frame_num = I2S_OUT_BLOCK_FRAMES;
-  // On a feeder underrun, clock out zeros instead of looping stale DMA data:
-  // repeating buffered step pulses would move the motor; zeros only drop the
-  // enable/direction lines until the feeder catches up.
+  // Clear stale DMA samples on underrun so an old step pulse is not replayed.
+  // Zero also drives the active-high motor-disable bit low, so safe electrical
+  // behavior during an underrun requires a separate board-level gate.
   channelConfig.auto_clear = true;
   if (i2s_new_channel(&channelConfig, &i2sOutChannel, NULL) != ESP_OK)
   {
@@ -293,16 +314,21 @@ static void shiftRegisterInit()
 
 static void stepperEnableAll(bool enable)
 {
+  if (enable && i2sOutFault)
+  {
+    return;
+  }
   shiftRegisterWrite(I2S_X_DISABLE_PIN, enable ? LOW : HIGH);
 }
 
 static unsigned long stepperPulseIntervalUs(int rpm)
 {
-  if (rpm <= 0)
+  if ((rpm <= 0) || (config.motorStepsPerRev <= 0) ||
+      ((uint64_t)config.motorStepsPerRev * (uint64_t)rpm > MAX_MOTOR_STEPS_RPM_PRODUCT))
   {
-    rpm = 100;
+    return 0;
   }
-  return (unsigned long)(60000000UL / ((unsigned long)config.motorStepsPerRev * (unsigned long)rpm));
+  return (unsigned long)(60000000ULL / ((uint64_t)config.motorStepsPerRev * (uint64_t)rpm));
 }
 
 void setStepperRpm(int stepperNum, int stepperRpm)
@@ -312,9 +338,11 @@ void setStepperRpm(int stepperNum, int stepperRpm)
     return;
   }
 
-  if (stepperRpm <= 0)
+  int stepsPerRev = config.motorStepsPerRev > 0 ? config.motorStepsPerRev : DEFAULT_MOTOR_STEPS_PER_REV;
+  if ((stepperRpm <= 0) ||
+      ((uint64_t)stepperRpm * (uint64_t)stepsPerRev > MAX_MOTOR_STEPS_RPM_PRODUCT))
   {
-    stepperRpm = 100;
+    return;
   }
   steppers[stepperNum].rpm = stepperRpm;
 }
@@ -331,7 +359,7 @@ bool initStepper()
 
 bool step(int stepperNum, long steps, bool reverse, uint32_t runId)
 {
-  if ((stepperNum < 1) || (stepperNum > 2) || (steps <= 0) || !isStepperRunCurrent(runId))
+  if ((stepperNum < 1) || (stepperNum > 2) || (steps <= 0) || i2sOutFault || !isStepperRunCurrent(runId))
   {
     return false;
   }
@@ -345,6 +373,10 @@ bool step(int stepperNum, long steps, bool reverse, uint32_t runId)
 
   StepperPins *motor = &steppers[stepperNum];
   unsigned long intervalUs = stepperPulseIntervalUs(motor->rpm);
+  if (intervalUs == 0)
+  {
+    return false;
+  }
   long framesPerStep = (long)((intervalUs + (I2S_OUT_FRAME_US / 2)) / I2S_OUT_FRAME_US);
   if (framesPerStep < 2)
   {
@@ -395,6 +427,10 @@ bool step(int stepperNum, long steps, bool reverse, uint32_t runId)
   }
 
   stepperEnableAll(false);
+  if (i2sOutFault)
+  {
+    updateDisplayLog(langText("status_stepper_i2s_failed"));
+  }
   return completed && isStepperRunCurrent(runId);
 }
 

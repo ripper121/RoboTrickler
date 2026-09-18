@@ -11,8 +11,12 @@ bool copyFilesystemFile(fs::FS &source, fs::FS &destination, const char *path)
   }
 
   char temporaryPath[96];
+  char backupPath[96];
   int pathLength = snprintf(temporaryPath, sizeof(temporaryPath), "%s.sync.tmp", path);
-  if ((pathLength < 0) || (pathLength >= (int)sizeof(temporaryPath)))
+  int backupLength = snprintf(backupPath, sizeof(backupPath), "%s.bak", path);
+  if ((pathLength < 0) || (pathLength >= (int)sizeof(temporaryPath)) ||
+      (backupLength < 0) || (backupLength >= (int)sizeof(backupPath)) ||
+      !recoverFilesystemBackup(destination, path))
   {
     sourceFile.close();
     return false;
@@ -28,6 +32,8 @@ bool copyFilesystemFile(fs::FS &source, fs::FS &destination, const char *path)
 
   uint8_t buffer[512];
   bool copied = true;
+  size_t expectedBytes = sourceFile.size();
+  size_t copiedBytes = 0;
   while (sourceFile.available())
   {
     size_t bytesRead = sourceFile.read(buffer, sizeof(buffer));
@@ -36,23 +42,46 @@ bool copyFilesystemFile(fs::FS &source, fs::FS &destination, const char *path)
       copied = false;
       break;
     }
+    copiedBytes += bytesRead;
     yield();
   }
 
   destinationFile.close();
   sourceFile.close();
 
-  if (!copied)
+  if (!copied || (copiedBytes != expectedBytes))
   {
     destination.remove(temporaryPath);
     return false;
   }
 
-  destination.remove(path);
-  if (!destination.rename(temporaryPath, path))
+  File copiedFile = destination.open(temporaryPath, FILE_READ);
+  bool sizeMatches = copiedFile && (copiedFile.size() == expectedBytes);
+  copiedFile.close();
+  if (!sizeMatches)
   {
     destination.remove(temporaryPath);
     return false;
+  }
+
+  bool hadOriginal = destination.exists(path);
+  if (hadOriginal && !destination.rename(path, backupPath))
+  {
+    destination.remove(temporaryPath);
+    return false;
+  }
+  if (!destination.rename(temporaryPath, path))
+  {
+    if (hadOriginal)
+    {
+      destination.rename(backupPath, path);
+    }
+    destination.remove(temporaryPath);
+    return false;
+  }
+  if (hadOriginal)
+  {
+    destination.remove(backupPath);
   }
   return true;
 }
@@ -90,13 +119,21 @@ bool syncConfigAndProfiles(fs::FS &source, fs::FS &destination, int &copiedFiles
       char profilePath[96];
       bool pathFits = strlcpy(profilePath, profileFile.path(), sizeof(profilePath)) < sizeof(profilePath);
       profileFile.close();
-      if (!pathFits || (strncmp(profilePath, "/profiles/", 10) != 0) ||
-          !copyFilesystemFile(source, destination, profilePath))
+      String profileName(profilePath);
+      if (!pathFits || (strncmp(profilePath, "/profiles/", 10) != 0))
       {
         profileDirectory.close();
         return false;
       }
-      copiedFiles++;
+      if (!profileName.endsWith(".bak") && !profileName.endsWith(".sync.tmp"))
+      {
+        if (!copyFilesystemFile(source, destination, profilePath))
+        {
+          profileDirectory.close();
+          return false;
+        }
+        copiedFiles++;
+      }
     }
     else
     {

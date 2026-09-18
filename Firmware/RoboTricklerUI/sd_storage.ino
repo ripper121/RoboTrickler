@@ -175,13 +175,18 @@ static bool loadProfileEntry(JsonObject profileEntry, int itemNumber, const char
   if (calibrationEntry)
   {
     float profileRevolutions = stepper["revolutions"] | 0.0;
-    profileSteps = lround((double)profileRevolutions * (double)motorStepsPerRev);
+    double calculatedSteps = (double)profileRevolutions * (double)motorStepsPerRev;
+    profileSteps = (isfinite(calculatedSteps) && (calculatedSteps > 0.0) &&
+                    (calculatedSteps <= (double)LONG_MAX))
+                       ? lround(calculatedSteps) : 0;
   }
   else
   {
     profileSteps = stepper["steps"] | 0;
   }
-  if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperRpm <= 0) || (measurements < 0) || (profileWeight < 0) || (profileSteps <= 0))
+  if ((stepperNumber < 1) || (stepperNumber > 2) || (stepperRpm <= 0) ||
+      ((uint64_t)motorStepsPerRev * (uint64_t)stepperRpm > MAX_MOTOR_STEPS_RPM_PRODUCT) ||
+      (measurements < 0) || !isfinite(profileWeight) || (profileWeight < 0) || (profileSteps <= 0))
   {
     if (showErrors)
     {
@@ -558,7 +563,15 @@ bool loadProfile(const char *filename, Config &config)
       {
         config.profileStepperEnabled[stepperNumber] = stepper["enabled"] | config.profileStepperEnabled[stepperNumber];
         config.profileStepperWeightPerRev[stepperNumber] = stepper["weightPerRev"] | config.profileStepperWeightPerRev[stepperNumber];
-        config.profileStepperRpm[stepperNumber] = stepper["rpm"] | config.profileStepperRpm[stepperNumber];
+        int rpm = stepper["rpm"] | config.profileStepperRpm[stepperNumber];
+        if ((rpm <= 0) ||
+            ((uint64_t)config.motorStepsPerRev * (uint64_t)rpm > MAX_MOTOR_STEPS_RPM_PRODUCT))
+        {
+          setSdReadError(sdFilenameError("err_invalid_profile_values", filename));
+          file.close();
+          return false;
+        }
+        config.profileStepperRpm[stepperNumber] = rpm;
       }
     }
   }
@@ -652,7 +665,7 @@ bool loadConfiguration(const char *filename, Config &config)
   strlcpy(config.scaleCustomCode, doc["scale"]["customCode"] | config.scaleCustomCode, sizeof(config.scaleCustomCode));
   config.scaleBaud = doc["scale"]["baud"] | config.scaleBaud;
   config.motorStepsPerRev = doc["stepper"]["stepsPerRev"] | config.motorStepsPerRev;
-  if (config.motorStepsPerRev <= 0)
+  if ((config.motorStepsPerRev <= 0) || (config.motorStepsPerRev > MAX_MOTOR_STEPS_PER_REV))
   {
     config.motorStepsPerRev = DEFAULT_MOTOR_STEPS_PER_REV;
   }
@@ -826,7 +839,17 @@ String nextCalibrationProfileName()
   return "";
 }
 
-static void populateCalibrationTrickleMap(JsonDocument &doc, float weightPerRev, int profileRpm,
+static bool roundProfileSteps(double exactSteps, long &steps)
+{
+  if (!isfinite(exactSteps) || (exactSteps < 0.0) || (exactSteps > (double)LONG_MAX))
+  {
+    return false;
+  }
+  steps = max(5L, lround(exactSteps));
+  return true;
+}
+
+static bool populateCalibrationTrickleMap(JsonDocument &doc, float weightPerRev, int profileRpm,
                                           float trickleMapLimitFactor)
 {
   const float diffWeights[8] = {1.929, 0.965, 0.482, 0.241, 0.121, 0.060, 0.030, 0.000};
@@ -835,12 +858,12 @@ static void populateCalibrationTrickleMap(JsonDocument &doc, float weightPerRev,
   JsonArray trickleMap = doc["trickleMap"].to<JsonArray>();
   for (int i = 0; i < diffWeightsCount; i++)
   {
-    long steps = (weightPerRev > 0.0)
-                     ? lround(((diffWeights[i] * (double)config.motorStepsPerRev) / weightPerRev) * trickleMapLimitFactor)
-                     : 5;
-    if (steps < 5)
+    long steps = 5;
+    if ((weightPerRev > 0.0) &&
+        !roundProfileSteps(((diffWeights[i] * (double)config.motorStepsPerRev) / weightPerRev) *
+                               trickleMapLimitFactor, steps))
     {
-      steps = 5;
+      return false;
     }
 
     JsonObject profileEntry = trickleMap.add<JsonObject>();
@@ -852,6 +875,7 @@ static void populateCalibrationTrickleMap(JsonDocument &doc, float weightPerRev,
     stepper["rpm"] = profileRpm;
     stepper["reverse"] = false;
   }
+  return true;
 }
 
 
@@ -929,7 +953,11 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   stepper2["weightPerRev"] = serialized(weightToString(config.profileStepperWeightPerRev[2] > 0.0 ? config.profileStepperWeightPerRev[2] : 10.0));
   stepper2["rpm"] = config.profileStepperRpm[2] > 0 ? config.profileStepperRpm[2] : 200;
 
-  populateCalibrationTrickleMap(doc, weightPerRev, profileRpm, DEFAULT_TRICKLE_MAP_LIMIT_FACTOR);
+  if (!populateCalibrationTrickleMap(doc, weightPerRev, profileRpm, DEFAULT_TRICKLE_MAP_LIMIT_FACTOR))
+  {
+    setSdReadError(langText("err_invalid_profile_values"));
+    return false;
+  }
 
   if (!ACTIVE_FS.exists("/profiles") && !ACTIVE_FS.mkdir("/profiles"))
   {
@@ -1053,9 +1081,16 @@ bool tuneProfileValues(const char *profileName, float weightPerRev, float trickl
     else if ((weightChanged || limitFactorChanged) && config.profileStepper[i] == 1)
     {
       // Same fine-throw formula as calibration, applied to existing entries.
-      long recalculatedSteps = lround(((config.profileDiffWeight[i] *
-                               (double)config.motorStepsPerRev) / weightPerRev) * trickleMapLimitFactor);
-      entry["stepper"]["steps"] = max(5L, recalculatedSteps);
+      long recalculatedSteps = 0;
+      if ((weightPerRev <= 0.0) ||
+          !roundProfileSteps(((config.profileDiffWeight[i] *
+                               (double)config.motorStepsPerRev) / weightPerRev) * trickleMapLimitFactor,
+                             recalculatedSteps))
+      {
+        setSdReadError(sdProfileEntryError("err_invalid_profile_values", filename.c_str(), i + 1));
+        return false;
+      }
+      entry["stepper"]["steps"] = recalculatedSteps;
     }
   }
   return writeProfileDocument(filename, doc);

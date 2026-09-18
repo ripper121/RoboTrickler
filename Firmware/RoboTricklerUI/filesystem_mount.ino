@@ -34,6 +34,48 @@ private:
   bool locked;
 };
 
+// Restore a file left between the original-to-backup and temp-to-original
+// renames. This works for either mounted filesystem, including an inactive
+// sync destination that may become active on a later boot.
+bool recoverFilesystemBackup(fs::FS &filesystem, const char *path)
+{
+  String backupPath = String(path) + ".bak";
+  if (!filesystem.exists(backupPath.c_str()))
+  {
+    return true;
+  }
+  if (filesystem.exists(path))
+  {
+    return filesystem.remove(backupPath.c_str());
+  }
+  return filesystem.rename(backupPath.c_str(), path);
+}
+
+static void recoverFilesystemSyncBackups(fs::FS &filesystem)
+{
+  recoverFilesystemBackup(filesystem, "/config.txt");
+  File directory = filesystem.open("/profiles");
+  if (!directory || !directory.isDirectory())
+  {
+    directory.close();
+    return;
+  }
+  File entry = directory.openNextFile();
+  while (entry)
+  {
+    String path = entry.path();
+    bool isBackup = !entry.isDirectory() && path.endsWith(".bak");
+    entry.close();
+    if (isBackup)
+    {
+      path.remove(path.length() - 4);
+      recoverFilesystemBackup(filesystem, path.c_str());
+    }
+    entry = directory.openNextFile();
+  }
+  directory.close();
+}
+
 bool initFilesystem()
 {
   if (filesystemMutex == NULL)
@@ -100,6 +142,14 @@ bool initFilesystem()
     DEBUG_PRINTLN(LittleFS.totalBytes());
     DEBUG_PRINT("LittleFS used bytes: ");
     DEBUG_PRINTLN(LittleFS.usedBytes());
+  }
+  if (sdMounted)
+  {
+    recoverFilesystemSyncBackups(SD);
+  }
+  if (littleFsMounted)
+  {
+    recoverFilesystemSyncBackups(LittleFS);
   }
   return filesystemActive;
 }

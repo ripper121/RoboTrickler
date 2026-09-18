@@ -3,6 +3,33 @@ String firmwareCheckUrl()
   return String(DEFAULT_FW_UPDATE_URL) + "?mac=" + String(WiFi.macAddress()) + "&version=" + String(FW_VERSION);
 }
 
+class FirmwareVersionResponse : public Stream
+{
+public:
+  static const size_t MAX_LENGTH = 64;
+  FirmwareVersionResponse() : length(0), overflow(false) { buffer[0] = '\0'; }
+  int available() override { return 0; }
+  int read() override { return -1; }
+  int peek() override { return -1; }
+  void flush() override {}
+  size_t write(uint8_t value) override { return write(&value, 1); }
+  size_t write(const uint8_t *data, size_t size) override
+  {
+    if (size > MAX_LENGTH - length)
+    {
+      overflow = true;
+      return 0;
+    }
+    memcpy(buffer + length, data, size);
+    length += size;
+    buffer[length] = '\0';
+    return size;
+  }
+  char buffer[MAX_LENGTH + 1];
+  size_t length;
+  bool overflow;
+};
+
 String normalizeFirmwareVersion(String version)
 {
   version.trim();
@@ -129,7 +156,25 @@ void makeHttpGetRequest(String serverPath)
     {
       DEBUG_PRINT("HTTP Response code: ");
       DEBUG_PRINTLN(httpResponseCode);
-      String payload = http.getString();
+      // HTTPClient handles both fixed and chunked responses. Keep the decoded
+      // body in a fixed buffer regardless of Content-Length.
+      int contentSize = http.getSize();
+      if (contentSize > (int)FirmwareVersionResponse::MAX_LENGTH)
+      {
+        DEBUG_PRINTLN("Firmware version response too long");
+        http.end();
+        return;
+      }
+      FirmwareVersionResponse response;
+      int bytesRead = http.writeToStream(&response);
+      if ((bytesRead < 0) || response.overflow ||
+          ((contentSize >= 0) && (bytesRead != contentSize)))
+      {
+        DEBUG_PRINTLN("Invalid firmware version response length");
+        http.end();
+        return;
+      }
+      String payload(response.buffer);
       DEBUG_PRINTLN(payload);
       if (isRemoteFirmwareNewer(payload))
       {
@@ -150,4 +195,3 @@ void makeHttpGetRequest(String serverPath)
     DEBUG_PRINTLN("Unable to connect");
   }
 }
-

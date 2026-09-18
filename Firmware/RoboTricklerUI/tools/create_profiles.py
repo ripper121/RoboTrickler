@@ -40,6 +40,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 # Hard cap requested for this tool. Profile names are zero-padded to 3 digits so
 # they sort correctly up to this many.
 MAX_PROFILES = 999
+MAX_PROFILE_RPM = 18750  # 200 steps/rev at the firmware's 62,500 steps/s limit
 
 # Conversion factor used by the original generator (grains per gram).
 GRAM_TO_GRAIN = 15.4323583529
@@ -96,6 +97,8 @@ def generate_profile(
     """
     if weight <= 0:
         raise ValueError("calibration weight must be greater than 0")
+    if not 1 <= rpm <= MAX_PROFILE_RPM:
+        raise ValueError(f"rpm must be between 1 and {MAX_PROFILE_RPM}")
     if not 1.0 <= calc_tolerance <= 100.0:
         raise ValueError("calculation tolerance must be between 1 and 100 percent")
 

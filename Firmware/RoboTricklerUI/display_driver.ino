@@ -2,7 +2,7 @@
 /* Serial debugging */
 void lvglLogPrint(const char *message)
 {
-  Serial.printf(message);
+  Serial.print(message);
   Serial.flush();
 }
 #endif
