@@ -266,6 +266,59 @@ String profileFilename(const char *profileName)
   return "/profiles/" + String(profileName) + ".txt";
 }
 
+// Recover and commit replace-in-place writes without first destroying the last
+// known-good file. A .bak file is retained only across the short rename window;
+// if power is lost there, the next read restores it automatically.
+bool recoverInterruptedFileReplacement(const String &filename)
+{
+  String backupFilename = filename + ".bak";
+  if (ACTIVE_FS.exists(filename.c_str()))
+  {
+    if (ACTIVE_FS.exists(backupFilename.c_str()))
+    {
+      ACTIVE_FS.remove(backupFilename.c_str());
+    }
+    return true;
+  }
+
+  if (!ACTIVE_FS.exists(backupFilename.c_str()))
+  {
+    return true;
+  }
+  return ACTIVE_FS.rename(backupFilename.c_str(), filename.c_str());
+}
+
+bool replaceFileWithTemp(const String &filename, const String &tempFilename)
+{
+  if (!recoverInterruptedFileReplacement(filename))
+  {
+    return false;
+  }
+  String backupFilename = filename + ".bak";
+  ACTIVE_FS.remove(backupFilename.c_str());
+
+  bool hadOriginal = ACTIVE_FS.exists(filename.c_str());
+  if (hadOriginal && !ACTIVE_FS.rename(filename.c_str(), backupFilename.c_str()))
+  {
+    return false;
+  }
+
+  if (!ACTIVE_FS.rename(tempFilename.c_str(), filename.c_str()))
+  {
+    if (hadOriginal)
+    {
+      ACTIVE_FS.rename(backupFilename.c_str(), filename.c_str());
+    }
+    return false;
+  }
+
+  if (hadOriginal)
+  {
+    ACTIVE_FS.remove(backupFilename.c_str());
+  }
+  return true;
+}
+
 String sdReadError = "";
 
 void setSdReadError(const String &message)
@@ -310,6 +363,11 @@ void setDefaultConfiguration(Config &config)
 // default file is written to disk.
 bool writeDefaultCalibrateProfile()
 {
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable())
+  {
+    return false;
+  }
   if (!ACTIVE_FS.exists("/profiles") && !ACTIVE_FS.mkdir("/profiles"))
   {
     updateDisplayLog(langText("msg_profiles_folder_failed"), true);
@@ -325,8 +383,9 @@ bool writeDefaultCalibrateProfile()
   stepper["reverse"] = false;
 
   const char *filename = "/profiles/calibrate.txt";
-  ACTIVE_FS.remove(filename);
-  File file = ACTIVE_FS.open(filename, FILE_WRITE);
+  String tempFilename = String(filename) + ".tmp";
+  ACTIVE_FS.remove(tempFilename.c_str());
+  File file = ACTIVE_FS.open(tempFilename.c_str(), FILE_WRITE);
   if (!file)
   {
     updateDisplayLog(langText("msg_profile_file_create_failed"), true);
@@ -334,10 +393,18 @@ bool writeDefaultCalibrateProfile()
   }
 
   bool written = serializeJsonPretty(doc, file) > 0;
+  file.flush();
   file.close();
   if (!written)
   {
-    ACTIVE_FS.remove(filename);
+    ACTIVE_FS.remove(tempFilename.c_str());
+    updateDisplayLog(langText("msg_profile_file_write_failed"), true);
+    return false;
+  }
+
+  if (!replaceFileWithTemp(filename, tempFilename))
+  {
+    ACTIVE_FS.remove(tempFilename.c_str());
     updateDisplayLog(langText("msg_profile_file_write_failed"), true);
     return false;
   }
@@ -367,11 +434,17 @@ bool ensureCalibrateProfile(Config &config)
 
 bool loadProfile(const char *filename, Config &config)
 {
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable())
+  {
+    setSdReadError(sdFilenameError("err_could_not_open_profile_file", filename));
+    return false;
+  }
   setSdReadError("");
   String infoText = String(langText("status_loading_profile")) + filename;
   updateDisplayLog(infoText, true);
 
-  if (!ACTIVE_FS.exists(filename))
+  if (!recoverInterruptedFileReplacement(filename) || !ACTIVE_FS.exists(filename))
   {
     setSdReadError(sdFilenameError("err_profile_file_not_found", filename));
     DEBUG_PRINTLN("Profile not found:");
@@ -515,8 +588,21 @@ bool loadProfile(const char *filename, Config &config)
 // Loads the configuration from a file
 bool loadConfiguration(const char *filename, Config &config)
 {
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable())
+  {
+    setDefaultConfiguration(config);
+    setSdReadError(sdFilenameError("err_could_not_open_config_file", filename));
+    return false;
+  }
   setSdReadError("");
   setDefaultConfiguration(config);
+  if (!recoverInterruptedFileReplacement(filename))
+  {
+    setSdReadError(sdFilenameError("err_could_not_open_config_file", filename));
+    return false;
+  }
+
   // Dump config file
 #if DEBUG
   printFile(filename);
@@ -593,6 +679,16 @@ bool loadConfiguration(const char *filename, Config &config)
 // false on open/parse failure. Shared by the read-modify-write profile helpers.
 static bool loadProfileDocument(const String &filename, JsonDocument &doc)
 {
+  if (!activeFilesystemAvailable())
+  {
+    setSdReadError(sdFilenameError("err_could_not_open_profile_file", filename.c_str()));
+    return false;
+  }
+  if (!recoverInterruptedFileReplacement(filename))
+  {
+    setSdReadError(sdFilenameError("err_could_not_open_profile_file", filename.c_str()));
+    return false;
+  }
   File file = ACTIVE_FS.open(filename.c_str());
   if (!file)
   {
@@ -631,6 +727,7 @@ static bool writeProfileDocument(const String &filename, JsonDocument &doc)
   }
 
   bool written = serializeJsonPretty(doc, file) > 0;
+  file.flush();
   file.close();
   if (!written)
   {
@@ -640,8 +737,7 @@ static bool writeProfileDocument(const String &filename, JsonDocument &doc)
     return false;
   }
 
-  ACTIVE_FS.remove(filename.c_str());
-  if (!ACTIVE_FS.rename(tempFilename.c_str(), filename.c_str()))
+  if (!replaceFileWithTemp(filename, tempFilename))
   {
     ACTIVE_FS.remove(tempFilename.c_str());
     setSdReadError(sdFilenameError("err_could_not_replace_profile_file", filename.c_str()));
@@ -655,6 +751,11 @@ static bool writeProfileDocument(const String &filename, JsonDocument &doc)
 
 bool saveProfileTargetWeight(const char *profileName, float targetWeight)
 {
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable())
+  {
+    return false;
+  }
   String filename = profileFilename(profileName);
   // Calibration dispenses fixed revolutions and has no target-weight field.
   // Adding general.targetWeight would invalidate its strict two-field schema.
@@ -682,6 +783,11 @@ bool saveProfileTargetWeight(const char *profileName, float targetWeight)
 
 bool isValidProfileFile(const char *filename)
 {
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable())
+  {
+    return false;
+  }
   File file = ACTIVE_FS.open(filename);
   if (!file)
   {
@@ -751,6 +857,11 @@ static void populateCalibrationTrickleMap(JsonDocument &doc, float weightPerRev,
 
 bool createProfileFromCalibration(float calibrationWeight, String &profileName)
 {
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable())
+  {
+    return false;
+  }
   if (calibrationWeight <= 0.0)
   {
     updateDisplayLog(langText("msg_calibration_weight_invalid"), true);
@@ -827,9 +938,11 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   }
 
   String filename = "/profiles/" + profileName + ".txt";
+  String tempFilename = filename + ".tmp";
   infoText = String(langText("status_writing_profile")) + profileName;
   updateDisplayLog(infoText, true);
-  File file = ACTIVE_FS.open(filename.c_str(), FILE_WRITE);
+  ACTIVE_FS.remove(tempFilename.c_str());
+  File file = ACTIVE_FS.open(tempFilename.c_str(), FILE_WRITE);
   if (!file)
   {
     updateDisplayLog(langText("msg_profile_file_create_failed"), true);
@@ -837,10 +950,17 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
   }
 
   bool written = serializeJsonPretty(doc, file) > 0;
+  file.flush();
   file.close();
   if (!written)
   {
-    ACTIVE_FS.remove(filename.c_str());
+    ACTIVE_FS.remove(tempFilename.c_str());
+    updateDisplayLog(langText("msg_profile_file_write_failed"), true);
+    return false;
+  }
+  if (!replaceFileWithTemp(filename, tempFilename))
+  {
+    ACTIVE_FS.remove(tempFilename.c_str());
     updateDisplayLog(langText("msg_profile_file_write_failed"), true);
     return false;
   }
@@ -855,8 +975,7 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
       setProfile(i);
       // setProfile() defers config saves; persist the freshly created profile
       // as the active one so it survives a reboot without a run in between.
-      saveConfiguration("/config.txt", config);
-      profileSelectionUnsaved = false;
+      profileSelectionUnsaved = !saveConfiguration("/config.txt", config);
       break;
     }
   }
@@ -871,6 +990,11 @@ bool createProfileFromCalibration(float calibrationWeight, String &profileName)
 bool tuneProfileValues(const char *profileName, float weightPerRev, float trickleMapLimitFactor,
                        const int *measurements, const long *steps, int count)
 {
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable())
+  {
+    return false;
+  }
   if (!measurements || !steps || count <= 0 || count > PROFILE_MAX_ENTRIES ||
       !isfinite(weightPerRev) || weightPerRev <= 0.0 ||
       !isfinite(trickleMapLimitFactor) ||
@@ -1017,9 +1141,57 @@ void scanProfileDirectory(const char *directory, byte &profileCounter, byte &inv
   root.close();
 }
 
+static void recoverProfileDirectoryReplacements(const char *directory)
+{
+  File root = ACTIVE_FS.open(directory);
+  if (!root || !root.isDirectory())
+  {
+    root.close();
+    return;
+  }
+
+  File file = root.openNextFile();
+  while (file)
+  {
+    if (!file.isDirectory())
+    {
+      String backupPath = file.path();
+      if (backupPath.endsWith(".txt.bak"))
+      {
+        file.close();
+        String targetPath = backupPath.substring(0, backupPath.length() - 4);
+        if (ACTIVE_FS.exists(targetPath.c_str()))
+        {
+          ACTIVE_FS.remove(backupPath.c_str());
+        }
+        else
+        {
+          ACTIVE_FS.rename(backupPath.c_str(), targetPath.c_str());
+        }
+      }
+      else
+      {
+        file.close();
+      }
+    }
+    else
+    {
+      file.close();
+    }
+    file = root.openNextFile();
+  }
+  root.close();
+}
+
 void refreshProfileList()
 {
   profileListCount = 0;
+
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable())
+  {
+    return;
+  }
 
   byte profileCounter = 0;
   byte invalidProfileCounter = 0;
@@ -1027,6 +1199,7 @@ void refreshProfileList()
 
   if (ACTIVE_FS.exists("/profiles"))
   {
+    recoverProfileDirectoryReplacements("/profiles");
     scanProfileDirectory("/profiles", profileCounter, invalidProfileCounter, invalidProfiles);
   }
 
@@ -1049,21 +1222,31 @@ void refreshProfileList()
       message += "\n...";
     }
     message += langText("msg_invalid_profiles_ignored");
-    errorBox(message, true);
+    // refreshProfileList() is also called from LVGL and WebServer callbacks.
+    // Never pump lv_timer_handler() recursively or hold an HTTP request open
+    // waiting for a touchscreen acknowledgement.
+    errorBox(message, false);
   }
 }
 
-void saveConfiguration(const char *filename, const Config &config)
+bool saveConfiguration(const char *filename, const Config &config)
 {
-  // Delete existing file, otherwise the configuration is appended to the file
-  ACTIVE_FS.remove(filename);
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable())
+  {
+    updateDisplayLog(langText("status_saving_config_failed"));
+    return false;
+  }
+  String targetFilename(filename);
+  String tempFilename = targetFilename + ".tmp";
+  ACTIVE_FS.remove(tempFilename.c_str());
 
-  // Open file for writing
-  File file = ACTIVE_FS.open(filename, FILE_WRITE);
+  File file = ACTIVE_FS.open(tempFilename.c_str(), FILE_WRITE);
   if (!file)
   {
     Serial.println(F("Failed to create file"));
-    return;
+    updateDisplayLog(langText("status_saving_config_failed"));
+    return false;
   }
 
   JsonDocument doc;
@@ -1086,17 +1269,27 @@ void saveConfiguration(const char *filename, const Config &config)
   doc["firmwareUpdate"]["check"] = config.fwUpdateCheck;
 
   // Serialize JSON to file
-  if (serializeJsonPretty(doc, file) == 0)
+  bool written = serializeJsonPretty(doc, file) > 0;
+  file.flush();
+  file.close();
+  if (!written)
   {
     DEBUG_PRINTLN("Failed to write to file");
-  }
-  else
-  {
-    persistedTotalCount = config.totalCount;
+    ACTIVE_FS.remove(tempFilename.c_str());
+    updateDisplayLog(langText("status_saving_config_failed"));
+    return false;
   }
 
-  // Close the file
-  file.close();
+  if (!replaceFileWithTemp(targetFilename, tempFilename))
+  {
+    DEBUG_PRINTLN("Failed to replace configuration file");
+    ACTIVE_FS.remove(tempFilename.c_str());
+    updateDisplayLog(langText("status_saving_config_failed"));
+    return false;
+  }
+
+  persistedTotalCount = config.totalCount;
+  return true;
 }
 
 // Prints the content of a file to the Serial

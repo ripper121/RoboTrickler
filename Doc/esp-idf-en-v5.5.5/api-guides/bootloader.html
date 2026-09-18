@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bootloader - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/bootloader.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/bootloader';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Build System" href="build-system.html" />
+    <link rel="prev" title="BluFi" href="ble/blufi.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Bootloader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bootloader-compatibility">Bootloader Compatibility</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#before-esp-idf-v2-1">Before ESP-IDF V2.1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#before-esp-idf-v3-1">Before ESP-IDF V3.1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#before-esp-idf-v5-1">Before ESP-IDF V5.1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spi-flash-configuration">SPI Flash Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#log-level">Log Level</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#factory-reset">Factory Reset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#boot-from-test-firmware">Boot from Test Firmware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rollback">Rollback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#watchdog">Watchdog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bootloader-size">Bootloader Size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fast-boot-from-deep-sleep">Fast Boot from Deep-Sleep</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-bootloader">Custom Bootloader</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Guides</a></li>
+      <li class="breadcrumb-item active">Bootloader</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/bootloader.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bootloader">
+<h1>Bootloader<a class="headerlink" href="#bootloader" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/api-guides/bootloader.html">[中文]</a></p>
+<p>The ESP-IDF second stage bootloader performs the following functions:</p>
+<ol class="arabic simple">
+<li><p>Minimal initial configuration of internal modules;</p></li>
+<li><p>Initialize <a class="reference internal" href="../security/flash-encryption.html"><span class="doc">Flash Encryption</span></a> and/or <a class="reference internal" href="../security/secure-boot-v2.html"><span class="doc">Secure Boot</span></a> features, if configured;</p></li>
+<li><p>Select the application partition to boot, based on the partition table and ota_data (if any);</p></li>
+<li><p>Load this image to RAM (IRAM &amp; DRAM) and transfer management to the image that was just loaded.</p></li>
+</ol>
+<p>ESP-IDF second stage bootloader is located at the address 0x1000 in the flash.</p>
+<p>For a full description of the startup process including the ESP-IDF second stage bootloader, see <a class="reference internal" href="startup.html"><span class="doc">Application Startup Flow</span></a>.</p>
+<section id="bootloader-compatibility">
+<span id="id1"></span><h2>Bootloader Compatibility<a class="headerlink" href="#bootloader-compatibility" title="Permalink to this heading"></a></h2>
+<p>It is recommended to update to newer <a class="reference internal" href="../versions.html"><span class="doc">versions of ESP-IDF</span></a>: when they are released. The OTA (over the air) update process can flash new apps in the field but cannot flash a new bootloader. For this reason, the bootloader supports booting apps built from newer versions of ESP-IDF.</p>
+<p>The bootloader does not support booting apps from older versions of ESP-IDF. When updating ESP-IDF manually on an existing product that might need to downgrade the app to an older version, keep using the older ESP-IDF bootloader binary as well.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If testing an OTA update for an existing product in production, always test it using the same ESP-IDF bootloader binary that is deployed in production.</p>
+</div>
+<section id="before-esp-idf-v2-1">
+<h3>Before ESP-IDF V2.1<a class="headerlink" href="#before-esp-idf-v2-1" title="Permalink to this heading"></a></h3>
+<p>Bootloaders built from very old versions of ESP-IDF (before ESP-IDF V2.1) perform less hardware configuration than newer versions. When using a bootloader from these early ESP-IDF versions and building a new app, enable the config option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-app-compatible-pre-v2-1-bootloaders"><span class="std std-ref">CONFIG_APP_COMPATIBLE_PRE_V2_1_BOOTLOADERS</span></a>.</p>
+</section>
+<section id="before-esp-idf-v3-1">
+<h3>Before ESP-IDF V3.1<a class="headerlink" href="#before-esp-idf-v3-1" title="Permalink to this heading"></a></h3>
+<p>Bootloaders built from versions of ESP-IDF before V3.1 do not support MD5 checksums in the partition table binary. When using a bootloader from these ESP-IDF versions and building a new app, enable the config option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-app-compatible-pre-v3-1-bootloaders"><span class="std std-ref">CONFIG_APP_COMPATIBLE_PRE_V3_1_BOOTLOADERS</span></a>.</p>
+</section>
+<section id="before-esp-idf-v5-1">
+<h3>Before ESP-IDF V5.1<a class="headerlink" href="#before-esp-idf-v5-1" title="Permalink to this heading"></a></h3>
+<p>Bootloaders built from versions of ESP-IDF prior to V5.1 do not support <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-system-esp32-sram1-region-as-iram"><span class="std std-ref">CONFIG_ESP_SYSTEM_ESP32_SRAM1_REGION_AS_IRAM</span></a>. When using a bootloader from these ESP-IDF versions and building a new app, you should not use this option.</p>
+</section>
+<section id="spi-flash-configuration">
+<h3>SPI Flash Configuration<a class="headerlink" href="#spi-flash-configuration" title="Permalink to this heading"></a></h3>
+<p>Each ESP-IDF application or bootloader .bin file contains a header with <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esptoolpy-flashmode"><span class="std std-ref">CONFIG_ESPTOOLPY_FLASHMODE</span></a>, <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esptoolpy-flashfreq"><span class="std std-ref">CONFIG_ESPTOOLPY_FLASHFREQ</span></a>, <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esptoolpy-flashsize"><span class="std std-ref">CONFIG_ESPTOOLPY_FLASHSIZE</span></a> embedded in it. These are used to configure the SPI flash during boot.</p>
+<p>The <a class="reference internal" href="startup.html#first-stage-bootloader"><span class="std std-ref">First stage (ROM) bootloader</span></a> reads the <a class="reference internal" href="startup.html#second-stage-bootloader"><span class="std std-ref">Second Stage Bootloader</span></a> header information from flash and uses this information to load the rest of the <a class="reference internal" href="startup.html#second-stage-bootloader"><span class="std std-ref">Second Stage Bootloader</span></a> from flash. However, at this time the system clock speed is lower than configured and not all flash modes are supported. When the <a class="reference internal" href="startup.html#second-stage-bootloader"><span class="std std-ref">Second Stage Bootloader</span></a> then runs, it will reconfigure the flash using values read from the currently selected app binary's header (and NOT from the <a class="reference internal" href="startup.html#second-stage-bootloader"><span class="std std-ref">Second Stage Bootloader</span></a> header). This allows an OTA update to change the SPI flash settings in use.</p>
+<p>Bootloaders prior to ESP-IDF V4.0 used the bootloader's own header to configure the SPI flash, meaning these values could not be changed in an update. To maintain compatibility with older bootloaders, the app re-initializes the flash settings during app startup using the configuration found in the app header.</p>
+</section>
+</section>
+<section id="log-level">
+<h2>Log Level<a class="headerlink" href="#log-level" title="Permalink to this heading"></a></h2>
+<p>The default bootloader log level is &quot;Info&quot;. By setting the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-log-level"><span class="std std-ref">CONFIG_BOOTLOADER_LOG_LEVEL</span></a> option, it is possible to increase or decrease this level. This log level is separate from the log level used in the app (see <a class="reference internal" href="../api-reference/system/log.html"><span class="doc">Logging library</span></a>).</p>
+<p>Reducing bootloader log verbosity can improve the overall project boot time by a small amount.</p>
+</section>
+<section id="factory-reset">
+<h2>Factory Reset<a class="headerlink" href="#factory-reset" title="Permalink to this heading"></a></h2>
+<p>Sometimes it is desirable to have a way for the device to fall back to a known-good state, in case of some problem with an update.</p>
+<p>To roll back to the original &quot;factory&quot; device configuration and clear any user settings, configure the config item <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-factory-reset"><span class="std std-ref">CONFIG_BOOTLOADER_FACTORY_RESET</span></a> in the bootloader.</p>
+<p>The factory reset mechanism allows the device to be factory reset in two ways:</p>
+<ul>
+<li><p>Clear one or more data partitions. The <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-data-factory-reset"><span class="std std-ref">CONFIG_BOOTLOADER_DATA_FACTORY_RESET</span></a> option allows users to specify which data partitions will be erased when the factory reset is executed.</p>
+<p>Users can specify the names of partitions as a comma-delimited list with optional spaces for readability. (Like this: <code class="docutils literal notranslate"><span class="pre">nvs,</span> <span class="pre">phy_init,</span> <span class="pre">nvs_custom</span></code>).</p>
+<p>Make sure that the names of partitions specified in the option are the same as those found in the partition table. Partitions of type &quot;app&quot; cannot be specified here.</p>
+</li>
+<li><p>Boot from &quot;factory&quot; app partition. Enabling the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-ota-data-erase"><span class="std std-ref">CONFIG_BOOTLOADER_OTA_DATA_ERASE</span></a> option will cause the device to boot from the default &quot;factory&quot; app partition after a factory reset (or if there is no factory app partition in the partition table then the default ota app partition is selected instead). This reset process involves erasing the OTA data partition which holds the currently selected OTA partition slot. The &quot;factory&quot; app partition slot (if it exists) is never updated via OTA, so resetting to this allows reverting to a &quot;known good&quot; firmware application.</p></li>
+</ul>
+<p>Either or both of these configuration options can be enabled independently.</p>
+<p>In addition, the following configuration options control the reset condition:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-num-pin-factory-reset"><span class="std std-ref">CONFIG_BOOTLOADER_NUM_PIN_FACTORY_RESET</span></a>- The input GPIO number used to trigger a factory reset. This GPIO must be pulled low or high (configurable) on reset to trigger this.</p></li>
+<li><p><a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-hold-time-gpio"><span class="std std-ref">CONFIG_BOOTLOADER_HOLD_TIME_GPIO</span></a>- this is hold time of GPIO for reset/test mode (by default 5 seconds). The GPIO must be held continuously for this period of time after reset before a factory reset or test partition boot (as applicable) is performed.</p></li>
+<li><p><a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-factory-reset-pin-level"><span class="std std-ref">CONFIG_BOOTLOADER_FACTORY_RESET_PIN_LEVEL</span></a> - configure whether a factory reset should trigger on a high or low level of the GPIO. If the GPIO has an internal pullup then this is enabled before the pin is sampled, consult the ESP32 datasheet for details on pin internal pullups.</p></li>
+</ul>
+<p>If an application needs to know if the factory reset has occurred, users can call the function <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">bootloader_common_get_rtc_retain_mem_factory_reset_state()</span></code>.</p>
+<ul class="simple">
+<li><p>If the status is read as true, the function will return the status, indicating that the factory reset has occurred. The function then resets the status to false for subsequent factory reset judgement.</p></li>
+<li><p>If the status is read as false, the function will return the status, indicating that the factory reset has not occurred, or the memory where this status is stored is invalid.</p></li>
+</ul>
+<p>Note that this feature reserves some RTC FAST memory (the same size as the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-skip-validate-in-deep-sleep"><span class="std std-ref">CONFIG_BOOTLOADER_SKIP_VALIDATE_IN_DEEP_SLEEP</span></a> feature).</p>
+</section>
+<section id="boot-from-test-firmware">
+<span id="bootloader-boot-from-test-firmware"></span><h2>Boot from Test Firmware<a class="headerlink" href="#boot-from-test-firmware" title="Permalink to this heading"></a></h2>
+<p>It is possible to write a special firmware app for testing in production, and boot this firmware when needed. The project partition table will need a dedicated app partition entry for this testing app, type <code class="docutils literal notranslate"><span class="pre">app</span></code> and subtype <code class="docutils literal notranslate"><span class="pre">test</span></code> (see <a class="reference internal" href="partition-tables.html"><span class="doc">Partition Tables</span></a>).</p>
+<p>Implementing a dedicated test app firmware requires creating a totally separate ESP-IDF project for the test app (each project in ESP-IDF only builds one app). The test app can be developed and tested independently of the main project, and then integrated at production testing time as a pre-compiled .bin file which is flashed to the address of the main project's test app partition.</p>
+<p>To support this functionality in the main project's bootloader, set the configuration item <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-app-test"><span class="std std-ref">CONFIG_BOOTLOADER_APP_TEST</span></a> and configure the following three items:</p>
+<ul>
+<li><p><a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-num-pin-app-test"><span class="std std-ref">CONFIG_BOOTLOADER_NUM_PIN_APP_TEST</span></a> - GPIO number to boot test partition. The selected GPIO will be configured as an input with internal pull-up enabled. This GPIO must be pulled low or high (configurable) on reset to trigger this.</p>
+<p>Once the GPIO input is released and the device has been rebooted, the default boot sequence will be enabled again to boot the factory partition or any OTA app partition slot.</p>
+</li>
+<li><p><a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-hold-time-gpio"><span class="std std-ref">CONFIG_BOOTLOADER_HOLD_TIME_GPIO</span></a> - this is the hold time of GPIO for reset/test mode (by default 5 seconds). The GPIO must be held continuously for this period of time after reset before a factory reset or test partition boot (as applicable) is performed.</p></li>
+<li><p><a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-app-test-pin-level"><span class="std std-ref">CONFIG_BOOTLOADER_APP_TEST_PIN_LEVEL</span></a> - configure whether a test partition boot should trigger on a high or low level of the GPIO. If the GPIO has an internal pull-up, then this is enabled before the pin is sampled. Consult the ESP32 datasheet for details on pin internal pull-ups.</p></li>
+</ul>
+</section>
+<section id="rollback">
+<h2>Rollback<a class="headerlink" href="#rollback" title="Permalink to this heading"></a></h2>
+<p>Rollback and anti-rollback features must be configured in the bootloader as well.</p>
+<p>Consult the <a class="reference internal" href="../api-reference/system/ota.html#app-rollback"><span class="std std-ref">App Rollback</span></a> and <a class="reference internal" href="../api-reference/system/ota.html#anti-rollback"><span class="std std-ref">Anti-rollback</span></a> sections in the <a class="reference internal" href="../api-reference/system/ota.html"><span class="doc">OTA API reference document</span></a>.</p>
+</section>
+<section id="watchdog">
+<span id="bootloader-watchdog"></span><h2>Watchdog<a class="headerlink" href="#watchdog" title="Permalink to this heading"></a></h2>
+<p>The chips come equipped with two groups of watchdog timers: Main System Watchdog Timer (MWDT_WDT) and RTC Watchdog Timer (RTC_WDT). Both watchdog timer groups are enabled when the chip is powered up. However, in the bootloader, they will both be disabled. If <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-wdt-enable"><span class="std std-ref">CONFIG_BOOTLOADER_WDT_ENABLE</span></a> is set (which is the default behavior), RTC_WDT is re-enabled. It tracks the time from the bootloader is enabled until the user's main function is called. In this scenario, RTC_WDT remains operational and will automatically reset the chip if no application successfully starts within 9 seconds. This functionality is particularly useful in preventing lockups caused by an unstable power source during startup.</p>
+<ul class="simple">
+<li><p>The timeout period can be adjusted by setting <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-wdt-time-ms"><span class="std std-ref">CONFIG_BOOTLOADER_WDT_TIME_MS</span></a> and recompiling the bootloader.</p></li>
+<li><p>The RTC Watchdog can be disabled in the bootloader by disabling the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-wdt-enable"><span class="std std-ref">CONFIG_BOOTLOADER_WDT_ENABLE</span></a> setting and recompiling the bootloader. This is not recommended.</p></li>
+<li><p>See <a class="reference internal" href="../api-reference/system/wdts.html#app-hardware-watchdog-timers"><span class="std std-ref">Hardware Watchdog Timers</span></a> to learn how RTC_WDT is used in the application.</p></li>
+</ul>
+</section>
+<section id="bootloader-size">
+<span id="id2"></span><h2>Bootloader Size<a class="headerlink" href="#bootloader-size" title="Permalink to this heading"></a></h2>
+<p>When enabling additional bootloader functions, including <a class="reference internal" href="../security/flash-encryption.html"><span class="doc">Flash Encryption</span></a> or Secure Boot, and especially if setting a high <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-log-level"><span class="std std-ref">CONFIG_BOOTLOADER_LOG_LEVEL</span></a> level, then it is important to monitor the bootloader .bin file's size.</p>
+<p>When using the default <a class="reference internal" href="../api-reference/kconfig-reference.html#config-partition-table-offset"><span class="std std-ref">CONFIG_PARTITION_TABLE_OFFSET</span></a> value 0x8000, the size limit is 0x8000 bytes.</p>
+<p>If the bootloader binary is too large, then the bootloader build will fail with an error &quot;Bootloader binary size [..] is too large for partition table offset&quot;. If the bootloader binary is flashed anyhow then the ESP32 will fail to boot - errors will be logged about either invalid partition table or invalid bootloader checksum.</p>
+<p>Options to work around this are:</p>
+<ul class="simple">
+<li><p>Set <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-compiler-optimization"><span class="std std-ref">bootloader compiler optimization</span></a> back to &quot;Size&quot; if it has been changed from this default value.</p></li>
+<li><p>Reduce <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-log-level"><span class="std std-ref">bootloader log level</span></a>. Setting log level to Warning, Error or None all significantly reduce the final binary size (but may make it harder to debug).</p></li>
+<li><p>Set <a class="reference internal" href="../api-reference/kconfig-reference.html#config-partition-table-offset"><span class="std std-ref">CONFIG_PARTITION_TABLE_OFFSET</span></a> to a higher value than 0x8000, to place the partition table later in the flash. This increases the space available for the bootloader. If the <a class="reference internal" href="partition-tables.html"><span class="doc">partition table</span></a> CSV file contains explicit partition offsets, they will need changing so no partition has an offset lower than <code class="docutils literal notranslate"><span class="pre">CONFIG_PARTITION_TABLE_OFFSET</span> <span class="pre">+</span> <span class="pre">0x1000</span></code>. (This includes the default partition CSV files supplied with ESP-IDF.)</p></li>
+</ul>
+<p>When Secure Boot V2 is enabled, there is also an absolute binary size limit of 48 KB (0xC000 bytes) (excluding the 4 KB signature), because the bootloader is first loaded into a fixed size buffer for verification.</p>
+</section>
+<section id="fast-boot-from-deep-sleep">
+<h2>Fast Boot from Deep-Sleep<a class="headerlink" href="#fast-boot-from-deep-sleep" title="Permalink to this heading"></a></h2>
+<p>The bootloader has the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-skip-validate-in-deep-sleep"><span class="std std-ref">CONFIG_BOOTLOADER_SKIP_VALIDATE_IN_DEEP_SLEEP</span></a> option which allows the wake-up time from Deep-sleep to be reduced (useful for reducing power consumption). This option is available when the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-boot"><span class="std std-ref">CONFIG_SECURE_BOOT</span></a> option is disabled or <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-boot-insecure"><span class="std std-ref">CONFIG_SECURE_BOOT_INSECURE</span></a> is enabled along with Secure Boot. The reduction in time is achieved by ignoring image verification.</p>
+<p>During the first boot, the bootloader stores the address of the application being launched in the RTC FAST memory. After waking up from deep sleep, this address is used to boot the application again without any checks, resulting in a significantly faster load.</p>
+</section>
+<section id="custom-bootloader">
+<h2>Custom Bootloader<a class="headerlink" href="#custom-bootloader" title="Permalink to this heading"></a></h2>
+<p>The current bootloader implementation allows a project to extend it or modify it. There are two ways of doing it: by implementing hooks or by overriding it. Both ways are presented in <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/custom_bootloader">custom_bootloader</a> folder in ESP-IDF examples:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/custom_bootloader/bootloader_hooks">custom_bootloader/bootloader_hooks</a> presents how to connect some hooks to the bootloader initialization</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/custom_bootloader/bootloader_override">custom_bootloader/bootloader_override</a> presents how to override the bootloader implementation</p></li>
+</ul>
+<p>In the bootloader space, you cannot use the drivers and functions from other components unless they explicitly support run in bootloader. If necessary, then the required functionality should be placed in the project's <cite>bootloader_components</cite> directory (note that this will increase its size). Examples of components that can be used in the bootloader are:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/nvs/nvs_bootloader">storage/nvs/nvs_bootloader</a></p></li>
+</ul>
+<p>If the bootloader grows too large then it can collide with the partition table, which is flashed at offset 0x8000 by default. Increase the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-partition-table-offset"><span class="std std-ref">partition table offset</span></a> value to place the partition table later in the flash. This increases the space available for the bootloader.</p>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Bootloader (api-guides/bootloader)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Bootloader (api-guides/bootloader)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ble/blufi.html" class="btn btn-neutral float-left" title="BluFi" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="build-system.html" class="btn btn-neutral float-right" title="Build System" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

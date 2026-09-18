@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speed Optimization - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/performance/speed.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/performance/speed';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Minimizing Binary Size" href="size.html" />
+    <link rel="prev" title="Performance" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Performance</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#how-to-optimize-performance">How to Optimize Performance</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#guides">Guides</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Speed Optimization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="size.html">Minimizing Binary Size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ram-usage.html">Minimizing RAM Usage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Performance</a></li>
+      <li class="breadcrumb-item active">Speed Optimization</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/performance/speed.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="speed-optimization">
+<h1>Speed Optimization<a class="headerlink" href="#speed-optimization" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-guides/performance/speed.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>Optimizing execution speed is a key element of software performance. Code that executes faster can also have other positive effects, e.g., reducing overall power consumption. However, improving execution speed may have trade-offs with other aspects of performance such as <a class="reference internal" href="size.html"><span class="doc">Minimizing Binary Size</span></a>.</p>
+</section>
+<section id="choose-what-to-optimize">
+<h2>Choose What to Optimize<a class="headerlink" href="#choose-what-to-optimize" title="Permalink to this heading"></a></h2>
+<p>If a function in the application firmware is executed once per week in the background, it may not matter if that function takes 10 ms or 100 ms to execute. If a function is executed constantly at 10 Hz, it matters greatly if it takes 10 ms or 100 ms to execute.</p>
+<p>Most kinds of application firmware only have a small set of functions that require optimal performance. Perhaps those functions are executed very often, or have to meet some application requirements for latency or throughput. Optimization efforts should be targeted at these particular functions.</p>
+</section>
+<section id="measuring-performance">
+<h2>Measuring Performance<a class="headerlink" href="#measuring-performance" title="Permalink to this heading"></a></h2>
+<p>The first step to improving something is to measure it.</p>
+<section id="basic-performance-measurements">
+<h3>Basic Performance Measurements<a class="headerlink" href="#basic-performance-measurements" title="Permalink to this heading"></a></h3>
+<p>You may be able to measure directly the performance relative to an external interaction with the world, e.g., see the examples <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/wifi/iperf">wifi/iperf</a> and <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/ethernet/iperf">ethernet/iperf</a> for measuring general network performance. Or you can use an oscilloscope or logic analyzer to measure the timing of an interaction with a device peripheral.</p>
+<p>Otherwise, one way to measure performance is to augment the code to take timing measurements:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_timer.h&quot;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">measure_important_function</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">MEASUREMENTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5000</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">esp_timer_get_time</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">retries</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">retries</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">MEASUREMENTS</span><span class="p">;</span><span class="w"> </span><span class="n">retries</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">important_function</span><span class="p">();</span><span class="w"> </span><span class="c1">// This is the thing you need to measure</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">esp_timer_get_time</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%u iterations took %llu milliseconds (%llu microseconds per invocation)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="n">MEASUREMENTS</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="o">/</span><span class="n">MEASUREMENTS</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Executing the target multiple times can help average out factors, e.g., RTOS context switches, overhead of measurements, etc.</p>
+<ul>
+<li><p>Using <a class="reference internal" href="../../api-reference/system/esp_timer.html#_CPPv418esp_timer_get_timev" title="esp_timer_get_time"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_get_time()</span></code></a> generates &quot;wall clock&quot; timestamps with microsecond precision, but has moderate overhead each time the timing functions are called.</p></li>
+<li><p>It is also possible to use the standard Unix <code class="docutils literal notranslate"><span class="pre">gettimeofday()</span></code> and <code class="docutils literal notranslate"><span class="pre">utime()</span></code> functions, although the overhead is slightly higher.</p></li>
+<li><p>Otherwise, including <code class="docutils literal notranslate"><span class="pre">hal/cpu_hal.h</span></code> and calling the HAL function <code class="docutils literal notranslate"><span class="pre">cpu_hal_get_cycle_count()</span></code> returns the number of CPU cycles executed. This function has lower overhead than the others, which is good for measuring very short execution times with high precision.</p>
+<p>The CPU cycles are counted per-core, so only use this method from an interrupt handler, or a task that is pinned to a single core.</p>
+</li>
+<li><p>While performing &quot;microbenchmarks&quot; (i.e., benchmarking only a very small routine of code that runs in less than 1-2 milliseconds), the flash cache performance can sometimes cause big variations in timing measurements depending on the binary. This happens because binary layout can cause different patterns of cache misses in a particular sequence of execution. If the test code is larger, then this effect usually averages out. Executing a small function multiple times when benchmarking can help reduce the impact of flash cache misses. Alternatively, move this code to IRAM (see <a class="reference internal" href="#speed-targeted-optimizations"><span class="std std-ref">Targeted Optimizations</span></a>).</p></li>
+</ul>
+</section>
+<section id="external-tracing">
+<h3>External Tracing<a class="headerlink" href="#external-tracing" title="Permalink to this heading"></a></h3>
+<p>The <a class="reference internal" href="../app_trace.html"><span class="doc">Application Level Tracing Library</span></a> allows measuring code execution with minimal impact on the code itself.</p>
+</section>
+<section id="tasks">
+<h3>Tasks<a class="headerlink" href="#tasks" title="Permalink to this heading"></a></h3>
+<p>If the option <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-generate-run-time-stats"><span class="std std-ref">CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS</span></a> is enabled, then the FreeRTOS API <a class="reference internal" href="../../api-reference/system/freertos_idf.html#_CPPv420vTaskGetRunTimeStatsPc" title="vTaskGetRunTimeStats"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskGetRunTimeStats()</span></code></a> can be used to retrieve runtime information about the processor time used by each FreeRTOS task.</p>
+<p><a class="reference internal" href="../app_trace.html#app-trace-system-behaviour-analysis-with-segger-systemview"><span class="std std-ref">SEGGER SystemView</span></a> is an excellent tool for visualizing task execution and looking for performance issues or improvements in the system as a whole.</p>
+</section>
+</section>
+<section id="improving-overall-speed">
+<h2>Improving Overall Speed<a class="headerlink" href="#improving-overall-speed" title="Permalink to this heading"></a></h2>
+<p>The following optimizations improve the execution of nearly all code, including boot times, throughput, latency, etc:</p>
+<p><ul class="simple">
+<li><p>Set <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esptoolpy-flashfreq"><span class="std std-ref">CONFIG_ESPTOOLPY_FLASHFREQ</span></a> to 80 MHz. This is double the 40 MHz default value and doubles the speed at which code is loaded or executed from flash. You should verify that the board or module that connects the ESP32 to the flash chip is rated for 80 MHz operation at the relevant temperature ranges before changing this setting. This information is contained in the hardware datasheet(s).</p></li>
+<li><p>Set <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esptoolpy-flashmode"><span class="std std-ref">CONFIG_ESPTOOLPY_FLASHMODE</span></a> to QIO or QOUT mode (Quad I/O). Both almost double the speed at which code is loaded or executed from flash compared to the default DIO mode. QIO is slightly faster than QOUT if both are supported. Note that both the flash chip model, and the electrical connections between the ESP32 and the flash chip must support quad I/O modes or the SoC will not work correctly.</p></li>
+<li><p>Set <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-compiler-optimization"><span class="std std-ref">CONFIG_COMPILER_OPTIMIZATION</span></a> to <code class="docutils literal notranslate"><span class="pre">Optimize</span> <span class="pre">for</span> <span class="pre">performance</span> <span class="pre">(-O2)</span></code> . This may slightly increase binary size compared to the default setting, but almost certainly increases the performance of some code. Note that if your code contains C or C++ Undefined Behavior, then increasing the compiler optimization level may expose bugs that otherwise are not seen.</p></li>
+<li><p>If the application uses PSRAM and is based on ESP32 rev. 3 (ECO3), setting <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp32-rev-min"><span class="std std-ref">CONFIG_ESP32_REV_MIN</span></a> to <code class="docutils literal notranslate"><span class="pre">3</span></code> disables PSRAM bug workarounds, reducing the code size and improving overall performance.</p></li>
+<li><p>Avoid using floating point arithmetic <code class="docutils literal notranslate"><span class="pre">float</span></code>. Even though ESP32 has a single precision hardware floating point unit, floating point calculations are always slower than integer calculations. If possible then use fixed point representations, a different method of integer representation, or convert part of the calculation to be integer only before switching to floating point.</p></li>
+<li><p>Avoid using double precision floating point arithmetic <code class="docutils literal notranslate"><span class="pre">double</span></code>. These calculations are emulated in software and are very slow. If possible then use an integer-based representation, or single-precision floating point.</p></li>
+</ul>
+</p>
+<section id="reduce-logging-overhead">
+<h3>Reduce Logging Overhead<a class="headerlink" href="#reduce-logging-overhead" title="Permalink to this heading"></a></h3>
+<p>Although standard output is buffered, it is possible for an application to be limited by the rate at which it can print data to log output once buffers are full. This is particularly relevant for startup time if a lot of output is logged, but such problem can happen at other times as well. There are multiple ways to solve this problem:</p>
+<p><ul class="simple">
+<li><p>Reduce the volume of log output by lowering the app <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-log-default-level"><span class="std std-ref">CONFIG_LOG_DEFAULT_LEVEL</span></a> (the equivalent bootloader setting is <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bootloader-log-level"><span class="std std-ref">CONFIG_BOOTLOADER_LOG_LEVEL</span></a>). This also reduces the binary size, and saves some CPU time spent on string formatting.</p></li>
+<li><p>Increase the speed of logging output by increasing the <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-console-uart-baudrate"><span class="std std-ref">CONFIG_ESP_CONSOLE_UART_BAUDRATE</span></a>.</p></li>
+<li><p>If your application does not require dynamic log level changes and you do not need to control logs per module using tags, consider disabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-log-dynamic-level-control"><span class="std std-ref">CONFIG_LOG_DYNAMIC_LEVEL_CONTROL</span></a> and changing <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-log-tag-level-impl"><span class="std std-ref">CONFIG_LOG_TAG_LEVEL_IMPL</span></a>. It helps to reduce memory usage and also contributes to speeding up log operations in your application about 10 times.</p></li>
+</ul>
+</p>
+</section>
+<section id="not-recommended">
+<h3>Not Recommended<a class="headerlink" href="#not-recommended" title="Permalink to this heading"></a></h3>
+<p>The following options also increase execution speed, but are not recommended as they also reduce the debuggability of the firmware application and may increase the severity of any bugs.</p>
+<p><ul class="simple">
+<li><p>Set <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-compiler-optimization-assertion-level"><span class="std std-ref">CONFIG_COMPILER_OPTIMIZATION_ASSERTION_LEVEL</span></a> to disabled. This also reduces firmware binary size by a small amount. However, it may increase the severity of bugs in the firmware including security-related bugs. If it is necessary to do this to optimize a particular function, consider adding <code class="docutils literal notranslate"><span class="pre">#define</span> <span class="pre">NDEBUG</span></code> at the top of that single source file instead.</p></li>
+</ul>
+</p>
+</section>
+</section>
+<section id="targeted-optimizations">
+<span id="speed-targeted-optimizations"></span><h2>Targeted Optimizations<a class="headerlink" href="#targeted-optimizations" title="Permalink to this heading"></a></h2>
+<p>The following changes increase the speed of a chosen part of the firmware application:</p>
+<p><ul>
+<li><p>Move frequently executed code to IRAM. By default, all code in the app is executed from flash cache. This means that it is possible for the CPU to have to wait on a &quot;cache miss&quot; while the next instructions are loaded from flash. Functions which are copied into IRAM are loaded once at boot time, and then always execute at full speed.</p>
+<p>IRAM is a limited resource, and using more IRAM may reduce available DRAM, so a strategic approach is needed when moving code to IRAM. See <a class="reference internal" href="../memory-types.html#iram"><span class="std std-ref">IRAM (Instruction RAM)</span></a> for more information.</p>
+</li>
+<li><p>Jump table optimizations can be re-enabled for individual source files that do not need to be placed in IRAM. For hot paths in large <code class="docutils literal notranslate"><span class="pre">switch</span> <span class="pre">cases</span></code>, this improves performance. For instructions on how to add the <code class="docutils literal notranslate"><span class="pre">-fjump-tables</span></code> and <code class="docutils literal notranslate"><span class="pre">-ftree-switch-conversion</span></code> options when compiling individual source files, see <a class="reference internal" href="../build-system.html#component-build-control"><span class="std std-ref">Controlling Component Compilation</span></a></p></li>
+</ul>
+</p>
+</section>
+<section id="improving-startup-time">
+<h2>Improving Startup Time<a class="headerlink" href="#improving-startup-time" title="Permalink to this heading"></a></h2>
+<p>In addition to the overall performance improvements shown above, the following options can be tweaked to specifically reduce startup time:</p>
+<p><ul class="simple">
+<li><p>Minimizing the <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-log-default-level"><span class="std std-ref">CONFIG_LOG_DEFAULT_LEVEL</span></a> and <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bootloader-log-level"><span class="std std-ref">CONFIG_BOOTLOADER_LOG_LEVEL</span></a> has a large impact on startup time. To enable more logging after the app starts up, set the <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-log-maximum-level"><span class="std std-ref">CONFIG_LOG_MAXIMUM_LEVEL</span></a> as well, and then call <a class="reference internal" href="../../api-reference/system/log.html#_CPPv417esp_log_level_setPKc15esp_log_level_t" title="esp_log_level_set"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_log_level_set()</span></code></a> to restore higher level logs. The <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/startup_time">system/startup_time</a> main function shows how to do this.</p></li>
+<li><p>If using Deep-sleep mode, setting <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bootloader-skip-validate-in-deep-sleep"><span class="std std-ref">CONFIG_BOOTLOADER_SKIP_VALIDATE_IN_DEEP_SLEEP</span></a> allows a faster wake from sleep. Note that if using Secure Boot, this represents a security compromise, as Secure Boot validation are not be performed on wake.</p></li>
+<li><p>Setting <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bootloader-skip-validate-on-power-on"><span class="std std-ref">CONFIG_BOOTLOADER_SKIP_VALIDATE_ON_POWER_ON</span></a> skips verifying the binary on every boot from the power-on reset. How much time this saves depends on the binary size and the flash settings. Note that this setting carries some risk if the flash becomes corrupt unexpectedly. Read the help text of the <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bootloader-skip-validate-on-power-on"><span class="std std-ref">config item</span></a> for an explanation and recommendations if using this option.</p></li>
+<li><p>It is possible to save a small amount of time during boot by disabling RTC slow clock calibration. To do so, set <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-rtc-clk-cal-cycles"><span class="std std-ref">CONFIG_RTC_CLK_CAL_CYCLES</span></a> to 0. Any part of the firmware that uses RTC slow clock as a timing source will be less accurate as a result.</p></li>
+<li><p>When external memory is used (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram"><span class="std std-ref">CONFIG_SPIRAM</span></a> enabled), enabling memory test on the external memory (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-memtest"><span class="std std-ref">CONFIG_SPIRAM_MEMTEST</span></a>) can have a large impact on startup time (approximately 1 second per 4 MB of memory tested). Disabling the memory tests will reduce startup time at the expense of testing the external memory.</p></li>
+<li><p>When external memory is used (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram"><span class="std std-ref">CONFIG_SPIRAM</span></a> enabled), enabling comprehensive poisoning will increase the startup time (approximately 300 milliseconds per 4 MiB of memory set) since all the memory used as heap (including the external memory) will be set to a default value.</p></li>
+</ul>
+</p>
+<p>The example project <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/startup_time">system/startup_time</a> is pre-configured to optimize startup time. The file <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/system/startup_time/sdkconfig.defaults">system/startup_time/sdkconfig.defaults</a> contain all of these settings. You can append these to the end of your project's own <code class="docutils literal notranslate"><span class="pre">sdkconfig</span></code> file to merge the settings, but please read the documentation for each setting first.</p>
+</section>
+<section id="task-priorities">
+<h2>Task Priorities<a class="headerlink" href="#task-priorities" title="Permalink to this heading"></a></h2>
+<p>As ESP-IDF FreeRTOS is a real-time operating system, it is necessary to ensure that high-throughput or low-latency tasks are granted a high priority in order to run immediately. Priority is set when calling <a class="reference internal" href="../../api-reference/system/freertos_idf.html#_CPPv411xTaskCreate14TaskFunction_tPCKcK22configSTACK_DEPTH_TYPEPCv11UBaseType_tPC12TaskHandle_t" title="xTaskCreate"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xTaskCreate()</span></code></a> or <a class="reference internal" href="../../api-reference/system/freertos_additions.html#_CPPv423xTaskCreatePinnedToCore14TaskFunction_tPCKcK8uint32_tPCv11UBaseType_tPC12TaskHandle_tK10BaseType_t" title="xTaskCreatePinnedToCore"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xTaskCreatePinnedToCore()</span></code></a> and can be changed at runtime by calling <a class="reference internal" href="../../api-reference/system/freertos_idf.html#_CPPv416vTaskPrioritySet12TaskHandle_t11UBaseType_t" title="vTaskPrioritySet"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskPrioritySet()</span></code></a>.</p>
+<p>It is also necessary to ensure that tasks yield CPU (by calling <a class="reference internal" href="../../api-reference/system/freertos_idf.html#_CPPv410vTaskDelayK10TickType_t" title="vTaskDelay"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskDelay()</span></code></a>, <code class="docutils literal notranslate"><span class="pre">sleep()</span></code>, or by blocking on semaphores, queues, task notifications, etc) in order to not starve lower-priority tasks and cause problems for the overall system. The <a class="reference internal" href="../../api-reference/system/wdts.html#task-watchdog-timer"><span class="std std-ref">Task Watchdog Timer (TWDT)</span></a> provides a mechanism to automatically detect if task starvation happens. However, note that a TWDT timeout does not always indicate a problem, because sometimes the correct operation of the firmware requires some long-running computation. In these cases, tweaking the TWDT timeout or even disabling the TWDT may be necessary.</p>
+<section id="built-in-task-priorities">
+<span id="id1"></span><h3>Built-in Task Priorities<a class="headerlink" href="#built-in-task-priorities" title="Permalink to this heading"></a></h3>
+<p>ESP-IDF starts a number of system tasks at fixed priority levels. Some are automatically started during the boot process, while some are started only if the application firmware initializes a particular feature. To optimize performance, structure the task priorities of your application properly to ensure the tasks are not delayed by the system tasks, while also not starving system tasks and impacting other functions of the system.</p>
+<p>This may require splitting up a particular task. For example, perform a time-critical operation in a high-priority task or an interrupt handler and do the non-time-critical part in a lower-priority task.</p>
+<p>Header <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_system/include/esp_task.h">components/esp_system/include/esp_task.h</a> contains macros for the priority levels used for built-in ESP-IDF tasks system. See <a class="reference internal" href="../../api-reference/system/freertos.html#freertos-system-tasks"><span class="std std-ref">Background Tasks</span></a> for more details about the system tasks.</p>
+<p>Common priorities are:</p>
+<p><ul>
+<li><p><a class="reference internal" href="../startup.html#app-main-task"><span class="std std-ref">Running the Main Task</span></a> that executes app_main function has minimum priority (1). This task is pinned to Core 0 by default (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-main-task-affinity"><span class="std std-ref">configurable</span></a>).</p></li>
+<li><p><a class="reference internal" href="../../api-reference/system/esp_timer.html"><span class="doc">ESP Timer (High Resolution Timer)</span></a> system task to manage high precision timer events and execute callbacks has high priority (22, <code class="docutils literal notranslate"><span class="pre">ESP_TASK_TIMER_PRIO</span></code>). This task is pinned to Core 0.</p></li>
+<li><p>FreeRTOS Timer Task to handle FreeRTOS timer callbacks is created when the scheduler initializes and has minimum task priority (1, <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-timer-task-priority"><span class="std std-ref">configurable</span></a>). This task is pinned to Core 0.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/system/esp_event.html"><span class="doc">Event Loop Library</span></a> system task to manage the default system event loop and execute callbacks has high priority (20, <code class="docutils literal notranslate"><span class="pre">ESP_TASK_EVENT_PRIO</span></code>) and it is pinned to Core 0. This configuration is only used if the application calls <a class="reference internal" href="../../api-reference/system/esp_event.html#_CPPv429esp_event_loop_create_defaultv" title="esp_event_loop_create_default"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_loop_create_default()</span></code></a>, it is possible to call <a class="reference internal" href="../../api-reference/system/esp_event.html#_CPPv421esp_event_loop_createPK21esp_event_loop_args_tP23esp_event_loop_handle_t" title="esp_event_loop_create"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_loop_create()</span></code></a> with a custom task configuration instead.</p></li>
+<li><p><a class="reference internal" href="../lwip.html"><span class="doc">lwIP</span></a> TCP/IP task has high priority (18, <code class="docutils literal notranslate"><span class="pre">ESP_TASK_TCPIP_PRIO</span></code>) and is not pinned to any core (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-lwip-tcpip-task-affinity"><span class="std std-ref">configurable</span></a>).</p></li>
+<li><p><a class="reference internal" href="../wifi.html"><span class="doc">Wi-Fi Driver</span></a> task has high priority (23) and is pinned to Core 0 by default (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-wifi-task-core-id"><span class="std std-ref">configurable</span></a>).</p></li>
+<li><p>Wi-Fi wpa_supplicant component may create dedicated tasks while the Wi-Fi Protected Setup (WPS), WPA2 EAP-TLS, Device Provisioning Protocol (DPP) or BSS Transition Management (BTM) features are in use. These tasks all have low priority (2) and are not pinned to any core.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/bluetooth/controller_vhci.html"><span class="doc">Controller &amp; HCI</span></a> task has high priority (23, <code class="docutils literal notranslate"><span class="pre">ESP_TASK_BT_CONTROLLER_PRIO</span></code>) and is pinned to Core 0 by default (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-btdm-ctrl-pinned-to-core-choice"><span class="std std-ref">configurable</span></a>). The Bluetooth Controller needs to respond to requests with low latency, so it should always be among the highest priority task assigned to a single CPU.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/bluetooth/nimble/index.html"><span class="doc">NimBLE-based Host APIs</span></a> task has high priority (21) and is pinned to Core 0 by default (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bt-nimble-pinned-to-core-choice"><span class="std std-ref">configurable</span></a>).</p></li>
+<li><dl>
+<dt><a class="reference internal" href="../../api-reference/bluetooth/index.html"><span class="doc">Bluetooth® API</span></a> creates multiple tasks when used:</dt><dd><ul class="simple">
+<li><p>Stack event callback task (&quot;BTC&quot;) has high priority (19).</p></li>
+<li><p>Stack BTU layer task has high priority (20).</p></li>
+<li><p>Host HCI host task has high priority (22).</p></li>
+</ul>
+<p>All Bluedroid Tasks are pinned to the same core, which is Core 0 by default (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bt-bluedroid-pinned-to-core-choice"><span class="std std-ref">configurable</span></a>).</p>
+</dd>
+</dl>
+</li>
+<li><p>The Ethernet driver creates a task for the MAC to receive Ethernet frames. If using the default config <code class="docutils literal notranslate"><span class="pre">ETH_MAC_DEFAULT_CONFIG</span></code> then the priority is medium-high (15) and the task is not pinned to any core. These settings can be changed by passing a custom <a class="reference internal" href="../../api-reference/network/esp_eth.html#_CPPv416eth_mac_config_t" title="eth_mac_config_t"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">eth_mac_config_t</span></code></a> struct when initializing the Ethernet MAC.</p></li>
+<li><p>If using the <a class="reference internal" href="../../api-reference/protocols/mqtt.html"><span class="doc">ESP-MQTT</span></a> component, it creates a task with default priority 5 (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mqtt-task-priority"><span class="std std-ref">configurable</span></a>, depending on <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mqtt-use-custom-config"><span class="std std-ref">CONFIG_MQTT_USE_CUSTOM_CONFIG</span></a>) and not pinned to any core (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mqtt-task-core-selection-enabled"><span class="std std-ref">configurable</span></a>).</p></li>
+<li><p>To see what is the task priority for <code class="docutils literal notranslate"><span class="pre">mDNS</span></code> service, please check <a class="reference external" href="https://docs.espressif.com/projects/esp-protocols/mdns/docs/latest/en/index.html#performance-optimization">Performance Optimization</a>.</p></li>
+</ul>
+</p>
+</section>
+<section id="choosing-task-priorities-of-the-application">
+<h3>Choosing Task Priorities of the Application<a class="headerlink" href="#choosing-task-priorities-of-the-application" title="Permalink to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Task execution is always completely suspended when writing to the built-in SPI flash chip. Only <a class="reference internal" href="../../api-reference/peripherals/spi_flash/spi_flash_concurrency.html#iram-safe-interrupt-handlers"><span class="std std-ref">IRAM-Safe Interrupt Handlers</span></a> continues executing.</p>
+</div>
+</section>
+</section>
+<section id="improving-interrupt-performance">
+<h2>Improving Interrupt Performance<a class="headerlink" href="#improving-interrupt-performance" title="Permalink to this heading"></a></h2>
+<p>ESP-IDF supports dynamic <a class="reference internal" href="../../api-reference/system/intr_alloc.html"><span class="doc">Interrupt Allocation</span></a> with interrupt preemption. Each interrupt in the system has a priority, and higher-priority interrupts preempts lower priority ones.</p>
+<p>Interrupt handlers execute in preference to any task, provided the task is not inside a critical section. For this reason, it is important to minimize the amount of time spent in executing an interrupt handler.</p>
+<p>To obtain the best performance for a particular interrupt handler:</p>
+<p><ul class="simple">
+<li><p>Assign more important interrupts a higher priority using a flag such as <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_LEVEL2</span></code> or <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_LEVEL3</span></code> when calling <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code>.</p></li>
+<li><p>Assign the interrupt on a CPU where built-in Wi-Fi/Bluetooth tasks are not configured to run, which means assigning the interrupt on Core 1 by default, see <a class="reference internal" href="#built-in-task-priorities"><span class="std std-ref">Built-in Task Priorities</span></a>. Interrupts are assigned on the same CPU where the <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code> function call is made.</p></li>
+<li><p>If you are sure the entire interrupt handler can run from IRAM (see <a class="reference internal" href="../../api-reference/peripherals/spi_flash/spi_flash_concurrency.html#iram-safe-interrupt-handlers"><span class="std std-ref">IRAM-Safe Interrupt Handlers</span></a>) then set the <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_IRAM</span></code> flag when calling <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code> to assign the interrupt. This prevents it being temporarily disabled if the application firmware writes to the internal SPI flash.</p></li>
+<li><p>Even if the interrupt handler is not IRAM-safe, if it is going to be executed frequently then consider moving the handler function to IRAM anyhow. This minimizes the chance of a flash cache miss when the interrupt code is executed (see <a class="reference internal" href="#speed-targeted-optimizations"><span class="std std-ref">Targeted Optimizations</span></a>). It is possible to do this without adding the <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_IRAM</span></code> flag to mark the interrupt as IRAM-safe, if only part of the handler is guaranteed to be in IRAM.</p></li>
+</ul>
+</p>
+</section>
+<section id="improving-network-speed">
+<span id="improve-network-speed"></span><h2>Improving Network Speed<a class="headerlink" href="#improving-network-speed" title="Permalink to this heading"></a></h2>
+<p><ul class="simple">
+<li><p>For Wi-Fi, see <a class="reference internal" href="../wifi.html#how-to-improve-wi-fi-performance"><span class="std std-ref">How to Improve Wi-Fi Performance</span></a> and <a class="reference internal" href="../wifi.html#wifi-buffer-usage"><span class="std std-ref">Wi-Fi Buffer Usage</span></a></p></li>
+<li><p>For lwIP TCP/IP, see <a class="reference internal" href="../lwip.html#lwip-performance"><span class="std std-ref">Performance Optimization</span></a></p></li>
+<li><p>The <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/wifi/iperf">wifi/iperf</a> example contains a configuration that is heavily optimized for Wi-Fi TCP/IP throughput, usually at the expense of higher RAM usage. Append the contents of the files <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/wifi/iperf/sdkconfig.defaults">wifi/iperf/sdkconfig.defaults</a>, <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/wifi/iperf/sdkconfig.defaults.esp32">wifi/iperf/sdkconfig.defaults.esp32</a> and <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/wifi/iperf/sdkconfig.ci.99">wifi/iperf/sdkconfig.ci.99</a> to the <code class="docutils literal notranslate"><span class="pre">sdkconfig</span></code> file in your project in order to add all of these options. Note that some of these options may have trade-offs in terms of reduced debuggability, increased firmware size, increased memory usage, or reduced performance of other features. To get the best result, read the documentation pages linked above and use related information to determine exactly which options are best suited for your app.</p></li>
+<li><p>The <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/ethernet/iperf">ethernet/iperf</a> example contains a configuration that is heavily optimized for Ethernet TCP/IP throughput, usually at the expense of higher RAM usage. Examine <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/ethernet/iperf/sdkconfig.defaults">ethernet/iperf/sdkconfig.defaults</a> for more details. Note that some of these options may have trade-offs in terms of reduced debuggability, increased firmware size, increased memory usage, or reduced performance of other features. To get the best result, read the documentation pages linked above and use related information to determine exactly which options are best suited for your app.</p></li>
+</ul>
+</p>
+</section>
+<section id="improving-i-o-performance">
+<h2>Improving I/O Performance<a class="headerlink" href="#improving-i-o-performance" title="Permalink to this heading"></a></h2>
+<p>Using standard C library functions like <code class="docutils literal notranslate"><span class="pre">fread</span></code> and <code class="docutils literal notranslate"><span class="pre">fwrite</span></code> instead of platform-specific unbuffered syscalls such as <code class="docutils literal notranslate"><span class="pre">read</span></code> and <code class="docutils literal notranslate"><span class="pre">write</span></code>, may result in slower performance.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">fread</span></code> and <code class="docutils literal notranslate"><span class="pre">fwrite</span></code> functions are designed for portability rather than speed, introducing some overhead due to their buffered nature. Check the example <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/fatfs/getting_started">storage/fatfs/getting_started</a> to see how to use these two functions.</p>
+<p>In contrast, the <code class="docutils literal notranslate"><span class="pre">read</span></code> and <code class="docutils literal notranslate"><span class="pre">write</span></code> functions are standard POSIX APIs that can be used directly when working with FatFs through VFS, with ESP-IDF handling the underlying implementation. Check the example <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/fatfs/fs_operations">storage/fatfs/fs_operations</a> to see how to use the two functions.</p>
+<p>Additional tips are provided below, and further details can be found in <a class="reference internal" href="../../api-reference/storage/fatfs.html"><span class="doc">FAT Filesystem Support</span></a>.</p>
+<p><ul>
+<li><p>The maximum size of a read/write request is equal to the FatFS cluster size (allocation unit size).</p></li>
+<li><p>For better performance, prefer using <code class="docutils literal notranslate"><span class="pre">read</span></code> and <code class="docutils literal notranslate"><span class="pre">write</span></code> over <code class="docutils literal notranslate"><span class="pre">fread</span></code> and <code class="docutils literal notranslate"><span class="pre">fwrite</span></code>.</p></li>
+<li><p>To improve the speed of buffered reading functions like <code class="docutils literal notranslate"><span class="pre">fread</span></code> and <code class="docutils literal notranslate"><span class="pre">fgets</span></code>, consider increasing the file buffer size. The default size in Newlib is 128 bytes, but you can increase it to 4096, 8192, or 16384 bytes. This can be made locally using the <code class="docutils literal notranslate"><span class="pre">setvbuf</span></code> function for a specific file pointer or globally by modifying the <code class="docutils literal notranslate"><span class="pre">CONFIG_FATFS_VFS_FSTAT_BLKSIZE</span></code> setting.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Increasing the buffer size will also increase heap memory usage.</p>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Speed Optimization (api-guides/performance/speed)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Speed Optimization (api-guides/performance/speed)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Performance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="size.html" class="btn btn-neutral float-right" title="Minimizing Binary Size" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

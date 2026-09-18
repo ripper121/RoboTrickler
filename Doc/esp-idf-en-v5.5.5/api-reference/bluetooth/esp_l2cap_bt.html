@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bluetooth® Classic L2CAP API - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/bluetooth/esp_l2cap_bt.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/bluetooth/esp_l2cap_bt';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Bluetooth® SDP API" href="esp_sdp.html" />
+    <link rel="prev" title="Bluetooth® HID Host API" href="esp_hidh.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Bluetooth<sup>®</sup> API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="controller_vhci.html">Controller &amp; HCI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bt_common.html">Bluetooth® Common</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="classic_bt.html">Bluetooth® Classic</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="esp_gap_bt.html">Bluetooth GAP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp_a2dp.html">Bluetooth A2DP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp_avrc.html">Bluetooth AVRC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp_spp.html">Bluetooth SPP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp_hf_defs.html">Bluetooth HFP Define</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp_hf_client.html">Bluetooth HFP Client</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp_hf_ag.html">Bluetooth HFP AG</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp_hidd.html">Bluetooth HID Device</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp_hidh.html">Bluetooth HID Host</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Bluetooth L2CAP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp_sdp.html">Bluetooth SDP</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bt_le.html">Bluetooth® Low Energy (Bluetooth LE)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nimble/index.html">NimBLE-based Host APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp-ble-mesh.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#examples-and-tutorials">Examples and Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Bluetooth<sup>®</sup> API</a></li>
+          <li class="breadcrumb-item"><a href="classic_bt.html">Bluetooth® Classic</a></li>
+      <li class="breadcrumb-item active">Bluetooth® Classic L2CAP API</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/bluetooth/esp_l2cap_bt.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bluetooth-classic-l2cap-api">
+<h1>Bluetooth® Classic L2CAP API<a class="headerlink" href="#bluetooth-classic-l2cap-api" title="Permalink to this heading"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>Bluetooth Classic L2CAP (Logical Link Control and Adaptation Layer Protocol) API provides functions for data transmission between Bluetooth devices. It supports both client and server roles, allowing the creation of L2CAP connections for reliable, high-throughput communication.</p>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/bluedroid/classic_bt/bt_l2cap_server">bluetooth/bluedroid/classic_bt/bt_l2cap_server</a> demonstrates how to use Logical Link Control and Adaptation Layer Protocol (L2CAP) APIs to create an L2CAP server, and wait to be discovered and connected by a remote device L2CAP client.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/bluedroid/classic_bt/bt_l2cap_client">bluetooth/bluedroid/classic_bt/bt_l2cap_client</a> demonstrates how to use L2CAP APIs to create an L2CAP client.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/host/bluedroid/api/include/api/esp_l2cap_bt_api.h">components/bt/host/bluedroid/api/include/api/esp_l2cap_bt_api.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_l2cap_bt_api.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">bt</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">bt</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES bt
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES bt
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430esp_bt_l2cap_register_callback17esp_bt_l2cap_cb_t">
+<span id="_CPPv330esp_bt_l2cap_register_callback17esp_bt_l2cap_cb_t"></span><span id="_CPPv230esp_bt_l2cap_register_callback17esp_bt_l2cap_cb_t"></span><span id="esp_bt_l2cap_register_callback__esp_bt_l2cap_cb_t"></span><span class="target" id="esp__l2cap__bt__api_8h_1a34a6e0fbbfd7308018aa3615c55e6e39"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_register_callback</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417esp_bt_l2cap_cb_t" title="esp_bt_l2cap_cb_t"><span class="n"><span class="pre">esp_bt_l2cap_cb_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">callback</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430esp_bt_l2cap_register_callback17esp_bt_l2cap_cb_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This function is called to init callbacks with L2CAP module. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callback</strong> -- <strong>[in]</strong> pointer to the init callback function.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>other: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417esp_bt_l2cap_initv">
+<span id="_CPPv317esp_bt_l2cap_initv"></span><span id="_CPPv217esp_bt_l2cap_initv"></span><span id="esp_bt_l2cap_init__void"></span><span class="target" id="esp__l2cap__bt__api_8h_1affab7c498fee54b39f135d9a814ef0d7"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_init</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417esp_bt_l2cap_initv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This function is called to init L2CAP module. When the operation is completed, the callback function will be called with ESP_BT_L2CAP_INIT_EVT. This function should be called after esp_bluedroid_enable() completes successfully. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>other: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419esp_bt_l2cap_deinitv">
+<span id="_CPPv319esp_bt_l2cap_deinitv"></span><span id="_CPPv219esp_bt_l2cap_deinitv"></span><span id="esp_bt_l2cap_deinit__void"></span><span class="target" id="esp__l2cap__bt__api_8h_1acbb0defa9cc12b0abe79c62e3aeec5b4"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_deinit</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419esp_bt_l2cap_deinitv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This function is called to uninit l2cap module. The operation will close all active L2CAP connection first, then the callback function will be called with ESP_BT_L2CAP_CLOSE_EVT, and the number of ESP_BT_L2CAP_CLOSE_EVT is equal to the number of connection. When the operation is completed, the callback function will be called with ESP_BT_L2CAP_UNINIT_EVT. This function should be called after esp_bt_l2cap_init() completes successfully. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>other: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420esp_bt_l2cap_connect25esp_bt_l2cap_cntl_flags_t8uint16_t13esp_bd_addr_t">
+<span id="_CPPv320esp_bt_l2cap_connect25esp_bt_l2cap_cntl_flags_t8uint16_t13esp_bd_addr_t"></span><span id="_CPPv220esp_bt_l2cap_connect25esp_bt_l2cap_cntl_flags_t8uint16_t13esp_bd_addr_t"></span><span id="esp_bt_l2cap_connect__esp_bt_l2cap_cntl_flags_t.uint16_t.esp_bd_addr_t"></span><span class="target" id="esp__l2cap__bt__api_8h_1a191e3f7bec18841c744ced10fd5439d3"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_connect</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv425esp_bt_l2cap_cntl_flags_t" title="esp_bt_l2cap_cntl_flags_t"><span class="n"><span class="pre">esp_bt_l2cap_cntl_flags_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">cntl_flag</span></span>, <span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">remote_psm</span></span>, <a class="reference internal" href="esp_bt_defs.html#_CPPv413esp_bd_addr_t" title="esp_bd_addr_t"><span class="n"><span class="pre">esp_bd_addr_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">peer_bd_addr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420esp_bt_l2cap_connect25esp_bt_l2cap_cntl_flags_t8uint16_t13esp_bd_addr_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This function makes an L2CAP connection to a remote BD Address. When the connection is initiated or failed to initiate, the callback is called with ESP_BT_L2CAP_CL_INIT_EVT. When the connection is established or failed, the callback is called with ESP_BT_L2CAP_OPEN_EVT. This function must be called after esp_bt_l2cap_init() successful and before esp_bt_l2cap_deinit(). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cntl_flag</strong> -- <strong>[in]</strong> Lower 16-bit security settings mask. </p></li>
+<li><p><strong>remote_psm</strong> -- <strong>[in]</strong> Remote device bluetooth Profile PSM. </p></li>
+<li><p><strong>peer_bd_addr</strong> -- <strong>[in]</strong> Remote device bluetooth device address.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>other: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422esp_bt_l2cap_start_srv25esp_bt_l2cap_cntl_flags_t8uint16_t">
+<span id="_CPPv322esp_bt_l2cap_start_srv25esp_bt_l2cap_cntl_flags_t8uint16_t"></span><span id="_CPPv222esp_bt_l2cap_start_srv25esp_bt_l2cap_cntl_flags_t8uint16_t"></span><span id="esp_bt_l2cap_start_srv__esp_bt_l2cap_cntl_flags_t.uint16_t"></span><span class="target" id="esp__l2cap__bt__api_8h_1a950b76bfa60763154aaae9d32ba52dd6"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_start_srv</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv425esp_bt_l2cap_cntl_flags_t" title="esp_bt_l2cap_cntl_flags_t"><span class="n"><span class="pre">esp_bt_l2cap_cntl_flags_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">cntl_flag</span></span>, <span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">local_psm</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422esp_bt_l2cap_start_srv25esp_bt_l2cap_cntl_flags_t8uint16_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Create an L2CAP server and start listening for connection requests. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><ul class="simple">
+<li><p>When the server is started successfully, the callback is called with <code class="docutils literal notranslate"><span class="pre">ESP_BT_L2CAP_START_EVT</span></code>.</p></li>
+<li><p>When the connection is established, the callback is called with <code class="docutils literal notranslate"><span class="pre">ESP_BT_L2CAP_OPEN_EVT</span></code>.</p></li>
+<li><p>This function must be called after <code class="docutils literal notranslate"><span class="pre">esp_bt_l2cap_init()</span></code> and before <code class="docutils literal notranslate"><span class="pre">esp_bt_l2cap_deinit()</span></code>.</p></li>
+</ul>
+</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cntl_flag</strong> -- <strong>[in]</strong> Lower 16-bit security settings mask. </p></li>
+<li><p><strong>local_psm</strong> -- <strong>[in]</strong> Dynamic PSM.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>other: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_bt_l2cap_stop_all_srvv">
+<span id="_CPPv325esp_bt_l2cap_stop_all_srvv"></span><span id="_CPPv225esp_bt_l2cap_stop_all_srvv"></span><span id="esp_bt_l2cap_stop_all_srv__void"></span><span class="target" id="esp__l2cap__bt__api_8h_1a73149edc252391f4127de6a806eb1e7a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_stop_all_srv</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_bt_l2cap_stop_all_srvv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This function stops all L2CAP servers. The operation will close all active L2CAP connection first, then the callback function will be called with ESP_BT_L2CAP_CLOSE_EVT, and the number of ESP_BT_L2CAP_CLOSE_EVT is equal to the number of connection. When the operation is completed, the callback is called with ESP_BT_L2CAP_SRV_STOP_EVT. This function must be called after esp_bt_l2cap_init() successful and before esp_bt_l2cap_deinit(). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>other: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421esp_bt_l2cap_stop_srv8uint16_t">
+<span id="_CPPv321esp_bt_l2cap_stop_srv8uint16_t"></span><span id="_CPPv221esp_bt_l2cap_stop_srv8uint16_t"></span><span id="esp_bt_l2cap_stop_srv__uint16_t"></span><span class="target" id="esp__l2cap__bt__api_8h_1a67f5f34f5ae616d46dbfffbe03da1bb5"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_stop_srv</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">local_psm</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421esp_bt_l2cap_stop_srv8uint16_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This function stops a specific L2CAP server. The operation will close all active L2CAP connection first on the specific L2CAP server, then the callback function will be called with ESP_BT_L2CAP_CLOSE_EVT, and the number of ESP_BT_L2CAP_CLOSE_EVT is equal to the number of connection. When the operation is completed, the callback is called with ESP_BT_L2CAP_SRV_STOP_EVT. This function must be called after esp_bt_l2cap_init() successful and before esp_bt_l2cap_deinit(). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>local_psm</strong> -- <strong>[in]</strong> Dynamic PSM.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>other: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_bt_l2cap_vfs_registerv">
+<span id="_CPPv325esp_bt_l2cap_vfs_registerv"></span><span id="_CPPv225esp_bt_l2cap_vfs_registerv"></span><span id="esp_bt_l2cap_vfs_register__void"></span><span class="target" id="esp__l2cap__bt__api_8h_1a70914d1ee075a4dbb9a9ebaa71c39d8d"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_vfs_register</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_bt_l2cap_vfs_registerv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This function is used to register VFS. Only supports write, read and close. When the operation is completed, the callback function will be called with ESP_BT_L2CAP_VFS_REGISTER_EVT. This function must be called after esp_bt_l2cap_init() successful and before esp_bt_l2cap_deinit(). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>other: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_bt_l2cap_vfs_unregisterv">
+<span id="_CPPv327esp_bt_l2cap_vfs_unregisterv"></span><span id="_CPPv227esp_bt_l2cap_vfs_unregisterv"></span><span id="esp_bt_l2cap_vfs_unregister__void"></span><span class="target" id="esp__l2cap__bt__api_8h_1adf776db19929b3459f2776faff1ba7f5"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_vfs_unregister</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_bt_l2cap_vfs_unregisterv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This function is used to unregister VFS. When the operation is completed, the callback function will be called with ESP_BT_L2CAP_VFS_UNREGISTER_EVT. This function must be called after esp_bt_l2cap_init() successful and before esp_bt_l2cap_deinit(). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>other: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv432esp_bt_l2cap_get_protocol_statusP30esp_bt_l2cap_protocol_status_t">
+<span id="_CPPv332esp_bt_l2cap_get_protocol_statusP30esp_bt_l2cap_protocol_status_t"></span><span id="_CPPv232esp_bt_l2cap_get_protocol_statusP30esp_bt_l2cap_protocol_status_t"></span><span id="esp_bt_l2cap_get_protocol_status__esp_bt_l2cap_protocol_status_tP"></span><span class="target" id="esp__l2cap__bt__api_8h_1a8b625a921a831363dd42aea7ff882226"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_get_protocol_status</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv430esp_bt_l2cap_protocol_status_t" title="esp_bt_l2cap_protocol_status_t"><span class="n"><span class="pre">esp_bt_l2cap_protocol_status_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">status</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv432esp_bt_l2cap_get_protocol_statusP30esp_bt_l2cap_protocol_status_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This function is used to get the status of L2CAP. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>status</strong> -- <strong>[out]</strong> - l2cap status</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>other: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="unions">
+<h3>Unions<a class="headerlink" href="#unions" title="Permalink to this heading"></a></h3>
+<dl class="cpp union">
+<dt class="sig sig-object cpp" id="_CPPv423esp_bt_l2cap_cb_param_t">
+<span id="_CPPv323esp_bt_l2cap_cb_param_t"></span><span id="_CPPv223esp_bt_l2cap_cb_param_t"></span><span class="target" id="unionesp__bt__l2cap__cb__param__t"></span><span class="k"><span class="pre">union</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_cb_param_t</span></span></span><a class="headerlink" href="#_CPPv423esp_bt_l2cap_cb_param_t" title="Permalink to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;esp_l2cap_bt_api.h&gt;</em></div>
+<p>L2CAP callback parameters union. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t4initE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t4initE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t4initE"></span><span id="esp_bt_l2cap_cb_param_t::init__esp_bt_l2cap_cb_param_t::l2cap_init_evt_param"></span><span class="target" id="unionesp__bt__l2cap__cb__param__t_1a4e160bc0cda76ac6dcd4719eba83dc58"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423esp_bt_l2cap_cb_param_t" title="esp_bt_l2cap_cb_param_t"><span class="n"><span class="pre">esp_bt_l2cap_cb_param_t</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_init_evt_paramE" title="esp_bt_l2cap_cb_param_t::l2cap_init_evt_param"><span class="n"><span class="pre">l2cap_init_evt_param</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">init</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t4initE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP callback param of ESP_BT_L2CAP_INIT_EVT </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t6uninitE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t6uninitE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t6uninitE"></span><span id="esp_bt_l2cap_cb_param_t::uninit__esp_bt_l2cap_cb_param_t::l2cap_uninit_evt_param"></span><span class="target" id="unionesp__bt__l2cap__cb__param__t_1ae7032ddb566a507026fd2843ffcb9182"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423esp_bt_l2cap_cb_param_t" title="esp_bt_l2cap_cb_param_t"><span class="n"><span class="pre">esp_bt_l2cap_cb_param_t</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N23esp_bt_l2cap_cb_param_t22l2cap_uninit_evt_paramE" title="esp_bt_l2cap_cb_param_t::l2cap_uninit_evt_param"><span class="n"><span class="pre">l2cap_uninit_evt_param</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">uninit</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t6uninitE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP callback param of ESP_BT_L2CAP_UNINIT_EVT </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t4openE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t4openE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t4openE"></span><span id="esp_bt_l2cap_cb_param_t::open__esp_bt_l2cap_cb_param_t::l2cap_open_evt_param"></span><span class="target" id="unionesp__bt__l2cap__cb__param__t_1af032396819c7bba65b4df531b366f041"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423esp_bt_l2cap_cb_param_t" title="esp_bt_l2cap_cb_param_t"><span class="n"><span class="pre">esp_bt_l2cap_cb_param_t</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_paramE" title="esp_bt_l2cap_cb_param_t::l2cap_open_evt_param"><span class="n"><span class="pre">l2cap_open_evt_param</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">open</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t4openE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP callback param of ESP_BT_L2CAP_OPEN_EVT </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t5closeE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t5closeE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t5closeE"></span><span id="esp_bt_l2cap_cb_param_t::close__esp_bt_l2cap_cb_param_t::l2cap_close_evt_param"></span><span class="target" id="unionesp__bt__l2cap__cb__param__t_1a722d0cda4f4ce6abcdf63b3995493385"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423esp_bt_l2cap_cb_param_t" title="esp_bt_l2cap_cb_param_t"><span class="n"><span class="pre">esp_bt_l2cap_cb_param_t</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_paramE" title="esp_bt_l2cap_cb_param_t::l2cap_close_evt_param"><span class="n"><span class="pre">l2cap_close_evt_param</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">close</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t5closeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP callback param of ESP_BT_L2CAP_CLOSE_EVT </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t5startE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t5startE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t5startE"></span><span id="esp_bt_l2cap_cb_param_t::start__esp_bt_l2cap_cb_param_t::l2cap_start_evt_param"></span><span class="target" id="unionesp__bt__l2cap__cb__param__t_1a07e11507770fca560372e7d75b0c2c0f"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423esp_bt_l2cap_cb_param_t" title="esp_bt_l2cap_cb_param_t"><span class="n"><span class="pre">esp_bt_l2cap_cb_param_t</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_paramE" title="esp_bt_l2cap_cb_param_t::l2cap_start_evt_param"><span class="n"><span class="pre">l2cap_start_evt_param</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">start</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t5startE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP callback param of ESP_BT_L2CAP_START_EVT </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t7cl_initE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t7cl_initE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t7cl_initE"></span><span id="esp_bt_l2cap_cb_param_t::cl_init__esp_bt_l2cap_cb_param_t::l2cap_cl_init_evt_param"></span><span class="target" id="unionesp__bt__l2cap__cb__param__t_1a18ea5babeec89844e1b00e0b11621e76"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423esp_bt_l2cap_cb_param_t" title="esp_bt_l2cap_cb_param_t"><span class="n"><span class="pre">esp_bt_l2cap_cb_param_t</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_paramE" title="esp_bt_l2cap_cb_param_t::l2cap_cl_init_evt_param"><span class="n"><span class="pre">l2cap_cl_init_evt_param</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cl_init</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t7cl_initE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP callback param of ESP_BT_L2CAP_CL_INIT_EVT </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t8srv_stopE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t8srv_stopE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t8srv_stopE"></span><span id="esp_bt_l2cap_cb_param_t::srv_stop__esp_bt_l2cap_cb_param_t::l2cap_srv_stop_evt_param"></span><span class="target" id="unionesp__bt__l2cap__cb__param__t_1a01b77c2d814c46e3d01fd73b157fbf17"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423esp_bt_l2cap_cb_param_t" title="esp_bt_l2cap_cb_param_t"><span class="n"><span class="pre">esp_bt_l2cap_cb_param_t</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_paramE" title="esp_bt_l2cap_cb_param_t::l2cap_srv_stop_evt_param"><span class="n"><span class="pre">l2cap_srv_stop_evt_param</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">srv_stop</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t8srv_stopE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP callback param of ESP_BT_L2CAP_SRV_STOP_EVT </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t12vfs_registerE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t12vfs_registerE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t12vfs_registerE"></span><span id="esp_bt_l2cap_cb_param_t::vfs_register__esp_bt_l2cap_cb_param_t::l2cap_vfs_register_evt_param"></span><span class="target" id="unionesp__bt__l2cap__cb__param__t_1aa0e5ec4f8c824850da60fa90f5b9a896"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423esp_bt_l2cap_cb_param_t" title="esp_bt_l2cap_cb_param_t"><span class="n"><span class="pre">esp_bt_l2cap_cb_param_t</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N23esp_bt_l2cap_cb_param_t28l2cap_vfs_register_evt_paramE" title="esp_bt_l2cap_cb_param_t::l2cap_vfs_register_evt_param"><span class="n"><span class="pre">l2cap_vfs_register_evt_param</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vfs_register</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t12vfs_registerE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP callback param of ESP_BT_L2CAP_VFS_REGISTER_EVT </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t14vfs_unregisterE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t14vfs_unregisterE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t14vfs_unregisterE"></span><span id="esp_bt_l2cap_cb_param_t::vfs_unregister__esp_bt_l2cap_cb_param_t::l2cap_vfs_unregister_evt_param"></span><span class="target" id="unionesp__bt__l2cap__cb__param__t_1aa698fdc2ce96d171894a045044d220db"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423esp_bt_l2cap_cb_param_t" title="esp_bt_l2cap_cb_param_t"><span class="n"><span class="pre">esp_bt_l2cap_cb_param_t</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N23esp_bt_l2cap_cb_param_t30l2cap_vfs_unregister_evt_paramE" title="esp_bt_l2cap_cb_param_t::l2cap_vfs_unregister_evt_param"><span class="n"><span class="pre">l2cap_vfs_unregister_evt_param</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vfs_unregister</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t14vfs_unregisterE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP callback param of ESP_BT_L2CAP_VFS_UNREGISTER_EVT </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_paramE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_paramE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_paramE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_cl_init_evt_param"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__cl__init__evt__param"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l2cap_cl_init_evt_param</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_paramE" title="Permalink to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;esp_l2cap_bt_api.h&gt;</em></div>
+<p>ESP_BT_L2CAP_CL_INIT_EVT. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_param6statusE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_param6statusE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_param6statusE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_cl_init_evt_param::status__esp_bt_l2cap_status_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__cl__init__evt__param_1a22af2a292d82287db691ed2c3db61e5d"></span><a class="reference internal" href="#_CPPv421esp_bt_l2cap_status_t" title="esp_bt_l2cap_status_t"><span class="n"><span class="pre">esp_bt_l2cap_status_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">status</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_param6statusE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>status </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_param6handleE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_param6handleE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_param6handleE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_cl_init_evt_param::handle__uint32_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__cl__init__evt__param_1a0ff4c1c4b8f2ce636f5b663f3a5d87ca"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">handle</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_param6handleE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The connection handle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_param6sec_idE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_param6sec_idE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_param6sec_idE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_cl_init_evt_param::sec_id__uint8_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__cl__init__evt__param_1a0a055a2d2f75f74ae45c9f7f842b8219"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sec_id</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t23l2cap_cl_init_evt_param6sec_idE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>security ID used by this server </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_paramE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_paramE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_paramE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_close_evt_param"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__close__evt__param"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l2cap_close_evt_param</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_paramE" title="Permalink to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;esp_l2cap_bt_api.h&gt;</em></div>
+<p>ESP_BT_L2CAP_CLOSE_EVT. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_param6statusE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_param6statusE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_param6statusE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_close_evt_param::status__esp_bt_l2cap_status_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__close__evt__param_1a9f9bea82c29dd34700448cc7b40f1f35"></span><a class="reference internal" href="#_CPPv421esp_bt_l2cap_status_t" title="esp_bt_l2cap_status_t"><span class="n"><span class="pre">esp_bt_l2cap_status_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">status</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_param6statusE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>status </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_param6handleE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_param6handleE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_param6handleE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_close_evt_param::handle__uint32_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__close__evt__param_1a42a405e8e3ea3e2dfa240dce790a5dc1"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">handle</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_param6handleE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The connection handle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_param5asyncE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_param5asyncE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_param5asyncE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_close_evt_param::async__b"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__close__evt__param_1a2cd5b5e0d40bff5a41734e5ca324e729"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">async</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_close_evt_param5asyncE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>FALSE, if local initiates disconnect </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_init_evt_paramE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t20l2cap_init_evt_paramE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t20l2cap_init_evt_paramE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_init_evt_param"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__init__evt__param"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l2cap_init_evt_param</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_init_evt_paramE" title="Permalink to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;esp_l2cap_bt_api.h&gt;</em></div>
+<p>ESP_BT_L2CAP_INIT_EVT. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_init_evt_param6statusE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t20l2cap_init_evt_param6statusE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t20l2cap_init_evt_param6statusE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_init_evt_param::status__esp_bt_l2cap_status_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__init__evt__param_1aed429c413cb51f99ee219b13a9a9da10"></span><a class="reference internal" href="#_CPPv421esp_bt_l2cap_status_t" title="esp_bt_l2cap_status_t"><span class="n"><span class="pre">esp_bt_l2cap_status_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">status</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_init_evt_param6statusE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>status </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_paramE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_paramE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_paramE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_open_evt_param"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__open__evt__param"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l2cap_open_evt_param</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_paramE" title="Permalink to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;esp_l2cap_bt_api.h&gt;</em></div>
+<p>ESP_BT_L2CAP_OPEN_EVT. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param6statusE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param6statusE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param6statusE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_open_evt_param::status__esp_bt_l2cap_status_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__open__evt__param_1aad7d4a652d9d2df4dcbdc922420e8627"></span><a class="reference internal" href="#_CPPv421esp_bt_l2cap_status_t" title="esp_bt_l2cap_status_t"><span class="n"><span class="pre">esp_bt_l2cap_status_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">status</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param6statusE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>status </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param6handleE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param6handleE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param6handleE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_open_evt_param::handle__uint32_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__open__evt__param_1aea46fa0c89990e6f62aecad3d6b482d7"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">handle</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param6handleE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The connection handle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param2fdE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param2fdE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param2fdE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_open_evt_param::fd__i"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__open__evt__param_1adb48adfe091a1aeea7bacd5514788c9f"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fd</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param2fdE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>File descriptor 
+
+ </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param7rem_bdaE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param7rem_bdaE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param7rem_bdaE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_open_evt_param::rem_bda__esp_bd_addr_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__open__evt__param_1a53edb2d53f3c7415d8a7d7661dd6316a"></span><a class="reference internal" href="esp_bt_defs.html#_CPPv413esp_bd_addr_t" title="esp_bd_addr_t"><span class="n"><span class="pre">esp_bd_addr_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rem_bda</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param7rem_bdaE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The peer address </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param6tx_mtuE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param6tx_mtuE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param6tx_mtuE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_open_evt_param::tx_mtu__int32_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__open__evt__param_1a466aca2ccabe95cae1e948b4b867fdc1"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tx_mtu</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t20l2cap_open_evt_param6tx_mtuE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The transmit MTU </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_paramE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_paramE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_paramE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_srv_stop_evt_param"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__srv__stop__evt__param"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l2cap_srv_stop_evt_param</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_paramE" title="Permalink to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;esp_l2cap_bt_api.h&gt;</em></div>
+<p>ESP_BT_L2CAP_SRV_STOP_EVT. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_param6statusE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_param6statusE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_param6statusE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_srv_stop_evt_param::status__esp_bt_l2cap_status_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__srv__stop__evt__param_1af103dadfb4e98ea35177290183329298"></span><a class="reference internal" href="#_CPPv421esp_bt_l2cap_status_t" title="esp_bt_l2cap_status_t"><span class="n"><span class="pre">esp_bt_l2cap_status_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">status</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_param6statusE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>status </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_param3psmE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_param3psmE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_param3psmE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_srv_stop_evt_param::psm__uint16_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__srv__stop__evt__param_1aeaf438e5cf7ed2230726d93424d84019"></span><span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">psm</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t24l2cap_srv_stop_evt_param3psmE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>local psm </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_paramE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_paramE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_paramE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_start_evt_param"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__start__evt__param"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l2cap_start_evt_param</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_paramE" title="Permalink to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;esp_l2cap_bt_api.h&gt;</em></div>
+<p>ESP_BT_L2CAP_START_EVT. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_param6statusE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_param6statusE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_param6statusE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_start_evt_param::status__esp_bt_l2cap_status_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__start__evt__param_1ade1337aa223668d77c565a57ddc5b6fa"></span><a class="reference internal" href="#_CPPv421esp_bt_l2cap_status_t" title="esp_bt_l2cap_status_t"><span class="n"><span class="pre">esp_bt_l2cap_status_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">status</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_param6statusE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>status </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_param6handleE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_param6handleE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_param6handleE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_start_evt_param::handle__uint32_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__start__evt__param_1a472e94d13457c45ffda34b8ea739a551"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">handle</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_param6handleE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The connection handle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_param6sec_idE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_param6sec_idE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_param6sec_idE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_start_evt_param::sec_id__uint8_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__start__evt__param_1a016d21205e7d3b3fb640b006f604553c"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sec_id</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t21l2cap_start_evt_param6sec_idE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>security ID used by this server </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t22l2cap_uninit_evt_paramE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t22l2cap_uninit_evt_paramE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t22l2cap_uninit_evt_paramE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_uninit_evt_param"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__uninit__evt__param"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l2cap_uninit_evt_param</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t22l2cap_uninit_evt_paramE" title="Permalink to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;esp_l2cap_bt_api.h&gt;</em></div>
+<p>ESP_BT_L2CAP_UNINIT_EVT. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t22l2cap_uninit_evt_param6statusE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t22l2cap_uninit_evt_param6statusE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t22l2cap_uninit_evt_param6statusE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_uninit_evt_param::status__esp_bt_l2cap_status_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__uninit__evt__param_1a3619919792dae71c8c30082f44843a03"></span><a class="reference internal" href="#_CPPv421esp_bt_l2cap_status_t" title="esp_bt_l2cap_status_t"><span class="n"><span class="pre">esp_bt_l2cap_status_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">status</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t22l2cap_uninit_evt_param6statusE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>status </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t28l2cap_vfs_register_evt_paramE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t28l2cap_vfs_register_evt_paramE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t28l2cap_vfs_register_evt_paramE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_vfs_register_evt_param"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__vfs__register__evt__param"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l2cap_vfs_register_evt_param</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t28l2cap_vfs_register_evt_paramE" title="Permalink to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;esp_l2cap_bt_api.h&gt;</em></div>
+<p>ESP_BT_L2CAP_VFS_REGISTER_EVT. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t28l2cap_vfs_register_evt_param6statusE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t28l2cap_vfs_register_evt_param6statusE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t28l2cap_vfs_register_evt_param6statusE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_vfs_register_evt_param::status__esp_bt_l2cap_status_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__vfs__register__evt__param_1a35a93f594603f2e96600a6b304f6d7b4"></span><a class="reference internal" href="#_CPPv421esp_bt_l2cap_status_t" title="esp_bt_l2cap_status_t"><span class="n"><span class="pre">esp_bt_l2cap_status_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">status</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t28l2cap_vfs_register_evt_param6statusE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>status </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t30l2cap_vfs_unregister_evt_paramE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t30l2cap_vfs_unregister_evt_paramE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t30l2cap_vfs_unregister_evt_paramE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_vfs_unregister_evt_param"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__vfs__unregister__evt__param"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l2cap_vfs_unregister_evt_param</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t30l2cap_vfs_unregister_evt_paramE" title="Permalink to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;esp_l2cap_bt_api.h&gt;</em></div>
+<p>ESP_BT_L2CAP_VFS_UNREGISTER_EVT. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_param_t30l2cap_vfs_unregister_evt_param6statusE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_param_t30l2cap_vfs_unregister_evt_param6statusE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_param_t30l2cap_vfs_unregister_evt_param6statusE"></span><span id="esp_bt_l2cap_cb_param_t::l2cap_vfs_unregister_evt_param::status__esp_bt_l2cap_status_t"></span><span class="target" id="structesp__bt__l2cap__cb__param__t_1_1l2cap__vfs__unregister__evt__param_1a36ea204f13ac697e98dd7a699a1da7c5"></span><a class="reference internal" href="#_CPPv421esp_bt_l2cap_status_t" title="esp_bt_l2cap_status_t"><span class="n"><span class="pre">esp_bt_l2cap_status_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">status</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_param_t30l2cap_vfs_unregister_evt_param6statusE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>status </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv430esp_bt_l2cap_protocol_status_t">
+<span id="_CPPv330esp_bt_l2cap_protocol_status_t"></span><span id="_CPPv230esp_bt_l2cap_protocol_status_t"></span><span id="esp_bt_l2cap_protocol_status_t"></span><span class="target" id="structesp__bt__l2cap__protocol__status__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_protocol_status_t</span></span></span><a class="headerlink" href="#_CPPv430esp_bt_l2cap_protocol_status_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP status parameters. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30esp_bt_l2cap_protocol_status_t12l2cap_initedE">
+<span id="_CPPv3N30esp_bt_l2cap_protocol_status_t12l2cap_initedE"></span><span id="_CPPv2N30esp_bt_l2cap_protocol_status_t12l2cap_initedE"></span><span id="esp_bt_l2cap_protocol_status_t::l2cap_inited__b"></span><span class="target" id="structesp__bt__l2cap__protocol__status__t_1a221d4c7c4c36e811223ae65d2db5b00f"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l2cap_inited</span></span></span><a class="headerlink" href="#_CPPv4N30esp_bt_l2cap_protocol_status_t12l2cap_initedE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>l2cap initialization </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30esp_bt_l2cap_protocol_status_t8conn_numE">
+<span id="_CPPv3N30esp_bt_l2cap_protocol_status_t8conn_numE"></span><span id="_CPPv2N30esp_bt_l2cap_protocol_status_t8conn_numE"></span><span id="esp_bt_l2cap_protocol_status_t::conn_num__uint8_t"></span><span class="target" id="structesp__bt__l2cap__protocol__status__t_1a9cf79fd4a795b920b3a61e1732ff504f"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">conn_num</span></span></span><a class="headerlink" href="#_CPPv4N30esp_bt_l2cap_protocol_status_t8conn_numE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Number of connections </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_BT_L2CAP_SEC_NONE">
+<span class="target" id="esp__l2cap__bt__api_8h_1a2532e0ef997586d6d60fa9d72d8e38f1"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_SEC_NONE</span></span></span><a class="headerlink" href="#c.ESP_BT_L2CAP_SEC_NONE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>No security </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_BT_L2CAP_SEC_AUTHORIZE">
+<span class="target" id="esp__l2cap__bt__api_8h_1ac455d4575bd735206090809318fee574"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_SEC_AUTHORIZE</span></span></span><a class="headerlink" href="#c.ESP_BT_L2CAP_SEC_AUTHORIZE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Authorization required </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_BT_L2CAP_SEC_AUTHENTICATE">
+<span class="target" id="esp__l2cap__bt__api_8h_1a89c2da013caeb0b08749359eb0eb9d8a"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_SEC_AUTHENTICATE</span></span></span><a class="headerlink" href="#c.ESP_BT_L2CAP_SEC_AUTHENTICATE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Authentication required </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_BT_L2CAP_SEC_ENCRYPT">
+<span class="target" id="esp__l2cap__bt__api_8h_1a8fc156a93de0ed66939497f2682c1297"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_SEC_ENCRYPT</span></span></span><a class="headerlink" href="#c.ESP_BT_L2CAP_SEC_ENCRYPT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Encryption required </p>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv425esp_bt_l2cap_cntl_flags_t">
+<span id="_CPPv325esp_bt_l2cap_cntl_flags_t"></span><span id="_CPPv225esp_bt_l2cap_cntl_flags_t"></span><span id="esp_bt_l2cap_cntl_flags_t"></span><span class="target" id="esp__l2cap__bt__api_8h_1a3d7cf260eefec6676c1414a212436e0a"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_cntl_flags_t</span></span></span><a class="headerlink" href="#_CPPv425esp_bt_l2cap_cntl_flags_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP control flags type </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv417esp_bt_l2cap_cb_t">
+<span id="_CPPv317esp_bt_l2cap_cb_t"></span><span id="_CPPv217esp_bt_l2cap_cb_t"></span><span id="esp_bt_l2cap_cb_t"></span><span class="target" id="esp__l2cap__bt__api_8h_1a183e69140e888f80c5fd3baa575a8996"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_cb_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv423esp_bt_l2cap_cb_event_t" title="esp_bt_l2cap_cb_event_t"><span class="n"><span class="pre">esp_bt_l2cap_cb_event_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423esp_bt_l2cap_cb_param_t" title="esp_bt_l2cap_cb_param_t"><span class="n"><span class="pre">esp_bt_l2cap_cb_param_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv417esp_bt_l2cap_cb_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP callback function type. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Param event<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>[in]</strong> Event type </p>
+</dd>
+<dt class="field-even">Param param<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>[in]</strong> Point to callback parameter, currently is union type </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv421esp_bt_l2cap_status_t">
+<span id="_CPPv321esp_bt_l2cap_status_t"></span><span id="_CPPv221esp_bt_l2cap_status_t"></span><span class="target" id="esp__l2cap__bt__api_8h_1a1efed652fd0ca8db6c3fa77dc39875ae"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_status_t</span></span></span><a class="headerlink" href="#_CPPv421esp_bt_l2cap_status_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP operation success and failure codes. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bt_l2cap_status_t20ESP_BT_L2CAP_SUCCESSE">
+<span id="_CPPv3N21esp_bt_l2cap_status_t20ESP_BT_L2CAP_SUCCESSE"></span><span id="_CPPv2N21esp_bt_l2cap_status_t20ESP_BT_L2CAP_SUCCESSE"></span><span class="target" id="esp__l2cap__bt__api_8h_1a1efed652fd0ca8db6c3fa77dc39875aea5aaafca8f7da4714ad72596248452e40"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_SUCCESS</span></span></span><a class="headerlink" href="#_CPPv4N21esp_bt_l2cap_status_t20ESP_BT_L2CAP_SUCCESSE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Successful operation. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bt_l2cap_status_t20ESP_BT_L2CAP_FAILUREE">
+<span id="_CPPv3N21esp_bt_l2cap_status_t20ESP_BT_L2CAP_FAILUREE"></span><span id="_CPPv2N21esp_bt_l2cap_status_t20ESP_BT_L2CAP_FAILUREE"></span><span class="target" id="esp__l2cap__bt__api_8h_1a1efed652fd0ca8db6c3fa77dc39875aeafa3ff64ea822578fc9a85319f05e2c36"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_FAILURE</span></span></span><a class="headerlink" href="#_CPPv4N21esp_bt_l2cap_status_t20ESP_BT_L2CAP_FAILUREE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Generic failure. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bt_l2cap_status_t17ESP_BT_L2CAP_BUSYE">
+<span id="_CPPv3N21esp_bt_l2cap_status_t17ESP_BT_L2CAP_BUSYE"></span><span id="_CPPv2N21esp_bt_l2cap_status_t17ESP_BT_L2CAP_BUSYE"></span><span class="target" id="esp__l2cap__bt__api_8h_1a1efed652fd0ca8db6c3fa77dc39875aea1c0f48a083b7cfd68ddcec0b8d2d8490"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_BUSY</span></span></span><a class="headerlink" href="#_CPPv4N21esp_bt_l2cap_status_t17ESP_BT_L2CAP_BUSYE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Temporarily can not handle this request. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bt_l2cap_status_t24ESP_BT_L2CAP_NO_RESOURCEE">
+<span id="_CPPv3N21esp_bt_l2cap_status_t24ESP_BT_L2CAP_NO_RESOURCEE"></span><span id="_CPPv2N21esp_bt_l2cap_status_t24ESP_BT_L2CAP_NO_RESOURCEE"></span><span class="target" id="esp__l2cap__bt__api_8h_1a1efed652fd0ca8db6c3fa77dc39875aea372c06b86eabf5a40c2c8183449609c5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_NO_RESOURCE</span></span></span><a class="headerlink" href="#_CPPv4N21esp_bt_l2cap_status_t24ESP_BT_L2CAP_NO_RESOURCEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>No more resource </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bt_l2cap_status_t22ESP_BT_L2CAP_NEED_INITE">
+<span id="_CPPv3N21esp_bt_l2cap_status_t22ESP_BT_L2CAP_NEED_INITE"></span><span id="_CPPv2N21esp_bt_l2cap_status_t22ESP_BT_L2CAP_NEED_INITE"></span><span class="target" id="esp__l2cap__bt__api_8h_1a1efed652fd0ca8db6c3fa77dc39875aea58b5e7faaaac91044760deaf1a2b8acf"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_NEED_INIT</span></span></span><a class="headerlink" href="#_CPPv4N21esp_bt_l2cap_status_t22ESP_BT_L2CAP_NEED_INITE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP module shall init first </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bt_l2cap_status_t24ESP_BT_L2CAP_NEED_DEINITE">
+<span id="_CPPv3N21esp_bt_l2cap_status_t24ESP_BT_L2CAP_NEED_DEINITE"></span><span id="_CPPv2N21esp_bt_l2cap_status_t24ESP_BT_L2CAP_NEED_DEINITE"></span><span class="target" id="esp__l2cap__bt__api_8h_1a1efed652fd0ca8db6c3fa77dc39875aea9cdbda768d8d61d95c929b395b62edf2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_NEED_DEINIT</span></span></span><a class="headerlink" href="#_CPPv4N21esp_bt_l2cap_status_t24ESP_BT_L2CAP_NEED_DEINITE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP module shall deinit first </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bt_l2cap_status_t26ESP_BT_L2CAP_NO_CONNECTIONE">
+<span id="_CPPv3N21esp_bt_l2cap_status_t26ESP_BT_L2CAP_NO_CONNECTIONE"></span><span id="_CPPv2N21esp_bt_l2cap_status_t26ESP_BT_L2CAP_NO_CONNECTIONE"></span><span class="target" id="esp__l2cap__bt__api_8h_1a1efed652fd0ca8db6c3fa77dc39875aea0795795aa33375af4af3828c4fdef7fa"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_NO_CONNECTION</span></span></span><a class="headerlink" href="#_CPPv4N21esp_bt_l2cap_status_t26ESP_BT_L2CAP_NO_CONNECTIONE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Connection may have been closed </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bt_l2cap_status_t22ESP_BT_L2CAP_NO_SERVERE">
+<span id="_CPPv3N21esp_bt_l2cap_status_t22ESP_BT_L2CAP_NO_SERVERE"></span><span id="_CPPv2N21esp_bt_l2cap_status_t22ESP_BT_L2CAP_NO_SERVERE"></span><span class="target" id="esp__l2cap__bt__api_8h_1a1efed652fd0ca8db6c3fa77dc39875aea5c699c8ce558b6dff4a1ffeaa34f77c4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_NO_SERVER</span></span></span><a class="headerlink" href="#_CPPv4N21esp_bt_l2cap_status_t22ESP_BT_L2CAP_NO_SERVERE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>No server </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv423esp_bt_l2cap_cb_event_t">
+<span id="_CPPv323esp_bt_l2cap_cb_event_t"></span><span id="_CPPv223esp_bt_l2cap_cb_event_t"></span><span class="target" id="esp__l2cap__bt__api_8h_1aa28bcf4a362553b6ec01364fb087c6a5"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bt_l2cap_cb_event_t</span></span></span><a class="headerlink" href="#_CPPv423esp_bt_l2cap_cb_event_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>L2CAP callback function events. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_event_t21ESP_BT_L2CAP_INIT_EVTE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_event_t21ESP_BT_L2CAP_INIT_EVTE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_event_t21ESP_BT_L2CAP_INIT_EVTE"></span><span class="target" id="esp__l2cap__bt__api_8h_1aa28bcf4a362553b6ec01364fb087c6a5a22c998edc19927a720bec5dc7ca74a51"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_INIT_EVT</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_event_t21ESP_BT_L2CAP_INIT_EVTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>When L2CAP is initialized, the event comes </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_event_t23ESP_BT_L2CAP_UNINIT_EVTE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_event_t23ESP_BT_L2CAP_UNINIT_EVTE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_event_t23ESP_BT_L2CAP_UNINIT_EVTE"></span><span class="target" id="esp__l2cap__bt__api_8h_1aa28bcf4a362553b6ec01364fb087c6a5af83770e6eace89ac811bfb34df8b8b86"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_UNINIT_EVT</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_event_t23ESP_BT_L2CAP_UNINIT_EVTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>When L2CAP is deinitialized, the event comes </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_event_t21ESP_BT_L2CAP_OPEN_EVTE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_event_t21ESP_BT_L2CAP_OPEN_EVTE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_event_t21ESP_BT_L2CAP_OPEN_EVTE"></span><span class="target" id="esp__l2cap__bt__api_8h_1aa28bcf4a362553b6ec01364fb087c6a5a6e14eb6b14d69587ce97c6e1bf6eb548"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_OPEN_EVT</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_event_t21ESP_BT_L2CAP_OPEN_EVTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>When L2CAP Client connection open, the event comes </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_event_t22ESP_BT_L2CAP_CLOSE_EVTE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_event_t22ESP_BT_L2CAP_CLOSE_EVTE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_event_t22ESP_BT_L2CAP_CLOSE_EVTE"></span><span class="target" id="esp__l2cap__bt__api_8h_1aa28bcf4a362553b6ec01364fb087c6a5a02fec6cb6a05e62a982b1b139d4dadcc"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_CLOSE_EVT</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_event_t22ESP_BT_L2CAP_CLOSE_EVTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>When L2CAP connection closed, the event comes </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_event_t22ESP_BT_L2CAP_START_EVTE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_event_t22ESP_BT_L2CAP_START_EVTE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_event_t22ESP_BT_L2CAP_START_EVTE"></span><span class="target" id="esp__l2cap__bt__api_8h_1aa28bcf4a362553b6ec01364fb087c6a5a2de9be8446d9363d0247687e59de1429"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_START_EVT</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_event_t22ESP_BT_L2CAP_START_EVTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>When L2CAP server started, the event comes </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_event_t24ESP_BT_L2CAP_CL_INIT_EVTE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_event_t24ESP_BT_L2CAP_CL_INIT_EVTE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_event_t24ESP_BT_L2CAP_CL_INIT_EVTE"></span><span class="target" id="esp__l2cap__bt__api_8h_1aa28bcf4a362553b6ec01364fb087c6a5a71ed08272e3aeb17a6e46ae10a86b756"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_CL_INIT_EVT</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_event_t24ESP_BT_L2CAP_CL_INIT_EVTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>When L2CAP client initiated a connection, the event comes </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_event_t25ESP_BT_L2CAP_SRV_STOP_EVTE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_event_t25ESP_BT_L2CAP_SRV_STOP_EVTE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_event_t25ESP_BT_L2CAP_SRV_STOP_EVTE"></span><span class="target" id="esp__l2cap__bt__api_8h_1aa28bcf4a362553b6ec01364fb087c6a5a24c8377af59950ebe24beaf2be3d13f5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_SRV_STOP_EVT</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_event_t25ESP_BT_L2CAP_SRV_STOP_EVTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>When L2CAP server stopped, the event comes </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_event_t29ESP_BT_L2CAP_VFS_REGISTER_EVTE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_event_t29ESP_BT_L2CAP_VFS_REGISTER_EVTE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_event_t29ESP_BT_L2CAP_VFS_REGISTER_EVTE"></span><span class="target" id="esp__l2cap__bt__api_8h_1aa28bcf4a362553b6ec01364fb087c6a5a4e86f904cc82d0d3a6fb695d0fab659a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_VFS_REGISTER_EVT</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_event_t29ESP_BT_L2CAP_VFS_REGISTER_EVTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>When L2CAP VFS register, the event comes </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_bt_l2cap_cb_event_t31ESP_BT_L2CAP_VFS_UNREGISTER_EVTE">
+<span id="_CPPv3N23esp_bt_l2cap_cb_event_t31ESP_BT_L2CAP_VFS_UNREGISTER_EVTE"></span><span id="_CPPv2N23esp_bt_l2cap_cb_event_t31ESP_BT_L2CAP_VFS_UNREGISTER_EVTE"></span><span class="target" id="esp__l2cap__bt__api_8h_1aa28bcf4a362553b6ec01364fb087c6a5a7f7f6d5acdeae4db28395ebae6183055"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BT_L2CAP_VFS_UNREGISTER_EVT</span></span></span><a class="headerlink" href="#_CPPv4N23esp_bt_l2cap_cb_event_t31ESP_BT_L2CAP_VFS_UNREGISTER_EVTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>When L2CAP VFS unregister, the event comes </p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Bluetooth® Classic L2CAP API (api-reference/bluetooth/esp_l2cap_bt)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Bluetooth® Classic L2CAP API (api-reference/bluetooth/esp_l2cap_bt)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="esp_hidh.html" class="btn btn-neutral float-left" title="Bluetooth® HID Host API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="esp_sdp.html" class="btn btn-neutral float-right" title="Bluetooth® SDP API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

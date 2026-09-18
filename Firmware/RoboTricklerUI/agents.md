@@ -3,6 +3,7 @@
    Review the example code of these paths first:
    - `C:\Users\ripper121\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.11\libraries` look yourself for the Espressif ESP32 core VERSION
    - `C:\Users\ripper121\Documents\Arduino\libraries`
+   - `C:\Users\ripper121\Documents\GitHub\RoboTrickler\Doc\esp-idf-en-v5.5.5`
 
       Reuse existing solutions when possible. If no suitable solution exists, implement new code in the style and structure of the examples.
 

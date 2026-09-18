@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPIFFS Filesystem - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/storage/spiffs.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/storage/spiffs';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Virtual Filesystem Component" href="vfs.html" />
+    <link rel="prev" title="Partitions API" href="partition.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Storage API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="fatfs.html">FAT Filesystem Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fatfsgen.html">Generating and Parsing FATFS on Host</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mass_mfg.html">Manufacturing Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_flash.html">Non-Volatile Storage Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_bootloader.html">NVS Bootloader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_encryption.html">NVS Encryption</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_partition_gen.html">NVS Partition Generator Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_partition_parse.html">NVS Partition Parser Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdmmc.html">SD/SDIO/MMC Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="partition.html">Partitions API</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">SPIFFS Filesystem</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#notes">Notes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tools">Tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See Also</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-example">Application Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#high-level-api-reference">High-level API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="vfs.html">Virtual Filesystem Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wear-levelling.html">Wear Levelling API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="storage-security.html">Storage Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Storage API</a></li>
+      <li class="breadcrumb-item active">SPIFFS Filesystem</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/storage/spiffs.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="spiffs-filesystem">
+<h1>SPIFFS Filesystem<a class="headerlink" href="#spiffs-filesystem" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/storage/spiffs.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>SPIFFS is a file system intended for SPI NOR flash devices on embedded targets. It supports wear levelling, file system consistency checks, and more.</p>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>Currently, SPIFFS does not support directories, it produces a flat structure. If SPIFFS is mounted under <code class="docutils literal notranslate"><span class="pre">/spiffs</span></code>, then creating a file with the path <code class="docutils literal notranslate"><span class="pre">/spiffs/tmp/myfile.txt</span></code> will create a file called <code class="docutils literal notranslate"><span class="pre">/tmp/myfile.txt</span></code> in SPIFFS, instead of <code class="docutils literal notranslate"><span class="pre">myfile.txt</span></code> in the directory <code class="docutils literal notranslate"><span class="pre">/spiffs/tmp</span></code>.</p></li>
+<li><p>It is not a real-time stack. One write operation might take much longer than another.</p></li>
+<li><p>For now, it does not detect or handle bad blocks.</p></li>
+<li><p>SPIFFS is able to reliably utilize only around 75% of assigned partition space.</p></li>
+<li><p>When the filesystem is running out of space, the garbage collector is trying to find free space by scanning the filesystem multiple times, which can take up to several seconds per write function call, depending on required space. This is caused by the SPIFFS design and the issue has been reported multiple times (e.g., <a class="reference external" href="https://github.com/espressif/esp-idf/issues/1737">here</a>) and in the official <a class="reference external" href="https://github.com/pellepl/spiffs/issues/">SPIFFS github repository</a>. The issue can be partially mitigated by the <a class="reference external" href="https://github.com/pellepl/spiffs/wiki/Configure-spiffs">SPIFFS configuration</a>.</p></li>
+<li><p>When the garbage collector attempts to reclaim space by scanning the entire filesystem multiple times (usually 10 times by default), during each scan, the garbage collector frees up one block if available. Therefore, if the maximum number of runs set for the garbage collector is 'n' (configured by the SPIFFS_GC_MAX_RUNS option located in <a class="reference external" href="https://github.com/pellepl/spiffs/wiki/Configure-spiffs">SPIFFS configuration</a>), then n times the block size will become available for data writing. If you attempt to write data exceeding n times the block size, the write operation may fail and return an error.</p></li>
+<li><p>When the chip experiences a power loss during a file system operation it could result in SPIFFS corruption. However the file system still might be recovered via <code class="docutils literal notranslate"><span class="pre">esp_spiffs_check</span></code> function. More details in the official SPIFFS <a class="reference external" href="https://github.com/pellepl/spiffs/wiki/FAQ">FAQ</a>.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="tools">
+<h2>Tools<a class="headerlink" href="#tools" title="Permalink to this heading"></a></h2>
+<section id="spiffsgen-py">
+<span id="spiffs-generator"></span><h3><code class="docutils literal notranslate"><span class="pre">spiffsgen.py</span></code><a class="headerlink" href="#spiffsgen-py" title="Permalink to this heading"></a></h3>
+<p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/spiffs/spiffsgen.py">spiffsgen.py</a> is a write-only Python SPIFFS implementation used to create filesystem images from the contents of a host folder. To use <code class="docutils literal notranslate"><span class="pre">spiffsgen.py</span></code>, open Terminal and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">spiffsgen</span><span class="o">.</span><span class="n">py</span> <span class="o">&lt;</span><span class="n">image_size</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">base_dir</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">output_file</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The required arguments are as follows:</p>
+<ul class="simple">
+<li><p><strong>image_size</strong>: size of the partition onto which the created SPIFFS image will be flashed.</p></li>
+<li><p><strong>base_dir</strong>: directory for which the SPIFFS image needs to be created.</p></li>
+<li><p><strong>output_file</strong>: SPIFFS image output file.</p></li>
+</ul>
+<p>There are also other arguments that control image generation. Documentation on these arguments can be found in the tool's help:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">spiffsgen</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+<p>These optional arguments correspond to a possible SPIFFS build configuration. To generate the right image, please make sure that you use the same arguments/configuration as were used to build SPIFFS. As a guide, the help output indicates the SPIFFS build configuration to which the argument corresponds. In cases when these arguments are not specified, the default values shown in the help output will be used.</p>
+<p>When the image is created, it can be flashed using <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code> or <code class="docutils literal notranslate"><span class="pre">parttool.py</span></code>.</p>
+<p>Aside from invoking the <code class="docutils literal notranslate"><span class="pre">spiffsgen.py</span></code> standalone by manually running it from the command line or a script, it is also possible to invoke <code class="docutils literal notranslate"><span class="pre">spiffsgen.py</span></code> directly from the build system by calling <code class="docutils literal notranslate"><span class="pre">spiffs_create_partition_image</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spiffs_create_partition_image</span><span class="p">(</span><span class="o">&lt;</span><span class="n">partition</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">base_dir</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">FLASH_IN_PROJECT</span><span class="p">]</span> <span class="p">[</span><span class="n">DEPENDS</span> <span class="n">dep</span> <span class="n">dep</span> <span class="n">dep</span><span class="o">...</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This is more convenient as the build configuration is automatically passed to the tool, ensuring that the generated image is valid for that build. An example of this is while the <strong>image_size</strong> is required for the standalone invocation, only the <strong>partition</strong> name is required when using <code class="docutils literal notranslate"><span class="pre">spiffs_create_partition_image</span></code> -- the image size is automatically obtained from the project's partition table.</p>
+<p><code class="docutils literal notranslate"><span class="pre">spiffs_create_partition_image</span></code> must be called from one of the component <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> files.</p>
+<p>Optionally, users can opt to have the image automatically flashed together with the app binaries, partition tables, etc. on <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">flash</span></code> by specifying <code class="docutils literal notranslate"><span class="pre">FLASH_IN_PROJECT</span></code>.  For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spiffs_create_partition_image</span><span class="p">(</span><span class="n">my_spiffs_partition</span> <span class="n">my_folder</span> <span class="n">FLASH_IN_PROJECT</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If FLASH_IN_PROJECT/SPIFFS_IMAGE_FLASH_IN_PROJECT is not specified, the image will still be generated, but you will have to flash it manually using <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code>, <code class="docutils literal notranslate"><span class="pre">parttool.py</span></code>, or a custom build system target.</p>
+<p>There are cases where the contents of the base directory itself is generated at build time. Users can use DEPENDS/SPIFFS_IMAGE_DEPENDS to specify targets that should be executed before generating the image:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">add_custom_target</span><span class="p">(</span><span class="n">dep</span> <span class="n">COMMAND</span> <span class="o">...</span><span class="p">)</span>
+
+<span class="n">spiffs_create_partition_image</span><span class="p">(</span><span class="n">my_spiffs_partition</span> <span class="n">my_folder</span> <span class="n">DEPENDS</span> <span class="n">dep</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For an example, see <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/spiffsgen">storage/spiffsgen</a>. This example demonstrates how to use the SPIFFS image generation tool to automatically create an SPIFFS image from a host folder during building.</p>
+</section>
+<section id="mkspiffs">
+<h3><code class="docutils literal notranslate"><span class="pre">mkspiffs</span></code><a class="headerlink" href="#mkspiffs" title="Permalink to this heading"></a></h3>
+<p>Another tool for creating SPIFFS partition images is <a class="reference external" href="https://github.com/igrr/mkspiffs">mkspiffs</a>. Similar to <code class="docutils literal notranslate"><span class="pre">spiffsgen.py</span></code>, it can be used to create an image from a given folder and then flash that image using <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code></p>
+<p>For that, you need to obtain the following parameters:</p>
+<ul class="simple">
+<li><p><strong>Block Size</strong>: 4096 (standard for SPI Flash)</p></li>
+<li><p><strong>Page Size</strong>: 256 (standard for SPI Flash)</p></li>
+<li><p><strong>Image Size</strong>: Size of the partition in bytes (can be obtained from a partition table)</p></li>
+<li><p><strong>Partition Offset</strong>: Starting address of the partition (can be obtained from a partition table)</p></li>
+</ul>
+<p>To pack a folder into a 1-Megabyte image, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkspiffs</span> <span class="o">-</span><span class="n">c</span> <span class="p">[</span><span class="n">src_folder</span><span class="p">]</span> <span class="o">-</span><span class="n">b</span> <span class="mi">4096</span> <span class="o">-</span><span class="n">p</span> <span class="mi">256</span> <span class="o">-</span><span class="n">s</span> <span class="mh">0x100000</span> <span class="n">spiffs</span><span class="o">.</span><span class="n">bin</span>
+</pre></div>
+</div>
+<p>To flash the image onto ESP32 at offset 0x110000, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">esptool</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">chip</span> <span class="n">esp32</span> <span class="o">--</span><span class="n">port</span> <span class="p">[</span><span class="n">port</span><span class="p">]</span> <span class="o">--</span><span class="n">baud</span> <span class="p">[</span><span class="n">baud</span><span class="p">]</span> <span class="n">write_flash</span> <span class="o">-</span><span class="n">z</span> <span class="mh">0x110000</span> <span class="n">spiffs</span><span class="o">.</span><span class="n">bin</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can configure the <code class="docutils literal notranslate"><span class="pre">write_flash</span></code> command of <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code> to <a class="reference external" href="https://docs.espressif.com/projects/esptool/en/latest/esptool/advanced-options.html#custom-spi-pin-configuration">write the spiffs data to an external SPI flash chip</a> using the <code class="docutils literal notranslate"><span class="pre">--spi-connection</span> <span class="pre">&lt;CLK&gt;,&lt;Q&gt;,&lt;D&gt;,&lt;HD&gt;,&lt;CS&gt;</span></code> option. Just specify the GPIO pins assigned to the external flash, e.g., <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">esptool.py</span> <span class="pre">write_flash</span> <span class="pre">--spi-connection</span> <span class="pre">6,7,8,9,11</span> <span class="pre">-z</span> <span class="pre">0x110000</span> <span class="pre">spiffs.bin</span></code>.</p>
+</div>
+<section id="notes-on-which-spiffs-tool-to-use">
+<h4>Notes on Which SPIFFS Tool to Use<a class="headerlink" href="#notes-on-which-spiffs-tool-to-use" title="Permalink to this heading"></a></h4>
+<p>The two tools presented above offer very similar functionality. However, there are reasons to prefer one over the other, depending on the use case.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">spiffsgen.py</span></code> in the following cases:</p>
+<ol class="arabic simple">
+<li><p>If you want to simply generate a SPIFFS image during the build. <code class="docutils literal notranslate"><span class="pre">spiffsgen.py</span></code> makes it very convenient by providing functions/commands from the build system itself.</p></li>
+<li><p>If the host has no C/C++ compiler available, because <code class="docutils literal notranslate"><span class="pre">spiffsgen.py</span></code> does not require compilation.</p></li>
+</ol>
+<p>Use <code class="docutils literal notranslate"><span class="pre">mkspiffs</span></code> in the following cases:</p>
+<ol class="arabic simple">
+<li><p>If you need to unpack SPIFFS images in addition to image generation. For now, it is not possible with <code class="docutils literal notranslate"><span class="pre">spiffsgen.py</span></code>.</p></li>
+<li><p>If you have an environment where a Python interpreter is not available, but a host compiler is available. Otherwise, a pre-compiled <code class="docutils literal notranslate"><span class="pre">mkspiffs</span></code> binary can do the job. However, there is no build system integration for <code class="docutils literal notranslate"><span class="pre">mkspiffs</span></code> and the user has to do the corresponding work: compiling <code class="docutils literal notranslate"><span class="pre">mkspiffs</span></code> during build (if a pre-compiled binary is not used), creating build rules/targets for the output files, passing proper parameters to the tool, etc.</p></li>
+</ol>
+</section>
+</section>
+</section>
+<section id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../api-guides/partition-tables.html"><span class="doc">Partition Table documentation</span></a></p></li>
+</ul>
+</section>
+<section id="application-example">
+<h2>Application Example<a class="headerlink" href="#application-example" title="Permalink to this heading"></a></h2>
+<p>An example of using SPIFFS is provided in the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/spiffs">storage/spiffs</a> directory. This example initializes and mounts a SPIFFS partition, then writes and reads data from it using POSIX and C library APIs. See the README.md file in the example directory for more information.</p>
+</section>
+<section id="high-level-api-reference">
+<h2>High-level API Reference<a class="headerlink" href="#high-level-api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/spiffs/include/esp_spiffs.h">components/spiffs/include/esp_spiffs.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_spiffs.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">spiffs</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">spiffs</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES spiffs
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES spiffs
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423esp_vfs_spiffs_registerPK21esp_vfs_spiffs_conf_t">
+<span id="_CPPv323esp_vfs_spiffs_registerPK21esp_vfs_spiffs_conf_t"></span><span id="_CPPv223esp_vfs_spiffs_registerPK21esp_vfs_spiffs_conf_t"></span><span id="esp_vfs_spiffs_register__esp_vfs_spiffs_conf_tCP"></span><span class="target" id="esp__spiffs_8h_1a22884e61c20b1eb47b2433384c142b0b"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_vfs_spiffs_register</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv421esp_vfs_spiffs_conf_t" title="esp_vfs_spiffs_conf_t"><span class="n"><span class="pre">esp_vfs_spiffs_conf_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">conf</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423esp_vfs_spiffs_registerPK21esp_vfs_spiffs_conf_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Register and mount SPIFFS to VFS with given path prefix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conf</strong> -- Pointer to <a class="reference internal" href="#structesp__vfs__spiffs__conf__t"><span class="std std-ref">esp_vfs_spiffs_conf_t</span></a> configuration structure</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK if success</p></li>
+<li><p>ESP_ERR_NO_MEM if objects could not be allocated</p></li>
+<li><p>ESP_ERR_INVALID_STATE if already mounted or partition is encrypted</p></li>
+<li><p>ESP_ERR_NOT_FOUND if partition for SPIFFS was not found</p></li>
+<li><p>ESP_FAIL if mount or format fails </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_vfs_spiffs_unregisterPKc">
+<span id="_CPPv325esp_vfs_spiffs_unregisterPKc"></span><span id="_CPPv225esp_vfs_spiffs_unregisterPKc"></span><span id="esp_vfs_spiffs_unregister__cCP"></span><span class="target" id="esp__spiffs_8h_1a5102c648b052fc2db4dfa65737fbe888"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_vfs_spiffs_unregister</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">partition_label</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_vfs_spiffs_unregisterPKc" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Unregister and unmount SPIFFS from VFS</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>partition_label</strong> -- Same label as passed to esp_vfs_spiffs_register.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK if successful</p></li>
+<li><p>ESP_ERR_INVALID_STATE already unregistered </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_spiffs_mountedPKc">
+<span id="_CPPv318esp_spiffs_mountedPKc"></span><span id="_CPPv218esp_spiffs_mountedPKc"></span><span id="esp_spiffs_mounted__cCP"></span><span class="target" id="esp__spiffs_8h_1a7d717d49ab365dd4e13578f97bd4825d"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_spiffs_mounted</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">partition_label</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_spiffs_mountedPKc" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check if SPIFFS is mounted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>partition_label</strong> -- Optional, label of the partition to check. If not specified, first partition with subtype=spiffs is used.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>true if mounted</p></li>
+<li><p>false if not mounted </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417esp_spiffs_formatPKc">
+<span id="_CPPv317esp_spiffs_formatPKc"></span><span id="_CPPv217esp_spiffs_formatPKc"></span><span id="esp_spiffs_format__cCP"></span><span class="target" id="esp__spiffs_8h_1a25c9968f444715dca56e77797b7c8eb8"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_spiffs_format</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">partition_label</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417esp_spiffs_formatPKc" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Format the SPIFFS partition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>partition_label</strong> -- Same label as passed to esp_vfs_spiffs_register. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK if successful</p></li>
+<li><p>ESP_FAIL on error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415esp_spiffs_infoPKcP6size_tP6size_t">
+<span id="_CPPv315esp_spiffs_infoPKcP6size_tP6size_t"></span><span id="_CPPv215esp_spiffs_infoPKcP6size_tP6size_t"></span><span id="esp_spiffs_info__cCP.sP.sP"></span><span class="target" id="esp__spiffs_8h_1ae0c787bee510e91a7ba299fd5313d02a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_spiffs_info</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">partition_label</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">total_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">used_bytes</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415esp_spiffs_infoPKcP6size_tP6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get information for SPIFFS</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>partition_label</strong> -- Same label as passed to esp_vfs_spiffs_register </p></li>
+<li><p><strong>total_bytes</strong> -- <strong>[out]</strong> Size of the file system </p></li>
+<li><p><strong>used_bytes</strong> -- <strong>[out]</strong> Current used bytes in the file system</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK if success</p></li>
+<li><p>ESP_ERR_INVALID_STATE if not mounted </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416esp_spiffs_checkPKc">
+<span id="_CPPv316esp_spiffs_checkPKc"></span><span id="_CPPv216esp_spiffs_checkPKc"></span><span id="esp_spiffs_check__cCP"></span><span class="target" id="esp__spiffs_8h_1a2373774a1991c4b6ce38637e0fb3e870"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_spiffs_check</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">partition_label</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416esp_spiffs_checkPKc" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check integrity of SPIFFS</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>partition_label</strong> -- Same label as passed to esp_vfs_spiffs_register </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK if successful</p></li>
+<li><p>ESP_ERR_INVALID_STATE if not mounted</p></li>
+<li><p>ESP_FAIL on error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413esp_spiffs_gcPKc6size_t">
+<span id="_CPPv313esp_spiffs_gcPKc6size_t"></span><span id="_CPPv213esp_spiffs_gcPKc6size_t"></span><span id="esp_spiffs_gc__cCP.s"></span><span class="target" id="esp__spiffs_8h_1aa3e3a07e45b18b966a7365860b66d1e4"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_spiffs_gc</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">partition_label</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size_to_gc</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413esp_spiffs_gcPKc6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Perform garbage collection in SPIFFS partition. </p>
+<p>Call this function to run GC and ensure that at least the given amount of space is available in the partition. This function will fail with ESP_ERR_NOT_FINISHED if it is not possible to reclaim the requested space (that is, not enough free or deleted pages in the filesystem). This function will also fail if it fails to reclaim the requested space after CONFIG_SPIFFS_GC_MAX_RUNS number of GC iterations. On one GC iteration, SPIFFS will erase one logical block (4kB). Therefore the value of CONFIG_SPIFFS_GC_MAX_RUNS should be set at least to the maximum expected size_to_gc, divided by 4096. For example, if the application expects to make room for a 1MB file and calls esp_spiffs_gc(label, 1024 * 1024), CONFIG_SPIFFS_GC_MAX_RUNS should be set to at least 256. On the other hand, increasing CONFIG_SPIFFS_GC_MAX_RUNS value increases the maximum amount of time for which any SPIFFS GC or write operation may potentially block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>partition_label</strong> -- Label of the partition to be garbage-collected. The partition must be already mounted. </p></li>
+<li><p><strong>size_to_gc</strong> -- The number of bytes that the GC process should attempt to make available. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_NOT_FINISHED if GC fails to reclaim the size given by size_to_gc</p></li>
+<li><p>ESP_ERR_INVALID_STATE if the partition is not mounted</p></li>
+<li><p>ESP_FAIL on all other errors </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv421esp_vfs_spiffs_conf_t">
+<span id="_CPPv321esp_vfs_spiffs_conf_t"></span><span id="_CPPv221esp_vfs_spiffs_conf_t"></span><span id="esp_vfs_spiffs_conf_t"></span><span class="target" id="structesp__vfs__spiffs__conf__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_vfs_spiffs_conf_t</span></span></span><a class="headerlink" href="#_CPPv421esp_vfs_spiffs_conf_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Configuration structure for esp_vfs_spiffs_register. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_vfs_spiffs_conf_t9base_pathE">
+<span id="_CPPv3N21esp_vfs_spiffs_conf_t9base_pathE"></span><span id="_CPPv2N21esp_vfs_spiffs_conf_t9base_pathE"></span><span id="esp_vfs_spiffs_conf_t::base_path__cCP"></span><span class="target" id="structesp__vfs__spiffs__conf__t_1add2c60af836f5dc9526885adc3a3d1c8"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">base_path</span></span></span><a class="headerlink" href="#_CPPv4N21esp_vfs_spiffs_conf_t9base_pathE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>File path prefix associated with the filesystem. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_vfs_spiffs_conf_t15partition_labelE">
+<span id="_CPPv3N21esp_vfs_spiffs_conf_t15partition_labelE"></span><span id="_CPPv2N21esp_vfs_spiffs_conf_t15partition_labelE"></span><span id="esp_vfs_spiffs_conf_t::partition_label__cCP"></span><span class="target" id="structesp__vfs__spiffs__conf__t_1ae228e117d84f2f03ffc947165f3ad10e"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">partition_label</span></span></span><a class="headerlink" href="#_CPPv4N21esp_vfs_spiffs_conf_t15partition_labelE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Optional, label of SPIFFS partition to use. If set to NULL, first partition with subtype=spiffs will be used. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_vfs_spiffs_conf_t9max_filesE">
+<span id="_CPPv3N21esp_vfs_spiffs_conf_t9max_filesE"></span><span id="_CPPv2N21esp_vfs_spiffs_conf_t9max_filesE"></span><span id="esp_vfs_spiffs_conf_t::max_files__s"></span><span class="target" id="structesp__vfs__spiffs__conf__t_1a8498ca07df2b1f8bf23578718fe58d43"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">max_files</span></span></span><a class="headerlink" href="#_CPPv4N21esp_vfs_spiffs_conf_t9max_filesE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Maximum files that could be open at the same time. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_vfs_spiffs_conf_t22format_if_mount_failedE">
+<span id="_CPPv3N21esp_vfs_spiffs_conf_t22format_if_mount_failedE"></span><span id="_CPPv2N21esp_vfs_spiffs_conf_t22format_if_mount_failedE"></span><span id="esp_vfs_spiffs_conf_t::format_if_mount_failed__b"></span><span class="target" id="structesp__vfs__spiffs__conf__t_1af657485432b43e27cf4a983cba3fcccc"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">format_if_mount_failed</span></span></span><a class="headerlink" href="#_CPPv4N21esp_vfs_spiffs_conf_t22format_if_mount_failedE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>If true, it will format the file system if it fails to mount. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=SPIFFS Filesystem (api-reference/storage/spiffs)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=SPIFFS Filesystem (api-reference/storage/spiffs)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="partition.html" class="btn btn-neutral float-left" title="Partitions API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vfs.html" class="btn btn-neutral float-right" title="Virtual Filesystem Component" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

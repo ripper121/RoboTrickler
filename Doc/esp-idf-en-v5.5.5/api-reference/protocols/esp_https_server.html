@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTTPS Server - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/esp_https_server.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/protocols/esp_https_server';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ICMP Echo" href="icmp_echo.html" />
+    <link rel="prev" title="HTTP Server" href="esp_http_server.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Application Protocols</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="asio.html">ASIO Port</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modbus.html">ESP-Modbus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mqtt.html">ESP-MQTT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_tls.html">ESP-TLS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_http_client.html">ESP HTTP Client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_local_ctrl.html">ESP Local Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_serial_slave_link.html">ESP Serial Slave Link</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_crt_bundle.html">ESP x509 Certificate Bundle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_http_server.html">HTTP Server</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">HTTPS Server</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#used-apis">Used APIs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#performance">Performance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#event-handling">Event Handling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#https-server-cert-selection-hook">HTTPS Server Cert Selection Hook</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="icmp_echo.html">ICMP Echo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdns.html">mDNS Service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mbedtls.html">Mbed TLS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#ip-network-layer">IP Network Layer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Application Protocols</a></li>
+      <li class="breadcrumb-item active">HTTPS Server</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/protocols/esp_https_server.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="https-server">
+<h1>HTTPS Server<a class="headerlink" href="#https-server" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/protocols/esp_https_server.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>This component is built on top of <a class="reference internal" href="esp_http_server.html"><span class="doc">HTTP Server</span></a>. The HTTPS server takes advantage of hook registration functions in the regular HTTP server to provide callback function for SSL session.</p>
+<p>All documentation for <a class="reference internal" href="esp_http_server.html"><span class="doc">HTTP Server</span></a> applies also to a server you create this way.</p>
+</section>
+<section id="used-apis">
+<h2>Used APIs<a class="headerlink" href="#used-apis" title="Permalink to this heading"></a></h2>
+<p>The following APIs of <a class="reference internal" href="esp_http_server.html"><span class="doc">HTTP Server</span></a> should not be used with <a class="reference internal" href="#"><span class="doc">HTTPS Server</span></a>, as they are used internally to handle secure sessions and to maintain internal state:</p>
+<ul class="simple">
+<li><p>&quot;send&quot;, &quot;receive&quot; and &quot;pending&quot; callback registration functions - secure socket handling</p>
+<ul>
+<li><p><a class="reference internal" href="esp_http_server.html#_CPPv428httpd_sess_set_send_override14httpd_handle_ti17httpd_send_func_t" title="httpd_sess_set_send_override"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">httpd_sess_set_send_override()</span></code></a></p></li>
+<li><p><a class="reference internal" href="esp_http_server.html#_CPPv428httpd_sess_set_recv_override14httpd_handle_ti17httpd_recv_func_t" title="httpd_sess_set_recv_override"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">httpd_sess_set_recv_override()</span></code></a></p></li>
+<li><p><a class="reference internal" href="esp_http_server.html#_CPPv431httpd_sess_set_pending_override14httpd_handle_ti20httpd_pending_func_t" title="httpd_sess_set_pending_override"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">httpd_sess_set_pending_override()</span></code></a></p></li>
+</ul>
+</li>
+<li><p>&quot;transport context&quot; - both global and session</p>
+<ul>
+<li><p><a class="reference internal" href="esp_http_server.html#_CPPv428httpd_sess_get_transport_ctx14httpd_handle_ti" title="httpd_sess_get_transport_ctx"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">httpd_sess_get_transport_ctx()</span></code></a> - returns SSL used for the session</p></li>
+<li><p><a class="reference internal" href="esp_http_server.html#_CPPv428httpd_sess_set_transport_ctx14httpd_handle_tiPv19httpd_free_ctx_fn_t" title="httpd_sess_set_transport_ctx"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">httpd_sess_set_transport_ctx()</span></code></a></p></li>
+<li><p><a class="reference internal" href="esp_http_server.html#_CPPv430httpd_get_global_transport_ctx14httpd_handle_t" title="httpd_get_global_transport_ctx"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">httpd_get_global_transport_ctx()</span></code></a> - returns the shared SSL context</p></li>
+<li><p><a class="reference internal" href="esp_http_server.html#_CPPv4N12httpd_config20global_transport_ctxE" title="httpd_config::global_transport_ctx"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">httpd_config::global_transport_ctx</span></code></a></p></li>
+<li><p><a class="reference internal" href="esp_http_server.html#_CPPv4N12httpd_config28global_transport_ctx_free_fnE" title="httpd_config::global_transport_ctx_free_fn"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">httpd_config::global_transport_ctx_free_fn</span></code></a></p></li>
+<li><p><a class="reference internal" href="esp_http_server.html#_CPPv4N12httpd_config7open_fnE" title="httpd_config::open_fn"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">httpd_config::open_fn</span></code></a> - used to set up secure sockets</p></li>
+</ul>
+</li>
+</ul>
+<p>Everything else can be used without limitations.</p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
+<p>Please see the example <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/protocols/https_server">protocols/https_server</a> to learn how to set up a secure server.</p>
+<p>Basically, all you need is to generate a certificate, embed it into the firmware, and pass the init struct into the start function after the certificate address and lengths are correctly configured in the init struct.</p>
+<p>The server can be started with or without SSL by changing a flag in the init struct - <a class="reference internal" href="#_CPPv4N16httpd_ssl_config14transport_modeE" title="httpd_ssl_config::transport_mode"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">httpd_ssl_config::transport_mode</span></code></a>. This could be used, e.g., for testing or in trusted environments where you prefer speed over security.</p>
+</section>
+<section id="performance">
+<h2>Performance<a class="headerlink" href="#performance" title="Permalink to this heading"></a></h2>
+<p>The initial session setup can take about two seconds, or more with slower clock speed or more verbose logging. Subsequent requests through the open secure socket are much faster (down to under 100 ms).</p>
+</section>
+<section id="event-handling">
+<h2>Event Handling<a class="headerlink" href="#event-handling" title="Permalink to this heading"></a></h2>
+<p>ESP HTTPS Server has various events for which a handler can be triggered by the <a class="reference internal" href="../system/esp_event.html"><span class="doc">Event Loop Library</span></a> when the particular event occurs. The handler has to be registered using <a class="reference internal" href="../system/esp_event.html#_CPPv426esp_event_handler_register16esp_event_base_t7int32_t19esp_event_handler_tPv" title="esp_event_handler_register"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_handler_register()</span></code></a>. This helps in event handling for ESP HTTPS Server.</p>
+<p><a class="reference internal" href="#_CPPv427esp_https_server_event_id_t" title="esp_https_server_event_id_t"><code class="xref cpp cpp-enum docutils literal notranslate"><span class="pre">esp_https_server_event_id_t</span></code></a> has all the events which can happen for ESP HTTPS server.</p>
+<p>Expected data type for different ESP HTTPS server events in event loop:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>HTTPS_SERVER_EVENT_ERROR          :   <code class="docutils literal notranslate"><span class="pre">esp_https_server_last_error_t</span></code></p></li>
+<li><p>HTTPS_SERVER_EVENT_START          :   <code class="docutils literal notranslate"><span class="pre">NULL</span></code></p></li>
+<li><p>HTTPS_SERVER_EVENT_ON_CONNECTED   :   <code class="docutils literal notranslate"><span class="pre">NULL</span></code></p></li>
+<li><p>HTTPS_SERVER_EVENT_ON_DATA        :   <code class="docutils literal notranslate"><span class="pre">int</span></code></p></li>
+<li><p>HTTPS_SERVER_EVENT_SENT_DATA      :   <code class="docutils literal notranslate"><span class="pre">NULL</span></code></p></li>
+<li><p>HTTPS_SERVER_EVENT_DISCONNECTED   :   <code class="docutils literal notranslate"><span class="pre">NULL</span></code></p></li>
+<li><p>HTTPS_SERVER_EVENT_STOP           :   <code class="docutils literal notranslate"><span class="pre">NULL</span></code></p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/protocols/https_server/simple">protocols/https_server/simple</a> demonstrates how to create an HTTPS server that returns a simple HTML page when visited.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/protocols/https_server/wss_server">protocols/https_server/wss_server</a> demonstrates how to create an SSL server with a simple WebSocket request handler that supports handling multiple clients, PING-PONG mechanism, and sending asynchronous messages to all clients.</p></li>
+</ul>
+</section>
+<section id="https-server-cert-selection-hook">
+<h2>HTTPS Server Cert Selection Hook<a class="headerlink" href="#https-server-cert-selection-hook" title="Permalink to this heading"></a></h2>
+<p>The ESP HTTPS Server component provides an option to set the server certification selection hook. This feature allows you to configure and use a certificate selection callback during server handshake. The callback helps to select a certificate to present to the client based on the TLS extensions supplied in the client hello message, such as ALPN and SNI.</p>
+<p>To enable this feature, please enable <a class="reference internal" href="../kconfig-reference.html#config-esp-https-server-cert-select-hook"><span class="std std-ref">CONFIG_ESP_HTTPS_SERVER_CERT_SELECT_HOOK</span></a> in the ESP HTTPS Server menuconfig. Please note that the ESP-TLS option is only available when Mbedtls is used as the TLS stack for ESP-TLS (default behaviour).</p>
+<p>When enabled, you can set the certificate selection callback using the <a class="reference internal" href="#_CPPv4N16httpd_ssl_config14cert_select_cbE" title="httpd_ssl_config::cert_select_cb"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">httpd_ssl_config::cert_select_cb</span></code></a> member of the <a class="reference internal" href="#_CPPv418httpd_ssl_config_t" title="httpd_ssl_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">httpd_ssl_config_t</span></code></a> structure.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">cert_selection_callback</span><span class="p">(</span><span class="n">mbedtls_ssl_context</span><span class="w"> </span><span class="o">*</span><span class="n">ssl</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">      </span><span class="cm">/* Code that the callback should execute */</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">httpd_ssl_config_t</span><span class="w"> </span><span class="n">cfg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">cert_select_cb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cert_section_callback</span><span class="p">,</span>
+<span class="w">  </span><span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_https_server/include/esp_https_server.h">components/esp_https_server/include/esp_https_server.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_https_server.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_https_server</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_https_server</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_https_server
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_https_server
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415httpd_ssl_startP14httpd_handle_tP18httpd_ssl_config_t">
+<span id="_CPPv315httpd_ssl_startP14httpd_handle_tP18httpd_ssl_config_t"></span><span id="_CPPv215httpd_ssl_startP14httpd_handle_tP18httpd_ssl_config_t"></span><span id="httpd_ssl_start__httpd_handle_tP.httpd_ssl_config_tP"></span><span class="target" id="esp__https__server_8h_1a4ec2bc959441791d6c7e02c5e6c3777d"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">httpd_ssl_start</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="esp_http_server.html#_CPPv414httpd_handle_t" title="httpd_handle_t"><span class="n"><span class="pre">httpd_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">handle</span></span>, <a class="reference internal" href="#_CPPv418httpd_ssl_config_t" title="httpd_ssl_config_t"><span class="n"><span class="pre">httpd_ssl_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">config</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415httpd_ssl_startP14httpd_handle_tP18httpd_ssl_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Create a SSL capable HTTP server (secure mode may be disabled in config)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> -- <strong>[inout]</strong> - server config, must not be const. Does not have to stay valid after calling this function. </p></li>
+<li><p><strong>handle</strong> -- <strong>[out]</strong> - storage for the server handle, must be a valid pointer </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>success </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414httpd_ssl_stop14httpd_handle_t">
+<span id="_CPPv314httpd_ssl_stop14httpd_handle_t"></span><span id="_CPPv214httpd_ssl_stop14httpd_handle_t"></span><span id="httpd_ssl_stop__httpd_handle_t"></span><span class="target" id="esp__https__server_8h_1aa102099700f549ff2b1aa39d996ef751"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">httpd_ssl_stop</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="esp_http_server.html#_CPPv414httpd_handle_t" title="httpd_handle_t"><span class="n"><span class="pre">httpd_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414httpd_ssl_stop14httpd_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stop the server. Blocks until the server is shut down.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- <strong>[in]</strong> </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Server stopped successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid argument</p></li>
+<li><p>ESP_FAIL: Failure to shut down server </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv428esp_https_server_user_cb_arg">
+<span id="_CPPv328esp_https_server_user_cb_arg"></span><span id="_CPPv228esp_https_server_user_cb_arg"></span><span id="esp_https_server_user_cb_arg"></span><span class="target" id="structesp__https__server__user__cb__arg"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_https_server_user_cb_arg</span></span></span><a class="headerlink" href="#_CPPv428esp_https_server_user_cb_arg" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Callback data struct, contains the ESP-TLS connection handle and the connection state at which the callback is executed. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28esp_https_server_user_cb_arg13user_cb_stateE">
+<span id="_CPPv3N28esp_https_server_user_cb_arg13user_cb_stateE"></span><span id="_CPPv2N28esp_https_server_user_cb_arg13user_cb_stateE"></span><span id="esp_https_server_user_cb_arg::user_cb_state__httpd_ssl_user_cb_state_t"></span><span class="target" id="structesp__https__server__user__cb__arg_1adca5327c1c86cb2d02c39a503b033f95"></span><a class="reference internal" href="#_CPPv425httpd_ssl_user_cb_state_t" title="httpd_ssl_user_cb_state_t"><span class="n"><span class="pre">httpd_ssl_user_cb_state_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">user_cb_state</span></span></span><a class="headerlink" href="#_CPPv4N28esp_https_server_user_cb_arg13user_cb_stateE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>State of user callback </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28esp_https_server_user_cb_arg3tlsE">
+<span id="_CPPv3N28esp_https_server_user_cb_arg3tlsE"></span><span id="_CPPv2N28esp_https_server_user_cb_arg3tlsE"></span><span id="esp_https_server_user_cb_arg::tls__esp_tls_tP"></span><span class="target" id="structesp__https__server__user__cb__arg_1a80ccd0d644639677b2001fabc72f0b92"></span><a class="reference internal" href="esp_tls.html#_CPPv49esp_tls_t" title="esp_tls_t"><span class="n"><span class="pre">esp_tls_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">tls</span></span></span><a class="headerlink" href="#_CPPv4N28esp_https_server_user_cb_arg3tlsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>ESP-TLS connection handle </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv416httpd_ssl_config">
+<span id="_CPPv316httpd_ssl_config"></span><span id="_CPPv216httpd_ssl_config"></span><span id="httpd_ssl_config"></span><span class="target" id="structhttpd__ssl__config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">httpd_ssl_config</span></span></span><a class="headerlink" href="#_CPPv416httpd_ssl_config" title="Permalink to this definition"></a><br /></dt>
+<dd><p>HTTPS server config struct</p>
+<p>Please use HTTPD_SSL_CONFIG_DEFAULT() to initialize it. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config5httpdE">
+<span id="_CPPv3N16httpd_ssl_config5httpdE"></span><span id="_CPPv2N16httpd_ssl_config5httpdE"></span><span id="httpd_ssl_config::httpd__httpd_config_t"></span><span class="target" id="structhttpd__ssl__config_1a54c8e7e84e32685dbf5ab9a6b384348e"></span><a class="reference internal" href="esp_http_server.html#_CPPv414httpd_config_t" title="httpd_config_t"><span class="n"><span class="pre">httpd_config_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">httpd</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config5httpdE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Underlying HTTPD server config</p>
+<p>Parameters like task stack size and priority can be adjusted here. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config10servercertE">
+<span id="_CPPv3N16httpd_ssl_config10servercertE"></span><span id="_CPPv2N16httpd_ssl_config10servercertE"></span><span id="httpd_ssl_config::servercert__uint8_tCP"></span><span class="target" id="structhttpd__ssl__config_1afad960f2078f5f96a15811bff5fa366b"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">servercert</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config10servercertE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Server certificate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config14servercert_lenE">
+<span id="_CPPv3N16httpd_ssl_config14servercert_lenE"></span><span id="_CPPv2N16httpd_ssl_config14servercert_lenE"></span><span id="httpd_ssl_config::servercert_len__s"></span><span class="target" id="structhttpd__ssl__config_1a2f53f9ae3ed75b53545d253883b7fbf5"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servercert_len</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config14servercert_lenE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Server certificate byte length </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config10cacert_pemE">
+<span id="_CPPv3N16httpd_ssl_config10cacert_pemE"></span><span id="_CPPv2N16httpd_ssl_config10cacert_pemE"></span><span id="httpd_ssl_config::cacert_pem__uint8_tCP"></span><span class="target" id="structhttpd__ssl__config_1a8daaa9aaf0ec922a58f0038020995db1"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">cacert_pem</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config10cacert_pemE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>CA certificate ((CA used to sign clients, or client cert itself) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config10cacert_lenE">
+<span id="_CPPv3N16httpd_ssl_config10cacert_lenE"></span><span id="_CPPv2N16httpd_ssl_config10cacert_lenE"></span><span id="httpd_ssl_config::cacert_len__s"></span><span class="target" id="structhttpd__ssl__config_1a709f15bceab073c4de491fb853f80cd3"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cacert_len</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config10cacert_lenE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>CA certificate byte length </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config11prvtkey_pemE">
+<span id="_CPPv3N16httpd_ssl_config11prvtkey_pemE"></span><span id="_CPPv2N16httpd_ssl_config11prvtkey_pemE"></span><span id="httpd_ssl_config::prvtkey_pem__uint8_tCP"></span><span class="target" id="structhttpd__ssl__config_1ad6fdea52af76e0c9522b2bb13393031d"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">prvtkey_pem</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config11prvtkey_pemE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Private key </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config11prvtkey_lenE">
+<span id="_CPPv3N16httpd_ssl_config11prvtkey_lenE"></span><span id="_CPPv2N16httpd_ssl_config11prvtkey_lenE"></span><span id="httpd_ssl_config::prvtkey_len__s"></span><span class="target" id="structhttpd__ssl__config_1a3f8e5c64474e1ecccd0e5ee923c55402"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prvtkey_len</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config11prvtkey_lenE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Private key byte length </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config20use_ecdsa_peripheralE">
+<span id="_CPPv3N16httpd_ssl_config20use_ecdsa_peripheralE"></span><span id="_CPPv2N16httpd_ssl_config20use_ecdsa_peripheralE"></span><span id="httpd_ssl_config::use_ecdsa_peripheral__b"></span><span class="target" id="structhttpd__ssl__config_1ab25aabb1dfa5491bf4992f6ecb40c152"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">use_ecdsa_peripheral</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config20use_ecdsa_peripheralE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Use ECDSA peripheral to use private key </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config19ecdsa_key_efuse_blkE">
+<span id="_CPPv3N16httpd_ssl_config19ecdsa_key_efuse_blkE"></span><span id="_CPPv2N16httpd_ssl_config19ecdsa_key_efuse_blkE"></span><span id="httpd_ssl_config::ecdsa_key_efuse_blk__uint8_t"></span><span class="target" id="structhttpd__ssl__config_1a7ee048d362316c5cef051f629f99c822"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ecdsa_key_efuse_blk</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config19ecdsa_key_efuse_blkE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The efuse block where ECDSA key is stored. For SECP384R1 curve, if two blocks are used, set this to the low block and use ecdsa_key_efuse_blk_high for the high block. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config24ecdsa_key_efuse_blk_highE">
+<span id="_CPPv3N16httpd_ssl_config24ecdsa_key_efuse_blk_highE"></span><span id="_CPPv2N16httpd_ssl_config24ecdsa_key_efuse_blk_highE"></span><span id="httpd_ssl_config::ecdsa_key_efuse_blk_high__uint8_t"></span><span class="target" id="structhttpd__ssl__config_1a448256897b8d5d592729ca8f9904cfbf"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ecdsa_key_efuse_blk_high</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config24ecdsa_key_efuse_blk_highE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The high efuse block for ECDSA key (used only for SECP384R1 curve). If not set (0), only ecdsa_key_efuse_blk is used. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config11ecdsa_curveE">
+<span id="_CPPv3N16httpd_ssl_config11ecdsa_curveE"></span><span id="_CPPv2N16httpd_ssl_config11ecdsa_curveE"></span><span id="httpd_ssl_config::ecdsa_curve__esp_tls_ecdsa_curve_t"></span><span class="target" id="structhttpd__ssl__config_1a5a84359ac4ae058b258f5e4851a91c73"></span><a class="reference internal" href="esp_tls.html#_CPPv421esp_tls_ecdsa_curve_t" title="esp_tls_ecdsa_curve_t"><span class="n"><span class="pre">esp_tls_ecdsa_curve_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ecdsa_curve</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config11ecdsa_curveE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>ECDSA curve to use (SECP256R1 or SECP384R1) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config14transport_modeE">
+<span id="_CPPv3N16httpd_ssl_config14transport_modeE"></span><span id="_CPPv2N16httpd_ssl_config14transport_modeE"></span><span id="httpd_ssl_config::transport_mode__httpd_ssl_transport_mode_t"></span><span class="target" id="structhttpd__ssl__config_1ae69828b7f90fb7ddf0ab3aa416ad4937"></span><a class="reference internal" href="#_CPPv426httpd_ssl_transport_mode_t" title="httpd_ssl_transport_mode_t"><span class="n"><span class="pre">httpd_ssl_transport_mode_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transport_mode</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config14transport_modeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Transport Mode (default secure) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config11port_secureE">
+<span id="_CPPv3N16httpd_ssl_config11port_secureE"></span><span id="_CPPv2N16httpd_ssl_config11port_secureE"></span><span id="httpd_ssl_config::port_secure__uint16_t"></span><span class="target" id="structhttpd__ssl__config_1ade1413e50ae737601ce86a7d58dd4910"></span><span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">port_secure</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config11port_secureE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Port used when transport mode is secure (default 443) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config13port_insecureE">
+<span id="_CPPv3N16httpd_ssl_config13port_insecureE"></span><span id="_CPPv2N16httpd_ssl_config13port_insecureE"></span><span id="httpd_ssl_config::port_insecure__uint16_t"></span><span class="target" id="structhttpd__ssl__config_1ac00719cac6bce4de56b89d5c3370344f"></span><span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">port_insecure</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config13port_insecureE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Port used when transport mode is insecure (default 80) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config15session_ticketsE">
+<span id="_CPPv3N16httpd_ssl_config15session_ticketsE"></span><span id="_CPPv2N16httpd_ssl_config15session_ticketsE"></span><span id="httpd_ssl_config::session_tickets__b"></span><span class="target" id="structhttpd__ssl__config_1a62b1a8b314cab4882b1583b82d0c38e9"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">session_tickets</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config15session_ticketsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable tls session tickets </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config18use_secure_elementE">
+<span id="_CPPv3N16httpd_ssl_config18use_secure_elementE"></span><span id="_CPPv2N16httpd_ssl_config18use_secure_elementE"></span><span id="httpd_ssl_config::use_secure_element__b"></span><span class="target" id="structhttpd__ssl__config_1ad436905660e8a2bf710581b317276d48"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">use_secure_element</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config18use_secure_elementE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable secure element for server session </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config7user_cbE">
+<span id="_CPPv3N16httpd_ssl_config7user_cbE"></span><span id="_CPPv2N16httpd_ssl_config7user_cbE"></span><span id="httpd_ssl_config::user_cb__esp_https_server_user_cbP"></span><span class="target" id="structhttpd__ssl__config_1a85caaa1fac7c0e218a25d011810de8f9"></span><a class="reference internal" href="#_CPPv424esp_https_server_user_cb" title="esp_https_server_user_cb"><span class="n"><span class="pre">esp_https_server_user_cb</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">user_cb</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config7user_cbE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User callback for esp_https_server </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config12ssl_userdataE">
+<span id="_CPPv3N16httpd_ssl_config12ssl_userdataE"></span><span id="_CPPv2N16httpd_ssl_config12ssl_userdataE"></span><span id="httpd_ssl_config::ssl_userdata__voidP"></span><span class="target" id="structhttpd__ssl__config_1aadf6177099fd1b10d48a4827d939ec82"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ssl_userdata</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config12ssl_userdataE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User data to add to the ssl context </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config14cert_select_cbE">
+<span id="_CPPv3N16httpd_ssl_config14cert_select_cbE"></span><span id="_CPPv2N16httpd_ssl_config14cert_select_cbE"></span><span id="httpd_ssl_config::cert_select_cb__esp_https_server_cert_select_cb"></span><span class="target" id="structhttpd__ssl__config_1a79ee4a1b5081276fa070b78f37b85346"></span><a class="reference internal" href="#_CPPv431esp_https_server_cert_select_cb" title="esp_https_server_cert_select_cb"><span class="n"><span class="pre">esp_https_server_cert_select_cb</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cert_select_cb</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config14cert_select_cbE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Certificate selection callback to use. The callback is only applicable when CONFIG_ESP_HTTPS_SERVER_CERT_SELECT_HOOK is enabled in menuconfig </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config11alpn_protosE">
+<span id="_CPPv3N16httpd_ssl_config11alpn_protosE"></span><span id="_CPPv2N16httpd_ssl_config11alpn_protosE"></span><span id="httpd_ssl_config::alpn_protos__cCPP"></span><span class="target" id="structhttpd__ssl__config_1a9fe5dd8ebda2c70eb2c18f9c0a400d15"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">alpn_protos</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config11alpn_protosE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Application protocols the server supports in order of preference. Used for negotiating during the TLS handshake, first one the client supports is selected. The data structure must live as long as the https server itself </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16httpd_ssl_config24tls_handshake_timeout_msE">
+<span id="_CPPv3N16httpd_ssl_config24tls_handshake_timeout_msE"></span><span id="_CPPv2N16httpd_ssl_config24tls_handshake_timeout_msE"></span><span id="httpd_ssl_config::tls_handshake_timeout_ms__uint32_t"></span><span class="target" id="structhttpd__ssl__config_1a0e7cf259e72fe8a3141d90c9d33a72cc"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tls_handshake_timeout_ms</span></span></span><a class="headerlink" href="#_CPPv4N16httpd_ssl_config24tls_handshake_timeout_msE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>TLS handshake timeout in milliseconds, default timeout is 10 seconds if not set </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.HTTPD_SSL_CONFIG_CLIENT_AUTH_OPTIONAL_INIT">
+<span class="target" id="esp__https__server_8h_1af20136ba2d0afb7c2eb8b5e0cc67807f"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTPD_SSL_CONFIG_CLIENT_AUTH_OPTIONAL_INIT</span></span></span><a class="headerlink" href="#c.HTTPD_SSL_CONFIG_CLIENT_AUTH_OPTIONAL_INIT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Helper macro for optional client certificate authentication field </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.HTTPD_SSL_CONFIG_DEFAULT">
+<span class="target" id="esp__https__server_8h_1aa2e08d61ccd15a0e357efc85980bf7f2"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTPD_SSL_CONFIG_DEFAULT</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.HTTPD_SSL_CONFIG_DEFAULT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Default config struct init Notes:<ul class="simple">
+<li><p>port is set when starting the server, according to 'transport_mode'</p></li>
+<li><p>one socket uses ~ 40kB RAM with SSL, we reduce the default socket count to 4</p></li>
+<li><p>SSL sockets are usually long-lived, closing LRU prevents pool exhaustion DOS</p></li>
+<li><p>Stack size may need adjustments depending on the user application </p></li>
+</ul>
+</p>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv431esp_https_server_cert_select_cb">
+<span id="_CPPv331esp_https_server_cert_select_cb"></span><span id="_CPPv231esp_https_server_cert_select_cb"></span><span id="esp_https_server_cert_select_cb"></span><span class="target" id="esp__https__server_8h_1a91bf446d61d2933f236063e906d5fed7"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><a class="reference internal" href="esp_tls.html#_CPPv426esp_tls_handshake_callback" title="esp_tls_handshake_callback"><span class="n"><span class="pre">esp_tls_handshake_callback</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_https_server_cert_select_cb</span></span></span><a class="headerlink" href="#_CPPv431esp_https_server_cert_select_cb" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv430esp_https_server_user_cb_arg_t">
+<span id="_CPPv330esp_https_server_user_cb_arg_t"></span><span id="_CPPv230esp_https_server_user_cb_arg_t"></span><span id="esp_https_server_user_cb_arg_t"></span><span class="target" id="esp__https__server_8h_1ab02864f46e862befbf3954eb95170e00"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv428esp_https_server_user_cb_arg" title="esp_https_server_user_cb_arg"><span class="n"><span class="pre">esp_https_server_user_cb_arg</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_https_server_user_cb_arg_t</span></span></span><a class="headerlink" href="#_CPPv430esp_https_server_user_cb_arg_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Callback data struct, contains the ESP-TLS connection handle and the connection state at which the callback is executed. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv429esp_https_server_last_error_t">
+<span id="_CPPv329esp_https_server_last_error_t"></span><span id="_CPPv229esp_https_server_last_error_t"></span><span id="esp_https_server_last_error_t"></span><span class="target" id="esp__https__server_8h_1a3301fa0ce5d1e407559cbf8f9023f9e8"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><a class="reference internal" href="esp_tls.html#_CPPv420esp_tls_last_error_t" title="esp_tls_last_error_t"><span class="n"><span class="pre">esp_tls_last_error_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_https_server_last_error_t</span></span></span><a class="headerlink" href="#_CPPv429esp_https_server_last_error_t" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv424esp_https_server_user_cb">
+<span id="_CPPv324esp_https_server_user_cb"></span><span id="_CPPv224esp_https_server_user_cb"></span><span id="esp_https_server_user_cb"></span><span class="target" id="esp__https__server_8h_1aa3d4e10ff36698b4a362403c757a619b"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_https_server_user_cb</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv430esp_https_server_user_cb_arg_t" title="esp_https_server_user_cb_arg_t"><span class="n"><span class="pre">esp_https_server_user_cb_arg_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">user_cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424esp_https_server_user_cb" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Callback function prototype Can be used to get connection or client information (SSL context) E.g. Client certificate, Socket FD, Connection state, etc. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Param user_cb<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callback data struct </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv418httpd_ssl_config_t">
+<span id="_CPPv318httpd_ssl_config_t"></span><span id="_CPPv218httpd_ssl_config_t"></span><span id="httpd_ssl_config_t"></span><span class="target" id="esp__https__server_8h_1adb2a362d709c6f84f92ceaf31bae8dd0"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv416httpd_ssl_config" title="httpd_ssl_config"><span class="n"><span class="pre">httpd_ssl_config</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">httpd_ssl_config_t</span></span></span><a class="headerlink" href="#_CPPv418httpd_ssl_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</section>
+<section id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv427esp_https_server_event_id_t">
+<span id="_CPPv327esp_https_server_event_id_t"></span><span id="_CPPv227esp_https_server_event_id_t"></span><span class="target" id="esp__https__server_8h_1ac9081b724cb0a0a75e4a9504b25aa10f"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_https_server_event_id_t</span></span></span><a class="headerlink" href="#_CPPv427esp_https_server_event_id_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27esp_https_server_event_id_t24HTTPS_SERVER_EVENT_ERRORE">
+<span id="_CPPv3N27esp_https_server_event_id_t24HTTPS_SERVER_EVENT_ERRORE"></span><span id="_CPPv2N27esp_https_server_event_id_t24HTTPS_SERVER_EVENT_ERRORE"></span><span class="target" id="esp__https__server_8h_1ac9081b724cb0a0a75e4a9504b25aa10fa243b81a50119f73874fbaf574f176ec5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTPS_SERVER_EVENT_ERROR</span></span></span><a class="headerlink" href="#_CPPv4N27esp_https_server_event_id_t24HTTPS_SERVER_EVENT_ERRORE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This event occurs when there are any errors during execution </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27esp_https_server_event_id_t24HTTPS_SERVER_EVENT_STARTE">
+<span id="_CPPv3N27esp_https_server_event_id_t24HTTPS_SERVER_EVENT_STARTE"></span><span id="_CPPv2N27esp_https_server_event_id_t24HTTPS_SERVER_EVENT_STARTE"></span><span class="target" id="esp__https__server_8h_1ac9081b724cb0a0a75e4a9504b25aa10facbc707b27fc5673e01c4b1b1f6ef5aaf"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTPS_SERVER_EVENT_START</span></span></span><a class="headerlink" href="#_CPPv4N27esp_https_server_event_id_t24HTTPS_SERVER_EVENT_STARTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This event occurs when HTTPS Server is started </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27esp_https_server_event_id_t31HTTPS_SERVER_EVENT_ON_CONNECTEDE">
+<span id="_CPPv3N27esp_https_server_event_id_t31HTTPS_SERVER_EVENT_ON_CONNECTEDE"></span><span id="_CPPv2N27esp_https_server_event_id_t31HTTPS_SERVER_EVENT_ON_CONNECTEDE"></span><span class="target" id="esp__https__server_8h_1ac9081b724cb0a0a75e4a9504b25aa10fa5404df2ecd0dbd166291c825827ab4a0"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTPS_SERVER_EVENT_ON_CONNECTED</span></span></span><a class="headerlink" href="#_CPPv4N27esp_https_server_event_id_t31HTTPS_SERVER_EVENT_ON_CONNECTEDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Once the HTTPS Server has been connected to the client </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27esp_https_server_event_id_t26HTTPS_SERVER_EVENT_ON_DATAE">
+<span id="_CPPv3N27esp_https_server_event_id_t26HTTPS_SERVER_EVENT_ON_DATAE"></span><span id="_CPPv2N27esp_https_server_event_id_t26HTTPS_SERVER_EVENT_ON_DATAE"></span><span class="target" id="esp__https__server_8h_1ac9081b724cb0a0a75e4a9504b25aa10fac9170b4a6c02a06810b7f3a7d578908a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTPS_SERVER_EVENT_ON_DATA</span></span></span><a class="headerlink" href="#_CPPv4N27esp_https_server_event_id_t26HTTPS_SERVER_EVENT_ON_DATAE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Occurs when receiving data from the client </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27esp_https_server_event_id_t28HTTPS_SERVER_EVENT_SENT_DATAE">
+<span id="_CPPv3N27esp_https_server_event_id_t28HTTPS_SERVER_EVENT_SENT_DATAE"></span><span id="_CPPv2N27esp_https_server_event_id_t28HTTPS_SERVER_EVENT_SENT_DATAE"></span><span class="target" id="esp__https__server_8h_1ac9081b724cb0a0a75e4a9504b25aa10fa7c147c447655244633ccc275b32245a3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTPS_SERVER_EVENT_SENT_DATA</span></span></span><a class="headerlink" href="#_CPPv4N27esp_https_server_event_id_t28HTTPS_SERVER_EVENT_SENT_DATAE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Occurs when an ESP HTTPS server sends data to the client </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27esp_https_server_event_id_t31HTTPS_SERVER_EVENT_DISCONNECTEDE">
+<span id="_CPPv3N27esp_https_server_event_id_t31HTTPS_SERVER_EVENT_DISCONNECTEDE"></span><span id="_CPPv2N27esp_https_server_event_id_t31HTTPS_SERVER_EVENT_DISCONNECTEDE"></span><span class="target" id="esp__https__server_8h_1ac9081b724cb0a0a75e4a9504b25aa10fa93aa2a44a62e845e3474111b4d3237ac"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTPS_SERVER_EVENT_DISCONNECTED</span></span></span><a class="headerlink" href="#_CPPv4N27esp_https_server_event_id_t31HTTPS_SERVER_EVENT_DISCONNECTEDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The connection has been disconnected </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27esp_https_server_event_id_t23HTTPS_SERVER_EVENT_STOPE">
+<span id="_CPPv3N27esp_https_server_event_id_t23HTTPS_SERVER_EVENT_STOPE"></span><span id="_CPPv2N27esp_https_server_event_id_t23HTTPS_SERVER_EVENT_STOPE"></span><span class="target" id="esp__https__server_8h_1ac9081b724cb0a0a75e4a9504b25aa10fadfa4b7e5e0512ba25760372e331194f5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTPS_SERVER_EVENT_STOP</span></span></span><a class="headerlink" href="#_CPPv4N27esp_https_server_event_id_t23HTTPS_SERVER_EVENT_STOPE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This event occurs when HTTPS Server is stopped </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv426httpd_ssl_transport_mode_t">
+<span id="_CPPv326httpd_ssl_transport_mode_t"></span><span id="_CPPv226httpd_ssl_transport_mode_t"></span><span class="target" id="esp__https__server_8h_1a242d9b88649bb7ab5e2bccb0c29f7b0a"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">httpd_ssl_transport_mode_t</span></span></span><a class="headerlink" href="#_CPPv426httpd_ssl_transport_mode_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26httpd_ssl_transport_mode_t26HTTPD_SSL_TRANSPORT_SECUREE">
+<span id="_CPPv3N26httpd_ssl_transport_mode_t26HTTPD_SSL_TRANSPORT_SECUREE"></span><span id="_CPPv2N26httpd_ssl_transport_mode_t26HTTPD_SSL_TRANSPORT_SECUREE"></span><span class="target" id="esp__https__server_8h_1a242d9b88649bb7ab5e2bccb0c29f7b0aa259964a65412ec30f099b352d53f1851"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTPD_SSL_TRANSPORT_SECURE</span></span></span><a class="headerlink" href="#_CPPv4N26httpd_ssl_transport_mode_t26HTTPD_SSL_TRANSPORT_SECUREE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26httpd_ssl_transport_mode_t28HTTPD_SSL_TRANSPORT_INSECUREE">
+<span id="_CPPv3N26httpd_ssl_transport_mode_t28HTTPD_SSL_TRANSPORT_INSECUREE"></span><span id="_CPPv2N26httpd_ssl_transport_mode_t28HTTPD_SSL_TRANSPORT_INSECUREE"></span><span class="target" id="esp__https__server_8h_1a242d9b88649bb7ab5e2bccb0c29f7b0aaf275918ce93e815564af0eca782a3609"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTPD_SSL_TRANSPORT_INSECURE</span></span></span><a class="headerlink" href="#_CPPv4N26httpd_ssl_transport_mode_t28HTTPD_SSL_TRANSPORT_INSECUREE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv425httpd_ssl_user_cb_state_t">
+<span id="_CPPv325httpd_ssl_user_cb_state_t"></span><span id="_CPPv225httpd_ssl_user_cb_state_t"></span><span class="target" id="esp__https__server_8h_1a9aad3be7ac2119a06b8378901d79875b"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">httpd_ssl_user_cb_state_t</span></span></span><a class="headerlink" href="#_CPPv425httpd_ssl_user_cb_state_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Indicates the state at which the user callback is executed, i.e at session creation or session close. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N25httpd_ssl_user_cb_state_t29HTTPD_SSL_USER_CB_SESS_CREATEE">
+<span id="_CPPv3N25httpd_ssl_user_cb_state_t29HTTPD_SSL_USER_CB_SESS_CREATEE"></span><span id="_CPPv2N25httpd_ssl_user_cb_state_t29HTTPD_SSL_USER_CB_SESS_CREATEE"></span><span class="target" id="esp__https__server_8h_1a9aad3be7ac2119a06b8378901d79875ba1e53ba40b721b4c73c3b34a696f130ef"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTPD_SSL_USER_CB_SESS_CREATE</span></span></span><a class="headerlink" href="#_CPPv4N25httpd_ssl_user_cb_state_t29HTTPD_SSL_USER_CB_SESS_CREATEE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N25httpd_ssl_user_cb_state_t28HTTPD_SSL_USER_CB_SESS_CLOSEE">
+<span id="_CPPv3N25httpd_ssl_user_cb_state_t28HTTPD_SSL_USER_CB_SESS_CLOSEE"></span><span id="_CPPv2N25httpd_ssl_user_cb_state_t28HTTPD_SSL_USER_CB_SESS_CLOSEE"></span><span class="target" id="esp__https__server_8h_1a9aad3be7ac2119a06b8378901d79875bada93397ef43f9ed42d9272e5bf88a4ba"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTPD_SSL_USER_CB_SESS_CLOSE</span></span></span><a class="headerlink" href="#_CPPv4N25httpd_ssl_user_cb_state_t28HTTPD_SSL_USER_CB_SESS_CLOSEE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=HTTPS Server (api-reference/protocols/esp_https_server)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=HTTPS Server (api-reference/protocols/esp_https_server)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="esp_http_server.html" class="btn btn-neutral float-left" title="HTTP Server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="icmp_echo.html" class="btn btn-neutral float-right" title="ICMP Echo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sigma-Delta Modulation (SDM) - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/sdm.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/peripherals/sdm';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="SPI Flash API" href="spi_flash/index.html" />
+    <link rel="prev" title="SDIO Card Slave Driver" href="sdio_slave.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Peripherals API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adc_oneshot.html">Analog to Digital Converter (ADC) Oneshot Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_continuous.html">Analog to Digital Converter (ADC) Continuous Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_calibration.html">Analog to Digital Converter (ADC) Calibration Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clk_tree.html">Clock Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dac.html">Digital To Analog Converter (DAC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gpio.html">GPIO &amp; RTC GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gptimer.html">General Purpose Timer (GPTimer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2c.html">Inter-Integrated Circuit (I2C)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2s.html">Inter-IC Sound (I2S)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lcd/index.html">LCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ledc.html">LED Control (LEDC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mcpwm.html">Motor Control Pulse Width Modulator (MCPWM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pcnt.html">Pulse Counter (PCNT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rmt.html">Remote Control Transceiver (RMT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sd_pullup_requirements.html">SD Pull-up Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdmmc_host.html">SDMMC Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdspi_host.html">SD SPI Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdio_slave.html">SDIO Card Slave Driver</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Sigma-Delta Modulation (SDM)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functional-overview">Functional Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#convert-to-an-analog-signal-optional">Convert to an Analog Signal (Optional)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="spi_flash/index.html">SPI Flash API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_master.html">SPI Master Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_slave.html">SPI Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cap_touch_sens.html">Capacitive Touch Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="twai.html">Two-Wire Automotive Interface (TWAI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uart.html">Universal Asynchronous Receiver/Transmitter (UART)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Peripherals API</a></li>
+      <li class="breadcrumb-item active">Sigma-Delta Modulation (SDM)</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/peripherals/sdm.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sigma-delta-modulation-sdm">
+<h1>Sigma-Delta Modulation (SDM)<a class="headerlink" href="#sigma-delta-modulation-sdm" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/peripherals/sdm.html">[中文]</a></p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h2>
+<p>ESP32 has a second-order sigma-delta modulator, which can generate independent PDM pulses to multiple channels. Please refer to the TRM to check how many hardware channels are available. <a class="footnote-reference brackets" href="#id4" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<p>Delta-sigma modulation converts an analog voltage signal into a pulse frequency, or pulse density, which can be understood as pulse-density modulation (PDM) (refer to <a class="reference external" href="https://en.wikipedia.org/wiki/Delta-sigma_modulation">Delta-sigma modulation on Wikipedia</a>).</p>
+<p>Typically, a Sigma-Delta modulated channel can be used in scenarios like:</p>
+<ul class="simple">
+<li><p>LED dimming</p></li>
+<li><p>Simple DAC (8-bit), with the help of an active RC low-pass filter</p></li>
+<li><p>Class D amplifier, with the help of a half-bridge or full-bridge circuit plus an LC low-pass filter</p></li>
+</ul>
+</section>
+<section id="functional-overview">
+<h2>Functional Overview<a class="headerlink" href="#functional-overview" title="Permalink to this heading"></a></h2>
+<p>The following sections of this document cover the typical steps to install and operate an SDM channel:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#sdm-resource-allocation"><span class="std std-ref">Resource Allocation</span></a> - covers how to initialize and configure an SDM channel and how to recycle the resources when it finishes working.</p></li>
+<li><p><a class="reference internal" href="#sdm-enable-and-disable-channel"><span class="std std-ref">Enable and Disable Channel</span></a> - covers how to enable and disable the channel.</p></li>
+<li><p><a class="reference internal" href="#sdm-set-equivalent-duty-cycle"><span class="std std-ref">Set Pulse Density</span></a> - describes how to set the equivalent duty cycle of the PDM pulses.</p></li>
+<li><p><a class="reference internal" href="#sdm-power-management"><span class="std std-ref">Power Management</span></a> - describes how different source clock selections can affect power consumption.</p></li>
+<li><p><a class="reference internal" href="#sdm-iram-safe"><span class="std std-ref">IRAM Safe</span></a> - lists which functions are supposed to work even when the cache is disabled.</p></li>
+<li><p><a class="reference internal" href="#sdm-thread-safety"><span class="std std-ref">Thread Safety</span></a> - lists which APIs are guaranteed to be thread-safe by the driver.</p></li>
+<li><p><a class="reference internal" href="#sdm-kconfig-options"><span class="std std-ref">Kconfig Options</span></a> - lists the supported Kconfig options that can be used to make a different effect on driver behavior.</p></li>
+</ul>
+<section id="resource-allocation">
+<span id="sdm-resource-allocation"></span><h3>Resource Allocation<a class="headerlink" href="#resource-allocation" title="Permalink to this heading"></a></h3>
+<p>In ESP-IDF, the information and attributes of SDM channels are managed and accessed through specific data structures, where the data structure is called <a class="reference internal" href="#_CPPv420sdm_channel_handle_t" title="sdm_channel_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">sdm_channel_handle_t</span></code></a>. Each channel is capable to output the binary, hardware-generated signal with the sigma-delta modulation. The driver manages all available channels in a pool so that there is no need to manually assign a fixed channel to a GPIO.</p>
+<p>To install an SDM channel, you should call <a class="reference internal" href="#_CPPv415sdm_new_channelPK12sdm_config_tP20sdm_channel_handle_t" title="sdm_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_new_channel()</span></code></a> to get a channel handle. Channel-specific configurations are passed in the <a class="reference internal" href="#_CPPv412sdm_config_t" title="sdm_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">sdm_config_t</span></code></a> structure:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv4N12sdm_config_t8gpio_numE" title="sdm_config_t::gpio_num"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">sdm_config_t::gpio_num</span></code></a> sets the GPIO that the PDM pulses output from.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N12sdm_config_t7clk_srcE" title="sdm_config_t::clk_src"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">sdm_config_t::clk_src</span></code></a> selects the source clock for the SDM module. Note that, all channels should select the same clock source.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N12sdm_config_t14sample_rate_hzE" title="sdm_config_t::sample_rate_hz"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">sdm_config_t::sample_rate_hz</span></code></a> sets the sample rate of the SDM module. A higher sample rate can help to output signals with higher SNR (Signal to Noise Ratio), and easier to restore the original signal after the filter.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N12sdm_config_t10invert_outE" title="sdm_config_t::invert_out"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">sdm_config_t::invert_out</span></code></a> sets whether to invert the output signal.</p></li>
+</ul>
+<p>The function <a class="reference internal" href="#_CPPv415sdm_new_channelPK12sdm_config_tP20sdm_channel_handle_t" title="sdm_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_new_channel()</span></code></a> can fail due to various errors such as insufficient memory, invalid arguments, etc. Specifically, when there are no more free channels (i.e., all hardware SDM channels have been used up), <a class="reference internal" href="../system/esp_err.html#c.ESP_ERR_NOT_FOUND" title="ESP_ERR_NOT_FOUND"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_NOT_FOUND</span></code></a> will be returned.</p>
+<p>If a previously created SDM channel is no longer required, you should recycle it by calling <a class="reference internal" href="#_CPPv415sdm_del_channel20sdm_channel_handle_t" title="sdm_del_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_del_channel()</span></code></a>. It allows the underlying HW channel to be used for other purposes. Before deleting an SDM channel handle, you should disable it by <a class="reference internal" href="#_CPPv419sdm_channel_disable20sdm_channel_handle_t" title="sdm_channel_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_channel_disable()</span></code></a> in advance or make sure it has not been enabled yet by <a class="reference internal" href="#_CPPv418sdm_channel_enable20sdm_channel_handle_t" title="sdm_channel_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_channel_enable()</span></code></a>.</p>
+<section id="creating-an-sdm-channel-with-a-sample-rate-of-1-mhz">
+<h4>Creating an SDM Channel with a Sample Rate of 1 MHz<a class="headerlink" href="#creating-an-sdm-channel-with-a-sample-rate-of-1-mhz" title="Permalink to this heading"></a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="n">sdm_channel_handle_t</span><span class="w"> </span><span class="n">chan</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w"> </span><span class="n">sdm_config_t</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="p">.</span><span class="n">clk_src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SDM_CLK_SRC_DEFAULT</span><span class="p">,</span>
+<span class="w">     </span><span class="p">.</span><span class="n">sample_rate_hz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">     </span><span class="p">.</span><span class="n">gpio_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w"> </span><span class="p">};</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">sdm_new_channel</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">chan</span><span class="p">));</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="enable-and-disable-channel">
+<span id="sdm-enable-and-disable-channel"></span><h3>Enable and Disable Channel<a class="headerlink" href="#enable-and-disable-channel" title="Permalink to this heading"></a></h3>
+<p>Before doing further IO control to the SDM channel, you should enable it first, by calling <a class="reference internal" href="#_CPPv418sdm_channel_enable20sdm_channel_handle_t" title="sdm_channel_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_channel_enable()</span></code></a>. Internally, this function:</p>
+<ul class="simple">
+<li><p>switches the channel state from <strong>init</strong> to <strong>enable</strong></p></li>
+<li><p>acquires a proper power management lock if a specific clock source (e.g., APB clock) is selected. See also <a class="reference internal" href="#sdm-power-management"><span class="std std-ref">Power Management</span></a> for more information.</p></li>
+</ul>
+<p>On the contrary, calling <a class="reference internal" href="#_CPPv419sdm_channel_disable20sdm_channel_handle_t" title="sdm_channel_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_channel_disable()</span></code></a> does the opposite, that is, put the channel back to the <strong>init</strong> state and releases the power management lock.</p>
+</section>
+<section id="set-pulse-density">
+<span id="sdm-set-equivalent-duty-cycle"></span><h3>Set Pulse Density<a class="headerlink" href="#set-pulse-density" title="Permalink to this heading"></a></h3>
+<p>For the output PDM signals, the pulse density decides the output analog voltage that is restored by a low-pass filter. The restored analog voltage from the channel is calculated by <code class="docutils literal notranslate"><span class="pre">Vout</span> <span class="pre">=</span> <span class="pre">VDD_IO</span> <span class="pre">/</span> <span class="pre">256</span> <span class="pre">*</span> <span class="pre">duty</span> <span class="pre">+</span> <span class="pre">VDD_IO</span> <span class="pre">/</span> <span class="pre">2</span></code>. The range of the quantized <code class="docutils literal notranslate"><span class="pre">density</span></code> input parameter of <a class="reference internal" href="#_CPPv429sdm_channel_set_pulse_density20sdm_channel_handle_t6int8_t" title="sdm_channel_set_pulse_density"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_channel_set_pulse_density()</span></code></a> is from -128 to 127 (8-bit signed integer). Depending on the value of the <code class="docutils literal notranslate"><span class="pre">density</span></code> parameter, the duty cycle of the output signal will be changed accordingly. For example, if a zero value is set, then the output signal's duty will be around 50%.</p>
+</section>
+<section id="power-management">
+<span id="sdm-power-management"></span><h3>Power Management<a class="headerlink" href="#power-management" title="Permalink to this heading"></a></h3>
+<p>When power management is enabled (i.e., <a class="reference internal" href="../kconfig-reference.html#config-pm-enable"><span class="std std-ref">CONFIG_PM_ENABLE</span></a> is on), the system will adjust the APB frequency before going into Light-sleep, thus potentially changing the sample rate of the sigma-delta modulator.</p>
+<p>However, the driver can prevent the system from changing APB frequency by acquiring a power management lock of type <a class="reference internal" href="../system/power_management.html#_CPPv4N18esp_pm_lock_type_t19ESP_PM_APB_FREQ_MAXE" title="ESP_PM_APB_FREQ_MAX"><code class="xref cpp cpp-enumerator docutils literal notranslate"><span class="pre">ESP_PM_APB_FREQ_MAX</span></code></a>. Whenever the driver creates an SDM channel instance that has selected <a class="reference internal" href="clk_tree.html#_CPPv4N24soc_periph_sdm_clk_src_t15SDM_CLK_SRC_APBE" title="SDM_CLK_SRC_APB"><code class="xref cpp cpp-enumerator docutils literal notranslate"><span class="pre">SDM_CLK_SRC_APB</span></code></a> as its clock source, the driver guarantees that the power management lock is acquired when enabling the channel by <a class="reference internal" href="#_CPPv418sdm_channel_enable20sdm_channel_handle_t" title="sdm_channel_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_channel_enable()</span></code></a>. Likewise, the driver releases the lock when <a class="reference internal" href="#_CPPv419sdm_channel_disable20sdm_channel_handle_t" title="sdm_channel_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_channel_disable()</span></code></a> is called for that channel.</p>
+</section>
+<section id="iram-safe">
+<span id="sdm-iram-safe"></span><h3>IRAM Safe<a class="headerlink" href="#iram-safe" title="Permalink to this heading"></a></h3>
+<p>There is a Kconfig option <a class="reference internal" href="../kconfig-reference.html#config-sdm-ctrl-func-in-iram"><span class="std std-ref">CONFIG_SDM_CTRL_FUNC_IN_IRAM</span></a> that can put commonly-used IO control functions into IRAM as well. So that these functions can also be executable when the cache is disabled. These IO control functions are listed as follows:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv429sdm_channel_set_pulse_density20sdm_channel_handle_t6int8_t" title="sdm_channel_set_pulse_density"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_channel_set_pulse_density()</span></code></a></p></li>
+</ul>
+</section>
+<section id="thread-safety">
+<span id="sdm-thread-safety"></span><h3>Thread Safety<a class="headerlink" href="#thread-safety" title="Permalink to this heading"></a></h3>
+<p>The factory function <a class="reference internal" href="#_CPPv415sdm_new_channelPK12sdm_config_tP20sdm_channel_handle_t" title="sdm_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_new_channel()</span></code></a> is guaranteed to be thread-safe by the driver, which means, the user can call it from different RTOS tasks without protection by extra locks.</p>
+<p>The following functions are allowed to run under ISR context, the driver uses a critical section to prevent them being called concurrently in both task and ISR.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv429sdm_channel_set_pulse_density20sdm_channel_handle_t6int8_t" title="sdm_channel_set_pulse_density"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_channel_set_pulse_density()</span></code></a></p></li>
+</ul>
+<p>Other functions that take the <a class="reference internal" href="#_CPPv420sdm_channel_handle_t" title="sdm_channel_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">sdm_channel_handle_t</span></code></a> as the first positional parameter, are not treated as thread-safe. This means the user should avoid calling them from multiple tasks.</p>
+</section>
+<section id="kconfig-options">
+<span id="sdm-kconfig-options"></span><h3>Kconfig Options<a class="headerlink" href="#kconfig-options" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="../kconfig-reference.html#config-sdm-ctrl-func-in-iram"><span class="std std-ref">CONFIG_SDM_CTRL_FUNC_IN_IRAM</span></a> controls where to place the SDM channel control functions (IRAM or Flash), see <a class="reference internal" href="#sdm-iram-safe"><span class="std std-ref">IRAM Safe</span></a> for more information.</p></li>
+<li><p><a class="reference internal" href="../kconfig-reference.html#config-sdm-enable-debug-log"><span class="std std-ref">CONFIG_SDM_ENABLE_DEBUG_LOG</span></a> is used to enable the debug log output. Enabling this option increases the firmware binary size.</p></li>
+</ul>
+</section>
+</section>
+<section id="convert-to-an-analog-signal-optional">
+<span id="convert-to-analog-signal"></span><h2>Convert to an Analog Signal (Optional)<a class="headerlink" href="#convert-to-an-analog-signal-optional" title="Permalink to this heading"></a></h2>
+<p>Typically, if a Sigma-Delta signal is connected to an LED to adjust the brightness, you do not have to add any filter between them, because our eyes have their own low-pass filters for changes in light intensity. However, if you want to check the real voltage or watch the analog waveform, you need to design an analog low-pass filter. Also, it is recommended to use an active filter instead of a passive filter to gain better isolation and not lose too much voltage.</p>
+<p>For example, you can take the following <a class="reference external" href="https://en.wikipedia.org/wiki/Sallen%E2%80%93Key_topology">Sallen-Key topology Low Pass Filter</a> as a reference.</p>
+<figure class="align-center" id="id5">
+<img alt="Sallen-Key Low Pass Filter" src="../../_images/typical_sallenkey_LP_filter.png" />
+<figcaption>
+<p><span class="caption-text">Sallen-Key Low Pass Filter</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>(Refer to <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/peripherals/sigma_delta/sdm_dac/README.md">peripherals/sigma_delta/sdm_dac/README.md</a> to see the waveforms before and after filtering.)</p>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/peripherals/sigma_delta/sdm_dac">peripherals/sigma_delta/sdm_dac</a> demonstrates how to use the sigma-delta driver to act as an 8-bit DAC, and output a 100 Hz sine wave.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/peripherals/sigma_delta/sdm_led">peripherals/sigma_delta/sdm_led</a> demonstrates how to use the sigma-delta driver to control the brightness of an LED or LCD backlight.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_sdm/include/driver/sdm.h">components/esp_driver_sdm/include/driver/sdm.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;driver/sdm.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_driver_sdm</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_driver_sdm</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_driver_sdm
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_driver_sdm
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415sdm_new_channelPK12sdm_config_tP20sdm_channel_handle_t">
+<span id="_CPPv315sdm_new_channelPK12sdm_config_tP20sdm_channel_handle_t"></span><span id="_CPPv215sdm_new_channelPK12sdm_config_tP20sdm_channel_handle_t"></span><span id="sdm_new_channel__sdm_config_tCP.sdm_channel_handle_tP"></span><span class="target" id="sdm_8h_1ab689eecd3e13cef46521e8ca6a886b75"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdm_new_channel</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv412sdm_config_t" title="sdm_config_t"><span class="n"><span class="pre">sdm_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">config</span></span>, <a class="reference internal" href="#_CPPv420sdm_channel_handle_t" title="sdm_channel_handle_t"><span class="n"><span class="pre">sdm_channel_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ret_chan</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415sdm_new_channelPK12sdm_config_tP20sdm_channel_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Create a new Sigma Delta channel. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> -- <strong>[in]</strong> SDM configuration </p></li>
+<li><p><strong>ret_chan</strong> -- <strong>[out]</strong> Returned SDM channel handle </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Create SDM channel successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Create SDM channel failed because of invalid argument</p></li>
+<li><p>ESP_ERR_NO_MEM: Create SDM channel failed because out of memory</p></li>
+<li><p>ESP_ERR_NOT_FOUND: Create SDM channel failed because all channels are used up and no more free one</p></li>
+<li><p>ESP_FAIL: Create SDM channel failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415sdm_del_channel20sdm_channel_handle_t">
+<span id="_CPPv315sdm_del_channel20sdm_channel_handle_t"></span><span id="_CPPv215sdm_del_channel20sdm_channel_handle_t"></span><span id="sdm_del_channel__sdm_channel_handle_t"></span><span class="target" id="sdm_8h_1ae425a74cec895a92170a6b5aaf5e3afa"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdm_del_channel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv420sdm_channel_handle_t" title="sdm_channel_handle_t"><span class="n"><span class="pre">sdm_channel_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415sdm_del_channel20sdm_channel_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Delete the Sigma Delta channel. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>chan</strong> -- <strong>[in]</strong> SDM channel created by <code class="docutils literal notranslate"><span class="pre">sdm_new_channel</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Delete the SDM channel successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Delete the SDM channel failed because of invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Delete the SDM channel failed because the channel is not in init state</p></li>
+<li><p>ESP_FAIL: Delete the SDM channel failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418sdm_channel_enable20sdm_channel_handle_t">
+<span id="_CPPv318sdm_channel_enable20sdm_channel_handle_t"></span><span id="_CPPv218sdm_channel_enable20sdm_channel_handle_t"></span><span id="sdm_channel_enable__sdm_channel_handle_t"></span><span class="target" id="sdm_8h_1af0bafd468a4da9d903f7ac365224868b"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdm_channel_enable</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv420sdm_channel_handle_t" title="sdm_channel_handle_t"><span class="n"><span class="pre">sdm_channel_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418sdm_channel_enable20sdm_channel_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable the Sigma Delta channel. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will transit the channel state from init to enable. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will acquire a PM lock, if a specific source clock (e.g. APB) is selected in the <code class="docutils literal notranslate"><a class="reference internal" href="#structsdm__config__t"><span class="std std-ref"><span class="pre">sdm_config_t</span></span></a></code>, while <code class="docutils literal notranslate"><span class="pre">CONFIG_PM_ENABLE</span></code> is enabled.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>chan</strong> -- <strong>[in]</strong> SDM channel created by <code class="docutils literal notranslate"><span class="pre">sdm_new_channel</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Enable SDM channel successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Enable SDM channel failed because of invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Enable SDM channel failed because the channel is already enabled</p></li>
+<li><p>ESP_FAIL: Enable SDM channel failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419sdm_channel_disable20sdm_channel_handle_t">
+<span id="_CPPv319sdm_channel_disable20sdm_channel_handle_t"></span><span id="_CPPv219sdm_channel_disable20sdm_channel_handle_t"></span><span id="sdm_channel_disable__sdm_channel_handle_t"></span><span class="target" id="sdm_8h_1aaff04b3e7aa41ee2334125208f4ee9fb"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdm_channel_disable</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv420sdm_channel_handle_t" title="sdm_channel_handle_t"><span class="n"><span class="pre">sdm_channel_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419sdm_channel_disable20sdm_channel_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable the Sigma Delta channel. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will do the opposite work to the <code class="docutils literal notranslate"><span class="pre">sdm_channel_enable()</span></code></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>chan</strong> -- <strong>[in]</strong> SDM channel created by <code class="docutils literal notranslate"><span class="pre">sdm_new_channel</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Disable SDM channel successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Disable SDM channel failed because of invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Disable SDM channel failed because the channel is not enabled yet</p></li>
+<li><p>ESP_FAIL: Disable SDM channel failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429sdm_channel_set_pulse_density20sdm_channel_handle_t6int8_t">
+<span id="_CPPv329sdm_channel_set_pulse_density20sdm_channel_handle_t6int8_t"></span><span id="_CPPv229sdm_channel_set_pulse_density20sdm_channel_handle_t6int8_t"></span><span id="sdm_channel_set_pulse_density__sdm_channel_handle_t.int8_t"></span><span class="target" id="sdm_8h_1a8f9124c831d158232624efab3e741df6"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdm_channel_set_pulse_density</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv420sdm_channel_handle_t" title="sdm_channel_handle_t"><span class="n"><span class="pre">sdm_channel_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span>, <span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">density</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429sdm_channel_set_pulse_density20sdm_channel_handle_t6int8_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set the pulse density of the PDM output signal. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The raw output signal requires a low-pass filter to restore it into analog voltage, the restored analog output voltage could be Vout = VDD_IO / 256 * density + VDD_IO / 2 </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is allowed to run within ISR context </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will be placed into IRAM if <code class="docutils literal notranslate"><span class="pre">CONFIG_SDM_CTRL_FUNC_IN_IRAM</span></code> is on, so that it's allowed to be executed when Cache is disabled</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chan</strong> -- <strong>[in]</strong> SDM channel created by <code class="docutils literal notranslate"><span class="pre">sdm_new_channel</span></code></p></li>
+<li><p><strong>density</strong> -- <strong>[in]</strong> Quantized pulse density of the PDM output signal, ranges from -128 to 127. But the range of [-90, 90] can provide a better randomness. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Set pulse density successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Set pulse density failed because of invalid argument</p></li>
+<li><p>ESP_FAIL: Set pulse density failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420sdm_channel_set_duty20sdm_channel_handle_t6int8_t">
+<span id="_CPPv320sdm_channel_set_duty20sdm_channel_handle_t6int8_t"></span><span id="_CPPv220sdm_channel_set_duty20sdm_channel_handle_t6int8_t"></span><span id="sdm_channel_set_duty__sdm_channel_handle_t.int8_t"></span><span class="target" id="sdm_8h_1a14739c37a0231b302901899ef579a4c1"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdm_channel_set_duty</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv420sdm_channel_handle_t" title="sdm_channel_handle_t"><span class="n"><span class="pre">sdm_channel_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span>, <span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">duty</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420sdm_channel_set_duty20sdm_channel_handle_t6int8_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The alias function of <code class="docutils literal notranslate"><span class="pre">sdm_channel_set_pulse_density</span></code>, it decides the pulse density of the output signal. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">sdm_channel_set_pulse_density</span></code> has a more appropriate name compare this alias function, suggest to turn to <code class="docutils literal notranslate"><span class="pre">sdm_channel_set_pulse_density</span></code> instead</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chan</strong> -- <strong>[in]</strong> SDM channel created by <code class="docutils literal notranslate"><span class="pre">sdm_new_channel</span></code></p></li>
+<li><p><strong>duty</strong> -- <strong>[in]</strong> Actually it's the quantized pulse density of the PDM output signal</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Set duty cycle successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Set duty cycle failed because of invalid argument</p></li>
+<li><p>ESP_FAIL: Set duty cycle failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv412sdm_config_t">
+<span id="_CPPv312sdm_config_t"></span><span id="_CPPv212sdm_config_t"></span><span id="sdm_config_t"></span><span class="target" id="structsdm__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdm_config_t</span></span></span><a class="headerlink" href="#_CPPv412sdm_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sigma Delta channel configuration. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12sdm_config_t8gpio_numE">
+<span id="_CPPv3N12sdm_config_t8gpio_numE"></span><span id="_CPPv2N12sdm_config_t8gpio_numE"></span><span id="sdm_config_t::gpio_num__i"></span><span class="target" id="structsdm__config__t_1a15aa2b510636ad744e2b59c7fc1d656f"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gpio_num</span></span></span><a class="headerlink" href="#_CPPv4N12sdm_config_t8gpio_numE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12sdm_config_t7clk_srcE">
+<span id="_CPPv3N12sdm_config_t7clk_srcE"></span><span id="_CPPv2N12sdm_config_t7clk_srcE"></span><span id="sdm_config_t::clk_src__sdm_clock_source_t"></span><span class="target" id="structsdm__config__t_1a831eb8169025b05b29bd2d0caccf6067"></span><a class="reference internal" href="#_CPPv418sdm_clock_source_t" title="sdm_clock_source_t"><span class="n"><span class="pre">sdm_clock_source_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clk_src</span></span></span><a class="headerlink" href="#_CPPv4N12sdm_config_t7clk_srcE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Clock source </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12sdm_config_t14sample_rate_hzE">
+<span id="_CPPv3N12sdm_config_t14sample_rate_hzE"></span><span id="_CPPv2N12sdm_config_t14sample_rate_hzE"></span><span id="sdm_config_t::sample_rate_hz__uint32_t"></span><span class="target" id="structsdm__config__t_1ac178952cdafc28dfd7953983a2114789"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sample_rate_hz</span></span></span><a class="headerlink" href="#_CPPv4N12sdm_config_t14sample_rate_hzE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Over sample rate in Hz, it determines the frequency of the carrier pulses </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12sdm_config_t10invert_outE">
+<span id="_CPPv3N12sdm_config_t10invert_outE"></span><span id="_CPPv2N12sdm_config_t10invert_outE"></span><span id="sdm_config_t::invert_out__uint32_t"></span><span class="target" id="structsdm__config__t_1a94a933c888a59b3e399f516599d81f66"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">invert_out</span></span></span><a class="headerlink" href="#_CPPv4N12sdm_config_t10invert_outE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Whether to invert the output signal </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12sdm_config_t12io_loop_backE">
+<span id="_CPPv3N12sdm_config_t12io_loop_backE"></span><span id="_CPPv2N12sdm_config_t12io_loop_backE"></span><span id="sdm_config_t::io_loop_back__uint32_t"></span><span class="target" id="structsdm__config__t_1aec7eb875f5586230204453e504820024"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">io_loop_back</span></span></span><a class="headerlink" href="#_CPPv4N12sdm_config_t12io_loop_backE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>For debug/test, the signal output from the GPIO will be fed to the input path as well </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12sdm_config_t5flagsE">
+<span id="_CPPv3N12sdm_config_t5flagsE"></span><span id="_CPPv2N12sdm_config_t5flagsE"></span><span id="sdm_config_t::flags__sdm_config_t"></span><span class="target" id="structsdm__config__t_1ab8de069e9be33bdab3393195101ae8c0"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv412sdm_config_t" title="sdm_config_t"><span class="n"><span class="pre">sdm_config_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">flags</span></span></span><a class="headerlink" href="#_CPPv4N12sdm_config_t5flagsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Extra flags </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv420sdm_channel_handle_t">
+<span id="_CPPv320sdm_channel_handle_t"></span><span id="_CPPv220sdm_channel_handle_t"></span><span id="sdm_channel_handle_t"></span><span class="target" id="sdm_8h_1a90829fc6def035c06791acc2df1a3dfd"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">sdm_channel_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">sdm_channel_handle_t</span></span></span><a class="headerlink" href="#_CPPv420sdm_channel_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of Sigma Delta channel handle. </p>
+</dd></dl>
+
+</section>
+<section id="id2">
+<h3>Header File<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/hal/include/hal/sdm_types.h">components/hal/include/hal/sdm_types.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hal/sdm_types.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id3">
+<h3>Type Definitions<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv418sdm_clock_source_t">
+<span id="_CPPv318sdm_clock_source_t"></span><span id="_CPPv218sdm_clock_source_t"></span><span id="sdm_clock_source_t"></span><span class="target" id="sdm__types_8h_1ad56278b90bedcb1caa14c799f152cb7b"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><a class="reference internal" href="clk_tree.html#_CPPv424soc_periph_sdm_clk_src_t" title="soc_periph_sdm_clk_src_t"><span class="n"><span class="pre">soc_periph_sdm_clk_src_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdm_clock_source_t</span></span></span><a class="headerlink" href="#_CPPv418sdm_clock_source_t" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id4" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Different ESP chip series might have different numbers of SDM channels. Please refer to Chapter <a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf#iomuxgpio">GPIO and IOMUX</a> in ESP32 Technical Reference Manual for more details. The driver does not forbid you from applying for more channels, but it will return an error when all available hardware resources are used up. Please always check the return value when doing resource allocation (e.g., <a class="reference internal" href="#_CPPv415sdm_new_channelPK12sdm_config_tP20sdm_channel_handle_t" title="sdm_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_new_channel()</span></code></a>).</p>
+</aside>
+</aside>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Sigma-Delta Modulation (SDM) (api-reference/peripherals/sdm)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Sigma-Delta Modulation (SDM) (api-reference/peripherals/sdm)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sdio_slave.html" class="btn btn-neutral float-left" title="SDIO Card Slave Driver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="spi_flash/index.html" class="btn btn-neutral float-right" title="SPI Flash API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

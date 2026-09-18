@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minimizing RAM Usage - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/performance/ram-usage.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/performance/ram-usage';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Reproducible Builds" href="../reproducible-builds.html" />
+    <link rel="prev" title="Minimizing Binary Size" href="size.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Performance</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#how-to-optimize-performance">How to Optimize Performance</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#guides">Guides</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="speed.html">Speed Optimization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="size.html">Minimizing Binary Size</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Minimizing RAM Usage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Performance</a></li>
+      <li class="breadcrumb-item active">Minimizing RAM Usage</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/performance/ram-usage.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="minimizing-ram-usage">
+<h1>Minimizing RAM Usage<a class="headerlink" href="#minimizing-ram-usage" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-guides/performance/ram-usage.html">[中文]</a></p>
+<p>In some cases, a firmware application's available RAM may run low or run out entirely. In these cases, it is necessary to tune the memory usage of the firmware application.</p>
+<p>In general, firmware should aim to leave some headroom of free internal RAM to deal with extraordinary situations or changes in RAM usage in future updates.</p>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this heading"></a></h2>
+<p>Before optimizing ESP-IDF RAM usage, it is necessary to understand the basics of ESP32 memory types, the difference between static and dynamic memory usage in C, and the way ESP-IDF uses stack and heap. This information can all be found in <a class="reference internal" href="../../api-reference/system/mem_alloc.html"><span class="doc">Heap Memory Allocation</span></a>.</p>
+</section>
+<section id="measuring-static-memory-usage">
+<h2>Measuring Static Memory Usage<a class="headerlink" href="#measuring-static-memory-usage" title="Permalink to this heading"></a></h2>
+<p>The <a class="reference internal" href="../build-system.html#idf-py"><span class="std std-ref">idf.py</span></a> tool can be used to generate reports about the static memory usage of an application, see <a class="reference internal" href="size.html#idf-py-size"><span class="std std-ref">Measuring Static Sizes</span></a>.</p>
+</section>
+<section id="measuring-dynamic-memory-usage">
+<h2>Measuring Dynamic Memory Usage<a class="headerlink" href="#measuring-dynamic-memory-usage" title="Permalink to this heading"></a></h2>
+<p>ESP-IDF contains a range of heap APIs for measuring free heap at runtime, see <a class="reference internal" href="../../api-reference/system/heap_debug.html"><span class="doc">Heap Memory Debugging</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In embedded systems, heap fragmentation can be a significant issue alongside total RAM usage. The heap measurement APIs provide ways to measure the largest free block. Monitoring this value along with the total number of free bytes can give a quick indication of whether heap fragmentation is becoming an issue.</p>
+</div>
+</section>
+<section id="reducing-static-memory-usage">
+<h2>Reducing Static Memory Usage<a class="headerlink" href="#reducing-static-memory-usage" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Reducing the static memory usage of the application increases the amount of RAM available for heap at runtime, and vice versa.</p></li>
+<li><p>Generally speaking, minimizing static memory usage requires monitoring the <code class="docutils literal notranslate"><span class="pre">.data</span></code> and <code class="docutils literal notranslate"><span class="pre">.bss</span></code> sizes. For tools to do this, see <a class="reference internal" href="size.html#idf-py-size"><span class="std std-ref">Measuring Static Sizes</span></a>.</p></li>
+<li><p>Internal ESP-IDF functions do not make heavy use of static RAM in C. In many instances (such as Wi-Fi library, Bluetooth controller), static buffers are still allocated from the heap. However, the allocation is performed only once during feature initialization and will be freed if the feature is deinitialized. This approach is adopted to optimize the availability of free memory at various stages of the application's life cycle.</p></li>
+</ul>
+<p>To minimize static memory use:</p>
+<p><ul class="simple">
+<li><p>Constant data can be stored in flash memory instead of RAM, thus it is recommended to declare structures, buffers, or other variables as <code class="docutils literal notranslate"><span class="pre">const</span></code>. This approach may require modifying firmware functions to accept <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">*</span></code> arguments instead of mutable pointer arguments. These changes can also help reduce the stack usage of certain functions.</p></li>
+<li><p>If using Bluedroid, setting the option <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bt-ble-dynamic-env-memory"><span class="std std-ref">CONFIG_BT_BLE_DYNAMIC_ENV_MEMORY</span></a> will cause Bluedroid to allocate memory on initialization and free it on deinitialization. This does not necessarily reduce the peak memory usage, but changes it from static memory usage to runtime memory usage.</p></li>
+<li><p>If using OpenThread, enabling the option <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-openthread-platform-msgpool-management"><span class="std std-ref">CONFIG_OPENTHREAD_PLATFORM_MSGPOOL_MANAGEMENT</span></a> will cause OpenThread to allocate message pool buffers from PSRAM, which will reduce static memory use.</p></li>
+</ul>
+</p>
+</section>
+<section id="determining-stack-size">
+<span id="optimize-stack-sizes"></span><h2>Determining Stack Size<a class="headerlink" href="#determining-stack-size" title="Permalink to this heading"></a></h2>
+<p>In FreeRTOS, task stacks are usually allocated from the heap. The stack size for each task is fixed and passed as an argument to <a class="reference internal" href="../../api-reference/system/freertos_idf.html#_CPPv411xTaskCreate14TaskFunction_tPCKcK22configSTACK_DEPTH_TYPEPCv11UBaseType_tPC12TaskHandle_t" title="xTaskCreate"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xTaskCreate()</span></code></a>. Each task can use up to its allocated stack size, but using more than this will cause an otherwise valid program to crash, with a stack overflow or heap corruption.</p>
+<p>Therefore, determining the optimum sizes of each task stack, minimizing the required size of each task stack, and minimizing the number of task stacks as whole, can all substantially reduce RAM usage.</p>
+<section id="configuration-options-for-stack-overflow-detection">
+<h3>Configuration Options for Stack Overflow Detection<a class="headerlink" href="#configuration-options-for-stack-overflow-detection" title="Permalink to this heading"></a></h3>
+<section id="end-of-stack-watchpoint">
+<h4>End of Stack Watchpoint<a class="headerlink" href="#end-of-stack-watchpoint" title="Permalink to this heading"></a></h4>
+<p>The End of Stack Watchpoint feature places a CPU watchpoint at the end of the current stack. If that word is overwritten (such as in a stack overflow), a panic is triggered immediately. End of Stack Watchpoints can be enabled via the <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-watchpoint-end-of-stack"><span class="std std-ref">CONFIG_FREERTOS_WATCHPOINT_END_OF_STACK</span></a> option, but can only be used if debugger watchpoints are not already being used.</p>
+</section>
+<section id="stack-canary-bytes">
+<h4>Stack Canary Bytes<a class="headerlink" href="#stack-canary-bytes" title="Permalink to this heading"></a></h4>
+<p>The Stack Canary Bytes feature adds a set of magic bytes at the end of each task's stack, and checks if those magic bytes have changed on every context switch. If those magic bytes are overwritten, a panic is triggered. Stack Canary Bytes can be enabled via the <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-check-stackoverflow"><span class="std std-ref">CONFIG_FREERTOS_CHECK_STACKOVERFLOW</span></a> option.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When using the End of Stack Watchpoint or Stack Canary Bytes, it is possible that a stack pointer skips over the watchpoint or canary bytes on a stack overflow and corrupts another region of RAM instead. Thus, these methods cannot detect all stack overflows.</p>
+</div>
+</section>
+</section>
+<section id="run-time-methods-to-determine-stack-size">
+<h3>Run-time Methods to Determine Stack Size<a class="headerlink" href="#run-time-methods-to-determine-stack-size" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>The <a class="reference internal" href="../../api-reference/system/freertos_idf.html#_CPPv427uxTaskGetStackHighWaterMark12TaskHandle_t" title="uxTaskGetStackHighWaterMark"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">uxTaskGetStackHighWaterMark()</span></code></a> returns the minimum free stack memory of a task throughout the task's lifetime in bytes, which gives a good indication of how much stack memory is left unused by a task. Note that on ESP32, the function returns the value in bytes (not words as stated in the standard FreeRTOS documentation).</p>
+<ul>
+<li><p>The easiest time to call <a class="reference internal" href="../../api-reference/system/freertos_idf.html#_CPPv427uxTaskGetStackHighWaterMark12TaskHandle_t" title="uxTaskGetStackHighWaterMark"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">uxTaskGetStackHighWaterMark()</span></code></a> is from the task itself: call <code class="docutils literal notranslate"><span class="pre">uxTaskGetStackHighWaterMark(NULL)</span></code> to get the current task's high water mark after the time that the task has achieved its peak stack usage, i.e., if there is a main loop, execute the main loop a number of times with all possible states, and then call <a class="reference internal" href="../../api-reference/system/freertos_idf.html#_CPPv427uxTaskGetStackHighWaterMark12TaskHandle_t" title="uxTaskGetStackHighWaterMark"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">uxTaskGetStackHighWaterMark()</span></code></a>.</p></li>
+<li><p>Often, it is possible to subtract almost the entire value returned here from the total stack size of a task, but allow some safety margin to account for unexpected small increases in stack usage at runtime.</p></li>
+</ul>
+</li>
+<li><p>Call <a class="reference internal" href="../../api-reference/system/freertos_idf.html#_CPPv420uxTaskGetSystemStatePC12TaskStatus_tK11UBaseType_tPC27configRUN_TIME_COUNTER_TYPE" title="uxTaskGetSystemState"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">uxTaskGetSystemState()</span></code></a> to get a summary of all tasks in the system. This includes their individual stack high watermark values.</p></li>
+</ul>
+</section>
+</section>
+<section id="reducing-stack-sizes">
+<h2>Reducing Stack Sizes<a class="headerlink" href="#reducing-stack-sizes" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Avoid stack heavy functions. String formatting functions (like <code class="docutils literal notranslate"><span class="pre">printf()</span></code>) are particularly heavy users of the stack, so any task which does not ever call these can usually have its stack size reduced.</p>
+<ul>
+<li><p>Using experimental <a class="reference internal" href="size.html#picolibc-instead-of-newlib"><span class="std std-ref">Picolibc instead of Newlib</span></a> reduces the stack usage of <code class="docutils literal notranslate"><span class="pre">printf()</span></code> calls significantly.</p></li>
+<li><p>Enabling <a class="reference internal" href="size.html#newlib-nano-formatting"><span class="std std-ref">Newlib Nano Formatting</span></a> reduces the stack usage of any task that calls <code class="docutils literal notranslate"><span class="pre">printf()</span></code> or other C string formatting functions.</p></li>
+</ul>
+</li>
+<li><p>Avoid allocating large variables on the stack. In C, any large structures or arrays allocated as an automatic variable (i.e., default scope of a C declaration) uses space on the stack. To minimize the sizes of these, allocate them statically and/or see if you can save memory by dynamically allocating them from the heap only when they are needed.</p></li>
+<li><p>Avoid deep recursive function calls. Individual recursive function calls do not always add a lot of stack usage each time they are called, but if each function includes large stack-based variables then the overhead can get quite high.</p></li>
+</ul>
+<section id="reducing-task-count">
+<h3>Reducing Task Count<a class="headerlink" href="#reducing-task-count" title="Permalink to this heading"></a></h3>
+<p>Combine tasks. If a particular task is never created, the task's stack is never allocated, thus reducing RAM usage significantly. Unnecessary tasks can typically be removed if those tasks can be combined with another task. In an application, tasks can typically be combined or removed if:</p>
+<ul class="simple">
+<li><p>The work done by the tasks can be structured into multiple functions that are called sequentially.</p></li>
+<li><p>The work done by the tasks can be structured into smaller jobs that are serialized (via a FreeRTOS queue or similar) for execution by a worker task.</p></li>
+</ul>
+</section>
+<section id="internal-task-stack-sizes">
+<h3>Internal Task Stack Sizes<a class="headerlink" href="#internal-task-stack-sizes" title="Permalink to this heading"></a></h3>
+<p>ESP-IDF allocates a number of internal tasks for housekeeping purposes or operating system functions. Some are created during the startup process, and some are created at runtime when particular features are initialized.</p>
+<p>The default stack sizes for these tasks are usually set conservatively high to allow all common usage patterns. Many of the stack sizes are configurable, and it may be possible to reduce them to match the real runtime stack usage of the task.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If internal task stack sizes are set too small, ESP-IDF will crash unpredictably. Even if the root cause is task stack overflow, this is not always clear when debugging. It is recommended that internal stack sizes are only reduced carefully (if at all), with close attention to high water mark free space under load. If reporting an issue that occurs when internal task stack sizes have been reduced, please always include the following information and the specific configuration that is being used.</p>
+</div>
+<p><ul class="simple">
+<li><p><a class="reference internal" href="../startup.html#app-main-task"><span class="std std-ref">Running the Main Task</span></a> has stack size <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-main-task-stack-size"><span class="std std-ref">CONFIG_ESP_MAIN_TASK_STACK_SIZE</span></a>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/system/esp_timer.html"><span class="doc">ESP Timer (High Resolution Timer)</span></a> system task which executes callbacks has stack size <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-timer-task-stack-size"><span class="std std-ref">CONFIG_ESP_TIMER_TASK_STACK_SIZE</span></a>.</p></li>
+<li><p>FreeRTOS Timer Task to handle FreeRTOS timer callbacks has stack size <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-timer-task-stack-depth"><span class="std std-ref">CONFIG_FREERTOS_TIMER_TASK_STACK_DEPTH</span></a>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/system/esp_event.html"><span class="doc">Event Loop Library</span></a> system task to execute callbacks for the default system event loop has stack size <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-system-event-task-stack-size"><span class="std std-ref">CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE</span></a>.</p></li>
+<li><p><a class="reference internal" href="../lwip.html"><span class="doc">lwIP</span></a> TCP/IP task has stack size <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-lwip-tcpip-task-stack-size"><span class="std std-ref">CONFIG_LWIP_TCPIP_TASK_STACK_SIZE</span></a>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/bluetooth/index.html"><span class="doc">Bluetooth® API</span></a> have task stack sizes <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bt-btc-task-stack-size"><span class="std std-ref">CONFIG_BT_BTC_TASK_STACK_SIZE</span></a>, <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bt-btu-task-stack-size"><span class="std std-ref">CONFIG_BT_BTU_TASK_STACK_SIZE</span></a>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/bluetooth/nimble/index.html"><span class="doc">NimBLE-based Host APIs</span></a> has task stack size <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bt-nimble-host-task-stack-size"><span class="std std-ref">CONFIG_BT_NIMBLE_HOST_TASK_STACK_SIZE</span></a>.</p></li>
+<li><p>The Ethernet driver creates a task for the MAC to receive Ethernet frames. If using the default config <code class="docutils literal notranslate"><span class="pre">ETH_MAC_DEFAULT_CONFIG</span></code> then the task stack size is 4 KB. This setting can be changed by passing a custom <a class="reference internal" href="../../api-reference/network/esp_eth.html#_CPPv416eth_mac_config_t" title="eth_mac_config_t"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">eth_mac_config_t</span></code></a> struct when initializing the Ethernet MAC.</p></li>
+<li><p>FreeRTOS idle task stack size is configured by <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-idle-task-stacksize"><span class="std std-ref">CONFIG_FREERTOS_IDLE_TASK_STACKSIZE</span></a>.</p></li>
+<li><p>If using the <a class="reference internal" href="../../api-reference/protocols/mqtt.html"><span class="doc">ESP-MQTT</span></a> component, it creates a task with stack size configured by <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mqtt-task-stack-size"><span class="std std-ref">CONFIG_MQTT_TASK_STACK_SIZE</span></a>. MQTT stack size can also be configured using <code class="docutils literal notranslate"><span class="pre">task_stack</span></code> field of <a class="reference internal" href="../../api-reference/protocols/mqtt.html#_CPPv424esp_mqtt_client_config_t" title="esp_mqtt_client_config_t"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">esp_mqtt_client_config_t</span></code></a>.</p></li>
+<li><p>To see how to optimize RAM usage when using <code class="docutils literal notranslate"><span class="pre">mDNS</span></code>, please check <a class="reference external" href="https://docs.espressif.com/projects/esp-protocols/mdns/docs/latest/en/index.html#minimizing-ram-usage">Minimizing RAM Usage</a>.</p></li>
+</ul>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Aside from built-in system features such as ESP-timer, if an ESP-IDF feature is not initialized by the firmware, then no associated task is created. In those cases, the stack usage is zero, and the stack-size configuration for the task is not relevant.</p>
+</div>
+</section>
+</section>
+<section id="reducing-heap-usage">
+<h2>Reducing Heap Usage<a class="headerlink" href="#reducing-heap-usage" title="Permalink to this heading"></a></h2>
+<p>For functions that assist in analyzing heap usage at runtime, see <a class="reference internal" href="../../api-reference/system/heap_debug.html"><span class="doc">Heap Memory Debugging</span></a>.</p>
+<p>Normally, optimizing heap usage consists of analyzing the usage and removing calls to <code class="docutils literal notranslate"><span class="pre">malloc()</span></code> that are not being used, reducing the corresponding sizes, or freeing previously allocated buffers earlier.</p>
+<p>There are some ESP-IDF configuration options that can reduce heap usage at runtime:</p>
+<p><ul class="simple">
+<li><p>lwIP documentation has a section to configure <a class="reference internal" href="../lwip.html#lwip-ram-usage"><span class="std std-ref">Minimum RAM Usage</span></a>.</p></li>
+<li><p><a class="reference internal" href="../wifi.html#wifi-buffer-usage"><span class="std std-ref">Wi-Fi Buffer Usage</span></a> describes options to either reduce the number of static buffers or reduce the maximum number of dynamic buffers in use, so as to minimize memory usage at a possible cost of performance. Note that static Wi-Fi buffers are still allocated from the heap when Wi-Fi is initialized, and will be freed if Wi-Fi is deinitialized.</p></li>
+<li><p>The Ethernet driver allocates DMA buffers for the internal Ethernet MAC when it is initialized - configuration options are <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-eth-dma-buffer-size"><span class="std std-ref">CONFIG_ETH_DMA_BUFFER_SIZE</span></a>, <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-eth-dma-rx-buffer-num"><span class="std std-ref">CONFIG_ETH_DMA_RX_BUFFER_NUM</span></a>, <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-eth-dma-tx-buffer-num"><span class="std std-ref">CONFIG_ETH_DMA_TX_BUFFER_NUM</span></a>.</p></li>
+<li><p>Several Mbed TLS configuration options can be used to reduce heap memory usage. See the <a class="reference internal" href="../../api-reference/protocols/mbedtls.html#reducing-ram-usage-mbedtls"><span class="std std-ref">Reducing Heap Usage</span></a> docs for details.</p></li>
+<li><p>In single-core mode only, it is possible to use IRAM as byte-accessible memory added to the regular heap by enabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp32-iram-as-8bit-accessible-memory"><span class="std std-ref">CONFIG_ESP32_IRAM_AS_8BIT_ACCESSIBLE_MEMORY</span></a>. Note that this option carries a performance penalty, and the risk of security issues caused by executable data. If this option is enabled, then it is possible to set other options to prefer certain buffers allocated from this memory: <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-mem-alloc-mode"><span class="std std-ref">CONFIG_MBEDTLS_MEM_ALLOC_MODE</span></a>, <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bt-nimble-mem-alloc-mode"><span class="std std-ref">NimBLE</span></a>.</p></li>
+<li><p>Reduce <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-btdm-ctrl-ble-max-conn"><span class="std std-ref">CONFIG_BTDM_CTRL_BLE_MAX_CONN</span></a> if using Bluetooth LE.</p></li>
+<li><p>Reduce <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-btdm-ctrl-br-edr-max-acl-conn"><span class="std std-ref">CONFIG_BTDM_CTRL_BR_EDR_MAX_ACL_CONN</span></a> if using Bluetooth Classic.</p></li>
+</ul>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are other configuration options that increases heap usage at runtime if changed from the defaults. These options are not listed above, but the help text for the configuration item will mention if there is some memory impact.</p>
+</div>
+</section>
+<section id="optimizing-iram-usage">
+<span id="optimize-iram-usage"></span><h2>Optimizing IRAM Usage<a class="headerlink" href="#optimizing-iram-usage" title="Permalink to this heading"></a></h2>
+<p>If the app allocates more static IRAM than available, then the app will fail to build, and linker errors such as <code class="docutils literal notranslate"><span class="pre">section</span> <span class="pre">'.iram0.text'</span> <span class="pre">will</span> <span class="pre">not</span> <span class="pre">fit</span> <span class="pre">in</span> <span class="pre">region</span> <span class="pre">'iram0_0_seg'</span></code>, <code class="docutils literal notranslate"><span class="pre">IRAM0</span> <span class="pre">segment</span> <span class="pre">data</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">fit</span></code>, and <code class="docutils literal notranslate"><span class="pre">region</span> <span class="pre">'iram0_0_seg'</span> <span class="pre">overflowed</span> <span class="pre">by</span> <span class="pre">84-bytes</span></code> will be seen. If this happens, it is necessary to find ways to reduce static IRAM usage in order to link the application.</p>
+<p>To analyze the IRAM usage in the firmware binary, use <a class="reference internal" href="size.html#idf-py-size"><span class="std std-ref">Measuring Static Sizes</span></a>. If the firmware failed to link, steps to analyze are shown at <a class="reference internal" href="../tools/idf-size.html#idf-size-linker-failed"><span class="std std-ref">Showing Size When Linker Fails</span></a>.</p>
+<p>The following options will reduce IRAM usage of some ESP-IDF features:</p>
+<p><ul class="simple">
+<li><p>Enable <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-place-functions-into-flash"><span class="std std-ref">CONFIG_FREERTOS_PLACE_FUNCTIONS_INTO_FLASH</span></a>. Provided these functions are not incorrectly used from ISRs, this option is safe to enable in all configurations.</p></li>
+<li><p>Enable <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-ringbuf-place-functions-into-flash"><span class="std std-ref">CONFIG_RINGBUF_PLACE_FUNCTIONS_INTO_FLASH</span></a>. Provided these functions are not incorrectly used from ISRs, this option is safe to enable in all configurations.</p></li>
+<li><p>Enable <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-ringbuf-place-isr-functions-into-flash"><span class="std std-ref">CONFIG_RINGBUF_PLACE_ISR_FUNCTIONS_INTO_FLASH</span></a>. This option is not safe to use if the ISR ringbuf functions are used from an IRAM interrupt context, e.g., if <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-uart-isr-in-iram"><span class="std std-ref">CONFIG_UART_ISR_IN_IRAM</span></a> is enabled. For the ESP-IDF drivers where this is the case, you can get an error at run-time when installing the driver in question.</p></li>
+<li><p>Disabling Wi-Fi options <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-wifi-iram-opt"><span class="std std-ref">CONFIG_ESP_WIFI_IRAM_OPT</span></a> and/or <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-wifi-rx-iram-opt"><span class="std std-ref">CONFIG_ESP_WIFI_RX_IRAM_OPT</span></a> options frees available IRAM at the cost of Wi-Fi performance.</p></li>
+<li><p>Disabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spi-flash-rom-driver-patch"><span class="std std-ref">CONFIG_SPI_FLASH_ROM_DRIVER_PATCH</span></a> frees some IRAM but is only available in some flash configurations, see the configuration item help text.</p></li>
+<li><p>If the application uses PSRAM and is based on ESP32 rev. 3 (ECO3), setting <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp32-rev-min"><span class="std std-ref">CONFIG_ESP32_REV_MIN</span></a> to <code class="docutils literal notranslate"><span class="pre">3</span></code> disables PSRAM bug workarounds, saving 10 KB or more of IRAM.</p></li>
+<li><p>Disabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-event-post-from-iram-isr"><span class="std std-ref">CONFIG_ESP_EVENT_POST_FROM_IRAM_ISR</span></a> prevents posting <code class="docutils literal notranslate"><span class="pre">esp_event</span></code> events from <a class="reference internal" href="../../api-reference/peripherals/spi_flash/spi_flash_concurrency.html#iram-safe-interrupt-handlers"><span class="std std-ref">IRAM-Safe Interrupt Handlers</span></a> but saves some IRAM.</p></li>
+<li><p>Disabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spi-master-isr-in-iram"><span class="std std-ref">CONFIG_SPI_MASTER_ISR_IN_IRAM</span></a> prevents spi_master interrupts from being serviced while writing to flash, and may otherwise reduce spi_master performance, but saves some IRAM.</p></li>
+<li><p>Disabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spi-slave-isr-in-iram"><span class="std std-ref">CONFIG_SPI_SLAVE_ISR_IN_IRAM</span></a> prevents spi_slave interrupts from being serviced while writing to flash, which saves some IRAM.</p></li>
+<li><p>Setting <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-hal-default-assertion-level"><span class="std std-ref">CONFIG_HAL_DEFAULT_ASSERTION_LEVEL</span></a> to disable assertion for HAL component saves some IRAM, especially for HAL code who calls <code class="docutils literal notranslate"><span class="pre">HAL_ASSERT</span></code> a lot and resides in IRAM.</p></li>
+<li><p>Refer to the sdkconfig menu <code class="docutils literal notranslate"><span class="pre">Auto-detect</span> <span class="pre">Flash</span> <span class="pre">chips</span></code>, and you can disable flash drivers which you do not need to save some IRAM.</p></li>
+<li><p>Enable <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-heap-place-function-into-flash"><span class="std std-ref">CONFIG_HEAP_PLACE_FUNCTION_INTO_FLASH</span></a>. Provided that <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spi-master-isr-in-iram"><span class="std std-ref">CONFIG_SPI_MASTER_ISR_IN_IRAM</span></a> is not enabled and the heap functions are not incorrectly used from ISRs, this option is safe to enable in all configurations.</p></li>
+<li><p>Disable <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-libc-locks-place-in-iram"><span class="std std-ref">CONFIG_LIBC_LOCKS_PLACE_IN_IRAM</span></a> if no ISRs that run while cache is disabled (i.e. IRAM ISRs) use libc lock APIs.</p></li>
+</ul>
+</p>
+<section id="using-sram1-for-iram">
+<h3>Using SRAM1 for IRAM<a class="headerlink" href="#using-sram1-for-iram" title="Permalink to this heading"></a></h3>
+<p>The SRAM1 memory area is normally used for DRAM, but it is possible to use parts of it for IRAM with <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-system-esp32-sram1-region-as-iram"><span class="std std-ref">CONFIG_ESP_SYSTEM_ESP32_SRAM1_REGION_AS_IRAM</span></a>. This memory would previously be reserved for DRAM data usage (e.g., <code class="docutils literal notranslate"><span class="pre">.bss</span></code>) by the ESP-IDF second stage bootloader and later added to the heap. After this option was introduced, the bootloader DRAM size was reduced to a value closer to what it normally actually needs.</p>
+<p>To use this option, ESP-IDF should be able to recognize that the new SRAM1 area is also a valid load address for an image segment. If the second stage bootloader was compiled before this option existed, then the bootloader will not be able to load the app that has code placed in this new extended IRAM area. This would typically happen if you are doing an OTA update, where only the app would be updated.</p>
+<p>If the IRAM section were to be placed in an invalid area, then this would be detected during the boot up process, and result in a failed boot:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>E (204) esp_image: Segment 5 0x400845f8-0x400a126c invalid: bad load address range
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Apps compiled with <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-system-esp32-sram1-region-as-iram"><span class="std std-ref">CONFIG_ESP_SYSTEM_ESP32_SRAM1_REGION_AS_IRAM</span></a> may fail to boot, if used together with a second stage bootloader that was compiled before this config option was introduced. If you are using an older bootloader and updating over OTA, please test carefully before pushing any updates.</p>
+</div>
+<p>Any memory that ends up unused for static IRAM will be added to the heap.</p>
+</section>
+<section id="putting-c-library-in-flash">
+<h3>Putting C Library in Flash<a class="headerlink" href="#putting-c-library-in-flash" title="Permalink to this heading"></a></h3>
+<p>When compiling for ESP32 revisions older than ECO3 (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp32-rev-min"><span class="std std-ref">CONFIG_ESP32_REV_MIN</span></a>), the PSRAM Cache bug workaround (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-workaround"><span class="std std-ref">CONFIG_SPIRAM_CACHE_WORKAROUND</span></a>) option is enabled, and the C library functions normally located in ROM are recompiled with the workaround and placed into IRAM instead. For most applications, it is safe to move many of the C library functions into flash, reclaiming some IRAM. Corresponding options include:</p>
+<p><ul class="simple">
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-libjmp-in-iram"><span class="std std-ref">CONFIG_SPIRAM_CACHE_LIBJMP_IN_IRAM</span></a>: affects the functions <code class="docutils literal notranslate"><span class="pre">longjmp</span></code> and <code class="docutils literal notranslate"><span class="pre">setjump</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-libmath-in-iram"><span class="std std-ref">CONFIG_SPIRAM_CACHE_LIBMATH_IN_IRAM</span></a>: affects the functions <code class="docutils literal notranslate"><span class="pre">abs</span></code>, <code class="docutils literal notranslate"><span class="pre">div</span></code>, <code class="docutils literal notranslate"><span class="pre">labs</span></code>, <code class="docutils literal notranslate"><span class="pre">ldiv</span></code>, <code class="docutils literal notranslate"><span class="pre">quorem</span></code>, <code class="docutils literal notranslate"><span class="pre">fpclassify</span></code> and <code class="docutils literal notranslate"><span class="pre">nan</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-libnumparser-in-iram"><span class="std std-ref">CONFIG_SPIRAM_CACHE_LIBNUMPARSER_IN_IRAM</span></a>: affects the functions <code class="docutils literal notranslate"><span class="pre">utoa</span></code>, <code class="docutils literal notranslate"><span class="pre">itoa</span></code>, <code class="docutils literal notranslate"><span class="pre">atoi</span></code>, <code class="docutils literal notranslate"><span class="pre">atol</span></code>, <code class="docutils literal notranslate"><span class="pre">strtol</span></code>, and <code class="docutils literal notranslate"><span class="pre">strtoul</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-libio-in-iram"><span class="std std-ref">CONFIG_SPIRAM_CACHE_LIBIO_IN_IRAM</span></a>: affects the functions <code class="docutils literal notranslate"><span class="pre">wcrtomb</span></code>, <code class="docutils literal notranslate"><span class="pre">fvwrite</span></code>, <code class="docutils literal notranslate"><span class="pre">wbuf</span></code>, <code class="docutils literal notranslate"><span class="pre">wsetup</span></code>, <code class="docutils literal notranslate"><span class="pre">fputwc</span></code>, <code class="docutils literal notranslate"><span class="pre">wctomb_r</span></code>, <code class="docutils literal notranslate"><span class="pre">ungetc</span></code>, <code class="docutils literal notranslate"><span class="pre">makebuf</span></code>, <code class="docutils literal notranslate"><span class="pre">fflush</span></code>, <code class="docutils literal notranslate"><span class="pre">refill</span></code>, and <code class="docutils literal notranslate"><span class="pre">sccl</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-libtime-in-iram"><span class="std std-ref">CONFIG_SPIRAM_CACHE_LIBTIME_IN_IRAM</span></a>: affects the functions <code class="docutils literal notranslate"><span class="pre">asctime</span></code>, <code class="docutils literal notranslate"><span class="pre">asctime_r</span></code>, <code class="docutils literal notranslate"><span class="pre">ctime</span></code>, <code class="docutils literal notranslate"><span class="pre">ctime_r</span></code>, <code class="docutils literal notranslate"><span class="pre">lcltime</span></code>, <code class="docutils literal notranslate"><span class="pre">lcltime_r</span></code>, <code class="docutils literal notranslate"><span class="pre">gmtime</span></code>, <code class="docutils literal notranslate"><span class="pre">gmtime_r</span></code>, <code class="docutils literal notranslate"><span class="pre">strftime</span></code>, <code class="docutils literal notranslate"><span class="pre">mktime</span></code>, <code class="docutils literal notranslate"><span class="pre">tzset_r</span></code>, <code class="docutils literal notranslate"><span class="pre">tzset</span></code>, <code class="docutils literal notranslate"><span class="pre">time</span></code>, <code class="docutils literal notranslate"><span class="pre">gettzinfo</span></code>, <code class="docutils literal notranslate"><span class="pre">systimes</span></code>, <code class="docutils literal notranslate"><span class="pre">month_lengths</span></code>, <code class="docutils literal notranslate"><span class="pre">timelocal</span></code>, <code class="docutils literal notranslate"><span class="pre">tzvars</span></code>, <code class="docutils literal notranslate"><span class="pre">tzlock</span></code>, <code class="docutils literal notranslate"><span class="pre">tzcalc_limits</span></code>, and <code class="docutils literal notranslate"><span class="pre">strptime</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-libchar-in-iram"><span class="std std-ref">CONFIG_SPIRAM_CACHE_LIBCHAR_IN_IRAM</span></a>: affects the functions <code class="docutils literal notranslate"><span class="pre">ctype_</span></code>, <code class="docutils literal notranslate"><span class="pre">toupper</span></code>, <code class="docutils literal notranslate"><span class="pre">tolower</span></code>, <code class="docutils literal notranslate"><span class="pre">toascii</span></code>, <code class="docutils literal notranslate"><span class="pre">strupr</span></code>, <code class="docutils literal notranslate"><span class="pre">bzero</span></code>, <code class="docutils literal notranslate"><span class="pre">isalnum</span></code>, <code class="docutils literal notranslate"><span class="pre">isalpha</span></code>, <code class="docutils literal notranslate"><span class="pre">isascii</span></code>, <code class="docutils literal notranslate"><span class="pre">isblank</span></code>, <code class="docutils literal notranslate"><span class="pre">iscntrl</span></code>, <code class="docutils literal notranslate"><span class="pre">isdigit</span></code>, <code class="docutils literal notranslate"><span class="pre">isgraph</span></code>, <code class="docutils literal notranslate"><span class="pre">islower</span></code>, <code class="docutils literal notranslate"><span class="pre">isprint</span></code>, <code class="docutils literal notranslate"><span class="pre">ispunct</span></code>, <code class="docutils literal notranslate"><span class="pre">isspace</span></code>, and <code class="docutils literal notranslate"><span class="pre">isupper</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-libmem-in-iram"><span class="std std-ref">CONFIG_SPIRAM_CACHE_LIBMEM_IN_IRAM</span></a>: affects the functions <code class="docutils literal notranslate"><span class="pre">memccpy</span></code>, <code class="docutils literal notranslate"><span class="pre">memchr</span></code>, <code class="docutils literal notranslate"><span class="pre">memmove</span></code>, and <code class="docutils literal notranslate"><span class="pre">memrchr</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-libstr-in-iram"><span class="std std-ref">CONFIG_SPIRAM_CACHE_LIBSTR_IN_IRAM</span></a>: affects the functions <code class="docutils literal notranslate"><span class="pre">strcasecmp</span></code>, <code class="docutils literal notranslate"><span class="pre">strcasestr</span></code>, <code class="docutils literal notranslate"><span class="pre">strchr</span></code>, <code class="docutils literal notranslate"><span class="pre">strcoll</span></code>, <code class="docutils literal notranslate"><span class="pre">strcpy</span></code>, <code class="docutils literal notranslate"><span class="pre">strcspn</span></code>, <code class="docutils literal notranslate"><span class="pre">strdup</span></code>, <code class="docutils literal notranslate"><span class="pre">strdup_r</span></code>, <code class="docutils literal notranslate"><span class="pre">strlcat</span></code>, <code class="docutils literal notranslate"><span class="pre">strlcpy</span></code>, <code class="docutils literal notranslate"><span class="pre">strlen</span></code>, <code class="docutils literal notranslate"><span class="pre">strlwr</span></code>, <code class="docutils literal notranslate"><span class="pre">strncasecmp</span></code>, <code class="docutils literal notranslate"><span class="pre">strncat</span></code>, <code class="docutils literal notranslate"><span class="pre">strncmp</span></code>, <code class="docutils literal notranslate"><span class="pre">strncpy</span></code>, <code class="docutils literal notranslate"><span class="pre">strndup</span></code>, <code class="docutils literal notranslate"><span class="pre">strndup_r</span></code>, <code class="docutils literal notranslate"><span class="pre">strrchr</span></code>, <code class="docutils literal notranslate"><span class="pre">strsep</span></code>, <code class="docutils literal notranslate"><span class="pre">strspn</span></code>, <code class="docutils literal notranslate"><span class="pre">strstr</span></code>, <code class="docutils literal notranslate"><span class="pre">strtok_r,</span> <span class="pre">and</span> <span class="pre">``strupr</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-librand-in-iram"><span class="std std-ref">CONFIG_SPIRAM_CACHE_LIBRAND_IN_IRAM</span></a>: affects the functions <code class="docutils literal notranslate"><span class="pre">srand</span></code>, <code class="docutils literal notranslate"><span class="pre">rand</span></code>, and <code class="docutils literal notranslate"><span class="pre">rand_r</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-libenv-in-iram"><span class="std std-ref">CONFIG_SPIRAM_CACHE_LIBENV_IN_IRAM</span></a>: affects the functions <code class="docutils literal notranslate"><span class="pre">environ</span></code>, <code class="docutils literal notranslate"><span class="pre">envlock</span></code>, and <code class="docutils literal notranslate"><span class="pre">getenv_r</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-libfile-in-iram"><span class="std std-ref">CONFIG_SPIRAM_CACHE_LIBFILE_IN_IRAM</span></a>: affects the functions <code class="docutils literal notranslate"><span class="pre">lock</span></code>, <code class="docutils literal notranslate"><span class="pre">isatty</span></code>, <code class="docutils literal notranslate"><span class="pre">fclose</span></code>, <code class="docutils literal notranslate"><span class="pre">open</span></code>, <code class="docutils literal notranslate"><span class="pre">close</span></code>, <code class="docutils literal notranslate"><span class="pre">creat</span></code>, <code class="docutils literal notranslate"><span class="pre">read</span></code>, <code class="docutils literal notranslate"><span class="pre">rshift</span></code>, <code class="docutils literal notranslate"><span class="pre">sbrk</span></code>, <code class="docutils literal notranslate"><span class="pre">stdio</span></code>, <code class="docutils literal notranslate"><span class="pre">syssbrk</span></code>, <code class="docutils literal notranslate"><span class="pre">sysclose</span></code>, <code class="docutils literal notranslate"><span class="pre">sysopen</span></code>, <code class="docutils literal notranslate"><span class="pre">creat</span></code>, <code class="docutils literal notranslate"><span class="pre">sysread</span></code>, <code class="docutils literal notranslate"><span class="pre">syswrite</span></code>, <code class="docutils literal notranslate"><span class="pre">impure</span></code>, <code class="docutils literal notranslate"><span class="pre">fwalk</span></code>, and <code class="docutils literal notranslate"><span class="pre">findfp</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-spiram-cache-libmisc-in-iram"><span class="std std-ref">CONFIG_SPIRAM_CACHE_LIBMISC_IN_IRAM</span></a>: affects the functions <code class="docutils literal notranslate"><span class="pre">raise</span></code> and <code class="docutils literal notranslate"><span class="pre">system</span></code>.</p></li>
+</ul>
+</p>
+<p>The exact amount of IRAM saved will depend on how much C library code is actually used by the application. In addition, the following options may be used to move more of the C library code into flash, however note that this may result in reduced performance. Be careful not to use the C library function allocated with <code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_IRAM</span></code> flag from interrupts when cache is disabled, refer to <a class="reference internal" href="../../api-reference/peripherals/spi_flash/spi_flash_concurrency.html#iram-safe-interrupt-handlers"><span class="std std-ref">IRAM-Safe Interrupt Handlers</span></a> for more details. For these reasons, the functions <code class="docutils literal notranslate"><span class="pre">itoa</span></code>, <code class="docutils literal notranslate"><span class="pre">memcmp</span></code>, <code class="docutils literal notranslate"><span class="pre">memcpy</span></code>, <code class="docutils literal notranslate"><span class="pre">memset</span></code>, <code class="docutils literal notranslate"><span class="pre">strcat</span></code>, <code class="docutils literal notranslate"><span class="pre">strcmp</span></code>, and <code class="docutils literal notranslate"><span class="pre">strlen</span></code> are always put in IRAM.</p>
+</section>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Moving frequently-called functions from IRAM to flash may increase their execution time.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Other configuration options exist that will increase IRAM usage by moving some functionality into IRAM, usually for performance, but the default option is not to do this. These are not listed here. The IRAM size impact of enabling these options is usually noted in the configuration item help text.</p>
+</div>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Minimizing RAM Usage (api-guides/performance/ram-usage)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Minimizing RAM Usage (api-guides/performance/ram-usage)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="size.html" class="btn btn-neutral float-left" title="Minimizing Binary Size" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../reproducible-builds.html" class="btn btn-neutral float-right" title="Reproducible Builds" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

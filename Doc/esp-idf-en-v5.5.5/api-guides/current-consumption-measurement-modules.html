@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Current Consumption Measurement of Modules - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/current-consumption-measurement-modules.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/current-consumption-measurement-modules';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Deep-sleep Wake Stubs" href="deep-sleep-stub.html" />
+    <link rel="prev" title="Anatomy of Core Dump Image" href="core_dump_internals.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_dump.html">Core Dump</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Current Consumption Measurement of Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#notes-to-measurement">Notes to Measurement</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#can-we-use-a-development-board">Can We Use a Development Board?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-choose-an-appropriate-ammeter">How to Choose an Appropriate Ammeter?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#hardware-connection">Hardware Connection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#measurement-steps">Measurement Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Guides</a></li>
+      <li class="breadcrumb-item active">Current Consumption Measurement of Modules</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/current-consumption-measurement-modules.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="current-consumption-measurement-of-modules">
+<h1>Current Consumption Measurement of Modules<a class="headerlink" href="#current-consumption-measurement-of-modules" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/api-guides/current-consumption-measurement-modules.html">[中文]</a></p>
+<p>You may want to know the current consumption of a <a class="reference external" href="https://www.espressif.com/en/products/modules">module</a> in Deep-sleep mode, <a class="reference internal" href="../api-reference/system/sleep_modes.html"><span class="doc">other power-saving modes</span></a>, and Active mode to develop some applications sensitive to power consumption. This section introduces how to measure the current consumption of a module running such an application.</p>
+<section id="notes-to-measurement">
+<h2>Notes to Measurement<a class="headerlink" href="#notes-to-measurement" title="Permalink to this heading"></a></h2>
+<section id="can-we-use-a-development-board">
+<h3>Can We Use a Development Board?<a class="headerlink" href="#can-we-use-a-development-board" title="Permalink to this heading"></a></h3>
+<p>For ESP32, using a development board directly to measure current consumption of the corresponding module is not recommended, as some circuits still consume power on the board even when you flash the chip with the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/deep_sleep">deep_sleep </a> example. Therefore, you need to cut off the power supply circuit to the module to measure the module's current. This method is inconvenient and increases measurement costs.</p>
+</section>
+<section id="how-to-choose-an-appropriate-ammeter">
+<h3>How to Choose an Appropriate Ammeter?<a class="headerlink" href="#how-to-choose-an-appropriate-ammeter" title="Permalink to this heading"></a></h3>
+<p>In the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/deep_sleep">deep_sleep </a> example, the module will be woken up every 20 seconds. In Deep-sleep mode, the current in the module is just several microamps (μA), while in active mode, the current is in the order of milliamps (mA). The high dynamic current range makes accurate measurement difficult. Ordinary ammeters cannot dynamically switch the measurement range fast enough.</p>
+<p>Additionally, ordinary ammeters have a relatively high internal resistance, resulting in a significant voltage drop. This may cause the module to enter an unstable state, as it is powered by a voltage smaller than the minimum required voltage supply.</p>
+<p>Therefore, an ammeter suitable for measuring current in Deep-sleep mode should have low internal resistance and, ideally, switch current ranges dynamically. We recommend two options: the <a class="reference external" href="https://www.joulescope.com/">Joulescope ammeter</a> and the <a class="reference external" href="https://www.nordicsemi.com/Products/Development-hardware/Power-Profiler-Kit-2.?lang=en">Power Profiler Kit II from Nordic</a>.</p>
+<section id="joulescope-ammeter">
+<h4>Joulescope Ammeter<a class="headerlink" href="#joulescope-ammeter" title="Permalink to this heading"></a></h4>
+<p>The Joulescope ammeter combines high-speed sampling and rapid dynamic current range switching to provide accurate and seamless current and energy measurements, even for devices with rapidly varying current consumption. Joulescope accurately measures electrical current over nine orders of magnitude from amps down to nanoamps. This wide range allows for accurate and precise current measurements for devices. Additionally, Joulescope has a total voltage drop of 25 mV at 1 A, which keeps the module running normally. These two features make Joulescope a perfect option for measuring the module switching between Deep-sleep mode and wake-up mode.</p>
+<p>Joulescope has no display screen. You need to connect it to a PC to visualize the current waveforms of the measured module. For specific instructions, please follow the documentation provided by the manufacturer.</p>
+</section>
+<section id="nordic-power-profiler-kit-ii">
+<h4>Nordic Power Profiler Kit II<a class="headerlink" href="#nordic-power-profiler-kit-ii" title="Permalink to this heading"></a></h4>
+<p>The Nordic Power Profiler Kit II has an advanced analog measurement unit with a high dynamic measurement range. This allows for accurate power consumption measurements for the entire range typically seen in low-power embedded applications, all the way from several microamps to 1 A. The resolution varies between 100 nA and 1 mA, depending on the measurement range, and is high enough to detect small spikes often seen in low-power optimized systems.</p>
+</section>
+</section>
+</section>
+<section id="hardware-connection">
+<h2>Hardware Connection<a class="headerlink" href="#hardware-connection" title="Permalink to this heading"></a></h2>
+<p>To measure the power consumption of a bare module, you need an <a class="reference external" href="https://docs.espressif.com/projects/espressif-esp-dev-kits/en/latest/other/esp-prog/user_guide.html">ESP-Prog</a> to flash the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/deep_sleep">deep_sleep </a> example to the module and power the module during measurement, a suitable ammeter (here we use the Joulescope ammeter), a computer, and of course a bare module with necessary jumper wires. For the connection, please refer to the following figure.</p>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="../_images/hardware_connection_power_measure.png"><img alt="Hardware Connection (click to enlarge)" src="../_images/hardware_connection_power_measure.png" style="width: 443.20000000000005px; height: 388.0px;" /></a>
+<figcaption>
+<p><span class="caption-text">Hardware Connection (click to enlarge)</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Please connect the pins of <strong>UART TX</strong>, <strong>UART RX</strong>, <strong>SPI Boot</strong>, <strong>Enable</strong>, and <strong>Ground</strong> on the measured module with corresponding pins on ESP-Prog, and connect the <strong>VPROG</strong> pin on ESP-Prog with the <strong>IN+</strong> port on the Joulescope ammeter and connect its <strong>OUT+</strong> port with the <strong>Power supply (3V3)</strong> pin on the measured module. For the specific names of these pins in different modules, please refer to the list below.</p>
+<table class="docutils align-center" id="id2">
+<caption><span class="caption-text">Pin Names of Modules Based on ESP32 Chip</span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Function of Module Pin</p></th>
+<th class="head"><p>Pin Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>UART TX</p></td>
+<td><p>TXD0</p></td>
+</tr>
+<tr class="row-odd"><td><p>UART RX</p></td>
+<td><p>RXD0</p></td>
+</tr>
+<tr class="row-even"><td><p>SPI Boot</p></td>
+<td><p>IO0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Enable</p></td>
+<td><p>EN</p></td>
+</tr>
+<tr class="row-even"><td><p>Power Supply</p></td>
+<td><p>3V3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ground</p></td>
+<td><p>GND</p></td>
+</tr>
+</tbody>
+</table>
+<p>For modules based on the ESP32 chip, the names of UART TX and UART RX pins may also be U0TXD and U0RXD.</p>
+<p>For details of the pin names, please refer to the <a class="reference external" href="https://www.espressif.com/en/support/download/documents/modules">datasheet of specific module</a>.</p>
+</section>
+<section id="measurement-steps">
+<h2>Measurement Steps<a class="headerlink" href="#measurement-steps" title="Permalink to this heading"></a></h2>
+<p>ESP32-S3-WROOM-1 is used as an example in the measurement, and other modules can be measured similarly. For the specific current consumption of chips in different modes, please refer to the Current Consumption subsection in the corresponding <a class="reference external" href="https://www.espressif.com/en/support/download/documents/chips?keys=&amp;field_download_document_type_tid%5B%5D=510">chip datasheet</a>.</p>
+<p>You can refer to the following steps to measure the current in Deep-sleep mode.</p>
+<ul class="simple">
+<li><p>Connect the aforementioned devices according to the hardware connection.</p></li>
+<li><p>Flash the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/deep_sleep">deep_sleep </a> example to the module. For details, please refer to <a class="reference internal" href="../get-started/linux-macos-start-project.html"><span class="doc">Start a Project on Linux and macOS</span></a> for a computer with Linux or macOS system or <a class="reference internal" href="../get-started/windows-start-project.html"><span class="doc">Start a Project on Windows</span></a> for a computer with Windows system.</p></li>
+</ul>
+<p>Please note that when you configure the example by running <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">menuconfig</span></code>, you need to disable <code class="docutils literal notranslate"><span class="pre">Enable</span> <span class="pre">touch</span> <span class="pre">wake</span> <span class="pre">up</span></code> in the <code class="docutils literal notranslate"><span class="pre">Example</span> <span class="pre">Configuration</span></code> to reduce the bottom current.</p>
+<p>For modules with an external resistor on GPIO12 (such as ESP32-WROVER-E/IE), you should call <a class="reference internal" href="../api-reference/peripherals/gpio.html#_CPPv416rtc_gpio_isolate10gpio_num_t" title="rtc_gpio_isolate"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rtc_gpio_isolate()</span></code></a> before going into Deep-sleep. This is to isolate the GPIO12 pin from external circuits to further minimize current consumption. Please note, for other modules, you do not have to call this function, otherwise, you may get abnormal results.</p>
+<ul class="simple">
+<li><p>By default, the module will be woken up every 20 seconds (you can change the timing by modifying the code of this example). To check if the example runs as expected, you can monitor the module operation by running <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">-p</span> <span class="pre">PORT</span> <span class="pre">monitor</span></code> (please replace PORT with your serial port name).</p></li>
+<li><p>Open the Joulescope software to see the current waveform as shown in the image below.</p></li>
+</ul>
+<p>From the waveforms, you can obtain that the current of the module in Deep-sleep mode is 8.14 μA. In addition, you can also see the current of the module in active mode, which is about 23.88 mA. The waveforms also show that the average power consumption during Deep-sleep mode is 26.85 μW, and the average power consumption during active mode is 78.32 mW.</p>
+<figure class="align-center" id="id3">
+<a class="reference internal image-reference" href="../_images/current_measure_waveform.png"><img alt="Current Waveform of ESP32-S3-WROOM-1 (click to enlarge)" src="../_images/current_measure_waveform.png" style="width: 537.0px; height: 493.0px;" /></a>
+<figcaption>
+<p><span class="caption-text">Current Waveform of ESP32-S3-WROOM-1 (click to enlarge)</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The figure below shows the total power consumption of one cycle is 6.37 mW.</p>
+<figure class="align-center" id="id4">
+<a class="reference internal image-reference" href="../_images/power_measure_waveform.png"><img alt="Power Consumption of ESP32-S3-WROOM-1 (click to enlarge)" src="../_images/power_measure_waveform.png" style="width: 539.0px; height: 514.0px;" /></a>
+<figcaption>
+<p><span class="caption-text">Power Consumption of ESP32-S3-WROOM-1 (click to enlarge)</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>By referring to these power consumption in different modes, you can estimate the power consumption of your applications and choose the appropriate power source.</p>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Current Consumption Measurement of Modules (api-guides/current-consumption-measurement-modules)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Current Consumption Measurement of Modules (api-guides/current-consumption-measurement-modules)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="core_dump_internals.html" class="btn btn-neutral float-left" title="Anatomy of Core Dump Image" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="deep-sleep-stub.html" class="btn btn-neutral float-right" title="Deep-sleep Wake Stubs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

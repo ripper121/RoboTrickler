@@ -93,13 +93,16 @@ static bool i2sOutWrite(const uint32_t *words, size_t frames)
          bytesWritten == bytes;
 }
 
-static void i2sOutBatchFlush()
+static bool i2sOutBatchFlush()
 {
-  if (i2sOutBatchFrames > 0)
+  if (i2sOutBatchFrames == 0)
   {
-    i2sOutWrite(i2sOutBatch, i2sOutBatchFrames);
-    i2sOutBatchFrames = 0;
+    return true;
   }
+
+  size_t frames = i2sOutBatchFrames;
+  i2sOutBatchFrames = 0;
+  return i2sOutWrite(i2sOutBatch, frames);
 }
 
 static bool i2sOutBatchAppend(uint32_t word, long frames, uint32_t runId)
@@ -113,7 +116,10 @@ static bool i2sOutBatchAppend(uint32_t word, long frames, uint32_t runId)
       {
         return false;
       }
-      i2sOutBatchFlush();
+      if (!i2sOutBatchFlush())
+      {
+        return false;
+      }
     }
     i2sOutBatch[i2sOutBatchFrames * 2] = word;
     i2sOutBatch[(i2sOutBatchFrames * 2) + 1] = word;
@@ -217,6 +223,8 @@ static void shiftRegisterInit()
   };
   if (i2s_channel_init_std_mode(i2sOutChannel, &stdConfig) != ESP_OK)
   {
+    i2s_del_channel(i2sOutChannel);
+    i2sOutChannel = NULL;
     updateDisplayLog(langText("status_stepper_i2s_failed"));
     return;
   }
@@ -230,23 +238,56 @@ static void shiftRegisterInit()
     i2sOutFeederBlock[(i * 2) + 1] = shiftRegisterState;
   }
   size_t preloaded = 1;
+  size_t totalPreloaded = 0;
+  bool preloadOk = true;
   while (preloaded > 0)
   {
     if (i2s_channel_preload_data(i2sOutChannel, i2sOutFeederBlock,
                                  sizeof(i2sOutFeederBlock), &preloaded) != ESP_OK)
     {
+      preloadOk = false;
       break;
     }
+    totalPreloaded += preloaded;
+  }
+  if (!preloadOk || (totalPreloaded == 0))
+  {
+    i2s_del_channel(i2sOutChannel);
+    i2sOutChannel = NULL;
+    updateDisplayLog(langText("status_stepper_i2s_failed"));
+    return;
   }
 
   if (i2s_channel_enable(i2sOutChannel) != ESP_OK)
   {
+    i2s_del_channel(i2sOutChannel);
+    i2sOutChannel = NULL;
     updateDisplayLog(langText("status_stepper_i2s_failed"));
     return;
   }
 
   i2sOutMutex = xSemaphoreCreateMutex();
-  xTaskCreatePinnedToCore(i2sOutFeederTask, "i2sOut", 3072, NULL, 2, NULL, 0);
+  if (i2sOutMutex == NULL)
+  {
+    i2s_channel_disable(i2sOutChannel);
+    i2s_del_channel(i2sOutChannel);
+    i2sOutChannel = NULL;
+    updateDisplayLog(langText("status_stepper_i2s_failed"));
+    return;
+  }
+
+  BaseType_t taskCreated = xTaskCreatePinnedToCore(i2sOutFeederTask, "i2sOut", 3072,
+                                                   NULL, 2, NULL, 0);
+  if (taskCreated != pdPASS)
+  {
+    vSemaphoreDelete(i2sOutMutex);
+    i2sOutMutex = NULL;
+    i2s_channel_disable(i2sOutChannel);
+    i2s_del_channel(i2sOutChannel);
+    i2sOutChannel = NULL;
+    updateDisplayLog(langText("status_stepper_i2s_failed"));
+    return;
+  }
   shiftRegisterReady = true;
 }
 
@@ -336,7 +377,7 @@ bool step(int stepperNum, long steps, bool reverse, uint32_t runId)
     }
     if (completed)
     {
-      i2sOutBatchFlush();
+      completed = i2sOutBatchFlush();
     }
     else
     {
@@ -348,7 +389,7 @@ bool step(int stepperNum, long steps, bool reverse, uint32_t runId)
     stepperEnableAll(false);
     uint32_t idle[2] = {shiftRegisterSnapshot(), 0};
     idle[1] = idle[0];
-    i2sOutWrite(idle, 1);
+    completed = i2sOutWrite(idle, 1) && completed;
     xSemaphoreGive(i2sOutMutex);
   }
 

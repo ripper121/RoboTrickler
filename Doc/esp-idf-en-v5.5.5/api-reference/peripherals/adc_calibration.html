@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analog to Digital Converter (ADC) Calibration Driver - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/adc_calibration.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/peripherals/adc_calibration';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Clock Tree" href="clk_tree.html" />
+    <link rel="prev" title="Analog to Digital Converter (ADC) Continuous Mode Driver" href="adc_continuous.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Peripherals API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adc_oneshot.html">Analog to Digital Converter (ADC) Oneshot Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_continuous.html">Analog to Digital Converter (ADC) Continuous Mode Driver</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Analog to Digital Converter (ADC) Calibration Driver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functional-overview">Functional Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="clk_tree.html">Clock Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dac.html">Digital To Analog Converter (DAC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gpio.html">GPIO &amp; RTC GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gptimer.html">General Purpose Timer (GPTimer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2c.html">Inter-Integrated Circuit (I2C)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2s.html">Inter-IC Sound (I2S)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lcd/index.html">LCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ledc.html">LED Control (LEDC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mcpwm.html">Motor Control Pulse Width Modulator (MCPWM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pcnt.html">Pulse Counter (PCNT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rmt.html">Remote Control Transceiver (RMT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sd_pullup_requirements.html">SD Pull-up Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdmmc_host.html">SDMMC Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdspi_host.html">SD SPI Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdio_slave.html">SDIO Card Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdm.html">Sigma-Delta Modulation (SDM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_flash/index.html">SPI Flash API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_master.html">SPI Master Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_slave.html">SPI Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cap_touch_sens.html">Capacitive Touch Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="twai.html">Two-Wire Automotive Interface (TWAI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uart.html">Universal Asynchronous Receiver/Transmitter (UART)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Peripherals API</a></li>
+      <li class="breadcrumb-item active">Analog to Digital Converter (ADC) Calibration Driver</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/peripherals/adc_calibration.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="analog-to-digital-converter-adc-calibration-driver">
+<h1>Analog to Digital Converter (ADC) Calibration Driver<a class="headerlink" href="#analog-to-digital-converter-adc-calibration-driver" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/peripherals/adc_calibration.html">[中文]</a></p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h2>
+<p>In ESP32, the analog-to-digital converter (ADC) compares the input analog voltage to the reference, and determines each bit of the output digital result. By design, the ADC reference voltage for ESP32 is 1100 mV. However, the true reference voltage can range from 1000 mV to 1200 mV among different chips. This guide introduces the ADC calibration driver to minimize the effect of different reference voltages, and get more accurate output results.</p>
+</section>
+<section id="functional-overview">
+<h2>Functional Overview<a class="headerlink" href="#functional-overview" title="Permalink to this heading"></a></h2>
+<p>The following sections of this document cover the typical steps to install and use the ADC calibration driver:</p>
+<p><ul class="simple">
+<li><p><a class="reference internal" href="#adc-calibration-scheme-creation"><span class="std std-ref">Calibration Scheme Creation</span></a> - covers how to create a calibration scheme handle and delete the calibration scheme handle.</p></li>
+<li><p><a class="reference internal" href="#adc-result-conversion"><span class="std std-ref">Result Conversion</span></a> - covers how to convert ADC raw result to calibrated result.</p></li>
+<li><p><a class="reference internal" href="#adc-thread-safety"><span class="std std-ref">Thread Safety</span></a> - lists which APIs are guaranteed to be thread-safe by the driver.</p></li>
+<li><p><a class="reference internal" href="#adc-minimize-noise"><span class="std std-ref">Minimize Noise</span></a> - describes a general way to minimize the noise.</p></li>
+<li><p><a class="reference internal" href="#adc-kconfig-options"><span class="std std-ref">Kconfig Options</span></a> - lists the supported Kconfig options that can be used to make a different effect on driver behavior.</p></li>
+</ul>
+</p>
+<section id="calibration-scheme-creation">
+<span id="adc-calibration-scheme-creation"></span><h3>Calibration Scheme Creation<a class="headerlink" href="#calibration-scheme-creation" title="Permalink to this heading"></a></h3>
+<p>The ADC calibration driver provides ADC calibration scheme(s). From the calibration driver's point of view, an ADC calibration scheme is created for an ADC calibration handle <a class="reference internal" href="#_CPPv417adc_cali_handle_t" title="adc_cali_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">adc_cali_handle_t</span></code></a>.</p>
+<p><a class="reference internal" href="#_CPPv421adc_cali_check_schemeP21adc_cali_scheme_ver_t" title="adc_cali_check_scheme"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">adc_cali_check_scheme()</span></code></a> can be used to know which calibration scheme is supported on the chip. If you already know the supported schemes, this step can be skipped. Just call the corresponding function to create the scheme handle.</p>
+<p>If you use your custom ADC calibration schemes, you could either modify this function <a class="reference internal" href="#_CPPv421adc_cali_check_schemeP21adc_cali_scheme_ver_t" title="adc_cali_check_scheme"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">adc_cali_check_scheme()</span></code></a>, or just skip this step and call your custom creation function.</p>
+<section id="adc-calibration-line-fitting-scheme">
+<h4>ADC Calibration Line Fitting Scheme<a class="headerlink" href="#adc-calibration-line-fitting-scheme" title="Permalink to this heading"></a></h4>
+<p>ESP32 supports <code class="xref c c-macro docutils literal notranslate"><span class="pre">ADC_CALI_SCHEME_VER_LINE_FITTING</span></code> scheme. To create this scheme, set up <code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">adc_cali_line_fitting_config_t</span></code> first.</p>
+<ul class="simple">
+<li><p><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">adc_cali_line_fitting_config_t::unit_id</span></code>, the ADC that your ADC raw results are from.</p></li>
+<li><p><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">adc_cali_line_fitting_config_t::atten</span></code>, ADC attenuation that your ADC raw results use.</p></li>
+<li><p><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">adc_cali_line_fitting_config_t::bitwidth</span></code>, bit width of ADC raw result.</p></li>
+</ul>
+<p>There is also a configuration <code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">adc_cali_line_fitting_config_t::default_vref</span></code>. Normally this can be simply set to 0. Line Fitting scheme does not rely on this value. However, if the Line Fitting scheme required eFuse bits are not burned on your board, the driver will rely on this value to do the calibration.</p>
+<p>You can use <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">adc_cali_scheme_line_fitting_check_efuse()</span></code> to check the eFuse bits. Normally the Line Fitting scheme eFuse value is <code class="xref c c-macro docutils literal notranslate"><span class="pre">ADC_CALI_LINE_FITTING_EFUSE_VAL_EFUSE_TP</span></code> or <code class="xref c c-macro docutils literal notranslate"><span class="pre">ADC_CALI_LINE_FITTING_EFUSE_VAL_EFUSE_VREF</span></code>. This means the Line Fitting scheme uses calibration parameters burned in the eFuse to do the calibration.</p>
+<p>When the Line Fitting scheme eFuse value is <code class="xref c c-macro docutils literal notranslate"><span class="pre">ADC_CALI_LINE_FITTING_EFUSE_VAL_DEFAULT_VREF</span></code>, you need to set the <code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_adc_cali_line_fitting_init::default_vref</span></code>. Default vref is an estimate of the ADC reference voltage provided as a parameter during calibration.</p>
+<p>After setting up the configuration structure, call <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">adc_cali_create_scheme_line_fitting()</span></code> to create a Line Fitting calibration scheme handle.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;calibration scheme version is %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Line Fitting&quot;</span><span class="p">);</span>
+<span class="n">adc_cali_line_fitting_config_t</span><span class="w"> </span><span class="n">cali_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">unit_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">unit</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">atten</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">atten</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">bitwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ADC_BITWIDTH_DEFAULT</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">adc_cali_create_scheme_line_fitting</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cali_config</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">handle</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>When the ADC calibration is no longer used, please delete the calibration scheme handle by calling <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">adc_cali_delete_scheme_line_fitting()</span></code>.</p>
+<section id="delete-line-fitting-scheme">
+<h5>Delete Line Fitting Scheme<a class="headerlink" href="#delete-line-fitting-scheme" title="Permalink to this heading"></a></h5>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;delete %s calibration scheme&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Line Fitting&quot;</span><span class="p">);</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">adc_cali_delete_scheme_line_fitting</span><span class="p">(</span><span class="n">handle</span><span class="p">));</span>
+</pre></div>
+</div>
+</section>
+</section>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to use your custom calibration schemes, you could provide a creation function to create your calibration scheme handle. Check the function table <code class="docutils literal notranslate"><span class="pre">adc_cali_scheme_t</span></code> in <code class="docutils literal notranslate"><span class="pre">components/esp_adc/interface/adc_cali_interface.h</span></code> to know the ESP ADC calibration interface.</p>
+</div>
+</section>
+<section id="result-conversion">
+<span id="adc-result-conversion"></span><h3>Result Conversion<a class="headerlink" href="#result-conversion" title="Permalink to this heading"></a></h3>
+<p>After setting up the calibration characteristics, you can call <a class="reference internal" href="#_CPPv423adc_cali_raw_to_voltage17adc_cali_handle_tiPi" title="adc_cali_raw_to_voltage"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">adc_cali_raw_to_voltage()</span></code></a> to convert the ADC raw result into calibrated result. The calibrated result is in the unit of mV. This function may fail due to an invalid argument. Especially, if this function returns <a class="reference internal" href="../system/esp_err.html#c.ESP_ERR_INVALID_STATE" title="ESP_ERR_INVALID_STATE"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_INVALID_STATE</span></code></a>, this means the calibration scheme is not created. You need to create a calibration scheme handle, use <a class="reference internal" href="#_CPPv421adc_cali_check_schemeP21adc_cali_scheme_ver_t" title="adc_cali_check_scheme"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">adc_cali_check_scheme()</span></code></a> to know the supported calibration scheme. On the other hand, you could also provide a custom calibration scheme and create the handle.</p>
+<section id="get-voltage">
+<h4>Get Voltage<a class="headerlink" href="#get-voltage" title="Permalink to this heading"></a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">adc_cali_raw_to_voltage</span><span class="p">(</span><span class="n">adc_cali_handle</span><span class="p">,</span><span class="w"> </span><span class="n">adc_raw</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">voltage</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]));</span>
+<span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ADC%d Channel[%d] Cali Voltage: %d mV&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ADC_UNIT_1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">EXAMPLE_ADC1_CHAN0</span><span class="p">,</span><span class="w"> </span><span class="n">voltage</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="thread-safety">
+<span id="adc-thread-safety"></span><h3>Thread Safety<a class="headerlink" href="#thread-safety" title="Permalink to this heading"></a></h3>
+<p>The factory function <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_adc_cali_new_scheme()</span></code> is guaranteed to be thread-safe by the driver. Therefore, you can call them from different RTOS tasks without protection by extra locks.</p>
+<p>Other functions that take the <a class="reference internal" href="#_CPPv417adc_cali_handle_t" title="adc_cali_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">adc_cali_handle_t</span></code></a> as the first positional parameter are not thread-safe, you should avoid calling them from multiple tasks.</p>
+</section>
+<section id="kconfig-options">
+<span id="adc-kconfig-options"></span><h3>Kconfig Options<a class="headerlink" href="#kconfig-options" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="../kconfig-reference.html#config-adc-cal-efuse-tp-enable"><span class="std std-ref">CONFIG_ADC_CAL_EFUSE_TP_ENABLE</span></a> - disable this to decrease the code size, if the calibration eFuse value is not set to <code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">ADC_CALI_LINE_FITTING_EFUSE_VAL_EFUSE_TP</span></code>.</p></li>
+<li><p><a class="reference internal" href="../kconfig-reference.html#config-adc-cal-efuse-vref-enable"><span class="std std-ref">CONFIG_ADC_CAL_EFUSE_VREF_ENABLE</span></a> - disable this to decrease the code size, if the calibration eFuse value is not set to <code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">ADC_CALI_LINE_FITTING_EFUSE_VAL_EFUSE_VREF</span></code>.</p></li>
+<li><p><a class="reference internal" href="../kconfig-reference.html#config-adc-cal-lut-enable"><span class="std std-ref">CONFIG_ADC_CAL_LUT_ENABLE</span></a> - disable this to decrease the code size, if you do not calibrate the ADC raw results under <code class="xref c c-macro docutils literal notranslate"><span class="pre">ADC_ATTEN_DB_12</span></code>.</p></li>
+</ul>
+</section>
+<section id="minimize-noise">
+<h3>Minimize Noise<a class="headerlink" href="#minimize-noise" title="Permalink to this heading"></a></h3>
+<p>The ESP32 ADC is sensitive to noise, leading to large discrepancies in ADC readings. Depending on the usage scenario, you may need to connect a bypass capacitor (e.g., a 100 nF ceramic capacitor) to the ADC input pad in use, to minimize noise. Besides, multisampling may also be used to further mitigate the effects of noise.</p>
+<figure class="align-center" id="id2">
+<img alt="ADC noise mitigation" src="../../_images/adc-noise-graph.jpg" />
+<figcaption>
+<p><span class="caption-text">Graph illustrating noise mitigation using capacitor and multisampling of 64 samples.</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_adc/include/esp_adc/adc_cali.h">components/esp_adc/include/esp_adc/adc_cali.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_adc/adc_cali.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_adc</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_adc</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_adc
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_adc
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421adc_cali_check_schemeP21adc_cali_scheme_ver_t">
+<span id="_CPPv321adc_cali_check_schemeP21adc_cali_scheme_ver_t"></span><span id="_CPPv221adc_cali_check_schemeP21adc_cali_scheme_ver_t"></span><span id="adc_cali_check_scheme__adc_cali_scheme_ver_tP"></span><span class="target" id="adc__cali_8h_1a15e0084070b279a2ecf095c2c391cc53"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">adc_cali_check_scheme</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421adc_cali_scheme_ver_t" title="adc_cali_scheme_ver_t"><span class="n"><span class="pre">adc_cali_scheme_ver_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">scheme_mask</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421adc_cali_check_schemeP21adc_cali_scheme_ver_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check the supported ADC calibration scheme. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scheme_mask</strong> -- <strong>[out]</strong> Supported ADC calibration scheme(s)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: On success</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid argument</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: No supported calibration scheme </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423adc_cali_raw_to_voltage17adc_cali_handle_tiPi">
+<span id="_CPPv323adc_cali_raw_to_voltage17adc_cali_handle_tiPi"></span><span id="_CPPv223adc_cali_raw_to_voltage17adc_cali_handle_tiPi"></span><span id="adc_cali_raw_to_voltage__adc_cali_handle_t.i.iP"></span><span class="target" id="adc__cali_8h_1af16accc7fb10bf72cb88110aca2edbe4"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">adc_cali_raw_to_voltage</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417adc_cali_handle_t" title="adc_cali_handle_t"><span class="n"><span class="pre">adc_cali_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">raw</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">voltage</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423adc_cali_raw_to_voltage17adc_cali_handle_tiPi" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Convert ADC raw data to calibrated voltage. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- <strong>[in]</strong> ADC calibration handle </p></li>
+<li><p><strong>raw</strong> -- <strong>[in]</strong> ADC raw data </p></li>
+<li><p><strong>voltage</strong> -- <strong>[out]</strong> Calibrated ADC voltage (in mV)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: On success</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Invalid state, scheme didn't registered </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv417adc_cali_handle_t">
+<span id="_CPPv317adc_cali_handle_t"></span><span id="_CPPv217adc_cali_handle_t"></span><span id="adc_cali_handle_t"></span><span class="target" id="adc__cali_8h_1a5b3d76144e341307599126f276ff469a"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">adc_cali_scheme_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">adc_cali_handle_t</span></span></span><a class="headerlink" href="#_CPPv417adc_cali_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>ADC calibration handle. </p>
+</dd></dl>
+
+</section>
+<section id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv421adc_cali_scheme_ver_t">
+<span id="_CPPv321adc_cali_scheme_ver_t"></span><span id="_CPPv221adc_cali_scheme_ver_t"></span><span class="target" id="adc__cali_8h_1a1574adab36bfa559c47d19d45ccf8e7a"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">adc_cali_scheme_ver_t</span></span></span><a class="headerlink" href="#_CPPv421adc_cali_scheme_ver_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>ADC calibration scheme. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21adc_cali_scheme_ver_t32ADC_CALI_SCHEME_VER_LINE_FITTINGE">
+<span id="_CPPv3N21adc_cali_scheme_ver_t32ADC_CALI_SCHEME_VER_LINE_FITTINGE"></span><span id="_CPPv2N21adc_cali_scheme_ver_t32ADC_CALI_SCHEME_VER_LINE_FITTINGE"></span><span class="target" id="adc__cali_8h_1a1574adab36bfa559c47d19d45ccf8e7aa754d89a7bcb84be86b2e51d7d40dff09"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ADC_CALI_SCHEME_VER_LINE_FITTING</span></span></span><a class="headerlink" href="#_CPPv4N21adc_cali_scheme_ver_t32ADC_CALI_SCHEME_VER_LINE_FITTINGE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Line fitting scheme. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21adc_cali_scheme_ver_t33ADC_CALI_SCHEME_VER_CURVE_FITTINGE">
+<span id="_CPPv3N21adc_cali_scheme_ver_t33ADC_CALI_SCHEME_VER_CURVE_FITTINGE"></span><span id="_CPPv2N21adc_cali_scheme_ver_t33ADC_CALI_SCHEME_VER_CURVE_FITTINGE"></span><span class="target" id="adc__cali_8h_1a1574adab36bfa559c47d19d45ccf8e7aa5f7cbec286dbca9e9b260bd0ef0fd762"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ADC_CALI_SCHEME_VER_CURVE_FITTING</span></span></span><a class="headerlink" href="#_CPPv4N21adc_cali_scheme_ver_t33ADC_CALI_SCHEME_VER_CURVE_FITTINGE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Curve fitting scheme. </p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_adc/include/esp_adc/adc_cali_scheme.h">components/esp_adc/include/esp_adc/adc_cali_scheme.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_adc/adc_cali_scheme.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_adc</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_adc</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_adc
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_adc
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Analog to Digital Converter (ADC) Calibration Driver (api-reference/peripherals/adc_calibration)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Analog to Digital Converter (ADC) Calibration Driver (api-reference/peripherals/adc_calibration)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="adc_continuous.html" class="btn btn-neutral float-left" title="Analog to Digital Converter (ADC) Continuous Mode Driver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="clk_tree.html" class="btn btn-neutral float-right" title="Clock Tree" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

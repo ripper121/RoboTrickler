@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deep-sleep Wake Stubs - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/deep-sleep-stub.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/deep-sleep-stub';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Error Handling" href="error-handling.html" />
+    <link rel="prev" title="Current Consumption Measurement of Modules" href="current-consumption-measurement-modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Deep-sleep Wake Stubs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implement-wake-stub">Implement wake stub</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#load-wake-stub-code-into-rtc-fast-memory">Load Wake Stub Code into RTC Fast Memory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#load-wake-stub-data-into-rtc-memory">Load Wake Stub Data into RTC memory</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Guides</a></li>
+      <li class="breadcrumb-item active">Deep-sleep Wake Stubs</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/deep-sleep-stub.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="deep-sleep-wake-stubs">
+<h1>Deep-sleep Wake Stubs<a class="headerlink" href="#deep-sleep-wake-stubs" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/api-guides/deep-sleep-stub.html">[中文]</a></p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h2>
+<p>The wakeup time from Deep-sleep mode is much longer, compared to Light-sleep and Modem-sleep modes as ROM and RAM are both powered down in this case, and the CPU needs more time for SPI booting. However, ESP32 supports running a “Deep-sleep wake stub” when coming out of Deep-sleep. This function runs immediately as soon as the chip wakes up - before any normal initialization, bootloader, or ESP-IDF code has run.</p>
+<p>Specifically, after waking up from Deep-sleep mode, ESP32 starts partial initialization. Then RTC fast memory will be validated with CRC. If validation passes, the wake stub code will be executed.</p>
+<p>As ESP32 has just woken up from Deep-sleep, most of the peripherals are in the reset state. The SPI flash has not been mapped. Thus, wake stub code can only call functions implemented in ROM or loaded into RTC fast memory, which retains content during Deep-sleep.</p>
+<p>From the above, by utilizing the wake stub functionality in an application, you can quickly run some code when waking up from Deep-sleep mode, without having to wait for the whole boot-up process. However, the stub size is restricted by the size of RTC fast memory.</p>
+<p>ESP32 supports RTC memory, including both RTC fast memory and RTC slow memory. The wake stub code should be loaded into RTC fast memory, with data utilized by the code being stored in RTC fast or RTC slow memory.</p>
+<p>Next we will introduce how to implement the wake stub code in an application.</p>
+</section>
+<section id="implement-wake-stub">
+<h2>Implement wake stub<a class="headerlink" href="#implement-wake-stub" title="Permalink to this heading"></a></h2>
+<p>The wake stub in esp-idf is realized by the function <a class="reference internal" href="../api-reference/system/sleep_modes.html#_CPPv419esp_wake_deep_sleepv" title="esp_wake_deep_sleep"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_wake_deep_sleep()</span></code></a>. This function is executed whenever the SoC wakes from Deep-sleep. As this function is weakly-linked to the default function <a class="reference internal" href="../api-reference/system/sleep_modes.html#_CPPv427esp_default_wake_deep_sleepv" title="esp_default_wake_deep_sleep"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_default_wake_deep_sleep()</span></code></a>, if your application contains a function with the name <code class="docutils literal notranslate"><span class="pre">esp_wake_deep_sleep()</span></code>, the default version <a class="reference internal" href="../api-reference/system/sleep_modes.html#_CPPv427esp_default_wake_deep_sleepv" title="esp_default_wake_deep_sleep"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_default_wake_deep_sleep()</span></code></a> in esp-idf will be overridden.</p>
+<p>Please note that implementing the function <a class="reference internal" href="../api-reference/system/sleep_modes.html#_CPPv419esp_wake_deep_sleepv" title="esp_wake_deep_sleep"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_wake_deep_sleep()</span></code></a> in your application is not mandatory for utilizing the Deep-sleep functionality. It becomes necessary only if you want to introduce certain behavior immediately upon the SoC's wake-up.</p>
+<p>When you develop a customized wake stub, the first step it should do is to call the default function <a class="reference internal" href="../api-reference/system/sleep_modes.html#_CPPv427esp_default_wake_deep_sleepv" title="esp_default_wake_deep_sleep"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_default_wake_deep_sleep()</span></code></a>.</p>
+<p>In addition, you can switch between different wake stubs by calling the function <a class="reference internal" href="../api-reference/system/sleep_modes.html#_CPPv428esp_set_deep_sleep_wake_stub29esp_deep_sleep_wake_stub_fn_t" title="esp_set_deep_sleep_wake_stub"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_set_deep_sleep_wake_stub()</span></code></a> during runtime.</p>
+<p>Implementing the wake stub function in your application includes the following steps:</p>
+<p><ul class="simple">
+<li><p>Loading wake stub code into RTC fast memory</p></li>
+<li><p>Loading data into RTC memory</p></li>
+</ul>
+</p>
+<section id="load-wake-stub-code-into-rtc-fast-memory">
+<h3>Load Wake Stub Code into RTC Fast Memory<a class="headerlink" href="#load-wake-stub-code-into-rtc-fast-memory" title="Permalink to this heading"></a></h3>
+<p>The wake stub code can only call functions present in ROM or loaded into RTC fast memory. All other RAM locations are unintiailized and contain random data. While the wake stub code can use other RAM areas for temporary storage, the contents of these areas will be overwritten either upon returning to Deep-sleep mode or upon initiating esp-idf.</p>
+<p>Wake stub code is a part of the main esp-idf application. During regular execution of esp-idf, functions can call the wake stub code or access RTC memory, treating them as a regular part of the application.</p>
+<p>Wake stub code must reside in RTC fast memory. This can be realized in two ways.</p>
+<ul class="simple">
+<li><p>Employ the attribute <code class="docutils literal notranslate"><span class="pre">RTC_IRAM_ATTR</span></code> to place <a class="reference internal" href="../api-reference/system/sleep_modes.html#_CPPv419esp_wake_deep_sleepv" title="esp_wake_deep_sleep"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_wake_deep_sleep()</span></code></a> into RTC fast memory:</p></li>
+</ul>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="n">RTC_IRAM_ATTR</span><span class="w"> </span><span class="nf">esp_wake_deep_sleep</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">esp_default_wake_deep_sleep</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Add additional functionality here</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The first approach is suitable for short and simple code segments or for source files including both &quot;normal&quot; and &quot;RTC&quot; code.</p>
+<ul class="simple">
+<li><p>Place the function <a class="reference internal" href="../api-reference/system/sleep_modes.html#_CPPv419esp_wake_deep_sleepv" title="esp_wake_deep_sleep"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_wake_deep_sleep()</span></code></a> into any source file with name starting with <code class="docutils literal notranslate"><span class="pre">rtc_wake_stub</span></code>. For files with such names <code class="docutils literal notranslate"><span class="pre">rtc_wake_stub*</span></code>, their contents can be automatically put into RTC fast memory by the linker.</p></li>
+</ul>
+<p>The second method is preferable when writing longer code segments in RTC fast memory.</p>
+<p>However, any string constants used in this way must be declared as arrays and marked with <code class="docutils literal notranslate"><span class="pre">RTC_RODATA_ATTR</span></code>, as shown in the example above.</p>
+<ul class="simple">
+<li><p>Place the data into any source file with name starting with <code class="docutils literal notranslate"><span class="pre">rtc_wake_stub</span></code>, as demonstrated in the example source file <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/system/deep_sleep_wake_stub/main/rtc_wake_stub_example.c">system/deep_sleep_wake_stub/main/rtc_wake_stub_example.c</a>.</p></li>
+</ul>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_count</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">s_max_count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Reset s_count</span>
+<span class="w">    </span><span class="n">s_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Set the default wake stub.</span>
+<span class="w">    </span><span class="c1">// There is a default version of this function provided in esp-idf.</span>
+<span class="w">    </span><span class="n">esp_default_wake_deep_sleep</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Return from the wake stub function to continue</span>
+<span class="w">    </span><span class="c1">// booting the firmware.</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The second approach is advisable when incorporating strings or more complex code segments.</p>
+<p>You can enable the Kconfig option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-skip-validate-in-deep-sleep"><span class="std std-ref">CONFIG_BOOTLOADER_SKIP_VALIDATE_IN_DEEP_SLEEP</span></a> to reduce wake-up time. See more information in <a class="reference internal" href="bootloader.html"><span class="doc">Fast boot from Deep-sleep</span></a>.</p>
+<p>All of the above functions are declared in <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_hw_support/include/esp_sleep.h">esp_hw_support/include/esp_sleep.h</a>.</p>
+</section>
+<section id="load-wake-stub-data-into-rtc-memory">
+<h3>Load Wake Stub Data into RTC memory<a class="headerlink" href="#load-wake-stub-data-into-rtc-memory" title="Permalink to this heading"></a></h3>
+<p>RTC memory must include read-only data used by the wake stub code. Data in RTC memory is initialized whenever the SoC restarts, except when waking from Deep-sleep. In such cases, the data retained before entering to Deep-sleep are kept. Data used by the wake stub code must be resident in RTC memory, i.e. RTC fast memory or in RTC slow memory.</p>
+<p>The data can be specified in the following two methods:</p>
+<ul class="simple">
+<li><p>Utilize attributes <code class="docutils literal notranslate"><span class="pre">RTC_DATA_ATTR</span></code> and <code class="docutils literal notranslate"><span class="pre">RTC_RODATA_ATTR</span></code> to specify writable or read-only data, respectively.</p></li>
+</ul>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">RTC_DATA_ATTR</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">wake_count</span><span class="p">;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="n">RTC_IRAM_ATTR</span><span class="w"> </span><span class="nf">esp_wake_deep_sleep</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">esp_default_wake_deep_sleep</span><span class="p">();</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">RTC_RODATA_ATTR</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">fmt_str</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Wake count %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">esp_rom_printf</span><span class="p">(</span><span class="n">fmt_str</span><span class="p">,</span><span class="w"> </span><span class="n">wake_count</span><span class="o">++</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The RTC memory area where the data will be placed can be configured via the menuconfig option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp32-rtcdata-in-fast-mem"><span class="std std-ref">CONFIG_ESP32_RTCDATA_IN_FAST_MEM</span></a>. This option allows keeping slow memory area for ULP programs. Once it is enabled, the data marked with <code class="docutils literal notranslate"><span class="pre">RTC_DATA_ATTR</span></code> and <code class="docutils literal notranslate"><span class="pre">RTC_RODATA_ATTR</span></code> are placed in the RTC fast memory segment; otherwise, it goes to RTC slow memory (the default option). This option depends on the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-freertos-unicore"><span class="std std-ref">CONFIG_FREERTOS_UNICORE</span></a> option because RTC fast memory can be accessed only by PRO_CPU.</p>
+<p>This option depends on the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-freertos-unicore"><span class="std std-ref">CONFIG_FREERTOS_UNICORE</span></a> because RTC fast memory can be accessed only by PRO_CPU.</p>
+<p>The attributes <code class="docutils literal notranslate"><span class="pre">RTC_FAST_ATTR</span></code> and <code class="docutils literal notranslate"><span class="pre">RTC_SLOW_ATTR</span></code> can be used to specify data that is forcefully placed into RTC fast memory and RTC slow memory, respectively. Any access to data marked with <code class="docutils literal notranslate"><span class="pre">RTC_FAST_ATTR</span></code> is allowed by PRO_CPU only.</p>
+</section>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/deep_sleep_wake_stub">system/deep_sleep_wake_stub</a> demonstrates how to use the Deep-sleep wake stub on ESP32 to quickly perform some tasks (the wake stub code) immediately after wake-up before going back to sleep.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Deep-sleep Wake Stubs (api-guides/deep-sleep-stub)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Deep-sleep Wake Stubs (api-guides/deep-sleep-stub)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="current-consumption-measurement-modules.html" class="btn btn-neutral float-left" title="Current Consumption Measurement of Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="error-handling.html" class="btn btn-neutral float-right" title="Error Handling" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

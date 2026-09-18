@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Overriding Default Chip Drivers - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_flash/spi_flash_override_driver.html" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/peripherals/spi_flash/spi_flash_override_driver';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Concurrency Constraints for Flash on SPI1" href="spi_flash_concurrency.html" />
+    <link rel="prev" title="Optional Features for Flash" href="spi_flash_optional_feature.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Peripherals API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../adc_oneshot.html">Analog to Digital Converter (ADC) Oneshot Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../adc_continuous.html">Analog to Digital Converter (ADC) Continuous Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../adc_calibration.html">Analog to Digital Converter (ADC) Calibration Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../clk_tree.html">Clock Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dac.html">Digital To Analog Converter (DAC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../gpio.html">GPIO &amp; RTC GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../gptimer.html">General Purpose Timer (GPTimer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../i2c.html">Inter-Integrated Circuit (I2C)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../i2s.html">Inter-IC Sound (I2S)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../lcd/index.html">LCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ledc.html">LED Control (LEDC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mcpwm.html">Motor Control Pulse Width Modulator (MCPWM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pcnt.html">Pulse Counter (PCNT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rmt.html">Remote Control Transceiver (RMT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sd_pullup_requirements.html">SD Pull-up Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sdmmc_host.html">SDMMC Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sdspi_host.html">SD SPI Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sdio_slave.html">SDIO Card Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sdm.html">Sigma-Delta Modulation (SDM)</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">SPI Flash API</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#overview">Overview</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#support-for-features-of-flash-chips">Support for Features of Flash Chips</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#initializing-a-flash-device">Initializing a Flash Device</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#spi-flash-access-api">SPI Flash Access API</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#spi-flash-size">SPI Flash Size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#concurrency-constraints-for-flash-on-spi1">Concurrency Constraints for Flash on SPI1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#spi-flash-encryption">SPI Flash Encryption</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#memory-mapping-api">Memory Mapping API</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#spi-flash-implementation">SPI Flash Implementation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#implementation-details">Implementation Details</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#related-documents">Related Documents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#api-reference-spi-flash">API Reference - SPI Flash</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#api-reference-flash-encrypt">API Reference - Flash Encrypt</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../spi_master.html">SPI Master Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spi_slave.html">SPI Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cap_touch_sens.html">Capacitive Touch Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../twai.html">Two-Wire Automotive Interface (TWAI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../uart.html">Universal Asynchronous Receiver/Transmitter (UART)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Peripherals API</a></li>
+          <li class="breadcrumb-item"><a href="index.html">SPI Flash API</a></li>
+      <li class="breadcrumb-item active">Overriding Default Chip Drivers</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/peripherals/spi_flash/spi_flash_override_driver.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="overriding-default-chip-drivers">
+<h1>Overriding Default Chip Drivers<a class="headerlink" href="#overriding-default-chip-drivers" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../../zh_CN/v5.5.5/esp32/api-reference/peripherals/spi_flash/spi_flash_override_driver.html">[中文]</a></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Customizing SPI Flash Chip Drivers is considered an &quot;expert&quot; feature. The user should only do so at their own risk (see the notes below).</p>
+</div>
+<p>During the SPI Flash driver's initialization (i.e., <a class="reference internal" href="index.html#_CPPv414esp_flash_initP11esp_flash_t" title="esp_flash_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_flash_init()</span></code></a>), there is a chip detection step during which the driver iterates through a Default Chip Driver List and determine which chip driver can properly support the currently connected flash chip. The Default Chip Drivers are provided by the ESP-IDF, thus are updated in together with each ESP-IDF version. However ESP-IDF also allows to customize their own chip drivers.</p>
+<p>Note the following points when customizing chip drivers:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>You may need to rely on some non-public ESP-IDF functions, which have slight possibility to change between ESP-IDF versions. On the one hand, these changes may be useful bug fixes for your driver, on the other hand, they may also be breaking changes (i.e., breaks your code).</p></li>
+<li><p>Some ESP-IDF bug fixes to other chip drivers are not automatically applied to your own custom chip drivers.</p></li>
+<li><p>If the protection of flash is not handled properly, there may be some random reliability issues.</p></li>
+<li><p>If you update to a newer ESP-IDF version that has support for more chips, you will have to manually add those new chip drivers into your custom chip driver list. Otherwise the driver will only search for the drivers in custom list you provided.</p></li>
+</ol>
+</div></blockquote>
+<section id="steps-for-creating-custom-chip-drivers-and-overriding-the-esp-idf-default-driver-list">
+<h2>Steps For Creating Custom Chip Drivers and Overriding the ESP-IDF Default Driver List<a class="headerlink" href="#steps-for-creating-custom-chip-drivers-and-overriding-the-esp-idf-default-driver-list" title="Permalink to this heading"></a></h2>
+<section id="bootloader-flash-driver">
+<h3>Bootloader Flash Driver<a class="headerlink" href="#bootloader-flash-driver" title="Permalink to this heading"></a></h3>
+<p>To implement the bootloader driver so that the ESP chip can boot successfully, please read this part carefully. Wrong code will make ESP chip fail to boot or introduce random issues. Issues in the bootloader cannot be fixed via OTA. Please fully comprehend below parts before making any changes.</p>
+<p>Currently, there are two parts to override in bootloader: <code class="docutils literal notranslate"><span class="pre">bootloader_flash_unlock</span></code> and <code class="docutils literal notranslate"><span class="pre">bootloader_flash_qe_support_list</span></code> (and its size). See sections below.</p>
+<p>Ensure that all commands are sent and recognized successfully. If the flash receives an unknown command, it may silently ignore it and continue operating without re-enabling protection. This could lead to mis-writing, erasing, or locking issues.</p>
+<p>All bootloader flash driver functions reside in a component for the bootloader, which should be placed under <code class="docutils literal notranslate"><span class="pre">bootloader_components</span></code>. For example, <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/custom_flash_driver/bootloader_components/">storage/custom_flash_driver/bootloader_components/</a>. Only the components under <code class="docutils literal notranslate"><span class="pre">bootloader_components</span></code> will be added into the component list of bootloader automatically.</p>
+<p>There is a slight difference in the <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> of the component. The customized flash functions take effect by overriding existing weak ones. In order to link them into the bootloader, use the linker argument <cite>-u</cite> against the overriding functions in the <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>. See <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/storage/custom_flash_driver/bootloader_components/bootloader_flash/CMakeLists.txt">storage/custom_flash_driver/bootloader_components/bootloader_flash/CMakeLists.txt</a>.</p>
+<section id="bootloader-flash-unlock">
+<h4>Bootloader flash unlock<a class="headerlink" href="#bootloader-flash-unlock" title="Permalink to this heading"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">bootloader_flash_unlock</span></code> function is used to unlock flash write protection, which means once the flash is locked by accident, IDF is able to unlock it. By default, the unlock function will clear all bits in status registers and configuration registers except QE bit.</p>
+<p>Please don not modify the QE bit; otherwise, your chip will not be able to run under QUAD modes.</p>
+<p>Please check the default case below. If your flash have different behavior from that, some modifications are required.</p>
+<p>You can start from copying <code class="docutils literal notranslate"><span class="pre">bootloader_flash_unlock_default</span></code> from <code class="docutils literal notranslate"><span class="pre">components/bootloader_support/bootloader_flash/src/bootloader_flash.c</span></code> into a file in your customized component folder before modifying it. The function should be renamed to <code class="docutils literal notranslate"><span class="pre">bootloader_flash_unlock</span></code> to override the IDF bootloader function. For example, <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/storage/custom_flash_driver/bootloader_components/bootloader_flash/bootloader_flash_unlock_custom.c">storage/custom_flash_driver/bootloader_components/bootloader_flash/bootloader_flash_unlock_custom.c</a>.</p>
+<p>After that, your implementation of <code class="docutils literal notranslate"><span class="pre">bootloader_flash_unlock</span></code> will be linked instead of IDF default one, which has been declared as a weak symbol. So when IDF second stage bootloader boots, your implementation of <code class="docutils literal notranslate"><span class="pre">bootloader_flash_unlock</span></code> will be executed. If you want to make sure your function is truly linked, you can enable <code class="docutils literal notranslate"><span class="pre">CONFIG_BOOTLOADER_LOG_LEVEL_DEBUG</span></code> and you will see a <code class="docutils literal notranslate"><span class="pre">Using</span> <span class="pre">overridden</span> <span class="pre">bootloader_flash_unlock</span></code> log.</p>
+<p>The default function includes three common behaviors, please check first:</p>
+<ul class="simple">
+<li><p>Case 1 (<strong>Default</strong>): Check if the QE bit in your flash chip is located at bit 1 in status register-2, written by the second byte after command 01H (WRSR). If so, this matches the default behavior, and no further action is needed.</p></li>
+<li><p>Case 2: Check if the QE bit in your flash chip is located at bit 1 in status register-2, written by command 31H (and your flash does not support Case 1, which uses 01H + 2 bytes to write it). If this is the case, add your chip ID to the function <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">is_qe_bit_in_bit1_at_reg2()</span></code>. For example:</p></li>
+</ul>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">IRAM_ATTR</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_qe_bit_in_bit1_at_reg2</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">esp_rom_spiflash_chip_t</span><span class="o">*</span><span class="w"> </span><span class="n">chip</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">chip</span><span class="o">-&gt;</span><span class="n">device_id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/****GD series***/</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mh">0xC84016</span><span class="p">:</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mh">0xC84017</span><span class="p">:</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mh">0xC84018</span><span class="p">:</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="cm">/**** your flash series ****/</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="cm">/*your flash ID*/</span><span class="p">:</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="k">default</span><span class="o">:</span>
+<span class="w">        </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Case 3: Check whether the QE bit in your flash chip is located at bit 6 in status register-1, which can be written by command 01H. If so, you need to add your chip ID in function <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">is_qe_bit_in_bit6_at_reg1()</span></code>. For example:</p></li>
+</ul>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">IRAM_ATTR</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_qe_bit_in_bit6_at_reg1</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">esp_rom_spiflash_chip_t</span><span class="o">*</span><span class="w"> </span><span class="n">chip</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">chip</span><span class="o">-&gt;</span><span class="n">device_id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/***ISSI series***/</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mh">0x9D4016</span><span class="p">:</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mh">0x9D4017</span><span class="p">:</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/***MXIC series***/</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mh">0xC22016</span><span class="p">:</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mh">0xC22017</span><span class="p">:</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/****your flash series***/</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="cm">/*your flash ID*/</span><span class="p">:</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="k">default</span><span class="o">:</span>
+<span class="w">        </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Case 4: If the three cases mentioned above cannot cover your usage, please add another <cite>if</cite> block and the corresponding behavior function in function <code class="docutils literal notranslate"><span class="pre">bootloader_flash_unlock</span></code>. The determination function in the <cite>if</cite> block is suggested to be named after <code class="docutils literal notranslate"><span class="pre">is_qe_bit_in_bit_x_at_reg_x_</span></code> (x stands for behavior). Refer to example <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/storage/custom_flash_driver/bootloader_components/bootloader_flash/bootloader_flash_unlock_custom.c">storage/custom_flash_driver/bootloader_components/bootloader_flash/bootloader_flash_unlock_custom.c</a>.</p></li>
+</ul>
+</section>
+<section id="bootloader-flash-quad-mode-support">
+<h4>Bootloader Flash Quad Mode Support<a class="headerlink" href="#bootloader-flash-quad-mode-support" title="Permalink to this heading"></a></h4>
+<p>Pointer <code class="docutils literal notranslate"><span class="pre">bootloader_flash_qe_support_list</span></code> is used for iteration in bootloader for selecting the correct behavior to enable flash chip work under QUAD mode. To operate the flash in QUAD mode, enabling the QE bit in the flash status register is necessary. If you want to use your flash chip under QUAD mode, please read this part and implement the necessary changes.</p>
+<ul class="simple">
+<li><p>Case 1: If QE bit is placed at bit 1 in status register-2 to be written by command 31H, nothing needs to be done because this is the default behavior.</p></li>
+<li><p>Case 2: If QE bit on your chip is placed at different places, or need to use different command. Please add your own support.</p></li>
+</ul>
+<p>To add your own support, you can start from copying the <code class="docutils literal notranslate"><span class="pre">bootloader_flash_qe_support_list_user</span></code> function from <a class="reference external" href="https://github.com/espressif/esp-idf/blob/master/components/bootloader_support/bootloader_flash/src/flash_qio_mode.c">flash_qio_mode.c</a> into your file, renaming to <code class="docutils literal notranslate"><span class="pre">bootloader_flash_qe_support_list</span></code>. Please also define a corresponding <code class="docutils literal notranslate"><span class="pre">bootloader_flash_qe_list_count</span></code>.</p>
+<p>Add the details of your flash chip, including the chip's name, ID, and the functions to write registers, into <code class="docutils literal notranslate"><span class="pre">bootloader_flash_qio_support_list</span></code>. You can also reuse the existing functions like <code class="docutils literal notranslate"><span class="pre">bootloader_read_status_8b_rdsr</span></code>.</p>
+<p>If the existing functions do not fully meet your needs, you can define your own functions using <code class="docutils literal notranslate"><span class="pre">bootloader_execute_flash_command</span></code>, such as <code class="docutils literal notranslate"><span class="pre">bootloader_read_status_otp_mode_8b</span></code> and <code class="docutils literal notranslate"><span class="pre">bootloader_write_status_otp_mode_8b</span></code>. For example, see <a class="reference external" href="https://github.com/espressif/esp-flash-drivers/tree/main/esp_flash_nor/bootloader_flash_driver/bootloader_flash_custom.c">bootloader_flash_custom.c</a>.</p>
+<p>Put everything together:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="n">DRAM_ATTR</span><span class="w"> </span><span class="n">bootloader_qio_info_t</span><span class="w"> </span><span class="n">bootloader_flash_qe_support_list_user</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/*   Manufacturer,   mfg_id, flash_id, id mask, Read Status,                Write Status,               QIE Bit */</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;MXIC&quot;</span><span class="p">,</span><span class="w">        </span><span class="mh">0xC2</span><span class="p">,</span><span class="w">   </span><span class="mh">0x2000</span><span class="p">,</span><span class="w"> </span><span class="mh">0xFF00</span><span class="p">,</span><span class="w">    </span><span class="n">bootloader_read_status_8b_rdsr</span><span class="p">,</span><span class="w">        </span><span class="n">bootloader_write_status_8b_wrsr</span><span class="p">,</span><span class="w">       </span><span class="mi">6</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;ISSI&quot;</span><span class="p">,</span><span class="w">        </span><span class="mh">0x9D</span><span class="p">,</span><span class="w">   </span><span class="mh">0x4000</span><span class="p">,</span><span class="w"> </span><span class="mh">0xCF00</span><span class="p">,</span><span class="w">    </span><span class="n">bootloader_read_status_8b_rdsr</span><span class="p">,</span><span class="w">        </span><span class="n">bootloader_write_status_8b_wrsr</span><span class="p">,</span><span class="w">       </span><span class="mi">6</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;WinBond&quot;</span><span class="p">,</span><span class="w">     </span><span class="mh">0xEF</span><span class="p">,</span><span class="w">   </span><span class="mh">0x4000</span><span class="p">,</span><span class="w"> </span><span class="mh">0xFF00</span><span class="p">,</span><span class="w">    </span><span class="n">bootloader_read_status_16b_rdsr_rdsr2</span><span class="p">,</span><span class="w"> </span><span class="n">bootloader_write_status_16b_wrsr</span><span class="p">,</span><span class="w">      </span><span class="mi">9</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;GD&quot;</span><span class="p">,</span><span class="w">          </span><span class="mh">0xC8</span><span class="p">,</span><span class="w">   </span><span class="mh">0x4000</span><span class="p">,</span><span class="w"> </span><span class="mh">0xFFFF</span><span class="p">,</span><span class="w">    </span><span class="n">bootloader_read_status_16b_rdsr_rdsr2</span><span class="p">,</span><span class="w"> </span><span class="n">bootloader_write_status_16b_wrsr</span><span class="p">,</span><span class="w">      </span><span class="mi">9</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;XM25QU64A&quot;</span><span class="p">,</span><span class="w">   </span><span class="mh">0x20</span><span class="p">,</span><span class="w">   </span><span class="mh">0x3817</span><span class="p">,</span><span class="w"> </span><span class="mh">0xFFFF</span><span class="p">,</span><span class="w">    </span><span class="n">bootloader_read_status_8b_xmc25qu64a</span><span class="p">,</span><span class="w">  </span><span class="n">bootloader_write_status_8b_xmc25qu64a</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;TH&quot;</span><span class="p">,</span><span class="w">          </span><span class="mh">0xCD</span><span class="p">,</span><span class="w">   </span><span class="mh">0x6000</span><span class="p">,</span><span class="w"> </span><span class="mh">0xFF00</span><span class="p">,</span><span class="w">    </span><span class="n">bootloader_read_status_16b_rdsr_rdsr2</span><span class="p">,</span><span class="w"> </span><span class="n">bootloader_write_status_16b_wrsr</span><span class="p">,</span><span class="w">      </span><span class="mi">9</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;EON&quot;</span><span class="p">,</span><span class="w">         </span><span class="mh">0x1C</span><span class="p">,</span><span class="w">   </span><span class="mh">0x7000</span><span class="p">,</span><span class="w"> </span><span class="mh">0xFF00</span><span class="p">,</span><span class="w">    </span><span class="n">bootloader_read_status_otp_mode_8b</span><span class="p">,</span><span class="w">    </span><span class="n">bootloader_write_status_otp_mode_8b</span><span class="p">,</span><span class="w">   </span><span class="mi">6</span><span class="w"> </span><span class="p">},</span>
+
+<span class="w">    </span><span class="cm">/* Final entry is default entry, if no other IDs have matched</span>
+
+<span class="cm">        This approach works for chips including:</span>
+<span class="cm">        GigaDevice (mfg ID 0xC8, flash IDs including 4016),</span>
+<span class="cm">        FM25Q32 (QOUT mode only, mfg ID 0xA1, flash IDs including 4016)</span>
+<span class="cm">        BY25Q32 (mfg ID 0x68, flash IDs including 4016)</span>
+<span class="cm">    */</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w">          </span><span class="mh">0xFF</span><span class="p">,</span><span class="w">    </span><span class="mh">0xFFFF</span><span class="p">,</span><span class="w"> </span><span class="mh">0xFFFF</span><span class="p">,</span><span class="w">   </span><span class="n">bootloader_read_status_8b_rdsr2</span><span class="p">,</span><span class="w">       </span><span class="n">bootloader_write_status_8b_wrsr2</span><span class="p">,</span><span class="w">      </span><span class="mi">1</span><span class="w"> </span><span class="p">},</span>
+<span class="p">};</span>
+<span class="k">const</span><span class="w"> </span><span class="n">DRAM_ATTR</span><span class="w"> </span><span class="n">bootloader_qio_info_t</span><span class="o">*</span><span class="w"> </span><span class="n">bootloader_flash_qe_support_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bootloader_flash_qe_support_list_user</span><span class="p">;</span>
+<span class="kt">uint8_t</span><span class="w"> </span><span class="n">DRAM_ATTR</span><span class="w"> </span><span class="n">bootloader_flash_qe_list_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">bootloader_flash_qe_support_list_user</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">bootloader_qio_info_t</span><span class="p">));</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="app-flash-driver">
+<h3>App Flash Driver<a class="headerlink" href="#app-flash-driver" title="Permalink to this heading"></a></h3>
+<section id="generic-flash-driver">
+<h4>Generic Flash Driver<a class="headerlink" href="#generic-flash-driver" title="Permalink to this heading"></a></h4>
+<p>The flash driver in the application is used to read, write, erase, and save data. It also supports some advanced features like OTA. Below is a guide on how to customize the driver for your specific flash model.</p>
+<ul class="simple">
+<li><p>Step 1: The last item of <cite>default_registered_chips</cite> should be the <a class="reference external" href="https://github.com/espressif/esp-idf/blob/master/components/spi_flash/spi_flash_chip_generic.c">generic chip driver</a>. If your flash chip does not match any of the chip drivers listed above, it will use the generic driver. Check for any differences in behavior between your flash and the generic driver, including but not limited to different commands, dummy cycles, data bytes, and status registers.</p></li>
+<li><p>Step 2: If you have found something different from the generic driver, you need to implement your own chip driver. Create a new file named <code class="docutils literal notranslate"><span class="pre">spi_flash_chip_&lt;vendor&gt;.c</span></code> to implement the specific behavior, and copy the <code class="docutils literal notranslate"><span class="pre">esp_flash_chip_generic</span></code> structure into it as a starting point. Remember to include <code class="docutils literal notranslate"><span class="pre">spi_flash_chip_generic.h</span></code>. Here is an example <a class="reference external" href="https://github.com/espressif/esp-flash-drivers/tree/main/esp_flash_nor/">esp_flash_nor</a>.</p></li>
+<li><p>Step 3: Implement the functions with difference and point to them from the <code class="docutils literal notranslate"><span class="pre">spi_flash_chip_t</span></code>. Note: if some behavior of your flash is the same as the generic one, retain the generic driver functions without customization. Only implement the parts that differ. Here is an example:</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Flash work for suspend (i.e., enabling <a class="reference internal" href="../../kconfig-reference.html#config-spi-flash-auto-suspend"><span class="std std-ref">CONFIG_SPI_FLASH_AUTO_SUSPEND</span></a>) should be tested carefully and systematically due to different flash hardware design. If you want to use the suspend feature for mass production, please contact <a class="reference external" href="https://www.espressif.com/en/contact-us/sales-questions">Espressif's business team</a>.</p>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="n">DRAM_ATTR</span><span class="w"> </span><span class="n">spi_flash_chip_t</span><span class="w"> </span><span class="n">esp_flash_chip_eon</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chip_name</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">spi_flash_chip_generic_timeout</span><span class="p">,</span><span class="w">  </span><span class="cm">/*&lt;! default behavior*/</span>
+<span class="w">    </span><span class="p">.</span><span class="n">probe</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_eon_probe</span><span class="p">,</span><span class="w">   </span><span class="cm">/*&lt;! EON specific */</span>
+<span class="w">    </span><span class="p">.</span><span class="n">reset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_reset</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">detect_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_detect_size</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">erase_chip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_erase_chip</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">erase_sector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_erase_sector</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">erase_block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_erase_block</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sector_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">block_erase_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span>
+
+<span class="w">    </span><span class="p">.</span><span class="n">get_chip_write_protect</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_get_write_protect</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">set_chip_write_protect</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_set_write_protect</span><span class="p">,</span>
+
+<span class="w">    </span><span class="p">.</span><span class="n">num_protectable_regions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">protectable_regions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">get_protected_regions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">set_protected_regions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span>
+
+<span class="w">    </span><span class="p">.</span><span class="n">read</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_read</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">write</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_write</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">program_page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_page_program</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">page_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">write_encrypted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_write_encrypted</span><span class="p">,</span>
+
+<span class="w">    </span><span class="p">.</span><span class="n">wait_idle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_wait_idle</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">set_io_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_eon_set_io_mode</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">get_io_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_eon_get_io_mode</span><span class="p">,</span>
+
+<span class="w">    </span><span class="p">.</span><span class="n">read_reg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_read_reg</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">yield</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_generic_yield</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sus_setup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_eon_suspend_cmd_conf</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">get_chip_caps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_eon_get_caps</span><span class="p">,</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul>
+<li><p>When writing your own flash chip driver, you can set your flash chip capabilities through <code class="docutils literal notranslate"><span class="pre">spi_flash_chip_***(vendor)_get_caps</span></code> and point the function pointer <code class="docutils literal notranslate"><span class="pre">get_chip_caps</span></code> to the <code class="docutils literal notranslate"><span class="pre">spi_flash_chip_***_get_caps</span></code> function for protection. The steps are as follows.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Please check whether your flash chip has the capabilities listed in <code class="docutils literal notranslate"><span class="pre">spi_flash_caps_t</span></code> by checking the flash datasheet.</p></li>
+<li><p>Write a function named <code class="docutils literal notranslate"><span class="pre">spi_flash_chip_***(vendor)_get_caps</span></code>. Take the example below as a reference (if the flash supports <code class="docutils literal notranslate"><span class="pre">suspend</span></code> and <code class="docutils literal notranslate"><span class="pre">read</span> <span class="pre">unique</span> <span class="pre">id</span></code>).</p></li>
+<li><p>Point the pointer <code class="docutils literal notranslate"><span class="pre">get_chip_caps</span></code> (in <code class="docutils literal notranslate"><span class="pre">spi_flash_chip_t</span></code>) to <code class="docutils literal notranslate"><span class="pre">spi_flash_chip_***_get_caps</span></code>.</p></li>
+</ol>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">spi_flash_caps_t</span><span class="w"> </span><span class="n">spi_flash_chip_</span><span class="o">***</span><span class="p">(</span><span class="n">vendor</span><span class="p">)</span><span class="n">_get_caps</span><span class="p">(</span><span class="n">esp_flash_t</span><span class="w"> </span><span class="o">*</span><span class="n">chip</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">spi_flash_caps_t</span><span class="w"> </span><span class="n">caps_flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 32-bit address flash is not supported</span>
+<span class="w">    </span><span class="n">caps_flags</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="n">SPI_FLAHS_CHIP_CAP_SUSPEND</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// Read flash unique id</span>
+<span class="w">    </span><span class="n">caps_flags</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="n">SPI_FLASH_CHIP_CAP_UNIQUE_ID</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">caps_flags</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="n">spi_flash_chip_t</span><span class="w"> </span><span class="n">esp_flash_chip_eon</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Other function pointers</span>
+<span class="w">    </span><span class="p">.</span><span class="n">get_chip_caps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spi_flash_chip_eon_get_caps</span><span class="p">,</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>You can also see how to implement this in the example <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/custom_flash_driver">storage/custom_flash_driver</a>. This example demonstrates how to override the default chip driver list.</p></li>
+</ul>
+</div>
+<ul class="simple">
+<li><p>Step 4: Create a header file (e.g., <code class="docutils literal notranslate"><span class="pre">spi_flash_chip_&lt;vendor&gt;.h</span></code>) and declare the structure using <cite>extern</cite>, so that other components or source code can reuse this structure. Wrap all your chip drivers (including source files and their headers) into a chip-driver component. Add the include path and the source file to the component <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>.</p></li>
+<li><p>Step 5: The <code class="docutils literal notranslate"><span class="pre">linker.lf</span></code> is used to put every chip driver that you are going to use whilst cache is disabled into internal RAM. See <a class="reference internal" href="../../../api-guides/linker-script-generation.html"><span class="doc">Linker Script Generation</span></a> for more details. Make sure this file covers all the source files that you add.</p></li>
+<li><p>Step 6: Add a new component in your project, e.g., <code class="docutils literal notranslate"><span class="pre">custom_chip_driver</span></code>. List your chip object under <code class="docutils literal notranslate"><span class="pre">default_registered_chips</span></code> in <code class="docutils literal notranslate"><span class="pre">custom_chip_driver/chip_drivers.c</span></code>. Then enable the <a class="reference internal" href="../../kconfig-reference.html#config-spi-flash-override-chip-driver-list"><span class="std std-ref">CONFIG_SPI_FLASH_OVERRIDE_CHIP_DRIVER_LIST</span></a> configuration option. This prevents compilation and linking of the default chip driver list (<code class="docutils literal notranslate"><span class="pre">default_registered_chips</span></code>) provided by ESP-IDF. Instead, the linker searches for the structure of the same name (<code class="docutils literal notranslate"><span class="pre">default_registered_chips</span></code>) that must be provided by you. You can refer to <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/storage/custom_flash_driver/components/custom_chip_driver/chip_drivers.c">storage/custom_flash_driver/components/custom_chip_driver/chip_drivers.c</a>.</p></li>
+<li><p>Step 7: Build your project, and you will see the new flash driver in use.</p></li>
+</ul>
+</section>
+<section id="high-performance-flash-implementation">
+<h4>High Performance Flash Implementation<a class="headerlink" href="#high-performance-flash-implementation" title="Permalink to this heading"></a></h4>
+<p>The high performance mode operates at frequencies higher than 80 MHz. Please check the datasheet for your flash and to determine which approach can reach to frequencies higher than 80 MHz, as listed in <em>DC Characteristics</em> section. Some behavior is already defined in the <a class="reference external" href="https://github.com/espressif/esp-idf/blob/master/components/spi_flash/spi_flash_hpm_enable.c">high performance file</a> . If your flash meets the specified behavior, extend the list as introduced in the <code class="docutils literal notranslate"><span class="pre">bootloader_flash_unlock</span></code> section. If your flash has different behavior, please add the new behavior and override the behavior table <code class="docutils literal notranslate"><span class="pre">spi_flash_hpm_enable_list</span></code>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Flash with a frequency set above 80 MHz should be tested carefully due to its strict timing requirements. If you want to use the high performance mode feature for mass production, please contact <a class="reference external" href="https://www.espressif.com/en/contact-us/sales-questions">Espressif's business team</a>.</p>
+</div>
+</section>
+</section>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h2>
+<p>See <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/custom_flash_driver">storage/custom_flash_driver</a>, which uses an <a class="reference external" href="https://github.com/espressif/esp-flash-drivers/tree/main/esp_flash_nor">external component</a> to add support for custom flash and implement customized drivers, while this document mainly focuses on illustrating how to override the IDF driver.</p>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Overriding Default Chip Drivers (api-reference/peripherals/spi_flash/spi_flash_override_driver)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Overriding Default Chip Drivers (api-reference/peripherals/spi_flash/spi_flash_override_driver)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="spi_flash_optional_feature.html" class="btn btn-neutral float-left" title="Optional Features for Flash" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="spi_flash_concurrency.html" class="btn btn-neutral float-right" title="Concurrency Constraints for Flash on SPI1" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

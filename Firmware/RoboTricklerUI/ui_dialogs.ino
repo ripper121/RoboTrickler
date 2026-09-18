@@ -660,7 +660,9 @@ static void createProfileTuneDialog()
 
 bool tuneSelectedProfile()
 {
-    if (messageBoxOpen || isProfileTuneDialogOpen())
+    FilesystemLockGuard filesystemGuard;
+    if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable() ||
+        messageBoxOpen || isProfileTuneDialogOpen())
     {
         return false;
     }

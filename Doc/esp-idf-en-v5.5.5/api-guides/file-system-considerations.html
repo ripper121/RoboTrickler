@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File System Considerations - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/file-system-considerations.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/file-system-considerations';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Hardware Abstraction" href="hardware-abstraction.html" />
+    <link rel="prev" title="Fatal Errors" href="fatal-errors.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">File System Considerations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fatfs">FatFS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spiffs">SPIFFS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#littlefs">LittleFS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvs-library">NVS Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-handling-design-considerations">File handling design considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#encrypting-partitions">Encrypting partitions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Guides</a></li>
+      <li class="breadcrumb-item active">File System Considerations</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/file-system-considerations.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="file-system-considerations">
+<h1>File System Considerations<a class="headerlink" href="#file-system-considerations" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/api-guides/file-system-considerations.html">[中文]</a></p>
+<p>This chapter is intended to help you decide which file system is most suitable for your application. It points out specific features and properties of the file systems supported by the ESP-IDF, which are important in typical use-cases rather than describing all the specifics or comparing implementation details. Technical details for each file system are available in their corresponding documentation.</p>
+<p>Currently, the ESP-IDF framework supports three file systems. ESP-IDF provides convenient APIs to handle the mounting and dismounting of file systems in a unified way. File and directory access is implemented via C/POSIX standard file APIs, allowing all applications to use the same interface regardless of the underlying file system:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#fatfs-fs-section"><span class="std std-ref">FatFS</span></a></p></li>
+<li><p><a class="reference internal" href="#spiffs-fs-section"><span class="std std-ref">SPIFFS</span></a></p></li>
+<li><p><a class="reference internal" href="#littlefs-fs-section"><span class="std std-ref">LittleFS</span></a></p></li>
+</ul>
+<p>All of them are based on 3rd-party libraries connected to the ESP-IDF through various wrappers and modifications.</p>
+<p>ESP-IDF also provides the NVS Library API for simple data storage use cases, using keys to access associated values. While it is not a full-featured file system, it is a good choice for storing configuration data, calibration data, and similar information. For more details, see the <a class="reference internal" href="#nvs-fs-section"><span class="std std-ref">NVS Library</span></a> section.</p>
+<p>The most significant properties and features of above-mentioned file systems are summarized in the following table:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 14.3%" />
+<col style="width: 28.6%" />
+<col style="width: 28.6%" />
+<col style="width: 28.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>FatFS</p></th>
+<th class="head"><p>SPIFFS</p></th>
+<th class="head"><p>LittleFS</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Features</p></td>
+<td><ul class="simple">
+<li><p>Implements MS FAT12, FAT16, FAT32 and optionally exFAT variants</p></li>
+<li><p>General purpose filesystem, widely compatible across most HW platforms</p></li>
+<li><p>Well documented</p></li>
+<li><p>Thread safe</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Developed for NOR flash devices on embedded systems, low RAM usage</p></li>
+<li><p>Implements static wear levelling</p></li>
+<li><p>Limited documentation, no ongoing development</p></li>
+<li><p>Thread safe</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Designed as fail-safe, with own wear levelling and with fixed amount of RAM usage independent on the file system size</p></li>
+<li><p>Well documented</p></li>
+<li><p>Thread safe</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>Storage units and limits</p></td>
+<td><ul class="simple">
+<li><p>Clusters (1–128 sectors)</p></li>
+<li><p>Supported sector sizes: 512 B, 4096 B</p></li>
+<li><p>FAT12: cluster size 512 B – 8 kB, max 4085 clusters</p></li>
+<li><p>FAT16: cluster size 512 B – 64 kB, max 65525 clusters</p></li>
+<li><p>FAT32: cluster size 512 B – 32 kB, max 268435455 clusters</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Logical pages, logical blocks (consists of pages)</p></li>
+<li><p>Typical setup: page = 256 B, block = 64 kB</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Blocks, metadata pairs</p></li>
+<li><p>Typical block size: 4 kB</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>Wear Levelling</p></td>
+<td><p>Optional (for SPI Flash)</p></td>
+<td><p>Integrated</p></td>
+<td><p>Integrated</p></td>
+</tr>
+<tr class="row-odd"><td><p>Minimum partition size</p></td>
+<td><ul class="simple">
+<li><p>8 sectors with wear levelling on (4 FATFS sectors + 4 WL sectors with WL sector size = 4096 B)</p></li>
+<li><p>plus 4 sectors at least</p></li>
+<li><p>real number given by WL configuration (Safe, Perf)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>6 logical blocks</p></li>
+<li><p>8 pages per block</p></li>
+</ul>
+</td>
+<td><p>Not specified, theoretically 2 blocks</p></td>
+</tr>
+<tr class="row-even"><td><p>Maximum partition size</p></td>
+<td><ul class="simple">
+<li><p>FAT12: approx. 32 MB with 8 kB clusters</p></li>
+<li><p>FAT16: approx. 4 GB with 64 kB clusters (theoretical)</p></li>
+<li><p>FAT32: approx. 8 TB with 32 kB clusters (theoretical)</p></li>
+</ul>
+</td>
+<td><p>Absolute maximum not specified, more than 1024 pages per block not recommended</p></td>
+<td><p>Not specified, theoretically around 2 GB</p></td>
+</tr>
+<tr class="row-odd"><td><p>Directory Support</p></td>
+<td><ul class="simple">
+<li><p>Yes (max 65536 entries in a common FAT directory)</p></li>
+<li><dl class="simple">
+<dt>Limitations:</dt><dd><ul>
+<li><p>FAT12: max 224 files in the Root directory</p></li>
+<li><p>FAT16: max 512 files in the Root directory</p></li>
+<li><p>FAT32: the Root is just another directory</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</td>
+<td><p>No</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>Power failure protection</p></td>
+<td><p>No</p></td>
+<td><p>Partial (see <a class="reference internal" href="#spiffs-fs-section"><span class="std std-ref">SPIFFS</span></a>)</p></td>
+<td><p>Yes (integrated)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Encryption support</p></td>
+<td><p>Yes</p></td>
+<td><p>No</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>Supported targets</p></td>
+<td><ul class="simple">
+<li><p>SPI Flash (NOR)</p></li>
+<li><p>SD cards</p></li>
+</ul>
+</td>
+<td><p>SPI Flash (NOR)</p></td>
+<td><ul class="simple">
+<li><p>SPI Flash (NOR)</p></li>
+<li><p>SD cards (IDF &gt;= v5.0)</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>For file systems performance comparison using various configurations and parameters, see Storage performance benchmark example <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/perf_benchmark">storage/perf_benchmark</a>.</p>
+<section id="fatfs">
+<span id="fatfs-fs-section"></span><h2>FatFS<a class="headerlink" href="#fatfs" title="Permalink to this heading"></a></h2>
+<p>The most supported file system, recommended for common applications - file/directory operations, data storage, logging, etc. It provides automatic resolution of specific FAT system type and is widely compatible with PC or other platforms. FatFS supports partition encryption, read-only mode, optional wear-levelling for SPI Flash (SD cards use own built-in WL), equipped with auxiliary host side tools (generators and parsers, Python scripts). It supports SDMMC access. The biggest weakness is its low resilience against sudden power-off events. To mitigate such a scenario impact, the ESP-IDF FatFS default setup deploys 2 FAT table copies. This option can be disabled by setting <a class="reference internal" href="../api-reference/storage/fatfs.html#_CPPv4N26esp_vfs_fat_mount_config_t11use_one_fatE" title="esp_vfs_fat_mount_config_t::use_one_fat"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_vfs_fat_mount_config_t::use_one_fat</span></code></a> flag (the 2-FAT processing is fully handled by the FatFS library). See also related examples.</p>
+<p><strong>Related documents:</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://elm-chan.org/fsw/ff/">FatFS source site</a></p></li>
+<li><p>More about <a class="reference external" href="https://en.wikipedia.org/wiki/Design_of_the_FAT_file_system#Size_limits">FAT table size limits</a></p></li>
+<li><p><a class="reference internal" href="../api-reference/storage/fatfs.html#using-fatfs-with-vfs"><span class="std std-ref">Using FatFS with VFS</span></a></p></li>
+<li><p><a class="reference internal" href="../api-reference/storage/fatfs.html#using-fatfs-with-vfs-and-sdcards"><span class="std std-ref">Using FatFS with VFS and SD cards</span></a></p></li>
+<li><p>ESP-IDF FatFS tools: <a class="reference internal" href="../api-reference/storage/fatfs.html#fatfs-partition-generator"><span class="std std-ref">Partition generator</span></a> and <a class="reference internal" href="../api-reference/storage/fatfs.html#fatfs-partition-analyzer"><span class="std std-ref">Partition analyzer</span></a></p></li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/sd_card">storage/sd_card</a> demonstrates how to access the SD card that uses the FAT file system.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/fatfs/ext_flash">storage/fatfs/ext_flash</a> demonstrates how to access the external flash that uses the FAT file system.</p></li>
+</ul>
+</section>
+<section id="spiffs">
+<span id="spiffs-fs-section"></span><h2>SPIFFS<a class="headerlink" href="#spiffs" title="Permalink to this heading"></a></h2>
+<p>SPIFFS is a file system providing certain level of power-off safety (see repair-after-restart function <a class="reference internal" href="../api-reference/storage/spiffs.html#_CPPv416esp_spiffs_checkPKc" title="esp_spiffs_check"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_spiffs_check()</span></code></a>) and built-in wear levelling. It tends to slow down when exceeding around 70% of the dedicated partition size due to its garbage collector implementation, and also doesn't support directories. It is useful for applications depending only on few files (possibly large) and requiring high level of consistency. Generally, the SPIFFS needs less RAM resources than FatFS and supports flash chips up to 128 MB in size. Please keep in mind the SPIFFS is not being developed and maintained anymore, so consider precisely whether its advantages for your project really prevail over the other file systems.</p>
+<p><strong>Related documents:</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../api-reference/storage/spiffs.html"><span class="doc">SPIFFS Filesystem</span></a></p></li>
+<li><p><a class="reference internal" href="../api-reference/storage/spiffs.html#spiffs-generator"><span class="std std-ref">Tools For Generating SPIFFS Images</span></a></p></li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/spiffs">storage/spiffs</a> demonstrates how to use SPIFFS on ESP32 chip.</p></li>
+</ul>
+</section>
+<section id="littlefs">
+<span id="littlefs-fs-section"></span><h2>LittleFS<a class="headerlink" href="#littlefs" title="Permalink to this heading"></a></h2>
+<p>LittleFS is a block based file system designed for microcontrollers and embedded devices. It provides a good level of power failure resilience, implements dynamic wear levelling, and has very low RAM requirements. The system also has configurable limits and integrated SD/MMC card support. It is a recommended choice for general type of application. The only disadvantage is the file system not being natively compatible with other platforms (unlike FatFS).</p>
+<p>LittleFS is available as external component in the <a class="reference external" href="https://components.espressif.com/">ESP Component Registry</a>. See <a class="reference external" href="https://components.espressif.com/components/joltwallet/littlefs">LittleFS component page</a> for the details on including the file system into your project.</p>
+<p><strong>Related documents:</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/littlefs-project/littlefs">LittleFS project home (sources, documentation)</a></p></li>
+<li><p><a class="reference external" href="https://github.com/littlefs-project/littlefs?tab=readme-ov-file#related-projects">LittleFS auxiliary tools and related projects</a></p></li>
+<li><p><a class="reference external" href="https://github.com/joltwallet/esp_littlefs">LittleFS port for ESP-IDF</a></p></li>
+<li><p><a class="reference external" href="https://components.espressif.com/components/joltwallet/littlefs">ESP-IDF LittleFS component</a></p></li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/littlefs">storage/littlefs</a> demonstrates how to use LittleFS on ESP32 chip.</p></li>
+</ul>
+</section>
+<section id="nvs-library">
+<span id="nvs-fs-section"></span><h2>NVS Library<a class="headerlink" href="#nvs-library" title="Permalink to this heading"></a></h2>
+<p>Non-volatile Storage (NVS) is useful for applications depending on handling numerous key-value pairs, for instance application system configuration. For convenience, the key space is divided into namespaces, each namespace is a separate storage area. Besides the basic data types up to the size of 64-bit integers, the NVS also supports zero terminated strings and blobs - binary data of arbitrary length.</p>
+<p>Features include:</p>
+<ul class="simple">
+<li><p>Flash wear leveling by design.</p></li>
+<li><p>Sudden power-loss protection (data is stored in a way that ensures atomic updates).</p></li>
+<li><p>Encryption support (AES-XTS).</p></li>
+<li><p>Tooling is provided for both data preparation during manufacturing and offline analysis.</p></li>
+</ul>
+<p>Points to keep in mind when developing NVS related code:</p>
+<ul class="simple">
+<li><p>The recommended use case is storing configuration data that does not change frequently.</p></li>
+<li><p>NVS is not suitable for logging or other use cases with frequent, large data updates. NVS works best with small updates and low-frequency writes. Another limitation is the maximum number of flash page erase cycles, which is typically around 100,000 for NOR flash devices.</p></li>
+<li><p>If the application needs to store groups of data with significantly different update rates, it is recommended to use separate NVS flash partitions for each group. This makes wear leveling easier to manage and reduces the risk of data corruption.</p></li>
+<li><p>The default NVS partition (the one labeled &quot;nvs&quot;) is used by other ESP-IDF components such as WiFi, Bluetooth, etc. It is recommended to use a separate partition for application data to avoid conflicts with other components.</p></li>
+<li><p>The allocation unit for NVS storage in flash memory is one page—4,096 bytes. At least three pages are needed for each NVS partition to function properly. One page is always reserved and never used for data storage.</p></li>
+<li><p>Before writing or updating existing data, there must be enough free space in the NVS partition to store both the old and new data. The NVS library doesn't support partial updates. This can be especially challenging with large BLOBs spanning flash page boundaries, resulting in longer write times and increased overhead space consumption.</p></li>
+<li><p>The NVS library cannot ensure data consistency in out-of-spec power environments, such as systems powered by batteries or solar panels. Misinterpretation of flash data in such situations can lead to corruption of the NVS flash partition. Developers should include data recovery code, e.g., based on a read-only data partition with factory settings.</p></li>
+<li><p>An initialized NVS library leaves a RAM footprint, which scales linearly with the overall size of the flash partitions and the number of cached keys.</p></li>
+</ul>
+<p><strong>Related documents:</strong></p>
+<ul class="simple">
+<li><p>To learn more about the API and NVS library details, see the <a class="reference internal" href="../api-reference/storage/nvs_flash.html"><span class="doc">NVS documentation page</span></a>.</p></li>
+<li><p>For mass production, you can use the <a class="reference internal" href="../api-reference/storage/nvs_partition_gen.html"><span class="doc">NVS Partition Generator Utility</span></a>.</p></li>
+<li><p>For offline NVS partition analysis, you can use the <a class="reference internal" href="../api-reference/storage/nvs_partition_parse.html"><span class="doc">NVS Partition Parser Utility</span></a>.</p></li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/nvs/nvs_rw_value">storage/nvs/nvs_rw_value</a> demonstrates how to use NVS to write and read a single integer value.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/nvs/nvs_rw_blob">storage/nvs/nvs_rw_blob</a> demonstrates how to use NVS to write and read a blob.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/nvs/nvs_statistics">storage/nvs/nvs_statistics</a> demonstrates how to obtain and interpret NVS usage statistics: free/used/available/total number of entries and number of namespaces in given NVS partition.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/nvs/nvs_iteration">storage/nvs/nvs_iteration</a> demonstrates how to iterate over entries of specific (or any) NVS data type and how to obtain info about such entries.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/security/nvs_encryption_hmac">security/nvs_encryption_hmac</a> demonstrates NVS encryption using the HMAC peripheral, where the encryption keys are derived from the HMAC key burnt in eFuse.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/security/flash_encryption">security/flash_encryption</a> demonstrates the flash encryption workflow including NVS partition creation and usage.</p></li>
+</ul>
+</section>
+<section id="file-handling-design-considerations">
+<h2>File handling design considerations<a class="headerlink" href="#file-handling-design-considerations" title="Permalink to this heading"></a></h2>
+<p>Here are several recommendation for building reliable storage features into your application:</p>
+<ul class="simple">
+<li><p>Use C Standard Library file APIs (ISO or POSIX) wherever possible. This high-level interface guarantees you will not need to change much, if it comes for instance to switching to a different file system. All the ESP-IDF supported file systems work as underlying layer for C STDLIB calls, so the specific file system details are nearly transparent to the application code. The only parts unique to each single system are formatting, mounting and diagnostic/repair functions</p></li>
+<li><p>Keep the file system dependent code separated, use wrappers to allow minimum change updates</p></li>
+<li><dl class="simple">
+<dt>Design reasonable structure of your application file storage:</dt><dd><ul>
+<li><p>Distribute the load evenly, if possible. Use meaningful number of directories/subdirectories (for instance FAT12 can keep only 224 records in its root directory).</p></li>
+<li><p>Avoid using too many files or too large files (though the latter usually causes less troubles than the former). Each file equals to a record in the system's internal &quot;database&quot;, which can easily end up in the necessary overhead consuming more space than the data stored. Even worse case is exhausting the filesystem's resources and subsequent failure of the application - which can happen really quickly in embedded systems' environment.</p></li>
+<li><p>Be cautious about number of write or erase operations performed in SPI Flash memory (for example, each write in the FatFS involves full erase of the area to be written). NOR Flash devices typically survive 100,000+ erase cycles per sector, and their lifetime is extended by the Wear-Levelling mechanism (implemented as a standalone component in corresponding driver stack, transparent from the application's perspective). The Wear-Levelling algorithm rotates the Flash memory sectors all around given partition space, so it requires some disk space available for the virtual sector shuffle. If you create &quot;well-tailored&quot; partition with the minimum space needed and manage to fill it with your application data, the Wear Levelling becomes ineffective and your device would degrade quickly. Projects with Flash write frequency around 500ms are fully capable to destroy average ESP32 flash in few days time (real world example).</p></li>
+<li><p>With the previous point given, consider using reasonably large partitions to ensure safe margins for your data. It is usually cheaper to invest into extra Flash space than to forcibly resolve troubles unexpectedly happening in the field.</p></li>
+<li><p>Think twice before deciding for specific file system - they are not 100% equal and each application has own strategy and requirements. For instance, the NVS is not suitable for storing a production data, as its design doesn't deal well with too many items being stored (recommended maximum for NVS partition size would be around 128 kB).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="encrypting-partitions">
+<h2>Encrypting partitions<a class="headerlink" href="#encrypting-partitions" title="Permalink to this heading"></a></h2>
+<p>ESP32 based chips provide several features to encrypt the contents of various partitions within chip's main SPI flash memory. All the necessary information can be found in chapters <a class="reference internal" href="../security/flash-encryption.html"><span class="doc">Flash Encryption</span></a> and <a class="reference internal" href="../api-reference/storage/nvs_encryption.html"><span class="doc">NVS Encryption</span></a>. Both variants use the AES family of algorithms, the Flash Encryption provides hardware-driven encryption scheme and is transparent from the software's perspective, whilst the NVS Encryption is a software feature implemented using mbedTLS component (though the mbedTLS can internally use the AES hardware accelerator, if available on given chip model). The latter requires the Flash Encryption enabled as the NVS Encryption needs a proprietary encrypted partition to hold its keys, and the NVS internal structure is not compatible with the Flash Encryption design. Therefore, both features come separate.</p>
+<p>Considering the storage security scheme and the design of ESP32 chips, there are several implications that may not be fully obvious in the main documents:</p>
+<ul class="simple">
+<li><p>The Flash encryption applies only to the main SPI Flash memory, due to its cache module design (all the &quot;transparent&quot; encryption APIs run over this cache). This implies that external flash partitions cannot be encrypted using the native Flash Encryption means.</p></li>
+<li><p>External partition encryption can be deployed by implementing custom encrypt/decrypt code in appropriate driver APIs - either by implementing own SPI flash driver (see <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/custom_flash_driver">storage/custom_flash_driver</a>) or by customizing higher levels in the driver stack, for instance by providing own <a class="reference internal" href="../api-reference/storage/fatfs.html#fatfs-diskio-layer"><span class="std std-ref">FatFS disk IO layer</span></a>.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=File System Considerations (api-guides/file-system-considerations)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=File System Considerations (api-guides/file-system-considerations)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fatal-errors.html" class="btn btn-neutral float-left" title="Fatal Errors" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hardware-abstraction.html" class="btn btn-neutral float-right" title="Hardware Abstraction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

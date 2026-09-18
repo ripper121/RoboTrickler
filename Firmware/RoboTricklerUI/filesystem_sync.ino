@@ -137,6 +137,11 @@ void requestFilesystemSync(FilesystemSyncDirection direction)
   {
     return;
   }
+  if (isWebFileUploadActive())
+  {
+    errorBox(langText("msg_sync_failed"), false);
+    return;
+  }
   if (isTricklerRunning())
   {
     errorBox(langText("msg_stop_trickler_before_sync"), false);

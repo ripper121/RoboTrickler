@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Device Discovery - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/ble/get-started/ble-device-discovery.html" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/ble/get-started/ble-device-discovery';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Connection" href="ble-connection.html" />
+    <link rel="prev" title="Introduction" href="ble-introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Bluetooth<sup>®</sup> Low Energy</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#overview">Overview</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#get-started">Get Started</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ble-introduction.html">Introduction</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Device Discovery</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ble-connection.html">Connection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ble-data-exchange.html">Data Exchange</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#security">Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#profile">Profile</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">API Guides</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+      <li class="breadcrumb-item active">Device Discovery</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/ble/get-started/ble-device-discovery.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="device-discovery">
+<h1>Device Discovery<a class="headerlink" href="#device-discovery" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../../zh_CN/v5.5.5/esp32/api-guides/ble/get-started/ble-device-discovery.html">[中文]</a></p>
+<p>This document is the second tutorial in the Getting Started series on Bluetooth Low Energy (Bluetooth LE), aiming to provide a brief overview of the Bluetooth LE device discovery process, including basic concepts related to advertising and scanning. Following this, the tutorial introduces the code implementation of Bluetooth LE advertising, using the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/ble_get_started/nimble/NimBLE_Beacon">NimBLE_Beacon </a> example based on the NimBLE host layer stack.</p>
+<section id="learning-objectives">
+<h2>Learning Objectives<a class="headerlink" href="#learning-objectives" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Understand the basic concepts of Advertising</p></li>
+<li><p>Understand the basic concepts of Scanning</p></li>
+<li><p>Learn about the code structure of the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/ble_get_started/nimble/NimBLE_Beacon">NimBLE_Beacon </a> example</p></li>
+</ul>
+<p>Advertising and Scanning are the states of Bluetooth LE devices during the device discovery phase before establishing a connection. First, let’s understand the basic concepts related to advertising.</p>
+</section>
+<section id="basic-concepts-of-advertising">
+<h2>Basic Concepts of Advertising<a class="headerlink" href="#basic-concepts-of-advertising" title="Permalink to this heading"></a></h2>
+<p>Advertising is the process where a device sends out advertising packets via its Bluetooth antenna. Since the advertiser does not know whether there is a receiver in the environment or when the receiver will activate its antenna, it needs to send advertising packets periodically until a device responds. During this process, there are several questions for the advertiser to consider:</p>
+<ol class="arabic simple">
+<li><p>Where should the advertising packets be sent? (Where?)</p></li>
+<li><p>How long should the interval between advertising packets be? (When?)</p></li>
+<li><p>What information should be included in the advertising packets? (What?)</p></li>
+</ol>
+<section id="where-to-send-advertising-packets">
+<h3>Where to Send Advertising Packets?<a class="headerlink" href="#where-to-send-advertising-packets" title="Permalink to this heading"></a></h3>
+<section id="bluetooth-radio-frequency-band">
+<h4>Bluetooth Radio Frequency Band<a class="headerlink" href="#bluetooth-radio-frequency-band" title="Permalink to this heading"></a></h4>
+<p>The first question pertains to which radio frequency band the advertising packets should be sent on. The answer is provided by the Bluetooth Core Specification: the 2.4 GHz ISM band. This band is a globally available, license-free radio frequency band that is not controlled by any country for military or other purposes, and does not require payment to any organization. Thus, it has high availability and no usage costs. However, this also means the 2.4 GHz ISM band is very crowded and may interfere with other wireless communication protocols such as 2.4 GHz WiFi.</p>
+</section>
+<section id="bluetooth-channels">
+<h4>Bluetooth Channels<a class="headerlink" href="#bluetooth-channels" title="Permalink to this heading"></a></h4>
+<p>Similar to Bluetooth Classic, the Bluetooth SIG has adopted Adaptive Frequency Hopping (AFH) in Bluetooth LE to address data collision issues. This technology can assess the congestion of RF channels and avoid crowded channels through frequency hopping to improve communication quality. However, unlike Bluetooth Classic, Bluetooth LE uses the 2.4 GHz ISM band divided into 40 RF channels, each with a 2 MHz bandwidth, ranging from 2402 MHz to 2480 MHz, while Bluetooth Classic uses 79 RF channels, each with a 1 MHz bandwidth.</p>
+<p>In Bluetooth Core Specification 4.2, RF channels are categorized into two types, as follows:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Quantity</p></th>
+<th class="head"><p>Index</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Advertising Channel</p></td>
+<td><p>3</p></td>
+<td><p>37-39</p></td>
+<td><p>Used for sending advertising packets and scan response packets</p></td>
+</tr>
+<tr class="row-odd"><td><p>Data Channel</p></td>
+<td><p>37</p></td>
+<td><p>0-36</p></td>
+<td><p>Used for sending data channel packets</p></td>
+</tr>
+</tbody>
+</table>
+<p>During advertising, the advertiser will send advertising packets on the three advertising channels (37-39). Once the advertising packets have been sent on all three channels, the advertising process is considered complete, and the advertiser will repeat the process at the next advertising interval.</p>
+</section>
+<section id="extended-advertising-features">
+<h4>Extended Advertising Features<a class="headerlink" href="#extended-advertising-features" title="Permalink to this heading"></a></h4>
+<p>In Bluetooth Core Specification 4.2, advertising packets are limited to a maximum of 31 bytes, which restricts the functionality of advertising. To enhance the capability of advertising, Bluetooth 5.0 introduced the Extended Advertising feature. This feature divides advertising packets into:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Abbreviation</p></th>
+<th class="head"><p>Max Payload Size per Packet (Bytes）</p></th>
+<th class="head"><p>Max Total Payload Size (Bytes)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Primary Advertising Packet</p></td>
+<td><p>Legacy ADV</p></td>
+<td><p>31</p></td>
+<td><p>31</p></td>
+</tr>
+<tr class="row-odd"><td><p>Extended Advertising Packet</p></td>
+<td><p>Extended ADV</p></td>
+<td><p>254</p></td>
+<td><p>1650</p></td>
+</tr>
+</tbody>
+</table>
+<p>Extended advertising packets are composed of <cite>ADV_EXT_IND</cite> and <cite>AUX_ADV_IND</cite>, transmitted on the primary and secondary advertising channels, respectively. The primary advertising channels correspond to channels 37-39, while the secondary advertising channels correspond to channels 0-36. Since the receiver always receives advertising data on the primary advertising channels, the advertiser must send <cite>ADV_EXT_IND</cite> on the primary advertising channels and <cite>AUX_ADV_IND</cite> on the secondary advertising channels. <cite>ADV_EXT_IND</cite> will indicate the secondary advertising channels where <cite>AUX_ADV_IND</cite> is transmitted. This mechanism allows the receiver to obtain the complete extended advertising packet by first receiving <cite>ADV_EXT_IND</cite> on the primary advertising channels and then going to the specified secondary advertising channels to receive <cite>AUX_ADV_IND</cite>.</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 40.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Channels</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Primary Advertising Channel</p></td>
+<td><p>37-39</p></td>
+<td><p>Used to transmit <cite>ADV_EXT_IND</cite> of the extended advertising packet</p></td>
+</tr>
+<tr class="row-odd"><td><p>Secondary Advertising Channel</p></td>
+<td><p>0-36</p></td>
+<td><p>Used to transmit <cite>AUX_ADV_IND</cite> of the extended advertising packet</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="how-long-should-the-advertising-interval-be">
+<h3>How long should the advertising interval be?<a class="headerlink" href="#how-long-should-the-advertising-interval-be" title="Permalink to this heading"></a></h3>
+<section id="advertising-interval">
+<h4>Advertising Interval<a class="headerlink" href="#advertising-interval" title="Permalink to this heading"></a></h4>
+<p>For the second question, regarding the period for sending advertising packets, the Bluetooth standard provides a clear parameter definition: Advertising Interval. The advertising interval can range from 20 ms to 10.24 s, with a step size of 0.625 ms.</p>
+<p>The choice of advertising interval affects both the discoverability of the advertiser and the device’s power consumption. If the advertising interval is too long, the probability of the advertising packets being received by a receiver becomes very low, which decreases the advertiser’s discoverability. Conversely, if the advertising interval is too short, frequent advertising consumes more power. Therefore, the advertiser needs to balance between discoverability and power consumption and choose the most appropriate advertising interval based on the application's needs.</p>
+<p>It is worth noting that if there are two advertisers with the same advertising interval in the same space, packet collision may occur, meaning both advertisers are sending advertising data to the same channel at the same time. Since advertising is a one-way process with no reception, the advertiser cannot know if a packet collision has occurred. To reduce the likelihood of such collisions, advertisers should add a random delay of 0-10 ms after each advertising event.</p>
+</section>
+</section>
+<section id="what-information-is-included-in-the-advertising-packet">
+<h3>What information is included in the advertising packet?<a class="headerlink" href="#what-information-is-included-in-the-advertising-packet" title="Permalink to this heading"></a></h3>
+</section>
+<section id="advertising-packet-structure">
+<h3>Advertising Packet Structure<a class="headerlink" href="#advertising-packet-structure" title="Permalink to this heading"></a></h3>
+<p>For the third question, regarding the information contained in the advertising packet, Bluetooth Core Specification 4.2 defines the format of the advertising packet, as shown in the diagram below:</p>
+<figure class="align-center" id="id2">
+<span id="adv-packet-structure"></span><a class="reference internal image-reference" href="../../../_images/ble-4.2-adv-packet-structure.png"><img alt="Advertising Packet Structure" src="../../../_images/ble-4.2-adv-packet-structure.png" style="width: 682.5px; height: 698.25px;" /></a>
+<figcaption>
+<p><span class="caption-text">Advertising Packet Structure in Bluetooth Core Specification 4.2</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Let’s break it down step by step. The outer layer of an advertising packet contains four parts, which are:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 40.0%" />
+<col style="width: 10.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Byte Size</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Preamble</p></td>
+<td><p>1</p></td>
+<td><p>A special bit sequence used for device clock synchronization</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Access Address</p></td>
+<td><p>4</p></td>
+<td><p>Marks the address of the advertising packet</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Protocol Data Unit, PDU</p></td>
+<td><p>2-39</p></td>
+<td><p>The area where the actual data is stored</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>Cyclic Redundancy Check, CRC</p></td>
+<td><p>3</p></td>
+<td><p>Used for cyclic redundancy checking</p></td>
+</tr>
+</tbody>
+</table>
+<p>The advertising packet is a type of Bluetooth packet, and its nature is determined by the type of PDU. Now, let's take a detailed look at the PDU.</p>
+<section id="pdu">
+<h4>PDU<a class="headerlink" href="#pdu" title="Permalink to this heading"></a></h4>
+<p>The PDU segment is where the actual data is stored. Its structure is as follows:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 50.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Byte Size</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Header</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Payload</p></td>
+<td><p>0-37</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="pdu-header">
+<h4>PDU Header<a class="headerlink" href="#pdu-header" title="Permalink to this heading"></a></h4>
+<p>The PDU header contains various pieces of information, which can be broken down into six parts:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 40.0%" />
+<col style="width: 10.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Bit Size</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>PDU Type</p></td>
+<td><p>4</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Reserved for Future Use, <strong>RFU</strong></p></td>
+<td><p>1</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Channel Selection Bit, <strong>ChSel</strong></p></td>
+<td><p>1</p></td>
+<td><p>Indicates whether the advertiser supports the <em>LE Channel Selection Algorithm #2</em></p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>TX Address, <strong>TxAdd</strong></p></td>
+<td><p>1</p></td>
+<td><p>0/1 indicates Public Address/Random Address</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>Rx Address, <strong>RxAdd</strong></p></td>
+<td><p>1</p></td>
+<td><p>0/1 indicates Public Address/Random Address</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>Payload Length</p></td>
+<td><p>8</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>The PDU Type bit reflects the advertising behavior of the device. In the Bluetooth protocol, there are three pairs of advertising behaviors:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><em>Connectable</em> vs. <em>Non-connectable</em>:</dt><dd><ul>
+<li><p>Whether the device accepts connection requests from others.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>Scannable</em> vs. <em>Non-scannable</em>:</dt><dd><ul>
+<li><p>Whether the device accepts scan requests from others.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>Undirected</em> vs. <em>Directed</em>:</dt><dd><ul>
+<li><p>Whether the advertising packet is sent to a specific device.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>These advertising behaviors can be combined into four common types of advertising, corresponding to four different PDU types:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Connectable？</p></th>
+<th class="head"><p>Scannable？</p></th>
+<th class="head"><p>Undirected？</p></th>
+<th class="head"><p>PDU Type</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p><cite>ADV_IND</cite></p></td>
+<td><p>The most common advertising type</p></td>
+</tr>
+<tr class="row-odd"><td><p>Y</p></td>
+<td><p>N</p></td>
+<td><p>N</p></td>
+<td><p><cite>ADV_DIRECT_IND</cite></p></td>
+<td><p>Commonly used for reconnecting with known devices</p></td>
+</tr>
+<tr class="row-even"><td><p>N</p></td>
+<td><p>N</p></td>
+<td><p>Y</p></td>
+<td><p><cite>ADV_NONCONN_IND</cite></p></td>
+<td><p>Used by beacon devices to advertising data without connection</p></td>
+</tr>
+<tr class="row-odd"><td><p>N</p></td>
+<td><p>Y</p></td>
+<td><p>Y</p></td>
+<td><p><cite>ADV_SCAN_IND</cite></p></td>
+<td><p>Used by beacons to advertise additional data via a scan response when packet length is insufficient</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="pdu-payload">
+<h4>PDU Payload<a class="headerlink" href="#pdu-payload" title="Permalink to this heading"></a></h4>
+<p>The PDU Payload is divided into two parts:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 50.0%" />
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Byte Size</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Advertisement Address, <strong>AdvA</strong></p></td>
+<td><p>6</p></td>
+<td><p>The 48-bit Bluetooth address of the advertiser</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Advertisement Data, <strong>AdvData</strong></p></td>
+<td><p>0-31</p></td>
+<td><p>Consists of multiple Advertisement Data Structures</p></td>
+</tr>
+</tbody>
+</table>
+<p>The Advertisement Address can be either a:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Public Address</p></td>
+<td><p>A globally unique fixed device address that manufacturers must register and pay fees to IEEE for</p></td>
+</tr>
+<tr class="row-odd"><td><p>Random Address</p></td>
+<td><p>A randomly generated address</p></td>
+</tr>
+</tbody>
+</table>
+<p>Random addresses are further divided into two categories:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Random Static Address</p></td>
+<td><p>Can be either fixed in firmware or randomly generated at startup but must not change during operation. Often used as an alternative to a Public Address.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Random Private Address</p></td>
+<td><p>Periodically changes to prevent device tracking.</p></td>
+</tr>
+</tbody>
+</table>
+<p>For devices using random private addresses to communicate with trusted devices, an Identity Resolving Key (IRK) should be used to generate the random address. Devices with the same IRK can resolve and obtain the true address. There are two types of random private addresses:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Resolvable Random Private Address</p></td>
+<td><p>Can be resolved with an IRK to obtain the device’s true address</p></td>
+</tr>
+<tr class="row-odd"><td><p>Non-resolvable Random Private Address</p></td>
+<td><p>Completely random and rarely used, as it cannot be resolved and is only meant to prevent tracking</p></td>
+</tr>
+</tbody>
+</table>
+<p>Let's look at the advertising data. The format of an advertising data structure is defined as follows:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 40.0%" />
+<col style="width: 20.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Byte Size</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>AD Length</p></td>
+<td><p>1</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>AD Type</p></td>
+<td><p>n</p></td>
+<td><p>Most types take 1 byte</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>AD Data</p></td>
+<td><p>(AD Length - n)</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="advertising-process">
+<h3>Advertising Process<a class="headerlink" href="#advertising-process" title="Permalink to this heading"></a></h3>
+<section id="advertising-with-a-public-address">
+<h4>Advertising With a Public Address<a class="headerlink" href="#advertising-with-a-public-address" title="Permalink to this heading"></a></h4>
+<p>When using a public address for advertising, set the <code class="docutils literal notranslate"><span class="pre">own_addr_type</span></code> of <code class="docutils literal notranslate"><span class="pre">esp_ble_adv_params_t</span></code> to <code class="docutils literal notranslate"><span class="pre">BLE_ADDR_TYPE_PUBLIC</span></code>. The advertising process flowchart is as follows (<em>click to enlarge</em>):</p>
+<figure class="align-center" id="id3">
+<div class="align-default"><a class="reference internal image-reference" href="../../../_images/seqdiag-271f5559c8213868b929a6ce92fdafc7beaf139c.png"><img height="2254.0" src="../../../_images/seqdiag-271f5559c8213868b929a6ce92fdafc7beaf139c.png" width="2112.0" /></a></div>
+<figcaption>
+<p><span class="caption-text">Advertising With a Public Address</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="advertising-with-a-resolvable-random-private-address">
+<h4>Advertising With a Resolvable Random Private Address<a class="headerlink" href="#advertising-with-a-resolvable-random-private-address" title="Permalink to this heading"></a></h4>
+<p>When using a resolvable random private address for advertising, the underlying protocol stack updates the advertising address when the resolvable random private address times out. The default timeout is set to 15 minutes. The timeout duration for the resolvable random private address can be configured using the <code class="docutils literal notranslate"><span class="pre">BT_BLE_RPA_TIMEOUT</span></code> option in menuconfig. Set the <code class="docutils literal notranslate"><span class="pre">own_addr_type</span></code> of <code class="docutils literal notranslate"><span class="pre">esp_ble_adv_params_t</span></code> to <code class="docutils literal notranslate"><span class="pre">BLE_ADDR_TYPE_RPA_PUBLIC</span></code> or <code class="docutils literal notranslate"><span class="pre">BLE_ADDR_TYPE_RPA_RANDOM</span></code>. The advertising process flowchart is as follows (<em>click to enlarge</em>):</p>
+<figure class="align-center" id="id4">
+<div class="align-default"><a class="reference internal image-reference" href="../../../_images/seqdiag-663a4167aea51298e828b413571b06684679e172.png"><img height="2492.0" src="../../../_images/seqdiag-663a4167aea51298e828b413571b06684679e172.png" width="2112.0" /></a></div>
+<figcaption>
+<p><span class="caption-text">Advertising With a Resolvable Random Private Address</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When advertising with a resolvable random private address, advertising should start only after the <code class="docutils literal notranslate"><span class="pre">esp_ble_gap_config_local_privacy</span></code> event returns. Set <code class="docutils literal notranslate"><span class="pre">own_addr_type</span></code> to <code class="docutils literal notranslate"><span class="pre">BLE_ADDR_TYPE_RPA_PUBLIC</span></code> or <code class="docutils literal notranslate"><span class="pre">BLE_ADDR_TYPE_RPA_RANDOM</span></code>.</p>
+<p>To use <code class="docutils literal notranslate"><span class="pre">BLE_ADDR_TYPE_RPA_RANDOM</span></code>, a random static address must be set through the <code class="docutils literal notranslate"><span class="pre">esp_ble_gap_set_rand_addr</span></code> API. This step is not required for <code class="docutils literal notranslate"><span class="pre">BLE_ADDR_TYPE_RPA_PUBLIC</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">BLE_ADDR_TYPE_RPA_PUBLIC</span></code> operates as follows: The controller generates a Resolvable Random Private Address (RPA) based on the local Identity Resolving Key (IRK) from the resolving list. If no matching entry is found in the resolving list, the public address is used.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">BLE_ADDR_TYPE_RPA_RANDOM</span></code>, If no matching entry is found in the resolving list, a random static address is used.</p>
+</div>
+</section>
+<section id="advertising-with-a-random-static-address">
+<h4>Advertising with a Random Static Address<a class="headerlink" href="#advertising-with-a-random-static-address" title="Permalink to this heading"></a></h4>
+<p>Similar to advertising with a resolvable random private address, advertising with a random static address requires setting the <code class="docutils literal notranslate"><span class="pre">own_addr_type</span></code> of <code class="docutils literal notranslate"><span class="pre">esp_ble_adv_params_t</span></code> to <code class="docutils literal notranslate"><span class="pre">BLE_ADDR_TYPE_RANDOM</span></code>. The advertising process flowchart is as follows (<em>click to enlarge</em>):</p>
+<figure class="align-center" id="id5">
+<div class="align-default"><a class="reference internal image-reference" href="../../../_images/seqdiag-25ccbdf4d104381d1e29c55e4ac5ef2781aec355.png"><img height="2906.0" src="../../../_images/seqdiag-25ccbdf4d104381d1e29c55e4ac5ef2781aec355.png" width="2112.0" /></a></div>
+<figcaption>
+<p><span class="caption-text">Advertising With a Random Static Address</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="basic-concepts-of-scanning">
+<h3>Basic Concepts of Scanning<a class="headerlink" href="#basic-concepts-of-scanning" title="Permalink to this heading"></a></h3>
+<p>Similar to the advertising process, scanning also raises three questions:</p>
+<ol class="arabic simple">
+<li><p>Where to scan? (Where?)</p></li>
+<li><p>When to scan and for how long? (When?)</p></li>
+<li><p>What to do during scanning? (What?)</p></li>
+</ol>
+<p>For Bluetooth LE 4.2 devices, the advertiser only sends data on the advertising channels, which are channels 37-39. For Bluetooth LE 5.0 devices, if the advertiser has enabled extended advertising, it sends <cite>ADV_EXT_IND</cite> on the primary advertising channels and <cite>AUX_ADV_IND</cite> on the secondary advertising channels. Thus, for Bluetooth LE 4.2 devices, scanners only need to receive advertising data on advertising channels. For Bluetooth LE 5.0 devices, scanners must first receive the <cite>ADV_EXT_IND</cite> on the primary advertising channels and, if it indicates a secondary channel, move to the corresponding secondary channel to receive the <cite>AUX_ADV_IND</cite>.</p>
+<section id="scan-window-and-scan-interval">
+<h4>Scan Window and Scan Interval<a class="headerlink" href="#scan-window-and-scan-interval" title="Permalink to this heading"></a></h4>
+<p>The second question refers to the concepts of the Scan Window and the Scan Interval.</p>
+<ul class="simple">
+<li><p><strong>Scan Window</strong>: the duration for which the scanner continuously receives packets on a single RF channel. For example, if the scan window is set to 50 ms, the scanner continuously scans for 50 ms on each RF channel.</p></li>
+<li><p><strong>Scan Interval</strong>: the time between the start of two consecutive scan windows, which means the scan interval is always greater than or equal to the scan window.</p></li>
+</ul>
+<p>The diagram below illustrates the process of a scanner receiving advertising packets on a timeline. The scanner's scan interval is 100 ms, and the scan window is 50 ms; the advertiser's advertising interval is 50 ms, and the duration of the advertising packet transmission is for illustrative purposes only. As shown, the first scan window corresponds to channel 37, where the scanner successfully receives the advertiser's first broadcasting packet sent on channel 37, and this pattern continues.</p>
+<figure class="align-center" id="id6">
+<a class="reference internal image-reference" href="../../../_images/ble-advertise-and-scan-sequence.png"><img alt="Advertising and Scanning Timing Diagram" src="../../../_images/ble-advertise-and-scan-sequence.png" style="width: 657.0px; height: 315.0px;" /></a>
+<figcaption>
+<p><span class="caption-text">Advertising and Scanning Timing Diagram</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="scan-request-and-scan-response">
+<span id="id1"></span><h4>Scan Request and Scan Response<a class="headerlink" href="#scan-request-and-scan-response" title="Permalink to this heading"></a></h4>
+<p>From the current introduction, it might seem that the advertiser only transmits and the scanner only receives during the advertising process. However, scanning behavior is divided into two types:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Passive Scanning</strong>:</dt><dd><ul>
+<li><p>The scanner only receives advertising packets.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Active Scanning</strong>:</dt><dd><ul>
+<li><p>After receiving an advertising packet, the scanner sends a scan request to a scannable advertiser.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>When a scannable advertiser receives a scan request, it sends a scan response packet, providing more advertising information to the interested scanner. The structure of the scan response packet is identical to the advertising packet, with the difference being the PDU type in the PDU header.</p>
+<p>In scenarios where the advertiser operates in scannable advertising mode and the scanner in active scanning mode, the data transmission timing between the advertiser and the scanner becomes more complex. For the scanner, after a scan window ends, it briefly switches to TX mode to send a scan request, then quickly switches back to RX mode to receive a possible scan response. For the advertiser, after each advertising, it briefly switches to RX mode to receive any scan requests, and upon receiving one, it switches to TX mode to send the scan response.</p>
+<figure class="align-center" id="id7">
+<a class="reference internal image-reference" href="../../../_images/ble-advertiser-rx-scan-request.png"><img alt="Scan Request Reception and Scan Response Transmission" src="../../../_images/ble-advertiser-rx-scan-request.png" style="width: 558.0px; height: 378.0px;" /></a>
+<figcaption>
+<p><span class="caption-text">Scan Request Reception and Scan Response Transmission</span><a class="headerlink" href="#id7" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+</section>
+<section id="hands-on-practice">
+<h2>Hands-On Practice<a class="headerlink" href="#hands-on-practice" title="Permalink to this heading"></a></h2>
+<p>After learning the relevant concepts of advertising and scanning, let's apply this knowledge in practice using the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/ble_get_started/nimble/NimBLE_Beacon">NimBLE_Beacon </a> example to create a simple beacon device.</p>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>An ESP32 development board</p></li>
+<li><p>ESP-IDF development environment</p></li>
+<li><p>The <strong>nRF Connect for Mobile</strong> app installed on your phone</p></li>
+</ol>
+<p>If you haven't set up the ESP-IDF development environment yet, please refer to <a class="reference internal" href="../../../get-started/index.html"><span class="doc">IDF Get Started</span></a>.</p>
+</section>
+<section id="try-it-out">
+<h3>Try It Out<a class="headerlink" href="#try-it-out" title="Permalink to this heading"></a></h3>
+<section id="building-and-flashing">
+<h4>Building and Flashing<a class="headerlink" href="#building-and-flashing" title="Permalink to this heading"></a></h4>
+<p>The reference example for this tutorial is <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/ble_get_started/nimble/NimBLE_Beacon">NimBLE_Beacon </a>.</p>
+<p>You can navigate to the example directory using the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>&lt;ESP-IDF<span class="w"> </span>Path&gt;/examples/bluetooth/ble_get_started/nimble/NimBLE_Beacon
+</pre></div>
+</div>
+<p>Please replace <cite>&lt;ESP-IDF Path&gt;</cite> with your local ESP-IDF folder path. Then, you can open the NimBLE_Beacon project using VSCode or another IDE you prefer. For example, after navigating to the example directory via the command line, you can open the project in VSCode using the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>code<span class="w"> </span>.
+</pre></div>
+</div>
+<p>Next, enter the ESP-IDF environment in the command line and set the target chip:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>idf.py<span class="w"> </span>set-target<span class="w"> </span>&lt;chip-name&gt;
+</pre></div>
+</div>
+<p>You should see messages like:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>...
+--<span class="w"> </span>Configuring<span class="w"> </span><span class="k">done</span>
+--<span class="w"> </span>Generating<span class="w"> </span><span class="k">done</span>
+--<span class="w"> </span>Build<span class="w"> </span>files<span class="w"> </span>have<span class="w"> </span>been<span class="w"> </span>written<span class="w"> </span>to<span class="w"> </span>...
+</pre></div>
+</div>
+<p>These messages indicate that the chip has been successfully configured. Then, connect the development board to your computer and run the following command to build the firmware, flash it to the board, and monitor the serial output from the ESP32 development board:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>idf.py<span class="w"> </span>flash<span class="w"> </span>monitor
+</pre></div>
+</div>
+<p>You should see messages like:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>...
+main_task:<span class="w"> </span>Returned<span class="w"> </span>from<span class="w"> </span>app_main<span class="o">()</span>
+</pre></div>
+</div>
+<p>Wait until the notification ends.</p>
+</section>
+<section id="viewing-beacon-device-information">
+<h4>Viewing Beacon Device Information<a class="headerlink" href="#viewing-beacon-device-information" title="Permalink to this heading"></a></h4>
+<p id="nimble-beacon-details">Open the <strong>nRF Connect for Mobile</strong> app on your phone, go to the <strong>SCANNER</strong> tab, and pull down to refresh. Locate the NimBLE_Beacon device, as shown in the figure below.</p>
+<figure class="align-center" id="id8">
+<a class="reference internal image-reference" href="../../../_images/ble-scan-list-nimble-beacon.jpg"><img alt="NimBLE Beacon" src="../../../_images/ble-scan-list-nimble-beacon.jpg" style="width: 432.0px; height: 897.6px;" /></a>
+<figcaption>
+<p><span class="caption-text">Locate NimBLE Beacon Device</span><a class="headerlink" href="#id8" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>If the device list is long, it is recommended to filter by the keyword NimBLE in the device name to quickly find the NimBLE_Beacon device.</p>
+<p>You will notice that the NimBLE Beacon device contains rich information, including the Espressif website (this demonstrates the beacon advertising feature). Click the <strong>RAW</strong> button in the lower-right corner to view the raw advertising packet data, as shown below.</p>
+<figure class="align-center" id="id9">
+<a class="reference internal image-reference" href="../../../_images/ble-adv-packet-raw-data.jpg"><img alt="ADV Packet Raw Data" src="../../../_images/ble-adv-packet-raw-data.jpg" style="width: 431.09999999999997px; height: 897.0px;" /></a>
+<figcaption>
+<p><span class="caption-text">Advertising Packet Raw Data</span><a class="headerlink" href="#id9" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p><strong>Details</strong> table summarizes all advertising data structures in the advertising data packet and the scan response data packet:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Length</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Raw Data</p></th>
+<th class="head"><p>Resolved Information</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Flags</p></td>
+<td><p>2 Bytes</p></td>
+<td><p><cite>0x01</cite></p></td>
+<td><p><cite>0x06</cite></p></td>
+<td><p>General Discoverable, BR/EDR Not Supported</p></td>
+</tr>
+<tr class="row-odd"><td><p>Complete Local Device Name</p></td>
+<td><p>14 Bytes</p></td>
+<td><p><cite>0x09</cite></p></td>
+<td><p><cite>0x4E696D424C455F426561636F6E</cite></p></td>
+<td><p>NimBLE_Beacon</p></td>
+</tr>
+<tr class="row-even"><td><p>TX Power Level</p></td>
+<td><p>2 Bytes</p></td>
+<td><p><cite>0x0A</cite></p></td>
+<td><p><cite>0x09</cite></p></td>
+<td><p>9 dBm</p></td>
+</tr>
+<tr class="row-odd"><td><p>Appearance</p></td>
+<td><p>3 Bytes</p></td>
+<td><p><cite>0x19</cite></p></td>
+<td><p><cite>0x0002</cite></p></td>
+<td><p>Generic Tag (Generic category)</p></td>
+</tr>
+<tr class="row-even"><td><p>LE Role</p></td>
+<td><p>2 Bytes</p></td>
+<td><p><cite>0x1C</cite></p></td>
+<td><p><cite>0x00</cite></p></td>
+<td><p>Only Peripheral Role supported</p></td>
+</tr>
+<tr class="row-odd"><td><p>LE Bluetooth Device Address</p></td>
+<td><p>8 Bytes</p></td>
+<td><p><cite>0x1B</cite></p></td>
+<td><p><cite>0x46F506BDF5F000</cite></p></td>
+<td><p><cite>F0:F5:BD:06:F5:46</cite></p></td>
+</tr>
+<tr class="row-even"><td><p>URI</p></td>
+<td><p>17 Bytes</p></td>
+<td><p><cite>0x24</cite></p></td>
+<td><p><cite>0x172F2F6573707265737369662E636F6D</cite></p></td>
+<td><p><cite>https://espressif.com</cite></p></td>
+</tr>
+</tbody>
+</table>
+<p>It is worth mentioning that the total length of the first five advertising data structures is 28 bytes, leaving only 3 bytes of space in the advertising data packet, which is not enough to accommodate the last two data structures. Therefore, the last two advertising data structures must be placed in the scan response data packet.</p>
+<p>You may also notice that the Raw Data for the Device Appearance is <cite>0x0002</cite>, while in the code, the definition for Generic Tag is <cite>0x0200</cite>. Additionally, the Raw Data for the Device Address appears to be completely reversed, except for the last byte (<cite>0x00</cite>). This is because Bluetooth LE air packets follow a little-endian transmission order, meaning the lower bytes are placed at the front.</p>
+<p>Also, note that the <strong>nRF Connect for Mobile</strong> app does not provide a <strong>CONNECT</strong> button to connect to this device, which aligns with our expectations since a Beacon device is inherently non-connectable. Now, let's dive into the code details to see how such a Beacon device is implemented.</p>
+</section>
+</section>
+</section>
+<section id="code-explanation">
+<h2>Code Explanation<a class="headerlink" href="#code-explanation" title="Permalink to this heading"></a></h2>
+<section id="project-structure-overview">
+<h3>Project Structure Overview<a class="headerlink" href="#project-structure-overview" title="Permalink to this heading"></a></h3>
+<p id="nimble-beacon-project-structure">The root directory of <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/ble_get_started/nimble/NimBLE_Beacon">NimBLE_Beacon </a> is roughly divided into the following parts:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><cite>README*.md</cite></dt><dd><ul>
+<li><p>Documentation for the project</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>sdkconfig.defaults*</cite></dt><dd><ul>
+<li><p>Default configurations for different chip development boards</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>CMakeLists.txt</cite></dt><dd><ul>
+<li><p>Used to include the ESP-IDF build environment</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>main</cite></dt><dd><ul>
+<li><p>The main project folder containing the source code, header files, and build configurations</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="program-behavior-overview">
+<h3>Program Behavior Overview<a class="headerlink" href="#program-behavior-overview" title="Permalink to this heading"></a></h3>
+<p id="nimble-beacon-program-behavior">Before diving into the code details, let's first get a macro understanding of the program behavior.</p>
+<p>First, we initialize the various modules used in the program, mainly including NVS Flash, the NimBLE Host Stack, and the GAP service.</p>
+<p>After the NimBLE Host Stack synchronizes with the Bluetooth controller, we confirm the Bluetooth address is available, then initiate an undirected, non-connectable, and scannable advertisement.</p>
+<p>The device remains in advertising mode continuously until a reboot occurs.</p>
+</section>
+<section id="entry-function">
+<h3>Entry Function<a class="headerlink" href="#entry-function" title="Permalink to this heading"></a></h3>
+<p id="nimble-beacon-entry-point">As with other projects, the entry function of the application is the <cite>app_main</cite> function in the <cite>main/main.c</cite> file, where we typically initialize the modules. In this example, we mainly do the following:</p>
+<ol class="arabic simple">
+<li><p>Initialize NVS Flash and the NimBLE Host Stack</p></li>
+<li><p>Initialize the GAP service</p></li>
+<li><p>Start the FreeRTOS task for the NimBLE Host Stack</p></li>
+</ol>
+<p>The ESP32 Bluetooth stack uses NVS Flash to store related configurations, so before initializing the Bluetooth stack, we must call the <cite>nvs_flash_init</cite> API to initialize NVS Flash. In some cases, we may need to call the <cite>nvs_flash_erase</cite> API to erase NVS Flash before initialization.</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">app_main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="cm">/* NVS flash initialization */</span>
+<span class="w">    </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nvs_flash_init</span><span class="p">();</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ret</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ESP_ERR_NVS_NO_FREE_PAGES</span><span class="w"> </span><span class="o">||</span>
+<span class="w">        </span><span class="n">ret</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ESP_ERR_NVS_NEW_VERSION_FOUND</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">nvs_flash_erase</span><span class="p">());</span>
+<span class="w">        </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nvs_flash_init</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ret</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ESP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ESP_LOGE</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;failed to initialize nvs flash, error code: %d &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ret</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Next, you can call <cite>nimble_port_init</cite> API to initialize NimBLE host stack.</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">app_main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="cm">/* NimBLE host stack initialization */</span>
+<span class="w">    </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nimble_port_init</span><span class="p">();</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ret</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ESP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ESP_LOGE</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;failed to initialize nimble stack, error code: %d &quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">ret</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Then, we call the <cite>gap_init</cite> function defined in the <cite>gap.c</cite> file to initialize the GAP service and set the device name and appearance.</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">app_main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="cm">/* GAP service initialization */</span>
+<span class="w">    </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gap_init</span><span class="p">();</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ESP_LOGE</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;failed to initialize GAP service, error code: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rc</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Next, we configure the NimBLE host stack, which mainly involves setting some callback functions, including callbacks for when the stack is reset and when synchronization is complete, and then saving the configuration.</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">nimble_host_config_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Set host callbacks */</span>
+<span class="w">    </span><span class="n">ble_hs_cfg</span><span class="p">.</span><span class="n">reset_cb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">on_stack_reset</span><span class="p">;</span>
+<span class="w">    </span><span class="n">ble_hs_cfg</span><span class="p">.</span><span class="n">sync_cb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">on_stack_sync</span><span class="p">;</span>
+<span class="w">    </span><span class="n">ble_hs_cfg</span><span class="p">.</span><span class="n">store_status_cb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ble_store_util_status_rr</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Store host configuration */</span>
+<span class="w">    </span><span class="n">ble_store_config_init</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">app_main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="cm">/* NimBLE host configuration initialization */</span>
+<span class="w">    </span><span class="n">nimble_host_config_init</span><span class="p">();</span>
+
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Finally, start the FreeRTOS thread for the NimBLE host stack.</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">nimble_host_task</span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">param</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Task entry log */</span>
+<span class="w">    </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;nimble host task has been started!&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/* This function won&#39;t return until nimble_port_stop() is executed */</span>
+<span class="w">    </span><span class="n">nimble_port_run</span><span class="p">();</span>
+
+<span class="w">    </span><span class="cm">/* Clean up at exit */</span>
+<span class="w">    </span><span class="n">vTaskDelete</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">app_main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="cm">/* Start NimBLE host task thread and return */</span>
+<span class="w">    </span><span class="n">xTaskCreate</span><span class="p">(</span><span class="n">nimble_host_task</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;NimBLE Host&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="o">*</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="start-advertising">
+<h3>Start Advertising<a class="headerlink" href="#start-advertising" title="Permalink to this heading"></a></h3>
+<p id="nimble-beacon-start-advertising">When developing applications using the NimBLE host stack, the programming model is event-driven.</p>
+<p>For example, after the NimBLE host stack synchronizes with the Bluetooth controller, a synchronization completion event will be triggered, invoking the <cite>ble_hs_cfg.sync_cb</cite> function. When setting up the callback function, we point the function pointer to the <cite>on_stack_sync</cite> function, which is the actual function called upon synchronization completion.</p>
+<p>In the <cite>on_stack_sync</cite> function, we call the <cite>adv_init</cite> function to initialize advertising operations. In <cite>adv_init</cite>, we first call the <cite>ble_hs_util_ensure_addr</cite> API to confirm that a usable Bluetooth address is available. Then, we call the <cite>ble_hs_id_infer_auto</cite> API to obtain the optimal Bluetooth address type.</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_stack_sync</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* On stack sync, do advertising initialization */</span>
+<span class="w">    </span><span class="n">adv_init</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">adv_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="cm">/* Make sure we have proper BT identity address set */</span>
+<span class="w">    </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ble_hs_util_ensure_addr</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ESP_LOGE</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;device does not have any available bt address!&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* Figure out BT address to use while advertising */</span>
+<span class="w">    </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ble_hs_id_infer_auto</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">own_addr_type</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ESP_LOGE</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;failed to infer address type, error code: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rc</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Next, we copy the Bluetooth address data from the NimBLE stack's memory space into the local <cite>addr_val</cite> array, preparing it for subsequent use.</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">adv_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="cm">/* Copy device address to addr_val */</span>
+<span class="w">    </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ble_hs_id_copy_addr</span><span class="p">(</span><span class="n">own_addr_type</span><span class="p">,</span><span class="w"> </span><span class="n">addr_val</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ESP_LOGE</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;failed to copy device address, error code: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rc</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">format_addr</span><span class="p">(</span><span class="n">addr_str</span><span class="p">,</span><span class="w"> </span><span class="n">addr_val</span><span class="p">);</span>
+<span class="w">    </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;device address: %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">addr_str</span><span class="p">);</span>
+
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Finally, we call the <cite>start_advertising</cite> function to initiate advertising. Within the <cite>start_advertising</cite> function, we first populate the advertising data structures, including the advertising flags, complete device name, transmission power level, device appearance, and LE role, into the advertising packet as follows:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">start_advertising</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Local variables */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">ble_hs_adv_fields</span><span class="w"> </span><span class="n">adv_fields</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="cm">/* Set advertising flags */</span>
+<span class="w">    </span><span class="n">adv_fields</span><span class="p">.</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_HS_ADV_F_DISC_GEN</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">BLE_HS_ADV_F_BREDR_UNSUP</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Set device name */</span>
+<span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ble_svc_gap_device_name</span><span class="p">();</span>
+<span class="w">    </span><span class="n">adv_fields</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="n">adv_fields</span><span class="p">.</span><span class="n">name_len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+<span class="w">    </span><span class="n">adv_fields</span><span class="p">.</span><span class="n">name_is_complete</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Set device tx power */</span>
+<span class="w">    </span><span class="n">adv_fields</span><span class="p">.</span><span class="n">tx_pwr_lvl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_HS_ADV_TX_PWR_LVL_AUTO</span><span class="p">;</span>
+<span class="w">    </span><span class="n">adv_fields</span><span class="p">.</span><span class="n">tx_pwr_lvl_is_present</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Set device appearance */</span>
+<span class="w">    </span><span class="n">adv_fields</span><span class="p">.</span><span class="n">appearance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_GAP_APPEARANCE_GENERIC_TAG</span><span class="p">;</span>
+<span class="w">    </span><span class="n">adv_fields</span><span class="p">.</span><span class="n">appearance_is_present</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Set device LE role */</span>
+<span class="w">    </span><span class="n">adv_fields</span><span class="p">.</span><span class="n">le_role</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_GAP_LE_ROLE_PERIPHERAL</span><span class="p">;</span>
+<span class="w">    </span><span class="n">adv_fields</span><span class="p">.</span><span class="n">le_role_is_present</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Set advertiement fields */</span>
+<span class="w">    </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ble_gap_adv_set_fields</span><span class="p">(</span><span class="o">&amp;</span><span class="n">adv_fields</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ESP_LOGE</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;failed to set advertising data, error code: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rc</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <cite>ble_hs_adv_fields</cite> structure predefines some commonly used advertising data types. After completing the data setup, we can enable the corresponding advertising data structures by setting the relevant is_present field to 1 or by assigning a non-zero value to the corresponding length field (len). For example, in the code above, we configure the device's transmission power with <cite>adv_fields.tx_pwr_lvl = BLE_HS_ADV_TX_PWR_LVL_AUTO;</cite>, and then enable that advertising data structure by setting <cite>adv_fields.tx_pwr_lvl_is_present = 1;</cite>. If we only configure the transmission power without setting the corresponding is_present field, the advertising data structure becomes invalid. Similarly, we configure the device name with <cite>adv_fields.name = (uint8_t *)name;</cite> and set the name's length with <cite>adv_fields.name_len = strlen(name);</cite> to add the device name as an advertising data structure to the advertising packet. If we only configure the device name without specifying its length, the advertising data structure will also be invalid.</p>
+<p>Finally, we call the <cite>ble_gap_adv_set_fields</cite> API to finalize the setup of the advertising data structures in the advertising packet.</p>
+<p>In the same way, we can fill in the device address and URI into the scan response packet as follows:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">start_advertising</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">ble_hs_adv_fields</span><span class="w"> </span><span class="n">rsp_fields</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="cm">/* Set device address */</span>
+<span class="w">    </span><span class="n">rsp_fields</span><span class="p">.</span><span class="n">device_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addr_val</span><span class="p">;</span>
+<span class="w">    </span><span class="n">rsp_fields</span><span class="p">.</span><span class="n">device_addr_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">own_addr_type</span><span class="p">;</span>
+<span class="w">    </span><span class="n">rsp_fields</span><span class="p">.</span><span class="n">device_addr_is_present</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Set URI */</span>
+<span class="w">    </span><span class="n">rsp_fields</span><span class="p">.</span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">esp_uri</span><span class="p">;</span>
+<span class="w">    </span><span class="n">rsp_fields</span><span class="p">.</span><span class="n">uri_len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">esp_uri</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/* Set scan response fields */</span>
+<span class="w">    </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ble_gap_adv_rsp_set_fields</span><span class="p">(</span><span class="o">&amp;</span><span class="n">rsp_fields</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ESP_LOGE</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;failed to set scan response data, error code: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rc</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Finally, we set the advertising parameters and initiate the advertising by calling the <cite>ble_gap_adv_start</cite> API.</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">start_advertising</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">ble_gap_adv_params</span><span class="w"> </span><span class="n">adv_params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="cm">/* Set non-connetable and general discoverable mode to be a beacon */</span>
+<span class="w">    </span><span class="n">adv_params</span><span class="p">.</span><span class="n">conn_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_GAP_CONN_MODE_NON</span><span class="p">;</span>
+<span class="w">    </span><span class="n">adv_params</span><span class="p">.</span><span class="n">disc_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_GAP_DISC_MODE_GEN</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Start advertising */</span>
+<span class="w">    </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ble_gap_adv_start</span><span class="p">(</span><span class="n">own_addr_type</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">BLE_HS_FOREVER</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">adv_params</span><span class="p">,</span>
+<span class="w">                        </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ESP_LOGE</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;failed to start advertising, error code: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rc</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;advertising started!&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this heading"></a></h2>
+<p>Through this tutorial, you have learned the basic concepts of advertising and scanning, and you mastered the method of building a Bluetooth LE Beacon device using the NimBLE host stack through the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/ble_get_started/nimble/NimBLE_Beacon">NimBLE_Beacon </a> example.</p>
+<p>You can try to modify the data in the example and observe the changes in the <strong>nRF Connect for Mobile</strong> app. For instance, you might modify the <cite>adv_fields</cite> or <cite>rsp_fields</cite> structures to change the populated advertising data structures, or swap the advertising data structures between the advertising packet and the scan response packet. However, keep in mind that the maximum size for the advertising data in both the advertising packet and the scan response packet is 31 bytes; if the size of the advertising data structure exceeds this limit, calling the <cite>ble_gap_adv_start</cite> API will fail.</p>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Device Discovery (api-guides/ble/get-started/ble-device-discovery)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Device Discovery (api-guides/ble/get-started/ble-device-discovery)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ble-introduction.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ble-connection.html" class="btn btn-neutral float-right" title="Connection" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

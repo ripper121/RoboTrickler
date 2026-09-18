@@ -1,5 +1,49 @@
+bool activeFilesystemAvailable()
+{
+  return filesystemActive && (activeFs != NULL);
+}
+
+bool filesystemLock()
+{
+  return (filesystemMutex != NULL) &&
+         (xSemaphoreTakeRecursive(filesystemMutex, 0) == pdTRUE);
+}
+
+void filesystemUnlock()
+{
+  if (filesystemMutex != NULL)
+  {
+    xSemaphoreGiveRecursive(filesystemMutex);
+  }
+}
+
+class FilesystemLockGuard
+{
+public:
+  FilesystemLockGuard() : locked(filesystemLock()) {}
+  ~FilesystemLockGuard()
+  {
+    if (locked)
+    {
+      filesystemUnlock();
+    }
+  }
+  operator bool() const { return locked; }
+
+private:
+  bool locked;
+};
+
 bool initFilesystem()
 {
+  if (filesystemMutex == NULL)
+  {
+    filesystemMutex = xSemaphoreCreateRecursiveMutex();
+    if (filesystemMutex == NULL)
+    {
+      return false;
+    }
+  }
   filesystemActive = false;
   activeFs = NULL;
   activeFsIsSd = false;

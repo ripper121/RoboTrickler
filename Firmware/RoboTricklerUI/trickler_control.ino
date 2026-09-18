@@ -14,7 +14,8 @@ void beep(const char *beepMode)
 
 void startTrickler()
 {
-    if (isTricklerRunning() || isProfileTuneTestActive())
+    if (isTricklerRunning() || isCalibrationProfilePromptPending() ||
+        isProfileTuneTestActive() || isWebFileUploadActive())
     {
         return;
     }
@@ -68,8 +69,7 @@ void startTrickler()
     // run actually starts.
     if (profileSelectionUnsaved)
     {
-        saveConfiguration("/config.txt", config);
-        profileSelectionUnsaved = false;
+        profileSelectionUnsaved = !saveConfiguration("/config.txt", config);
     }
 
     String selectedText = String(langText("placeholder_profile")) + ": " + config.profileName + langText("status_profile_selected_suffix");
@@ -84,9 +84,15 @@ void startTrickler()
     startMeasurement();
 }
 
-void stopTrickler()
+static void finishStopTrickler()
 {
-    stopMeasurement();
+    // Reserve the filesystem before publishing logs/beeps. For Core 1 safety
+    // stops this prevents an editor mutation from winning the gap between the
+    // state transition and the total-counter save.
+    FilesystemLockGuard filesystemGuard;
+    setStepperRunEnabled(false);
+    activeProfileStep = -1;
+    beep("button");
     setProfileTabEnabled(true);
     // Persist the total counter only when a charge actually finished since the
     // last save; a manual stop without a completed throw changes nothing.
@@ -103,6 +109,22 @@ void stopTrickler()
     updateDisplayLog(infoText, true);
 }
 
+bool stopRunningTricklerInState(TricklerState state)
+{
+    if (!transitionTricklerState(TRICKLER_RUNNING, state))
+    {
+        return false;
+    }
+    finishStopTrickler();
+    return true;
+}
+
+void stopTrickler()
+{
+    setTricklerState(TRICKLER_IDLE);
+    finishStopTrickler();
+}
+
 void startMeasurement()
 {
     // Start with a stable-weight window before the first throw.
@@ -113,14 +135,6 @@ void startMeasurement()
     firstProfileMovePending = true;
     setStepperRunEnabled(true);
     setTricklerState(TRICKLER_RUNNING);
-    beep("button");
-}
-
-void stopMeasurement()
-{
-    setStepperRunEnabled(false);
-    activeProfileStep = -1;
-    setTricklerState(TRICKLER_IDLE);
     beep("button");
 }
 

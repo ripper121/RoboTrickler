@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Application Level Tracing - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/app_trace.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/system/app_trace';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Call Function with External Stack" href="esp_function_with_shared_stack.html" />
+    <link rel="prev" title="Bootloader Image Format" href="bootloader_image_format.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">System API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app_image_format.html">App Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootloader_image_format.html">Bootloader Image Format</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Application Level Tracing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="esp_function_with_shared_stack.html">Call Function with External Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chip_revision.html">Chip Revision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console.html">Console</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efuse.html">eFuse Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_err.html">Error Code and Helper Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_ota.html">ESP HTTPS OTA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_event.html">Event Loop Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos.html">FreeRTOS Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_idf.html">FreeRTOS (IDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_additions.html">FreeRTOS (Supplemental Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mem_alloc.html">Heap Memory Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mm.html">Memory Management for MMU Supported Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="heap_debug.html">Heap Memory Debugging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_timer.html">ESP Timer (High Resolution Timer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="internal-unstable.html">Internal and Unstable APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipc.html">Inter-Processor Call (IPC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intr_alloc.html">Interrupt Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="log.html">Logging library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc_system_api.html">Miscellaneous System APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ota.html">Over The Air Updates (OTA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="perfmon.html">Performance Monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="power_management.html">Power Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pthread.html">POSIX Support (Including POSIX Threads Support)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sleep_modes.html">Sleep Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soc_caps.html">SoC Capabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_time.html">System Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="himem.html">Himem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ulp.html">Ultra Low Power (ULP) coprocessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wdts.html">Watchdogs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">System API</a></li>
+      <li class="breadcrumb-item active">Application Level Tracing</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/system/app_trace.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="application-level-tracing">
+<h1>Application Level Tracing<a class="headerlink" href="#application-level-tracing" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/system/app_trace.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>ESP-IDF provides a useful feature for application behavior analysis called <strong>Application Level Tracing</strong>. The feature can be enabled in menuconfig and allows transfer of arbitrary data between the host and ESP32 via JTAG interface with minimal overhead on program execution.</p>
+<p>Developers can use this library to send application specific state of execution to the host, and receive commands or other types of information in the opposite direction at runtime. The main use cases of this library are:</p>
+<ol class="arabic simple">
+<li><p>Collecting application specific data, see <a class="reference internal" href="../../api-guides/app_trace.html#app-trace-application-specific-tracing"><span class="std std-ref">Application Specific Tracing</span></a>.</p></li>
+<li><p>Lightweight logging to the host, see <a class="reference internal" href="../../api-guides/app_trace.html#app-trace-logging-to-host"><span class="std std-ref">Logging to Host</span></a>.</p></li>
+<li><p>System behaviour analysis, see <a class="reference internal" href="../../api-guides/app_trace.html#app-trace-system-behaviour-analysis-with-segger-systemview"><span class="std std-ref">System Behavior Analysis with SEGGER SystemView</span></a>.</p></li>
+</ol>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/app_trace_to_plot">system/app_trace_to_plot</a> demonstrates how to use the Application Level Tracing Library to send and plot dummy sensor data to a host via JTAG, providing a faster alternative to logging via UART.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/app_trace_basic">system/app_trace_basic</a> demonstrates how to use the Application Level Tracing Library to log messages to a host via JTAG, providing a faster alternative to UART logs.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/app_trace/include/esp_app_trace.h">components/app_trace/include/esp_app_trace.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_app_trace.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">app_trace</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">app_trace</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES app_trace
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES app_trace
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417esp_apptrace_initv">
+<span id="_CPPv317esp_apptrace_initv"></span><span id="_CPPv217esp_apptrace_initv"></span><span id="esp_apptrace_init__void"></span><span class="target" id="esp__app__trace_8h_1acc0d417d61290f50bb681b356cb64128"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_init</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417esp_apptrace_initv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Initializes application tracing module. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Should be called before any esp_apptrace_xxx call.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ESP_OK on success, otherwise see esp_err_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv431esp_apptrace_down_buffer_configP7uint8_t8uint32_t">
+<span id="_CPPv331esp_apptrace_down_buffer_configP7uint8_t8uint32_t"></span><span id="_CPPv231esp_apptrace_down_buffer_configP7uint8_t8uint32_t"></span><span id="esp_apptrace_down_buffer_config__uint8_tP.uint32_t"></span><span class="target" id="esp__app__trace_8h_1aeb0227e34d2a305e6a58140ff0663214"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_down_buffer_config</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">buf</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv431esp_apptrace_down_buffer_configP7uint8_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Configures down buffer. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Needs to be called before attempting to receive any data using esp_apptrace_down_buffer_get and esp_apptrace_read. This function does not protect internal data by lock.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buf</strong> -- Address of buffer to use for down channel (host to target) data. </p></li>
+<li><p><strong>size</strong> -- Size of the buffer. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423esp_apptrace_buffer_get19esp_apptrace_dest_t8uint32_t8uint32_t">
+<span id="_CPPv323esp_apptrace_buffer_get19esp_apptrace_dest_t8uint32_t8uint32_t"></span><span id="_CPPv223esp_apptrace_buffer_get19esp_apptrace_dest_t8uint32_t8uint32_t"></span><span id="esp_apptrace_buffer_get__esp_apptrace_dest_t.uint32_t.uint32_t"></span><span class="target" id="esp__app__trace_8h_1ad4f3e54710082d8568db88aef182d1c4"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_buffer_get</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">tmo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423esp_apptrace_buffer_get19esp_apptrace_dest_t8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Allocates buffer for trace data. Once the data in the buffer is ready to be sent, esp_apptrace_buffer_put must be called to indicate it. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to send data. </p></li>
+<li><p><strong>size</strong> -- Size of data to write to trace buffer. </p></li>
+<li><p><strong>tmo</strong> -- Timeout for operation (in us). Use ESP_APPTRACE_TMO_INFINITE to wait indefinitely.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>non-NULL on success, otherwise NULL. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423esp_apptrace_buffer_put19esp_apptrace_dest_tP7uint8_t8uint32_t">
+<span id="_CPPv323esp_apptrace_buffer_put19esp_apptrace_dest_tP7uint8_t8uint32_t"></span><span id="_CPPv223esp_apptrace_buffer_put19esp_apptrace_dest_tP7uint8_t8uint32_t"></span><span id="esp_apptrace_buffer_put__esp_apptrace_dest_t.uint8_tP.uint32_t"></span><span class="target" id="esp__app__trace_8h_1a725e4b87009f8dbe99b99493394216a2"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_buffer_put</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">tmo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423esp_apptrace_buffer_put19esp_apptrace_dest_tP7uint8_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Indicates that the data in the buffer is ready to be sent. This function is a counterpart of and must be preceded by esp_apptrace_buffer_get. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to send data. Should be identical to the same parameter in call to esp_apptrace_buffer_get. </p></li>
+<li><p><strong>ptr</strong> -- Address of trace buffer to release. Should be the value returned by call to esp_apptrace_buffer_get. </p></li>
+<li><p><strong>tmo</strong> -- Timeout for operation (in us). Use ESP_APPTRACE_TMO_INFINITE to wait indefinitely.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success, otherwise see esp_err_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_apptrace_write19esp_apptrace_dest_tPKv8uint32_t8uint32_t">
+<span id="_CPPv318esp_apptrace_write19esp_apptrace_dest_tPKv8uint32_t8uint32_t"></span><span id="_CPPv218esp_apptrace_write19esp_apptrace_dest_tPKv8uint32_t8uint32_t"></span><span id="esp_apptrace_write__esp_apptrace_dest_t.voidCP.uint32_t.uint32_t"></span><span class="target" id="esp__app__trace_8h_1a49d5dbc05201d8039898e55984347445"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_write</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">tmo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_apptrace_write19esp_apptrace_dest_tPKv8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Writes data to trace buffer. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to send data. </p></li>
+<li><p><strong>data</strong> -- Address of data to write to trace buffer. </p></li>
+<li><p><strong>size</strong> -- Size of data to write to trace buffer. </p></li>
+<li><p><strong>tmo</strong> -- Timeout for operation (in us). Use ESP_APPTRACE_TMO_INFINITE to wait indefinitely.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success, otherwise see esp_err_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423esp_apptrace_vprintf_to19esp_apptrace_dest_t8uint32_tPKc7va_list">
+<span id="_CPPv323esp_apptrace_vprintf_to19esp_apptrace_dest_t8uint32_tPKc7va_list"></span><span id="_CPPv223esp_apptrace_vprintf_to19esp_apptrace_dest_t8uint32_tPKc7va_list"></span><span id="esp_apptrace_vprintf_to__esp_apptrace_dest_t.uint32_t.cCP.va_list"></span><span class="target" id="esp__app__trace_8h_1ac37528521f4503009e03751bb57d68b9"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_vprintf_to</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">tmo</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">fmt</span></span>, <span class="n"><span class="pre">va_list</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ap</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423esp_apptrace_vprintf_to19esp_apptrace_dest_t8uint32_tPKc7va_list" title="Permalink to this definition"></a><br /></dt>
+<dd><p>vprintf-like function to send log messages to host via specified HW interface. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to send data. </p></li>
+<li><p><strong>tmo</strong> -- Timeout for operation (in us). Use ESP_APPTRACE_TMO_INFINITE to wait indefinitely. </p></li>
+<li><p><strong>fmt</strong> -- Address of format string. </p></li>
+<li><p><strong>ap</strong> -- List of arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of bytes written. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420esp_apptrace_vprintfPKc7va_list">
+<span id="_CPPv320esp_apptrace_vprintfPKc7va_list"></span><span id="_CPPv220esp_apptrace_vprintfPKc7va_list"></span><span id="esp_apptrace_vprintf__cCP.va_list"></span><span class="target" id="esp__app__trace_8h_1ad25d5162907f5888d26f53f7b1113d5e"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_vprintf</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">fmt</span></span>, <span class="n"><span class="pre">va_list</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ap</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420esp_apptrace_vprintfPKc7va_list" title="Permalink to this definition"></a><br /></dt>
+<dd><p>vprintf-like function to send log messages to host. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fmt</strong> -- Address of format string. </p></li>
+<li><p><strong>ap</strong> -- List of arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of bytes written. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_apptrace_flush19esp_apptrace_dest_t8uint32_t">
+<span id="_CPPv318esp_apptrace_flush19esp_apptrace_dest_t8uint32_t"></span><span id="_CPPv218esp_apptrace_flush19esp_apptrace_dest_t8uint32_t"></span><span id="esp_apptrace_flush__esp_apptrace_dest_t.uint32_t"></span><span class="target" id="esp__app__trace_8h_1a474ac9ed14e5a46bf1fc83d5616eb668"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_flush</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">tmo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_apptrace_flush19esp_apptrace_dest_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Flushes remaining data in trace buffer to host. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to flush data on. </p></li>
+<li><p><strong>tmo</strong> -- Timeout for operation (in us). Use ESP_APPTRACE_TMO_INFINITE to wait indefinitely.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success, otherwise see esp_err_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_apptrace_flush_nolock19esp_apptrace_dest_t8uint32_t8uint32_t">
+<span id="_CPPv325esp_apptrace_flush_nolock19esp_apptrace_dest_t8uint32_t8uint32_t"></span><span id="_CPPv225esp_apptrace_flush_nolock19esp_apptrace_dest_t8uint32_t8uint32_t"></span><span id="esp_apptrace_flush_nolock__esp_apptrace_dest_t.uint32_t.uint32_t"></span><span class="target" id="esp__app__trace_8h_1ac3f252295ae1334c01fb3f017e265b30"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_flush_nolock</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">min_sz</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">tmo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_apptrace_flush_nolock19esp_apptrace_dest_t8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Flushes remaining data in trace buffer to host without locking internal data. This is a special version of esp_apptrace_flush which should be called from panic handler. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to flush data on. </p></li>
+<li><p><strong>min_sz</strong> -- Threshold for flushing data. If current filling level is above this value, data will be flushed. TRAX destinations only. </p></li>
+<li><p><strong>tmo</strong> -- Timeout for operation (in us). Use ESP_APPTRACE_TMO_INFINITE to wait indefinitely.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success, otherwise see esp_err_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417esp_apptrace_read19esp_apptrace_dest_tPvP8uint32_t8uint32_t">
+<span id="_CPPv317esp_apptrace_read19esp_apptrace_dest_tPvP8uint32_t8uint32_t"></span><span id="_CPPv217esp_apptrace_read19esp_apptrace_dest_tPvP8uint32_t8uint32_t"></span><span id="esp_apptrace_read__esp_apptrace_dest_t.voidP.uint32_tP.uint32_t"></span><span class="target" id="esp__app__trace_8h_1a3e94a89574fcbe43995c98aa480e59b9"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_read</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">tmo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417esp_apptrace_read19esp_apptrace_dest_tPvP8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Reads host data from trace buffer. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to read the data on. </p></li>
+<li><p><strong>data</strong> -- Address of buffer to put data from trace buffer. </p></li>
+<li><p><strong>size</strong> -- Pointer to store size of read data. Before call to this function pointed memory must hold requested size of data </p></li>
+<li><p><strong>tmo</strong> -- Timeout for operation (in us). Use ESP_APPTRACE_TMO_INFINITE to wait indefinitely.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success, otherwise see esp_err_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_apptrace_down_buffer_get19esp_apptrace_dest_tP8uint32_t8uint32_t">
+<span id="_CPPv328esp_apptrace_down_buffer_get19esp_apptrace_dest_tP8uint32_t8uint32_t"></span><span id="_CPPv228esp_apptrace_down_buffer_get19esp_apptrace_dest_tP8uint32_t8uint32_t"></span><span id="esp_apptrace_down_buffer_get__esp_apptrace_dest_t.uint32_tP.uint32_t"></span><span class="target" id="esp__app__trace_8h_1a59e801357c3549d25718da5cfa6bed7c"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_down_buffer_get</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">tmo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_apptrace_down_buffer_get19esp_apptrace_dest_tP8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Retrieves incoming data buffer if any. Once data in the buffer is processed, esp_apptrace_down_buffer_put must be called to indicate it. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to receive data. </p></li>
+<li><p><strong>size</strong> -- Address to store size of available data in down buffer. Must be initialized with requested value. </p></li>
+<li><p><strong>tmo</strong> -- Timeout for operation (in us). Use ESP_APPTRACE_TMO_INFINITE to wait indefinitely.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>non-NULL on success, otherwise NULL. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_apptrace_down_buffer_put19esp_apptrace_dest_tP7uint8_t8uint32_t">
+<span id="_CPPv328esp_apptrace_down_buffer_put19esp_apptrace_dest_tP7uint8_t8uint32_t"></span><span id="_CPPv228esp_apptrace_down_buffer_put19esp_apptrace_dest_tP7uint8_t8uint32_t"></span><span id="esp_apptrace_down_buffer_put__esp_apptrace_dest_t.uint8_tP.uint32_t"></span><span class="target" id="esp__app__trace_8h_1a85474d2c3b3f7ccd114212ab376c5543"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_down_buffer_put</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">tmo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_apptrace_down_buffer_put19esp_apptrace_dest_tP7uint8_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Indicates that the data in the down buffer is processed. This function is a counterpart of and must be preceded by esp_apptrace_down_buffer_get. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to receive data. Should be identical to the same parameter in call to esp_apptrace_down_buffer_get. </p></li>
+<li><p><strong>ptr</strong> -- Address of trace buffer to release. Should be the value returned by call to esp_apptrace_down_buffer_get. </p></li>
+<li><p><strong>tmo</strong> -- Timeout for operation (in us). Use ESP_APPTRACE_TMO_INFINITE to wait indefinitely.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success, otherwise see esp_err_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430esp_apptrace_host_is_connected19esp_apptrace_dest_t">
+<span id="_CPPv330esp_apptrace_host_is_connected19esp_apptrace_dest_t"></span><span id="_CPPv230esp_apptrace_host_is_connected19esp_apptrace_dest_t"></span><span id="esp_apptrace_host_is_connected__esp_apptrace_dest_t"></span><span class="target" id="esp__app__trace_8h_1a76998fe8c220cb28299d3f9676996cb0"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_host_is_connected</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430esp_apptrace_host_is_connected19esp_apptrace_dest_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Checks whether host is connected. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dest</strong> -- Indicates HW interface to use.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if host is connected, otherwise false </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_apptrace_fopen19esp_apptrace_dest_tPKcPKc">
+<span id="_CPPv318esp_apptrace_fopen19esp_apptrace_dest_tPKcPKc"></span><span id="_CPPv218esp_apptrace_fopen19esp_apptrace_dest_tPKcPKc"></span><span id="esp_apptrace_fopen__esp_apptrace_dest_t.cCP.cCP"></span><span class="target" id="esp__app__trace_8h_1a1811ccd3e23990c6ac9ee54ffdb62017"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_fopen</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">path</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">mode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_apptrace_fopen19esp_apptrace_dest_tPKcPKc" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Opens file on host. This function has the same semantic as 'fopen' except for the first argument. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to use. </p></li>
+<li><p><strong>path</strong> -- Path to file. </p></li>
+<li><p><strong>mode</strong> -- Mode string. See fopen for details.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>non zero file handle on success, otherwise 0 </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419esp_apptrace_fclose19esp_apptrace_dest_tPv">
+<span id="_CPPv319esp_apptrace_fclose19esp_apptrace_dest_tPv"></span><span id="_CPPv219esp_apptrace_fclose19esp_apptrace_dest_tPv"></span><span id="esp_apptrace_fclose__esp_apptrace_dest_t.voidP"></span><span class="target" id="esp__app__trace_8h_1a6676cb3bf3208d4cbb490fcad3721133"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_fclose</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stream</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419esp_apptrace_fclose19esp_apptrace_dest_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Closes file on host. This function has the same semantic as 'fclose' except for the first argument. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to use. </p></li>
+<li><p><strong>stream</strong> -- File handle returned by esp_apptrace_fopen.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Zero on success, otherwise non-zero. See fclose for details. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419esp_apptrace_fwrite19esp_apptrace_dest_tPKv6size_t6size_tPv">
+<span id="_CPPv319esp_apptrace_fwrite19esp_apptrace_dest_tPKv6size_t6size_tPv"></span><span id="_CPPv219esp_apptrace_fwrite19esp_apptrace_dest_tPKv6size_t6size_tPv"></span><span id="esp_apptrace_fwrite__esp_apptrace_dest_t.voidCP.s.s.voidP"></span><span class="target" id="esp__app__trace_8h_1ab7f07e9e4b5f95fdc8a4580c61417427"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_fwrite</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nmemb</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stream</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419esp_apptrace_fwrite19esp_apptrace_dest_tPKv6size_t6size_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Writes to file on host. This function has the same semantic as 'fwrite' except for the first argument. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to use. </p></li>
+<li><p><strong>ptr</strong> -- Address of data to write. </p></li>
+<li><p><strong>size</strong> -- Size of an item. </p></li>
+<li><p><strong>nmemb</strong> -- Number of items to write. </p></li>
+<li><p><strong>stream</strong> -- File handle returned by esp_apptrace_fopen.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of written items. See fwrite for details. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_apptrace_fread19esp_apptrace_dest_tPv6size_t6size_tPv">
+<span id="_CPPv318esp_apptrace_fread19esp_apptrace_dest_tPv6size_t6size_tPv"></span><span id="_CPPv218esp_apptrace_fread19esp_apptrace_dest_tPv6size_t6size_tPv"></span><span id="esp_apptrace_fread__esp_apptrace_dest_t.voidP.s.s.voidP"></span><span class="target" id="esp__app__trace_8h_1ac19e8dbdb7f65baa182127c5ad03f690"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_fread</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nmemb</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stream</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_apptrace_fread19esp_apptrace_dest_tPv6size_t6size_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Read file on host. This function has the same semantic as 'fread' except for the first argument. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to use. </p></li>
+<li><p><strong>ptr</strong> -- Address to store read data. </p></li>
+<li><p><strong>size</strong> -- Size of an item. </p></li>
+<li><p><strong>nmemb</strong> -- Number of items to read. </p></li>
+<li><p><strong>stream</strong> -- File handle returned by esp_apptrace_fopen.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of read items. See fread for details. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_apptrace_fseek19esp_apptrace_dest_tPvli">
+<span id="_CPPv318esp_apptrace_fseek19esp_apptrace_dest_tPvli"></span><span id="_CPPv218esp_apptrace_fseek19esp_apptrace_dest_tPvli"></span><span id="esp_apptrace_fseek__esp_apptrace_dest_t.voidP.l.i"></span><span class="target" id="esp__app__trace_8h_1aea5f2eafaccdc20ffa0289a86665c6dc"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_fseek</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stream</span></span>, <span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">offset</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">whence</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_apptrace_fseek19esp_apptrace_dest_tPvli" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set position indicator in file on host. This function has the same semantic as 'fseek' except for the first argument. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to use. </p></li>
+<li><p><strong>stream</strong> -- File handle returned by esp_apptrace_fopen. </p></li>
+<li><p><strong>offset</strong> -- Offset. See fseek for details. </p></li>
+<li><p><strong>whence</strong> -- Position in file. See fseek for details.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Zero on success, otherwise non-zero. See fseek for details. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_apptrace_ftell19esp_apptrace_dest_tPv">
+<span id="_CPPv318esp_apptrace_ftell19esp_apptrace_dest_tPv"></span><span id="_CPPv218esp_apptrace_ftell19esp_apptrace_dest_tPv"></span><span id="esp_apptrace_ftell__esp_apptrace_dest_t.voidP"></span><span class="target" id="esp__app__trace_8h_1a4d6fd612bb101e1e58c23c5ec191414c"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_ftell</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stream</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_apptrace_ftell19esp_apptrace_dest_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get current position indicator for file on host. This function has the same semantic as 'ftell' except for the first argument. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to use. </p></li>
+<li><p><strong>stream</strong> -- File handle returned by esp_apptrace_fopen.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Current position in file. See ftell for details. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_apptrace_fstop19esp_apptrace_dest_t">
+<span id="_CPPv318esp_apptrace_fstop19esp_apptrace_dest_t"></span><span id="_CPPv218esp_apptrace_fstop19esp_apptrace_dest_t"></span><span id="esp_apptrace_fstop__esp_apptrace_dest_t"></span><span class="target" id="esp__app__trace_8h_1a9f3cfd555e064ea4604f63b716b41b5a"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_fstop</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_apptrace_fstop19esp_apptrace_dest_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Indicates to the host that all file operations are complete. This function should be called after all file operations are finished and indicate to the host that it can perform cleanup operations (close open files etc.). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dest</strong> -- Indicates HW interface to use.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success, otherwise see esp_err_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417esp_apptrace_feof19esp_apptrace_dest_tPv">
+<span id="_CPPv317esp_apptrace_feof19esp_apptrace_dest_tPv"></span><span id="_CPPv217esp_apptrace_feof19esp_apptrace_dest_tPv"></span><span id="esp_apptrace_feof__esp_apptrace_dest_t.voidP"></span><span class="target" id="esp__app__trace_8h_1a02414763e26bacf9a5f3a17f0eb6f156"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_feof</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_apptrace_dest_t" title="esp_apptrace_dest_t"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">dest</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stream</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417esp_apptrace_feof19esp_apptrace_dest_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Test end-of-file indicator on a stream. This function has the same semantic as 'feof' except for the first argument. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> -- Indicates HW interface to use. </p></li>
+<li><p><strong>stream</strong> -- File handle returned by esp_apptrace_fopen.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Non-Zero if end-of-file indicator is set for stream. See feof for details. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413esp_gcov_dumpv">
+<span id="_CPPv313esp_gcov_dumpv"></span><span id="_CPPv213esp_gcov_dumpv"></span><span id="esp_gcov_dump__void"></span><span class="target" id="esp__app__trace_8h_1a028cd34a09bb52dc15f3544b06677b24"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_gcov_dump</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413esp_gcov_dumpv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Triggers gcov info dump. This function waits for the host to connect to target before dumping data. </p>
+</dd></dl>
+
+</section>
+<section id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv419esp_apptrace_dest_t">
+<span id="_CPPv319esp_apptrace_dest_t"></span><span id="_CPPv219esp_apptrace_dest_t"></span><span class="target" id="esp__app__trace_8h_1a304e889cda85bcb24af670e3c5304df8"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_apptrace_dest_t</span></span></span><a class="headerlink" href="#_CPPv419esp_apptrace_dest_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Application trace data destinations bits. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_apptrace_dest_t22ESP_APPTRACE_DEST_JTAGE">
+<span id="_CPPv3N19esp_apptrace_dest_t22ESP_APPTRACE_DEST_JTAGE"></span><span id="_CPPv2N19esp_apptrace_dest_t22ESP_APPTRACE_DEST_JTAGE"></span><span class="target" id="esp__app__trace_8h_1a304e889cda85bcb24af670e3c5304df8a2b1a042c0a2b925414bfb54844d93aba"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_APPTRACE_DEST_JTAG</span></span></span><a class="headerlink" href="#_CPPv4N19esp_apptrace_dest_t22ESP_APPTRACE_DEST_JTAGE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>JTAG destination. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_apptrace_dest_t22ESP_APPTRACE_DEST_TRAXE">
+<span id="_CPPv3N19esp_apptrace_dest_t22ESP_APPTRACE_DEST_TRAXE"></span><span id="_CPPv2N19esp_apptrace_dest_t22ESP_APPTRACE_DEST_TRAXE"></span><span class="target" id="esp__app__trace_8h_1a304e889cda85bcb24af670e3c5304df8a29b9a2276e4f1ae584b9e6819edada02"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_APPTRACE_DEST_TRAX</span></span></span><a class="headerlink" href="#_CPPv4N19esp_apptrace_dest_t22ESP_APPTRACE_DEST_TRAXE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>xxx_TRAX name is obsolete, use more common xxx_JTAG </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_apptrace_dest_t22ESP_APPTRACE_DEST_UARTE">
+<span id="_CPPv3N19esp_apptrace_dest_t22ESP_APPTRACE_DEST_UARTE"></span><span id="_CPPv2N19esp_apptrace_dest_t22ESP_APPTRACE_DEST_UARTE"></span><span class="target" id="esp__app__trace_8h_1a304e889cda85bcb24af670e3c5304df8a35f92b44284c4d5a79ed2b35fa009791"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_APPTRACE_DEST_UART</span></span></span><a class="headerlink" href="#_CPPv4N19esp_apptrace_dest_t22ESP_APPTRACE_DEST_UARTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>UART destination. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_apptrace_dest_t21ESP_APPTRACE_DEST_MAXE">
+<span id="_CPPv3N19esp_apptrace_dest_t21ESP_APPTRACE_DEST_MAXE"></span><span id="_CPPv2N19esp_apptrace_dest_t21ESP_APPTRACE_DEST_MAXE"></span><span class="target" id="esp__app__trace_8h_1a304e889cda85bcb24af670e3c5304df8af30be239f6eac3e9483a1ee3e8258051"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_APPTRACE_DEST_MAX</span></span></span><a class="headerlink" href="#_CPPv4N19esp_apptrace_dest_t21ESP_APPTRACE_DEST_MAXE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_apptrace_dest_t21ESP_APPTRACE_DEST_NUME">
+<span id="_CPPv3N19esp_apptrace_dest_t21ESP_APPTRACE_DEST_NUME"></span><span id="_CPPv2N19esp_apptrace_dest_t21ESP_APPTRACE_DEST_NUME"></span><span class="target" id="esp__app__trace_8h_1a304e889cda85bcb24af670e3c5304df8adcdd183e3e28714382e92fef5cfd3827"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_APPTRACE_DEST_NUM</span></span></span><a class="headerlink" href="#_CPPv4N19esp_apptrace_dest_t21ESP_APPTRACE_DEST_NUME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/app_trace/include/esp_sysview_trace.h">components/app_trace/include/esp_sysview_trace.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_sysview_trace.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">app_trace</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">app_trace</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES app_trace
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES app_trace
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id2">
+<h3>Functions<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417esp_sysview_flush8uint32_t">
+<span id="_CPPv317esp_sysview_flush8uint32_t"></span><span id="_CPPv217esp_sysview_flush8uint32_t"></span><span id="esp_sysview_flush__uint32_t"></span><span class="target" id="esp__sysview__trace_8h_1aa594d626180a43cde5138ee496683521"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sysview_flush</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">tmo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417esp_sysview_flush8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Flushes remaining data in SystemView trace buffer to host. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmo</strong> -- Timeout for operation (in us). Use ESP_APPTRACE_TMO_INFINITE to wait indefinetly.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419esp_sysview_vprintfPKc7va_list">
+<span id="_CPPv319esp_sysview_vprintfPKc7va_list"></span><span id="_CPPv219esp_sysview_vprintfPKc7va_list"></span><span id="esp_sysview_vprintf__cCP.va_list"></span><span class="target" id="esp__sysview__trace_8h_1a0cb5d46f80c5dc8137316a3500e831e3"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sysview_vprintf</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">format</span></span>, <span class="n"><span class="pre">va_list</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">args</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419esp_sysview_vprintfPKc7va_list" title="Permalink to this definition"></a><br /></dt>
+<dd><p>vprintf-like function to sent log messages to the host. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>format</strong> -- Address of format string. </p></li>
+<li><p><strong>args</strong> -- List of arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of bytes written. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_sysview_heap_trace_start8uint32_t">
+<span id="_CPPv328esp_sysview_heap_trace_start8uint32_t"></span><span id="_CPPv228esp_sysview_heap_trace_start8uint32_t"></span><span id="esp_sysview_heap_trace_start__uint32_t"></span><span class="target" id="esp__sysview__trace_8h_1aeb729ffb804e2e9e952385319366c77c"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sysview_heap_trace_start</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">tmo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_sysview_heap_trace_start8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Starts SystemView heap tracing. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmo</strong> -- Timeout (in us) to wait for the host to be connected. Use -1 to wait forever.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success, ESP_ERR_TIMEOUT if operation has been timed out. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_sysview_heap_trace_stopv">
+<span id="_CPPv327esp_sysview_heap_trace_stopv"></span><span id="_CPPv227esp_sysview_heap_trace_stopv"></span><span id="esp_sysview_heap_trace_stop__void"></span><span class="target" id="esp__sysview__trace_8h_1aad0c4b4dc6b8d318429081610802c5b6"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sysview_heap_trace_stop</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_sysview_heap_trace_stopv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stops SystemView heap tracing. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ESP_OK. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_sysview_heap_trace_allocPv8uint32_tPKv">
+<span id="_CPPv328esp_sysview_heap_trace_allocPv8uint32_tPKv"></span><span id="_CPPv228esp_sysview_heap_trace_allocPv8uint32_tPKv"></span><span id="esp_sysview_heap_trace_alloc__voidP.uint32_t.voidCP"></span><span class="target" id="esp__sysview__trace_8h_1ad50b8e5c820c78ad53732baa29f955bf"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sysview_heap_trace_alloc</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">callers</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_sysview_heap_trace_allocPv8uint32_tPKv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sends heap allocation event to the host. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>addr</strong> -- Address of allocated block. </p></li>
+<li><p><strong>size</strong> -- Size of allocated block. </p></li>
+<li><p><strong>callers</strong> -- Pointer to array with callstack addresses. Array size must be CONFIG_HEAP_TRACING_STACK_DEPTH. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_sysview_heap_trace_freePvPKv">
+<span id="_CPPv327esp_sysview_heap_trace_freePvPKv"></span><span id="_CPPv227esp_sysview_heap_trace_freePvPKv"></span><span id="esp_sysview_heap_trace_free__voidP.voidCP"></span><span class="target" id="esp__sysview__trace_8h_1a360b8cb4d97db325d3e501a5980ed677"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sysview_heap_trace_free</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">callers</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_sysview_heap_trace_freePvPKv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sends heap de-allocation event to the host. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>addr</strong> -- Address of de-allocated block. </p></li>
+<li><p><strong>callers</strong> -- Pointer to array with callstack addresses. Array size must be CONFIG_HEAP_TRACING_STACK_DEPTH. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Application Level Tracing (api-reference/system/app_trace)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Application Level Tracing (api-reference/system/app_trace)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="bootloader_image_format.html" class="btn btn-neutral float-left" title="Bootloader Image Format" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="esp_function_with_shared_stack.html" class="btn btn-neutral float-right" title="Call Function with External Stack" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

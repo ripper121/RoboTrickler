@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protocols - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/migration-guides/release-5.x/5.0/protocols.html" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'migration-guides/release-5.x/5.0/protocols';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Provisioning" href="provisioning.html" />
+    <link rel="prev" title="Peripherals" href="peripherals.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Migration Guides</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html#esp-idf-5-x-migration-guide">ESP-IDF 5.x Migration Guide</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Migration from 4.4 to 5.0</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="bluetooth-classic.html">Bluetooth Classic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bluetooth-low-energy.html">Bluetooth Low Energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gcc.html">GCC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="networking.html">Networking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="peripherals.html">Peripherals</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Protocols</a></li>
+<li class="toctree-l4"><a class="reference internal" href="provisioning.html">Provisioning</a></li>
+<li class="toctree-l4"><a class="reference internal" href="removed-components.html">Removed or Deprecated Components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="storage.html">Storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="system.html">System</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tools.html">Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../5.1/index.html">Migration from 5.0 to 5.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.2/index.html">Migration from 5.1 to 5.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.3/index.html">Migration from 5.2 to 5.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.4/index.html">Migration from 5.3 to 5.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.5/index.html">Migration from 5.4 to 5.5</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Migration Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Migration from 4.4 to 5.0</a></li>
+      <li class="breadcrumb-item active">Protocols</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/migration-guides/release-5.x/5.0/protocols.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="protocols">
+<h1>Protocols<a class="headerlink" href="#protocols" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../../zh_CN/v5.5.5/esp32/migration-guides/release-5.x/5.0/protocols.html">[中文]</a></p>
+<section id="mbed-tls">
+<span id="migration-guide-mbedtls"></span><h2>Mbed TLS<a class="headerlink" href="#mbed-tls" title="Permalink to this heading"></a></h2>
+<p>For ESP-IDF v5.0, <a class="reference external" href="https://github.com/Mbed-TLS/mbedtls">Mbed TLS</a> has been updated from v2.x to v3.1.0.</p>
+<p>For more details about Mbed TLS's migration from version 2.x to version 3.0 or greater, please refer to the <a class="reference external" href="https://github.com/espressif/mbedtls/blob/9bb5effc3298265f829878825d9bd38478e67514/docs/3.0-migration-guide.md">official guide</a>.</p>
+<section id="breaking-changes-summary">
+<h3>Breaking Changes (Summary)<a class="headerlink" href="#breaking-changes-summary" title="Permalink to this heading"></a></h3>
+<section id="most-structure-fields-are-now-private">
+<h4>Most Structure Fields Are Now Private<a class="headerlink" href="#most-structure-fields-are-now-private" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><p>Direct access to fields of structures (<code class="docutils literal notranslate"><span class="pre">struct</span></code> types) declared in public headers is no longer supported.</p></li>
+<li><p>Appropriate accessor functions (getter/setter) must be used for the same. A temporary workaround would be to use <code class="docutils literal notranslate"><span class="pre">MBEDTLS_PRIVATE</span></code> macro (<strong>not recommended</strong>).</p></li>
+<li><p>For more details, refer to the <a class="reference external" href="https://github.com/espressif/mbedtls/blob/9bb5effc3298265f829878825d9bd38478e67514/docs/3.0-migration-guide.md#most-structure-fields-are-now-private">official guide</a>.</p></li>
+</ul>
+</section>
+<section id="ssl">
+<h4>SSL<a class="headerlink" href="#ssl" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><p>Removed support for TLS 1.0, 1.1, and DTLS 1.0</p></li>
+<li><p>Removed support for SSL 3.0</p></li>
+</ul>
+</section>
+<section id="deprecated-functions-were-removed-from-cryptography-modules">
+<h4>Deprecated Functions Were Removed from Cryptography Modules<a class="headerlink" href="#deprecated-functions-were-removed-from-cryptography-modules" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><p>The functions <code class="docutils literal notranslate"><span class="pre">mbedtls_*_ret()</span></code> (related to MD, SHA, RIPEMD, RNG, HMAC modules) was renamed to replace the corresponding functions without <code class="docutils literal notranslate"><span class="pre">_ret</span></code> appended and updated return value.</p></li>
+<li><p>For more details, refer to the <a class="reference external" href="https://github.com/espressif/mbedtls/blob/9bb5effc3298265f829878825d9bd38478e67514/docs/3.0-migration-guide.md#deprecated-functions-were-removed-from-hashing-modules">official guide</a>.</p></li>
+</ul>
+</section>
+<section id="deprecated-config-options">
+<h4>Deprecated Config Options<a class="headerlink" href="#deprecated-config-options" title="Permalink to this heading"></a></h4>
+<p>Following are some of the important config options deprecated by this update. The configs related to and/or dependent on these have also been deprecated.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">MBEDTLS_SSL_PROTO_SSL3</span></code>  : Support for SSL 3.0</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MBEDTLS_SSL_PROTO_TLS1</span></code>  : Support for TLS 1.0</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MBEDTLS_SSL_PROTO_TLS1_1</span></code>: Support for TLS 1.1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MBEDTLS_SSL_PROTO_DTLS</span></code>  : Support for DTLS 1.1 (Only DTLS 1.2 is supported now)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MBEDTLS_DES_C</span></code>           : Support for 3DES ciphersuites</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MBEDTLS_RC4_MODE</span></code>        : Support for RC4-based ciphersuites</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This list includes only major options configurable through <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">menuconfig</span></code>. For more details on deprecated options, refer to the <a class="reference external" href="https://github.com/espressif/mbedtls/blob/9bb5effc3298265f829878825d9bd38478e67514/docs/3.0-migration-guide.md#most-structure-fields-are-now-private">official guide</a>.</p>
+</div>
+</section>
+</section>
+</section>
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this heading"></a></h2>
+<section id="disabled-diffie-hellman-key-exchange-modes">
+<h3>Disabled Diffie-Hellman Key Exchange Modes<a class="headerlink" href="#disabled-diffie-hellman-key-exchange-modes" title="Permalink to this heading"></a></h3>
+<p>The Diffie-Hellman Key Exchange modes have now been disabled by default due to security risks (see warning text <a class="reference external" href="https://github.com/espressif/mbedtls/blob/9bb5effc3298265f829878825d9bd38478e67514/include/mbedtls/dhm.h#L20">here</a>). Related configs are given below:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">MBEDTLS_DHM_C</span></code>                 : Support for the Diffie-Hellman-Merkle module</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MBEDTLS_KEY_EXCHANGE_DHE_PSK</span></code>  : Support for Diffie-Hellman PSK (pre-shared-key) TLS authentication modes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MBEDTLS_KEY_EXCHANGE_DHE_RSA</span></code>  : Support for cipher suites with the prefix <code class="docutils literal notranslate"><span class="pre">TLS-DHE-RSA-WITH-</span></code></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>During the initial step of the handshake (i.e., <code class="docutils literal notranslate"><span class="pre">client_hello</span></code>), the server selects a cipher from the list that the client publishes. As the DHE_PSK/DHE_RSA ciphers have now been disabled by the above change, the server would fall back to an alternative cipher; if in a rare case, it does not support any other cipher, the handshake would fail. To retrieve the list of ciphers supported by the server, one must attempt to connect with the server with a specific cipher from the client-side. Few utilities can help do this, e.g., <code class="docutils literal notranslate"><span class="pre">sslscan</span></code>.</p>
+</div>
+</section>
+<section id="remove-certs-module-from-x509-library">
+<h3>Remove <code class="docutils literal notranslate"><span class="pre">certs</span></code> Module from X509 Library<a class="headerlink" href="#remove-certs-module-from-x509-library" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">mbedtls/certs.h</span></code> header is no longer available in mbedtls 3.1. Most applications can safely remove it from the list of includes.</p></li>
+</ul>
+</section>
+<section id="breaking-change-for-esp-crt-bundle-set-api">
+<h3>Breaking Change for <code class="docutils literal notranslate"><span class="pre">esp_crt_bundle_set</span></code> API<a class="headerlink" href="#breaking-change-for-esp-crt-bundle-set-api" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>The <a class="reference internal" href="../../../api-reference/protocols/esp_crt_bundle.html#_CPPv418esp_crt_bundle_setPK7uint8_t6size_t" title="esp_crt_bundle_set"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_crt_bundle_set()</span></code></a> API now requires one additional argument named <code class="docutils literal notranslate"><span class="pre">bundle_size</span></code>. The return type of the API has also been changed to <a class="reference internal" href="../../../api-reference/system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_err_t</span></code></a> from <code class="docutils literal notranslate"><span class="pre">void</span></code>.</p></li>
+</ul>
+</section>
+<section id="breaking-change-for-esp-ds-rsa-sign-api">
+<h3>Breaking Change for <code class="docutils literal notranslate"><span class="pre">esp_ds_rsa_sign</span></code> API<a class="headerlink" href="#breaking-change-for-esp-ds-rsa-sign-api" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>The <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ds_rsa_sign()</span></code> API now requires one less argument. The argument <code class="docutils literal notranslate"><span class="pre">mode</span></code> is no longer required.</p></li>
+</ul>
+</section>
+</section>
+<section id="https-server">
+<h2>HTTPS Server<a class="headerlink" href="#https-server" title="Permalink to this heading"></a></h2>
+<section id="id2">
+<h3>Breaking Changes (Summary)<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>Names of variables holding different certs in <a class="reference internal" href="../../../api-reference/protocols/esp_https_server.html#_CPPv418httpd_ssl_config_t" title="httpd_ssl_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">httpd_ssl_config_t</span></code></a> structure have been updated.</p>
+<p><ul class="simple">
+<li><p><a class="reference internal" href="../../../api-reference/protocols/esp_https_server.html#_CPPv4N16httpd_ssl_config10servercertE" title="httpd_ssl_config::servercert"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">httpd_ssl_config::servercert</span></code></a> variable inherits role of <code class="docutils literal notranslate"><span class="pre">cacert_pem</span></code> variable.</p></li>
+<li><p><a class="reference internal" href="../../../api-reference/protocols/esp_https_server.html#_CPPv4N16httpd_ssl_config14servercert_lenE" title="httpd_ssl_config::servercert_len"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">httpd_ssl_config::servercert_len</span></code></a> variable inherits role of <code class="docutils literal notranslate"><span class="pre">cacert_len</span></code> variable</p></li>
+<li><p><a class="reference internal" href="../../../api-reference/protocols/esp_https_server.html#_CPPv4N16httpd_ssl_config10cacert_pemE" title="httpd_ssl_config::cacert_pem"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">httpd_ssl_config::cacert_pem</span></code></a> variable inherits role of <code class="docutils literal notranslate"><span class="pre">client_verify_cert_pem</span></code> variable</p></li>
+<li><p><a class="reference internal" href="../../../api-reference/protocols/esp_https_server.html#_CPPv4N16httpd_ssl_config10cacert_lenE" title="httpd_ssl_config::cacert_len"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">httpd_ssl_config::cacert_len</span></code></a> variable inherits role of <code class="docutils literal notranslate"><span class="pre">client_verify_cert_len</span></code> variable</p></li>
+</ul>
+</p>
+<p>The return type of the <a class="reference internal" href="../../../api-reference/protocols/esp_https_server.html#_CPPv414httpd_ssl_stop14httpd_handle_t" title="httpd_ssl_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">httpd_ssl_stop()</span></code></a> API has been changed to <a class="reference internal" href="../../../api-reference/system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_err_t</span></code></a> from <code class="docutils literal notranslate"><span class="pre">void</span></code>.</p>
+</section>
+</section>
+<section id="esp-https-ota">
+<h2>ESP HTTPS OTA<a class="headerlink" href="#esp-https-ota" title="Permalink to this heading"></a></h2>
+<section id="id3">
+<h3>Breaking Changes (Summary)<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>The function <a class="reference internal" href="../../../api-reference/system/esp_https_ota.html#_CPPv413esp_https_otaPK22esp_https_ota_config_t" title="esp_https_ota"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_https_ota()</span></code></a> now requires pointer to <a class="reference internal" href="../../../api-reference/system/esp_https_ota.html#_CPPv422esp_https_ota_config_t" title="esp_https_ota_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_https_ota_config_t</span></code></a> as argument instead of pointer to <a class="reference internal" href="../../../api-reference/protocols/esp_http_client.html#_CPPv424esp_http_client_config_t" title="esp_http_client_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_http_client_config_t</span></code></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="esp-tls">
+<h2>ESP-TLS<a class="headerlink" href="#esp-tls" title="Permalink to this heading"></a></h2>
+<section id="id4">
+<h3>Breaking Changes (Summary)<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<section id="esp-tls-t-structure-is-now-private">
+<h4><code class="docutils literal notranslate"><span class="pre">esp_tls_t</span></code> Structure Is Now Private<a class="headerlink" href="#esp-tls-t-structure-is-now-private" title="Permalink to this heading"></a></h4>
+<p>The <a class="reference internal" href="../../../api-reference/protocols/esp_tls.html#_CPPv49esp_tls_t" title="esp_tls_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_tls_t</span></code></a> has now been made completely private. You cannot access its internal structures directly. Any necessary data that needs to be obtained from the ESP-TLS handle can be done through respective getter/setter functions. If there is a requirement of a specific getter/setter function, please raise an <a class="reference external" href="https://github.com/espressif/esp-idf/issues">issue</a> on ESP-IDF.</p>
+<p>The list of newly added getter/setter function is as as follows:</p>
+<p><ul class="simple">
+<li><p><a class="reference internal" href="../../../api-reference/protocols/esp_tls.html#_CPPv423esp_tls_get_ssl_contextP9esp_tls_t" title="esp_tls_get_ssl_context"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_tls_get_ssl_context()</span></code></a> - Obtain the ssl context of the underlying ssl stack from the ESP-TLS handle.</p></li>
+</ul>
+</p>
+</section>
+<section id="function-deprecations-and-recommended-alternatives">
+<h4>Function Deprecations And Recommended Alternatives<a class="headerlink" href="#function-deprecations-and-recommended-alternatives" title="Permalink to this heading"></a></h4>
+<p>Following table summarizes the deprecated functions removed and their alternatives to be used from ESP-IDF v5.0 onwards.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Deprecated Function</p></th>
+<th class="head"><p>Alternative</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">esp_tls_conn_new()</span></code></p></td>
+<td><p><a class="reference internal" href="../../../api-reference/protocols/esp_tls.html#_CPPv421esp_tls_conn_new_syncPKciiPK13esp_tls_cfg_tP9esp_tls_t" title="esp_tls_conn_new_sync"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_tls_conn_new_sync()</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">esp_tls_conn_delete()</span></code></p></td>
+<td><p><a class="reference internal" href="../../../api-reference/protocols/esp_tls.html#_CPPv420esp_tls_conn_destroyP9esp_tls_t" title="esp_tls_conn_destroy"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_tls_conn_destroy()</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>The function <a class="reference internal" href="../../../api-reference/protocols/esp_tls.html#_CPPv421esp_tls_conn_http_newPKcPK13esp_tls_cfg_t" title="esp_tls_conn_http_new"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_tls_conn_http_new()</span></code></a> has now been termed as deprecated. Please use the alternative function <a class="reference internal" href="../../../api-reference/protocols/esp_tls.html#_CPPv426esp_tls_conn_http_new_syncPKcPK13esp_tls_cfg_tP9esp_tls_t" title="esp_tls_conn_http_new_sync"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_tls_conn_http_new_sync()</span></code></a> (or its asynchronous <a class="reference internal" href="../../../api-reference/protocols/esp_tls.html#_CPPv427esp_tls_conn_http_new_asyncPKcPK13esp_tls_cfg_tP9esp_tls_t" title="esp_tls_conn_http_new_async"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_tls_conn_http_new_async()</span></code></a>). Note that the alternatives need an additional parameter <a class="reference internal" href="../../../api-reference/protocols/esp_tls.html#_CPPv49esp_tls_t" title="esp_tls_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_tls_t</span></code></a>, which has to be initialized using the <a class="reference internal" href="../../../api-reference/protocols/esp_tls.html#_CPPv412esp_tls_initv" title="esp_tls_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_tls_init()</span></code></a> function.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="http-server">
+<h2>HTTP Server<a class="headerlink" href="#http-server" title="Permalink to this heading"></a></h2>
+<section id="id5">
+<h3>Breaking Changes (Summary)<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">http_server.h</span></code> header is no longer available in <code class="docutils literal notranslate"><span class="pre">esp_http_server</span></code>. Please use <code class="docutils literal notranslate"><span class="pre">esp_http_server.h</span></code> instead.</p></li>
+</ul>
+</section>
+</section>
+<section id="esp-http-client">
+<h2>ESP HTTP Client<a class="headerlink" href="#esp-http-client" title="Permalink to this heading"></a></h2>
+<section id="id6">
+<h3>Breaking Changes (Summary)<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>The functions <a class="reference internal" href="../../../api-reference/protocols/esp_http_client.html#_CPPv420esp_http_client_read24esp_http_client_handle_tPci" title="esp_http_client_read"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_http_client_read()</span></code></a> and <a class="reference internal" href="../../../api-reference/protocols/esp_http_client.html#_CPPv429esp_http_client_fetch_headers24esp_http_client_handle_t" title="esp_http_client_fetch_headers"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_http_client_fetch_headers()</span></code></a> now return an additional return value <code class="docutils literal notranslate"><span class="pre">-ESP_ERR_HTTP_EAGAIN</span></code> for timeout errors - call timed-out before any data was ready.</p></li>
+</ul>
+</section>
+</section>
+<section id="tcp-transport">
+<h2>TCP Transport<a class="headerlink" href="#tcp-transport" title="Permalink to this heading"></a></h2>
+<section id="id7">
+<h3>Breaking Changes (Summary)<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>The function <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_transport_read()</span></code> now returns <code class="docutils literal notranslate"><span class="pre">0</span></code> for a connection timeout and <code class="docutils literal notranslate"><span class="pre">&lt;</span> <span class="pre">0</span></code> for other errors. Please refer <code class="xref cpp cpp-enum docutils literal notranslate"><span class="pre">esp_tcp_transport_err_t</span></code> for all possible return values.</p></li>
+</ul>
+</section>
+</section>
+<section id="mqtt-client">
+<h2>MQTT Client<a class="headerlink" href="#mqtt-client" title="Permalink to this heading"></a></h2>
+<section id="id8">
+<h3>Breaking Changes (Summary)<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../../api-reference/protocols/mqtt.html#_CPPv424esp_mqtt_client_config_t" title="esp_mqtt_client_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_mqtt_client_config_t</span></code></a> have all fields grouped in sub structs.</p></li>
+</ul>
+<p>Most common configurations are listed below:</p>
+<ul class="simple">
+<li><p>Broker address now is set in <code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_mqtt_client_config_t::broker::address::uri</span></code></p></li>
+<li><p>Security related to broker verification in <code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_mqtt_client_config_t::broker::verification</span></code></p></li>
+<li><p>Client username is set in <code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_mqtt_client_config_t::credentials::username</span></code></p></li>
+<li><p><a class="reference internal" href="../../../api-reference/protocols/mqtt.html#_CPPv424esp_mqtt_client_config_t" title="esp_mqtt_client_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_mqtt_client_config_t</span></code></a> no longer supports the <code class="docutils literal notranslate"><span class="pre">user_context</span></code> field. Please use <a class="reference internal" href="../../../api-reference/protocols/mqtt.html#_CPPv430esp_mqtt_client_register_event24esp_mqtt_client_handle_t19esp_mqtt_event_id_t19esp_event_handler_tPv" title="esp_mqtt_client_register_event"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_mqtt_client_register_event()</span></code></a> instead for registering an event handler; the last argument <code class="docutils literal notranslate"><span class="pre">event_handler_arg</span></code> can be used to pass user context to the handler.</p></li>
+</ul>
+</section>
+</section>
+<section id="esp-modbus">
+<h2>ESP-Modbus<a class="headerlink" href="#esp-modbus" title="Permalink to this heading"></a></h2>
+<section id="id9">
+<h3>Breaking Changes (Summary)<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<p>The ESP-IDF component <code class="docutils literal notranslate"><span class="pre">freemodbus</span></code> has been removed from ESP-IDF and is supported as a separate component. Additional information for the <code class="docutils literal notranslate"><span class="pre">ESP-Modbus</span></code> component can be found in the separate repository:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.github.com/espressif/esp-modbus">ESP-Modbus component on GitHub</a></p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">main</span></code> component folder of the new application shall include the component manager manifest file <code class="docutils literal notranslate"><span class="pre">idf_component.yml</span></code> as in the example below:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>dependencies:
+  espressif/esp-modbus:
+    version: &quot;^1.0&quot;
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">esp-modbus</span></code> component can be found in <a class="reference external" href="https://components.espressif.com/component/espressif/esp-modbus">ESP Component Registry</a>. Refer to <a class="reference external" href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/tools/idf-component-manager.html">component manager documentation</a> for more information on how to set up the component manager.</p>
+<p>For applications targeting v4.x releases of ESP-IDF that need to use new <code class="docutils literal notranslate"><span class="pre">esp-modbus</span></code> component, adding the component manager manifest file <code class="docutils literal notranslate"><span class="pre">idf_component.yml</span></code> will be sufficient to pull in the new component. However, users should also exclude the legacy <code class="docutils literal notranslate"><span class="pre">freemodbus</span></code> component from the build. This can be achieved using the statement below in the project's <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>:</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="s">EXCLUDE_COMPONENTS</span><span class="w"> </span><span class="s">freemodbus</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Protocols (migration-guides/release-5.x/5.0/protocols)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Protocols (migration-guides/release-5.x/5.0/protocols)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="peripherals.html" class="btn btn-neutral float-left" title="Peripherals" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="provisioning.html" class="btn btn-neutral float-right" title="Provisioning" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

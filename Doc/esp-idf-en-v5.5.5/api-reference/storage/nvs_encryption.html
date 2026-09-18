@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NVS Encryption - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/storage/nvs_encryption.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/storage/nvs_encryption';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="NVS Partition Generator Utility" href="nvs_partition_gen.html" />
+    <link rel="prev" title="NVS Bootloader" href="nvs_bootloader.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Storage API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="fatfs.html">FAT Filesystem Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fatfsgen.html">Generating and Parsing FATFS on Host</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mass_mfg.html">Manufacturing Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_flash.html">Non-Volatile Storage Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_bootloader.html">NVS Bootloader</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">NVS Encryption</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvs-encryption-flash-encryption-based-scheme">NVS Encryption: Flash Encryption-Based Scheme</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#encrypted-read-write">Encrypted Read/Write</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvs-security-provider">NVS Security Provider</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_partition_gen.html">NVS Partition Generator Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_partition_parse.html">NVS Partition Parser Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdmmc.html">SD/SDIO/MMC Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="partition.html">Partitions API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spiffs.html">SPIFFS Filesystem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vfs.html">Virtual Filesystem Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wear-levelling.html">Wear Levelling API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="storage-security.html">Storage Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Storage API</a></li>
+      <li class="breadcrumb-item active">NVS Encryption</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/storage/nvs_encryption.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nvs-encryption">
+<h1>NVS Encryption<a class="headerlink" href="#nvs-encryption" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/storage/nvs_encryption.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>This guide provides an overview of the NVS encryption feature. NVS encryption helps to achieve secure storage on the device flash memory.</p>
+<p>Data stored in NVS partitions can be encrypted using XTS-AES in the manner similar to the one mentioned in disk encryption standard IEEE P1619. For the purpose of encryption, each entry is treated as one <code class="docutils literal notranslate"><span class="pre">sector</span></code> and relative address of the entry (w.r.t., partition-start) is fed to the encryption algorithm as <code class="docutils literal notranslate"><span class="pre">sector-number</span></code>.</p>
+</section>
+<section id="nvs-encryption-flash-encryption-based-scheme">
+<span id="nvs-encr-flash-enc-scheme"></span><h2>NVS Encryption: Flash Encryption-Based Scheme<a class="headerlink" href="#nvs-encryption-flash-encryption-based-scheme" title="Permalink to this heading"></a></h2>
+<p>In this scheme, the keys required for NVS encryption are stored in yet another partition, which is protected using <a class="reference internal" href="../../security/flash-encryption.html"><span class="doc">Flash Encryption</span></a>. Therefore, enabling <a class="reference internal" href="../../security/flash-encryption.html"><span class="doc">Flash Encryption</span></a> becomes a prerequisite for NVS encryption here.</p>
+<p>NVS encryption is enabled by default when <a class="reference internal" href="../../security/flash-encryption.html"><span class="doc">Flash Encryption</span></a> is enabled. This is done because Wi-Fi driver stores credentials (like SSID and passphrase) in the default NVS partition. It is important to encrypt them as default choice if platform-level encryption is already enabled.</p>
+<p>For using NVS encryption using this scheme, the partition table must contain the <a class="reference internal" href="#nvs-encr-key-partition"><span class="std std-ref">NVS Key Partition</span></a>. Two partition tables containing the <a class="reference internal" href="#nvs-encr-key-partition"><span class="std std-ref">NVS Key Partition</span></a> are provided for NVS encryption under the partition table option (<code class="docutils literal notranslate"><span class="pre">menuconfig</span></code> &gt; <code class="docutils literal notranslate"><span class="pre">Partition</span> <span class="pre">Table</span></code>). They can be selected with the project configuration menu (<code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">menuconfig</span></code>). Please refer to the example <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/security/flash_encryption">security/flash_encryption</a> for how to configure and use the NVS encryption feature.</p>
+<section id="nvs-key-partition">
+<span id="nvs-encr-key-partition"></span><h3>NVS Key Partition<a class="headerlink" href="#nvs-key-partition" title="Permalink to this heading"></a></h3>
+<p>An application requiring NVS encryption support (using the Flash Encryption-based scheme) needs to be compiled with a key-partition of the type <code class="docutils literal notranslate"><span class="pre">data</span></code> and subtype <code class="docutils literal notranslate"><span class="pre">nvs_keys</span></code>. This partition should be marked as <code class="docutils literal notranslate"><span class="pre">encrypted</span></code> and its size should be the minimum partition size (4 KB). Refer to <a class="reference internal" href="../../api-guides/partition-tables.html"><span class="doc">Partition Tables</span></a> for more details. Two additional partition tables which contain the <a class="reference internal" href="#nvs-encr-key-partition"><span class="std std-ref">NVS Key Partition</span></a> are provided under the partition table option (<code class="docutils literal notranslate"><span class="pre">menuconfig</span></code> &gt; <code class="docutils literal notranslate"><span class="pre">Partition</span> <span class="pre">Table</span></code>). They can be directly used for NVS encryption. The structure of these partitions is depicted below:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+-----------+--------------+-------------+----+
+|              XTS encryption key (32)        |
++---------------------------------------------+
+|              XTS tweak key (32)             |
++---------------------------------------------+
+|                  CRC32 (4)                  |
++---------------------------------------------+
+</pre></div>
+</div>
+<p>The XTS encryption keys in the <a class="reference internal" href="#nvs-encr-key-partition"><span class="std std-ref">NVS Key Partition</span></a> can be generated in one of the following two ways.</p>
+<p><strong>Generate the keys on ESP32 chip itself</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>When NVS encryption is enabled, the <a class="reference internal" href="nvs_flash.html#_CPPv414nvs_flash_initv" title="nvs_flash_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_init()</span></code></a> API function can be used to initialize the encrypted default NVS partition. The API function internally generates the XTS encryption keys on the ESP chip. The API function finds the first <a class="reference internal" href="#nvs-encr-key-partition"><span class="std std-ref">NVS Key Partition</span></a>.</p></li>
+<li><p>Then the API function automatically generates and stores the NVS keys in that partition by making use of the <a class="reference internal" href="nvs_flash.html#_CPPv423nvs_flash_generate_keysPK15esp_partition_tP13nvs_sec_cfg_t" title="nvs_flash_generate_keys"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_generate_keys()</span></code></a> API function provided by <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/nvs_flash/include/nvs_flash.h">nvs_flash/include/nvs_flash.h</a>. New keys are generated and stored only when the respective key partition is empty. The same key partition can then be used to read the security configurations for initializing a custom encrypted NVS partition with help of <a class="reference internal" href="nvs_flash.html#_CPPv431nvs_flash_secure_init_partitionPKcP13nvs_sec_cfg_t" title="nvs_flash_secure_init_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_secure_init_partition()</span></code></a>.</p></li>
+<li><p>The API functions <a class="reference internal" href="nvs_flash.html#_CPPv421nvs_flash_secure_initP13nvs_sec_cfg_t" title="nvs_flash_secure_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_secure_init()</span></code></a> and <a class="reference internal" href="nvs_flash.html#_CPPv431nvs_flash_secure_init_partitionPKcP13nvs_sec_cfg_t" title="nvs_flash_secure_init_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_secure_init_partition()</span></code></a> do not generate the keys internally. When these API functions are used for initializing encrypted NVS partitions, the keys can be generated after startup using the <a class="reference internal" href="nvs_flash.html#_CPPv423nvs_flash_generate_keysPK15esp_partition_tP13nvs_sec_cfg_t" title="nvs_flash_generate_keys"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_generate_keys()</span></code></a> API function provided by <code class="docutils literal notranslate"><span class="pre">nvs_flash.h</span></code>. The API function then writes those keys onto the key-partition in encrypted form.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please note that <code class="docutils literal notranslate"><span class="pre">nvs_keys</span></code> partition must be completely erased before you start the application in this approach. Otherwise the application may generate the <a class="reference internal" href="nvs_flash.html#c.ESP_ERR_NVS_CORRUPT_KEY_PART" title="ESP_ERR_NVS_CORRUPT_KEY_PART"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_NVS_CORRUPT_KEY_PART</span></code></a> error code assuming that <code class="docutils literal notranslate"><span class="pre">nvs_keys</span></code> partition is not empty and contains malformatted data. You can use the following command for this:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>parttool.py --port PORT --partition-table-file=PARTITION_TABLE_FILE --partition-table-offset PARTITION_TABLE_OFFSET erase_partition --partition-type=data --partition-subtype=nvs_keys
+
+# If Flash Encryption or Secure Boot are enabled then add &quot;--esptool-erase-args=force&quot; to suppress the error:
+# &quot;Active security features detected, erasing flash is disabled as a safety measure.  Use --force to override ...&quot;
+parttool.py --port PORT --esptool-erase-args=force --partition-table-file=PARTITION_TABLE_FILE --partition-table-offset PARTITION_TABLE_OFFSET erase_partition --partition-type=data --partition-subtype=nvs_keys
+</pre></div>
+</div>
+</div>
+</div></blockquote>
+<p><strong>Use a pre-generated NVS key partition</strong></p>
+<blockquote>
+<div><p>This option will be required by the user when keys in the <a class="reference internal" href="#nvs-encr-key-partition"><span class="std std-ref">NVS Key Partition</span></a> are not generated by the application. The <a class="reference internal" href="#nvs-encr-key-partition"><span class="std std-ref">NVS Key Partition</span></a> containing the XTS encryption keys can be generated with the help of <a class="reference internal" href="nvs_partition_gen.html"><span class="doc">NVS Partition Generator Utility</span></a>. Then the user can store the pre-generated key partition on the flash with help of the following two commands:</p>
+<p>1. Build and flash the partition table</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>idf.py partition-table partition-table-flash
+</pre></div>
+</div>
+<p>2. Store the keys in the <a class="reference internal" href="#nvs-encr-key-partition"><span class="std std-ref">NVS Key Partition</span></a> (on the flash) with the help of <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/partition_table/parttool.py">parttool.py </a> (see Partition Tool section in <a class="reference internal" href="../../api-guides/partition-tables.html"><span class="doc">partition-tables</span></a> for more details)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>parttool.py --port PORT --partition-table-offset PARTITION_TABLE_OFFSET write_partition --partition-name=&quot;name of nvs_key partition&quot; --input NVS_KEY_PARTITION_FILE
+
+# If Flash Encryption or Secure Boot are enabled then add &quot;--esptool-erase-args=force&quot; to suppress the error:
+# &quot;Active security features detected, erasing flash is disabled as a safety measure.  Use --force to override ...&quot;
+parttool.py --port PORT --esptool-erase-args=force --partition-table-offset PARTITION_TABLE_OFFSET write_partition --partition-name=&quot;name of nvs_key partition&quot; --input NVS_KEY_PARTITION_FILE
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the device is encrypted in flash encryption development mode and you want to renew the NVS key partition, you need to tell <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/partition_table/parttool.py">parttool.py</a> to encrypt the NVS key partition and you also need to give it a pointer to the unencrypted partition table in your build directory (build/partition_table) since the partition table on the device is encrypted, too. You can use the following command:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>parttool.py --esptool-write-args encrypt --port PORT --partition-table-file=PARTITION_TABLE_FILE --partition-table-offset PARTITION_TABLE_OFFSET write_partition --partition-name=&quot;name of nvs_key partition&quot; --input NVS_KEY_PARTITION_FILE
+
+# If Flash Encryption or Secure Boot are enabled then add &quot;--esptool-erase-args=force&quot; to suppress the error:
+# &quot;Active security features detected, erasing flash is disabled as a safety measure.  Use --force to override ...&quot;
+parttool.py --esptool-erase-args=force --esptool-write-args encrypt --port PORT --partition-table-file=PARTITION_TABLE_FILE --partition-table-offset PARTITION_TABLE_OFFSET write_partition --partition-name=&quot;name of nvs_key partition&quot; --input NVS_KEY_PARTITION_FILE
+</pre></div>
+</div>
+</div>
+</div></blockquote>
+<p>Since the key partition is marked as <code class="docutils literal notranslate"><span class="pre">encrypted</span></code> and <a class="reference internal" href="../../security/flash-encryption.html"><span class="doc">Flash Encryption</span></a> is enabled, the bootloader will encrypt this partition using flash encryption key on the first boot.</p>
+<p>It is possible for an application to use different keys for different NVS partitions and thereby have multiple key-partitions. However, it is a responsibility of the application to provide the correct key-partition and keys for encryption or decryption.</p>
+</section>
+</section>
+<section id="encrypted-read-write">
+<h2>Encrypted Read/Write<a class="headerlink" href="#encrypted-read-write" title="Permalink to this heading"></a></h2>
+<p>The same NVS API functions <code class="docutils literal notranslate"><span class="pre">nvs_get_*</span></code> or <code class="docutils literal notranslate"><span class="pre">nvs_set_*</span></code> can be used for reading of, and writing to an encrypted NVS partition as well.</p>
+<p><strong>Encrypt the default NVS partition</strong></p>
+<ul class="simple">
+<li><p>To enable encryption for the default NVS partition, no additional step is necessary. When <a class="reference internal" href="../kconfig-reference.html#config-nvs-encryption"><span class="std std-ref">CONFIG_NVS_ENCRYPTION</span></a> is enabled, the <a class="reference internal" href="nvs_flash.html#_CPPv414nvs_flash_initv" title="nvs_flash_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_init()</span></code></a> API function internally performs some additional steps to enable encryption for the default NVS partition depending on the scheme being used (set by <a class="reference internal" href="../kconfig-reference.html#config-nvs-sec-key-protection-scheme"><span class="std std-ref">CONFIG_NVS_SEC_KEY_PROTECTION_SCHEME</span></a>).</p></li>
+<li><p>For the flash encryption-based scheme, the first <a class="reference internal" href="#nvs-encr-key-partition"><span class="std std-ref">NVS Key Partition</span></a> found is used to generate the encryption keys while for the HMAC one, keys are generated using the HMAC key burnt in eFuse at <a class="reference internal" href="../kconfig-reference.html#config-nvs-sec-hmac-efuse-key-id"><span class="std std-ref">CONFIG_NVS_SEC_HMAC_EFUSE_KEY_ID</span></a> (refer to the API documentation for more details).</p></li>
+</ul>
+<p>Alternatively, <a class="reference internal" href="nvs_flash.html#_CPPv421nvs_flash_secure_initP13nvs_sec_cfg_t" title="nvs_flash_secure_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_secure_init()</span></code></a> API function can also be used to enable encryption for the default NVS partition.</p>
+<p><strong>Encrypt a custom NVS partition</strong></p>
+<ul>
+<li><p>To enable encryption for a custom NVS partition, <a class="reference internal" href="nvs_flash.html#_CPPv431nvs_flash_secure_init_partitionPKcP13nvs_sec_cfg_t" title="nvs_flash_secure_init_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_secure_init_partition()</span></code></a> API function is used instead of <a class="reference internal" href="nvs_flash.html#_CPPv424nvs_flash_init_partitionPKc" title="nvs_flash_init_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_init_partition()</span></code></a>.</p></li>
+<li><p>When <a class="reference internal" href="nvs_flash.html#_CPPv421nvs_flash_secure_initP13nvs_sec_cfg_t" title="nvs_flash_secure_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_secure_init()</span></code></a> and <a class="reference internal" href="nvs_flash.html#_CPPv431nvs_flash_secure_init_partitionPKcP13nvs_sec_cfg_t" title="nvs_flash_secure_init_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_secure_init_partition()</span></code></a> API functions are used, the applications are expected to follow the steps below in order to perform NVS read/write operations with encryption enabled:</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p>Populate the NVS security configuration structure <a class="reference internal" href="nvs_flash.html#_CPPv413nvs_sec_cfg_t" title="nvs_sec_cfg_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">nvs_sec_cfg_t</span></code></a></p>
+<blockquote>
+<div><ul>
+<li><p>For the Flash Encryption-based scheme</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Find key partition and NVS data partition using <code class="docutils literal notranslate"><span class="pre">esp_partition_find*</span></code> API functions.</p></li>
+<li><p>Populate the <a class="reference internal" href="nvs_flash.html#_CPPv413nvs_sec_cfg_t" title="nvs_sec_cfg_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">nvs_sec_cfg_t</span></code></a> struct using the <a class="reference internal" href="nvs_flash.html#_CPPv427nvs_flash_read_security_cfgPK15esp_partition_tP13nvs_sec_cfg_t" title="nvs_flash_read_security_cfg"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_read_security_cfg()</span></code></a> or <a class="reference internal" href="nvs_flash.html#_CPPv423nvs_flash_generate_keysPK15esp_partition_tP13nvs_sec_cfg_t" title="nvs_flash_generate_keys"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_generate_keys()</span></code></a> API functions.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Initialise NVS flash partition using the <a class="reference internal" href="nvs_flash.html#_CPPv421nvs_flash_secure_initP13nvs_sec_cfg_t" title="nvs_flash_secure_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_secure_init()</span></code></a> or <a class="reference internal" href="nvs_flash.html#_CPPv431nvs_flash_secure_init_partitionPKcP13nvs_sec_cfg_t" title="nvs_flash_secure_init_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_secure_init_partition()</span></code></a> API functions.</p></li>
+<li><p>Open a namespace using the <a class="reference internal" href="nvs_flash.html#_CPPv48nvs_openPKc15nvs_open_mode_tP12nvs_handle_t" title="nvs_open"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_open()</span></code></a> or <a class="reference internal" href="nvs_flash.html#_CPPv423nvs_open_from_partitionPKcPKc15nvs_open_mode_tP12nvs_handle_t" title="nvs_open_from_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_open_from_partition()</span></code></a> API functions.</p></li>
+<li><p>Perform NVS read/write operations using <code class="docutils literal notranslate"><span class="pre">nvs_get_*</span></code> or <code class="docutils literal notranslate"><span class="pre">nvs_set_*</span></code>.</p></li>
+<li><p>Deinitialise an NVS partition using <a class="reference internal" href="nvs_flash.html#_CPPv416nvs_flash_deinitv" title="nvs_flash_deinit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_flash_deinit()</span></code></a>.</p></li>
+</ol>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="nvs-security-provider">
+<h2>NVS Security Provider<a class="headerlink" href="#nvs-security-provider" title="Permalink to this heading"></a></h2>
+<p>The component <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/components/nvs_sec_provider">nvs_sec_provider</a> stores all the implementation-specific code for the NVS encryption schemes and would also accommodate any future schemes. This component acts as an interface to the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/components/nvs_flash">nvs_flash</a> component for the handling of encryption keys. <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/components/nvs_sec_provider">nvs_sec_provider</a> has a configuration menu of its own, based on which the selected security scheme and the corresponding settings are registered for the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/components/nvs_flash">nvs_flash</a> component.</p>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/nvs_sec_provider/include/nvs_sec_provider.h">components/nvs_sec_provider/include/nvs_sec_provider.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;nvs_sec_provider.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">nvs_sec_provider</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">nvs_sec_provider</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES nvs_sec_provider
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES nvs_sec_provider
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv435nvs_sec_provider_register_flash_encPK26nvs_sec_config_flash_enc_tPP16nvs_sec_scheme_t">
+<span id="_CPPv335nvs_sec_provider_register_flash_encPK26nvs_sec_config_flash_enc_tPP16nvs_sec_scheme_t"></span><span id="_CPPv235nvs_sec_provider_register_flash_encPK26nvs_sec_config_flash_enc_tPP16nvs_sec_scheme_t"></span><span id="nvs_sec_provider_register_flash_enc__nvs_sec_config_flash_enc_tCP.nvs_sec_scheme_tPP"></span><span class="target" id="nvs__sec__provider_8h_1a85ff8cf084ee2db3b8496a67d5746f77"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nvs_sec_provider_register_flash_enc</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv426nvs_sec_config_flash_enc_t" title="nvs_sec_config_flash_enc_t"><span class="n"><span class="pre">nvs_sec_config_flash_enc_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">sec_scheme_cfg</span></span>, <a class="reference internal" href="nvs_flash.html#_CPPv416nvs_sec_scheme_t" title="nvs_sec_scheme_t"><span class="n"><span class="pre">nvs_sec_scheme_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">sec_scheme_handle_out</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv435nvs_sec_provider_register_flash_encPK26nvs_sec_config_flash_enc_tPP16nvs_sec_scheme_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Register the Flash-Encryption based scheme for NVS Encryption. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sec_scheme_cfg</strong> -- <strong>[in]</strong> Security scheme specific configuration data </p></li>
+<li><p><strong>sec_scheme_handle_out</strong> -- <strong>[out]</strong> Security scheme specific configuration handle</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK, if <code class="docutils literal notranslate"><span class="pre">sec_scheme_handle_out</span></code> was populated successfully with the scheme configuration;</p></li>
+<li><p>ESP_ERR_INVALID_ARG, if <code class="docutils literal notranslate"><span class="pre">scheme_cfg_hmac</span></code> is NULL;</p></li>
+<li><p>ESP_ERR_NO_MEM, No memory for the scheme-specific handle <code class="docutils literal notranslate"><span class="pre">sec_scheme_handle_out</span></code></p></li>
+<li><p>ESP_ERR_NOT_FOUND, if no <code class="docutils literal notranslate"><span class="pre">nvs_keys</span></code> partition is found </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427nvs_sec_provider_deregisterP16nvs_sec_scheme_t">
+<span id="_CPPv327nvs_sec_provider_deregisterP16nvs_sec_scheme_t"></span><span id="_CPPv227nvs_sec_provider_deregisterP16nvs_sec_scheme_t"></span><span id="nvs_sec_provider_deregister__nvs_sec_scheme_tP"></span><span class="target" id="nvs__sec__provider_8h_1a18b76f5635aa330defa9fadc072468f6"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nvs_sec_provider_deregister</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="nvs_flash.html#_CPPv416nvs_sec_scheme_t" title="nvs_sec_scheme_t"><span class="n"><span class="pre">nvs_sec_scheme_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">sec_scheme_handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427nvs_sec_provider_deregisterP16nvs_sec_scheme_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Deregister the NVS encryption scheme registered with the given handle. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sec_scheme_handle</strong> -- <strong>[in]</strong> Security scheme specific configuration handle</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK, if the scheme registered with <code class="docutils literal notranslate"><span class="pre">sec_scheme_handle</span></code> was deregistered successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG, if <code class="docutils literal notranslate"><span class="pre">sec_scheme_handle</span></code> is NULL; </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv426nvs_sec_config_flash_enc_t">
+<span id="_CPPv326nvs_sec_config_flash_enc_t"></span><span id="_CPPv226nvs_sec_config_flash_enc_t"></span><span id="nvs_sec_config_flash_enc_t"></span><span class="target" id="structnvs__sec__config__flash__enc__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nvs_sec_config_flash_enc_t</span></span></span><a class="headerlink" href="#_CPPv426nvs_sec_config_flash_enc_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Flash encryption-based scheme specific configuration data. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26nvs_sec_config_flash_enc_t13nvs_keys_partE">
+<span id="_CPPv3N26nvs_sec_config_flash_enc_t13nvs_keys_partE"></span><span id="_CPPv2N26nvs_sec_config_flash_enc_t13nvs_keys_partE"></span><span id="nvs_sec_config_flash_enc_t::nvs_keys_part__esp_partition_tCP"></span><span class="target" id="structnvs__sec__config__flash__enc__t_1ae694f5d1a4319d7f2c0494a98262c639"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">nvs_keys_part</span></span></span><a class="headerlink" href="#_CPPv4N26nvs_sec_config_flash_enc_t13nvs_keys_partE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Partition of subtype <code class="docutils literal notranslate"><span class="pre">nvs_keys</span></code> holding the NVS encryption keys </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_NVS_SEC_BASE">
+<span class="target" id="nvs__sec__provider_8h_1afa39d4e60d318c4e5ac716dcd8352b01"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_NVS_SEC_BASE</span></span></span><a class="headerlink" href="#c.ESP_ERR_NVS_SEC_BASE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Starting number of error codes </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_NVS_SEC_HMAC_KEY_NOT_FOUND">
+<span class="target" id="nvs__sec__provider_8h_1a8347a50c6fe5c74327563c1baf0c561c"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_NVS_SEC_HMAC_KEY_NOT_FOUND</span></span></span><a class="headerlink" href="#c.ESP_ERR_NVS_SEC_HMAC_KEY_NOT_FOUND" title="Permalink to this definition"></a><br /></dt>
+<dd><p>HMAC Key required to generate the NVS encryption keys not found </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_NVS_SEC_HMAC_KEY_BLK_ALREADY_USED">
+<span class="target" id="nvs__sec__provider_8h_1ac315868f64fa9551678a24c9baffad68"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_NVS_SEC_HMAC_KEY_BLK_ALREADY_USED</span></span></span><a class="headerlink" href="#c.ESP_ERR_NVS_SEC_HMAC_KEY_BLK_ALREADY_USED" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Provided eFuse block for HMAC key generation is already in use </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_NVS_SEC_HMAC_KEY_GENERATION_FAILED">
+<span class="target" id="nvs__sec__provider_8h_1adf3d6efc91830032fdfdfa4728fb7075"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_NVS_SEC_HMAC_KEY_GENERATION_FAILED</span></span></span><a class="headerlink" href="#c.ESP_ERR_NVS_SEC_HMAC_KEY_GENERATION_FAILED" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Failed to generate/write the HMAC key to eFuse </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_NVS_SEC_HMAC_XTS_KEYS_DERIV_FAILED">
+<span class="target" id="nvs__sec__provider_8h_1a9ff861e60658e9b9532162f742e0048e"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_NVS_SEC_HMAC_XTS_KEYS_DERIV_FAILED</span></span></span><a class="headerlink" href="#c.ESP_ERR_NVS_SEC_HMAC_XTS_KEYS_DERIV_FAILED" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Failed to derive the NVS encryption keys based on the HMAC-based scheme </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.NVS_SEC_PROVIDER_CFG_FLASH_ENC_DEFAULT">
+<span class="target" id="nvs__sec__provider_8h_1a292367e253844b932234d4ace2b59e8e"></span><span class="sig-name descname"><span class="n"><span class="pre">NVS_SEC_PROVIDER_CFG_FLASH_ENC_DEFAULT</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.NVS_SEC_PROVIDER_CFG_FLASH_ENC_DEFAULT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Helper for populating the Flash encryption-based scheme specific configuration data. </p>
+</dd></dl>
+
+</section>
+<section id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv419nvs_sec_scheme_id_t">
+<span id="_CPPv319nvs_sec_scheme_id_t"></span><span id="_CPPv219nvs_sec_scheme_id_t"></span><span class="target" id="nvs__sec__provider_8h_1a188f67165a9cc823d3c53e2270647c1c"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nvs_sec_scheme_id_t</span></span></span><a class="headerlink" href="#_CPPv419nvs_sec_scheme_id_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>NVS Encryption Keys Protection Scheme. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19nvs_sec_scheme_id_t24NVS_SEC_SCHEME_FLASH_ENCE">
+<span id="_CPPv3N19nvs_sec_scheme_id_t24NVS_SEC_SCHEME_FLASH_ENCE"></span><span id="_CPPv2N19nvs_sec_scheme_id_t24NVS_SEC_SCHEME_FLASH_ENCE"></span><span class="target" id="nvs__sec__provider_8h_1a188f67165a9cc823d3c53e2270647c1ca63eef363ca32ff00c09d3840bfcc3296"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NVS_SEC_SCHEME_FLASH_ENC</span></span></span><a class="headerlink" href="#_CPPv4N19nvs_sec_scheme_id_t24NVS_SEC_SCHEME_FLASH_ENCE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Protect NVS encryption keys using Flash Encryption </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19nvs_sec_scheme_id_t19NVS_SEC_SCHEME_HMACE">
+<span id="_CPPv3N19nvs_sec_scheme_id_t19NVS_SEC_SCHEME_HMACE"></span><span id="_CPPv2N19nvs_sec_scheme_id_t19NVS_SEC_SCHEME_HMACE"></span><span class="target" id="nvs__sec__provider_8h_1a188f67165a9cc823d3c53e2270647c1ca0b266debad78ae54483724ff172274ea"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NVS_SEC_SCHEME_HMAC</span></span></span><a class="headerlink" href="#_CPPv4N19nvs_sec_scheme_id_t19NVS_SEC_SCHEME_HMACE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Protect NVS encryption keys using HMAC peripheral </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19nvs_sec_scheme_id_t18NVS_SEC_SCHEME_MAXE">
+<span id="_CPPv3N19nvs_sec_scheme_id_t18NVS_SEC_SCHEME_MAXE"></span><span id="_CPPv2N19nvs_sec_scheme_id_t18NVS_SEC_SCHEME_MAXE"></span><span class="target" id="nvs__sec__provider_8h_1a188f67165a9cc823d3c53e2270647c1cafb278581f5e3ba81953a7a03c5dcba3d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NVS_SEC_SCHEME_MAX</span></span></span><a class="headerlink" href="#_CPPv4N19nvs_sec_scheme_id_t18NVS_SEC_SCHEME_MAXE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=NVS Encryption (api-reference/storage/nvs_encryption)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=NVS Encryption (api-reference/storage/nvs_encryption)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nvs_bootloader.html" class="btn btn-neutral float-left" title="NVS Bootloader" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nvs_partition_gen.html" class="btn btn-neutral float-right" title="NVS Partition Generator Utility" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

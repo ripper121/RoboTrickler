@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SDMMC Host Driver - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/sdmmc_host.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/peripherals/sdmmc_host';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="SD SPI Host Driver" href="sdspi_host.html" />
+    <link rel="prev" title="SD Pull-up Requirements" href="sd_pullup_requirements.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Peripherals API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adc_oneshot.html">Analog to Digital Converter (ADC) Oneshot Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_continuous.html">Analog to Digital Converter (ADC) Continuous Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_calibration.html">Analog to Digital Converter (ADC) Calibration Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clk_tree.html">Clock Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dac.html">Digital To Analog Converter (DAC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gpio.html">GPIO &amp; RTC GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gptimer.html">General Purpose Timer (GPTimer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2c.html">Inter-Integrated Circuit (I2C)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2s.html">Inter-IC Sound (I2S)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lcd/index.html">LCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ledc.html">LED Control (LEDC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mcpwm.html">Motor Control Pulse Width Modulator (MCPWM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pcnt.html">Pulse Counter (PCNT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rmt.html">Remote Control Transceiver (RMT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sd_pullup_requirements.html">SD Pull-up Requirements</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">SDMMC Host Driver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#supported-speed-modes">Supported Speed Modes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-the-sdmmc-host-driver">Using the SDMMC Host Driver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuring-bus-width-and-frequency">Configuring Bus Width and Frequency</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ddr-mode-for-emmc-chips">DDR Mode for eMMC Chips</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See also</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="sdspi_host.html">SD SPI Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdio_slave.html">SDIO Card Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdm.html">Sigma-Delta Modulation (SDM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_flash/index.html">SPI Flash API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_master.html">SPI Master Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_slave.html">SPI Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cap_touch_sens.html">Capacitive Touch Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="twai.html">Two-Wire Automotive Interface (TWAI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uart.html">Universal Asynchronous Receiver/Transmitter (UART)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Peripherals API</a></li>
+      <li class="breadcrumb-item active">SDMMC Host Driver</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/peripherals/sdmmc_host.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sdmmc-host-driver">
+<h1>SDMMC Host Driver<a class="headerlink" href="#sdmmc-host-driver" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/peripherals/sdmmc_host.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>ESP32's SDMMC host peripheral has two slots. Each slot can be used independently to connect to an SD card, SDIO device, or eMMC chip.</p>
+<ul class="simple">
+<li><p>Slot 0 (<code class="xref c c-macro docutils literal notranslate"><span class="pre">SDMMC_HOST_SLOT_0</span></code>) is an 8-bit slot. It uses <code class="docutils literal notranslate"><span class="pre">HS1_*</span></code> signals in the PIN MUX.</p></li>
+<li><p>Slot 1 (<code class="xref c c-macro docutils literal notranslate"><span class="pre">SDMMC_HOST_SLOT_1</span></code>) is a 4-bit slot. It uses <code class="docutils literal notranslate"><span class="pre">HS2_*</span></code> signals in the PIN MUX.</p></li>
+</ul>
+<p>The slots are connected to ESP32 GPIOs using IO MUX. Pin mappings of these slots are given in the table below.</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 40.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Slot 0</p></th>
+<th class="head"><p>Slot 1</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CMD</p></td>
+<td><p>GPIO11</p></td>
+<td><p>GPIO15</p></td>
+</tr>
+<tr class="row-odd"><td><p>CLK</p></td>
+<td><p>GPIO6</p></td>
+<td><p>GPIO14</p></td>
+</tr>
+<tr class="row-even"><td><p>D0</p></td>
+<td><p>GPIO7</p></td>
+<td><p>GPIO2</p></td>
+</tr>
+<tr class="row-odd"><td><p>D1</p></td>
+<td><p>GPIO8</p></td>
+<td><p>GPIO4</p></td>
+</tr>
+<tr class="row-even"><td><p>D2</p></td>
+<td><p>GPIO9</p></td>
+<td><p>GPIO12</p></td>
+</tr>
+<tr class="row-odd"><td><p>D3</p></td>
+<td><p>GPIO10</p></td>
+<td><p>GPIO13</p></td>
+</tr>
+<tr class="row-even"><td><p>D4</p></td>
+<td><p>GPIO16</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>D5</p></td>
+<td><p>GPIO17</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>D6</p></td>
+<td><p>GPIO5</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>D7</p></td>
+<td><p>GPIO18</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>CD</p></td>
+<td><p>any input via GPIO matrix</p></td>
+<td><p>any input via GPIO matrix</p></td>
+</tr>
+<tr class="row-odd"><td><p>WP</p></td>
+<td><p>any input via GPIO matrix</p></td>
+<td><p>any input via GPIO matrix</p></td>
+</tr>
+</tbody>
+</table>
+<p>The Card Detect (CD) and Write Protect (WP) signals can be routed to arbitrary pins using the GPIO matrix. To reserve the pins, set the <code class="docutils literal notranslate"><span class="pre">cd</span></code> and <code class="docutils literal notranslate"><span class="pre">wp</span></code> members of the <a class="reference internal" href="#_CPPv419sdmmc_slot_config_t" title="sdmmc_slot_config_t"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_slot_config_t</span></code></a> structure before calling <a class="reference internal" href="#_CPPv420sdmmc_host_init_slotiPK19sdmmc_slot_config_t" title="sdmmc_host_init_slot"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_host_init_slot()</span></code></a>. Please note that it is not advised to specify a CD pin when working with SDIO cards, because the CD signal in ESP32 can also trigger SDIO slave interrupt.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Pins used by Slot 0 (<code class="docutils literal notranslate"><span class="pre">HS1_*</span></code>) are also used to connect the SPI flash chip in ESP32-WROOM and ESP32-WROVER modules. These pins cannot be concurrently shared between an SD card and an SPI flash. If you need to use Slot 0, establish an alternative connection for the SPI flash using different pins and configure the necessary eFuses accordingly.</p>
+</div>
+</section>
+<section id="supported-speed-modes">
+<h2>Supported Speed Modes<a class="headerlink" href="#supported-speed-modes" title="Permalink to this heading"></a></h2>
+<p>SDMMC Host driver supports the following speed modes:</p>
+<p><ul class="simple">
+<li><p>Default Speed (20 MHz): 1-line or 4-line with SD cards, and 1-line, 4-line, or 8-line with 3.3 V eMMC</p></li>
+<li><p>High Speed (40 MHz): 1-line or 4-line with SD cards, and 1-line, 4-line, or 8-line with 3.3 V eMMC</p></li>
+<li><p>High Speed DDR (40 MHz): 4-line with 3.3 V eMMC</p></li>
+</ul>
+</p>
+<p>Speed modes not supported at present:</p>
+<ul class="simple">
+<li><p>High Speed DDR mode: 8-line eMMC</p></li>
+</ul>
+</section>
+<section id="using-the-sdmmc-host-driver">
+<h2>Using the SDMMC Host Driver<a class="headerlink" href="#using-the-sdmmc-host-driver" title="Permalink to this heading"></a></h2>
+<p>Of all the functions listed below, only the following ones will be used directly by most applications:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv415sdmmc_host_initv" title="sdmmc_host_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_host_init()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv420sdmmc_host_init_slotiPK19sdmmc_slot_config_t" title="sdmmc_host_init_slot"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_host_init_slot()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv417sdmmc_host_deinitv" title="sdmmc_host_deinit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_host_deinit()</span></code></a></p></li>
+</ul>
+<p>Other functions, such as the ones given below, will be called by the SD/MMC protocol layer via function pointers in the <a class="reference internal" href="../storage/sdmmc.html#_CPPv412sdmmc_host_t" title="sdmmc_host_t"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_host_t</span></code></a> structure:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv424sdmmc_host_set_bus_widthi6size_t" title="sdmmc_host_set_bus_width"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_host_set_bus_width()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv423sdmmc_host_set_card_clki8uint32_t" title="sdmmc_host_set_card_clk"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_host_set_card_clk()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv425sdmmc_host_do_transactioniP15sdmmc_command_t" title="sdmmc_host_do_transaction"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_host_do_transaction()</span></code></a></p></li>
+</ul>
+</section>
+<section id="configuring-bus-width-and-frequency">
+<h2>Configuring Bus Width and Frequency<a class="headerlink" href="#configuring-bus-width-and-frequency" title="Permalink to this heading"></a></h2>
+<p>With the default initializers for <a class="reference internal" href="../storage/sdmmc.html#_CPPv412sdmmc_host_t" title="sdmmc_host_t"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_host_t</span></code></a> and <a class="reference internal" href="#_CPPv419sdmmc_slot_config_t" title="sdmmc_slot_config_t"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_slot_config_t</span></code></a>, i.e., <code class="xref c c-macro docutils literal notranslate"><span class="pre">SDMMC_HOST_DEFAULT</span></code> and <code class="xref c c-macro docutils literal notranslate"><span class="pre">SDMMC_SLOT_CONFIG_DEFAULT</span></code>, SDMMC Host driver will attempt to use the widest bus supported by the card (4 lines for SD, 8 lines for eMMC) and the frequency of 20 MHz.</p>
+<p>In the designs where communication at 40 MHz frequency can be achieved, it is possible to increase the bus frequency by changing the <code class="docutils literal notranslate"><span class="pre">max_freq_khz</span></code> field of <a class="reference internal" href="../storage/sdmmc.html#_CPPv412sdmmc_host_t" title="sdmmc_host_t"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_host_t</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sdmmc_host_t</span> <span class="n">host</span> <span class="o">=</span> <span class="n">SDMMC_HOST_DEFAULT</span><span class="p">();</span>
+<span class="n">host</span><span class="o">.</span><span class="n">max_freq_khz</span> <span class="o">=</span> <span class="n">SDMMC_FREQ_HIGHSPEED</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>If you need a specific frequency other than standard speeds, you are free to use any value from within an appropriate range of the SD interface given (SDMMC or SDSPI). However, the real clock frequency shall be calculated by the underlying driver and the value can be different from the one required.</p>
+<p>For the SDMMC, <code class="docutils literal notranslate"><span class="pre">max_freq_khz</span></code> works as the upper limit so the final frequency value shall be always lower or equal. For the SDSPI, the nearest fitting frequency is supplied and thus the value can be greater than/equal to/lower than <code class="docutils literal notranslate"><span class="pre">max_freq_khz</span></code>.</p>
+<p>To configure the bus width, set the <code class="docutils literal notranslate"><span class="pre">width</span></code> field of <a class="reference internal" href="#_CPPv419sdmmc_slot_config_t" title="sdmmc_slot_config_t"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_slot_config_t</span></code></a>. For example, to set 1-line mode:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sdmmc_slot_config_t</span> <span class="n">slot</span> <span class="o">=</span> <span class="n">SDMMC_SLOT_CONFIG_DEFAULT</span><span class="p">();</span>
+<span class="n">slot</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="ddr-mode-for-emmc-chips">
+<h2>DDR Mode for eMMC Chips<a class="headerlink" href="#ddr-mode-for-emmc-chips" title="Permalink to this heading"></a></h2>
+<p>By default, DDR mode will be used if:</p>
+<ul class="simple">
+<li><p>SDMMC host frequency is set to <a class="reference internal" href="../storage/sdmmc.html#c.SDMMC_FREQ_HIGHSPEED" title="SDMMC_FREQ_HIGHSPEED"><code class="xref c c-macro docutils literal notranslate"><span class="pre">SDMMC_FREQ_HIGHSPEED</span></code></a> in <a class="reference internal" href="../storage/sdmmc.html#_CPPv412sdmmc_host_t" title="sdmmc_host_t"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_host_t</span></code></a> structure, and</p></li>
+<li><p>eMMC chip reports DDR mode support in its CSD register</p></li>
+</ul>
+<p>DDR mode places higher requirements for signal integrity. To disable DDR mode while keeping the <a class="reference internal" href="../storage/sdmmc.html#c.SDMMC_FREQ_HIGHSPEED" title="SDMMC_FREQ_HIGHSPEED"><code class="xref c c-macro docutils literal notranslate"><span class="pre">SDMMC_FREQ_HIGHSPEED</span></code></a> frequency, clear the <a class="reference internal" href="../storage/sdmmc.html#c.SDMMC_HOST_FLAG_DDR" title="SDMMC_HOST_FLAG_DDR"><code class="xref c c-macro docutils literal notranslate"><span class="pre">SDMMC_HOST_FLAG_DDR</span></code></a> bit in <a class="reference internal" href="../storage/sdmmc.html#_CPPv4N12sdmmc_host_t5flagsE" title="sdmmc_host_t::flags"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">sdmmc_host_t::flags</span></code></a> field of the <a class="reference internal" href="../storage/sdmmc.html#_CPPv412sdmmc_host_t" title="sdmmc_host_t"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_host_t</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sdmmc_host_t</span> <span class="n">host</span> <span class="o">=</span> <span class="n">SDMMC_HOST_DEFAULT</span><span class="p">();</span>
+<span class="n">host</span><span class="o">.</span><span class="n">max_freq_khz</span> <span class="o">=</span> <span class="n">SDMMC_FREQ_HIGHSPEED</span><span class="p">;</span>
+<span class="n">host</span><span class="o">.</span><span class="n">flags</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">SDMMC_HOST_FLAG_DDR</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../storage/sdmmc.html"><span class="doc">SD/SDIO/MMC Driver</span></a>: introduces the higher-level driver which implements the protocol layer.</p></li>
+<li><p><a class="reference internal" href="sdspi_host.html"><span class="doc">SD SPI Host Driver</span></a>: introduces a similar driver that uses the SPI controller and is limited to SD protocol's SPI mode.</p></li>
+<li><p><a class="reference internal" href="sd_pullup_requirements.html"><span class="doc">SD Pull-up Requirements</span></a>: introduces pull-up support and compatibility of modules and development kits.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_sdmmc/include/driver/sdmmc_host.h">components/esp_driver_sdmmc/include/driver/sdmmc_host.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;driver/sdmmc_host.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_driver_sdmmc</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_driver_sdmmc</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_driver_sdmmc
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_driver_sdmmc
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415sdmmc_host_initv">
+<span id="_CPPv315sdmmc_host_initv"></span><span id="_CPPv215sdmmc_host_initv"></span><span id="sdmmc_host_init__void"></span><span class="target" id="sdmmc__host_8h_1ad4e25fc6b18a165a56ba4b17c8521f80"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_init</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415sdmmc_host_initv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Initialize SDMMC host peripheral. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread safe</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success or if sdmmc_host_init was already initialized with this function</p></li>
+<li><p>ESP_ERR_NO_MEM if memory can not be allocated </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420sdmmc_host_init_slotiPK19sdmmc_slot_config_t">
+<span id="_CPPv320sdmmc_host_init_slotiPK19sdmmc_slot_config_t"></span><span id="_CPPv220sdmmc_host_init_slotiPK19sdmmc_slot_config_t"></span><span id="sdmmc_host_init_slot__i.sdmmc_slot_config_tCP"></span><span class="target" id="sdmmc__host_8h_1a405b06e5e842236bc8ccb698ffe12702"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_init_slot</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419sdmmc_slot_config_t" title="sdmmc_slot_config_t"><span class="n"><span class="pre">sdmmc_slot_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">slot_config</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420sdmmc_host_init_slotiPK19sdmmc_slot_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Initialize given slot of SDMMC peripheral. </p>
+<p>On the ESP32, SDMMC peripheral has two slots:<ul class="simple">
+<li><p>Slot 0: 8-bit wide, maps to HS1_* signals in PIN MUX</p></li>
+<li><p>Slot 1: 4-bit wide, maps to HS2_* signals in PIN MUX</p></li>
+</ul>
+</p>
+<p>Card detect and write protect signals can be routed to arbitrary GPIOs using GPIO matrix.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread safe</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p></li>
+<li><p><strong>slot_config</strong> -- additional configuration for the slot </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_STATE if host has not been initialized using sdmmc_host_init</p></li>
+<li><p>ESP_ERR_INVALID_ARG if GPIO pins from slot_config are not valid </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424sdmmc_host_set_bus_widthi6size_t">
+<span id="_CPPv324sdmmc_host_set_bus_widthi6size_t"></span><span id="_CPPv224sdmmc_host_set_bus_widthi6size_t"></span><span id="sdmmc_host_set_bus_width__i.s"></span><span class="target" id="sdmmc__host_8h_1a1885b43bc897d6143fb416489ffe953d"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_set_bus_width</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">width</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424sdmmc_host_set_bus_widthi6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select bus width to be used for data transfer. </p>
+<p>SD/MMC card must be initialized prior to this command, and a command to set bus width has to be sent to the card (e.g. SD_APP_SET_BUS_WIDTH)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread safe</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p></li>
+<li><p><strong>width</strong> -- bus width (1, 4, or 8 for slot 0; 1 or 4 for slot 1) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if slot number or width is not valid </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425sdmmc_host_get_slot_widthi">
+<span id="_CPPv325sdmmc_host_get_slot_widthi"></span><span id="_CPPv225sdmmc_host_get_slot_widthi"></span><span id="sdmmc_host_get_slot_width__i"></span><span class="target" id="sdmmc__host_8h_1ab633bf17c6260cb4bb3e81bcd5f1159d"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_get_slot_width</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425sdmmc_host_get_slot_widthi" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get bus width configured in <code class="docutils literal notranslate"><span class="pre">sdmmc_host_init_slot</span></code> to be used for data transfer. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>slot</strong> -- slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>configured bus width of the specified slot. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423sdmmc_host_set_card_clki8uint32_t">
+<span id="_CPPv323sdmmc_host_set_card_clki8uint32_t"></span><span id="_CPPv223sdmmc_host_set_card_clki8uint32_t"></span><span id="sdmmc_host_set_card_clk__i.uint32_t"></span><span class="target" id="sdmmc__host_8h_1a1a06bfada8deb8b08bd32497bcbfdfe9"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_set_card_clk</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">freq_khz</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423sdmmc_host_set_card_clki8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set card clock frequency. </p>
+<p>Currently only integer fractions of 40MHz clock can be used. For High Speed cards, 40MHz can be used. For Default Speed cards, 20MHz can be used.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread safe</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p></li>
+<li><p><strong>freq_khz</strong> -- card clock frequency, in kHz </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>other error codes may be returned in the future </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427sdmmc_host_set_bus_ddr_modeib">
+<span id="_CPPv327sdmmc_host_set_bus_ddr_modeib"></span><span id="_CPPv227sdmmc_host_set_bus_ddr_modeib"></span><span id="sdmmc_host_set_bus_ddr_mode__i.b"></span><span class="target" id="sdmmc__host_8h_1ad7095391d1955f8b3259d26832928f01"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_set_bus_ddr_mode</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ddr_enabled</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427sdmmc_host_set_bus_ddr_modeib" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable or disable DDR mode of SD interface. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p></li>
+<li><p><strong>ddr_enabled</strong> -- enable or disable DDR mode </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED if DDR mode is not supported on this slot </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429sdmmc_host_set_cclk_always_onib">
+<span id="_CPPv329sdmmc_host_set_cclk_always_onib"></span><span id="_CPPv229sdmmc_host_set_cclk_always_onib"></span><span id="sdmmc_host_set_cclk_always_on__i.b"></span><span class="target" id="sdmmc__host_8h_1a6c91e2fb7a2651fa5cf49ef72042f475"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_set_cclk_always_on</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">cclk_always_on</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429sdmmc_host_set_cclk_always_onib" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable or disable always-on card clock When cclk_always_on is false, the host controller is allowed to shut down the card clock between the commands. When cclk_always_on is true, the clock is generated even if no command is in progress. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- slot number </p></li>
+<li><p><strong>cclk_always_on</strong> -- enable or disable always-on clock </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if the slot number is invalid </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425sdmmc_host_do_transactioniP15sdmmc_command_t">
+<span id="_CPPv325sdmmc_host_do_transactioniP15sdmmc_command_t"></span><span id="_CPPv225sdmmc_host_do_transactioniP15sdmmc_command_t"></span><span id="sdmmc_host_do_transaction__i.sdmmc_command_tP"></span><span class="target" id="sdmmc__host_8h_1a67df816cbf69383fe20f07eceae97e21"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_do_transaction</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <a class="reference internal" href="../storage/sdmmc.html#_CPPv415sdmmc_command_t" title="sdmmc_command_t"><span class="n"><span class="pre">sdmmc_command_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">cmdinfo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425sdmmc_host_do_transactioniP15sdmmc_command_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Send command to the card and get response. </p>
+<p>This function returns when command is sent and response is received, or data is transferred, or timeout occurs.</p>
+<p><dl class="simple">
+<dt><strong>Attention</strong></dt><dd><p>Data buffer passed in cmdinfo-&gt;data must be in DMA capable memory and aligned to 4 byte boundary. If it's behind the cache, both cmdinfo-&gt;data and cmdinfo-&gt;buflen need to be aligned to cache line boundary.</p>
+</dd>
+</dl>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread safe w.r.t. init/deinit functions, and bus width/clock speed configuration functions. Multiple tasks can call sdmmc_host_do_transaction as long as other sdmmc_host_* functions are not called.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p></li>
+<li><p><strong>cmdinfo</strong> -- pointer to structure describing command and data to transfer </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_TIMEOUT if response or data transfer has timed out</p></li>
+<li><p>ESP_ERR_INVALID_CRC if response or data transfer CRC check has failed</p></li>
+<li><p>ESP_ERR_INVALID_RESPONSE if the card has sent an invalid response</p></li>
+<li><p>ESP_ERR_INVALID_SIZE if the size of data transfer is not valid in SD protocol</p></li>
+<li><p>ESP_ERR_INVALID_ARG if the data buffer is not in DMA capable memory </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424sdmmc_host_io_int_enablei">
+<span id="_CPPv324sdmmc_host_io_int_enablei"></span><span id="_CPPv224sdmmc_host_io_int_enablei"></span><span id="sdmmc_host_io_int_enable__i"></span><span class="target" id="sdmmc__host_8h_1afc353c5af64650d69d5f461e64a9f2d2"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_io_int_enable</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424sdmmc_host_io_int_enablei" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable IO interrupts. </p>
+<p>This function configures the host to accept SDIO interrupts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>slot</strong> -- slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>returns ESP_OK, other errors possible in the future </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422sdmmc_host_io_int_waiti10TickType_t">
+<span id="_CPPv322sdmmc_host_io_int_waiti10TickType_t"></span><span id="_CPPv222sdmmc_host_io_int_waiti10TickType_t"></span><span id="sdmmc_host_io_int_wait__i.TickType_t"></span><span class="target" id="sdmmc__host_8h_1a4d9c05c13745f353e2e71b13b7e6351f"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_io_int_wait</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="n"><span class="pre">TickType_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeout_ticks</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422sdmmc_host_io_int_waiti10TickType_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Block until an SDIO interrupt is received, or timeout occurs. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p></li>
+<li><p><strong>timeout_ticks</strong> -- number of RTOS ticks to wait for the interrupt </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success (interrupt received)</p></li>
+<li><p>ESP_ERR_TIMEOUT if the interrupt did not occur within timeout_ticks </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422sdmmc_host_deinit_sloti">
+<span id="_CPPv322sdmmc_host_deinit_sloti"></span><span id="_CPPv222sdmmc_host_deinit_sloti"></span><span id="sdmmc_host_deinit_slot__i"></span><span class="target" id="sdmmc__host_8h_1a8a7cc7ee0a8cf2964af7d0d8f0161df0"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_deinit_slot</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422sdmmc_host_deinit_sloti" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable SDMMC host and release allocated resources gracefully. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If there are more than 1 active slots, this function will just decrease the reference count and won't actually disable the host until the last slot is disabled</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread safe</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>slot</strong> -- slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_STATE if SDMMC host has not been initialized</p></li>
+<li><p>ESP_ERR_INVALID_ARG if invalid slot number is used </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417sdmmc_host_deinitv">
+<span id="_CPPv317sdmmc_host_deinitv"></span><span id="_CPPv217sdmmc_host_deinitv"></span><span id="sdmmc_host_deinit__void"></span><span class="target" id="sdmmc__host_8h_1aed8c00e9ed9bfa4f2ee35db687388f46"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_deinit</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417sdmmc_host_deinitv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable SDMMC host and release allocated resources forcefully. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will deinitialize the host immediately, regardless of the number of active slots</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread safe</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_STATE if SDMMC host has not been initialized </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424sdmmc_host_get_real_freqiPi">
+<span id="_CPPv324sdmmc_host_get_real_freqiPi"></span><span id="_CPPv224sdmmc_host_get_real_freqiPi"></span><span id="sdmmc_host_get_real_freq__i.iP"></span><span class="target" id="sdmmc__host_8h_1abafae7d9e8dd477800b0bf72d32f648b"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_get_real_freq</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">real_freq_khz</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424sdmmc_host_get_real_freqiPi" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Provides a real frequency used for an SD card installed on specific slot of SD/MMC host controller. </p>
+<p>This function calculates real working frequency given by current SD/MMC host controller setup for required slot: it reads associated host and card dividers from corresponding SDMMC registers, calculates respective frequency and stores the value into the 'real_freq_khz' parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p></li>
+<li><p><strong>real_freq_khz</strong> -- <strong>[out]</strong> output parameter for the result frequency (in kHz) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG on real_freq_khz == NULL or invalid slot number used </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426sdmmc_host_set_input_delayi19sdmmc_delay_phase_t">
+<span id="_CPPv326sdmmc_host_set_input_delayi19sdmmc_delay_phase_t"></span><span id="_CPPv226sdmmc_host_set_input_delayi19sdmmc_delay_phase_t"></span><span id="sdmmc_host_set_input_delay__i.sdmmc_delay_phase_t"></span><span class="target" id="sdmmc__host_8h_1ab297e245ad254ccdf700de8038485dd2"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_set_input_delay</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <a class="reference internal" href="../storage/sdmmc.html#_CPPv419sdmmc_delay_phase_t" title="sdmmc_delay_phase_t"><span class="n"><span class="pre">sdmmc_delay_phase_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">delay_phase</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426sdmmc_host_set_input_delayi19sdmmc_delay_phase_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>set input delay </p>
+<p><ul class="simple">
+<li><p>This API sets delay when the SDMMC Host samples the signal from the SD Slave.</p></li>
+<li><p>This API will check if the given <code class="docutils literal notranslate"><span class="pre">delay_phase</span></code> is valid or not.</p></li>
+<li><p>This API will print out the delay time, in picosecond (ps)</p></li>
+</ul>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>ESP32 doesn't support this feature, you will get an <code class="docutils literal notranslate"><span class="pre">ESP_ERR_NOT_SUPPORTED</span></code></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p></li>
+<li><p><strong>delay_phase</strong> -- delay phase, this API will convert the phase into picoseconds and print it out</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: ON success.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid argument.</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: ESP32 doesn't support this feature. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423sdmmc_host_get_dma_infoiP18esp_dma_mem_info_t">
+<span id="_CPPv323sdmmc_host_get_dma_infoiP18esp_dma_mem_info_t"></span><span id="_CPPv223sdmmc_host_get_dma_infoiP18esp_dma_mem_info_t"></span><span id="sdmmc_host_get_dma_info__i.esp_dma_mem_info_tP"></span><span class="target" id="sdmmc__host_8h_1a488beff4ab1552d54568a86f556d14b7"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_get_dma_info</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="n"><span class="pre">esp_dma_mem_info_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dma_mem_info</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423sdmmc_host_get_dma_infoiP18esp_dma_mem_info_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the DMA memory information for the host driver. </p>
+<p><dl>
+<dt class="sig sig-object cpp">
+<em><span class="pre">Deprecated:</span></em></dt>
+<dd><p>This API is deprecated</p>
+</dd></dl>
+
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- <strong>[in]</strong> slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p></li>
+<li><p><strong>dma_mem_info</strong> -- <strong>[out]</strong> DMA memory information structure </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: ON success.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid argument. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv433sdmmc_host_check_buffer_alignmentiPKv6size_t">
+<span id="_CPPv333sdmmc_host_check_buffer_alignmentiPKv6size_t"></span><span id="_CPPv233sdmmc_host_check_buffer_alignmentiPKv6size_t"></span><span id="sdmmc_host_check_buffer_alignment__i.voidCP.s"></span><span class="target" id="sdmmc__host_8h_1aecb8f36f230af4328f56a6c5fd2c4009"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_check_buffer_alignment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">buf</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv433sdmmc_host_check_buffer_alignmentiPKv6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check if the buffer meets the alignment requirements. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- <strong>[in]</strong> slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p></li>
+<li><p><strong>buf</strong> -- <strong>[in]</strong> buffer pointer </p></li>
+<li><p><strong>size</strong> -- <strong>[in]</strong> buffer size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True for aligned buffer, false for not aligned buffer </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430sdmmc_host_is_slot_set_to_uhs1iPb">
+<span id="_CPPv330sdmmc_host_is_slot_set_to_uhs1iPb"></span><span id="_CPPv230sdmmc_host_is_slot_set_to_uhs1iPb"></span><span id="sdmmc_host_is_slot_set_to_uhs1__i.bP"></span><span class="target" id="sdmmc__host_8h_1a56efdecf445f11e583f93f66652b7ad2"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_is_slot_set_to_uhs1</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">is_uhs1</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430sdmmc_host_is_slot_set_to_uhs1iPb" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check if the slot is set to uhs1 or not. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- <strong>[in]</strong> Slot id </p></li>
+<li><p><strong>is_uhs1</strong> -- <strong>[out]</strong> Is uhs1 or not</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: on success</p></li>
+<li><p>ESP_ERR_INVALID_STATE: driver not in correct state </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420sdmmc_host_get_stateP18sdmmc_host_state_t">
+<span id="_CPPv320sdmmc_host_get_stateP18sdmmc_host_state_t"></span><span id="_CPPv220sdmmc_host_get_stateP18sdmmc_host_state_t"></span><span id="sdmmc_host_get_state__sdmmc_host_state_tP"></span><span class="target" id="sdmmc__host_8h_1ab102f0f1df922431f7cd58e1aea106f3"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_get_state</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418sdmmc_host_state_t" title="sdmmc_host_state_t"><span class="n"><span class="pre">sdmmc_host_state_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">state</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420sdmmc_host_get_stateP18sdmmc_host_state_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the state of SDMMC host. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> -- <strong>[out]</strong> output parameter for SDMMC host state structure</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG on invalid argument </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419sdmmc_slot_config_t">
+<span id="_CPPv319sdmmc_slot_config_t"></span><span id="_CPPv219sdmmc_slot_config_t"></span><span id="sdmmc_slot_config_t"></span><span class="target" id="structsdmmc__slot__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_slot_config_t</span></span></span><a class="headerlink" href="#_CPPv419sdmmc_slot_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Extra configuration for SDMMC peripheral slot </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t3clkE">
+<span id="_CPPv3N19sdmmc_slot_config_t3clkE"></span><span id="_CPPv2N19sdmmc_slot_config_t3clkE"></span><span id="sdmmc_slot_config_t::clk__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1a4c47f2a53b98bf4ea00b38cabb459ff8"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clk</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t3clkE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of CLK signal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t3cmdE">
+<span id="_CPPv3N19sdmmc_slot_config_t3cmdE"></span><span id="_CPPv2N19sdmmc_slot_config_t3cmdE"></span><span id="sdmmc_slot_config_t::cmd__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1a26477c15b4d3a8b629f55173cf0fbfb0"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cmd</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t3cmdE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of CMD signal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t2d0E">
+<span id="_CPPv3N19sdmmc_slot_config_t2d0E"></span><span id="_CPPv2N19sdmmc_slot_config_t2d0E"></span><span id="sdmmc_slot_config_t::d0__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1abbc602990d4eecb7579942363e7fabb2"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d0</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t2d0E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of D0 signal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t2d1E">
+<span id="_CPPv3N19sdmmc_slot_config_t2d1E"></span><span id="_CPPv2N19sdmmc_slot_config_t2d1E"></span><span id="sdmmc_slot_config_t::d1__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1a55c268fc63ae2de7b99c214e1a20397d"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d1</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t2d1E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of D1 signal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t2d2E">
+<span id="_CPPv3N19sdmmc_slot_config_t2d2E"></span><span id="_CPPv2N19sdmmc_slot_config_t2d2E"></span><span id="sdmmc_slot_config_t::d2__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1ae56a84d94c0e772fc3490b8ecbde4d9f"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d2</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t2d2E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of D2 signal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t2d3E">
+<span id="_CPPv3N19sdmmc_slot_config_t2d3E"></span><span id="_CPPv2N19sdmmc_slot_config_t2d3E"></span><span id="sdmmc_slot_config_t::d3__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1a6271b2f2d85cf2a2d46b41e35a241d4e"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d3</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t2d3E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of D3 signal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t2d4E">
+<span id="_CPPv3N19sdmmc_slot_config_t2d4E"></span><span id="_CPPv2N19sdmmc_slot_config_t2d4E"></span><span id="sdmmc_slot_config_t::d4__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1a0596ef4d391ab10369b8ef5f47cabb2a"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d4</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t2d4E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of D4 signal. Ignored in 1- or 4- line mode. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t2d5E">
+<span id="_CPPv3N19sdmmc_slot_config_t2d5E"></span><span id="_CPPv2N19sdmmc_slot_config_t2d5E"></span><span id="sdmmc_slot_config_t::d5__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1a61ab30652264e112e31a989ac19f8104"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d5</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t2d5E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of D5 signal. Ignored in 1- or 4- line mode. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t2d6E">
+<span id="_CPPv3N19sdmmc_slot_config_t2d6E"></span><span id="_CPPv2N19sdmmc_slot_config_t2d6E"></span><span id="sdmmc_slot_config_t::d6__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1a35c209b59b689fbc5e579b0265cf04fa"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d6</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t2d6E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of D6 signal. Ignored in 1- or 4- line mode. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t2d7E">
+<span id="_CPPv3N19sdmmc_slot_config_t2d7E"></span><span id="_CPPv2N19sdmmc_slot_config_t2d7E"></span><span id="sdmmc_slot_config_t::d7__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1a605b447e168956f515a7817395bcacbb"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d7</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t2d7E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of D7 signal. Ignored in 1- or 4- line mode. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t7gpio_cdE">
+<span id="_CPPv3N19sdmmc_slot_config_t7gpio_cdE"></span><span id="_CPPv2N19sdmmc_slot_config_t7gpio_cdE"></span><span id="sdmmc_slot_config_t::gpio_cd__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1a2cd608084468ca03dae8a9efb257e77f"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gpio_cd</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t7gpio_cdE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of card detect signal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t2cdE">
+<span id="_CPPv3N19sdmmc_slot_config_t2cdE"></span><span id="_CPPv2N19sdmmc_slot_config_t2cdE"></span><span id="sdmmc_slot_config_t::cd__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1a4b3aa7ea51cb0b43e8aa8cae355c9bb5"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cd</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t2cdE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of card detect signal; shorter name. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t7gpio_wpE">
+<span id="_CPPv3N19sdmmc_slot_config_t7gpio_wpE"></span><span id="_CPPv2N19sdmmc_slot_config_t7gpio_wpE"></span><span id="sdmmc_slot_config_t::gpio_wp__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1a151e7988d3ca998ee559b5574411933f"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gpio_wp</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t7gpio_wpE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of write protect signal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t2wpE">
+<span id="_CPPv3N19sdmmc_slot_config_t2wpE"></span><span id="_CPPv2N19sdmmc_slot_config_t2wpE"></span><span id="sdmmc_slot_config_t::wp__gpio_num_t"></span><span class="target" id="structsdmmc__slot__config__t_1a20e89e96957ca977c6f1affbe6c34209"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wp</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t2wpE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of write protect signal; shorter name. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t5widthE">
+<span id="_CPPv3N19sdmmc_slot_config_t5widthE"></span><span id="_CPPv2N19sdmmc_slot_config_t5widthE"></span><span id="sdmmc_slot_config_t::width__uint8_t"></span><span class="target" id="structsdmmc__slot__config__t_1a4c3f931fba2bfbec4e746f01b4bfb01b"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">width</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t5widthE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Bus width used by the slot (might be less than the max width supported) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19sdmmc_slot_config_t5flagsE">
+<span id="_CPPv3N19sdmmc_slot_config_t5flagsE"></span><span id="_CPPv2N19sdmmc_slot_config_t5flagsE"></span><span id="sdmmc_slot_config_t::flags__uint32_t"></span><span class="target" id="structsdmmc__slot__config__t_1a92c1d87f7e41d8c8eeac984df09c3b56"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">flags</span></span></span><a class="headerlink" href="#_CPPv4N19sdmmc_slot_config_t5flagsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Features used by this slot. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv418sdmmc_host_state_t">
+<span id="_CPPv318sdmmc_host_state_t"></span><span id="_CPPv218sdmmc_host_state_t"></span><span id="sdmmc_host_state_t"></span><span class="target" id="structsdmmc__host__state__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_host_state_t</span></span></span><a class="headerlink" href="#_CPPv418sdmmc_host_state_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>SD/MMC host state structure </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18sdmmc_host_state_t16host_initializedE">
+<span id="_CPPv3N18sdmmc_host_state_t16host_initializedE"></span><span id="_CPPv2N18sdmmc_host_state_t16host_initializedE"></span><span id="sdmmc_host_state_t::host_initialized__b"></span><span class="target" id="structsdmmc__host__state__t_1adeb65224b96789f10297ef1893cce789"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">host_initialized</span></span></span><a class="headerlink" href="#_CPPv4N18sdmmc_host_state_t16host_initializedE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Whether the host is initialized. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18sdmmc_host_state_t17num_of_init_slotsE">
+<span id="_CPPv3N18sdmmc_host_state_t17num_of_init_slotsE"></span><span id="_CPPv2N18sdmmc_host_state_t17num_of_init_slotsE"></span><span id="sdmmc_host_state_t::num_of_init_slots__i"></span><span class="target" id="structsdmmc__host__state__t_1adbf2a05e531b819d058c57a3f3495900"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">num_of_init_slots</span></span></span><a class="headerlink" href="#_CPPv4N18sdmmc_host_state_t17num_of_init_slotsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Number of initialized slots. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDMMC_SLOT_FLAG_INTERNAL_PULLUP">
+<span class="target" id="sdmmc__host_8h_1a0af1cb8c4ec6379c3566a144652ca4fd"></span><span class="sig-name descname"><span class="n"><span class="pre">SDMMC_SLOT_FLAG_INTERNAL_PULLUP</span></span></span><a class="headerlink" href="#c.SDMMC_SLOT_FLAG_INTERNAL_PULLUP" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable internal pullups on enabled pins. The internal pullups are insufficient however, please make sure external pullups are connected on the bus. This is for debug / example purpose only. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDMMC_SLOT_FLAG_WP_ACTIVE_HIGH">
+<span class="target" id="sdmmc__host_8h_1a71d5e67b309e50371ad4f83e5e4f015b"></span><span class="sig-name descname"><span class="n"><span class="pre">SDMMC_SLOT_FLAG_WP_ACTIVE_HIGH</span></span></span><a class="headerlink" href="#c.SDMMC_SLOT_FLAG_WP_ACTIVE_HIGH" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO write protect polarity. 0 means &quot;active low&quot;, i.e. card is protected when the GPIO is low; 1 means &quot;active high&quot;, i.e. card is protected when GPIO is high. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDMMC_SLOT_FLAG_UHS1">
+<span class="target" id="sdmmc__host_8h_1a70e5d623a869a36b487164751d79de72"></span><span class="sig-name descname"><span class="n"><span class="pre">SDMMC_SLOT_FLAG_UHS1</span></span></span><a class="headerlink" href="#c.SDMMC_SLOT_FLAG_UHS1" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable UHS-I mode for this slot </p>
+</dd></dl>
+
+</section>
+<section id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/sdmmc/include/sd_pwr_ctrl.h">components/sdmmc/include/sd_pwr_ctrl.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sd_pwr_ctrl.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">sdmmc</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">sdmmc</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES sdmmc
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES sdmmc
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id2">
+<h3>Functions<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426sd_pwr_ctrl_set_io_voltage20sd_pwr_ctrl_handle_ti">
+<span id="_CPPv326sd_pwr_ctrl_set_io_voltage20sd_pwr_ctrl_handle_ti"></span><span id="_CPPv226sd_pwr_ctrl_set_io_voltage20sd_pwr_ctrl_handle_ti"></span><span id="sd_pwr_ctrl_set_io_voltage__sd_pwr_ctrl_handle_t.i"></span><span class="target" id="sd__pwr__ctrl_8h_1aa36d130817fe5ee98625123688fda816"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sd_pwr_ctrl_set_io_voltage</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv420sd_pwr_ctrl_handle_t" title="sd_pwr_ctrl_handle_t"><span class="n"><span class="pre">sd_pwr_ctrl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">voltage_mv</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426sd_pwr_ctrl_set_io_voltage20sd_pwr_ctrl_handle_ti" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set SD IO voltage by a registered SD power control driver handle. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- <strong>[in]</strong> SD power control driver handle </p></li>
+<li><p><strong>voltage_mv</strong> -- <strong>[in]</strong> Voltage in mV </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv420sd_pwr_ctrl_handle_t">
+<span id="_CPPv320sd_pwr_ctrl_handle_t"></span><span id="_CPPv220sd_pwr_ctrl_handle_t"></span><span id="sd_pwr_ctrl_handle_t"></span><span class="target" id="sd__pwr__ctrl_8h_1ade4ae265c2b9bc949b427e98b1767522"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">sd_pwr_ctrl_drv_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">sd_pwr_ctrl_handle_t</span></span></span><a class="headerlink" href="#_CPPv420sd_pwr_ctrl_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>SD power control handle. </p>
+</dd></dl>
+
+</section>
+<section id="id3">
+<h3>Header File<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/sdmmc/include/sd_pwr_ctrl_by_on_chip_ldo.h">components/sdmmc/include/sd_pwr_ctrl_by_on_chip_ldo.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sd_pwr_ctrl_by_on_chip_ldo.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">sdmmc</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">sdmmc</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES sdmmc
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES sdmmc
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id4">
+<h3>Functions<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427sd_pwr_ctrl_new_on_chip_ldoPK24sd_pwr_ctrl_ldo_config_tP20sd_pwr_ctrl_handle_t">
+<span id="_CPPv327sd_pwr_ctrl_new_on_chip_ldoPK24sd_pwr_ctrl_ldo_config_tP20sd_pwr_ctrl_handle_t"></span><span id="_CPPv227sd_pwr_ctrl_new_on_chip_ldoPK24sd_pwr_ctrl_ldo_config_tP20sd_pwr_ctrl_handle_t"></span><span id="sd_pwr_ctrl_new_on_chip_ldo__sd_pwr_ctrl_ldo_config_tCP.sd_pwr_ctrl_handle_tP"></span><span class="target" id="sd__pwr__ctrl__by__on__chip__ldo_8h_1a2c6ec508fcbef529e01294769f61f3ea"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sd_pwr_ctrl_new_on_chip_ldo</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv424sd_pwr_ctrl_ldo_config_t" title="sd_pwr_ctrl_ldo_config_t"><span class="n"><span class="pre">sd_pwr_ctrl_ldo_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configs</span></span>, <a class="reference internal" href="#_CPPv420sd_pwr_ctrl_handle_t" title="sd_pwr_ctrl_handle_t"><span class="n"><span class="pre">sd_pwr_ctrl_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ret_drv</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427sd_pwr_ctrl_new_on_chip_ldoPK24sd_pwr_ctrl_ldo_config_tP20sd_pwr_ctrl_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>New an SD power control driver via on-chip LDO. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configs</strong> -- <strong>[in]</strong> On-chip LDO power control driver configurations </p></li>
+<li><p><strong>ret_drv</strong> -- <strong>[out]</strong> Created power control driver handle</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK</p></li>
+<li><p>ESP_ERR_INVALID_ARG Invalid arguments</p></li>
+<li><p>ESP_ERR_NO_MEM Out of memory </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427sd_pwr_ctrl_del_on_chip_ldo20sd_pwr_ctrl_handle_t">
+<span id="_CPPv327sd_pwr_ctrl_del_on_chip_ldo20sd_pwr_ctrl_handle_t"></span><span id="_CPPv227sd_pwr_ctrl_del_on_chip_ldo20sd_pwr_ctrl_handle_t"></span><span id="sd_pwr_ctrl_del_on_chip_ldo__sd_pwr_ctrl_handle_t"></span><span class="target" id="sd__pwr__ctrl__by__on__chip__ldo_8h_1a834d08268e1b2b2e88e135fd08b41e49"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sd_pwr_ctrl_del_on_chip_ldo</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv420sd_pwr_ctrl_handle_t" title="sd_pwr_ctrl_handle_t"><span class="n"><span class="pre">sd_pwr_ctrl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">ctrl_handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427sd_pwr_ctrl_del_on_chip_ldo20sd_pwr_ctrl_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Delete a previously created on-chip LDO power control driver. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ctrl_handle</strong> -- <strong>[in]</strong> Power control driver handle</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK</p></li>
+<li><p>ESP_ERR_INVALID_ARG Invalid arguments </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="id5">
+<h3>Structures<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv424sd_pwr_ctrl_ldo_config_t">
+<span id="_CPPv324sd_pwr_ctrl_ldo_config_t"></span><span id="_CPPv224sd_pwr_ctrl_ldo_config_t"></span><span id="sd_pwr_ctrl_ldo_config_t"></span><span class="target" id="structsd__pwr__ctrl__ldo__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sd_pwr_ctrl_ldo_config_t</span></span></span><a class="headerlink" href="#_CPPv424sd_pwr_ctrl_ldo_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>LDO configurations. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24sd_pwr_ctrl_ldo_config_t11ldo_chan_idE">
+<span id="_CPPv3N24sd_pwr_ctrl_ldo_config_t11ldo_chan_idE"></span><span id="_CPPv2N24sd_pwr_ctrl_ldo_config_t11ldo_chan_idE"></span><span id="sd_pwr_ctrl_ldo_config_t::ldo_chan_id__i"></span><span class="target" id="structsd__pwr__ctrl__ldo__config__t_1a085e672afc5d040b862838bc15168b0a"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ldo_chan_id</span></span></span><a class="headerlink" href="#_CPPv4N24sd_pwr_ctrl_ldo_config_t11ldo_chan_idE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>On-chip LDO channel ID, e.g. set to <code class="docutils literal notranslate"><span class="pre">4</span></code> is the <code class="docutils literal notranslate"><span class="pre">LDO_VO4</span></code> is connected to power the SDMMC IO. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=SDMMC Host Driver (api-reference/peripherals/sdmmc_host)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=SDMMC Host Driver (api-reference/peripherals/sdmmc_host)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sd_pullup_requirements.html" class="btn btn-neutral float-left" title="SD Pull-up Requirements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sdspi_host.html" class="btn btn-neutral float-right" title="SD SPI Host Driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

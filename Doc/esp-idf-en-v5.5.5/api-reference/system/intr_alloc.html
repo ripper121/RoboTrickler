@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interrupt Allocation - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/intr_alloc.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/system/intr_alloc';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Logging library" href="log.html" />
+    <link rel="prev" title="Inter-Processor Call (IPC)" href="ipc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">System API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app_image_format.html">App Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootloader_image_format.html">Bootloader Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app_trace.html">Application Level Tracing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_function_with_shared_stack.html">Call Function with External Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chip_revision.html">Chip Revision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console.html">Console</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efuse.html">eFuse Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_err.html">Error Code and Helper Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_ota.html">ESP HTTPS OTA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_event.html">Event Loop Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos.html">FreeRTOS Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_idf.html">FreeRTOS (IDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_additions.html">FreeRTOS (Supplemental Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mem_alloc.html">Heap Memory Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mm.html">Memory Management for MMU Supported Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="heap_debug.html">Heap Memory Debugging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_timer.html">ESP Timer (High Resolution Timer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="internal-unstable.html">Internal and Unstable APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipc.html">Inter-Processor Call (IPC)</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Interrupt Allocation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#multicore-issues">Multicore Issues</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#iram-safe-interrupt-handlers">IRAM-Safe Interrupt Handlers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#multiple-handlers-sharing-a-source">Multiple Handlers Sharing A Source</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#troubleshooting-interrupt-allocation">Troubleshooting Interrupt Allocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="log.html">Logging library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc_system_api.html">Miscellaneous System APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ota.html">Over The Air Updates (OTA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="perfmon.html">Performance Monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="power_management.html">Power Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pthread.html">POSIX Support (Including POSIX Threads Support)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sleep_modes.html">Sleep Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soc_caps.html">SoC Capabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_time.html">System Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="himem.html">Himem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ulp.html">Ultra Low Power (ULP) coprocessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wdts.html">Watchdogs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">System API</a></li>
+      <li class="breadcrumb-item active">Interrupt Allocation</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/system/intr_alloc.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="interrupt-allocation">
+<h1>Interrupt Allocation<a class="headerlink" href="#interrupt-allocation" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/system/intr_alloc.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>The ESP32 has two cores, with 32 interrupts each. Each interrupt has a fixed priority, most (but not all) interrupts are connected to the interrupt matrix.</p>
+<p>Because there are more interrupt sources than interrupts, sometimes it makes sense to share an interrupt in multiple drivers. The <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code> abstraction exists to hide all these implementation details.</p>
+<p>A driver can allocate an interrupt for a certain peripheral by calling <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code>, <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc_bind()</span></code>, <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc_intrstatus()</span></code>, or <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc_intrstatus_bind()</span></code>. It can use the flags passed to this function to specify the type, priority, and trigger method of the interrupt to allocate. The interrupt allocation code will then find an applicable interrupt, use the interrupt matrix to hook it up to the peripheral, and install the given interrupt handler and ISR to it.</p>
+<p>The interrupt allocator presents two different types of interrupts, namely shared interrupts and non-shared interrupts, both of which require different handling. Non-shared interrupts will allocate a separate interrupt for every <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code> call, and this interrupt is use solely for the peripheral attached to it, with only one ISR that will get called. Shared interrupts can have multiple peripherals triggering them, with multiple ISRs being called when one of the peripherals attached signals an interrupt. Thus, ISRs that are intended for shared interrupts should check the interrupt status of the peripheral they service in order to check if any action is required.</p>
+<p>Non-shared interrupts can be either level- or edge-triggered. Shared interrupts can only be level interrupts due to the chance of missed interrupts when edge interrupts are used.</p>
+<p>To illustrate why shared interrupts can only be level-triggered, take the scenario where peripheral A and peripheral B share the same edge-triggered interrupt. Peripheral B triggers an interrupt and sets its interrupt signal high, causing a low-to-high edge, which in turn latches the CPU's interrupt bit and triggers the ISR. The ISR executes, checks that peripheral A did not trigger an interrupt, and proceeds to handle and clear peripheral B's interrupt signal. Before the ISR returns, the CPU clears its interrupt bit latch. Thus, during the entire interrupt handling process, if peripheral A triggers an interrupt, it will be missed due the CPU clearing the interrupt bit latch.</p>
+<ul class="simple">
+<li><p>Allocating an external interrupt will always allocate it on the core that does the allocation.</p></li>
+<li><p>Freeing an external interrupt must always happen on the same core it was allocated on.</p></li>
+<li><p>Disabling and enabling external interrupts from another core is allowed.</p></li>
+<li><p>Multiple external interrupt sources can share an interrupt slot by passing <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_SHARED</span></code> as a flag to <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code>.</p></li>
+</ul>
+<p>Care should be taken when calling <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code> from a task which is not pinned to a core. During task switching, these tasks can migrate between cores. Therefore it is impossible to tell which CPU the interrupt is allocated on, which makes it difficult to free the interrupt handle and may also cause debugging difficulties. It is advised to use <a class="reference internal" href="freertos_additions.html#_CPPv423xTaskCreatePinnedToCore14TaskFunction_tPCKcK8uint32_tPCv11UBaseType_tPC12TaskHandle_tK10BaseType_t" title="xTaskCreatePinnedToCore"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xTaskCreatePinnedToCore()</span></code></a> with a specific CoreID argument to create tasks that allocate interrupts. In the case of internal interrupt sources, this is required.</p>
+</section>
+<section id="multicore-issues">
+<span id="iram-safe-interrupts-handlers"></span><h2>Multicore Issues<a class="headerlink" href="#multicore-issues" title="Permalink to this heading"></a></h2>
+<p>Peripherals that can generate interrupts can be divided in two types:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>External peripherals, within the ESP32 but outside the Xtensa cores themselves. Most ESP32 peripherals are of this type.</p></li>
+<li><p>Internal peripherals, part of the Xtensa CPU cores themselves.</p></li>
+</ul>
+</div></blockquote>
+<p>Interrupt handling differs slightly between these two types of peripherals.</p>
+<section id="internal-peripheral-interrupts">
+<h3>Internal Peripheral Interrupts<a class="headerlink" href="#internal-peripheral-interrupts" title="Permalink to this heading"></a></h3>
+<p>Each Xtensa CPU core has its own set of six internal peripherals:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Three timer comparators</p></li>
+<li><p>A performance monitor</p></li>
+<li><p>Two software interrupts</p></li>
+</ul>
+</div></blockquote>
+<p>Internal interrupt sources are defined in <code class="docutils literal notranslate"><span class="pre">esp_intr_alloc.h</span></code> as <code class="docutils literal notranslate"><span class="pre">ETS_INTERNAL_*_INTR_SOURCE</span></code>.</p>
+<p>These peripherals can only be configured from the core they are associated with. When generating an interrupt, the interrupt they generate is hard-wired to their associated core; it is not possible to have, for example, an internal timer comparator of one core generate an interrupt on another core. That is why these sources can only be managed using a task running on that specific core. Internal interrupt sources are still allocatable using <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code> as normal, but they cannot be shared and will always have a fixed interrupt level (namely, the one associated in hardware with the peripheral).</p>
+</section>
+<section id="external-peripheral-interrupts">
+<h3>External Peripheral Interrupts<a class="headerlink" href="#external-peripheral-interrupts" title="Permalink to this heading"></a></h3>
+<p>The remaining interrupt sources are from external peripherals.</p>
+</section>
+</section>
+<section id="iram-safe-interrupt-handlers">
+<h2>IRAM-Safe Interrupt Handlers<a class="headerlink" href="#iram-safe-interrupt-handlers" title="Permalink to this heading"></a></h2>
+<p>When performing write and erase operations on SPI flash, ESP32 will disable the cache, making SPI flash and SPIRAM inaccessible for interrupt handlers. This is why there are two types of interrupt handlers in ESP-IDF, which have their advantages and disadvantages:</p>
+<p><strong>IRAM-safe interrupt handlers</strong> - only access code and data in internal memory (IRAM for code, DRAM for data).</p>
+<p><ul class="simple">
+<li><p><strong>+</strong> <strong>Latency</strong>: They execute relatively fast and with low latency, since they are not blocked by slow flash write and erase operations (erases can take tens or hundreds of milliseconds to complete). This is useful for interrupts which need a guaranteed minimum execution latency.</p></li>
+<li><p><strong>-</strong> <strong>Internal memory use</strong>: They consume precious internal memory that could otherwise be used for something else.</p></li>
+<li><p><strong>+</strong> <strong>Cache misses</strong>: They do not rely on the cache with potential cache misses since the code and data are in internal memory already.</p></li>
+<li><p><strong>Usage</strong>: To register such an interrupt via the interrupt allocator API, use the <code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_IRAM</span></code> flag.</p></li>
+</ul>
+</p>
+<p><strong>Non-IRAM-safe interrupt handlers</strong> - may access code and (read-only) data in flash.</p>
+<p><ul class="simple">
+<li><p><strong>-</strong> <strong>Latency</strong>: In case of flash operations, these interrupt handlers are postponed, which makes their average latency longer and less predictable.</p></li>
+<li><p><strong>+</strong> <strong>Internal memory use</strong>: They do not use any or not as much memory in internal RAM as IRAM-safe interrupts.</p></li>
+<li><p><strong>Usage</strong>: To register such an interrupt via the interrupt allocator API, do <em>not</em> use the <code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_IRAM</span></code> flag.</p></li>
+</ul>
+</p>
+<p><em>Note that there is nothing that explicitly marks an interrupt handler as IRAM-safe.</em> An interrupt handler is IRAM-safe implicitly if and only if the code and data it may access are placed in internal memory. The term &quot;IRAM-safe&quot; is actually a bit misleading, since there are more requirements than just placing the handler's code in IRAM memory. Examples of interrupt handlers that are <strong>not</strong> IRAM-safe include:</p>
+<p><ul class="simple">
+<li><p>A handler that has some of its code placed in flash memory.</p></li>
+<li><p>A handler that is placed in IRAM but calls functions placed in flash memory.</p></li>
+<li><p>A handler that accesses a read-only variable placed in flash, even though the handler's code is actually placed in IRAM.</p></li>
+</ul>
+</p>
+<p>For details on placing code and data in IRAM or DRAM, see <a class="reference internal" href="../../api-guides/memory-types.html#how-to-place-code-in-iram"><span class="std std-ref">How to Place Code in IRAM</span></a>.</p>
+<p>For more details about SPI flash operations and their interactions with interrupt handlers, see the <a class="reference internal" href="../peripherals/spi_flash/spi_flash_concurrency.html#iram-safe-interrupt-handlers"><span class="std std-ref">SPI flash API documentation</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Never register an interrupt handler with <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_IRAM</span></code> flag if you are not 100% sure that all the code and data that the interrupt ever accesses are in IRAM (code) or DRAM (data). Disregarding this will lead to (sometimes spurious) <a class="reference internal" href="../../api-guides/fatal-errors.html#cache-error"><span class="std std-ref">cache errors</span></a>. This must also be true for code and data accessed indirectly through function calls.</p>
+</div>
+</section>
+<section id="multiple-handlers-sharing-a-source">
+<span id="intr-alloc-shared-interrupts"></span><h2>Multiple Handlers Sharing A Source<a class="headerlink" href="#multiple-handlers-sharing-a-source" title="Permalink to this heading"></a></h2>
+<p>Several handlers can be assigned to a same source, given that all handlers are allocated using the <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_SHARED</span></code> flag. They will all be allocated to the interrupt, which the source is attached to, and called sequentially when the source is active. The handlers can be disabled and freed individually. The source is attached to the interrupt (enabled), if one or more handlers are enabled, otherwise detached. A handler will never be called when disabled, while <strong>its source may still be triggered</strong> if any one of its handler enabled.</p>
+<p>Sources attached to non-shared interrupt do not support this feature.</p>
+<p>By default, when <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_SHARED</span></code> flag is specified, the interrupt allocator will allocate only priority level 1 interrupts. Use <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_SHARED</span> <span class="pre">|</span> <span class="pre">ESP_INTR_FLAG_LOWMED</span></code> to also allow allocating shared interrupts at priority levels 2 and 3.</p>
+<p>Though the framework supports this feature, you have to use it <strong>very carefully</strong>. There usually exist two ways to stop an interrupt from being triggered: <strong>disable the source</strong> or <strong>mask peripheral interrupt status</strong>. ESP-IDF only handles enabling and disabling of the source itself, leaving status and mask bits to be handled by users.</p>
+<p><strong>Status bits shall either be masked before the handler responsible for it is disabled, or be masked and then properly handled in another enabled interrupt</strong>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Leaving some status bits unhandled without masking them, while disabling the handlers for them, will cause the interrupt(s) to be triggered indefinitely, resulting therefore in a system crash.</p>
+</div>
+<p>When calling <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code> or <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc_intrstatus()</span></code>, the interrupt allocator selects the first interrupt that meets the level requirements for mapping the specified source, without considering other sources already mapped to the shared interrupt line. However, by using the functions <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc_bind()</span></code> or <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc_intrstatus_bind()</span></code>, you can explicitly specify the interrupt handler to be shared with the given interrupt source.</p>
+</section>
+<section id="troubleshooting-interrupt-allocation">
+<h2>Troubleshooting Interrupt Allocation<a class="headerlink" href="#troubleshooting-interrupt-allocation" title="Permalink to this heading"></a></h2>
+<p>On most Espressif SoCs, CPU interrupts are a limited resource. Therefore it is possible for a program to run out of CPU interrupts, for example by initializing several peripheral drivers. Typically, this will result in the driver initialization function returning <code class="docutils literal notranslate"><span class="pre">ESP_ERR_NOT_FOUND</span></code> error code.</p>
+<p>If this happens, you can use <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_dump()</span></code> function to print the list of interrupts along with their status. The output of this function typically looks like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CPU</span> <span class="mi">0</span> <span class="n">interrupt</span> <span class="n">status</span><span class="p">:</span>
+<span class="n">Int</span>  <span class="n">Level</span>  <span class="n">Type</span>   <span class="n">Status</span>
+<span class="mi">0</span>     <span class="mi">1</span>    <span class="n">Level</span>  <span class="n">Reserved</span>
+<span class="mi">1</span>     <span class="mi">1</span>    <span class="n">Level</span>  <span class="n">Reserved</span>
+<span class="mi">2</span>     <span class="mi">1</span>    <span class="n">Level</span>  <span class="n">Used</span><span class="p">:</span> <span class="n">RTC_CORE</span>
+<span class="mi">3</span>     <span class="mi">1</span>    <span class="n">Level</span>  <span class="n">Used</span><span class="p">:</span> <span class="n">TG0_LACT_LEVEL</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>The columns of the output have the following meaning:</p>
+<p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Int</span></code>: CPU interrupt input number. This is typically not used in software directly, and is provided for reference only.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Level</span></code>: Interrupt priority (1-7) of the CPU interrupt. This priority is fixed in hardware, and cannot be changed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Type</span></code>: Interrupt type (Level or Edge) of the CPU interrupt. This type is fixed in hardware, and cannot be changed.</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Status</span></code>: One of the possible statuses of the interrupt:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Reserved</span></code>: The interrupt is reserved either at hardware level, or by one of the parts of ESP-IDF. It can not be allocated using <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Used:</span> <span class="pre">&lt;source&gt;</span></code>: The interrupt is allocated and connected to a single peripheral.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Shared:</span> <span class="pre">&lt;source1&gt;</span> <span class="pre">&lt;source2&gt;</span> <span class="pre">...</span></code>: The interrupt is allocated and connected to multiple peripherals. See <a class="reference internal" href="#intr-alloc-shared-interrupts"><span class="std std-ref">Multiple Handlers Sharing A Source</span></a> above.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Free</span></code>: The interrupt is not allocated and can be used by <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Free</span> <span class="pre">(not</span> <span class="pre">general-use)</span></code>: The interrupt is not allocated, but is either a high-priority interrupt (priority 4-7) or an edge-triggered interrupt. High-priority interrupts can be allocated using <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code> but requires the handlers to be written in Assembly, see <a class="reference internal" href="../../api-guides/hlinterrupts.html"><span class="doc">High Priority Interrupts</span></a>. Edge-triggered low- and medium-priority interrupts can also be allocated using <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_alloc()</span></code>, but are not used often since most peripheral interrupts are level-triggered.</p></li>
+</ul>
+</p>
+<p>If you have confirmed that the application is indeed running out of interrupts, a combination of the following suggestions can help resolve the issue:</p>
+<p><ul class="simple">
+<li><p>On multi-core targets, try initializing some of the peripheral drivers from a task pinned to the second core. Interrupts are typically allocated on the same core where the peripheral driver initialization function runs. Therefore by running the initialization function on the second core, more interrupt inputs can be used.</p></li>
+<li><p>Determine the interrupts which can tolerate higher latency, and allocate them using <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_SHARED</span></code> flag (optionally ORed with <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_LOWMED</span></code>). Using this flag for two or more peripherals will let them use a single interrupt input, and therefore save interrupt inputs for other peripherals. See <a class="reference internal" href="#intr-alloc-shared-interrupts"><span class="std std-ref">Multiple Handlers Sharing A Source</span></a> above.</p></li>
+<li><p>Some peripheral driver may default to allocating interrupts with <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_LEVEL1</span></code> flag, so priority 2 and 3 interrupts do not get used by default. If <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_intr_dump()</span></code> shows that some priority 2 or 3 interrupts are available, try changing the interrupt allocation flags when initializing the driver to <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_LEVEL2</span></code> or <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_LEVEL3</span></code>.</p></li>
+<li><p>Check if some of the peripheral drivers do not need to be used all the time, and initialize or deinitialize them on demand. This can reduce the number of simultaneously allocated interrupts.</p></li>
+</ul>
+</p>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_hw_support/include/esp_intr_types.h">components/esp_hw_support/include/esp_intr_types.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_intr_types.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_INTR_CPU_AFFINITY_TO_CORE_ID">
+<span class="target" id="esp__intr__types_8h_1af2ff07be8af522c454f855b4658df861"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_INTR_CPU_AFFINITY_TO_CORE_ID</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">cpu_affinity</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ESP_INTR_CPU_AFFINITY_TO_CORE_ID" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Convert esp_intr_cpu_affinity_t to CPU core ID. </p>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv414intr_handler_t">
+<span id="_CPPv314intr_handler_t"></span><span id="_CPPv214intr_handler_t"></span><span id="intr_handler_t"></span><span class="target" id="esp__intr__types_8h_1a637aa0db4839d3e945e74c56e82218f2"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">intr_handler_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">arg</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv414intr_handler_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Function prototype for interrupt handler function </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv413intr_handle_t">
+<span id="_CPPv313intr_handle_t"></span><span id="_CPPv213intr_handle_t"></span><span id="intr_handle_t"></span><span class="target" id="esp__intr__types_8h_1a3eddc388ae7627338fc7d7f4584299c0"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">intr_handle_data_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">intr_handle_t</span></span></span><a class="headerlink" href="#_CPPv413intr_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Handle to an interrupt handler </p>
+</dd></dl>
+
+</section>
+<section id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv423esp_intr_cpu_affinity_t">
+<span id="_CPPv323esp_intr_cpu_affinity_t"></span><span id="_CPPv223esp_intr_cpu_affinity_t"></span><span class="target" id="esp__intr__types_8h_1a7f06246c4b6a4a34f95f62253aa2ece8"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_intr_cpu_affinity_t</span></span></span><a class="headerlink" href="#_CPPv423esp_intr_cpu_affinity_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Interrupt CPU core affinity. </p>
+<p>This type specify the CPU core that the peripheral interrupt is connected to. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_intr_cpu_affinity_t26ESP_INTR_CPU_AFFINITY_AUTOE">
+<span id="_CPPv3N23esp_intr_cpu_affinity_t26ESP_INTR_CPU_AFFINITY_AUTOE"></span><span id="_CPPv2N23esp_intr_cpu_affinity_t26ESP_INTR_CPU_AFFINITY_AUTOE"></span><span class="target" id="esp__intr__types_8h_1a7f06246c4b6a4a34f95f62253aa2ece8a31fe63200174f5391f5bd73f43787f44"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_INTR_CPU_AFFINITY_AUTO</span></span></span><a class="headerlink" href="#_CPPv4N23esp_intr_cpu_affinity_t26ESP_INTR_CPU_AFFINITY_AUTOE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Install the peripheral interrupt to ANY CPU core, decided by on which CPU the interrupt allocator is running. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_intr_cpu_affinity_t23ESP_INTR_CPU_AFFINITY_0E">
+<span id="_CPPv3N23esp_intr_cpu_affinity_t23ESP_INTR_CPU_AFFINITY_0E"></span><span id="_CPPv2N23esp_intr_cpu_affinity_t23ESP_INTR_CPU_AFFINITY_0E"></span><span class="target" id="esp__intr__types_8h_1a7f06246c4b6a4a34f95f62253aa2ece8a11dcb96633443b8e95db0dc28932a04a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_INTR_CPU_AFFINITY_0</span></span></span><a class="headerlink" href="#_CPPv4N23esp_intr_cpu_affinity_t23ESP_INTR_CPU_AFFINITY_0E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Install the peripheral interrupt to CPU core 0. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_intr_cpu_affinity_t23ESP_INTR_CPU_AFFINITY_1E">
+<span id="_CPPv3N23esp_intr_cpu_affinity_t23ESP_INTR_CPU_AFFINITY_1E"></span><span id="_CPPv2N23esp_intr_cpu_affinity_t23ESP_INTR_CPU_AFFINITY_1E"></span><span class="target" id="esp__intr__types_8h_1a7f06246c4b6a4a34f95f62253aa2ece8a1213a7ce93480d4ae5701cfff022fe64"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_INTR_CPU_AFFINITY_1</span></span></span><a class="headerlink" href="#_CPPv4N23esp_intr_cpu_affinity_t23ESP_INTR_CPU_AFFINITY_1E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Install the peripheral interrupt to CPU core 1. </p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_hw_support/include/esp_intr_alloc.h">components/esp_hw_support/include/esp_intr_alloc.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_intr_alloc.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Interrupt Allocation (api-reference/system/intr_alloc)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Interrupt Allocation (api-reference/system/intr_alloc)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ipc.html" class="btn btn-neutral float-left" title="Inter-Processor Call (IPC)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="log.html" class="btn btn-neutral float-right" title="Logging library" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

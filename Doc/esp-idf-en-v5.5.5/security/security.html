@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Overview - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/security/security.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'security/security';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Flash Encryption" href="flash-encryption.html" />
+    <link rel="prev" title="Security Guides" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Security Guides</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Security Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#goals">Goals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#platform-security">Platform Security</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#secure-boot">Secure Boot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flash-encryption">Flash Encryption</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#debug-interfaces">Debug Interfaces</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#network-security">Network Security</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#wi-fi">Wi-Fi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tls-transport-layer-security">TLS (Transport Layer Security)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#product-security">Product Security</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#secure-provisioning">Secure Provisioning</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#secure-ota-over-the-air-updates">Secure OTA (Over-the-air) Updates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#secure-storage">Secure Storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#secure-device-control">Secure Device Control</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#security-policy">Security Policy</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#advisories">Advisories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#software-updates">Software Updates</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="flash-encryption.html">Flash Encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="secure-boot-v1.html">Secure Boot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="secure-boot-v2.html">Secure Boot v2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security-features-enablement-workflows.html">Security Features Enablement Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vulnerabilities.html">Vulnerabilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Security Guides</a></li>
+      <li class="breadcrumb-item active">Security Overview</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/security/security.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="security-overview">
+<h1>Security Overview<a class="headerlink" href="#security-overview" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/security/security.html">[中文]</a></p>
+<p>This guide provides an overview of the overall security features available in various Espressif solutions. It is highly recommended to consider this guide while designing the products with the Espressif platform and the ESP-IDF software stack from the <strong>security</strong> perspective.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In this guide, most used commands are in the form of <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">secure-&lt;command&gt;</span></code>, which is a wrapper around corresponding <code class="docutils literal notranslate"><span class="pre">espsecure.py</span> <span class="pre">&lt;command&gt;</span></code>. The <code class="docutils literal notranslate"><span class="pre">idf.py</span></code> based commands provides more user-friendly experience, although may lack some of the advanced functionality of their <code class="docutils literal notranslate"><span class="pre">espsecure.py</span></code> based counterparts.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>It is possible to try out the security features for ESP32 target SoC under <a class="reference internal" href="../api-guides/tools/qemu.html"><span class="doc">QEMU Emulator</span></a> virtually. Once the security workflow is established, you can then proceed to the real hardware.</p>
+</div>
+<section id="goals">
+<h2>Goals<a class="headerlink" href="#goals" title="Permalink to this heading"></a></h2>
+<p>High level security goals are as follows:</p>
+<ol class="arabic simple">
+<li><p>Preventing untrustworthy code from being executed</p></li>
+<li><p>Protecting the identity and integrity of the code stored in the off-chip flash memory</p></li>
+<li><p>Securing device identity</p></li>
+<li><p>Secure storage for confidential data</p></li>
+<li><p>Authenticated and encrypted communication from the device</p></li>
+</ol>
+</section>
+<section id="platform-security">
+<h2>Platform Security<a class="headerlink" href="#platform-security" title="Permalink to this heading"></a></h2>
+<section id="secure-boot">
+<span id="secure-boot-guide"></span><h3>Secure Boot<a class="headerlink" href="#secure-boot" title="Permalink to this heading"></a></h3>
+<p>The Secure Boot feature ensures that only authenticated software can execute on the device. The Secure Boot process forms a chain of trust by verifying all <strong>mutable</strong> software entities involved in the <a class="reference internal" href="../api-guides/startup.html"><span class="doc">Application Startup Flow</span></a>. Signature verification happens during both boot-up as well as in OTA updates.</p>
+<p>Please refer to <a class="reference internal" href="secure-boot-v2.html"><span class="doc">Secure Boot v2</span></a> for detailed documentation about this feature.</p>
+<p>For ESP32 before ECO3, please refer to <a class="reference internal" href="secure-boot-v1.html"><span class="doc">Secure Boot</span></a>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>It is highly recommended that Secure Boot be enabled on all production devices.</p>
+</div>
+<section id="secure-boot-best-practices">
+<h4>Secure Boot Best Practices<a class="headerlink" href="#secure-boot-best-practices" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><p>Generate the signing key on a system with a quality source of entropy.</p></li>
+<li><p>Always keep the signing key private. A leak of this key will compromise the Secure Boot system.</p></li>
+<li><p>Do not allow any third party to observe any aspects of the key generation or signing process using <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">secure-</span></code> or <code class="docutils literal notranslate"><span class="pre">espsecure.py</span></code> commands. Both processes are vulnerable to timing or other side-channel attacks.</p></li>
+<li><p>Ensure that all security eFuses have been correctly programmed, including disabling of the debug interfaces, non-required boot mediums (e.g., UART DL mode), etc.</p></li>
+</ul>
+</section>
+</section>
+<section id="flash-encryption">
+<span id="flash-enc-guide"></span><h3>Flash Encryption<a class="headerlink" href="#flash-encryption" title="Permalink to this heading"></a></h3>
+<p>The Flash Encryption feature helps to encrypt the contents on the off-chip flash memory and thus provides the <strong>confidentiality</strong> aspect to the software or data stored in the flash memory.</p>
+<p>Please refer to <a class="reference internal" href="flash-encryption.html"><span class="doc">Flash Encryption</span></a> for detailed information about this feature.</p>
+<section id="flash-encryption-best-practices">
+<h4>Flash Encryption Best Practices<a class="headerlink" href="#flash-encryption-best-practices" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><p>It is recommended to use <a class="reference internal" href="flash-encryption.html#flash-enc-release-mode"><span class="std std-ref">Release Mode</span></a> for the production use-cases.</p></li>
+<li><p>It is recommended to have a unique flash encryption key per device.</p></li>
+<li><p>Enable <a class="reference internal" href="#secure-boot-guide"><span class="std std-ref">Secure Boot</span></a> as an extra layer of protection, and to prevent an attacker from selectively corrupting any part of the flash before boot.</p></li>
+</ul>
+</section>
+</section>
+<section id="debug-interfaces">
+<h3>Debug Interfaces<a class="headerlink" href="#debug-interfaces" title="Permalink to this heading"></a></h3>
+<section id="jtag">
+<h4>JTAG<a class="headerlink" href="#jtag" title="Permalink to this heading"></a></h4>
+<p><ul class="simple">
+<li><p>JTAG interface stays disabled if any of the security features are enabled. Please refer to <a class="reference internal" href="../api-guides/jtag-debugging/tips-and-quirks.html#jtag-debugging-security-features"><span class="std std-ref">JTAG with Flash Encryption or Secure Boot</span></a> for more information.</p></li>
+<li><p>JTAG interface can also be disabled in the absence of any other security features using <a class="reference internal" href="../api-reference/system/efuse.html#efuse-api"><span class="std std-ref">eFuse API</span></a>.</p></li>
+</ul>
+</p>
+</section>
+<section id="uart-download-mode">
+<h4>UART Download Mode<a class="headerlink" href="#uart-download-mode" title="Permalink to this heading"></a></h4>
+<p>For ESP32 ECO3 case, UART Download mode stays disabled if any of the security features are enabled in their release configuration. Alternatively, it can also be disabled by calling <a class="reference internal" href="../api-reference/system/efuse.html#_CPPv435esp_efuse_disable_rom_download_modev" title="esp_efuse_disable_rom_download_mode"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_efuse_disable_rom_download_mode()</span></code></a> at runtime.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If UART Download mode is disabled then <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code> can not work on the device.</p>
+</div>
+</section>
+</section>
+</section>
+<section id="network-security">
+<h2>Network Security<a class="headerlink" href="#network-security" title="Permalink to this heading"></a></h2>
+<section id="wi-fi">
+<h3>Wi-Fi<a class="headerlink" href="#wi-fi" title="Permalink to this heading"></a></h3>
+<p>In addition to the traditional security methods (WEP/WPA-TKIP/WPA2-CCMP), Wi-Fi driver in ESP-IDF also supports additional state-of-the-art security protocols. Please refer to the <a class="reference internal" href="../api-guides/wifi-security.html"><span class="doc">Wi-Fi Security</span></a> for detailed documentation.</p>
+</section>
+<section id="tls-transport-layer-security">
+<h3>TLS (Transport Layer Security)<a class="headerlink" href="#tls-transport-layer-security" title="Permalink to this heading"></a></h3>
+<p>It is recommended to use TLS (Transport Layer Security) in all external communications (e.g., cloud communication, OTA updates) from the ESP device. ESP-IDF supports <a class="reference internal" href="../api-reference/protocols/mbedtls.html"><span class="doc">Mbed TLS</span></a> as the official TLS stack.</p>
+<p>TLS is default integrated in <a class="reference internal" href="../api-reference/protocols/esp_http_client.html"><span class="doc">ESP HTTP Client</span></a>, <a class="reference internal" href="../api-reference/protocols/esp_https_server.html"><span class="doc">HTTPS Server</span></a> and several other components that ship with ESP-IDF.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is recommended to use the ESP-IDF protocol components in their default configuration, which has been ensured to be secure. Disabling of HTTPS and similar security-critical configurations should be avoided.</p>
+</div>
+<section id="esp-tls-abstraction">
+<h4>ESP-TLS Abstraction<a class="headerlink" href="#esp-tls-abstraction" title="Permalink to this heading"></a></h4>
+<p>ESP-IDF provides an abstraction layer for the most-used TLS functionalities. Hence, it is recommended that an application uses the API exposed by <a class="reference internal" href="../api-reference/protocols/esp_tls.html"><span class="doc">ESP-TLS</span></a>.</p>
+<p><a class="reference internal" href="../api-reference/protocols/esp_tls.html#esp-tls-server-verification"><span class="std std-ref">TLS Server Verification</span></a> section highlights diverse ways in which the identity of server could be established on the device side.</p>
+</section>
+<section id="esp-certificate-bundle">
+<h4>ESP Certificate Bundle<a class="headerlink" href="#esp-certificate-bundle" title="Permalink to this heading"></a></h4>
+<p>The <a class="reference internal" href="../api-reference/protocols/esp_crt_bundle.html"><span class="doc">ESP x509 Certificate Bundle</span></a> API provides an easy way to include a bundle of custom x509 root certificates for TLS server verification. The certificate bundle is the easiest way to verify the identity of almost all standard TLS servers.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>It is highly recommended to verify the identity of the server based on X.509 certificates to avoid establishing communication with the <strong>fake</strong> server.</p>
+</div>
+</section>
+<section id="managing-root-certificates">
+<h4>Managing Root Certificates<a class="headerlink" href="#managing-root-certificates" title="Permalink to this heading"></a></h4>
+<p>Root Certificates embedded inside the application must be managed carefully. Any update to the root certificate list or the <a class="reference internal" href="../api-reference/protocols/esp_crt_bundle.html"><span class="doc">ESP x509 Certificate Bundle</span></a> can have an impact on the TLS connection with the remote endpoint. This includes a connection to the OTA update server. In some cases, the problem shall be visible on the next OTA update and it may leave device unable to perform OTA updates forever.</p>
+<p>Root certificates list update could have following reasons:</p>
+<ul class="simple">
+<li><p>New firmware has different set of remote endpoint(s).</p></li>
+<li><p>The existing certificate has expired.</p></li>
+<li><p>The certificate has been added or retracted from the upstream certificate bundle.</p></li>
+<li><p>The certificate list changed due to market share statistics (<code class="docutils literal notranslate"><span class="pre">CONFIG_MBEDTLS_CERTIFICATE_BUNDLE_DEFAULT_CMN</span></code> case).</p></li>
+</ul>
+<p>Some guidelines to consider on this topic:</p>
+<ul class="simple">
+<li><p>Please consider enabling <a class="reference internal" href="../api-reference/system/ota.html#ota-rollback"><span class="std std-ref">OTA rollback</span></a> and then keep the successful connection to the OTA update server as the checkpoint to cancel the rollback process. This ensures that the newly updated firmware can successfully reach till the OTA update server, otherwise rollback process will go back to the previous firmware on the device.</p></li>
+<li><p>If you plan to enable the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-mbedtls-have-time-date"><span class="std std-ref">CONFIG_MBEDTLS_HAVE_TIME_DATE</span></a> option, then please consider to have the time sync mechanism (SNTP) and sufficient number of trusted certificates in place.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="product-security">
+<h2>Product Security<a class="headerlink" href="#product-security" title="Permalink to this heading"></a></h2>
+<section id="secure-provisioning">
+<h3>Secure Provisioning<a class="headerlink" href="#secure-provisioning" title="Permalink to this heading"></a></h3>
+<p>Secure Provisioning refers to a process of secure on-boarding of the ESP device on to the Wi-Fi network. This mechanism also allows provision of additional custom configuration data during the initial provisioning phase from the provisioning entity, e.g., Smartphone.</p>
+<p>ESP-IDF provides various security schemes to establish a secure session between ESP and the provisioning entity, they are highlighted at <a class="reference internal" href="../api-reference/provisioning/provisioning.html#provisioning-security-schemes"><span class="std std-ref">Security Schemes</span></a>.</p>
+<p>Please refer to the <a class="reference internal" href="../api-reference/provisioning/wifi_provisioning.html"><span class="doc">Wi-Fi Provisioning</span></a> documentation for details and the example code for this feature.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Espressif provides Android and iOS Phone Apps along with their sources, so that it could be easy to further customize them as per the product requirement.</p>
+</div>
+</section>
+<section id="secure-ota-over-the-air-updates">
+<h3>Secure OTA (Over-the-air) Updates<a class="headerlink" href="#secure-ota-over-the-air-updates" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>OTA Updates must happen over secure transport, e.g., HTTPS.</p></li>
+<li><p>ESP-IDF provides a simplified abstraction layer <a class="reference internal" href="../api-reference/system/esp_https_ota.html"><span class="doc">ESP HTTPS OTA</span></a> for this.</p></li>
+<li><p>If <a class="reference internal" href="#secure-boot-guide"><span class="std std-ref">Secure Boot</span></a> is enabled, then the server should host the signed application image.</p></li>
+<li><p>If <a class="reference internal" href="#flash-enc-guide"><span class="std std-ref">Flash Encryption</span></a> is enabled, then no additional steps are required on the server side, encryption shall be taken care on the device itself during flash write.</p></li>
+<li><p>OTA update <a class="reference internal" href="../api-reference/system/ota.html#ota-rollback"><span class="std std-ref">Rollback Process</span></a> can help to switch the application as <code class="docutils literal notranslate"><span class="pre">active</span></code> only after its functionality has been verified.</p></li>
+</ul>
+<section id="anti-rollback-protection">
+<h4>Anti-Rollback Protection<a class="headerlink" href="#anti-rollback-protection" title="Permalink to this heading"></a></h4>
+<p>Anti-rollback protection feature ensures that device only executes the application that meets the security version criteria as stored in its eFuse. So even though the application is trusted and signed by legitimate key, it may contain some revoked security feature or credential. Hence, device must reject any such application.</p>
+<p>ESP-IDF allows this feature for the application only and it is managed through 2nd stage bootloader. The security version is stored in the device eFuse and it is compared against the application image header during both boot-up and over-the-air updates.</p>
+<p>Please see more information to enable this feature in the <a class="reference internal" href="../api-reference/system/ota.html#anti-rollback"><span class="std std-ref">Anti-rollback</span></a> guide.</p>
+</section>
+<section id="encrypted-firmware-distribution">
+<h4>Encrypted Firmware Distribution<a class="headerlink" href="#encrypted-firmware-distribution" title="Permalink to this heading"></a></h4>
+<p>Encrypted firmware distribution during over-the-air updates ensures that the application stays encrypted <strong>in transit</strong> from the server to the device. This can act as an additional layer of protection on top of the TLS communication during OTA updates and protect the identity of the application.</p>
+<p>Please see working example for this documented in <a class="reference internal" href="../api-reference/system/esp_https_ota.html#ota-updates-pre-encrypted-firmware"><span class="std std-ref">OTA Upgrades with Pre-Encrypted Firmware</span></a> section.</p>
+</section>
+</section>
+<section id="secure-storage">
+<h3>Secure Storage<a class="headerlink" href="#secure-storage" title="Permalink to this heading"></a></h3>
+<p>Secure storage refers to the application-specific data that can be stored in a secure manner on the device, i.e., off-chip flash memory. This is typically a read-write flash partition and holds device specific configuration data, e.g., Wi-Fi credentials.</p>
+<p>ESP-IDF provides the <strong>NVS (Non-volatile Storage)</strong> management component which allows encrypted data partitions. This feature is tied with the platform <a class="reference internal" href="#flash-enc-guide"><span class="std std-ref">Flash Encryption</span></a> feature described earlier.</p>
+<p>Please refer to the <a class="reference internal" href="../api-reference/storage/nvs_flash.html#nvs-encryption"><span class="std std-ref">NVS Encryption</span></a> for detailed documentation on the working and instructions to enable this feature.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>By default, ESP-IDF components writes the device specific data into the default NVS partition, including Wi-Fi credentials too, and it is recommended to protect this data using <strong>NVS Encryption</strong> feature.</p>
+</div>
+</section>
+<section id="secure-device-control">
+<h3>Secure Device Control<a class="headerlink" href="#secure-device-control" title="Permalink to this heading"></a></h3>
+<p>ESP-IDF provides capability to control an ESP device over <code class="docutils literal notranslate"><span class="pre">Wi-Fi/Ethernet</span> <span class="pre">+</span> <span class="pre">HTTP</span></code> or <code class="docutils literal notranslate"><span class="pre">BLE</span></code> in a secure manner using ESP Local Control component.</p>
+<p>Please refer to the <a class="reference internal" href="../api-reference/protocols/esp_local_ctrl.html"><span class="doc">ESP Local Control</span></a> for detailed documentation about this feature.</p>
+</section>
+</section>
+<section id="security-policy">
+<h2>Security Policy<a class="headerlink" href="#security-policy" title="Permalink to this heading"></a></h2>
+<p>The ESP-IDF GitHub repository has attached <a class="reference external" href="https://github.com/espressif/esp-idf/blob/master/SECURITY.md">Security Policy Brief</a>.</p>
+<section id="advisories">
+<h3>Advisories<a class="headerlink" href="#advisories" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Espressif publishes critical <a class="reference external" href="https://www.espressif.com/en/support/documents/advisories">Security Advisories</a>, which includes security advisories regarding both hardware and software.</p></li>
+<li><p>The specific advisories of the ESP-IDF software components are published through the <a class="reference external" href="https://github.com/espressif/esp-idf/security/advisories">GitHub repository</a>.</p></li>
+</ul>
+</section>
+<section id="software-updates">
+<h3>Software Updates<a class="headerlink" href="#software-updates" title="Permalink to this heading"></a></h3>
+<p>Critical security issues in the ESP-IDF components, and third-party libraries are fixed as and when we find them or when they are reported to us. Gradually, we make the fixes available in all applicable release branches in ESP-IDF.</p>
+<p>Applicable security issues and CVEs for the ESP-IDF components, third-party libraries are mentioned in the ESP-IDF release notes.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>We recommend periodically updating to the latest bugfix version of the ESP-IDF release to have all critical security fixes available.</p>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Security Overview (security/security)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Security Overview (security/security)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Security Guides" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="flash-encryption.html" class="btn btn-neutral float-right" title="Flash Encryption" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

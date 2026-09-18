@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Over The Air Updates (OTA) - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/ota.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/system/ota';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Performance Monitor" href="perfmon.html" />
+    <link rel="prev" title="Miscellaneous System APIs" href="misc_system_api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">System API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app_image_format.html">App Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootloader_image_format.html">Bootloader Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app_trace.html">Application Level Tracing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_function_with_shared_stack.html">Call Function with External Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chip_revision.html">Chip Revision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console.html">Console</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efuse.html">eFuse Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_err.html">Error Code and Helper Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_ota.html">ESP HTTPS OTA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_event.html">Event Loop Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos.html">FreeRTOS Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_idf.html">FreeRTOS (IDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_additions.html">FreeRTOS (Supplemental Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mem_alloc.html">Heap Memory Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mm.html">Memory Management for MMU Supported Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="heap_debug.html">Heap Memory Debugging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_timer.html">ESP Timer (High Resolution Timer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="internal-unstable.html">Internal and Unstable APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipc.html">Inter-Processor Call (IPC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intr_alloc.html">Interrupt Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="log.html">Logging library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc_system_api.html">Miscellaneous System APIs</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Over The Air Updates (OTA)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ota-process-overview">OTA Process Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ota-data-partition">OTA Data Partition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#app-rollback">App Rollback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#anti-rollback">Anti-rollback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#secure-ota-updates-without-secure-boot">Secure OTA Updates Without Secure Boot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tuning-ota-performance">Tuning OTA Performance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ota-tool-otatool-py">OTA Tool <code class="docutils literal notranslate"><span class="pre">otatool.py</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See Also</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#debugging-ota-failure">Debugging OTA Failure</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="perfmon.html">Performance Monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="power_management.html">Power Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pthread.html">POSIX Support (Including POSIX Threads Support)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sleep_modes.html">Sleep Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soc_caps.html">SoC Capabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_time.html">System Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="himem.html">Himem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ulp.html">Ultra Low Power (ULP) coprocessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wdts.html">Watchdogs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">System API</a></li>
+      <li class="breadcrumb-item active">Over The Air Updates (OTA)</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/system/ota.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="over-the-air-updates-ota">
+<h1>Over The Air Updates (OTA)<a class="headerlink" href="#over-the-air-updates-ota" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/system/ota.html">[中文]</a></p>
+<section id="ota-process-overview">
+<h2>OTA Process Overview<a class="headerlink" href="#ota-process-overview" title="Permalink to this heading"></a></h2>
+<p>The OTA update mechanism allows a device to update itself based on data received while the normal firmware is running (for example, over Wi-Fi, Bluetooth or Ethernet).</p>
+<p>The following modes support OTA updates for certain partitions:</p>
+<ul class="simple">
+<li><p><strong>Safe update mode</strong>. The update process for certain partitions is designed to be resilient, ensuring that even if the power is cut off during the update, the chip will remain operational and capable of booting the current application. The following partitions support this mode:</p>
+<ul>
+<li><p>Application. OTA requires configuring the <a class="reference internal" href="../../api-guides/partition-tables.html"><span class="doc">Partition Tables</span></a> of the device with at least two OTA app slot partitions (i.e., <code class="docutils literal notranslate"><span class="pre">ota_0</span></code> and <code class="docutils literal notranslate"><span class="pre">ota_1</span></code>) and an OTA Data Partition. The OTA operation functions write a new app firmware image to whichever OTA app slot that is currently not selected for booting. Once the image is verified, the OTA Data partition is updated to specify that this image should be used for the next boot.</p></li>
+</ul>
+</li>
+<li><p><strong>Unsafe update mode</strong>. The update process is vulnerable, meaning that a power interruption during the update can cause issues that prevent the current application from loading, potentially leading to an unrecoverable state. The temporary partition receives the new image, and once it is fully downloaded, the image is copied to the final destination partition. If an interruption occurs during this final copying process, it can lead to issues. The following partitions support this mode:</p>
+<ul>
+<li><p>Bootloader.</p></li>
+<li><p>Partition table.</p></li>
+<li><p>Other data partitions like NVS, FAT, etc.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="ota-data-partition">
+<span id="id1"></span><h2>OTA Data Partition<a class="headerlink" href="#ota-data-partition" title="Permalink to this heading"></a></h2>
+<p>An OTA data partition (type <code class="docutils literal notranslate"><span class="pre">data</span></code>, subtype <code class="docutils literal notranslate"><span class="pre">ota</span></code>) must be included in the <a class="reference internal" href="../../api-guides/partition-tables.html"><span class="doc">Partition Tables</span></a> of any project which uses the OTA functions.</p>
+<p>For factory boot settings, the OTA data partition should contain no data (all bytes erased to 0xFF). In this case, the ESP-IDF second stage bootloader boots the factory app if it is present in the partition table. If no factory app is included in the partition table, the first available OTA slot (usually <code class="docutils literal notranslate"><span class="pre">ota_0</span></code>) is booted.</p>
+<p>After the first OTA update, the OTA data partition is updated to specify which OTA app slot partition should be booted next.</p>
+<p>The OTA data partition is two flash sectors (0x2000 bytes) in size, to prevent problems if there is a power failure while it is being written. Sectors are independently erased and written with matching data, and if they disagree a counter field is used to determine which sector was written more recently.</p>
+</section>
+<section id="app-rollback">
+<span id="id2"></span><h2>App Rollback<a class="headerlink" href="#app-rollback" title="Permalink to this heading"></a></h2>
+<p>The main purpose of the application rollback is to keep the device working after the update. This feature allows you to roll back to the previous working application in case a new application has critical errors. When the rollback process is enabled and an OTA update provides a new version of the app, one of three things can happen:</p>
+<ul class="simple">
+<li><p>The application works fine, <a class="reference internal" href="#_CPPv438esp_ota_mark_app_valid_cancel_rollbackv" title="esp_ota_mark_app_valid_cancel_rollback"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_valid_cancel_rollback()</span></code></a> marks the running application with the state <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_VALID</span></code>. There are no restrictions on booting this application.</p></li>
+<li><p>The application has critical errors and further work is not possible, a rollback to the previous application is required, <a class="reference internal" href="#_CPPv444esp_ota_mark_app_invalid_rollback_and_rebootv" title="esp_ota_mark_app_invalid_rollback_and_reboot"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_invalid_rollback_and_reboot()</span></code></a> marks the running application with the state <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_INVALID</span></code> and reset. This application will not be selected by the bootloader for boot and will boot the previously working application.</p></li>
+<li><p>If the <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-rollback-enable"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE</span></a> option is set, and a reset occurs without calling either function then the application is rolled back.</p></li>
+</ul>
+<p>The following code serves detect the initial boot for an application after the OTA update. Upon the first boot, the application checks its state and performs diagnostics. If the diagnostics are successful, the application should call <a class="reference internal" href="#_CPPv438esp_ota_mark_app_valid_cancel_rollbackv" title="esp_ota_mark_app_valid_cancel_rollback"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_valid_cancel_rollback()</span></code></a> to confirm the operability of the application. If the diagnostics fail, the application should call <a class="reference internal" href="#_CPPv444esp_ota_mark_app_invalid_rollback_and_rebootv" title="esp_ota_mark_app_invalid_rollback_and_reboot"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_invalid_rollback_and_reboot()</span></code></a> to roll back to the previous working application.</p>
+<p>If the application is not able to boot or execute this code due to an abort/reboot/power loss error, the bootloader marks this application as <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_INVALID</span></code> in the next booting attempt and rolls back to the previous working application.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="n">esp_partition_t</span><span class="w"> </span><span class="o">*</span><span class="n">running</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">esp_ota_get_running_partition</span><span class="p">();</span>
+<span class="n">esp_ota_img_states_t</span><span class="w"> </span><span class="n">ota_state</span><span class="p">;</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">esp_ota_get_state_partition</span><span class="p">(</span><span class="n">running</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ota_state</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ESP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ota_state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ESP_OTA_IMG_PENDING_VERIFY</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// run diagnostic function ...</span>
+<span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">diagnostic_is_ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">diagnostic</span><span class="p">();</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">diagnostic_is_ok</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Diagnostics completed successfully! Continuing execution ...&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">esp_ota_mark_app_valid_cancel_rollback</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">ESP_LOGE</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Diagnostics failed! Start rollback to the previous version ...&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">esp_ota_mark_app_invalid_rollback_and_reboot</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>For the example incorporating the above code snippet, see the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/ota/native_ota_example">system/ota/native_ota_example</a> example.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The state is not written to the binary image of the application but rather to the <code class="docutils literal notranslate"><span class="pre">otadata</span></code> partition. The partition contains a <code class="docutils literal notranslate"><span class="pre">ota_seq</span></code> counter, which is a pointer to the slot (<code class="docutils literal notranslate"><span class="pre">ota_0</span></code>, <code class="docutils literal notranslate"><span class="pre">ota_1</span></code>, ...) from which the application will be selected for boot.</p>
+</div>
+<section id="app-ota-state">
+<h3>App OTA State<a class="headerlink" href="#app-ota-state" title="Permalink to this heading"></a></h3>
+<p>States control the process of selecting a boot app:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>States</p></th>
+<th class="head"><p>Restriction of selecting a boot app in bootloader</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ESP_OTA_IMG_VALID</p></td>
+<td><p>None restriction. Will be selected.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ESP_OTA_IMG_UNDEFINED</p></td>
+<td><p>None restriction. Will be selected.</p></td>
+</tr>
+<tr class="row-even"><td><p>ESP_OTA_IMG_INVALID</p></td>
+<td><p>Will not be selected.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ESP_OTA_IMG_ABORTED</p></td>
+<td><p>Will not be selected.</p></td>
+</tr>
+<tr class="row-even"><td><p>ESP_OTA_IMG_NEW</p></td>
+<td><p>If <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-rollback-enable"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE</span></a> option is set it will
+be selected only once. In bootloader the state immediately changes to
+<code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_PENDING_VERIFY</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ESP_OTA_IMG_PENDING_VERIFY</p></td>
+<td><p>If <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-rollback-enable"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE</span></a> option is set it will
+not be selected, and the state will change to <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_ABORTED</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>If <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-rollback-enable"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE</span></a> option is not enabled (by default), then the use of the following functions <a class="reference internal" href="#_CPPv438esp_ota_mark_app_valid_cancel_rollbackv" title="esp_ota_mark_app_valid_cancel_rollback"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_valid_cancel_rollback()</span></code></a> and <a class="reference internal" href="#_CPPv444esp_ota_mark_app_invalid_rollback_and_rebootv" title="esp_ota_mark_app_invalid_rollback_and_reboot"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_invalid_rollback_and_reboot()</span></code></a> are optional, and <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_NEW</span></code> and <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_PENDING_VERIFY</span></code> states are not used.</p>
+<p>An option in Kconfig <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-rollback-enable"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE</span></a> allows you to track the first boot of a new application. In this case, the application must confirm its operability by calling <a class="reference internal" href="#_CPPv438esp_ota_mark_app_valid_cancel_rollbackv" title="esp_ota_mark_app_valid_cancel_rollback"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_valid_cancel_rollback()</span></code></a> function, otherwise the application will be rolled back upon reboot. It allows you to control the operability of the application during the boot phase. Thus, a new application has only one attempt to boot successfully.</p>
+</section>
+<section id="rollback-process">
+<span id="ota-rollback"></span><h3>Rollback Process<a class="headerlink" href="#rollback-process" title="Permalink to this heading"></a></h3>
+<p>The description of the rollback process when <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-rollback-enable"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE</span></a> option is enabled:</p>
+<ul class="simple">
+<li><p>The new application is successfully downloaded and <a class="reference internal" href="#_CPPv426esp_ota_set_boot_partitionPK15esp_partition_t" title="esp_ota_set_boot_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_set_boot_partition()</span></code></a> function makes this partition bootable and sets the state <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_NEW</span></code>. This state means that the application is new and should be monitored for its first boot.</p></li>
+<li><p>Reboot <a class="reference internal" href="misc_system_api.html#_CPPv411esp_restartv" title="esp_restart"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_restart()</span></code></a>.</p></li>
+<li><p>The bootloader checks for the <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_PENDING_VERIFY</span></code> state if it is set, then it will be written to <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_ABORTED</span></code>.</p></li>
+<li><p>The bootloader selects a new application to boot so that the state is not set as <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_INVALID</span></code> or <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_ABORTED</span></code>.</p></li>
+<li><p>The bootloader checks the selected application for <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_NEW</span></code> state if it is set, then it will be written to <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_PENDING_VERIFY</span></code>. This state means that the application requires confirmation of its operability, if this does not happen and a reboot occurs, this state will be overwritten to <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_ABORTED</span></code> (see above) and this application will no longer be able to start, i.e., there will be a rollback to the previous working application.</p></li>
+<li><p>A new application has started and should make a self-test.</p></li>
+<li><p>If the self-test has completed successfully, then you must call the function <a class="reference internal" href="#_CPPv438esp_ota_mark_app_valid_cancel_rollbackv" title="esp_ota_mark_app_valid_cancel_rollback"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_valid_cancel_rollback()</span></code></a> because the application is awaiting confirmation of operability (<code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_PENDING_VERIFY</span></code> state).</p></li>
+<li><p>If the self-test fails, then call <a class="reference internal" href="#_CPPv444esp_ota_mark_app_invalid_rollback_and_rebootv" title="esp_ota_mark_app_invalid_rollback_and_reboot"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_invalid_rollback_and_reboot()</span></code></a> function to roll back to the previous working application, while the invalid application is set <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_INVALID</span></code> state.</p></li>
+<li><p>If the application has not been confirmed, the state remains <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_PENDING_VERIFY</span></code>, and the next boot it will be changed to <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_ABORTED</span></code>, which prevents re-boot of this application. There will be a rollback to the previous working application.</p></li>
+</ul>
+</section>
+<section id="unexpected-reset">
+<h3>Unexpected Reset<a class="headerlink" href="#unexpected-reset" title="Permalink to this heading"></a></h3>
+<p>If a power loss or an unexpected crash occurs at the time of the first boot of a new application, it will roll back the application.</p>
+<p>Recommendation: Perform the self-test procedure as quickly as possible, to prevent rollback due to power loss.</p>
+<p>Only <code class="docutils literal notranslate"><span class="pre">OTA</span></code> partitions can be rolled back. Factory partition is not rolled back.</p>
+</section>
+<section id="booting-invalid-aborted-apps">
+<h3>Booting Invalid/aborted Apps<a class="headerlink" href="#booting-invalid-aborted-apps" title="Permalink to this heading"></a></h3>
+<p>Booting an application which was previously set to <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_INVALID</span></code> or <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_ABORTED</span></code> is possible:</p>
+<ul class="simple">
+<li><p>Get the last invalid application partition <a class="reference internal" href="#_CPPv434esp_ota_get_last_invalid_partitionv" title="esp_ota_get_last_invalid_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_get_last_invalid_partition()</span></code></a>.</p></li>
+<li><p>Pass the received partition to <a class="reference internal" href="#_CPPv426esp_ota_set_boot_partitionPK15esp_partition_t" title="esp_ota_set_boot_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_set_boot_partition()</span></code></a>, this will update the <code class="docutils literal notranslate"><span class="pre">otadata</span></code>.</p></li>
+<li><p>Restart <a class="reference internal" href="misc_system_api.html#_CPPv411esp_restartv" title="esp_restart"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_restart()</span></code></a>. The bootloader will boot the specified application.</p></li>
+</ul>
+<p>To determine if self-tests should be run during startup of an application, call the <a class="reference internal" href="#_CPPv427esp_ota_get_state_partitionPK15esp_partition_tP20esp_ota_img_states_t" title="esp_ota_get_state_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_get_state_partition()</span></code></a> function. If result is <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_PENDING_VERIFY</span></code> then self-testing and subsequent confirmation of operability is required.</p>
+</section>
+<section id="where-the-states-are-set">
+<h3>Where the States Are Set<a class="headerlink" href="#where-the-states-are-set" title="Permalink to this heading"></a></h3>
+<p>A brief description of where the states are set:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_VALID</span></code> state is set by <a class="reference internal" href="#_CPPv438esp_ota_mark_app_valid_cancel_rollbackv" title="esp_ota_mark_app_valid_cancel_rollback"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_valid_cancel_rollback()</span></code></a> function.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_UNDEFINED</span></code> state is set by <a class="reference internal" href="#_CPPv426esp_ota_set_boot_partitionPK15esp_partition_t" title="esp_ota_set_boot_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_set_boot_partition()</span></code></a> function if <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-rollback-enable"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE</span></a> option is not enabled.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_NEW</span></code> state is set by <a class="reference internal" href="#_CPPv426esp_ota_set_boot_partitionPK15esp_partition_t" title="esp_ota_set_boot_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_set_boot_partition()</span></code></a> function if <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-rollback-enable"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE</span></a> option is enabled.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_INVALID</span></code> state is set by function <a class="reference internal" href="#_CPPv433esp_ota_mark_app_invalid_rollbackv" title="esp_ota_mark_app_invalid_rollback"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_invalid_rollback()</span></code></a> or <a class="reference internal" href="#_CPPv444esp_ota_mark_app_invalid_rollback_and_rebootv" title="esp_ota_mark_app_invalid_rollback_and_reboot"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_invalid_rollback_and_reboot()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_ABORTED</span></code> state is set if there was no confirmation of the application operability and occurs reboots (if <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-rollback-enable"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE</span></a> option is enabled).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_PENDING_VERIFY</span></code> state is set in a bootloader if <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-rollback-enable"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE</span></a> option is enabled and selected app has <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_NEW</span></code> state.</p></li>
+</ul>
+</section>
+</section>
+<section id="anti-rollback">
+<span id="id3"></span><h2>Anti-rollback<a class="headerlink" href="#anti-rollback" title="Permalink to this heading"></a></h2>
+<p>Anti-rollback prevents rollback to application with security version lower than one programmed in eFuse of chip.</p>
+<p>This function works if set <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-anti-rollback"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ANTI_ROLLBACK</span></a> option. In the bootloader, when selecting a bootable application, an additional security version check is added which is on the chip and in the application image. The version in the bootable firmware must be greater than or equal to the version in the chip.</p>
+<p><a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-anti-rollback"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ANTI_ROLLBACK</span></a> and <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-rollback-enable"><span class="std std-ref">CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE</span></a> options are used together. In this case, rollback is possible only on the security version which is equal or higher than the version in the chip.</p>
+<section id="a-typical-anti-rollback-scheme-is">
+<h3>A Typical Anti-rollback Scheme Is<a class="headerlink" href="#a-typical-anti-rollback-scheme-is" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>New firmware released with the elimination of vulnerabilities with the previous version of security.</p></li>
+<li><p>After the developer makes sure that this firmware is working. He can increase the security version and release a new firmware.</p></li>
+<li><p>Download new application.</p></li>
+<li><p>To make it bootable, run the function <a class="reference internal" href="#_CPPv426esp_ota_set_boot_partitionPK15esp_partition_t" title="esp_ota_set_boot_partition"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_set_boot_partition()</span></code></a>. If the security version of the new application is smaller than the version in the chip, the new application will be erased. Update to new firmware is not possible.</p></li>
+<li><p>Reboot.</p></li>
+<li><p>In the bootloader, an application with a security version greater than or equal to the version in the chip will be selected. If otadata is in the initial state, and one firmware was loaded via a serial channel, whose secure version is higher than the chip, then the secure version of efuse will be immediately updated in the bootloader.</p></li>
+<li><p>New application booted. Then the application should perform diagnostics of the operation and if it is completed successfully, you should call <a class="reference internal" href="#_CPPv438esp_ota_mark_app_valid_cancel_rollbackv" title="esp_ota_mark_app_valid_cancel_rollback"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_valid_cancel_rollback()</span></code></a> function to mark the running application with the <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_VALID</span></code> state and update the secure version on chip. Note that if the <a class="reference internal" href="#_CPPv433esp_ota_mark_app_invalid_rollbackv" title="esp_ota_mark_app_invalid_rollback"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_invalid_rollback()</span></code></a> or <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_mark_app_invalid_rollback_with_reboot()</span></code> function is called a rollback may not happen as the device may not have any bootable apps. It will then return <code class="docutils literal notranslate"><span class="pre">ESP_ERR_OTA_ROLLBACK_FAILED</span></code> error and stay in the <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_PENDING_VERIFY</span></code> state.</p></li>
+<li><p>The next update of app is possible if a running app is in the <code class="docutils literal notranslate"><span class="pre">ESP_OTA_IMG_VALID</span></code> state.</p></li>
+</ul>
+<p>Recommendation:</p>
+<p>If you want to avoid the download/erase overhead in case of the app from the server has security version lower than the running app, you have to get <code class="docutils literal notranslate"><span class="pre">new_app_info.secure_version</span></code> from the first package of an image and compare it with the secure version of efuse. Use <code class="docutils literal notranslate"><span class="pre">esp_efuse_check_secure_version(new_app_info.secure_version)</span></code> function if it is true then continue downloading otherwise abort.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="p">....</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">image_header_was_checked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">data_read</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">esp_http_client_read</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="n">ota_write_data</span><span class="p">,</span><span class="w"> </span><span class="n">BUFFSIZE</span><span class="p">);</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">data_read</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">image_header_was_checked</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">esp_app_desc_t</span><span class="w"> </span><span class="n">new_app_info</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">data_read</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">esp_image_header_t</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">esp_image_segment_header_t</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">esp_app_desc_t</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// check current version with downloading</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">esp_efuse_check_secure_version</span><span class="p">(</span><span class="n">new_app_info</span><span class="p">.</span><span class="n">secure_version</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="n">ESP_LOGE</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;This a new app can not be downloaded due to a secure version is lower than stored in efuse.&quot;</span><span class="p">);</span>
+<span class="w">                  </span><span class="n">http_cleanup</span><span class="p">(</span><span class="n">client</span><span class="p">);</span>
+<span class="w">                  </span><span class="n">task_fatal_error</span><span class="p">();</span>
+<span class="w">                </span><span class="p">}</span>
+
+<span class="w">                </span><span class="n">image_header_was_checked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+
+<span class="w">                </span><span class="n">esp_ota_begin</span><span class="p">(</span><span class="n">update_partition</span><span class="p">,</span><span class="w"> </span><span class="n">OTA_SIZE_UNKNOWN</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">update_handle</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">esp_ota_write</span><span class="p">(</span><span class="w"> </span><span class="n">update_handle</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">ota_write_data</span><span class="p">,</span><span class="w"> </span><span class="n">data_read</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+<p>Restrictions:</p>
+<p><ul class="simple">
+<li><p>The number of bits in the <code class="docutils literal notranslate"><span class="pre">secure_version</span></code> field is limited to 32 bits. This means that only 32 times you can do an anti-rollback. You can reduce the length of this efuse field using <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-sec-ver-size-efuse-field"><span class="std std-ref">CONFIG_BOOTLOADER_APP_SEC_VER_SIZE_EFUSE_FIELD</span></a> option.</p></li>
+<li><p>Anti-rollback works only if the encoding scheme for efuse is set to <code class="docutils literal notranslate"><span class="pre">NONE</span></code>.</p></li>
+<li><p>Factory and Test partitions are not supported in anti rollback scheme and hence partition table should not have partition with SubType set to <code class="docutils literal notranslate"><span class="pre">factory</span></code> or <code class="docutils literal notranslate"><span class="pre">test</span></code>.</p></li>
+</ul>
+</p>
+<p><code class="docutils literal notranslate"><span class="pre">security_version</span></code>:</p>
+<ul class="simple">
+<li><p>In application image it is stored in <code class="docutils literal notranslate"><span class="pre">esp_app_desc</span></code> structure. The number is set <a class="reference internal" href="../kconfig-reference.html#config-bootloader-app-secure-version"><span class="std std-ref">CONFIG_BOOTLOADER_APP_SECURE_VERSION</span></a>.</p></li>
+</ul>
+<ul class="simple">
+<li><p>In ESP32, it is stored in efuse <code class="docutils literal notranslate"><span class="pre">EFUSE_BLK3_RDATA4_REG</span></code>. (when an eFuse bit is programmed to 1, it can never be reverted to 0). The number of bits set in this register is the <code class="docutils literal notranslate"><span class="pre">security_version</span></code> from app.</p></li>
+</ul>
+</section>
+</section>
+<section id="secure-ota-updates-without-secure-boot">
+<span id="secure-ota-updates"></span><h2>Secure OTA Updates Without Secure Boot<a class="headerlink" href="#secure-ota-updates-without-secure-boot" title="Permalink to this heading"></a></h2>
+<p>The verification of signed OTA updates can be performed even without enabling hardware secure boot. This can be achieved by setting <a class="reference internal" href="../kconfig-reference.html#config-secure-signed-apps-no-secure-boot"><span class="std std-ref">CONFIG_SECURE_SIGNED_APPS_NO_SECURE_BOOT</span></a> and <a class="reference internal" href="../kconfig-reference.html#config-secure-signed-on-update-no-secure-boot"><span class="std std-ref">CONFIG_SECURE_SIGNED_ON_UPDATE_NO_SECURE_BOOT</span></a>.</p>
+<p>For more information, please refer to <a class="reference internal" href="../../security/secure-boot-v1.html#signed-app-verify"><span class="std std-ref">Signed App Verification Without Hardware Secure Boot</span></a>.</p>
+</section>
+<section id="tuning-ota-performance">
+<h2>Tuning OTA Performance<a class="headerlink" href="#tuning-ota-performance" title="Permalink to this heading"></a></h2>
+<ul>
+<li><p>Erasing the update partition at once instead of sequential erasing (default mechanism) while write operation might help in reducing the overall time taken for firmware upgrade. To enable this, set <a class="reference internal" href="esp_https_ota.html#_CPPv4N22esp_https_ota_config_t16bulk_flash_eraseE" title="esp_https_ota_config_t::bulk_flash_erase"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_https_ota_config_t::bulk_flash_erase</span></code></a> to true in <a class="reference internal" href="esp_https_ota.html#_CPPv422esp_https_ota_config_t" title="esp_https_ota_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_https_ota_config_t</span></code></a> structure. If the partition to be erased is too large, task watchdog could be triggered. It is advised to increase the watchdog timeout in such cases.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">esp_https_ota_config_t</span><span class="w"> </span><span class="n">ota_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">bulk_flash_erase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>Tuning the <code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_https_ota_config_t::http_config::buffer_size</span></code> can also help in improving the OTA performance.</p></li>
+<li><p><a class="reference internal" href="esp_https_ota.html#_CPPv422esp_https_ota_config_t" title="esp_https_ota_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_https_ota_config_t</span></code></a> has a member <a class="reference internal" href="esp_https_ota.html#_CPPv4N22esp_https_ota_config_t11buffer_capsE" title="esp_https_ota_config_t::buffer_caps"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_https_ota_config_t::buffer_caps</span></code></a> which can be used to specify the memory type to use when allocating memory to the OTA buffer. Configuring this value to MALLOC_CAP_INTERNAL might help in improving the OTA performance when SPIRAM is enabled.</p></li>
+<li><p>For optimizing network performance, please refer to <strong>Improving Network Speed</strong> section in the <a class="reference internal" href="../../api-guides/performance/speed.html"><span class="doc">Speed Optimization</span></a> for more details.</p></li>
+</ul>
+</section>
+<section id="ota-tool-otatool-py">
+<h2>OTA Tool <code class="docutils literal notranslate"><span class="pre">otatool.py</span></code><a class="headerlink" href="#ota-tool-otatool-py" title="Permalink to this heading"></a></h2>
+<p>The component <code class="docutils literal notranslate"><span class="pre">app_update</span></code> provides a tool <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/app_update/otatool.py">app_update/otatool.py</a> for performing OTA partition-related operations on a target device. The following operations can be performed using the tool:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>read contents of otadata partition (read_otadata)</p></li>
+<li><p>erase otadata partition, effectively resetting device to factory app (erase_otadata)</p></li>
+<li><p>switch OTA partitions (switch_ota_partition)</p></li>
+<li><p>erasing OTA partition (erase_ota_partition)</p></li>
+<li><p>write to OTA partition (write_ota_partition)</p></li>
+<li><p>read contents of OTA partition (read_ota_partition)</p></li>
+</ul>
+</div></blockquote>
+<p>The tool can either be imported and used from another Python script or invoked from shell script for users wanting to perform operation programmatically. This is facilitated by the tool's Python API and command-line interface, respectively.</p>
+<section id="python-api">
+<h3>Python API<a class="headerlink" href="#python-api" title="Permalink to this heading"></a></h3>
+<p>Before anything else, make sure that the <code class="docutils literal notranslate"><span class="pre">otatool</span></code> module is imported.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="n">idf_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;IDF_PATH&quot;</span><span class="p">]</span>  <span class="c1"># get value of IDF_PATH from environment</span>
+<span class="n">otatool_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">idf_path</span><span class="p">,</span> <span class="s2">&quot;components&quot;</span><span class="p">,</span> <span class="s2">&quot;app_update&quot;</span><span class="p">)</span>  <span class="c1"># otatool.py lives in $IDF_PATH/components/app_update</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">otatool_dir</span><span class="p">)</span>  <span class="c1"># this enables Python to find otatool module</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">otatool</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>  <span class="c1"># import all names inside otatool module</span>
+</pre></div>
+</div>
+<p>The starting point for using the tool's Python API to do is create an <code class="docutils literal notranslate"><span class="pre">OtatoolTarget</span></code> object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a parttool.py target device connected on serial port /dev/ttyUSB1</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">OtatoolTarget</span><span class="p">(</span><span class="s2">&quot;/dev/ttyUSB1&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The created object can now be used to perform operations on the target device:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Erase otadata, resetting the device to factory app</span>
+<span class="n">target</span><span class="o">.</span><span class="n">erase_otadata</span><span class="p">()</span>
+
+<span class="c1"># Erase contents of OTA app slot 0</span>
+<span class="n">target</span><span class="o">.</span><span class="n">erase_ota_partition</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Switch boot partition to that of app slot 1</span>
+<span class="n">target</span><span class="o">.</span><span class="n">switch_ota_partition</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Read OTA partition &#39;ota_3&#39; and save contents to a file named &#39;ota_3.bin&#39;</span>
+<span class="n">target</span><span class="o">.</span><span class="n">read_ota_partition</span><span class="p">(</span><span class="s2">&quot;ota_3&quot;</span><span class="p">,</span> <span class="s2">&quot;ota_3.bin&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The OTA partition to operate on is specified using either the app slot number or the partition name.</p>
+<p>More information on the Python API is available in the docstrings for the tool.</p>
+</section>
+<section id="command-line-interface">
+<h3>Command-line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this heading"></a></h3>
+<p>The command-line interface of <code class="docutils literal notranslate"><span class="pre">otatool.py</span></code> has the following structure:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>otatool.py<span class="w"> </span><span class="o">[</span>command-args<span class="o">]</span><span class="w"> </span><span class="o">[</span>subcommand<span class="o">]</span><span class="w"> </span><span class="o">[</span>subcommand-args<span class="o">]</span>
+
+-<span class="w"> </span>command-args<span class="w"> </span>-<span class="w"> </span>these<span class="w"> </span>are<span class="w"> </span>arguments<span class="w"> </span>that<span class="w"> </span>are<span class="w"> </span>needed<span class="w"> </span><span class="k">for</span><span class="w"> </span>executing<span class="w"> </span>the<span class="w"> </span>main<span class="w"> </span><span class="nb">command</span><span class="w"> </span><span class="o">(</span>parttool.py<span class="o">)</span>,<span class="w"> </span>mostly<span class="w"> </span>pertaining<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>target<span class="w"> </span>device
+-<span class="w"> </span>subcommand<span class="w"> </span>-<span class="w"> </span>this<span class="w"> </span>is<span class="w"> </span>the<span class="w"> </span>operation<span class="w"> </span>to<span class="w"> </span>be<span class="w"> </span>performed
+-<span class="w"> </span>subcommand-args<span class="w"> </span>-<span class="w"> </span>these<span class="w"> </span>are<span class="w"> </span>arguments<span class="w"> </span>that<span class="w"> </span>are<span class="w"> </span>specific<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>chosen<span class="w"> </span>operation
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Erase otadata, resetting the device to factory app</span>
+otatool.py<span class="w"> </span>--port<span class="w"> </span><span class="s2">&quot;/dev/ttyUSB1&quot;</span><span class="w"> </span>erase_otadata
+
+<span class="c1"># Erase contents of OTA app slot 0</span>
+otatool.py<span class="w"> </span>--port<span class="w"> </span><span class="s2">&quot;/dev/ttyUSB1&quot;</span><span class="w"> </span>erase_ota_partition<span class="w"> </span>--slot<span class="w"> </span><span class="m">0</span>
+
+<span class="c1"># Switch boot partition to that of app slot 1</span>
+otatool.py<span class="w"> </span>--port<span class="w"> </span><span class="s2">&quot;/dev/ttyUSB1&quot;</span><span class="w"> </span>switch_ota_partition<span class="w"> </span>--slot<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Read OTA partition &#39;ota_3&#39; and save contents to a file named &#39;ota_3.bin&#39;</span>
+otatool.py<span class="w"> </span>--port<span class="w"> </span><span class="s2">&quot;/dev/ttyUSB1&quot;</span><span class="w"> </span>read_ota_partition<span class="w"> </span>--name<span class="o">=</span>ota_3<span class="w"> </span>--output<span class="o">=</span>ota_3.bin
+</pre></div>
+</div>
+<p>More information can be obtained by specifying <code class="docutils literal notranslate"><span class="pre">--help</span></code> as argument:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Display possible subcommands and show main command argument descriptions</span>
+otatool.py<span class="w"> </span>--help
+
+<span class="c1"># Show descriptions for specific subcommand arguments</span>
+otatool.py<span class="w"> </span><span class="o">[</span>subcommand<span class="o">]</span><span class="w"> </span>--help
+</pre></div>
+</div>
+</section>
+</section>
+<section id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../api-guides/partition-tables.html"><span class="doc">Partition Tables</span></a></p></li>
+<li><p><a class="reference internal" href="../storage/partition.html"><span class="doc">Partitions API</span></a></p></li>
+<li><p><a class="reference internal" href="../peripherals/spi_flash/index.html"><span class="doc">SPI Flash API</span></a></p></li>
+<li><p><a class="reference internal" href="esp_https_ota.html"><span class="doc">ESP HTTPS OTA</span></a></p></li>
+</ul>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/ota/native_ota_example">system/ota/native_ota_example</a> demonstrates how to use the <cite>app_update</cite> component's APIs for native over-the-air (OTA) updates on ESP32. For applicable SoCs, please refer to <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/system/ota/native_ota_example/README.md">system/ota/native_ota_example/README.md</a>.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/ota/otatool">system/ota/otatool</a> demonstrates how to use the OTA tool to perform operations such as reading, writing, and erasing OTA partitions, switching boot partitions, and switching to factory partition. For more information, please refer to <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/system/ota/otatool/README.md">system/ota/otatool/README.md</a>.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/app_update/include/esp_ota_ops.h">components/app_update/include/esp_ota_ops.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_ota_ops.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">app_update</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">app_update</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES app_update
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES app_update
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_ota_get_app_descriptionv">
+<span id="_CPPv327esp_ota_get_app_descriptionv"></span><span id="_CPPv227esp_ota_get_app_descriptionv"></span><span id="esp_ota_get_app_description__void"></span><span class="target" id="esp__ota__ops_8h_1a467f97f6703e976ea25e8278143e2822"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="misc_system_api.html#_CPPv414esp_app_desc_t" title="esp_app_desc_t"><span class="n"><span class="pre">esp_app_desc_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_get_app_description</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_ota_get_app_descriptionv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Return esp_app_desc structure. This structure includes app version. </p>
+<p>
+Return description for running app. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This API is present for backward compatibility reasons. Alternative function with the same functionality is <code class="docutils literal notranslate"><span class="pre">esp_app_get_description</span></code></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to esp_app_desc structure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426esp_ota_get_app_elf_sha256Pc6size_t">
+<span id="_CPPv326esp_ota_get_app_elf_sha256Pc6size_t"></span><span id="_CPPv226esp_ota_get_app_elf_sha256Pc6size_t"></span><span id="esp_ota_get_app_elf_sha256__cP.s"></span><span class="target" id="esp__ota__ops_8h_1a8cc19b8e2a351da7eeaf1e6744f5aa71"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_get_app_elf_sha256</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dst</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426esp_ota_get_app_elf_sha256Pc6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Fill the provided buffer with SHA256 of the ELF file, formatted as hexadecimal, null-terminated. If the buffer size is not sufficient to fit the entire SHA256 in hex plus a null terminator, the largest possible number of bytes will be written followed by a null. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This API is present for backward compatibility reasons. Alternative function with the same functionality is <code class="docutils literal notranslate"><span class="pre">esp_app_get_elf_sha256</span></code></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dst</strong> -- Destination buffer </p></li>
+<li><p><strong>size</strong> -- Size of the buffer </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of bytes written to dst (including null terminator) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413esp_ota_beginPK15esp_partition_t6size_tP16esp_ota_handle_t">
+<span id="_CPPv313esp_ota_beginPK15esp_partition_t6size_tP16esp_ota_handle_t"></span><span id="_CPPv213esp_ota_beginPK15esp_partition_t6size_tP16esp_ota_handle_t"></span><span id="esp_ota_begin__esp_partition_tCP.s.esp_ota_handle_tP"></span><span class="target" id="esp__ota__ops_8h_1a9bc45e766f0a06a9aea5c3554451fbfd"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_begin</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">partition</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">image_size</span></span>, <a class="reference internal" href="#_CPPv416esp_ota_handle_t" title="esp_ota_handle_t"><span class="n"><span class="pre">esp_ota_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413esp_ota_beginPK15esp_partition_t6size_tP16esp_ota_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Commence an OTA update writing to the specified partition. </p>
+<p>The specified partition is erased to the specified image size.</p>
+<p>If image size is not yet known, pass OTA_SIZE_UNKNOWN which will cause the entire partition to be erased.</p>
+<p>On success, this function allocates memory that remains in use until esp_ota_end() is called with the returned handle.</p>
+<p>Note: If the rollback option is enabled and the running application has the ESP_OTA_IMG_PENDING_VERIFY state then it will lead to the ESP_ERR_OTA_ROLLBACK_INVALID_STATE error. Confirm the running app before to run download a new app, use esp_ota_mark_app_valid_cancel_rollback() function for it (this should be done as early as possible when you first download a new application).</p>
+<p>Note: Rollback is applicable only for app type partitions. Note: For Rollback - The OTA data slot corresponding to the last boot application partition will be invalidated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>partition</strong> -- Pointer to info for partition which will receive the OTA update. Required. This is considered as the staging partition (where OTA is downloaded), be default this also considered as the final partition which supposed to be updated. The final partition can be overwritten using esp_ota_set_final_partition() after calling esp_ota_begin() to relocate contents to the final destination partition. </p></li>
+<li><p><strong>image_size</strong> -- Size of new OTA app image. Partition will be erased in order to receive this size of image. If 0 or OTA_SIZE_UNKNOWN, the entire partition is erased. </p></li>
+<li><p><strong>out_handle</strong> -- On success, returns a handle which should be used for subsequent esp_ota_write() and esp_ota_end() calls.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: OTA operation commenced successfully.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: partition or out_handle arguments were NULL, or partition doesn't point to an OTA app partition.</p></li>
+<li><p>ESP_ERR_NO_MEM: Cannot allocate memory for OTA operation.</p></li>
+<li><p>ESP_ERR_OTA_PARTITION_CONFLICT: Partition holds the currently running firmware, cannot update in place.</p></li>
+<li><p>ESP_ERR_NOT_FOUND: Partition argument not found in partition table.</p></li>
+<li><p>ESP_ERR_OTA_SELECT_INFO_INVALID: The OTA data partition contains invalid data.</p></li>
+<li><p>ESP_ERR_INVALID_SIZE: Partition doesn't fit in configured flash size.</p></li>
+<li><p>ESP_ERR_FLASH_OP_TIMEOUT or ESP_ERR_FLASH_OP_FAIL: Flash write failed.</p></li>
+<li><p>ESP_ERR_OTA_ROLLBACK_INVALID_STATE: If the running app has not confirmed state. Before performing an update, the application must be valid. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414esp_ota_resumePK15esp_partition_tK6size_tK6size_tP16esp_ota_handle_t">
+<span id="_CPPv314esp_ota_resumePK15esp_partition_tK6size_tK6size_tP16esp_ota_handle_t"></span><span id="_CPPv214esp_ota_resumePK15esp_partition_tK6size_tK6size_tP16esp_ota_handle_t"></span><span id="esp_ota_resume__esp_partition_tCP.sC.sC.esp_ota_handle_tP"></span><span class="target" id="esp__ota__ops_8h_1a71bd59350df0bc1a682a43d9f5ff0fbc"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_resume</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">partition</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">erase_size</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">image_offset</span></span>, <a class="reference internal" href="#_CPPv416esp_ota_handle_t" title="esp_ota_handle_t"><span class="n"><span class="pre">esp_ota_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414esp_ota_resumePK15esp_partition_tK6size_tK6size_tP16esp_ota_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Resume an interrupted OTA update by continuing to write to the specified partition. </p>
+<p>This function is used when an OTA update was previously started and needs to be resumed after an interruption. It continues the OTA process from the specified offset within the partition.</p>
+<p>Unlike esp_ota_begin(), this function does not erase the partition which receives the OTA update, but rather expects that part of the image has already been written correctly, and it resumes writing from the given offset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>partition</strong> -- Pointer to info for the partition which is receiving the OTA update. Required. </p></li>
+<li><p><strong>erase_size</strong> -- Specifies how much flash memory to erase before resuming OTA, depending on whether a sequential write or a bulk erase is being used. </p></li>
+<li><p><strong>image_offset</strong> -- Offset from where to resume the OTA process. Should be set to the number of bytes already written. </p></li>
+<li><p><strong>out_handle</strong> -- On success, returns a handle that should be used for subsequent esp_ota_write() and esp_ota_end() calls.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: OTA operation resumed successfully.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: partition, out_handle were NULL or image_offset arguments is negative, or partition doesn't point to an OTA app partition.</p></li>
+<li><p>ESP_ERR_NO_MEM: Cannot allocate memory for OTA operation.</p></li>
+<li><p>ESP_ERR_OTA_PARTITION_CONFLICT: Partition holds the currently running firmware, cannot update in place.</p></li>
+<li><p>ESP_ERR_NOT_FOUND: Partition argument not found in partition table.</p></li>
+<li><p>ESP_ERR_OTA_SELECT_INFO_INVALID: The OTA data partition contains invalid data.</p></li>
+<li><p>ESP_ERR_INVALID_SIZE: Partition doesn't fit in configured flash size.</p></li>
+<li><p>ESP_ERR_FLASH_OP_TIMEOUT or ESP_ERR_FLASH_OP_FAIL: Flash write failed. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_ota_set_final_partition16esp_ota_handle_tPK15esp_partition_tb">
+<span id="_CPPv327esp_ota_set_final_partition16esp_ota_handle_tPK15esp_partition_tb"></span><span id="_CPPv227esp_ota_set_final_partition16esp_ota_handle_tPK15esp_partition_tb"></span><span id="esp_ota_set_final_partition__esp_ota_handle_t.esp_partition_tCP.b"></span><span class="target" id="esp__ota__ops_8h_1ab58f2f8175f25c086680bcf685a341d8"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_set_final_partition</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416esp_ota_handle_t" title="esp_ota_handle_t"><span class="n"><span class="pre">esp_ota_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">final</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">finalize_with_copy</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_ota_set_final_partition16esp_ota_handle_tPK15esp_partition_tb" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set the final destination partition for OTA update. </p>
+<p>This function configures the specified final partition as the destination for the OTA update. It also allows setting a flag to indicate if the image should be copied from the staging partition to the final partition after the OTA update completes. Otherwise, copying will need to be handled by custom code using <a class="reference internal" href="../storage/partition.html#esp__partition_8h_1abb953ec5e52125039ae92b7377645221"><span class="std std-ref">esp_partition_copy()</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This can be called after esp_ota_begin() and before the OTA update has started (before esp_ota_write()).</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- OTA update handle obtained from esp_ota_begin(). </p></li>
+<li><p><strong>final</strong> -- Pointer to the final destination partition where the new image will be verified and potentially finalized. This partition must not be NULL. </p></li>
+<li><p><strong>finalize_with_copy</strong> -- Boolean flag indicating if the downloaded image should be copied from the staging partition to the final partition upon completion. Set to False if you intend to perform the final copy process manually later.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: final destination partition set successfully.</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Once the OTA update has started, changing the final destination partition is prohibited.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid arguments were passed (e.g., final partition is NULL).</p></li>
+<li><p>ESP_ERR_NOT_FOUND: OTA handle not found or final partition verification failed. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413esp_ota_write16esp_ota_handle_tPKv6size_t">
+<span id="_CPPv313esp_ota_write16esp_ota_handle_tPKv6size_t"></span><span id="_CPPv213esp_ota_write16esp_ota_handle_tPKv6size_t"></span><span id="esp_ota_write__esp_ota_handle_t.voidCP.s"></span><span class="target" id="esp__ota__ops_8h_1ad0c82589787238cceee85d384ff94963"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_write</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416esp_ota_handle_t" title="esp_ota_handle_t"><span class="n"><span class="pre">esp_ota_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413esp_ota_write16esp_ota_handle_tPKv6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write OTA update data to partition. </p>
+<p>This function can be called multiple times as data is received during the OTA operation. Data is written sequentially to the partition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle obtained from esp_ota_begin </p></li>
+<li><p><strong>data</strong> -- Data buffer to write </p></li>
+<li><p><strong>size</strong> -- Size of data buffer in bytes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Data was written to flash successfully, or size = 0</p></li>
+<li><p>ESP_ERR_INVALID_ARG: handle is invalid.</p></li>
+<li><p>ESP_ERR_OTA_VALIDATE_FAILED: First byte of image contains invalid image magic byte.</p></li>
+<li><p>ESP_ERR_FLASH_OP_TIMEOUT or ESP_ERR_FLASH_OP_FAIL: Flash write failed.</p></li>
+<li><p>ESP_ERR_INVALID_SIZE: if write would go out of bounds of the partition</p></li>
+<li><p>or one of error codes from lower-level flash driver. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_ota_write_with_offset16esp_ota_handle_tPKv6size_t8uint32_t">
+<span id="_CPPv325esp_ota_write_with_offset16esp_ota_handle_tPKv6size_t8uint32_t"></span><span id="_CPPv225esp_ota_write_with_offset16esp_ota_handle_tPKv6size_t8uint32_t"></span><span id="esp_ota_write_with_offset__esp_ota_handle_t.voidCP.s.uint32_t"></span><span class="target" id="esp__ota__ops_8h_1a1811ce053adf8b6ec3572ad9b0208810"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_write_with_offset</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416esp_ota_handle_t" title="esp_ota_handle_t"><span class="n"><span class="pre">esp_ota_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">offset</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_ota_write_with_offset16esp_ota_handle_tPKv6size_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write OTA update data to partition at an offset. </p>
+<p>This function can write data in non-contiguous manner. If flash encryption is enabled, data should be 16 bytes aligned.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>While performing OTA, if the packets arrive out of order, esp_ota_write_with_offset() can be used to write data in non-contiguous manner. Use of esp_ota_write_with_offset() in combination with esp_ota_write() is not recommended.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle obtained from esp_ota_begin </p></li>
+<li><p><strong>data</strong> -- Data buffer to write </p></li>
+<li><p><strong>size</strong> -- Size of data buffer in bytes </p></li>
+<li><p><strong>offset</strong> -- Offset in flash partition</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Data was written to flash successfully.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: handle is invalid.</p></li>
+<li><p>ESP_ERR_FLASH_OP_TIMEOUT or ESP_ERR_FLASH_OP_FAIL: Flash write failed. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411esp_ota_end16esp_ota_handle_t">
+<span id="_CPPv311esp_ota_end16esp_ota_handle_t"></span><span id="_CPPv211esp_ota_end16esp_ota_handle_t"></span><span id="esp_ota_end__esp_ota_handle_t"></span><span class="target" id="esp__ota__ops_8h_1a5431fefb9be82295bdf5f10cb94bd3ec"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_end</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416esp_ota_handle_t" title="esp_ota_handle_t"><span class="n"><span class="pre">esp_ota_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411esp_ota_end16esp_ota_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Finish OTA update and validate newly written app image. </p>
+<p>
+If the finalize_with_copy option is set, the staging partition will be copied to the final partition at the end of this function. Otherwise, copying will need to be handled by custom code using <a class="reference internal" href="../storage/partition.html#esp__partition_8h_1abb953ec5e52125039ae92b7377645221"><span class="std std-ref">esp_partition_copy()</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>After calling esp_ota_end(), the handle is no longer valid and any memory associated with it is freed (regardless of result). </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If either the final or staging partitions were for the bootloader, then at the end of this function, the bootloader is reset to its default offset: esp_image_bootloader_offset_set(ESP_PRIMARY_BOOTLOADER_OFFSET)</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- Handle obtained from esp_ota_begin().</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Newly written OTA app image is valid.</p></li>
+<li><p>ESP_ERR_NOT_FOUND: OTA handle was not found.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Handle was never written to.</p></li>
+<li><p>ESP_ERR_OTA_VALIDATE_FAILED: OTA image is invalid (either not a valid app image, or - if secure boot is enabled - signature failed to verify.)</p></li>
+<li><p>ESP_ERR_INVALID_STATE: If flash encryption is enabled, this result indicates an internal error writing the final encrypted bytes to flash. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413esp_ota_abort16esp_ota_handle_t">
+<span id="_CPPv313esp_ota_abort16esp_ota_handle_t"></span><span id="_CPPv213esp_ota_abort16esp_ota_handle_t"></span><span id="esp_ota_abort__esp_ota_handle_t"></span><span class="target" id="esp__ota__ops_8h_1ac07184f911550aa5a52877000be34464"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_abort</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416esp_ota_handle_t" title="esp_ota_handle_t"><span class="n"><span class="pre">esp_ota_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413esp_ota_abort16esp_ota_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Abort OTA update, free the handle and memory associated with it. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- obtained from esp_ota_begin().</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Handle and its associated memory is freed successfully.</p></li>
+<li><p>ESP_ERR_NOT_FOUND: OTA handle was not found. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426esp_ota_set_boot_partitionPK15esp_partition_t">
+<span id="_CPPv326esp_ota_set_boot_partitionPK15esp_partition_t"></span><span id="_CPPv226esp_ota_set_boot_partitionPK15esp_partition_t"></span><span id="esp_ota_set_boot_partition__esp_partition_tCP"></span><span class="target" id="esp__ota__ops_8h_1ae3f26950d63f174fa47bbf885c189973"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_set_boot_partition</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">partition</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426esp_ota_set_boot_partitionPK15esp_partition_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Configure OTA data for a new boot partition. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If this function returns ESP_OK, calling esp_restart() will boot the newly configured app partition.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>partition</strong> -- Pointer to info for partition containing app image to boot.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: OTA data updated, next reboot will use specified partition.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: partition argument was NULL or didn't point to a valid OTA partition of type &quot;app&quot;.</p></li>
+<li><p>ESP_ERR_OTA_VALIDATE_FAILED: Partition contained invalid app image. Also returned if secure boot is enabled and signature validation failed.</p></li>
+<li><p>ESP_ERR_NOT_FOUND: OTA data partition not found.</p></li>
+<li><p>ESP_ERR_FLASH_OP_TIMEOUT or ESP_ERR_FLASH_OP_FAIL: Flash erase or write failed. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426esp_ota_get_boot_partitionv">
+<span id="_CPPv326esp_ota_get_boot_partitionv"></span><span id="_CPPv226esp_ota_get_boot_partitionv"></span><span id="esp_ota_get_boot_partition__void"></span><span class="target" id="esp__ota__ops_8h_1af94acc01d323e763e40713268d62ff59"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_get_boot_partition</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426esp_ota_get_boot_partitionv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get partition info of currently configured boot app. </p>
+<p>If esp_ota_set_boot_partition() has been called, the partition which was set by that function will be returned.</p>
+<p>If esp_ota_set_boot_partition() has not been called, the result is usually the same as esp_ota_get_running_partition(). The two results are not equal if the configured boot partition does not contain a valid app (meaning that the running partition will be an app that the bootloader chose via fallback).</p>
+<p>If the OTA data partition is not present or not valid then the result is the first app partition found in the partition table. In priority order, this means: the factory app, the first OTA app slot, or the test app partition.</p>
+<p>Note that there is no guarantee the returned partition is a valid app. Use esp_image_verify(ESP_IMAGE_VERIFY, ...) to verify if the returned partition contains a bootable image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to info for partition structure, or NULL if partition table is invalid or a flash read operation failed. Any returned pointer is valid for the lifetime of the application. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_ota_get_running_partitionv">
+<span id="_CPPv329esp_ota_get_running_partitionv"></span><span id="_CPPv229esp_ota_get_running_partitionv"></span><span id="esp_ota_get_running_partition__void"></span><span class="target" id="esp__ota__ops_8h_1ab5e37815c69df1e033e38b6a977a564d"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_get_running_partition</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_ota_get_running_partitionv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get partition info of currently running app. </p>
+<p>This function is different to esp_ota_get_boot_partition() in that it ignores any change of selected boot partition caused by esp_ota_set_boot_partition(). Only the app whose code is currently running will have its partition information returned.</p>
+<p>The partition returned by this function may also differ from esp_ota_get_boot_partition() if the configured boot partition is somehow invalid, and the bootloader fell back to a different app partition at boot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to info for partition structure, or NULL if no partition is found or flash read operation failed. Returned pointer is valid for the lifetime of the application. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv433esp_ota_get_next_update_partitionPK15esp_partition_t">
+<span id="_CPPv333esp_ota_get_next_update_partitionPK15esp_partition_t"></span><span id="_CPPv233esp_ota_get_next_update_partitionPK15esp_partition_t"></span><span id="esp_ota_get_next_update_partition__esp_partition_tCP"></span><span class="target" id="esp__ota__ops_8h_1a5dc3fed9a7d20bf07e9c904f78769e41"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_get_next_update_partition</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">start_from</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv433esp_ota_get_next_update_partitionPK15esp_partition_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Return the next OTA app partition which should be written with a new firmware. </p>
+<p>Call this function to find an OTA app partition which can be passed to esp_ota_begin().</p>
+<p>Finds next partition round-robin, starting from the current running partition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>start_from</strong> -- If set, treat this partition info as describing the current running partition. Can be NULL, in which case esp_ota_get_running_partition() is used to find the currently running partition. The result of this function is never the same as this argument.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pointer to info for partition which should be updated next. NULL result indicates invalid OTA data partition, or that no eligible OTA app slot partition was found. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv433esp_ota_get_partition_descriptionPK15esp_partition_tP14esp_app_desc_t">
+<span id="_CPPv333esp_ota_get_partition_descriptionPK15esp_partition_tP14esp_app_desc_t"></span><span id="_CPPv233esp_ota_get_partition_descriptionPK15esp_partition_tP14esp_app_desc_t"></span><span id="esp_ota_get_partition_description__esp_partition_tCP.esp_app_desc_tP"></span><span class="target" id="esp__ota__ops_8h_1a5e26b2c60248d30a8792d3379cd0dd2d"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_get_partition_description</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">partition</span></span>, <a class="reference internal" href="misc_system_api.html#_CPPv414esp_app_desc_t" title="esp_app_desc_t"><span class="n"><span class="pre">esp_app_desc_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">app_desc</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv433esp_ota_get_partition_descriptionPK15esp_partition_tP14esp_app_desc_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns esp_app_desc structure for app partition. This structure includes app version. </p>
+<p>Returns a description for the requested app partition. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>partition</strong> -- <strong>[in]</strong> Pointer to app partition. (only app partition) </p></li>
+<li><p><strong>app_desc</strong> -- <strong>[out]</strong> Structure of info about app. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Successful.</p></li>
+<li><p>ESP_ERR_NOT_FOUND app_desc structure is not found. Magic word is incorrect.</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED Partition is not application.</p></li>
+<li><p>ESP_ERR_INVALID_ARG Arguments is NULL or if partition's offset exceeds partition size.</p></li>
+<li><p>ESP_ERR_INVALID_SIZE Read would go out of bounds of the partition.</p></li>
+<li><p>or one of error codes from lower-level flash driver. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv434esp_ota_get_bootloader_descriptionPK15esp_partition_tP21esp_bootloader_desc_t">
+<span id="_CPPv334esp_ota_get_bootloader_descriptionPK15esp_partition_tP21esp_bootloader_desc_t"></span><span id="_CPPv234esp_ota_get_bootloader_descriptionPK15esp_partition_tP21esp_bootloader_desc_t"></span><span id="esp_ota_get_bootloader_description__esp_partition_tCP.esp_bootloader_desc_tP"></span><span class="target" id="esp__ota__ops_8h_1ad566ddb5b8009093f8c8f6876e7188e8"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_get_bootloader_description</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">bootloader_partition</span></span>, <a class="reference internal" href="bootloader_image_format.html#_CPPv421esp_bootloader_desc_t" title="esp_bootloader_desc_t"><span class="n"><span class="pre">esp_bootloader_desc_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">desc</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv434esp_ota_get_bootloader_descriptionPK15esp_partition_tP21esp_bootloader_desc_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns the description structure of the bootloader. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bootloader_partition</strong> -- <strong>[in]</strong> Pointer to bootloader partition. If NULL, then the PRIMARY bootloader is used (the default location). offset = CONFIG_BOOTLOADER_OFFSET_IN_FLASH, size = CONFIG_PARTITION_TABLE_OFFSET - CONFIG_BOOTLOADER_OFFSET_IN_FLASH, </p></li>
+<li><p><strong>desc</strong> -- <strong>[out]</strong> Structure of info about bootloader. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Successful.</p></li>
+<li><p>ESP_ERR_NOT_FOUND Description structure is not found in the bootloader image. Magic byte is incorrect.</p></li>
+<li><p>ESP_ERR_INVALID_ARG Arguments is NULL.</p></li>
+<li><p>ESP_ERR_INVALID_SIZE Read would go out of bounds of the partition.</p></li>
+<li><p>or one of error codes from lower-level flash driver. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv441esp_ota_invalidate_inactive_ota_data_slotv">
+<span id="_CPPv341esp_ota_invalidate_inactive_ota_data_slotv"></span><span id="_CPPv241esp_ota_invalidate_inactive_ota_data_slotv"></span><span id="esp_ota_invalidate_inactive_ota_data_slot__void"></span><span class="target" id="esp__ota__ops_8h_1a694427afdea13f06d8341182752b95b4"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_invalidate_inactive_ota_data_slot</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv441esp_ota_invalidate_inactive_ota_data_slotv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Invalidate the OTA data slot associated with the last boot application partition. </p>
+<p>This function erases the OTA data slot corresponding to the last boot application partition, making the partition invalid for booting in future. The application partition itself is not erased, preserving its contents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK: Successfully invalidated the OTA data slot.</p></li>
+<li><p>ESP_FAIL: Failed to invalidate the OTA data slot (e.g., invalid parameters, no OTA data partition, or other errors).</p></li>
+<li><p>Other error codes from <code class="docutils literal notranslate"><span class="pre">esp_partition_erase_range</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv431esp_ota_get_app_partition_countv">
+<span id="_CPPv331esp_ota_get_app_partition_countv"></span><span id="_CPPv231esp_ota_get_app_partition_countv"></span><span id="esp_ota_get_app_partition_count__void"></span><span class="target" id="esp__ota__ops_8h_1a3f74f5f69ea0d83dd051982546cd6c0d"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_get_app_partition_count</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv431esp_ota_get_app_partition_countv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns number of ota partitions provided in partition table. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>Number of OTA partitions </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv438esp_ota_mark_app_valid_cancel_rollbackv">
+<span id="_CPPv338esp_ota_mark_app_valid_cancel_rollbackv"></span><span id="_CPPv238esp_ota_mark_app_valid_cancel_rollbackv"></span><span id="esp_ota_mark_app_valid_cancel_rollback__void"></span><span class="target" id="esp__ota__ops_8h_1a26dbc3704d172a86a4bb511c5379f726"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_mark_app_valid_cancel_rollback</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv438esp_ota_mark_app_valid_cancel_rollbackv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This function is called to indicate that the running app is working well. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK: if successful. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv433esp_ota_mark_app_invalid_rollbackv">
+<span id="_CPPv333esp_ota_mark_app_invalid_rollbackv"></span><span id="_CPPv233esp_ota_mark_app_invalid_rollbackv"></span><span id="esp_ota_mark_app_invalid_rollback__void"></span><span class="target" id="esp__ota__ops_8h_1ab4402aa2095426989b8c67a79c6db8ac"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_mark_app_invalid_rollback</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv433esp_ota_mark_app_invalid_rollbackv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This function is called to roll back to the previously workable app without reboot. </p>
+<p>Checks applications on a flash drive that can be booted in case of rollback. If the flash does not have at least one app (except the running app) then rollback is not possible. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK: if successful.</p></li>
+<li><p>ESP_FAIL: if not successful.</p></li>
+<li><p>ESP_ERR_OTA_ROLLBACK_FAILED: The rollback is not possible because the available OTA partitions on the flash do not contain a valid application. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv444esp_ota_mark_app_invalid_rollback_and_rebootv">
+<span id="_CPPv344esp_ota_mark_app_invalid_rollback_and_rebootv"></span><span id="_CPPv244esp_ota_mark_app_invalid_rollback_and_rebootv"></span><span id="esp_ota_mark_app_invalid_rollback_and_reboot__void"></span><span class="target" id="esp__ota__ops_8h_1a89eff13bd3b96f75e5739420a3853a0b"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_mark_app_invalid_rollback_and_reboot</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv444esp_ota_mark_app_invalid_rollback_and_rebootv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This function is called to roll back to the previously workable app with reboot. </p>
+<p>Equivalent to calling esp_ota_mark_app_invalid_rollback(), and, if successful, followed by esp_restart().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_FAIL: if not successful.</p></li>
+<li><p>ESP_ERR_OTA_ROLLBACK_FAILED: The rollback is not possible due to flash does not have any apps. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv434esp_ota_get_last_invalid_partitionv">
+<span id="_CPPv334esp_ota_get_last_invalid_partitionv"></span><span id="_CPPv234esp_ota_get_last_invalid_partitionv"></span><span id="esp_ota_get_last_invalid_partition__void"></span><span class="target" id="esp__ota__ops_8h_1a106bebbf17e786d8f59fd3f203f09633"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_get_last_invalid_partition</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv434esp_ota_get_last_invalid_partitionv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns last partition with invalid state (ESP_OTA_IMG_INVALID or ESP_OTA_IMG_ABORTED). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>partition. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_ota_get_state_partitionPK15esp_partition_tP20esp_ota_img_states_t">
+<span id="_CPPv327esp_ota_get_state_partitionPK15esp_partition_tP20esp_ota_img_states_t"></span><span id="_CPPv227esp_ota_get_state_partitionPK15esp_partition_tP20esp_ota_img_states_t"></span><span id="esp_ota_get_state_partition__esp_partition_tCP.esp_ota_img_states_tP"></span><span class="target" id="esp__ota__ops_8h_1a7acd9fcddfe727052b8a8f82ae6d6157"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_get_state_partition</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><span class="n"><span class="pre">esp_partition_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">partition</span></span>, <span class="n"><span class="pre">esp_ota_img_states_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ota_state</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_ota_get_state_partitionPK15esp_partition_tP20esp_ota_img_states_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns state for given partition. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>partition</strong> -- <strong>[in]</strong> Pointer to partition. </p></li>
+<li><p><strong>ota_state</strong> -- <strong>[out]</strong> state of partition (if this partition has a record in otadata). </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Successful.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: partition or ota_state arguments were NULL.</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: partition is not ota.</p></li>
+<li><p>ESP_ERR_NOT_FOUND: Partition table does not have otadata or state was not found for given partition. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv437esp_ota_erase_last_boot_app_partitionv">
+<span id="_CPPv337esp_ota_erase_last_boot_app_partitionv"></span><span id="_CPPv237esp_ota_erase_last_boot_app_partitionv"></span><span id="esp_ota_erase_last_boot_app_partition__void"></span><span class="target" id="esp__ota__ops_8h_1a6884e3f6a31e1de34606254a2771f372"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_erase_last_boot_app_partition</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv437esp_ota_erase_last_boot_app_partitionv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Erase previous boot app partition and corresponding otadata select for this partition. </p>
+<p>When current app is marked to as valid then you can erase previous app partition. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK: Successful, otherwise ESP_ERR. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv434esp_ota_check_rollback_is_possiblev">
+<span id="_CPPv334esp_ota_check_rollback_is_possiblev"></span><span id="_CPPv234esp_ota_check_rollback_is_possiblev"></span><span id="esp_ota_check_rollback_is_possible__void"></span><span class="target" id="esp__ota__ops_8h_1a1c68fbc471a55b4fc8d1b8d8b9ea1d8c"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_check_rollback_is_possible</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv434esp_ota_check_rollback_is_possiblev" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Checks applications on the slots which can be booted in case of rollback. </p>
+<p>These applications should be valid (marked in otadata as not UNDEFINED, INVALID or ABORTED and crc is good) and be able booted, and secure_version of app &gt;= secure_version of efuse (if anti-rollback is enabled).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>True: Returns true if the slots have at least one app (except the running app).</p></li>
+<li><p>False: The rollback is not possible. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.OTA_SIZE_UNKNOWN">
+<span class="target" id="esp__ota__ops_8h_1a2b59e5257a669f4d42123b914659b13c"></span><span class="sig-name descname"><span class="n"><span class="pre">OTA_SIZE_UNKNOWN</span></span></span><a class="headerlink" href="#c.OTA_SIZE_UNKNOWN" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Used for esp_ota_begin() if new image size is unknown </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.OTA_WITH_SEQUENTIAL_WRITES">
+<span class="target" id="esp__ota__ops_8h_1a553ec9260e97fe480b890a1ef0ecf434"></span><span class="sig-name descname"><span class="n"><span class="pre">OTA_WITH_SEQUENTIAL_WRITES</span></span></span><a class="headerlink" href="#c.OTA_WITH_SEQUENTIAL_WRITES" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Used for esp_ota_begin() if new image size is unknown and erase can be done in incremental manner (assuming write operation is in continuous sequence) </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_OTA_BASE">
+<span class="target" id="esp__ota__ops_8h_1a82107daeadfd3ec3f89b81a1c05adb3d"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_OTA_BASE</span></span></span><a class="headerlink" href="#c.ESP_ERR_OTA_BASE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Base error code for ota_ops api </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_OTA_PARTITION_CONFLICT">
+<span class="target" id="esp__ota__ops_8h_1a41f0ac37858fcd77ce7d016c0d21dba0"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_OTA_PARTITION_CONFLICT</span></span></span><a class="headerlink" href="#c.ESP_ERR_OTA_PARTITION_CONFLICT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Error if request was to write or erase the current running partition </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_OTA_SELECT_INFO_INVALID">
+<span class="target" id="esp__ota__ops_8h_1ade03c22c871db65a35ea0cb9b12d4bb2"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_OTA_SELECT_INFO_INVALID</span></span></span><a class="headerlink" href="#c.ESP_ERR_OTA_SELECT_INFO_INVALID" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Error if OTA data partition contains invalid content </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_OTA_VALIDATE_FAILED">
+<span class="target" id="esp__ota__ops_8h_1ab1216d6e362b43c5aa6e8a801d4f267a"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_OTA_VALIDATE_FAILED</span></span></span><a class="headerlink" href="#c.ESP_ERR_OTA_VALIDATE_FAILED" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Error if OTA app image is invalid </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_OTA_SMALL_SEC_VER">
+<span class="target" id="esp__ota__ops_8h_1a9eada9dd4faf9e938a20b87b85a202de"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_OTA_SMALL_SEC_VER</span></span></span><a class="headerlink" href="#c.ESP_ERR_OTA_SMALL_SEC_VER" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Error if the firmware has a secure version less than the running firmware. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_OTA_ROLLBACK_FAILED">
+<span class="target" id="esp__ota__ops_8h_1a3f85b64cef55b67234243221d0867a4c"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_OTA_ROLLBACK_FAILED</span></span></span><a class="headerlink" href="#c.ESP_ERR_OTA_ROLLBACK_FAILED" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Error if flash does not have valid firmware in passive partition and hence rollback is not possible </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_OTA_ROLLBACK_INVALID_STATE">
+<span class="target" id="esp__ota__ops_8h_1a130be4d89c518e1fbe2edb203e22e6a3"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_OTA_ROLLBACK_INVALID_STATE</span></span></span><a class="headerlink" href="#c.ESP_ERR_OTA_ROLLBACK_INVALID_STATE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Error if current active firmware is still marked in pending validation state (ESP_OTA_IMG_PENDING_VERIFY), essentially first boot of firmware image post upgrade and hence firmware upgrade is not possible </p>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv416esp_ota_handle_t">
+<span id="_CPPv316esp_ota_handle_t"></span><span id="_CPPv216esp_ota_handle_t"></span><span id="esp_ota_handle_t"></span><span class="target" id="esp__ota__ops_8h_1ab59b49499007fc1d23ff9da4e311f63f"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ota_handle_t</span></span></span><a class="headerlink" href="#_CPPv416esp_ota_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Opaque handle for an application OTA update. </p>
+<p>esp_ota_begin() returns a handle which is then used for subsequent calls to esp_ota_write() and esp_ota_end(). </p>
+</dd></dl>
+
+</section>
+</section>
+<section id="debugging-ota-failure">
+<h2>Debugging OTA Failure<a class="headerlink" href="#debugging-ota-failure" title="Permalink to this heading"></a></h2>
+<figure class="align-center" id="id4">
+<a class="reference internal image-reference" href="../../_images/how-to-debug-when-OTA-fails-en.png"><img alt="How to Debug When OTA Fails (click to enlarge)" src="../../_images/how-to-debug-when-OTA-fails-en.png" style="width: 800.0px; height: 638.0px;" /></a>
+<figcaption>
+<p><span class="caption-text">How to Debug When OTA Fails (click to enlarge)</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Over The Air Updates (OTA) (api-reference/system/ota)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Over The Air Updates (OTA) (api-reference/system/ota)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="misc_system_api.html" class="btn btn-neutral float-left" title="Miscellaneous System APIs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="perfmon.html" class="btn btn-neutral float-right" title="Performance Monitor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Core Dump - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/core_dump.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/core_dump';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Anatomy of Core Dump Image" href="core_dump_internals.html" />
+    <link rel="prev" title="Static Analyzer" href="code-quality/static-analyzer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Core Dump</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configurations">Configurations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#destination">Destination</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#format-size">Format &amp; Size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data-integrity-check">Data Integrity Check</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reserved-stack-size">Reserved Stack Size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#core-dump-memory-regions">Core Dump Memory Regions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#core-dump-to-flash">Core Dump to Flash</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#core-dump-to-uart">Core Dump to UART</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#automatic-decoding">Automatic Decoding</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#manual-decoding">Manual Decoding</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#core-dump-commands">Core Dump Commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rom-functions-in-backtraces">ROM Functions in Backtraces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dumping-variables-on-demand">Dumping Variables on Demand</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#supported-notations-and-ram-regions">Supported Notations and RAM Regions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example">Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#related-documents">Related Documents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Guides</a></li>
+      <li class="breadcrumb-item active">Core Dump</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/core_dump.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="core-dump">
+<h1>Core Dump<a class="headerlink" href="#core-dump" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/api-guides/core_dump.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>A core dump is a set of software state information that is automatically saved by the panic handler when a fatal error occurs. Core dumps are useful for conducting post-mortem analysis of the software's state at the moment of failure. ESP-IDF provides support for generating core dumps.</p>
+<p>A core dump contains snapshots of all tasks in the system at the moment of failure, where each snapshot includes a task's control block (TCB) and stack. By analyzing the task snapshots, it is possible to find out what task, at what instruction (line of code), and what call stack of that task lead to the crash. It is also possible to dump the contents of variables on demand, provided those variables are assigned special core dump attributes.</p>
+<p>Core dump data is saved to a core dump file according to a particular format, see <a class="reference internal" href="core_dump_internals.html"><span class="doc">Core dump internals</span></a> for more details. However, ESP-IDF's <code class="docutils literal notranslate"><span class="pre">idf.py</span></code> command provides special subcommands to decode and analyze the core dump file.</p>
+</section>
+<section id="configurations">
+<h2>Configurations<a class="headerlink" href="#configurations" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Core</span> <span class="pre">dump</span></code> configuration options are available only if the <code class="docutils literal notranslate"><span class="pre">espcoredump</span></code> component is included in the build. To include <code class="docutils literal notranslate"><span class="pre">Core</span> <span class="pre">dump</span></code> into your project, add the <code class="docutils literal notranslate"><span class="pre">espcoredump</span></code> component as a dependency in either <code class="docutils literal notranslate"><span class="pre">REQUIRES</span></code> or <code class="docutils literal notranslate"><span class="pre">PRIV_REQUIRES</span></code> when registering your component with <code class="docutils literal notranslate"><span class="pre">idf_component_register</span></code>.</p>
+</div>
+<section id="destination">
+<h3>Destination<a class="headerlink" href="#destination" title="Permalink to this heading"></a></h3>
+<p>The <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-coredump-to-flash-or-uart"><span class="std std-ref">CONFIG_ESP_COREDUMP_TO_FLASH_OR_UART</span></a> option enables or disables core dump, and selects the core dump destination if enabled. When a crash occurs, the generated core dump file can either be saved to flash, or output to a connected host over UART.</p>
+</section>
+<section id="format-size">
+<h3>Format &amp; Size<a class="headerlink" href="#format-size" title="Permalink to this heading"></a></h3>
+<p>The <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-coredump-data-format"><span class="std std-ref">CONFIG_ESP_COREDUMP_DATA_FORMAT</span></a> option controls the format of the core dump file, namely ELF format or Binary format.</p>
+<p>The ELF format contains extended features and allows more information regarding erroneous tasks and crashed software to be saved. However, using the ELF format causes the core dump file to be larger. This format is recommended for new software designs and is flexible enough to be extended in future revisions to save more information.</p>
+<p>The Binary format is kept for compatibility reasons. Binary format core dump files are smaller while provide better performance.</p>
+<p>The <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-coredump-max-tasks-num"><span class="std std-ref">CONFIG_ESP_COREDUMP_MAX_TASKS_NUM</span></a> option configures the number of task snapshots saved by the core dump. Crashed task registers and the stack are always saved, regardless of this configuration option. Other tasks are included in order of their priority (starting with the highest-priority ready task).</p>
+<p>Core dump data integrity checking is supported via the <code class="docutils literal notranslate"><span class="pre">Components</span></code> &gt; <code class="docutils literal notranslate"><span class="pre">Core</span> <span class="pre">dump</span></code> &gt; <code class="docutils literal notranslate"><span class="pre">Core</span> <span class="pre">dump</span> <span class="pre">data</span> <span class="pre">integrity</span> <span class="pre">check</span></code> option.</p>
+</section>
+<section id="data-integrity-check">
+<h3>Data Integrity Check<a class="headerlink" href="#data-integrity-check" title="Permalink to this heading"></a></h3>
+<p>Core dump files include a checksum, which can be used to verify the integrity of the core dump file, i.e., the file has not been corrupted. The <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-coredump-checksum"><span class="std std-ref">CONFIG_ESP_COREDUMP_CHECKSUM</span></a> option controls the type of checksum, namely CRC32 or SHA256 (only supported in the ELF format).</p>
+<p>The CRC32 option provides better calculation performance and consumes less memory for storage.</p>
+<p>The SHA256 hash algorithm provides a greater probability of detecting corruption than a CRC32 with multiple-bit errors.</p>
+</section>
+<section id="reserved-stack-size">
+<h3>Reserved Stack Size<a class="headerlink" href="#reserved-stack-size" title="Permalink to this heading"></a></h3>
+<p>Core dump routines run from a separate stack due to core dump itself needing to parse and save all other task stacks. The <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-coredump-stack-size"><span class="std std-ref">CONFIG_ESP_COREDUMP_STACK_SIZE</span></a> option controls the size of the core dump's stack in number of bytes.</p>
+<p>Setting this option to 0 bytes will cause the core dump routines to run from the ISR stack, thus saving a bit of memory. Setting the option greater than zero will cause a separate stack to be instantiated.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If a separate stack is used, the recommended stack size should be larger than 1300 bytes to ensure that the core dump routines themselves do not cause a stack overflow.</p>
+</div>
+</section>
+<section id="core-dump-memory-regions">
+<h3>Core Dump Memory Regions<a class="headerlink" href="#core-dump-memory-regions" title="Permalink to this heading"></a></h3>
+<p>By default, core dumps typically save CPU registers, tasks data and summary of the panic reason. When the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-coredump-capture-dram"><span class="std std-ref">CONFIG_ESP_COREDUMP_CAPTURE_DRAM</span></a> option is selected, <code class="docutils literal notranslate"><span class="pre">.bss</span></code> and <code class="docutils literal notranslate"><span class="pre">.data</span></code> sections and <code class="docutils literal notranslate"><span class="pre">heap</span></code> data will also be part of the dump.</p>
+<p>For a better debugging experience, it is recommended to dump these sections. However, this will result in a larger coredump file. The required additional storage space may vary based on the amount of DRAM the application uses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Apart from the crashed task's TCB and stack, data located in the external RAM will not be stored in the core dump file, this include variables defined with <code class="docutils literal notranslate"><span class="pre">EXT_RAM_BSS_ATTR</span></code> or <code class="docutils literal notranslate"><span class="pre">EXT_RAM_NOINIT_ATTR</span></code> attributes, as well as any data stored in the <code class="docutils literal notranslate"><span class="pre">extram_bss</span></code> section.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This feature is only enabled when using the ELF file format.</p>
+</div>
+</section>
+</section>
+<section id="core-dump-to-flash">
+<h2>Core Dump to Flash<a class="headerlink" href="#core-dump-to-flash" title="Permalink to this heading"></a></h2>
+<p>When the core dump file is saved to flash, the file is saved to a special core dump partition in flash. Specifying the core dump partition will reserve space on the flash chip to store the core dump file.</p>
+<p>The core dump partition is automatically declared when using the default partition table provided by ESP-IDF. However, when using a custom partition table, you need to declare the core dump partition, as illustrated below:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Name,   Type, SubType, Offset,  Size
+# Note: if you have increased the bootloader size, make sure to update the offsets to avoid overlap
+nvs,      data, nvs,     0x9000,  0x6000
+phy_init, data, phy,     0xf000,  0x1000
+factory,  app,  factory, 0x10000, 1M
+coredump, data, coredump,,        64K
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If <a class="reference internal" href="../security/flash-encryption.html"><span class="doc">Flash Encryption</span></a> is enabled on the device, please add an <code class="docutils literal notranslate"><span class="pre">encrypted</span></code> flag to the core dump partition declaration. Please note that the core dump cannot be read from encrypted partitions using <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">coredump-info</span></code> or <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">coredump-debug</span></code> commands.
+It is recommended to read the core dump from ESP which will automatically decrypt the partition and send it for analysis, which can be done by running e.g. <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">coredump-info</span> <span class="pre">-c</span> <span class="pre">&lt;path-to-core-dump&gt;</span></code>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>coredump, data, coredump,,       64K, encrypted
+</pre></div>
+</div>
+</div>
+<p>There are no special requirements for the partition name. It can be chosen according to the application's needs, but the partition type should be <code class="docutils literal notranslate"><span class="pre">data</span></code> and the sub-type should be <code class="docutils literal notranslate"><span class="pre">coredump</span></code>. Also, when choosing partition size, note that the core dump file introduces a constant overhead of 20 bytes and a per-task overhead of 12 bytes. This overhead does not include the size of TCB and stack for every task. So the partition size should be at least <code class="docutils literal notranslate"><span class="pre">20</span> <span class="pre">+</span> <span class="pre">max</span> <span class="pre">tasks</span> <span class="pre">number</span> <span class="pre">x</span> <span class="pre">(12</span> <span class="pre">+</span> <span class="pre">TCB</span> <span class="pre">size</span> <span class="pre">+</span> <span class="pre">max</span> <span class="pre">task</span> <span class="pre">stack</span> <span class="pre">size)</span></code> bytes.</p>
+<p>An example of the generic command to analyze core dump from flash is:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>idf.py<span class="w"> </span>coredump-info
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>idf.py<span class="w"> </span>coredump-debug
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">coredump-info</span></code> and <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">coredump-debug</span></code> commands are wrappers around the <cite>esp-coredump</cite> tool for easier use in the ESP-IDF environment. For more information see <a class="reference internal" href="#core-dump-commands"><span class="std std-ref">Core Dump Commands</span></a> section.</p>
+</div>
+</section>
+<section id="core-dump-to-uart">
+<h2>Core Dump to UART<a class="headerlink" href="#core-dump-to-uart" title="Permalink to this heading"></a></h2>
+<p>When the core dump file is output to UART, the output file is Base64-encoded. The <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-coredump-decode"><span class="std std-ref">CONFIG_ESP_COREDUMP_DECODE</span></a> option allows for selecting whether the output file is automatically decoded by the ESP-IDF monitor or kept encoded for manual decoding.</p>
+<section id="automatic-decoding">
+<h3>Automatic Decoding<a class="headerlink" href="#automatic-decoding" title="Permalink to this heading"></a></h3>
+<p>If <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-coredump-decode"><span class="std std-ref">CONFIG_ESP_COREDUMP_DECODE</span></a> is set to automatically decode the UART core dump, ESP-IDF monitor will automatically decode the data, translate any function addresses to source code lines, and display it in the monitor. The output to ESP-IDF monitor would resemble the following output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>===============================================================
+==================== ESP32 CORE DUMP START ====================
+
+Crashed task handle: 0x3ffafba0, name: &#39;main&#39;, GDB name: &#39;process 1073413024&#39;
+Crashed task is not in the interrupt context
+Panic reason: abort() was called at PC 0x400d66b9 on core 0
+
+================== CURRENT THREAD REGISTERS ===================
+exccause       0x1d (StoreProhibitedCause)
+excvaddr       0x0
+epc1           0x40084013
+epc2           0x0
+...
+==================== CURRENT THREAD STACK =====================
+#0  0x4008110d in panic_abort (details=0x3ffb4f0b &quot;abort() was called at PC 0x400d66b9 on core 0&quot;) at /builds/espressif/esp-idf/components/esp_system/panic.c:472
+#1  0x4008510c in esp_system_abort (details=0x3ffb4f0b &quot;abort() was called at PC 0x400d66b9 on core 0&quot;) at /builds/espressif/esp-idf/components/esp_system/port/esp_system_chip.c:93
+...
+======================== THREADS INFO =========================
+  Id   Target Id          Frame
+* 1    process 1073413024 0x4008110d in panic_abort (details=0x3ffb4f0b &quot;abort() was called at PC 0x400d66b9 on core 0&quot;) at /builds/espressif/esp-idf/components/esp_system/panic.c:472
+  2    process 1073413368 vPortTaskWrapper (pxCode=0x0, pvParameters=0x0) at /builds/espressif/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:133
+...
+       TCB             NAME PRIO C/B  STACK USED/FREE
+---------- ---------------- -------- ----------------
+0x3ffafba0             main      1/1         368/3724
+0x3ffafcf8            IDLE0      0/0         288/1240
+0x3ffafe50            IDLE1      0/0         416/1108
+...
+==================== THREAD 1 (TCB: 0x3ffafba0, name: &#39;main&#39;) =====================
+#0  0x4008110d in panic_abort (details=0x3ffb4f0b &quot;abort() was called at PC 0x400d66b9 on core 0&quot;) at /builds/espressif/esp-idf/components/esp_system/panic.c:472
+#1  0x4008510c in esp_system_abort (details=0x3ffb4f0b &quot;abort() was called at PC 0x400d66b9 on core 0&quot;) at /builds/espressif/esp-idf/components/esp_system/port/esp_system_chip.c:93
+...
+==================== THREAD 2 (TCB: 0x3ffafcf8, name: &#39;IDLE0&#39;) =====================
+#0  vPortTaskWrapper (pxCode=0x0, pvParameters=0x0) at /builds/espressif/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:133
+#1  0x40000000 in ?? ()
+...
+======================= ALL MEMORY REGIONS ========================
+Name   Address   Size   Attrs
+...
+.iram0.vectors 0x40080000 0x403 R XA
+.iram0.text 0x40080404 0xb8ab R XA
+.dram0.data 0x3ffb0000 0x2114 RW A
+...
+===================== ESP32 CORE DUMP END =====================
+===============================================================
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-coredump-uart-delay"><span class="std std-ref">CONFIG_ESP_COREDUMP_UART_DELAY</span></a> allows for an optional delay to be added before the core dump file is output to UART.</p>
+</section>
+<section id="manual-decoding">
+<h3>Manual Decoding<a class="headerlink" href="#manual-decoding" title="Permalink to this heading"></a></h3>
+<p>If you set <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-coredump-decode"><span class="std std-ref">CONFIG_ESP_COREDUMP_DECODE</span></a> to no decoding, then the raw  Base64-encoded body of core dump is output to UART between the following header and footer of the UART output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>================= CORE DUMP START =================
+&lt;body of Base64-encoded core dump, save it to file on disk&gt;
+================= CORE DUMP END ===================
+</pre></div>
+</div>
+<p>It is advised to manually save the core dump text body to a file. The <code class="docutils literal notranslate"><span class="pre">CORE</span> <span class="pre">DUMP</span> <span class="pre">START</span></code> and <code class="docutils literal notranslate"><span class="pre">CORE</span> <span class="pre">DUMP</span> <span class="pre">END</span></code> lines must not be included in a core dump text file. The saved text can the be decoded using the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>idf.py<span class="w"> </span>coredump-info<span class="w"> </span>-c<span class="w"> </span>&lt;/path/to/saved/base64/text&gt;
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>idf.py<span class="w"> </span>coredump-debug<span class="w"> </span>-c<span class="w"> </span>&lt;/path/to/saved/base64/text&gt;
+</pre></div>
+</div>
+</section>
+</section>
+<section id="core-dump-commands">
+<span id="id1"></span><h2>Core Dump Commands<a class="headerlink" href="#core-dump-commands" title="Permalink to this heading"></a></h2>
+<p>ESP-IDF provides special commands to retrieve and analyze core dumps:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">coredump-info</span></code> - reads coredump from flash and prints crashed task's registers, call stack, list of available tasks in the system, memory regions, and contents of memory stored in core dump (TCBs and stacks).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">coredump-debug</span></code> - reads coredump from flash, saves it as ELF file and runs a GDB debug session with this file. You can examine memory, variables, and task states manually. Note that since not all memory is saved in the core dump, only the values of variables allocated on the stack are meaningful.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">coredump-info</span> <span class="pre">--help</span></code> and <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">coredump-debug</span> <span class="pre">--help</span></code> commands can be used to get more details on usage. For example, they can save the coredump into a file and avoid the need to read it from flash every time these commands are run.</p>
+<p>For advanced users who want to pass additional arguments or use custom ELF files, it is possible to use the <a class="reference external" href="https://github.com/espressif/esp-coredump">esp-coredump</a> tool directly. For more information, use in ESP-IDF environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>esp-coredump<span class="w"> </span>--help
+</pre></div>
+</div>
+</section>
+<section id="rom-functions-in-backtraces">
+<h2>ROM Functions in Backtraces<a class="headerlink" href="#rom-functions-in-backtraces" title="Permalink to this heading"></a></h2>
+<p>It is a possible that at the moment of a crash, some tasks and/or the crashed task itself have one or more ROM functions in their call stacks. Since ROM is not part of the program ELF, it is impossible for GDB to parse such call stacks due to GDB analyzing functions' prologues to decode backtraces. Thus, call stack parsing will break with an error message upon the first ROM function that is encountered.</p>
+<p>To overcome this issue, the <a class="reference external" href="https://github.com/espressif/esp-rom-elfs/releases">ROM ELF</a> provided by Espressif is loaded automatically by ESP-IDF monitor based on the target and its revision. More details about ROM ELFs can be found in <a class="reference external" href="https://github.com/espressif/esp-rom-elfs/blob/master/README.md">esp-rom-elfs</a>.</p>
+</section>
+<section id="dumping-variables-on-demand">
+<h2>Dumping Variables on Demand<a class="headerlink" href="#dumping-variables-on-demand" title="Permalink to this heading"></a></h2>
+<p>Sometimes you want to read the last value of a variable to understand the root cause of a crash. Core dump supports retrieving variable data over GDB by applying special attributes to declared variables.</p>
+<section id="supported-notations-and-ram-regions">
+<h3>Supported Notations and RAM Regions<a class="headerlink" href="#supported-notations-and-ram-regions" title="Permalink to this heading"></a></h3>
+<p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">COREDUMP_DRAM_ATTR</span></code> places the variable into the DRAM area, which is included in the dump.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">COREDUMP_RTC_ATTR</span></code> places the variable into the RTC area, which is included in the dump.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">COREDUMP_RTC_FAST_ATTR</span></code> places the variable into the RTC_FAST area, which is included in the dump.</p></li>
+</ul>
+</p>
+</section>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>In <a class="reference internal" href="kconfig/project-configuration-guide.html#project-configuration-menu"><span class="std std-ref">Editing the Configuration</span></a>, enable <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-coredump-to-flash-or-uart"><span class="std std-ref">COREDUMP TO FLASH</span></a>, then save and exit.</p></li>
+<li><p>In your project, create a global variable in the DRAM area, such as:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>//<span class="w"> </span>uint8_t<span class="w"> </span>global_var<span class="p">;</span>
+COREDUMP_DRAM_ATTR<span class="w"> </span>uint8_t<span class="w"> </span>global_var<span class="p">;</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>In the main application, set the variable to any value and <code class="docutils literal notranslate"><span class="pre">assert(0)</span></code> to cause a crash.</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">global_var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">25</span><span class="p">;</span>
+assert<span class="o">(</span><span class="m">0</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Build, flash, and run the application on a target device and wait for the dumping information.</p></li>
+<li><p>Run the command below to start core dumping in GDB, where <code class="docutils literal notranslate"><span class="pre">PORT</span></code> is the device USB port:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>idf.py<span class="w"> </span>coredump-debug
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li><p>In GDB shell, type <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">global_var</span></code> to get the variable content:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>gdb<span class="o">)</span><span class="w"> </span>p<span class="w"> </span>global_var
+<span class="nv">$1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">25</span><span class="w"> </span><span class="s1">&#39;\031&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="related-documents">
+<h3>Related Documents<a class="headerlink" href="#related-documents" title="Permalink to this heading"></a></h3>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="core_dump_internals.html">Anatomy of Core Dump Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_dump_internals.html#overview-of-implementation">Overview of Implementation</a></li>
+</ul>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Core Dump (api-guides/core_dump)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Core Dump (api-guides/core_dump)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="code-quality/static-analyzer.html" class="btn btn-neutral float-left" title="Static Analyzer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="core_dump_internals.html" class="btn btn-neutral float-right" title="Anatomy of Core Dump Image" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

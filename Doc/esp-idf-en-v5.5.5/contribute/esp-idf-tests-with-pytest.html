@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESP-IDF Tests with Pytest Guide - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/contribute/esp-idf-tests-with-pytest.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'contribute/esp-idf-tests-with-pytest';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ESP-IDF Versions" href="../versions.html" />
+    <link rel="prev" title="Copyright Header Guide" href="copyright-guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Contributions Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#how-to-contribute">How to Contribute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#before-contributing">Before Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#pull-request-process">Pull Request Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#legal-part">Legal Part</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#related-documents">Related Documents</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="style-guide.html">Espressif IoT Development Framework Style Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install-pre-commit-hook.html">Install Pre-commit Hook for ESP-IDF Project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="documenting-code.html">Documenting Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="creating-examples.html">Creating Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api-reference/template.html">API Documentation Template</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributor-agreement.html">Contributor Agreement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="copyright-guide.html">Copyright Header Guide</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ESP-IDF Tests with Pytest Guide</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#common-concepts">Common Concepts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytest-in-esp-idf">pytest in ESP-IDF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-target-tests-in-ci">Running Target Tests in CI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-tests-locally">Running Tests Locally</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytest-tips-tricks">Pytest Tips &amp; Tricks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#further-readings">Further Readings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Contributions Guide</a></li>
+      <li class="breadcrumb-item active">ESP-IDF Tests with Pytest Guide</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/contribute/esp-idf-tests-with-pytest.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="esp-idf-tests-with-pytest-guide">
+<h1>ESP-IDF Tests with Pytest Guide<a class="headerlink" href="#esp-idf-tests-with-pytest-guide" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/contribute/esp-idf-tests-with-pytest.html">[中文]</a></p>
+<p>ESP-IDF provides a variety of testing mechanisms that runs directly on target ESP chips (referred to as <strong>target test</strong>). These target tests are typically integrated into an ESP-IDF project specifically designed for testing purposes (known as a <strong>test app</strong>). Similar to standard ESP-IDF projects, test apps follow the same build, flash, and monitoring procedures.</p>
+<p>In target testing, a connected host (for instance, a PC) is typically required to trigger specific test cases, provide test data, and evaluate test results.</p>
+<p>On the host side, ESP-IDF employs the pytest framework (alongside certain pytest plugins) to automate target testing. This guide delves into pytest in ESP-IDF, covering the following aspects:</p>
+<ol class="arabic simple">
+<li><p>Common concepts in ESP-IDF target testing.</p></li>
+<li><p>Using the pytest framework in Python scripts for target testing automation.</p></li>
+<li><p>ESP-IDF Continuous Integration (CI) target testing workflow.</p></li>
+<li><p>Running target tests locally using pytest.</p></li>
+<li><p>pytest tips and tricks.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In ESP-IDF, we use the following pytest plugins by default:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/pytest-embedded">pytest-embedded</a> with default services <code class="docutils literal notranslate"><span class="pre">esp,idf</span></code></p></li>
+<li><p><a class="reference external" href="https://github.com/pytest-dev/pytest-rerunfailures">pytest-rerunfailures</a></p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/pytest-ignore-test-results">pytest-ignore-test-results</a></p></li>
+</ul>
+<p>All the concepts and usages introduced in this guide are based on the default behavior of these plugins, thus may not be available in vanilla pytest.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This guide specifically targets ESP-IDF contributors. Some of the concepts, like the custom markers, may not be directly applicable to personal projects using the ESP-IDF SDK. For running pytest-embedded in personal projects, please refer to <a class="reference external" href="https://docs.espressif.com/projects/pytest-embedded">pytest-embedded documentation</a>, and explore the <a class="reference external" href="https://github.com/espressif/pytest-embedded/tree/main/examples/esp-idf">provided examples</a>.</p>
+</div>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<p>All basic dependencies could be installed by running the ESP-IDF install script with the <code class="docutils literal notranslate"><span class="pre">--enable-pytest</span></code> argument:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>install.sh<span class="w"> </span>--enable-pytest
+</pre></div>
+</div>
+<p>Additional test script specific dependencies could be installed separately by running the ESP-IDF install script with the <code class="docutils literal notranslate"><span class="pre">--enable-pytest-specific</span></code> argument:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>install.sh<span class="w"> </span>--enable-test-specific
+</pre></div>
+</div>
+<p>Several mechanisms have been implemented to ensure the successful execution of the installation processes. If you encounter any issues during installation, please submit an issue report to our <a class="reference external" href="https://github.com/espressif/esp-idf/issues">GitHub issue tracker</a>.</p>
+</section>
+<section id="common-concepts">
+<h2>Common Concepts<a class="headerlink" href="#common-concepts" title="Permalink to this heading"></a></h2>
+<p>A <strong>test app</strong> is a set of binaries which are built from an IDF project that is used to test a particular feature of your project. Test apps are usually located under <code class="docutils literal notranslate"><span class="pre">${IDF_PATH}/examples</span></code>, <code class="docutils literal notranslate"><span class="pre">${IDF_PATH}/tools/test_apps</span></code>, and <code class="docutils literal notranslate"><span class="pre">${IDF_PATH}/components/&lt;COMPONENT_NAME&gt;/test_apps</span></code>.</p>
+<p>A <strong>Device under test (DUT)</strong> is a set of ESP chip(s) which connect to a host (e.g., a PC). The host is responsible for flashing the apps to the DUT, triggering the test cases, and inspecting the test results.</p>
+<p>A typical ESP-IDF project that contains a pytest script will have the following structure:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>.
+└── my_app/
+    ├── main/
+    │   └── ...
+    ├── CMakeLists.txt
+    └── pytest_foo.py
+</pre></div>
+</div>
+<p>Sometimes, for some multi-dut tests, one test case requires multiple test apps. In this case, the test app folder structure would be like this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>.
+├── my_app_foo/
+│   ├── main/
+│   │   └── ...
+│   └── CMakeLists.txt
+├── my_app_bar/
+│   ├── main/
+│   │   └── ...
+│   └── CMakeLists.txt
+└── pytest_foo_bar.py
+</pre></div>
+</div>
+</section>
+<section id="pytest-in-esp-idf">
+<h2>pytest in ESP-IDF<a class="headerlink" href="#pytest-in-esp-idf" title="Permalink to this heading"></a></h2>
+<section id="single-dut-test-cases">
+<h3>Single DUT Test Cases<a class="headerlink" href="#single-dut-test-cases" title="Permalink to this heading"></a></h3>
+<section id="getting-started">
+<h4>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">esp32</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">esp32s2</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">generic</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_hello_world</span><span class="p">(</span><span class="n">dut</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">dut</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is a simple test script that could run with the ESP-IDF getting-started example <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/get-started/hello_world">get-started/hello_world</a>.</p>
+<p>First two lines are the target markers:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">&#64;pytest.mark.esp32</span></code> is a marker that indicates that this test case should be run on the ESP32.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">&#64;pytest.mark.esp32s2</span></code> is a marker that indicates that this test case should be run on the ESP32-S2.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the test case can be run on all targets officially supported by ESP-IDF (call <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">--list-targets</span></code> for more details), you can use a special marker <code class="docutils literal notranslate"><span class="pre">supported_targets</span></code> to apply all of them in one line.</p>
+<p>We also supports <code class="docutils literal notranslate"><span class="pre">preview_targets</span></code> and <code class="docutils literal notranslate"><span class="pre">all_targets</span></code> as special target markers (call <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">--list-targets</span> <span class="pre">--preview</span></code> for a full targets list including preview targets).</p>
+</div>
+<p>Next, we have the environment marker:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">&#64;pytest.mark.generic</span></code> is a marker that indicates that this test case should be run on the <code class="docutils literal notranslate"><span class="pre">generic</span></code> board type.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For the detailed explanation of the environment markers, please refer to <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/tools/ci/idf_pytest/constants.py">ENV_MARKERS definition </a></p>
+</div>
+<p>Finally, we have the test function. With a <code class="docutils literal notranslate"><span class="pre">dut</span></code> fixture. In single-dut test cases, the <code class="docutils literal notranslate"><span class="pre">dut</span></code> fixture is an instance of <code class="docutils literal notranslate"><span class="pre">IdfDut</span></code> class, for multi-dut test cases, it is a tuple of <code class="docutils literal notranslate"><span class="pre">IdfDut</span></code> instances. For more details regarding the <code class="docutils literal notranslate"><span class="pre">IdfDut</span></code> class, please refer to <a class="reference external" href="https://docs.espressif.com/projects/pytest-embedded/en/latest/api.html#pytest_embedded_idf.dut.IdfDut">pytest-embedded IdfDut API reference</a>.</p>
+</section>
+<section id="same-app-with-different-sdkconfig-files">
+<h4>Same App With Different sdkconfig Files<a class="headerlink" href="#same-app-with-different-sdkconfig-files" title="Permalink to this heading"></a></h4>
+<p>For some test cases, you may need to run the same app with different sdkconfig files. For detailed documentation regarding sdkconfig related concepts, please refer to <a class="reference external" href="https://docs.espressif.com/projects/idf-build-apps/en/latest/explanations/find.html">idf-build-apps Documentation</a>.</p>
+<p>Here's a simple example that demonstrates how to run the same app with different sdkconfig files. Assume we have the following folder structure:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>.
+└── my_app/
+    ├── main/
+    │   └── ...
+    ├── CMakeLists.txt
+    ├── sdkconfig.ci.foo
+    ├── sdkconfig.ci.bar
+    └── pytest_foo.py
+</pre></div>
+</div>
+<p>If the test case needs to run all supported targets with these two sdkconfig files, you can use the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">esp32</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">esp32s2</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="p">[</span>    <span class="c1"># &lt;-- parameterize the sdkconfig file</span>
+    <span class="s1">&#39;foo&#39;</span><span class="p">,</span>                              <span class="c1"># &lt;-- run with sdkconfig.ci.foo</span>
+    <span class="s1">&#39;bar&#39;</span><span class="p">,</span>                              <span class="c1"># &lt;-- run with sdkconfig.ci.bar</span>
+<span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>                       <span class="c1"># &lt;-- `indirect=True` is required, indicates this param is pre-calculated before other fixtures</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_foo_bar</span><span class="p">(</span><span class="n">dut</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">config</span> <span class="o">==</span> <span class="s1">&#39;foo&#39;</span><span class="p">:</span>
+      <span class="n">dut</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s1">&#39;This is from sdkconfig.ci.foo&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">config</span> <span class="o">==</span> <span class="s1">&#39;bar&#39;</span><span class="p">:</span>
+      <span class="n">dut</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s1">&#39;This is from sdkconfig.ci.bar&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All markers will impact the test case simultaneously. Overall, this test function would be replicated to 4 test cases:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">test_foo_bar</span></code>, with esp32 target, and <code class="docutils literal notranslate"><span class="pre">sdkconfig.ci.foo</span></code> as the sdkconfig file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_foo_bar</span></code>, with esp32 target, and <code class="docutils literal notranslate"><span class="pre">sdkconfig.ci.bar</span></code> as the sdkconfig file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_foo_bar</span></code>, with esp32s2 target, and <code class="docutils literal notranslate"><span class="pre">sdkconfig.ci.foo</span></code> as the sdkconfig file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_foo_bar</span></code>, with esp32s2 target, and <code class="docutils literal notranslate"><span class="pre">sdkconfig.ci.bar</span></code> as the sdkconfig file</p></li>
+</ul>
+<p>Sometimes in the test script or the log file, you may see the following format:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">esp32.foo.test_foo_bar</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">esp32.bar.test_foo_bar</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">esp32s2.foo.test_foo_bar</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">esp32s2.bar.test_foo_bar</span></code></p></li>
+</ul>
+<p>We call this format the <strong>test case ID</strong>. The test case ID should be considered as the unique identifier of a test case. It is composed of the following parts:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">esp32</span></code>: the target name</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">foo</span></code>: the config name</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_foo_bar</span></code>: the test function name</p></li>
+</ul>
+<p>The test case ID is used to identify the test case in the JUnit report.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Nearly all the CLI options of pytest-embedded supports parameterization. To see all supported CLI options, you may run <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">--help</span></code> and check the <code class="docutils literal notranslate"><span class="pre">embedded-...</span></code> sections for vanilla pytest-embedded ones, and the <code class="docutils literal notranslate"><span class="pre">idf</span></code> sections for ESP-IDF specific ones.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The target markers, like <code class="docutils literal notranslate"><span class="pre">&#64;pytest.mark.esp32</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;pytest.mark.esp32s2</span></code>, are actually syntactic sugar for parameterization. In fact they are defined as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s1">&#39;esp32&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;esp32s2&#39;</span><span class="p">,</span>
+<span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="same-app-with-different-sdkconfig-files-different-targets">
+<h4>Same App With Different sdkconfig Files, Different Targets<a class="headerlink" href="#same-app-with-different-sdkconfig-files-different-targets" title="Permalink to this heading"></a></h4>
+<p>For some test cases, you may need to run the same app with different sdkconfig files. These sdkconfig files supports different targets. We may use <code class="docutils literal notranslate"><span class="pre">pytest.param</span></code> to achieve this. Let's use the same folder structure as above.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="p">[</span><span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">esp32</span><span class="p">]),</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="p">[</span><span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">esp32s2</span><span class="p">]),</span>
+<span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now this test function would be replicated to 2 test cases (represented as test case IDs):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">esp32.foo.test_foo_bar</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">esp32s2.bar.test_foo_bar</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="testing-serial-output-expecting">
+<h3>Testing Serial Output (Expecting)<a class="headerlink" href="#testing-serial-output-expecting" title="Permalink to this heading"></a></h3>
+<p>To ensure that test has executed successfully on target, the test script can test that serial output of the target using the <code class="docutils literal notranslate"><span class="pre">dut.expect()</span></code> function, for example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_hello_world</span><span class="p">(</span><span class="n">dut</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">dut</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s1">&#39;\d+&#39;</span><span class="p">)</span>  <span class="c1"># &lt;-- `expect`ing from a regex</span>
+    <span class="n">dut</span><span class="o">.</span><span class="n">expect_exact</span><span class="p">(</span><span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>  <span class="c1"># &lt;-- `expect_exact`ly the string</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">dut.expect(...)</span></code> will first compile the expected string into regex, which in turn is then used to seek through the serial output until the compiled regex is matched, or until a timeout occurs.</p>
+<p>Please pay extra attention to the expected string when it contains regex keyword characters (e.g., parentheses, square brackets). Alternatively, you may use <code class="docutils literal notranslate"><span class="pre">dut.expect_exact(...)</span></code> that will attempt to match the string without converting it into regex.</p>
+<p>For more information regarding the different types of <code class="docutils literal notranslate"><span class="pre">expect</span></code> functions, please refer to the <a class="reference external" href="https://docs.espressif.com/projects/pytest-embedded/en/latest/expecting.html">pytest-embedded Expecting documentation</a>.</p>
+</section>
+<section id="multi-dut-test-cases">
+<h3>Multi-DUT Test Cases<a class="headerlink" href="#multi-dut-test-cases" title="Permalink to this heading"></a></h3>
+<section id="multi-target-tests-with-the-same-app">
+<h4>Multi-Target Tests with the Same App<a class="headerlink" href="#multi-target-tests-with-the-same-app" title="Permalink to this heading"></a></h4>
+<p>In some cases a test may involve multiple targets running the same test app. Parameterize <code class="docutils literal notranslate"><span class="pre">count</span></code> to the number of DUTs you want to test with.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="mi">2</span><span class="p">,</span>
+<span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="p">[</span>
+  <span class="s1">&#39;esp32|esp32s2&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;esp32s3&#39;</span><span class="p">,</span>
+<span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_hello_world</span><span class="p">(</span><span class="n">dut</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">dut</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>
+    <span class="n">dut</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">|</span></code> symbol in all parameterized items is used for separating the settings for each DUT. In this example, the test case would be tested with:</p>
+<ul class="simple">
+<li><p>esp32, esp32s2</p></li>
+<li><p>esp32s3, esp32s3</p></li>
+</ul>
+<p>After setting the param <code class="docutils literal notranslate"><span class="pre">count</span></code> to 2, all the fixtures are changed into tuples.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><code class="docutils literal notranslate"><span class="pre">count</span></code> is mandatory for multi-DUT tests.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For detailed multi-dut parametrization documentation, please refer to <a class="reference external" href="https://docs.espressif.com/projects/pytest-embedded/en/latest/key_concepts.html#multi-duts">pytest-embedded Multi-DUT documentation</a>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In some test scripts, you may see target markers like <code class="docutils literal notranslate"><span class="pre">&#64;pytest.mark.esp32</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;pytest.mark.esp32s2</span></code> used together with multi-DUT test cases. This is deprecated and should be replaced with the <code class="docutils literal notranslate"><span class="pre">target</span></code> parametrization.</p>
+<p>For example,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">esp32</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">esp32s2</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="mi">2</span><span class="p">,</span>
+<span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_hello_world</span><span class="p">(</span><span class="n">dut</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">dut</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>
+    <span class="n">dut</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>should be replaced with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="mi">2</span><span class="p">,</span>
+<span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s1">&#39;esp32&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;esp32s2&#39;</span><span class="p">,</span>
+<span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_hello_world</span><span class="p">(</span><span class="n">dut</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">dut</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>
+    <span class="n">dut</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This could help avoid the ambiguity of the target markers when multi-DUT test cases are using different type of targets.</p>
+</div>
+</section>
+<section id="multi-target-tests-with-different-apps">
+<h4>Multi-Target Tests with Different Apps<a class="headerlink" href="#multi-target-tests-with-different-apps" title="Permalink to this heading"></a></h4>
+<p>In some cases, a test may involve multiple targets running different test apps (e.g., separate targets to act as master and slave). Usually in ESP-IDF, the folder structure would be like this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>.
+├── master/
+│   ├── main/
+│   │   └── ...
+│   └── CMakeLists.txt
+├── slave/
+│   ├── main/
+│   │   └── ...
+│   └── CMakeLists.txt
+└── pytest_master_slave.py
+</pre></div>
+</div>
+<p>In this case, we can parameterize the <code class="docutils literal notranslate"><span class="pre">app_path</span></code> to the path of the test apps you want to test with.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">multi_dut_generic</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="mi">2</span><span class="p">,</span>
+<span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;app_path, target&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot;master&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">|</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot;slave&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;esp32|esp32s2&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot;master&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">|</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot;slave&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;esp32s2|esp32&#39;</span><span class="p">),</span>
+<span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_master_slave</span><span class="p">(</span><span class="n">dut</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">master</span> <span class="o">=</span> <span class="n">dut</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">slave</span> <span class="o">=</span> <span class="n">dut</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">master</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>
+    <span class="n">slave</span><span class="o">.</span><span class="n">expect_exact</span><span class="p">(</span><span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When parametrizing two items, like <code class="docutils literal notranslate"><span class="pre">app_path,</span> <span class="pre">target</span></code> here, make sure you're passing a list of tuples to the <code class="docutils literal notranslate"><span class="pre">parametrize</span></code> decorator. Each tuple should contain the values for each item.</p>
+</div>
+<p>The test case here will be replicated to 2 test cases:</p>
+<ul class="simple">
+<li><p>dut-0, an ESP32, running app <code class="docutils literal notranslate"><span class="pre">master</span></code>, and dut-1, an ESP32-S2, running app <code class="docutils literal notranslate"><span class="pre">slave</span></code></p></li>
+<li><p>dut-0, an ESP32-S2, running app <code class="docutils literal notranslate"><span class="pre">master</span></code>, and dut-1, an ESP32, running app <code class="docutils literal notranslate"><span class="pre">slave</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="test-cases-with-unity-test-framework">
+<h3>Test Cases with Unity Test Framework<a class="headerlink" href="#test-cases-with-unity-test-framework" title="Permalink to this heading"></a></h3>
+<p>We use the <a class="reference external" href="https://github.com/ThrowTheSwitch/Unity">Unity test framework</a> in our unit tests. Overall, we have three types of test cases (<a class="reference external" href="https://github.com/ThrowTheSwitch/Unity">Unity test framework</a>):</p>
+<ul class="simple">
+<li><p>Normal test cases (single DUT)</p></li>
+<li><p>Multi-stage test cases (single DUT)</p></li>
+<li><p>Multi-device test cases (multi-DUT)</p></li>
+</ul>
+<p>All single-DUT test cases (including normal test cases and multi-stage test cases) can be run using the following command:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_unity_single_dut</span><span class="p">(</span><span class="n">dut</span><span class="p">:</span> <span class="n">IdfDut</span><span class="p">):</span>
+    <span class="n">dut</span><span class="o">.</span><span class="n">run_all_single_board_cases</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Using this command will skip all the test cases containing the <code class="docutils literal notranslate"><span class="pre">[ignore]</span></code> tag.</p>
+<p>If you need to run a group of test cases, you may run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_unity_single_dut</span><span class="p">(</span><span class="n">dut</span><span class="p">:</span> <span class="n">IdfDut</span><span class="p">):</span>
+    <span class="n">dut</span><span class="o">.</span><span class="n">run_all_single_board_cases</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s1">&#39;psram&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It would trigger all test cases with the <code class="docutils literal notranslate"><span class="pre">[psram]</span></code> tag.</p>
+<p>If you need to run all test cases except for a specific groups, you may run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_unity_single_dut</span><span class="p">(</span><span class="n">dut</span><span class="p">:</span> <span class="n">IdfDut</span><span class="p">):</span>
+    <span class="n">dut</span><span class="o">.</span><span class="n">run_all_single_board_cases</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s1">&#39;!psram&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This code will trigger all test cases except those with the [psram] tag.</p>
+<p>If you need to run a group of test cases filtered by specific attributes, you may run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_rtc_xtal32k</span><span class="p">(</span><span class="n">dut</span><span class="p">:</span> <span class="n">Dut</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">dut</span><span class="o">.</span><span class="n">run_all_single_board_cases</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;test_env&#39;</span><span class="p">:</span> <span class="s1">&#39;xtal32k&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>This command will trigger all tests with the attribute <code class="docutils literal notranslate"><span class="pre">test_env</span></code> equal to <code class="docutils literal notranslate"><span class="pre">xtal32k</span></code>.</p>
+<p>If you need to run tests by specific names, you may run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_dut_run_all_single_board_cases</span><span class="p">(</span><span class="n">dut</span><span class="p">):</span>
+    <span class="n">dut</span><span class="o">.</span><span class="n">run_all_single_board_cases</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;normal_case1&quot;</span><span class="p">,</span> <span class="s2">&quot;multiple_stages_test&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This command will trigger <code class="docutils literal notranslate"><span class="pre">normal_case1</span></code> and <code class="docutils literal notranslate"><span class="pre">multiple_stages_test</span></code></p>
+<p>We also provide a fixture <code class="docutils literal notranslate"><span class="pre">case_tester</span></code> to trigger all kinds of test cases easier. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_unity_single_dut</span><span class="p">(</span><span class="n">case_tester</span><span class="p">):</span>
+    <span class="n">case_tester</span><span class="o">.</span><span class="n">run_all_normal_cases</span><span class="p">()</span>       <span class="c1"># to run all normal test cases</span>
+    <span class="n">case_tester</span><span class="o">.</span><span class="n">run_all_multi_dev_cases</span><span class="p">()</span>    <span class="c1"># to run all multi-device test cases</span>
+    <span class="n">case_tester</span><span class="o">.</span><span class="n">run_all_multi_stage_cases</span><span class="p">()</span>  <span class="c1"># to run all multi-stage test cases</span>
+</pre></div>
+</div>
+<p>For a full list of the available functions, please refer to <a class="reference external" href="https://docs.espressif.com/projects/pytest-embedded/en/latest/api.html#pytest_embedded_idf.unity_tester.CaseTester">pytest-embedded case_tester API reference</a>.</p>
+</section>
+</section>
+<section id="running-target-tests-in-ci">
+<h2>Running Target Tests in CI<a class="headerlink" href="#running-target-tests-in-ci" title="Permalink to this heading"></a></h2>
+<p>The workflow in CI is as follows:</p>
+<figure class="align-center" id="id3">
+<div class="align-default"><img height="200" src="../_images/blockdiag-beb3b0888c4cf41291b7cc8435c6231a807e08d3.png" width="832" /></div>
+<figcaption>
+<p><span class="caption-text">Target Test Child Pipeline Workflow</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>All build jobs and target test jobs are generated automatically by our CI script <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/tools/ci/dynamic_pipelines">tools/ci/dynamic_pipelines</a>.</p>
+<section id="build-jobs">
+<h3>Build Jobs<a class="headerlink" href="#build-jobs" title="Permalink to this heading"></a></h3>
+<p>In CI, all ESP-IDF projects under <code class="docutils literal notranslate"><span class="pre">components</span></code>, <code class="docutils literal notranslate"><span class="pre">examples</span></code>, and <code class="docutils literal notranslate"><span class="pre">tools/test_apps</span></code>, are built with all supported targets and sdkconfig files. The binaries are built under <code class="docutils literal notranslate"><span class="pre">build_&lt;target&gt;_&lt;config&gt;</span></code>. For example</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>.
+├── build_esp32_history/
+│   └── ...
+├── build_esp32_nohistory/
+│   └── ...
+├── build_esp32s2_history/
+│   └── ...
+├── ...
+├── main/
+├── CMakeLists.txt
+├── sdkconfig.ci.history
+├── sdkconfig.ci.nohistory
+└── ...
+</pre></div>
+</div>
+<p>There are two types of build jobs, <code class="docutils literal notranslate"><span class="pre">build_test_related_apps</span></code> and <code class="docutils literal notranslate"><span class="pre">build_non_test_related_apps</span></code>.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">build_test_related_apps</span></code>, all the built binaries will be uploaded to our internal MinIO server. You may find the download link in the build report posted in the internal MR.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">build_non_test_related_apps</span></code>, all the built binaries will be removed after the build job is finished. Only the build log files will be uploaded to our internal MinIO server. You may also find the download link in the build report posted in the internal MR.</p>
+</section>
+<section id="target-test-jobs">
+<h3>Target Test Jobs<a class="headerlink" href="#target-test-jobs" title="Permalink to this heading"></a></h3>
+<p>In CI, all generated target test jobs are named according to the pattern &quot;&lt;targets&gt; - &lt;env_markers&gt;&quot;. For example, single-dut test job <code class="docutils literal notranslate"><span class="pre">esp32</span> <span class="pre">-</span> <span class="pre">generic</span></code>, or multi-dut test job <code class="docutils literal notranslate"><span class="pre">esp32,esp32</span> <span class="pre">-</span> <span class="pre">multi_dut_generic</span></code>.</p>
+<p>The binaries in the target test jobs are downloaded from our internal MinIO servers. For most of the test cases, only the files that are required by flash (like .bin files, flash_args files, etc) would be downloaded. For some test cases, like jtag test cases, .elf files are also downloaded.</p>
+</section>
+</section>
+<section id="running-tests-locally">
+<span id="run-the-tests-locally"></span><h2>Running Tests Locally<a class="headerlink" href="#running-tests-locally" title="Permalink to this heading"></a></h2>
+<section id="id1">
+<h3>Installation<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>First you need to install ESP-IDF with additional Python requirements:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span><span class="nv">$IDF_PATH</span>
+$<span class="w"> </span>bash<span class="w"> </span>install.sh<span class="w"> </span>--enable-ci<span class="w"> </span>--enable-pytest
+$<span class="w"> </span>.<span class="w"> </span>./export.sh
+</pre></div>
+</div>
+</section>
+<section id="build-directories">
+<h3>Build Directories<a class="headerlink" href="#build-directories" title="Permalink to this heading"></a></h3>
+<p>By default, each test case looks for the required binary files in the following directories (in order):</p>
+<ul class="simple">
+<li><p>Directory set by <code class="docutils literal notranslate"><span class="pre">--build-dir</span></code> command line argument, if specified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_&lt;target&gt;_&lt;sdkconfig&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_&lt;target&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_&lt;sdkconfig&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build</span></code></p></li>
+</ul>
+<p>As long as one of the above directories exists, the test case uses that directory to flash the binaries. If none of the above directories exists, the test case fails with an error.</p>
+</section>
+<section id="test-your-test-script">
+<h3>Test Your Test Script<a class="headerlink" href="#test-your-test-script" title="Permalink to this heading"></a></h3>
+<section id="single-dut-test-cases-with-sdkconfig-defaults">
+<h4>Single-DUT Test Cases With <code class="docutils literal notranslate"><span class="pre">sdkconfig.defaults</span></code><a class="headerlink" href="#single-dut-test-cases-with-sdkconfig-defaults" title="Permalink to this heading"></a></h4>
+<p>This is the simplest use case. Let's take <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/get-started/hello_world">examples/get-started/hello_world</a> as an example. Assume we're testing with a ESP32 board.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span><span class="nv">$IDF_PATH</span>/examples/get-started/hello_world
+$<span class="w"> </span>idf.py<span class="w"> </span>set-target<span class="w"> </span>esp32<span class="w"> </span>build
+$<span class="w"> </span>pytest<span class="w"> </span>--target<span class="w"> </span>esp32
+</pre></div>
+</div>
+</section>
+<section id="single-dut-test-cases-with-sdkconfig-ci-xxx">
+<h4>Single-DUT Test Cases With <code class="docutils literal notranslate"><span class="pre">sdkconfig.ci.xxx</span></code><a class="headerlink" href="#single-dut-test-cases-with-sdkconfig-ci-xxx" title="Permalink to this heading"></a></h4>
+<p>Some test cases may need to run with different sdkconfig files. Let's take <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/console/basic">examples/system/console/basic</a> as an example. Assume we're testing with a ESP32 board, and test with <code class="docutils literal notranslate"><span class="pre">sdkconfig.ci.history</span></code>.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span><span class="nv">$IDF_PATH</span>/examples/system/console/basic
+$<span class="w"> </span>idf.py<span class="w"> </span>-DSDKCONFIG_DEFAULTS<span class="o">=</span><span class="s1">&#39;sdkconfig.defaults;sdkconfig.ci.history&#39;</span><span class="w"> </span>-B<span class="w"> </span>build_esp32_history<span class="w"> </span>set-target<span class="w"> </span>esp32<span class="w"> </span>build
+$<span class="w"> </span>pytest<span class="w"> </span>--target<span class="w"> </span>esp32<span class="w"> </span>-k<span class="w"> </span><span class="s2">&quot;not nohistory&quot;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Here if we use <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">--target</span> <span class="pre">esp32</span> <span class="pre">-k</span> <span class="pre">history</span></code>, both test cases will be selected, since <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">-k</span></code> will use string matching to filter the test cases.</p>
+</div>
+<p>If you want to build and test with all sdkconfig files at the same time, you should use our CI script as an helper script:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span><span class="nv">$IDF_PATH</span>/examples/system/console/basic
+$<span class="w"> </span>python<span class="w"> </span><span class="nv">$IDF_PATH</span>/tools/ci/ci_build_apps.py<span class="w"> </span>.<span class="w"> </span>--target<span class="w"> </span>esp32<span class="w"> </span>-v<span class="w"> </span>--pytest-apps
+$<span class="w"> </span>pytest<span class="w"> </span>--target<span class="w"> </span>esp32
+</pre></div>
+</div>
+<p>The app with <code class="docutils literal notranslate"><span class="pre">sdkconfig.ci.history</span></code> will be built in <code class="docutils literal notranslate"><span class="pre">build_esp32_history</span></code>, and the app with <code class="docutils literal notranslate"><span class="pre">sdkconfig.ci.nohistory</span></code> will be built in <code class="docutils literal notranslate"><span class="pre">build_esp32_nohistory</span></code>. <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">--target</span> <span class="pre">esp32</span></code> will run tests on both apps.</p>
+</section>
+<section id="id2">
+<h4>Multi-DUT Test Cases<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h4>
+<p>Some test cases may need to run with multiple DUTs. Let's take <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/openthread">examples/openthread</a> as an example. The test case function looks like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;config, count, app_path, target&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;rcp|cli_h2|br&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span>
+         <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot;ot_rcp&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+         <span class="sa">f</span><span class="s1">&#39;|</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot;ot_cli&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+         <span class="sa">f</span><span class="s1">&#39;|</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot;ot_br&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;esp32c6|esp32h2|esp32s3&#39;</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_thread_connect</span><span class="p">(</span><span class="n">dut</span><span class="p">:</span><span class="n">Tuple</span><span class="p">[</span><span class="n">IdfDut</span><span class="p">,</span> <span class="n">IdfDut</span><span class="p">,</span> <span class="n">IdfDut</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>The test cases will run with</p>
+<ul class="simple">
+<li><p>ESP32-C6, flashed with <code class="docutils literal notranslate"><span class="pre">ot_rcp</span></code></p></li>
+<li><p>ESP32-H2, flashed with <code class="docutils literal notranslate"><span class="pre">ot_cli</span></code></p></li>
+<li><p>ESP32-S3, flashed with <code class="docutils literal notranslate"><span class="pre">ot_br</span></code></p></li>
+</ul>
+<p>Of course we can build the required binaries manually, but we can also use our CI script as an helper script:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span><span class="nv">$IDF_PATH</span>/examples/openthread
+$<span class="w"> </span>python<span class="w"> </span><span class="nv">$IDF_PATH</span>/tools/ci/ci_build_apps.py<span class="w"> </span>.<span class="w"> </span>--target<span class="w"> </span>all<span class="w"> </span>-v<span class="w"> </span>--pytest-apps<span class="w"> </span>-k<span class="w"> </span>test_thread_connect
+$<span class="w"> </span>pytest<span class="w"> </span>--target<span class="w"> </span>esp32c6,esp32h2,esp32s3<span class="w"> </span>-k<span class="w"> </span>test_thread_connect
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>It is mandatory to list all the targets for multi-DUT test cases. Otherwise, the test case would fail with an error.</p>
+</div>
+</section>
+</section>
+<section id="debug-ci-test-cases">
+<h3>Debug CI Test Cases<a class="headerlink" href="#debug-ci-test-cases" title="Permalink to this heading"></a></h3>
+<p>Sometimes you can't reproduce the CI test case failure locally. In this case, you may need to debug the test case with the binaries built in CI.</p>
+<p>Run pytest with <code class="docutils literal notranslate"><span class="pre">--pipeline-id</span> <span class="pre">&lt;pipeline_id&gt;</span></code> to force pytest to download the binaries from CI. For example:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span><span class="nv">$IDF_PATH</span>/examples/get-started/hello_world
+$<span class="w"> </span>pytest<span class="w"> </span>--target<span class="w"> </span>esp32<span class="w"> </span>--pipeline-id<span class="w"> </span><span class="m">123456</span>
+</pre></div>
+</div>
+<p>Even if you have <code class="docutils literal notranslate"><span class="pre">build_esp32_default</span></code>, or <code class="docutils literal notranslate"><span class="pre">build</span></code> directory locally, pytest would still download the binaries from pipeline 123456 and place the binaries in <code class="docutils literal notranslate"><span class="pre">build_esp32_default</span></code>. Then run the test case with this binary.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>&lt;pipeline_id&gt; should be the parent pipeline id. You can copy it in your MR page.</p>
+</div>
+</section>
+</section>
+<section id="pytest-tips-tricks">
+<h2>Pytest Tips &amp; Tricks<a class="headerlink" href="#pytest-tips-tricks" title="Permalink to this heading"></a></h2>
+<section id="custom-classes">
+<h3>Custom Classes<a class="headerlink" href="#custom-classes" title="Permalink to this heading"></a></h3>
+<p>Usually, you may want to write a custom class under these conditions:</p>
+<ol class="arabic simple">
+<li><p>Add more reusable functions for a certain number of DUTs.</p></li>
+<li><p>Add custom setup and teardown functions</p></li>
+</ol>
+<p>This code example is taken from <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/tools/test_apps/system/panic/conftest.py">panic/conftest.py </a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">PanicTestDut</span><span class="p">(</span><span class="n">IdfDut</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">monkeypatch_module</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">FixtureRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MonkeyPatch</span><span class="p">:</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">MonkeyPatch</span><span class="p">()</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">addfinalizer</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">undo</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mp</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">,</span> <span class="n">autouse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">replace_dut_class</span><span class="p">(</span><span class="n">monkeypatch_module</span><span class="p">:</span> <span class="n">MonkeyPatch</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">monkeypatch_module</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="s1">&#39;pytest_embedded_idf.dut.IdfDut&#39;</span><span class="p">,</span> <span class="n">PanicTestDut</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">monkeypatch_module</span></code> provides a <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/fixtures.html#scope-sharing-fixtures-across-classes-modules-packages-or-session">module-scoped</a> <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">monkeypatch</a> fixture.</p>
+<p><code class="docutils literal notranslate"><span class="pre">replace_dut_class</span></code> is a <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/fixtures.html#scope-sharing-fixtures-across-classes-modules-packages-or-session">module-scoped</a> <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/fixtures.html#autouse-fixtures-fixtures-you-don-t-have-to-request">autouse</a> fixture. This function replaces the <code class="docutils literal notranslate"><span class="pre">IdfDut</span></code> class with your custom class.</p>
+</section>
+<section id="mark-flaky-tests">
+<h3>Mark Flaky Tests<a class="headerlink" href="#mark-flaky-tests" title="Permalink to this heading"></a></h3>
+<p>Certain test cases are based on Ethernet or Wi-Fi. However, the test may be flaky due to networking issues. Thus, it is possible to mark a particular test case as flaky.</p>
+<p>This code example is taken from <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_eth/test_apps/pytest_esp_eth.py">pytest_esp_eth.py </a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">flaky</span><span class="p">(</span><span class="n">reruns</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">reruns_delay</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_esp_eth_ip101</span><span class="p">(</span><span class="n">dut</span><span class="p">:</span> <span class="n">IdfDut</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>This flaky marker means that if the test function failed, the test case would rerun for a maximum of 3 times with 5 seconds delay.</p>
+</section>
+<section id="mark-known-failures">
+<h3>Mark Known Failures<a class="headerlink" href="#mark-known-failures" title="Permalink to this heading"></a></h3>
+<p>Sometimes, a test can consistently fail for the following reasons:</p>
+<ul class="simple">
+<li><p>The feature under test (or the test itself) has a bug.</p></li>
+<li><p>The test environment is unstable (e.g., due to network issues) leading to a high failure ratio.</p></li>
+</ul>
+<p>Now you may mark this test case with marker <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/skipping.html#xfail-mark-test-functions-as-expected-to-fail">xfail</a> with a user-friendly readable reason.</p>
+<p>This code example is taken from <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/tools/test_apps/system/panic/pytest_panic.py">pytest_panic.py </a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">xfail</span><span class="p">(</span><span class="s1">&#39;config.getvalue(&quot;target&quot;) == &quot;esp32s2&quot;&#39;</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s1">&#39;raised IllegalInstruction instead&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cache_error</span><span class="p">(</span><span class="n">dut</span><span class="p">:</span> <span class="n">PanicTestDut</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">test_func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</pre></div>
+</div>
+<p>This marker means that test is a known failure on the ESP32-S2.</p>
+</section>
+<section id="mark-nightly-run-test-cases">
+<h3>Mark Nightly Run Test Cases<a class="headerlink" href="#mark-nightly-run-test-cases" title="Permalink to this heading"></a></h3>
+<p>Some test cases are only triggered in nightly run pipelines due to a lack of runners.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">nightly_run</span>
+</pre></div>
+</div>
+<p>This marker means that the test case would only be run with env var <code class="docutils literal notranslate"><span class="pre">NIGHTLY_RUN</span></code> or <code class="docutils literal notranslate"><span class="pre">INCLUDE_NIGHTLY_RUN</span></code>.</p>
+</section>
+<section id="mark-temporarily-disabled-in-ci">
+<h3>Mark Temporarily Disabled in CI<a class="headerlink" href="#mark-temporarily-disabled-in-ci" title="Permalink to this heading"></a></h3>
+<p>Some test cases which can pass locally may need to be temporarily disabled in CI due to a lack of runners.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">temp_skip_ci</span><span class="p">(</span><span class="n">targets</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;esp32&#39;</span><span class="p">,</span> <span class="s1">&#39;esp32s2&#39;</span><span class="p">],</span> <span class="n">reason</span><span class="o">=</span><span class="s1">&#39;lack of runners&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This marker means that the test case could still be run locally with <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">--target</span> <span class="pre">esp32</span></code>, but will not run in CI.</p>
+</section>
+<section id="add-new-markers">
+<h3>Add New Markers<a class="headerlink" href="#add-new-markers" title="Permalink to this heading"></a></h3>
+<p>We are using two types of custom markers, target markers which indicate that the test cases should support this target, and env markers which indicate that the test cases should be assigned to runners with these tags in CI.</p>
+<p>You can add new markers by adding one line under the <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/conftest.py">conftest.py</a>. If it is a target marker, it should be added into <code class="docutils literal notranslate"><span class="pre">TARGET_MARKERS</span></code>. If it is a marker that specifies a type of test environment, it should be added into <code class="docutils literal notranslate"><span class="pre">ENV_MARKERS</span></code>. The syntax should be: <code class="docutils literal notranslate"><span class="pre">&lt;marker_name&gt;:</span> <span class="pre">&lt;marker_description&gt;</span></code>.</p>
+</section>
+<section id="skip-auto-flash-binary">
+<h3>Skip Auto Flash Binary<a class="headerlink" href="#skip-auto-flash-binary" title="Permalink to this heading"></a></h3>
+<p>Skipping auto-flash binary every time would be useful when you are debugging your test script.</p>
+<p>You can call pytest with <code class="docutils literal notranslate"><span class="pre">--skip-autoflash</span> <span class="pre">y</span></code> to achieve it.</p>
+</section>
+<section id="record-statistics">
+<h3>Record Statistics<a class="headerlink" href="#record-statistics" title="Permalink to this heading"></a></h3>
+<p>Sometimes you may need to record some statistics while running the tests, like the performance test statistics.</p>
+<p>You can use <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/output.html?highlight=junit#record-xml-attribute">record_xml_attribute</a> fixture in your test script, and the statistics would be recorded as attributes in the JUnit report.</p>
+</section>
+<section id="logging-system">
+<h3>Logging System<a class="headerlink" href="#logging-system" title="Permalink to this heading"></a></h3>
+<p>Sometimes you may need to add some extra logging lines while running the test cases.</p>
+<p>You can use <a class="reference external" href="https://docs.python.org/3/library/logging.html">Python logging module</a> to achieve this.</p>
+<p>Here are some logging functions provided as fixtures,</p>
+<section id="log-performance">
+<h4><code class="docutils literal notranslate"><span class="pre">log_performance</span></code><a class="headerlink" href="#log-performance" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_hello_world</span><span class="p">(</span>
+    <span class="n">dut</span><span class="p">:</span> <span class="n">IdfDut</span><span class="p">,</span>
+    <span class="n">log_performance</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">log_performance</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The above example would log the performance item with pre-defined format: <code class="docutils literal notranslate"><span class="pre">[performance][test]:</span> <span class="pre">1</span></code> and record it under the <code class="docutils literal notranslate"><span class="pre">properties</span></code> tag in the JUnit report if <code class="docutils literal notranslate"><span class="pre">--junitxml</span> <span class="pre">&lt;filepath&gt;</span></code> is specified. The JUnit test case node would look like:</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">testcase</span> <span class="na">classname</span><span class="o">=</span><span class="s">&quot;examples.get-started.hello_world.pytest_hello_world&quot;</span> <span class="na">file</span><span class="o">=</span><span class="s">&quot;examples/get-started/hello_world/pytest_hello_world.py&quot;</span> <span class="na">line</span><span class="o">=</span><span class="s">&quot;13&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;esp32.default.test_hello_world&quot;</span> <span class="na">time</span><span class="o">=</span><span class="s">&quot;8.389&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">properties</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">property</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;test&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;1&quot;</span><span class="p">/&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">properties</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">testcase</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="check-performance">
+<h4><code class="docutils literal notranslate"><span class="pre">check_performance</span></code><a class="headerlink" href="#check-performance" title="Permalink to this heading"></a></h4>
+<p>We provide C macros <code class="docutils literal notranslate"><span class="pre">TEST_PERFORMANCE_LESS_THAN</span></code> and <code class="docutils literal notranslate"><span class="pre">TEST_PERFORMANCE_GREATER_THAN</span></code> to log the performance item and check if the value is in the valid range. Sometimes the performance item value could not be measured in C code, so we also provide a Python function for the same purpose. Please note that using C macros is the preferred approach, since the Python function could not recognize the threshold values of the same performance item under different <code class="docutils literal notranslate"><span class="pre">#ifdef</span></code> blocks well.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_hello_world</span><span class="p">(</span>
+    <span class="n">dut</span><span class="p">:</span> <span class="n">IdfDut</span><span class="p">,</span>
+    <span class="n">check_performance</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">check_performance</span><span class="p">(</span><span class="s1">&#39;RSA_2048KEY_PUBLIC_OP&#39;</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="s1">&#39;esp32&#39;</span><span class="p">)</span>
+    <span class="n">check_performance</span><span class="p">(</span><span class="s1">&#39;RSA_2048KEY_PUBLIC_OP&#39;</span><span class="p">,</span> <span class="mi">19001</span><span class="p">,</span> <span class="s1">&#39;esp32&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The above example would first get the threshold values of the performance item <code class="docutils literal notranslate"><span class="pre">RSA_2048KEY_PUBLIC_OP</span></code> from <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/idf_test/include/idf_performance.h">components/idf_test/include/idf_performance.h</a> and the target-specific one <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/idf_test/include/esp32/idf_performance_target.h">components/idf_test/include/esp32/idf_performance_target.h</a>, then check if the value reached the minimum limit or exceeded the maximum limit.</p>
+<p>Let us assume the value of <code class="docutils literal notranslate"><span class="pre">IDF_PERFORMANCE_MAX_RSA_2048KEY_PUBLIC_OP</span></code> is 19000. so the first <code class="docutils literal notranslate"><span class="pre">check_performance</span></code> line would pass and the second one would fail with warning: <code class="docutils literal notranslate"><span class="pre">[Performance]</span> <span class="pre">RSA_2048KEY_PUBLIC_OP</span> <span class="pre">value</span> <span class="pre">is</span> <span class="pre">19001,</span> <span class="pre">doesn\'t</span> <span class="pre">meet</span> <span class="pre">pass</span> <span class="pre">standard</span> <span class="pre">19000.0</span></code>.</p>
+</section>
+</section>
+</section>
+<section id="further-readings">
+<h2>Further Readings<a class="headerlink" href="#further-readings" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.pytest.org/en/stable/">pytest documentation</a></p></li>
+<li><p><a class="reference external" href="https://docs.espressif.com/projects/pytest-embedded/en/latest/">pytest-embedded documentation</a></p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=ESP-IDF Tests with Pytest Guide (contribute/esp-idf-tests-with-pytest)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=ESP-IDF Tests with Pytest Guide (contribute/esp-idf-tests-with-pytest)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="copyright-guide.html" class="btn btn-neutral float-left" title="Copyright Header Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../versions.html" class="btn btn-neutral float-right" title="ESP-IDF Versions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

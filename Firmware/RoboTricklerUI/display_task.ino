@@ -40,19 +40,35 @@ IRAM_ATTR void lvglDisplayTask(void *parg)
     }
 }
 
-IRAM_ATTR void initDisplayTask(void)
+IRAM_ATTR bool initDisplayTask(void)
 {
     if (lvglMutex == NULL)
     {
         lvglMutex = xSemaphoreCreateRecursiveMutex();
+        if (lvglMutex == NULL)
+        {
+            return false;
+        }
     }
 
-    xTaskCreatePinnedToCore(lvglDisplayTask,
-                            "lvglTask",
-                            DISP_TASK_STACK,
-                            NULL,
-                            DISP_TASK_PRIORITY,
-                            &lvDisplayTaskHandle,
-                            DISP_TASK_CORE // Keep LVGL and web servicing on one core.
-    );
+    if (lvDisplayTaskHandle != NULL)
+    {
+        return true;
+    }
+
+    BaseType_t taskCreated = xTaskCreatePinnedToCore(lvglDisplayTask,
+                                                     "lvglTask",
+                                                     DISP_TASK_STACK,
+                                                     NULL,
+                                                     DISP_TASK_PRIORITY,
+                                                     &lvDisplayTaskHandle,
+                                                     DISP_TASK_CORE);
+    if (taskCreated != pdPASS)
+    {
+        lvDisplayTaskHandle = NULL;
+        vSemaphoreDelete(lvglMutex);
+        lvglMutex = NULL;
+        return false;
+    }
+    return true;
 }

@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heap Memory Allocation - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/mem_alloc.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/system/mem_alloc';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Memory Management for MMU Supported Memory" href="mm.html" />
+    <link rel="prev" title="FreeRTOS (Supplemental Features)" href="freertos_additions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">System API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app_image_format.html">App Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootloader_image_format.html">Bootloader Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app_trace.html">Application Level Tracing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_function_with_shared_stack.html">Call Function with External Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chip_revision.html">Chip Revision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console.html">Console</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efuse.html">eFuse Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_err.html">Error Code and Helper Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_ota.html">ESP HTTPS OTA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_event.html">Event Loop Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos.html">FreeRTOS Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_idf.html">FreeRTOS (IDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_additions.html">FreeRTOS (Supplemental Features)</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Heap Memory Allocation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stack-and-heap">Stack and Heap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#memory-capabilities">Memory Capabilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#available-heap">Available Heap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#special-capabilities">Special Capabilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#thread-safety">Thread Safety</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#calling-heap-related-functions-from-isr">Calling Heap-Related Functions from ISR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#heap-tracing-debugging">Heap Tracing &amp; Debugging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#implementation-notes">Implementation Notes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference-heap-allocation">API Reference - Heap Allocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference-initialisation">API Reference - Initialisation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference-multi-heap-api">API Reference - Multi-Heap API</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mm.html">Memory Management for MMU Supported Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="heap_debug.html">Heap Memory Debugging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_timer.html">ESP Timer (High Resolution Timer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="internal-unstable.html">Internal and Unstable APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipc.html">Inter-Processor Call (IPC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intr_alloc.html">Interrupt Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="log.html">Logging library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc_system_api.html">Miscellaneous System APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ota.html">Over The Air Updates (OTA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="perfmon.html">Performance Monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="power_management.html">Power Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pthread.html">POSIX Support (Including POSIX Threads Support)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sleep_modes.html">Sleep Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soc_caps.html">SoC Capabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_time.html">System Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="himem.html">Himem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ulp.html">Ultra Low Power (ULP) coprocessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wdts.html">Watchdogs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">System API</a></li>
+      <li class="breadcrumb-item active">Heap Memory Allocation</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/system/mem_alloc.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="heap-memory-allocation">
+<h1>Heap Memory Allocation<a class="headerlink" href="#heap-memory-allocation" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/system/mem_alloc.html">[中文]</a></p>
+<section id="stack-and-heap">
+<h2>Stack and Heap<a class="headerlink" href="#stack-and-heap" title="Permalink to this heading"></a></h2>
+<p>ESP-IDF applications use the common computer architecture patterns of <strong>stack</strong> (dynamic memory allocated by program control flow), <strong>heap</strong> (dynamic memory allocated by function calls), and <strong>static memory</strong> (memory allocated at compile time).</p>
+<p>Because ESP-IDF is a multi-threaded RTOS environment, each RTOS task has its own stack. By default, each of these stacks is allocated from the heap when the task is created. See <a class="reference internal" href="freertos_idf.html#_CPPv417xTaskCreateStatic14TaskFunction_tPCKcK8uint32_tPCv11UBaseType_tPC11StackType_tPC12StaticTask_t" title="xTaskCreateStatic"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xTaskCreateStatic()</span></code></a> for the alternative where stacks are statically allocated.</p>
+<p>Because ESP32 uses multiple types of RAM, it also contains multiple heaps with different capabilities. A capabilities-based memory allocator allows apps to make heap allocations for different purposes.</p>
+<p>For most purposes, the C Standard Library's <code class="docutils literal notranslate"><span class="pre">malloc()</span></code> and <code class="docutils literal notranslate"><span class="pre">free()</span></code> functions can be used for heap allocation without any special consideration. However, in order to fully make use of all of the memory types and their characteristics, ESP-IDF also has a capabilities-based heap memory allocator. If you want to have a memory with certain properties (e.g., <a class="reference internal" href="#dma-capable-memory"><span class="std std-ref">DMA-Capable Memory</span></a> or executable-memory), you can create an OR-mask of the required capabilities and pass that to <a class="reference internal" href="#_CPPv416heap_caps_malloc6size_t8uint32_t" title="heap_caps_malloc"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_malloc()</span></code></a>.</p>
+</section>
+<section id="memory-capabilities">
+<span id="id1"></span><h2>Memory Capabilities<a class="headerlink" href="#memory-capabilities" title="Permalink to this heading"></a></h2>
+<p>The ESP32 contains multiple types of RAM:</p>
+<ul class="simple">
+<li><p>DRAM (Data RAM) is memory that is connected to CPU's data bus and is used to hold data. This is the most common kind of memory accessed as a heap.</p></li>
+<li><p>IRAM (Instruction RAM) is memory that is connected to the CPU's instruction bus and usually holds executable data only (i.e., instructions). If accessed as generic memory, all accesses must be aligned to <a class="reference internal" href="#bit-accessible-memory"><span class="std std-ref">32-Bit Accessible Memory</span></a>.</p></li>
+<li><p>D/IRAM is RAM that is connected to CPU's data bus and instruction bus, thus can be used either Instruction or Data RAM.</p></li>
+</ul>
+<p>For more details on these internal memory types, see <a class="reference internal" href="../../api-guides/memory-types.html#memory-layout"><span class="std std-ref">Memory Types</span></a>.</p>
+<p>It is also possible to connect external SPI RAM to the ESP32. The <a class="reference internal" href="../../api-guides/external-ram.html"><span class="doc">external RAM</span></a> is integrated into the ESP32's memory map via the cache, and accessed similarly to DRAM.</p>
+<p>All DRAM memory is single-byte accessible, thus all DRAM heaps possess the <code class="docutils literal notranslate"><span class="pre">MALLOC_CAP_8BIT</span></code> capability. Users can call <code class="docutils literal notranslate"><span class="pre">heap_caps_get_free_size(MALLOC_CAP_8BIT)</span></code> to get the free size of all DRAM heaps.</p>
+<p>If users run out of <code class="docutils literal notranslate"><span class="pre">MALLOC_CAP_8BIT</span></code>, they can use <code class="docutils literal notranslate"><span class="pre">MALLOC_CAP_IRAM_8BIT</span></code> instead. In that case, IRAM can still be used as a &quot;reserve&quot; pool of internal memory if the users only access it in a 32-bit aligned manner, or if they enable <code class="docutils literal notranslate"><span class="pre">CONFIG_ESP32_IRAM_AS_8BIT_ACCESSIBLE_MEMORY</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This option is available only on single-core ESP32 configuration (<code class="docutils literal notranslate"><span class="pre">CONFIG_FREERTOS_UNICORE=y</span></code>). The <code class="docutils literal notranslate"><span class="pre">CONFIG_ESP32_IRAM_AS_8BIT_ACCESSIBLE_MEMORY</span></code> option has a significant disadvantage compared to regular memory: every byte, half-word, and arbitrary unaligned access to <code class="docutils literal notranslate"><span class="pre">MALLOC_CAP_IRAM_8BIT</span></code> memory triggers a <code class="docutils literal notranslate"><span class="pre">LoadStore</span></code> or <code class="docutils literal notranslate"><span class="pre">Alignment</span></code> exception. Although these exceptions are handled in software to ensure correct values are read or written, each access incurs approximately 167 CPU cycles of overhead and can cause significant performance degradation if accessed frequently. Therefore, it should be avoided in performance-critical sections of code such as ISRs or tight loops. Consider to refactor the code to use 32-bit aligned (<code class="docutils literal notranslate"><span class="pre">uint32_t</span></code>) accesses.</p>
+</div>
+<p>When calling <code class="docutils literal notranslate"><span class="pre">malloc()</span></code>, the ESP-IDF <code class="docutils literal notranslate"><span class="pre">malloc()</span></code> internally calls <code class="docutils literal notranslate"><span class="pre">heap_caps_malloc_default(size)</span></code>. This will allocate memory with the capability <code class="docutils literal notranslate"><span class="pre">MALLOC_CAP_DEFAULT</span></code>, which is byte-addressable.</p>
+<p><code class="docutils literal notranslate"><span class="pre">MALLOC_CAP_DEFAULT</span></code> describes the memory capability, not the exact allocation policy. In particular, <code class="docutils literal notranslate"><span class="pre">heap_caps_malloc(size,</span> <span class="pre">MALLOC_CAP_DEFAULT)</span></code> is not required to follow the same placement strategy as <code class="docutils literal notranslate"><span class="pre">malloc()</span></code>.</p>
+<p>For example, when <a class="reference internal" href="../../api-guides/external-ram.html"><span class="doc">external RAM</span></a> is added to the capability allocator, <code class="docutils literal notranslate"><span class="pre">heap_caps_malloc(size,</span> <span class="pre">MALLOC_CAP_DEFAULT)</span></code> may return external RAM, while <code class="docutils literal notranslate"><span class="pre">malloc()</span></code> may still prefer or require internal RAM depending on the configuration.</p>
+<p>Because <code class="docutils literal notranslate"><span class="pre">malloc()</span></code> uses the capabilities-based allocation system, memory allocated using <a class="reference internal" href="#_CPPv416heap_caps_malloc6size_t8uint32_t" title="heap_caps_malloc"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_malloc()</span></code></a> can be freed by calling the standard <code class="docutils literal notranslate"><span class="pre">free()</span></code> function.</p>
+</section>
+<section id="available-heap">
+<h2>Available Heap<a class="headerlink" href="#available-heap" title="Permalink to this heading"></a></h2>
+<section id="dram">
+<span id="dram-definition"></span><h3>DRAM<a class="headerlink" href="#dram" title="Permalink to this heading"></a></h3>
+<p>At startup, the DRAM heap contains all data memory that is not statically allocated by the app. Reducing statically-allocated buffers increases the amount of available free heap.</p>
+<p>To find the amount of statically allocated memory, use the <a class="reference internal" href="../../api-guides/performance/size.html#idf-py-size"><span class="std std-ref">idf.py size</span></a> command.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See the <a class="reference internal" href="../../api-guides/memory-types.html#dram"><span class="std std-ref">DRAM (Data RAM)</span></a> section for more details about the DRAM usage limitations.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At runtime, the available heap DRAM may be less than calculated at compile time, because, at startup, some memory is allocated from the heap before the FreeRTOS scheduler is started (including memory for the stacks of initial FreeRTOS tasks).</p>
+</div>
+</section>
+<section id="iram">
+<h3>IRAM<a class="headerlink" href="#iram" title="Permalink to this heading"></a></h3>
+<p>At startup, the IRAM heap contains all instruction memory that is not used by the app executable code.</p>
+<p>The <a class="reference internal" href="../../api-guides/performance/size.html#idf-py-size"><span class="std std-ref">idf.py size</span></a> command can be used to find the amount of IRAM used by the app.</p>
+</section>
+<section id="d-iram">
+<h3>D/IRAM<a class="headerlink" href="#d-iram" title="Permalink to this heading"></a></h3>
+<p>Some memory in the ESP32 is available as either DRAM or IRAM. If memory is allocated from a D/IRAM region, the free heap size for both types of memory will decrease.</p>
+</section>
+<section id="heap-sizes">
+<h3>Heap Sizes<a class="headerlink" href="#heap-sizes" title="Permalink to this heading"></a></h3>
+<p>At startup, all ESP-IDF apps log a summary of all heap addresses (and sizes) at level Info:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>I (252) heap_init: Initializing. RAM available for dynamic allocation:
+I (259) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (265) heap_init: At 3FFB2EC8 len 0002D138 (180 KiB): DRAM
+I (272) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (278) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (284) heap_init: At 4008944C len 00016BB4 (90 KiB): IRAM
+</pre></div>
+</div>
+</section>
+<section id="finding-available-heap">
+<h3>Finding Available Heap<a class="headerlink" href="#finding-available-heap" title="Permalink to this heading"></a></h3>
+<p>See <a class="reference internal" href="heap_debug.html#heap-information"><span class="std std-ref">Heap Information</span></a>.</p>
+</section>
+</section>
+<section id="special-capabilities">
+<h2>Special Capabilities<a class="headerlink" href="#special-capabilities" title="Permalink to this heading"></a></h2>
+<section id="dma-capable-memory">
+<span id="id2"></span><h3>DMA-Capable Memory<a class="headerlink" href="#dma-capable-memory" title="Permalink to this heading"></a></h3>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">MALLOC_CAP_DMA</span></code> flag to allocate memory which is suitable for use with hardware DMA engines (for example SPI and I2S). This capability flag excludes any external PSRAM.</p>
+</section>
+<section id="bit-accessible-memory">
+<span id="id3"></span><h3>32-Bit Accessible Memory<a class="headerlink" href="#bit-accessible-memory" title="Permalink to this heading"></a></h3>
+<p>If a certain memory structure is only addressed in 32-bit units, for example, an array of ints or pointers, it can be useful to allocate it with the <code class="docutils literal notranslate"><span class="pre">MALLOC_CAP_32BIT</span></code> flag. This also allows the allocator to give out IRAM memory, which is sometimes unavailable for a normal <code class="docutils literal notranslate"><span class="pre">malloc()</span></code> call. This can help to use all the available memory in the ESP32.</p>
+<p>Please note that on ESP32 series chips, <code class="docutils literal notranslate"><span class="pre">MALLOC_CAP_32BIT</span></code> cannot be used for storing floating-point variables. This is because <code class="docutils literal notranslate"><span class="pre">MALLOC_CAP_32BIT</span></code> may return instruction RAM and the floating-point assembly instructions on ESP32 cannot access instruction RAM.</p>
+<p>Memory allocated with <code class="docutils literal notranslate"><span class="pre">MALLOC_CAP_32BIT</span></code> can <strong>only</strong> be accessed via 32-bit reads and writes, any other type of access will generate a fatal LoadStoreError exception.</p>
+</section>
+<section id="external-spi-memory">
+<h3>External SPI Memory<a class="headerlink" href="#external-spi-memory" title="Permalink to this heading"></a></h3>
+<p>When <a class="reference internal" href="../../api-guides/external-ram.html"><span class="doc">external RAM</span></a> is enabled, external SPI RAM can be allocated using standard <code class="docutils literal notranslate"><span class="pre">malloc</span></code> calls, or via <code class="docutils literal notranslate"><span class="pre">heap_caps_malloc(MALLOC_CAP_SPIRAM)</span></code>, depending on the configuration. See <a class="reference internal" href="../../api-guides/external-ram.html#external-ram-config"><span class="std std-ref">Configuring External RAM</span></a> for more details.</p>
+<p>On ESP32 only external SPI RAM under 4 MiB in size can be allocated this way. To use the region above the 4 MiB limit, you can use the <a class="reference internal" href="himem.html"><span class="doc">himem API</span></a>.</p>
+</section>
+</section>
+<section id="thread-safety">
+<h2>Thread Safety<a class="headerlink" href="#thread-safety" title="Permalink to this heading"></a></h2>
+<p>Heap functions are thread-safe, meaning they can be called from different tasks simultaneously without any limitations.</p>
+<p>It is technically possible to call <code class="docutils literal notranslate"><span class="pre">malloc</span></code>, <code class="docutils literal notranslate"><span class="pre">free</span></code>, and related functions from interrupt handler (ISR) context (see <a class="reference internal" href="#calling-heap-related-functions-from-isr"><span class="std std-ref">Calling Heap-Related Functions from ISR</span></a>). However, this is not recommended, as heap function calls may delay other interrupts. It is strongly recommended to refactor applications so that any buffers used by an ISR are pre-allocated outside of the ISR. Support for calling heap functions from ISRs may be removed in a future update.</p>
+</section>
+<section id="calling-heap-related-functions-from-isr">
+<span id="id4"></span><h2>Calling Heap-Related Functions from ISR<a class="headerlink" href="#calling-heap-related-functions-from-isr" title="Permalink to this heading"></a></h2>
+<p>The following functions from the heap component can be called from the interrupt handler (ISR):</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv416heap_caps_malloc6size_t8uint32_t" title="heap_caps_malloc"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_malloc()</span></code></a></p></li>
+<li><p><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_malloc_default()</span></code></p></li>
+<li><p><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_realloc_default()</span></code></p></li>
+<li><p><a class="reference internal" href="#_CPPv423heap_caps_malloc_prefer6size_t6size_tz" title="heap_caps_malloc_prefer"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_malloc_prefer()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv424heap_caps_realloc_preferPv6size_t6size_tz" title="heap_caps_realloc_prefer"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_realloc_prefer()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv423heap_caps_calloc_prefer6size_t6size_t6size_tz" title="heap_caps_calloc_prefer"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_calloc_prefer()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv414heap_caps_freePv" title="heap_caps_free"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_free()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv417heap_caps_reallocPv6size_t8uint32_t" title="heap_caps_realloc"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_realloc()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv416heap_caps_calloc6size_t6size_t8uint32_t" title="heap_caps_calloc"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_calloc()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv423heap_caps_aligned_alloc6size_t6size_t8uint32_t" title="heap_caps_aligned_alloc"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_aligned_alloc()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv422heap_caps_aligned_freePv" title="heap_caps_aligned_free"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">heap_caps_aligned_free()</span></code></a></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>However, this practice is strongly discouraged.</p>
+</div>
+</section>
+<section id="heap-tracing-debugging">
+<h2>Heap Tracing &amp; Debugging<a class="headerlink" href="#heap-tracing-debugging" title="Permalink to this heading"></a></h2>
+<p>The following features are documented on the <a class="reference internal" href="heap_debug.html"><span class="doc">Heap Memory Debugging</span></a> page:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="heap_debug.html#heap-information"><span class="std std-ref">Heap Information</span></a> (free space, etc.)</p></li>
+<li><p><a class="reference internal" href="heap_debug.html#heap-allocation-free"><span class="std std-ref">Heap Allocation and Free Function Hooks</span></a></p></li>
+<li><p><a class="reference internal" href="heap_debug.html#heap-corruption"><span class="std std-ref">Heap Corruption Detection</span></a></p></li>
+<li><p><a class="reference internal" href="heap_debug.html#heap-tracing"><span class="std std-ref">Heap Tracing</span></a> (memory leak detection, monitoring, etc.)</p></li>
+</ul>
+</section>
+<section id="implementation-notes">
+<h2>Implementation Notes<a class="headerlink" href="#implementation-notes" title="Permalink to this heading"></a></h2>
+<p>Knowledge about the regions of memory in the chip comes from the &quot;SoC&quot; component, which contains memory layout information for the chip, and the different capabilities of each region. Each region's capabilities are prioritized, so that (for example) dedicated DRAM and IRAM regions are used for allocations ahead of the more versatile D/IRAM regions.</p>
+<p>Each contiguous region of memory contains its own memory heap. The heaps are created using the <a class="reference internal" href="#multi-heap"><span class="std std-ref">multi_heap</span></a> functionality. <code class="docutils literal notranslate"><span class="pre">multi_heap</span></code> allows any contiguous region of memory to be used as a heap.</p>
+<p>The heap capabilities allocator uses knowledge of the memory regions to initialize each individual heap. Allocation functions in the heap capabilities API will find the most appropriate heap for the allocation based on desired capabilities, available space, and preferences for each region's use, and then calling <a class="reference internal" href="#_CPPv417multi_heap_malloc19multi_heap_handle_t6size_t" title="multi_heap_malloc"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">multi_heap_malloc()</span></code></a> for the heap situated in that particular region.</p>
+<p>Calling <code class="docutils literal notranslate"><span class="pre">free()</span></code> involves finding the particular heap corresponding to the freed address, and then call <a class="reference internal" href="#_CPPv415multi_heap_free19multi_heap_handle_tPv" title="multi_heap_free"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">multi_heap_free()</span></code></a> on that particular <code class="docutils literal notranslate"><span class="pre">multi_heap</span></code> instance.</p>
+</section>
+<section id="api-reference-heap-allocation">
+<h2>API Reference - Heap Allocation<a class="headerlink" href="#api-reference-heap-allocation" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/heap/include/esp_heap_caps.h">components/heap/include/esp_heap_caps.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_heap_caps.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv440heap_caps_register_failed_alloc_callback23esp_alloc_failed_hook_t">
+<span id="_CPPv340heap_caps_register_failed_alloc_callback23esp_alloc_failed_hook_t"></span><span id="_CPPv240heap_caps_register_failed_alloc_callback23esp_alloc_failed_hook_t"></span><span id="heap_caps_register_failed_alloc_callback__esp_alloc_failed_hook_t"></span><span class="target" id="esp__heap__caps_8h_1a5921a659f7891945590837dd81b9b985"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_register_failed_alloc_callback</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423esp_alloc_failed_hook_t" title="esp_alloc_failed_hook_t"><span class="n"><span class="pre">esp_alloc_failed_hook_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">callback</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv440heap_caps_register_failed_alloc_callback23esp_alloc_failed_hook_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>registers a callback function to be invoked if a memory allocation operation fails </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callback</strong> -- caller defined callback to be invoked </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK if callback was registered. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416heap_caps_malloc6size_t8uint32_t">
+<span id="_CPPv316heap_caps_malloc6size_t8uint32_t"></span><span id="_CPPv216heap_caps_malloc6size_t8uint32_t"></span><span id="heap_caps_malloc__s.uint32_t"></span><span class="target" id="esp__heap__caps_8h_1a41021ceb08d125bde8072d1303ee7266"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_malloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416heap_caps_malloc6size_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Allocate a chunk of memory which has the given capabilities. </p>
+<p>Equivalent semantics to libc malloc(), for capability-aware memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>size</strong> -- Size, in bytes, of the amount of memory to allocate </p></li>
+<li><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory to be returned</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A pointer to the memory allocated on success, NULL on failure </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414heap_caps_freePv">
+<span id="_CPPv314heap_caps_freePv"></span><span id="_CPPv214heap_caps_freePv"></span><span id="heap_caps_free__voidP"></span><span class="target" id="esp__heap__caps_8h_1aefb117b700d0577eaf80b02fedb41e39"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_free</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414heap_caps_freePv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Free memory previously allocated via heap_caps_malloc() or heap_caps_realloc(). </p>
+<p>Equivalent semantics to libc free(), for capability-aware memory.</p>
+<p>In IDF, <code class="docutils literal notranslate"><span class="pre">free(p)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">heap_caps_free(p)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ptr</strong> -- Pointer to memory previously returned from heap_caps_malloc() or heap_caps_realloc(). Can be NULL. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417heap_caps_reallocPv6size_t8uint32_t">
+<span id="_CPPv317heap_caps_reallocPv6size_t8uint32_t"></span><span id="_CPPv217heap_caps_reallocPv6size_t8uint32_t"></span><span id="heap_caps_realloc__voidP.s.uint32_t"></span><span class="target" id="esp__heap__caps_8h_1a6f1ff0c13056293d301d59b57db8605f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_realloc</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417heap_caps_reallocPv6size_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Reallocate memory previously allocated via heap_caps_malloc() or heap_caps_realloc(). </p>
+<p>Equivalent semantics to libc realloc(), for capability-aware memory.</p>
+<p>In IDF, <code class="docutils literal notranslate"><span class="pre">realloc(p,</span> <span class="pre">s)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">heap_caps_realloc(p,</span> <span class="pre">s,</span> <span class="pre">MALLOC_CAP_8BIT)</span></code>.</p>
+<p>'caps' parameter can be different to the capabilities that any original 'ptr' was allocated with. In this way, realloc can be used to &quot;move&quot; a buffer if necessary to ensure it meets a new set of capabilities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ptr</strong> -- Pointer to previously allocated memory, or NULL for a new allocation. </p></li>
+<li><p><strong>size</strong> -- Size of the new buffer requested, or 0 to free the buffer. </p></li>
+<li><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory desired for the new allocation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pointer to a new buffer of size 'size' with capabilities 'caps', or NULL if allocation failed. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423heap_caps_aligned_alloc6size_t6size_t8uint32_t">
+<span id="_CPPv323heap_caps_aligned_alloc6size_t6size_t8uint32_t"></span><span id="_CPPv223heap_caps_aligned_alloc6size_t6size_t8uint32_t"></span><span id="heap_caps_aligned_alloc__s.s.uint32_t"></span><span class="target" id="esp__heap__caps_8h_1a3439a1241d761b2158cae070a587484f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_aligned_alloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423heap_caps_aligned_alloc6size_t6size_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Allocate an aligned chunk of memory which has the given capabilities. </p>
+<p>Equivalent semantics to libc aligned_alloc(), for capability-aware memory. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alignment</strong> -- How the pointer received needs to be aligned must be a power of two </p></li>
+<li><p><strong>size</strong> -- Size, in bytes, of the amount of memory to allocate </p></li>
+<li><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory to be returned</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A pointer to the memory allocated on success, NULL on failure </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422heap_caps_aligned_freePv">
+<span id="_CPPv322heap_caps_aligned_freePv"></span><span id="_CPPv222heap_caps_aligned_freePv"></span><span id="heap_caps_aligned_free__voidP"></span><span class="target" id="esp__heap__caps_8h_1a2aa70af40dda32723d5c98890c1187d3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_aligned_free</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422heap_caps_aligned_freePv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Used to deallocate memory previously allocated with heap_caps_aligned_alloc. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is deprecated, please consider using heap_caps_free() instead </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ptr</strong> -- Pointer to the memory allocated </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424heap_caps_aligned_calloc6size_t6size_t6size_t8uint32_t">
+<span id="_CPPv324heap_caps_aligned_calloc6size_t6size_t6size_t8uint32_t"></span><span id="_CPPv224heap_caps_aligned_calloc6size_t6size_t6size_t8uint32_t"></span><span id="heap_caps_aligned_calloc__s.s.s.uint32_t"></span><span class="target" id="esp__heap__caps_8h_1a41c655854376e4ba17a48237bd92dc94"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_aligned_calloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424heap_caps_aligned_calloc6size_t6size_t6size_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Allocate an aligned chunk of memory which has the given capabilities. The initialized value in the memory is set to zero. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alignment</strong> -- How the pointer received needs to be aligned must be a power of two </p></li>
+<li><p><strong>n</strong> -- Number of continuing chunks of memory to allocate </p></li>
+<li><p><strong>size</strong> -- Size, in bytes, of a chunk of memory to allocate </p></li>
+<li><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory to be returned</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A pointer to the memory allocated on success, NULL on failure </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416heap_caps_calloc6size_t6size_t8uint32_t">
+<span id="_CPPv316heap_caps_calloc6size_t6size_t8uint32_t"></span><span id="_CPPv216heap_caps_calloc6size_t6size_t8uint32_t"></span><span id="heap_caps_calloc__s.s.uint32_t"></span><span class="target" id="esp__heap__caps_8h_1a13198b4206e0b77804647608bf95f8a3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_calloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416heap_caps_calloc6size_t6size_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Allocate a chunk of memory which has the given capabilities. The initialized value in the memory is set to zero. </p>
+<p>Equivalent semantics to libc calloc(), for capability-aware memory.</p>
+<p>In IDF, <code class="docutils literal notranslate"><span class="pre">calloc(p)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">heap_caps_calloc(p,</span> <span class="pre">MALLOC_CAP_8BIT)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> -- Number of continuing chunks of memory to allocate </p></li>
+<li><p><strong>size</strong> -- Size, in bytes, of a chunk of memory to allocate </p></li>
+<li><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory to be returned</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A pointer to the memory allocated on success, NULL on failure </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424heap_caps_get_total_size8uint32_t">
+<span id="_CPPv324heap_caps_get_total_size8uint32_t"></span><span id="_CPPv224heap_caps_get_total_size8uint32_t"></span><span id="heap_caps_get_total_size__uint32_t"></span><span class="target" id="esp__heap__caps_8h_1acc9e000e44c005280d4bfb2b0237cb04"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_get_total_size</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424heap_caps_get_total_size8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the total size of all the regions that have the given capabilities. </p>
+<p>This function takes all regions capable of having the given capabilities allocated in them and adds up the total space they have.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>total size in bytes </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423heap_caps_get_free_size8uint32_t">
+<span id="_CPPv323heap_caps_get_free_size8uint32_t"></span><span id="_CPPv223heap_caps_get_free_size8uint32_t"></span><span id="heap_caps_get_free_size__uint32_t"></span><span class="target" id="esp__heap__caps_8h_1aba551fca7214bbab39f9dfaa93ce581f"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_get_free_size</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423heap_caps_get_free_size8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the total free size of all the regions that have the given capabilities. </p>
+<p>This function takes all regions capable of having the given capabilities allocated in them and adds up the free space they have.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that because of heap fragmentation it is probably not possible to allocate a single block of memory of this size. Use heap_caps_get_largest_free_block() for this purpose.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Amount of free bytes in the regions </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv431heap_caps_get_minimum_free_size8uint32_t">
+<span id="_CPPv331heap_caps_get_minimum_free_size8uint32_t"></span><span id="_CPPv231heap_caps_get_minimum_free_size8uint32_t"></span><span id="heap_caps_get_minimum_free_size__uint32_t"></span><span class="target" id="esp__heap__caps_8h_1a9a90e8d38ee9a6a900a90f1dfa5393fb"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_get_minimum_free_size</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv431heap_caps_get_minimum_free_size8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the total minimum free memory of all regions with the given capabilities. </p>
+<p>This adds all the low watermarks of the regions capable of delivering the memory with the given capabilities.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note the result may be less than the global all-time minimum available heap of this kind, as &quot;low watermarks&quot; are tracked per-region. Individual regions' heaps may have reached their &quot;low watermarks&quot; at different points in time. However, this result still gives a &quot;worst case&quot; indication for all-time minimum free heap.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Heaps added at runtime using heap_caps_add_region_with_caps() (i.e., from app_main onwards) are not taken into account in the minimum free size calculation.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Amount of free bytes in the regions </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv432heap_caps_get_largest_free_block8uint32_t">
+<span id="_CPPv332heap_caps_get_largest_free_block8uint32_t"></span><span id="_CPPv232heap_caps_get_largest_free_block8uint32_t"></span><span id="heap_caps_get_largest_free_block__uint32_t"></span><span class="target" id="esp__heap__caps_8h_1a557602c430237f580762415ccfff8c72"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_get_largest_free_block</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv432heap_caps_get_largest_free_block8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the largest free block of memory able to be allocated with the given capabilities. </p>
+<p>Returns the largest value of <code class="docutils literal notranslate"><span class="pre">s</span></code> for which <code class="docutils literal notranslate"><span class="pre">heap_caps_malloc(s,</span> <span class="pre">caps)</span></code> will succeed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Size of the largest free block in bytes. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv447heap_caps_monitor_local_minimum_free_size_startv">
+<span id="_CPPv347heap_caps_monitor_local_minimum_free_size_startv"></span><span id="_CPPv247heap_caps_monitor_local_minimum_free_size_startv"></span><span id="heap_caps_monitor_local_minimum_free_size_start__void"></span><span class="target" id="esp__heap__caps_8h_1a2a6d2e0d866ec9a3e4e5cab801afd0b9"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_monitor_local_minimum_free_size_start</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv447heap_caps_monitor_local_minimum_free_size_startv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Start monitoring the value of minimum_free_bytes from the moment this function is called instead of from startup. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This allows to detect local lows of the minimum_free_bytes value that wouldn't be detected otherwise.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>esp_err_t ESP_OK if the function executed properly ESP_FAIL if called when monitoring already active </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv446heap_caps_monitor_local_minimum_free_size_stopv">
+<span id="_CPPv346heap_caps_monitor_local_minimum_free_size_stopv"></span><span id="_CPPv246heap_caps_monitor_local_minimum_free_size_stopv"></span><span id="heap_caps_monitor_local_minimum_free_size_stop__void"></span><span class="target" id="esp__heap__caps_8h_1a8c96b682af410de68e9f27271ee6d50c"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_monitor_local_minimum_free_size_stop</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv446heap_caps_monitor_local_minimum_free_size_stopv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stop monitoring the value of minimum_free_bytes. After this call the minimum_free_bytes value calculated from startup will be returned in heap_caps_get_info and heap_caps_get_minimum_free_size. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>esp_err_t ESP_OK if the function executed properly ESP_FAIL if called when monitoring not active </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418heap_caps_get_infoP17multi_heap_info_t8uint32_t">
+<span id="_CPPv318heap_caps_get_infoP17multi_heap_info_t8uint32_t"></span><span id="_CPPv218heap_caps_get_infoP17multi_heap_info_t8uint32_t"></span><span id="heap_caps_get_info__multi_heap_info_tP.uint32_t"></span><span class="target" id="esp__heap__caps_8h_1a149c4d5f97b416d97c43e699297d308d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_get_info</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417multi_heap_info_t" title="multi_heap_info_t"><span class="n"><span class="pre">multi_heap_info_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">info</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418heap_caps_get_infoP17multi_heap_info_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get heap info for all regions with the given capabilities. </p>
+<p>Calls multi_heap_info() on all heaps which share the given capabilities. The information returned is an aggregate across all matching heaps. The meanings of fields are the same as defined for <a class="reference internal" href="#structmulti__heap__info__t"><span class="std std-ref">multi_heap_info_t</span></a>, except that <code class="docutils literal notranslate"><span class="pre">minimum_free_bytes</span></code> has the same caveats described in heap_caps_get_minimum_free_size().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>info</strong> -- Pointer to a structure which will be filled with relevant heap metadata. </p></li>
+<li><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425heap_caps_print_heap_info8uint32_t">
+<span id="_CPPv325heap_caps_print_heap_info8uint32_t"></span><span id="_CPPv225heap_caps_print_heap_info8uint32_t"></span><span id="heap_caps_print_heap_info__uint32_t"></span><span class="target" id="esp__heap__caps_8h_1a9128a61529561f49fec49416cbe7a1e6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_print_heap_info</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425heap_caps_print_heap_info8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Print a summary of all memory with the given capabilities. </p>
+<p>Calls multi_heap_info on all heaps which share the given capabilities, and prints a two-line summary for each, then a total summary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429heap_caps_check_integrity_allb">
+<span id="_CPPv329heap_caps_check_integrity_allb"></span><span id="_CPPv229heap_caps_check_integrity_allb"></span><span id="heap_caps_check_integrity_all__b"></span><span class="target" id="esp__heap__caps_8h_1a211c894e4d9caf638c3f4969729a42b5"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_check_integrity_all</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">print_errors</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429heap_caps_check_integrity_allb" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check integrity of all heap memory in the system. </p>
+<p>Calls multi_heap_check on all heaps. Optionally print errors if heaps are corrupt.</p>
+<p>Calling this function is equivalent to calling heap_caps_check_integrity with the caps argument set to MALLOC_CAP_INVALID.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please increase the value of <code class="docutils literal notranslate"><span class="pre">CONFIG_ESP_INT_WDT_TIMEOUT_MS</span></code> when using this API with PSRAM enabled.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>print_errors</strong> -- Print specific errors if heap corruption is found.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if all heaps are valid, False if at least one heap is corrupt. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425heap_caps_check_integrity8uint32_tb">
+<span id="_CPPv325heap_caps_check_integrity8uint32_tb"></span><span id="_CPPv225heap_caps_check_integrity8uint32_tb"></span><span id="heap_caps_check_integrity__uint32_t.b"></span><span class="target" id="esp__heap__caps_8h_1a2a45e5c3e46f6e3b2fe2f09ffa49079f"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_check_integrity</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">print_errors</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425heap_caps_check_integrity8uint32_tb" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check integrity of all heaps with the given capabilities. </p>
+<p>Calls multi_heap_check on all heaps which share the given capabilities. Optionally print errors if the heaps are corrupt.</p>
+<p>See also heap_caps_check_integrity_all to check all heap memory in the system and heap_caps_check_integrity_addr to check memory around a single address.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please increase the value of <code class="docutils literal notranslate"><span class="pre">CONFIG_ESP_INT_WDT_TIMEOUT_MS</span></code> when using this API with PSRAM capability flag.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory </p></li>
+<li><p><strong>print_errors</strong> -- Print specific errors if heap corruption is found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if all heaps are valid, False if at least one heap is corrupt. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430heap_caps_check_integrity_addr8intptr_tb">
+<span id="_CPPv330heap_caps_check_integrity_addr8intptr_tb"></span><span id="_CPPv230heap_caps_check_integrity_addr8intptr_tb"></span><span id="heap_caps_check_integrity_addr__intptr_t.b"></span><span class="target" id="esp__heap__caps_8h_1a70306edd596739207e9b56301d2e3cc5"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_check_integrity_addr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">intptr_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">print_errors</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430heap_caps_check_integrity_addr8intptr_tb" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check integrity of heap memory around a given address. </p>
+<p>This function can be used to check the integrity of a single region of heap memory, which contains the given address.</p>
+<p>This can be useful if debugging heap integrity for corruption at a known address, as it has a lower overhead than checking all heap regions. Note that if the corrupt address moves around between runs (due to timing or other factors) then this approach won't work, and you should call heap_caps_check_integrity or heap_caps_check_integrity_all instead.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The entire heap region around the address is checked, not only the adjacent heap blocks.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>addr</strong> -- Address in memory. Check for corruption in region containing this address. </p></li>
+<li><p><strong>print_errors</strong> -- Print specific errors if heap corruption is found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the heap containing the specified address is valid, False if at least one heap is corrupt or the address doesn't belong to a heap region. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430heap_caps_malloc_extmem_enable6size_t">
+<span id="_CPPv330heap_caps_malloc_extmem_enable6size_t"></span><span id="_CPPv230heap_caps_malloc_extmem_enable6size_t"></span><span id="heap_caps_malloc_extmem_enable__s"></span><span class="target" id="esp__heap__caps_8h_1a94574f33deb2cacc7ed5b5ce3920440f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_malloc_extmem_enable</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">limit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430heap_caps_malloc_extmem_enable6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable malloc() in external memory and set limit below which malloc() attempts are placed in internal memory. </p>
+<p>When external memory is in use, the allocation strategy is to initially try to satisfy smaller allocation requests with internal memory and larger requests with external memory. This sets the limit between the two, as well as generally enabling allocation in external memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>limit</strong> -- Limit, in bytes. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423heap_caps_malloc_prefer6size_t6size_tz">
+<span id="_CPPv323heap_caps_malloc_prefer6size_t6size_tz"></span><span id="_CPPv223heap_caps_malloc_prefer6size_t6size_tz"></span><span id="heap_caps_malloc_prefer__s.s.z"></span><span class="target" id="esp__heap__caps_8h_1a57cd44a3301ec8300906402a5afe7a0b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_malloc_prefer</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">num</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423heap_caps_malloc_prefer6size_t6size_tz" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Allocate a chunk of memory as preference in decreasing order. </p>
+<p><dl class="simple">
+<dt><strong>Attention</strong></dt><dd><p>The variable parameters are bitwise OR of MALLOC_CAP_* flags indicating the type of memory. This API prefers to allocate memory with the first parameter. If failed, allocate memory with the next parameter. It will try in this order until allocating a chunk of memory successfully or fail to allocate memories with any of the parameters.</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>size</strong> -- Size, in bytes, of the amount of memory to allocate </p></li>
+<li><p><strong>num</strong> -- Number of variable parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A pointer to the memory allocated on success, NULL on failure </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424heap_caps_realloc_preferPv6size_t6size_tz">
+<span id="_CPPv324heap_caps_realloc_preferPv6size_t6size_tz"></span><span id="_CPPv224heap_caps_realloc_preferPv6size_t6size_tz"></span><span id="heap_caps_realloc_prefer__voidP.s.s.z"></span><span class="target" id="esp__heap__caps_8h_1a1184d25738c17e44c2ec4dc585be85e4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_realloc_prefer</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">num</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424heap_caps_realloc_preferPv6size_t6size_tz" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Reallocate a chunk of memory as preference in decreasing order. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ptr</strong> -- Pointer to previously allocated memory, or NULL for a new allocation. </p></li>
+<li><p><strong>size</strong> -- Size of the new buffer requested, or 0 to free the buffer. </p></li>
+<li><p><strong>num</strong> -- Number of variable parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pointer to a new buffer of size 'size', or NULL if allocation failed. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423heap_caps_calloc_prefer6size_t6size_t6size_tz">
+<span id="_CPPv323heap_caps_calloc_prefer6size_t6size_t6size_tz"></span><span id="_CPPv223heap_caps_calloc_prefer6size_t6size_t6size_tz"></span><span id="heap_caps_calloc_prefer__s.s.s.z"></span><span class="target" id="esp__heap__caps_8h_1ad876f9cf0822b99f2c3ea38c849f004c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_calloc_prefer</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">num</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423heap_caps_calloc_prefer6size_t6size_t6size_tz" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Allocate a chunk of memory as preference in decreasing order. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> -- Number of continuing chunks of memory to allocate </p></li>
+<li><p><strong>size</strong> -- Size, in bytes, of a chunk of memory to allocate </p></li>
+<li><p><strong>num</strong> -- Number of variable parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A pointer to the memory allocated on success, NULL on failure </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414heap_caps_dump8uint32_t">
+<span id="_CPPv314heap_caps_dump8uint32_t"></span><span id="_CPPv214heap_caps_dump8uint32_t"></span><span id="heap_caps_dump__uint32_t"></span><span class="target" id="esp__heap__caps_8h_1ae19d3bc2f6f027fe30e47cbf991f1a6b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_dump</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414heap_caps_dump8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Dump the full structure of all heaps with matching capabilities. </p>
+<p>Prints a large amount of output to serial (because of locking limitations, the output bypasses stdout/stderr). For each (variable sized) block in each matching heap, the following output is printed on a single line:</p>
+<p><ul class="simple">
+<li><p>Block address (the data buffer returned by malloc is 4 bytes after this if heap debugging is set to Basic, or 8 bytes otherwise).</p></li>
+<li><p>Data size (the data size may be larger than the size requested by malloc, either due to heap fragmentation or because of heap debugging level).</p></li>
+<li><p>Address of next block in the heap.</p></li>
+<li><p>If the block is free, the address of the next free block is also printed.</p></li>
+</ul>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>caps</strong> -- Bitwise OR of MALLOC_CAP_* flags indicating the type of memory </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418heap_caps_dump_allv">
+<span id="_CPPv318heap_caps_dump_allv"></span><span id="_CPPv218heap_caps_dump_allv"></span><span id="heap_caps_dump_all__void"></span><span class="target" id="esp__heap__caps_8h_1a38a354fb76dfa5b8f9ea0755455ff02b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_dump_all</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418heap_caps_dump_allv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Dump the full structure of all heaps. </p>
+<p>Covers all registered heaps. Prints a large amount of output to serial.</p>
+<p>Output is the same as for heap_caps_dump. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428heap_caps_get_allocated_sizePv">
+<span id="_CPPv328heap_caps_get_allocated_sizePv"></span><span id="_CPPv228heap_caps_get_allocated_sizePv"></span><span id="heap_caps_get_allocated_size__voidP"></span><span class="target" id="esp__heap__caps_8h_1a048217cbb477451ec4739bdac4021583"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_get_allocated_size</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428heap_caps_get_allocated_sizePv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Return the size that a particular pointer was allocated with. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The app will crash with an assertion failure if the pointer is not valid.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ptr</strong> -- Pointer to currently allocated heap memory. Must be a pointer value previously returned by heap_caps_malloc, malloc, calloc, etc. and not yet freed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Size of the memory allocated at this block. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv435heap_caps_get_containing_block_sizePv">
+<span id="_CPPv335heap_caps_get_containing_block_sizePv"></span><span id="_CPPv235heap_caps_get_containing_block_sizePv"></span><span id="heap_caps_get_containing_block_size__voidP"></span><span class="target" id="esp__heap__caps_8h_1ac5bbf52e0468c86272a17cb3f198786f"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_get_containing_block_size</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv435heap_caps_get_containing_block_sizePv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Return the size of the block containing the pointer passed as parameter. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The app will crash with an assertion failure if the pointer is invalid.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ptr</strong> -- Pointer to currently allocated heap memory. The pointer value must be within the allocated memory and the memory must not be freed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Size of the containing block allocated. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414heap_caps_walk8uint32_t21heap_caps_walker_cb_tPv">
+<span id="_CPPv314heap_caps_walk8uint32_t21heap_caps_walker_cb_tPv"></span><span id="_CPPv214heap_caps_walk8uint32_t21heap_caps_walker_cb_tPv"></span><span id="heap_caps_walk__uint32_t.heap_caps_walker_cb_t.voidP"></span><span class="target" id="esp__heap__caps_8h_1a6fc025611ec6271bc2ade90fef310e78"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_walk</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span>, <a class="reference internal" href="#_CPPv421heap_caps_walker_cb_t" title="heap_caps_walker_cb_t"><span class="n"><span class="pre">heap_caps_walker_cb_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">walker_func</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">user_data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414heap_caps_walk8uint32_t21heap_caps_walker_cb_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Function called to walk through the heaps with the given set of capabilities. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>caps</strong> -- The set of capabilities assigned to the heaps to walk through </p></li>
+<li><p><strong>walker_func</strong> -- Callback called for each block of the heaps being traversed </p></li>
+<li><p><strong>user_data</strong> -- Opaque pointer to user defined data </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418heap_caps_walk_all21heap_caps_walker_cb_tPv">
+<span id="_CPPv318heap_caps_walk_all21heap_caps_walker_cb_tPv"></span><span id="_CPPv218heap_caps_walk_all21heap_caps_walker_cb_tPv"></span><span id="heap_caps_walk_all__heap_caps_walker_cb_t.voidP"></span><span class="target" id="esp__heap__caps_8h_1aa31b32ebaaafa0a32d3df6e9b1ec3301"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_walk_all</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421heap_caps_walker_cb_t" title="heap_caps_walker_cb_t"><span class="n"><span class="pre">heap_caps_walker_cb_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">walker_func</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">user_data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418heap_caps_walk_all21heap_caps_walker_cb_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Function called to walk through all heaps defined by the heap component. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>walker_func</strong> -- Callback called for each block of the heaps being traversed </p></li>
+<li><p><strong>user_data</strong> -- Opaque pointer to user defined data </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv416walker_heap_info">
+<span id="_CPPv316walker_heap_info"></span><span id="_CPPv216walker_heap_info"></span><span id="walker_heap_info"></span><span class="target" id="structwalker__heap__info"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">walker_heap_info</span></span></span><a class="headerlink" href="#_CPPv416walker_heap_info" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Structure used to store heap related data passed to the walker callback function. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16walker_heap_info5startE">
+<span id="_CPPv3N16walker_heap_info5startE"></span><span id="_CPPv2N16walker_heap_info5startE"></span><span id="walker_heap_info::start__intptr_t"></span><span class="target" id="structwalker__heap__info_1a8aa7806e90523969b338a34907621f47"></span><span class="n"><span class="pre">intptr_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">start</span></span></span><a class="headerlink" href="#_CPPv4N16walker_heap_info5startE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Start address of the heap in which the block is located. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16walker_heap_info3endE">
+<span id="_CPPv3N16walker_heap_info3endE"></span><span id="_CPPv2N16walker_heap_info3endE"></span><span id="walker_heap_info::end__intptr_t"></span><span class="target" id="structwalker__heap__info_1a6a3706c086bfc5fc67f8e827321a0f58"></span><span class="n"><span class="pre">intptr_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><a class="headerlink" href="#_CPPv4N16walker_heap_info3endE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>End address of the heap in which the block is located. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417walker_block_info">
+<span id="_CPPv317walker_block_info"></span><span id="_CPPv217walker_block_info"></span><span id="walker_block_info"></span><span class="target" id="structwalker__block__info"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">walker_block_info</span></span></span><a class="headerlink" href="#_CPPv417walker_block_info" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Structure used to store block related data passed to the walker callback function. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17walker_block_info3ptrE">
+<span id="_CPPv3N17walker_block_info3ptrE"></span><span id="_CPPv2N17walker_block_info3ptrE"></span><span id="walker_block_info::ptr__voidP"></span><span class="target" id="structwalker__block__info_1af55d7d9d3a76f8c59918965dfc9c842d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ptr</span></span></span><a class="headerlink" href="#_CPPv4N17walker_block_info3ptrE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Pointer to the block data. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17walker_block_info4sizeE">
+<span id="_CPPv3N17walker_block_info4sizeE"></span><span id="_CPPv2N17walker_block_info4sizeE"></span><span id="walker_block_info::size__s"></span><span class="target" id="structwalker__block__info_1ae7135932c6301e7b15acdc1d045842bc"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><a class="headerlink" href="#_CPPv4N17walker_block_info4sizeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The size of the block. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17walker_block_info4usedE">
+<span id="_CPPv3N17walker_block_info4usedE"></span><span id="_CPPv2N17walker_block_info4usedE"></span><span id="walker_block_info::used__b"></span><span class="target" id="structwalker__block__info_1a104d31ebd96c88553acf197c1ca7d026"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">used</span></span></span><a class="headerlink" href="#_CPPv4N17walker_block_info4usedE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Block status. True: used, False: free. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.HEAP_IRAM_ATTR">
+<span class="target" id="esp__heap__caps_8h_1a2e6d94c99d0a6e732e87b9cd09466d74"></span><span class="sig-name descname"><span class="n"><span class="pre">HEAP_IRAM_ATTR</span></span></span><a class="headerlink" href="#c.HEAP_IRAM_ATTR" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_EXEC">
+<span class="target" id="esp__heap__caps_8h_1a7c96cafcb8ab916f84bca17603ec7ba7"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_EXEC</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_EXEC" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Flags to indicate the capabilities of the various memory systems. </p>
+<p>Memory must be able to run executable code </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_32BIT">
+<span class="target" id="esp__heap__caps_8h_1a826059625c016d96c251325d6673e096"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_32BIT</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_32BIT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must allow for aligned 32-bit data accesses. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_8BIT">
+<span class="target" id="esp__heap__caps_8h_1aac0f0a20c619ae2e979820ffbf2a74ca"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_8BIT</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_8BIT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must allow for 8/16/...-bit data accesses. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_DMA">
+<span class="target" id="esp__heap__caps_8h_1ad54f7d30a5138ac70088b9532043ebd7"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_DMA</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_DMA" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be able to accessed by DMA. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_PID2">
+<span class="target" id="esp__heap__caps_8h_1a3673338a10ab2461426397b1f08b1f46"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_PID2</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_PID2" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be mapped to PID2 memory space (PIDs are not currently used) </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_PID3">
+<span class="target" id="esp__heap__caps_8h_1a0de919b5cc5d4d45f645a3386c717a6e"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_PID3</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_PID3" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be mapped to PID3 memory space (PIDs are not currently used) </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_PID4">
+<span class="target" id="esp__heap__caps_8h_1a3d003de2672f6516e41c6af17b14dcd3"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_PID4</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_PID4" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be mapped to PID4 memory space (PIDs are not currently used) </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_PID5">
+<span class="target" id="esp__heap__caps_8h_1ac9769710e6abd937d3b3b9d06ffb4fc2"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_PID5</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_PID5" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be mapped to PID5 memory space (PIDs are not currently used) </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_PID6">
+<span class="target" id="esp__heap__caps_8h_1abecfbaa7697633318a031eff5ea50dc6"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_PID6</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_PID6" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be mapped to PID6 memory space (PIDs are not currently used) </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_PID7">
+<span class="target" id="esp__heap__caps_8h_1a6f793bf08b8197cc457062ecba25b984"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_PID7</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_PID7" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be mapped to PID7 memory space (PIDs are not currently used) </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_SPIRAM">
+<span class="target" id="esp__heap__caps_8h_1ace53477a25da151b259cb66c4c486f48"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_SPIRAM</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_SPIRAM" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be in SPI RAM. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_INTERNAL">
+<span class="target" id="esp__heap__caps_8h_1a5f2f4d8ffb828c43078750c475cf6047"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_INTERNAL</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_INTERNAL" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be internal; specifically it should not disappear when flash/spiram cache is switched off. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_DEFAULT">
+<span class="target" id="esp__heap__caps_8h_1ac2819ab42951525fcea5025c268f069c"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_DEFAULT</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_DEFAULT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory can be returned in a non-capability-specific memory allocation (e.g. malloc(), calloc()) call. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_IRAM_8BIT">
+<span class="target" id="esp__heap__caps_8h_1ab3679f975ec725ecb2e22179686428e4"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_IRAM_8BIT</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_IRAM_8BIT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be in IRAM and allow unaligned access. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_RETENTION">
+<span class="target" id="esp__heap__caps_8h_1aeb5113245add5bc36dd81068741af649"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_RETENTION</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_RETENTION" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be able to accessed by retention DMA. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_RTCRAM">
+<span class="target" id="esp__heap__caps_8h_1a7d5b34af1e98c17d3ab8efb5b1c49755"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_RTCRAM</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_RTCRAM" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be in RTC fast memory. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_SPM">
+<span class="target" id="esp__heap__caps_8h_1a6bde536d938bf0c98e2bba3e1af2a2c6"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_SPM</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_SPM" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be in SPM memory. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_TCM">
+<span class="target" id="esp__heap__caps_8h_1aad889717c947bd68a2c8def2f562626c"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_TCM</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_TCM" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_DMA_DESC_AHB">
+<span class="target" id="esp__heap__caps_8h_1a9cea80892d27b7a5a6682ad143b71e48"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_DMA_DESC_AHB</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_DMA_DESC_AHB" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be capable of containing AHB DMA descriptors. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_DMA_DESC_AXI">
+<span class="target" id="esp__heap__caps_8h_1a8ae9e32c1074db7116d4c69b5ab3df16"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_DMA_DESC_AXI</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_DMA_DESC_AXI" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be capable of containing AXI DMA descriptors. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_CACHE_ALIGNED">
+<span class="target" id="esp__heap__caps_8h_1a74a743cb77357dfd331052803a8953a3"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_CACHE_ALIGNED</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_CACHE_ALIGNED" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be aligned to the cache line size of any intermediate caches. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_SIMD">
+<span class="target" id="esp__heap__caps_8h_1a5d06017ad01d493ebe0b13ee1690d307"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_SIMD</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_SIMD" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be capable of being used for SIMD instructions (i.e. allow for SIMD-specific-bit data accesses) </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_SPIRAM_NO_ENC">
+<span class="target" id="esp__heap__caps_8h_1ab27af08fe49d8ebce1a0436d21091d38"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_SPIRAM_NO_ENC</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_SPIRAM_NO_ENC" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory must be in the PSRAM region exempt from flash encryption (plaintext in PSRAM; see CONFIG_SPIRAM_ENC_EXEMPT) </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MALLOC_CAP_INVALID">
+<span class="target" id="esp__heap__caps_8h_1ab711dea757d655e249112adc67a879ad"></span><span class="sig-name descname"><span class="n"><span class="pre">MALLOC_CAP_INVALID</span></span></span><a class="headerlink" href="#c.MALLOC_CAP_INVALID" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Memory can't be used / list end marker. </p>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv423esp_alloc_failed_hook_t">
+<span id="_CPPv323esp_alloc_failed_hook_t"></span><span id="_CPPv223esp_alloc_failed_hook_t"></span><span id="esp_alloc_failed_hook_t"></span><span class="target" id="esp__heap__caps_8h_1aef8999a79a3159c96600d333af60eb15"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_alloc_failed_hook_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n"><span class="pre">caps</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">function_name</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv423esp_alloc_failed_hook_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>callback called when an allocation operation fails, if registered </p>
+<dl class="field-list simple">
+<dt class="field-odd">Param size<span class="colon">:</span></dt>
+<dd class="field-odd"><p>in bytes of failed allocation </p>
+</dd>
+<dt class="field-even">Param caps<span class="colon">:</span></dt>
+<dd class="field-even"><p>capabilities requested of failed allocation </p>
+</dd>
+<dt class="field-odd">Param function_name<span class="colon">:</span></dt>
+<dd class="field-odd"><p>function which generated the failure </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv418walker_heap_into_t">
+<span id="_CPPv318walker_heap_into_t"></span><span id="_CPPv218walker_heap_into_t"></span><span id="walker_heap_into_t"></span><span class="target" id="esp__heap__caps_8h_1ae9652f545d73ee58af75889fef98446e"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv416walker_heap_info" title="walker_heap_info"><span class="n"><span class="pre">walker_heap_info</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">walker_heap_into_t</span></span></span><a class="headerlink" href="#_CPPv418walker_heap_into_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Structure used to store heap related data passed to the walker callback function. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv419walker_block_info_t">
+<span id="_CPPv319walker_block_info_t"></span><span id="_CPPv219walker_block_info_t"></span><span id="walker_block_info_t"></span><span class="target" id="esp__heap__caps_8h_1a70e90b26812591323cbb1b7a9a2b7281"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv417walker_block_info" title="walker_block_info"><span class="n"><span class="pre">walker_block_info</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">walker_block_info_t</span></span></span><a class="headerlink" href="#_CPPv419walker_block_info_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Structure used to store block related data passed to the walker callback function. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv421heap_caps_walker_cb_t">
+<span id="_CPPv321heap_caps_walker_cb_t"></span><span id="_CPPv221heap_caps_walker_cb_t"></span><span id="heap_caps_walker_cb_t"></span><span class="target" id="esp__heap__caps_8h_1aaa1ec46ffcf07cdd783097531d21d63d"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_walker_cb_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv418walker_heap_into_t" title="walker_heap_into_t"><span class="n"><span class="pre">walker_heap_into_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">heap_info</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419walker_block_info_t" title="walker_block_info_t"><span class="n"><span class="pre">walker_block_info_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">block_info</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">user_data</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv421heap_caps_walker_cb_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Function callback used to get information of memory block during calls to heap_caps_walk or heap_caps_walk_all. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Param heap_info<span class="colon">:</span></dt>
+<dd class="field-odd"><p>See walker_heap_into_t </p>
+</dd>
+<dt class="field-even">Param block_info<span class="colon">:</span></dt>
+<dd class="field-even"><p>See walker_block_info_t </p>
+</dd>
+<dt class="field-odd">Param user_data<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Opaque pointer to user defined data</p>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p>True to proceed with the heap traversal False to stop the traversal of the current heap and continue with the traversal of the next heap (if any) </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="api-reference-initialisation">
+<h2>API Reference - Initialisation<a class="headerlink" href="#api-reference-initialisation" title="Permalink to this heading"></a></h2>
+<section id="id5">
+<h3>Header File<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/heap/include/esp_heap_caps_init.h">components/heap/include/esp_heap_caps_init.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_heap_caps_init.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id6">
+<h3>Functions<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414heap_caps_initv">
+<span id="_CPPv314heap_caps_initv"></span><span id="_CPPv214heap_caps_initv"></span><span id="heap_caps_init__void"></span><span class="target" id="esp__heap__caps__init_8h_1abacfe65210ed89804126b128dcdc6db0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_init</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414heap_caps_initv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Initialize the capability-aware heap allocator. </p>
+<p>This is called once in the IDF startup code. Do not call it at other times. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv434heap_caps_enable_nonos_stack_heapsv">
+<span id="_CPPv334heap_caps_enable_nonos_stack_heapsv"></span><span id="_CPPv234heap_caps_enable_nonos_stack_heapsv"></span><span id="heap_caps_enable_nonos_stack_heaps__void"></span><span class="target" id="esp__heap__caps__init_8h_1af5c1dc12cab8b7acd97863f433316c19"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_enable_nonos_stack_heaps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv434heap_caps_enable_nonos_stack_heapsv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable heap(s) in memory regions where the startup stacks are located. </p>
+<p>On startup, the pro/app CPUs have a certain memory region they use as stack, so we cannot do allocations in the regions these stack frames are. When FreeRTOS is completely started, they do not use that memory anymore and heap(s) there can be enabled. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420heap_caps_add_region8intptr_t8intptr_t">
+<span id="_CPPv320heap_caps_add_region8intptr_t8intptr_t"></span><span id="_CPPv220heap_caps_add_region8intptr_t8intptr_t"></span><span id="heap_caps_add_region__intptr_t.intptr_t"></span><span class="target" id="esp__heap__caps__init_8h_1ae22488c4edee3a2bff04a19938dc7b23"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_add_region</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">intptr_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">start</span></span>, <span class="n"><span class="pre">intptr_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420heap_caps_add_region8intptr_t8intptr_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Add a region of memory to the collection of heaps at runtime. </p>
+<p>Most memory regions are defined in soc_memory_layout.c for the SoC, and are registered via heap_caps_init(). Some regions can't be used immediately and are later enabled via heap_caps_enable_nonos_stack_heaps().</p>
+<p>Call this function to add a region of memory to the heap at some later time.</p>
+<p>This function does not consider any of the &quot;reserved&quot; regions or other data in soc_memory_layout, caller needs to consider this themselves.</p>
+<p>All memory within the region specified by start &amp; end parameters must be otherwise unused.</p>
+<p>The capabilities of the newly registered memory will be determined by the start address, as looked up in the regions specified in soc_memory_layout.c.</p>
+<p>Use heap_caps_add_region_with_caps() to register a region with custom capabilities.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please refer to following example for memory regions allowed for addition to heap based on an existing region (address range for demonstration purpose only): <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="n">Existing</span> <span class="n">region</span><span class="p">:</span> <span class="mh">0x1000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x3000</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x1000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x3000</span> <span class="p">(</span><span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x1000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x2000</span> <span class="p">(</span><span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x0000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x1000</span> <span class="p">(</span><span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x3000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x4000</span> <span class="p">(</span><span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x0000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x2000</span> <span class="p">(</span><span class="n">NOT</span> <span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x0000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x4000</span> <span class="p">(</span><span class="n">NOT</span> <span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x1000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x4000</span> <span class="p">(</span><span class="n">NOT</span> <span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x2000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x4000</span> <span class="p">(</span><span class="n">NOT</span> <span class="n">Allowed</span><span class="p">)</span>
+</pre></div>
+</div>
+</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> -- Start address of new region. </p></li>
+<li><p><strong>end</strong> -- End address of new region.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success, ESP_ERR_INVALID_ARG if a parameter is invalid, ESP_ERR_NOT_FOUND if the specified start address doesn't reside in a known region, or any error returned by heap_caps_add_region_with_caps(). </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430heap_caps_add_region_with_capsA_K8uint32_t8intptr_t8intptr_t">
+<span id="_CPPv330heap_caps_add_region_with_capsA_K8uint32_t8intptr_t8intptr_t"></span><span id="_CPPv230heap_caps_add_region_with_capsA_K8uint32_t8intptr_t8intptr_t"></span><span id="heap_caps_add_region_with_caps__uint32_tCA.intptr_t.intptr_t"></span><span class="target" id="esp__heap__caps__init_8h_1a6960ca17873b47de977541b37cde3404"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">heap_caps_add_region_with_caps</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <span class="n"><span class="pre">intptr_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">start</span></span>, <span class="n"><span class="pre">intptr_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430heap_caps_add_region_with_capsA_K8uint32_t8intptr_t8intptr_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Add a region of memory to the collection of heaps at runtime, with custom capabilities. </p>
+<p>Similar to heap_caps_add_region(), only custom memory capabilities are specified by the caller.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please refer to following example for memory regions allowed for addition to heap based on an existing region (address range for demonstration purpose only): <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="n">Existing</span> <span class="n">region</span><span class="p">:</span> <span class="mh">0x1000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x3000</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x1000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x3000</span> <span class="p">(</span><span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x1000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x2000</span> <span class="p">(</span><span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x0000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x1000</span> <span class="p">(</span><span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x3000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x4000</span> <span class="p">(</span><span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x0000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x2000</span> <span class="p">(</span><span class="n">NOT</span> <span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x0000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x4000</span> <span class="p">(</span><span class="n">NOT</span> <span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x1000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x4000</span> <span class="p">(</span><span class="n">NOT</span> <span class="n">Allowed</span><span class="p">)</span>
+      <span class="n">New</span> <span class="n">region</span><span class="p">:</span>      <span class="mh">0x2000</span> <span class="o">&lt;-&gt;</span> <span class="mh">0x4000</span> <span class="p">(</span><span class="n">NOT</span> <span class="n">Allowed</span><span class="p">)</span>
+</pre></div>
+</div>
+</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>caps</strong> -- Ordered array of capability masks for the new region, in order of priority. Must have length SOC_MEMORY_TYPE_NO_PRIOS. Does not need to remain valid after the call returns. </p></li>
+<li><p><strong>start</strong> -- Start address of new region. </p></li>
+<li><p><strong>end</strong> -- End address of new region.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if a parameter is invalid</p></li>
+<li><p>ESP_ERR_NO_MEM if no memory to register new heap.</p></li>
+<li><p>ESP_ERR_INVALID_SIZE if the memory region is too small to fit a heap</p></li>
+<li><p>ESP_FAIL if region overlaps the start and/or end of an existing region </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="api-reference-multi-heap-api">
+<span id="multi-heap"></span><h2>API Reference - Multi-Heap API<a class="headerlink" href="#api-reference-multi-heap-api" title="Permalink to this heading"></a></h2>
+<p>(Note: The multi-heap API is used internally by the heap capabilities allocator. Most ESP-IDF programs never need to call this API directly.)</p>
+<section id="id7">
+<h3>Header File<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/heap/include/multi_heap.h">components/heap/include/multi_heap.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;multi_heap.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id8">
+<h3>Functions<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424multi_heap_aligned_alloc19multi_heap_handle_t6size_t6size_t">
+<span id="_CPPv324multi_heap_aligned_alloc19multi_heap_handle_t6size_t6size_t"></span><span id="_CPPv224multi_heap_aligned_alloc19multi_heap_handle_t6size_t6size_t"></span><span id="multi_heap_aligned_alloc__multi_heap_handle_t.s.s"></span><span class="target" id="multi__heap_8h_1a3d88d9f5d2e00c62e7877cfd87b04a6d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_aligned_alloc</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424multi_heap_aligned_alloc19multi_heap_handle_t6size_t6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>allocate a chunk of memory with specific alignment </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- Handle to a registered heap. </p></li>
+<li><p><strong>size</strong> -- size in bytes of memory chunk </p></li>
+<li><p><strong>alignment</strong> -- how the memory must be aligned</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>pointer to the memory allocated, NULL on failure </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417multi_heap_malloc19multi_heap_handle_t6size_t">
+<span id="_CPPv317multi_heap_malloc19multi_heap_handle_t6size_t"></span><span id="_CPPv217multi_heap_malloc19multi_heap_handle_t6size_t"></span><span id="multi_heap_malloc__multi_heap_handle_t.s"></span><span class="target" id="multi__heap_8h_1ac850df4bf1dfcde4550738d5b6f454f9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_malloc</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417multi_heap_malloc19multi_heap_handle_t6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>malloc() a buffer in a given heap </p>
+<p>Semantics are the same as standard malloc(), only the returned buffer will be allocated in the specified heap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- Handle to a registered heap. </p></li>
+<li><p><strong>size</strong> -- Size of desired buffer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pointer to new memory, or NULL if allocation fails. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423multi_heap_aligned_free19multi_heap_handle_tPv">
+<span id="_CPPv323multi_heap_aligned_free19multi_heap_handle_tPv"></span><span id="_CPPv223multi_heap_aligned_free19multi_heap_handle_tPv"></span><span id="multi_heap_aligned_free__multi_heap_handle_t.voidP"></span><span class="target" id="multi__heap_8h_1a96b36bfa54860ff4d98f218d5c472d7d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_aligned_free</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">p</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423multi_heap_aligned_free19multi_heap_handle_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>free() a buffer aligned in a given heap. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is deprecated, consider using multi_heap_free() instead </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- Handle to a registered heap. </p></li>
+<li><p><strong>p</strong> -- NULL, or a pointer previously returned from multi_heap_aligned_alloc() for the same heap. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415multi_heap_free19multi_heap_handle_tPv">
+<span id="_CPPv315multi_heap_free19multi_heap_handle_tPv"></span><span id="_CPPv215multi_heap_free19multi_heap_handle_tPv"></span><span id="multi_heap_free__multi_heap_handle_t.voidP"></span><span class="target" id="multi__heap_8h_1a57ece2f1499c39b5756498ec331bd468"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_free</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">p</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415multi_heap_free19multi_heap_handle_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>free() a buffer in a given heap. </p>
+<p>Semantics are the same as standard free(), only the argument 'p' must be NULL or have been allocated in the specified heap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- Handle to a registered heap. </p></li>
+<li><p><strong>p</strong> -- NULL, or a pointer previously returned from multi_heap_malloc() or multi_heap_realloc() for the same heap. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418multi_heap_realloc19multi_heap_handle_tPv6size_t">
+<span id="_CPPv318multi_heap_realloc19multi_heap_handle_tPv6size_t"></span><span id="_CPPv218multi_heap_realloc19multi_heap_handle_tPv6size_t"></span><span id="multi_heap_realloc__multi_heap_handle_t.voidP.s"></span><span class="target" id="multi__heap_8h_1a5e2ece140107e5ee2a98b90bf818bed5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_realloc</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">p</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418multi_heap_realloc19multi_heap_handle_tPv6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>realloc() a buffer in a given heap. </p>
+<p>Semantics are the same as standard realloc(), only the argument 'p' must be NULL or have been allocated in the specified heap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- Handle to a registered heap. </p></li>
+<li><p><strong>p</strong> -- NULL, or a pointer previously returned from multi_heap_malloc() or multi_heap_realloc() for the same heap. </p></li>
+<li><p><strong>size</strong> -- Desired new size for buffer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>New buffer of 'size' containing contents of 'p', or NULL if reallocation failed. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429multi_heap_get_allocated_size19multi_heap_handle_tPv">
+<span id="_CPPv329multi_heap_get_allocated_size19multi_heap_handle_tPv"></span><span id="_CPPv229multi_heap_get_allocated_size19multi_heap_handle_tPv"></span><span id="multi_heap_get_allocated_size__multi_heap_handle_t.voidP"></span><span class="target" id="multi__heap_8h_1af88d5a13cce47e48c329ef86f29f5fa2"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_get_allocated_size</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">p</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429multi_heap_get_allocated_size19multi_heap_handle_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Return the size that a particular pointer was allocated with. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- Handle to a registered heap. </p></li>
+<li><p><strong>p</strong> -- Pointer, must have been previously returned from multi_heap_malloc() or multi_heap_realloc() for the same heap.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Size of the memory allocated at this block. May be more than the original size argument, due to padding and minimum block sizes. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419multi_heap_registerPv6size_t">
+<span id="_CPPv319multi_heap_registerPv6size_t"></span><span id="_CPPv219multi_heap_registerPv6size_t"></span><span id="multi_heap_register__voidP.s"></span><span class="target" id="multi__heap_8h_1a83ee39aa9c03378c9eb32dc45c27f016"></span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_register</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">start</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419multi_heap_registerPv6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Register a new heap for use. </p>
+<p>This function initialises a heap at the specified address, and returns a handle for future heap operations.</p>
+<p>There is no equivalent function for deregistering a heap - if all blocks in the heap are free, you can immediately start using the memory for other purposes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> -- Start address of the memory to use for a new heap. </p></li>
+<li><p><strong>size</strong> -- Size (in bytes) of the new heap.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Handle of a new heap ready for use, or NULL if the heap region was too small to be initialised. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419multi_heap_set_lock19multi_heap_handle_tPv">
+<span id="_CPPv319multi_heap_set_lock19multi_heap_handle_tPv"></span><span id="_CPPv219multi_heap_set_lock19multi_heap_handle_tPv"></span><span id="multi_heap_set_lock__multi_heap_handle_t.voidP"></span><span class="target" id="multi__heap_8h_1af1e3c624610b9768289eb95496f6cdeb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_set_lock</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">lock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419multi_heap_set_lock19multi_heap_handle_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Associate a private lock pointer with a heap. </p>
+<p>The lock argument is supplied to the MULTI_HEAP_LOCK() and MULTI_HEAP_UNLOCK() macros, defined in multi_heap_platform.h.</p>
+<p>The lock in question must be recursive.</p>
+<p>When the heap is first registered, the associated lock is NULL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- Handle to a registered heap. </p></li>
+<li><p><strong>lock</strong> -- Optional pointer to a locking structure to associate with this heap. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415multi_heap_dump19multi_heap_handle_t">
+<span id="_CPPv315multi_heap_dump19multi_heap_handle_t"></span><span id="_CPPv215multi_heap_dump19multi_heap_handle_t"></span><span id="multi_heap_dump__multi_heap_handle_t"></span><span class="target" id="multi__heap_8h_1a498d52c8ab07c5863ce49cc142b01828"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_dump</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415multi_heap_dump19multi_heap_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Dump heap information to stdout. </p>
+<p>For debugging purposes, this function dumps information about every block in the heap to stdout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>heap</strong> -- Handle to a registered heap. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416multi_heap_check19multi_heap_handle_tb">
+<span id="_CPPv316multi_heap_check19multi_heap_handle_tb"></span><span id="_CPPv216multi_heap_check19multi_heap_handle_tb"></span><span id="multi_heap_check__multi_heap_handle_t.b"></span><span class="target" id="multi__heap_8h_1ad1f307768d124bc73ec03a44ef28d740"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_check</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">print_errors</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416multi_heap_check19multi_heap_handle_tb" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check heap integrity. </p>
+<p>Walks the heap and checks all heap data structures are valid. If any errors are detected, an error-specific message can be optionally printed to stderr. Print behaviour can be overridden at compile time by defining MULTI_CHECK_FAIL_PRINTF in multi_heap_platform.h.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread-safe as it sets a global variable with the value of print_errors.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- Handle to a registered heap. </p></li>
+<li><p><strong>print_errors</strong> -- If true, errors will be printed to stderr. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if heap is valid, false otherwise. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420multi_heap_free_size19multi_heap_handle_t">
+<span id="_CPPv320multi_heap_free_size19multi_heap_handle_t"></span><span id="_CPPv220multi_heap_free_size19multi_heap_handle_t"></span><span id="multi_heap_free_size__multi_heap_handle_t"></span><span class="target" id="multi__heap_8h_1a31baeeba41b9560413af745b33c5b6b5"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_free_size</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420multi_heap_free_size19multi_heap_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Return free heap size. </p>
+<p>Returns the number of bytes available in the heap.</p>
+<p>Equivalent to the total_free_bytes member returned by multi_heap_get_heap_info().</p>
+<p>Note that the heap may be fragmented, so the actual maximum size for a single malloc() may be lower. To know this size, see the largest_free_block member returned by multi_heap_get_heap_info().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>heap</strong> -- Handle to a registered heap. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of free bytes. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428multi_heap_minimum_free_size19multi_heap_handle_t">
+<span id="_CPPv328multi_heap_minimum_free_size19multi_heap_handle_t"></span><span id="_CPPv228multi_heap_minimum_free_size19multi_heap_handle_t"></span><span id="multi_heap_minimum_free_size__multi_heap_handle_t"></span><span class="target" id="multi__heap_8h_1a7073b215edc403edd4ef7083d8f86e13"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_minimum_free_size</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428multi_heap_minimum_free_size19multi_heap_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Return the lifetime minimum free heap size. </p>
+<p>Equivalent to the minimum_free_bytes member returned by multi_heap_get_info().</p>
+<p>Returns the lifetime &quot;low watermark&quot; of possible values returned from multi_free_heap_size(), for the specified heap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>heap</strong> -- Handle to a registered heap. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of free bytes. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419multi_heap_get_info19multi_heap_handle_tP17multi_heap_info_t">
+<span id="_CPPv319multi_heap_get_info19multi_heap_handle_tP17multi_heap_info_t"></span><span id="_CPPv219multi_heap_get_info19multi_heap_handle_tP17multi_heap_info_t"></span><span id="multi_heap_get_info__multi_heap_handle_t.multi_heap_info_tP"></span><span class="target" id="multi__heap_8h_1aad3673c369c1efc02fd8aa1cbebcf713"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_get_info</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <a class="reference internal" href="#_CPPv417multi_heap_info_t" title="multi_heap_info_t"><span class="n"><span class="pre">multi_heap_info_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">info</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419multi_heap_get_info19multi_heap_handle_tP17multi_heap_info_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Return metadata about a given heap. </p>
+<p>Fills a <a class="reference internal" href="#structmulti__heap__info__t"><span class="std std-ref">multi_heap_info_t</span></a> structure with information about the specified heap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- Handle to a registered heap. </p></li>
+<li><p><strong>info</strong> -- Pointer to a structure to fill with heap metadata. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429multi_heap_aligned_alloc_offs19multi_heap_handle_t6size_t6size_t6size_t">
+<span id="_CPPv329multi_heap_aligned_alloc_offs19multi_heap_handle_t6size_t6size_t6size_t"></span><span id="_CPPv229multi_heap_aligned_alloc_offs19multi_heap_handle_t6size_t6size_t6size_t"></span><span id="multi_heap_aligned_alloc_offs__multi_heap_handle_t.s.s.s"></span><span class="target" id="multi__heap_8h_1a5bd68a8c4de105758813932748b207ed"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_aligned_alloc_offs</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">offset</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429multi_heap_aligned_alloc_offs19multi_heap_handle_t6size_t6size_t6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Perform an aligned allocation from the provided offset. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- The heap in which to perform the allocation </p></li>
+<li><p><strong>size</strong> -- The size of the allocation </p></li>
+<li><p><strong>alignment</strong> -- How the memory must be aligned </p></li>
+<li><p><strong>offset</strong> -- The offset at which the alignment should start </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void* The ptr to the allocated memory </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv435multi_heap_reset_minimum_free_bytes19multi_heap_handle_t">
+<span id="_CPPv335multi_heap_reset_minimum_free_bytes19multi_heap_handle_t"></span><span id="_CPPv235multi_heap_reset_minimum_free_bytes19multi_heap_handle_t"></span><span id="multi_heap_reset_minimum_free_bytes__multi_heap_handle_t"></span><span class="target" id="multi__heap_8h_1a63c94ec2432b1cff8873244b02f9a394"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_reset_minimum_free_bytes</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv435multi_heap_reset_minimum_free_bytes19multi_heap_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Reset the minimum_free_bytes value (setting it to free_bytes) and return the former value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>heap</strong> -- The heap in which the reset is taking place </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>size_t the value of minimum_free_bytes before it is reset </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv437multi_heap_restore_minimum_free_bytes19multi_heap_handle_tK6size_t">
+<span id="_CPPv337multi_heap_restore_minimum_free_bytes19multi_heap_handle_tK6size_t"></span><span id="_CPPv237multi_heap_restore_minimum_free_bytes19multi_heap_handle_tK6size_t"></span><span id="multi_heap_restore_minimum_free_bytes__multi_heap_handle_t.sC"></span><span class="target" id="multi__heap_8h_1a5e65837d15044e30317cf07e5ba29568"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_restore_minimum_free_bytes</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">new_minimum_free_bytes_value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv437multi_heap_restore_minimum_free_bytes19multi_heap_handle_tK6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set the value of minimum_free_bytes to new_minimum_free_bytes_value or keep the current value of minimum_free_bytes if it is smaller than new_minimum_free_bytes_value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- The heap in which the restore is taking place </p></li>
+<li><p><strong>new_minimum_free_bytes_value</strong> -- The value to restore the minimum_free_bytes to </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415multi_heap_walk19multi_heap_handle_t22multi_heap_walker_cb_tPv">
+<span id="_CPPv315multi_heap_walk19multi_heap_handle_t22multi_heap_walker_cb_tPv"></span><span id="_CPPv215multi_heap_walk19multi_heap_handle_t22multi_heap_walker_cb_tPv"></span><span id="multi_heap_walk__multi_heap_handle_t.multi_heap_walker_cb_t.voidP"></span><span class="target" id="multi__heap_8h_1a9423fd4ba0f7e7cd72dd3c3532477485"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_walk</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <a class="reference internal" href="#_CPPv422multi_heap_walker_cb_t" title="multi_heap_walker_cb_t"><span class="n"><span class="pre">multi_heap_walker_cb_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">walker_func</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">user_data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415multi_heap_walk19multi_heap_handle_t22multi_heap_walker_cb_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Call the tlsf_walk_pool function of the heap given as parameter with the walker function passed as parameter. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- The heap to traverse </p></li>
+<li><p><strong>walker_func</strong> -- The walker to trigger on each block of the heap </p></li>
+<li><p><strong>user_data</strong> -- Opaque pointer to user defined data </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430multi_heap_get_full_block_size19multi_heap_handle_tPv">
+<span id="_CPPv330multi_heap_get_full_block_size19multi_heap_handle_tPv"></span><span id="_CPPv230multi_heap_get_full_block_size19multi_heap_handle_tPv"></span><span id="multi_heap_get_full_block_size__multi_heap_handle_t.voidP"></span><span class="target" id="multi__heap_8h_1aad4f3f90b5b1fea1bde23cc80b9ee6af"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_get_full_block_size</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">p</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430multi_heap_get_full_block_size19multi_heap_handle_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv432multi_heap_find_containing_block19multi_heap_handle_tPv">
+<span id="_CPPv332multi_heap_find_containing_block19multi_heap_handle_tPv"></span><span id="_CPPv232multi_heap_find_containing_block19multi_heap_handle_tPv"></span><span id="multi_heap_find_containing_block__multi_heap_handle_t.voidP"></span><span class="target" id="multi__heap_8h_1a87bd165d3c39662e23e7a1ae275f8311"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_find_containing_block</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419multi_heap_handle_t" title="multi_heap_handle_t"><span class="n"><span class="pre">multi_heap_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">heap</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv432multi_heap_find_containing_block19multi_heap_handle_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Function walking through a given heap and returning the pointer to the allocated block containing the pointer passed as parameter. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The heap parameter must be valid and the pointer parameter must belong to a block of allocated memory. The app will crash with an assertion failure if at least one of the parameter is invalid.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heap</strong> -- The heap to walk through </p></li>
+<li><p><strong>ptr</strong> -- The pointer to find the allocated block of </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pointer to the allocated block containing the pointer ptr </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="id9">
+<h3>Structures<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417multi_heap_info_t">
+<span id="_CPPv317multi_heap_info_t"></span><span id="_CPPv217multi_heap_info_t"></span><span id="multi_heap_info_t"></span><span class="target" id="structmulti__heap__info__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_info_t</span></span></span><a class="headerlink" href="#_CPPv417multi_heap_info_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Structure to access heap metadata via multi_heap_get_info. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17multi_heap_info_t16total_free_bytesE">
+<span id="_CPPv3N17multi_heap_info_t16total_free_bytesE"></span><span id="_CPPv2N17multi_heap_info_t16total_free_bytesE"></span><span id="multi_heap_info_t::total_free_bytes__s"></span><span class="target" id="structmulti__heap__info__t_1a579d218a5e7be434de0e06c4a5e2fc44"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">total_free_bytes</span></span></span><a class="headerlink" href="#_CPPv4N17multi_heap_info_t16total_free_bytesE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Total free bytes in the heap. Equivalent to multi_free_heap_size(). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17multi_heap_info_t21total_allocated_bytesE">
+<span id="_CPPv3N17multi_heap_info_t21total_allocated_bytesE"></span><span id="_CPPv2N17multi_heap_info_t21total_allocated_bytesE"></span><span id="multi_heap_info_t::total_allocated_bytes__s"></span><span class="target" id="structmulti__heap__info__t_1af7ac7bb9523d54bc65ff43ca695eaa4d"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">total_allocated_bytes</span></span></span><a class="headerlink" href="#_CPPv4N17multi_heap_info_t21total_allocated_bytesE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Total bytes allocated to data in the heap. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17multi_heap_info_t18largest_free_blockE">
+<span id="_CPPv3N17multi_heap_info_t18largest_free_blockE"></span><span id="_CPPv2N17multi_heap_info_t18largest_free_blockE"></span><span id="multi_heap_info_t::largest_free_block__s"></span><span class="target" id="structmulti__heap__info__t_1ab1f0470a7a39d0ff6624aa3a51ebe314"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">largest_free_block</span></span></span><a class="headerlink" href="#_CPPv4N17multi_heap_info_t18largest_free_blockE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Size of the largest free block in the heap. This is the largest malloc-able size. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17multi_heap_info_t18minimum_free_bytesE">
+<span id="_CPPv3N17multi_heap_info_t18minimum_free_bytesE"></span><span id="_CPPv2N17multi_heap_info_t18minimum_free_bytesE"></span><span id="multi_heap_info_t::minimum_free_bytes__s"></span><span class="target" id="structmulti__heap__info__t_1aaae058568c1b0c400bf53060c64d1193"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">minimum_free_bytes</span></span></span><a class="headerlink" href="#_CPPv4N17multi_heap_info_t18minimum_free_bytesE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Lifetime minimum free heap size. Equivalent to multi_minimum_free_heap_size(). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17multi_heap_info_t16allocated_blocksE">
+<span id="_CPPv3N17multi_heap_info_t16allocated_blocksE"></span><span id="_CPPv2N17multi_heap_info_t16allocated_blocksE"></span><span id="multi_heap_info_t::allocated_blocks__s"></span><span class="target" id="structmulti__heap__info__t_1a216a36cb5c73cec2f2a1afafdbdb4727"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">allocated_blocks</span></span></span><a class="headerlink" href="#_CPPv4N17multi_heap_info_t16allocated_blocksE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Number of (variable size) blocks allocated in the heap. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17multi_heap_info_t11free_blocksE">
+<span id="_CPPv3N17multi_heap_info_t11free_blocksE"></span><span id="_CPPv2N17multi_heap_info_t11free_blocksE"></span><span id="multi_heap_info_t::free_blocks__s"></span><span class="target" id="structmulti__heap__info__t_1ab18daccada986848b88c9c61b06183a7"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">free_blocks</span></span></span><a class="headerlink" href="#_CPPv4N17multi_heap_info_t11free_blocksE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Number of (variable size) free blocks in the heap. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17multi_heap_info_t12total_blocksE">
+<span id="_CPPv3N17multi_heap_info_t12total_blocksE"></span><span id="_CPPv2N17multi_heap_info_t12total_blocksE"></span><span id="multi_heap_info_t::total_blocks__s"></span><span class="target" id="structmulti__heap__info__t_1a0298f4fdc59110fe56a29c2e130ea9f7"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">total_blocks</span></span></span><a class="headerlink" href="#_CPPv4N17multi_heap_info_t12total_blocksE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Total number of (variable size) blocks in the heap. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="id10">
+<h3>Type Definitions<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv419multi_heap_handle_t">
+<span id="_CPPv319multi_heap_handle_t"></span><span id="_CPPv219multi_heap_handle_t"></span><span id="multi_heap_handle_t"></span><span class="target" id="multi__heap_8h_1a051dfcd4b982e1c1d33930f96fb6539d"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">multi_heap_info</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_handle_t</span></span></span><a class="headerlink" href="#_CPPv419multi_heap_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Opaque handle to a registered heap. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv422multi_heap_walker_cb_t">
+<span id="_CPPv322multi_heap_walker_cb_t"></span><span id="_CPPv222multi_heap_walker_cb_t"></span><span id="multi_heap_walker_cb_t"></span><span class="target" id="multi__heap_8h_1aa955ee963801b59565f9b8ac0d8e2219"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">multi_heap_walker_cb_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">block_ptr</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">block_size</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">block_used</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">user_data</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv422multi_heap_walker_cb_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Callback called when walking the given heap blocks of memory. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Param block_ptr<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to the block data </p>
+</dd>
+<dt class="field-even">Param block_size<span class="colon">:</span></dt>
+<dd class="field-even"><p>The size of the block </p>
+</dd>
+<dt class="field-odd">Param block_used<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Block status. 0: free, 1: allocated </p>
+</dd>
+<dt class="field-even">Param user_data<span class="colon">:</span></dt>
+<dd class="field-even"><p>Opaque pointer to user defined data</p>
+</dd>
+<dt class="field-odd">Return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the walker is expected to continue the heap traversal False if the walker is expected to stop the traversal of the heap </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Heap Memory Allocation (api-reference/system/mem_alloc)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Heap Memory Allocation (api-reference/system/mem_alloc)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="freertos_additions.html" class="btn btn-neutral float-left" title="FreeRTOS (Supplemental Features)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mm.html" class="btn btn-neutral float-right" title="Memory Management for MMU Supported Memory" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -11,7 +11,11 @@ void initSetup()
     {
         ui_init();
         disableTouchGestures();
-        initDisplayTask();
+        if (!initDisplayTask())
+        {
+            Serial.println(F("Failed to create LVGL display task"));
+            return;
+        }
         restartNow = true;
         errorBox(langText("msg_filesystem_mount_failed"), true);
         return;
@@ -19,7 +23,11 @@ void initSetup()
 
     ui_init();
     disableTouchGestures();
-    initDisplayTask();
+    if (!initDisplayTask())
+    {
+        Serial.println(F("Failed to create LVGL display task"));
+        return;
+    }
 
     updateDisplayLog((String("Robo-Trickler v") + FW_VERSION + " // strenuous.dev").c_str());
 

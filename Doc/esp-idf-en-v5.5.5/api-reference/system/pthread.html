@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POSIX Support (Including POSIX Threads Support) - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/pthread.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/system/pthread';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Random Number Generation" href="random.html" />
+    <link rel="prev" title="Power Management" href="power_management.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">System API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app_image_format.html">App Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootloader_image_format.html">Bootloader Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app_trace.html">Application Level Tracing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_function_with_shared_stack.html">Call Function with External Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chip_revision.html">Chip Revision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console.html">Console</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efuse.html">eFuse Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_err.html">Error Code and Helper Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_ota.html">ESP HTTPS OTA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_event.html">Event Loop Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos.html">FreeRTOS Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_idf.html">FreeRTOS (IDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_additions.html">FreeRTOS (Supplemental Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mem_alloc.html">Heap Memory Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mm.html">Memory Management for MMU Supported Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="heap_debug.html">Heap Memory Debugging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_timer.html">ESP Timer (High Resolution Timer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="internal-unstable.html">Internal and Unstable APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipc.html">Inter-Processor Call (IPC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intr_alloc.html">Interrupt Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="log.html">Logging library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc_system_api.html">Miscellaneous System APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ota.html">Over The Air Updates (OTA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="perfmon.html">Performance Monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="power_management.html">Power Management</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">POSIX Support (Including POSIX Threads Support)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rtos-integration">RTOS Integration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#standard-features">Standard Features</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#not-implemented">Not Implemented</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#esp-idf-extensions">ESP-IDF Extensions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sleep_modes.html">Sleep Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soc_caps.html">SoC Capabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_time.html">System Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="himem.html">Himem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ulp.html">Ultra Low Power (ULP) coprocessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wdts.html">Watchdogs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">System API</a></li>
+      <li class="breadcrumb-item active">POSIX Support (Including POSIX Threads Support)</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/system/pthread.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="posix-support-including-posix-threads-support">
+<h1>POSIX Support (Including POSIX Threads Support)<a class="headerlink" href="#posix-support-including-posix-threads-support" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/system/pthread.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>ESP-IDF is based on FreeRTOS but offers a range of POSIX-compatible APIs that allow easy porting of third-party code. This includes support for common parts of the POSIX Threads <code class="docutils literal notranslate"><span class="pre">pthread</span></code> API.</p>
+<p>POSIX Threads are implemented in ESP-IDF as wrappers around equivalent FreeRTOS features. The runtime memory or performance overhead of using the pthreads API is quite low, but not every feature available in either pthreads or FreeRTOS is available via the ESP-IDF pthreads support.</p>
+<p>Pthreads can be used in ESP-IDF by including standard <code class="docutils literal notranslate"><span class="pre">pthread.h</span></code> header, which is included in the toolchain libc. An additional ESP-IDF specific header, <code class="docutils literal notranslate"><span class="pre">esp_pthread.h</span></code>, provides additional non-POSIX APIs for using some ESP-IDF features with pthreads.</p>
+<p>Besides POSIX Threads, ESP-IDF also supports <a class="reference internal" href="#posix-message-queues"><span class="std std-ref">POSIX message queues</span></a>.</p>
+<p>C++ Standard Library implementations for <code class="docutils literal notranslate"><span class="pre">std::thread</span></code>, <code class="docutils literal notranslate"><span class="pre">std::mutex</span></code>, <code class="docutils literal notranslate"><span class="pre">std::condition_variable</span></code>, etc., are realized using pthreads and other POSIX APIs (via GCC libstdc++). Therefore, restrictions mentioned here also apply to the equivalent C++ standard library functionality.</p>
+<p>If you identify a useful API that you would like to see implemented in ESP-IDF, please open a <a class="reference external" href="https://github.com/espressif/esp-idf/issues">feature request on GitHub</a> with the details.</p>
+</section>
+<section id="rtos-integration">
+<h2>RTOS Integration<a class="headerlink" href="#rtos-integration" title="Permalink to this heading"></a></h2>
+<p>Unlike many operating systems using POSIX Threads, ESP-IDF is a real-time operating system with a real-time scheduler. This means that a thread will only stop running if a higher priority task is ready to run, the thread blocks on an OS synchronization structure like a mutex, or the thread calls any of the functions <code class="docutils literal notranslate"><span class="pre">sleep</span></code>, <a class="reference internal" href="freertos_idf.html#_CPPv410vTaskDelayK10TickType_t" title="vTaskDelay"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskDelay()</span></code></a>, or <code class="docutils literal notranslate"><span class="pre">usleep</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When calling a standard libc or C++ sleep function, such as <code class="docutils literal notranslate"><span class="pre">usleep</span></code> defined in <code class="docutils literal notranslate"><span class="pre">unistd.h</span></code>, the task will only block and yield the core if the sleep time is longer than <a class="reference internal" href="../kconfig-reference.html#config-freertos-hz"><span class="std std-ref">one FreeRTOS tick period</span></a>. If the time is shorter, the thread will busy-wait instead of yielding to another RTOS task.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The POSIX <code class="docutils literal notranslate"><span class="pre">errno</span></code> is provided by newlib in ESP-IDF. Thus the configuration <code class="docutils literal notranslate"><span class="pre">configUSE_POSIX_ERRNO</span></code> is not used and should stay disabled.</p>
+</div>
+<p>By default, all POSIX Threads have the same RTOS priority, but it is possible to change this by calling a <a class="reference internal" href="#esp-pthread"><span class="std std-ref">custom API</span></a>.</p>
+</section>
+<section id="standard-features">
+<h2>Standard Features<a class="headerlink" href="#standard-features" title="Permalink to this heading"></a></h2>
+<p>The following standard APIs are implemented in ESP-IDF.</p>
+<p>Refer to <a class="reference external" href="https://man7.org/linux/man-pages/man7/pthreads.7.html">standard POSIX Threads documentation</a>, or <code class="docutils literal notranslate"><span class="pre">pthread.h</span></code>, for details about the standard arguments and behaviour of each function. Differences or limitations compared to the standard APIs are noted below.</p>
+<section id="thread-apis">
+<span id="posix-thread-api"></span><h3>Thread APIs<a class="headerlink" href="#thread-apis" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">pthread_create()</span></code></dt><dd><ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">attr</span></code> argument is supported for setting stack size and detach state only. Other attribute fields are ignored.</p></li>
+<li><p>Unlike FreeRTOS task functions, the <code class="docutils literal notranslate"><span class="pre">start_routine</span></code> function is allowed to return. A detached type thread is automatically deleted if the function returns. The default joinable type thread will be suspended until <code class="docutils literal notranslate"><span class="pre">pthread_join()</span></code> is called on it.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_join()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_detach()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_exit()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sched_yield()</span></code></p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">pthread_self()</span></code></dt><dd><ul>
+<li><p>An assert will fail if this function is called from a FreeRTOS task which is not a pthread.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_equal()</span></code></p></li>
+</ul>
+</section>
+<section id="thread-attributes">
+<h3>Thread Attributes<a class="headerlink" href="#thread-attributes" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_attr_init()</span></code></p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">pthread_attr_destroy()</span></code></dt><dd><ul>
+<li><p>This function does not need to free any resources and instead resets the <code class="docutils literal notranslate"><span class="pre">attr</span></code> structure to defaults. The implementation is the same as <code class="docutils literal notranslate"><span class="pre">pthread_attr_init()</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_attr_getstacksize()</span></code> / <code class="docutils literal notranslate"><span class="pre">pthread_attr_setstacksize()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_attr_getdetachstate()</span></code> / <code class="docutils literal notranslate"><span class="pre">pthread_attr_setdetachstate()</span></code></p></li>
+</ul>
+</section>
+<section id="once">
+<h3>Once<a class="headerlink" href="#once" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_once()</span></code></p></li>
+</ul>
+<p>Static initializer constant <code class="docutils literal notranslate"><span class="pre">PTHREAD_ONCE_INIT</span></code> is supported.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function can be called from tasks created using either pthread or FreeRTOS APIs.</p>
+</div>
+</section>
+<section id="mutexes">
+<h3>Mutexes<a class="headerlink" href="#mutexes" title="Permalink to this heading"></a></h3>
+<p>POSIX Mutexes are implemented as FreeRTOS Mutex Semaphores (normal type for &quot;fast&quot; or &quot;error check&quot; mutexes, and Recursive type for &quot;recursive&quot; mutexes). This means that they have the same priority inheritance behavior as mutexes created with <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xSemaphoreCreateMutex()</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_mutex_init()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_mutex_destroy()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_mutex_lock()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_mutex_timedlock()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_mutex_trylock()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_mutex_unlock()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_mutexattr_init()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_mutexattr_destroy()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_mutexattr_gettype()</span></code> / <code class="docutils literal notranslate"><span class="pre">pthread_mutexattr_settype()</span></code></p></li>
+</ul>
+<p>Static initializer constant <code class="docutils literal notranslate"><span class="pre">PTHREAD_MUTEX_INITIALIZER</span></code> is supported, but the non-standard static initializer constants for other mutex types are not supported.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These functions can be called from tasks created using either pthread or FreeRTOS APIs.</p>
+</div>
+</section>
+<section id="condition-variables">
+<h3>Condition Variables<a class="headerlink" href="#condition-variables" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">pthread_cond_init()</span></code></dt><dd><ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">attr</span></code> argument is not implemented and is ignored.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_cond_destroy()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_cond_signal()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_cond_broadcast()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_cond_wait()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_cond_timedwait()</span></code></p></li>
+</ul>
+<p>Static initializer constant <code class="docutils literal notranslate"><span class="pre">PTHREAD_COND_INITIALIZER</span></code> is supported.</p>
+<ul class="simple">
+<li><p>The resolution of <code class="docutils literal notranslate"><span class="pre">pthread_cond_timedwait()</span></code> timeouts is the RTOS tick period (see <a class="reference internal" href="../kconfig-reference.html#config-freertos-hz"><span class="std std-ref">CONFIG_FREERTOS_HZ</span></a>). Timeouts may be delayed up to one tick period after the requested timeout.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These functions can be called from tasks created using either pthread or FreeRTOS APIs.</p>
+</div>
+</section>
+<section id="semaphores">
+<h3>Semaphores<a class="headerlink" href="#semaphores" title="Permalink to this heading"></a></h3>
+<p>In ESP-IDF, POSIX <strong>unnamed</strong> semaphores are implemented. The accessible API is described below. It implements <a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/semaphore.h.html">semaphores as specified in the POSIX standard</a>, unless specified otherwise.</p>
+<ul>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/sem_init.html">sem_init()</a></p></li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/sem_destroy.html">sem_destroy()</a></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pshared</span></code> is ignored. Semaphores can always be shared between FreeRTOS tasks.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/sem_post.html">sem_post()</a></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>If the semaphore has a value of <code class="docutils literal notranslate"><span class="pre">SEM_VALUE_MAX</span></code> already, <code class="docutils literal notranslate"><span class="pre">-1</span></code> is returned and <code class="docutils literal notranslate"><span class="pre">errno</span></code> is set to <code class="docutils literal notranslate"><span class="pre">EAGAIN</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/sem_wait.html">sem_wait()</a></p></li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/sem_trywait.html">sem_trywait()</a></p></li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/sem_timedwait.html">sem_timedwait()</a></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The time value passed by abstime will be rounded up to the next FreeRTOS tick.</p></li>
+<li><p>The actual timeout happens after the tick that the time was rounded to and before the following tick.</p></li>
+<li><p>It is possible, though unlikely, that the task is preempted directly after the timeout calculation, delaying the timeout of the following blocking operating system call by the duration of the preemption.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/sem_getvalue.html">sem_getvalue()</a></p></li>
+</ul>
+</section>
+<section id="read-write-locks">
+<h3>Read/Write Locks<a class="headerlink" href="#read-write-locks" title="Permalink to this heading"></a></h3>
+<p>The following API functions of the POSIX reader-writer locks specification are implemented:</p>
+<ul>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_rwlock_init.html">pthread_rwlock_init()</a></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">attr</span></code> argument is not implemented and is ignored.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_rwlock_destroy.html">pthread_rwlock_destroy()</a></p></li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_rwlock_rdlock.html">pthread_rwlock_rdlock()</a></p></li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_rwlock_tryrdlock.html">pthread_rwlock_tryrdlock()</a></p></li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_rwlock_wrlock.html">pthread_rwlock_wrlock()</a></p></li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_rwlock_trywrlock.html">pthread_rwlock_trywrlock()</a></p></li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_rwlock_unlock.html">pthread_rwlock_unlock()</a></p></li>
+</ul>
+<p>The static initializer constant <code class="docutils literal notranslate"><span class="pre">PTHREAD_RWLOCK_INITIALIZER</span></code> is supported.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These functions can be called from tasks created using either pthread or FreeRTOS APIs.</p>
+</div>
+</section>
+<section id="thread-specific-data">
+<h3>Thread-Specific Data<a class="headerlink" href="#thread-specific-data" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">pthread_key_create()</span></code></dt><dd><ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">destr_function</span></code> argument is supported and will be called if a thread function exits normally, calls <code class="docutils literal notranslate"><span class="pre">pthread_exit()</span></code>, or if the underlying task is deleted directly using the FreeRTOS function <a class="reference internal" href="freertos_idf.html#_CPPv411vTaskDelete12TaskHandle_t" title="vTaskDelete"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskDelete()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_key_delete()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_setspecific()</span></code> / <code class="docutils literal notranslate"><span class="pre">pthread_getspecific()</span></code></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These functions can be called from tasks created using either pthread or FreeRTOS APIs. When calling these functions from tasks created using FreeRTOS APIs, <a class="reference internal" href="../kconfig-reference.html#config-freertos-tlsp-deletion-callbacks"><span class="std std-ref">CONFIG_FREERTOS_TLSP_DELETION_CALLBACKS</span></a> config option must be enabled to ensure the thread-specific data is cleaned up before the task is deleted.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are other options for thread local storage in ESP-IDF, including options with higher performance. See <a class="reference internal" href="../../api-guides/thread-local-storage.html"><span class="doc">Thread Local Storage</span></a>.</p>
+</div>
+</section>
+<section id="message-queues">
+<span id="posix-message-queues"></span><h3>Message Queues<a class="headerlink" href="#message-queues" title="Permalink to this heading"></a></h3>
+<p>The message queue implementation is based on the <a class="reference external" href="https://www.freertos.org/FreeRTOS-Plus/FreeRTOS_Plus_POSIX/index.html">FreeRTOS-Plus-POSIX</a> project. Message queues are not made available in any filesystem on ESP-IDF. Message priorities are not supported.</p>
+<p>The following API functions of the POSIX message queue specification are implemented:</p>
+<ul>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/mq_open.html">mq_open()</a></p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>The <code class="docutils literal notranslate"><span class="pre">name</span></code> argument has, besides the POSIX specification, the following additional restrictions:</dt><dd><ul>
+<li><p>It has to begin with a leading slash.</p></li>
+<li><p>It has to be no more than 255 + 2 characters long (including the leading slash, excluding the terminating null byte). However, memory for <code class="docutils literal notranslate"><span class="pre">name</span></code> is dynamically allocated internally, so the shorter it is, the fewer memory it will consume.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">mode</span></code> argument is not implemented and is ignored.</p></li>
+<li><p>Supported <code class="docutils literal notranslate"><span class="pre">oflags</span></code>: <code class="docutils literal notranslate"><span class="pre">O_RDWR</span></code>, <code class="docutils literal notranslate"><span class="pre">O_CREAT</span></code>, <code class="docutils literal notranslate"><span class="pre">O_EXCL</span></code>, and <code class="docutils literal notranslate"><span class="pre">O_NONBLOCK</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/mq_close.html">mq_close()</a></p></li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/mq_unlink.html">mq_unlink()</a></p></li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/mq_receive.html">mq_receive()</a></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Since message priorities are not supported, <code class="docutils literal notranslate"><span class="pre">msg_prio</span></code> is unused.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/mq_receive.html">mq_timedreceive()</a></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Since message priorities are not supported, <code class="docutils literal notranslate"><span class="pre">msg_prio</span></code> is unused.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/mq_send.html">mq_send()</a></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Since message priorities are not supported, <code class="docutils literal notranslate"><span class="pre">msg_prio</span></code> has no effect.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/mq_send.html">mq_timedsend()</a></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Since message priorities are not supported, <code class="docutils literal notranslate"><span class="pre">msg_prio</span></code> has no effect.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/mq_getattr.html">mq_getattr()</a></p></li>
+</ul>
+<p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/mq_notify.html">mq_notify()</a> and <a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/mq_setattr.html">mq_setattr()</a> are not implemented.</p>
+<section id="building">
+<h4>Building<a class="headerlink" href="#building" title="Permalink to this heading"></a></h4>
+<p>To use the POSIX message queue API, please add <code class="docutils literal notranslate"><span class="pre">rt</span></code> as a requirement in your component's <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you have used <a class="reference external" href="https://www.freertos.org/FreeRTOS-Plus/FreeRTOS_Plus_POSIX/index.html">FreeRTOS-Plus-POSIX</a> in another FreeRTOS project before, please note that the include paths in IDF are POSIX-like. Hence, applications include <code class="docutils literal notranslate"><span class="pre">mqueue.h</span></code> directly instead of using the subdirectory include <code class="docutils literal notranslate"><span class="pre">FreeRTOS_POSIX/mqueue.h</span></code>.</p>
+</div>
+</section>
+</section>
+</section>
+<section id="not-implemented">
+<h2>Not Implemented<a class="headerlink" href="#not-implemented" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">pthread.h</span></code> header is a standard header and includes additional APIs and features which are not implemented in ESP-IDF. These include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_cancel()</span></code> returns <code class="docutils literal notranslate"><span class="pre">ENOSYS</span></code> if called.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pthread_condattr_init()</span></code> returns <code class="docutils literal notranslate"><span class="pre">ENOSYS</span></code> if called.</p></li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/mq_notify.html">mq_notify()</a> returns <code class="docutils literal notranslate"><span class="pre">ENOSYS</span></code> if called.</p></li>
+<li><p><a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/mq_setattr.html">mq_setattr()</a> returns <code class="docutils literal notranslate"><span class="pre">ENOSYS</span></code> if called.</p></li>
+</ul>
+<p>Other POSIX Threads functions (not listed here) are not implemented and will produce either a compiler or a linker error if referenced from an ESP-IDF application.</p>
+</section>
+<section id="esp-idf-extensions">
+<span id="esp-pthread"></span><h2>ESP-IDF Extensions<a class="headerlink" href="#esp-idf-extensions" title="Permalink to this heading"></a></h2>
+<p>The API <a class="reference internal" href="#_CPPv419esp_pthread_set_cfgPK17esp_pthread_cfg_t" title="esp_pthread_set_cfg"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_pthread_set_cfg()</span></code></a> defined in the <code class="docutils literal notranslate"><span class="pre">esp_pthreads.h</span></code> header offers custom extensions to control how subsequent calls to <code class="docutils literal notranslate"><span class="pre">pthread_create()</span></code> behaves. Currently, the following configuration can be set:</p>
+<p><ul class="simple">
+<li><p>Default stack size of new threads, if not specified when calling <code class="docutils literal notranslate"><span class="pre">pthread_create()</span></code> (overrides <a class="reference internal" href="../kconfig-reference.html#config-pthread-task-stack-size-default"><span class="std std-ref">CONFIG_PTHREAD_TASK_STACK_SIZE_DEFAULT</span></a>).</p></li>
+<li><p>Stack memory capabilities determine which kind of memory is used for allocating pthread stacks. The field takes ESP-IDF heap capability flags, as defined in <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/heap/include/esp_heap_caps.h">heap/include/esp_heap_caps.h</a>. The memory must be 8-bit accessible (MALLOC_CAP_8BIT), besides other custom flags the user can choose from. The user is responsible for ensuring the correctness of the stack memory capabilities. For more information about memory locations, refer to the documentation of <a class="reference internal" href="mem_alloc.html#memory-capabilities"><span class="std std-ref">Memory Capabilities</span></a>.</p></li>
+<li><p>RTOS priority of new threads (overrides <a class="reference internal" href="../kconfig-reference.html#config-pthread-task-prio-default"><span class="std std-ref">CONFIG_PTHREAD_TASK_PRIO_DEFAULT</span></a>).</p></li>
+<li><p>Core affinity / core pinning of new threads (overrides <a class="reference internal" href="../kconfig-reference.html#config-pthread-task-core-default"><span class="std std-ref">CONFIG_PTHREAD_TASK_CORE_DEFAULT</span></a>).</p></li>
+<li><p>FreeRTOS task name for new threads (overrides <a class="reference internal" href="../kconfig-reference.html#config-pthread-task-name-default"><span class="std std-ref">CONFIG_PTHREAD_TASK_NAME_DEFAULT</span></a>)</p></li>
+</ul>
+</p>
+<p>This configuration is scoped to the calling thread (or FreeRTOS task), meaning that <a class="reference internal" href="#_CPPv419esp_pthread_set_cfgPK17esp_pthread_cfg_t" title="esp_pthread_set_cfg"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_pthread_set_cfg()</span></code></a> can be called independently in different threads or tasks. If the <code class="docutils literal notranslate"><span class="pre">inherit_cfg</span></code> flag is set in the current configuration then any new thread created will inherit the creator's configuration (if that thread calls <code class="docutils literal notranslate"><span class="pre">pthread_create()</span></code> recursively), otherwise the new thread will have the default configuration.</p>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/pthread">system/pthread</a> demonstrates using the pthreads API to create threads.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/cxx/pthread">cxx/pthread</a> demonstrates using C++ Standard Library functions with threads.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/pthread/include/esp_pthread.h">components/pthread/include/esp_pthread.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_pthread.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">pthread</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">pthread</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES pthread
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES pthread
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430esp_pthread_get_default_configv">
+<span id="_CPPv330esp_pthread_get_default_configv"></span><span id="_CPPv230esp_pthread_get_default_configv"></span><span id="esp_pthread_get_default_config__void"></span><span class="target" id="esp__pthread_8h_1aa4ee93d0cacc51fe615aa8a25fd82925"></span><a class="reference internal" href="#_CPPv417esp_pthread_cfg_t" title="esp_pthread_cfg_t"><span class="n"><span class="pre">esp_pthread_cfg_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_pthread_get_default_config</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430esp_pthread_get_default_configv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Creates a default pthread configuration based on the values set via menuconfig. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A default configuration structure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419esp_pthread_set_cfgPK17esp_pthread_cfg_t">
+<span id="_CPPv319esp_pthread_set_cfgPK17esp_pthread_cfg_t"></span><span id="_CPPv219esp_pthread_set_cfgPK17esp_pthread_cfg_t"></span><span id="esp_pthread_set_cfg__esp_pthread_cfg_tCP"></span><span class="target" id="esp__pthread_8h_1aa4b4704c9a892641a1a58e680d065f1f"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_pthread_set_cfg</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv417esp_pthread_cfg_t" title="esp_pthread_cfg_t"><span class="n"><span class="pre">esp_pthread_cfg_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">cfg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419esp_pthread_set_cfgPK17esp_pthread_cfg_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Configure parameters for creating pthread. </p>
+<p>This API allows you to configure how the subsequent pthread_create() call will behave. This call can be used to setup configuration parameters like stack size, priority, configuration inheritance etc.</p>
+<p>If the 'inherit' flag in the configuration structure is enabled, then the same configuration is also inherited in the thread subtree.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If cfg-&gt;stack_alloc_caps is 0, it is automatically set to valid default stack memory capabilities. If cfg-&gt;stack_alloc_caps is non-zero, the developer is responsible for its correctenss. This function only checks that the capabilities are MALLOC_CAP_8BIT, the rest is unchecked. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Passing non-NULL attributes to pthread_create() will override the stack_size parameter set using this API</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cfg</strong> -- The pthread config parameters</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK if configuration was successfully set</p></li>
+<li><p>ESP_ERR_NO_MEM if out of memory</p></li>
+<li><p>ESP_ERR_INVALID_ARG if cfg is NULL</p></li>
+<li><p>ESP_ERR_INVALID_ARG if stack_size is less than PTHREAD_STACK_MIN</p></li>
+<li><p>ESP_ERR_INVALID_ARG if stack_alloc_caps does not include MALLOC_CAP_8BIT </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419esp_pthread_get_cfgP17esp_pthread_cfg_t">
+<span id="_CPPv319esp_pthread_get_cfgP17esp_pthread_cfg_t"></span><span id="_CPPv219esp_pthread_get_cfgP17esp_pthread_cfg_t"></span><span id="esp_pthread_get_cfg__esp_pthread_cfg_tP"></span><span class="target" id="esp__pthread_8h_1aeea32cef67e38e86d7190ba62c39fe55"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_pthread_get_cfg</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417esp_pthread_cfg_t" title="esp_pthread_cfg_t"><span class="n"><span class="pre">esp_pthread_cfg_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">p</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419esp_pthread_get_cfgP17esp_pthread_cfg_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get current pthread creation configuration. </p>
+<p>This will retrieve the current configuration that will be used for creating threads.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>p</strong> -- Pointer to the pthread config structure that will be updated with the currently configured parameters</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK if the configuration was available</p></li>
+<li><p>ESP_ERR_INVALID_ARG if p is NULL</p></li>
+<li><p>ESP_ERR_NOT_FOUND if a configuration wasn't previously set </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416esp_pthread_initv">
+<span id="_CPPv316esp_pthread_initv"></span><span id="_CPPv216esp_pthread_initv"></span><span id="esp_pthread_init__void"></span><span class="target" id="esp__pthread_8h_1af70c70b32882eae5b3f4b4cb1ebeae32"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_pthread_init</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416esp_pthread_initv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Initialize pthread library. </p>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417esp_pthread_cfg_t">
+<span id="_CPPv317esp_pthread_cfg_t"></span><span id="_CPPv217esp_pthread_cfg_t"></span><span id="esp_pthread_cfg_t"></span><span class="target" id="structesp__pthread__cfg__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_pthread_cfg_t</span></span></span><a class="headerlink" href="#_CPPv417esp_pthread_cfg_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>pthread configuration structure that influences pthread creation </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_pthread_cfg_t10stack_sizeE">
+<span id="_CPPv3N17esp_pthread_cfg_t10stack_sizeE"></span><span id="_CPPv2N17esp_pthread_cfg_t10stack_sizeE"></span><span id="esp_pthread_cfg_t::stack_size__s"></span><span class="target" id="structesp__pthread__cfg__t_1ab39bc9623540243a2aed7c395f148c6a"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stack_size</span></span></span><a class="headerlink" href="#_CPPv4N17esp_pthread_cfg_t10stack_sizeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The stack size of the pthread </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_pthread_cfg_t4prioE">
+<span id="_CPPv3N17esp_pthread_cfg_t4prioE"></span><span id="_CPPv2N17esp_pthread_cfg_t4prioE"></span><span id="esp_pthread_cfg_t::prio__s"></span><span class="target" id="structesp__pthread__cfg__t_1a7e85780b6cecafa968fc9900dfb69579"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prio</span></span></span><a class="headerlink" href="#_CPPv4N17esp_pthread_cfg_t4prioE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The thread's priority </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_pthread_cfg_t11inherit_cfgE">
+<span id="_CPPv3N17esp_pthread_cfg_t11inherit_cfgE"></span><span id="_CPPv2N17esp_pthread_cfg_t11inherit_cfgE"></span><span id="esp_pthread_cfg_t::inherit_cfg__b"></span><span class="target" id="structesp__pthread__cfg__t_1a41d9819bde695aff30df9bcf2da862d8"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inherit_cfg</span></span></span><a class="headerlink" href="#_CPPv4N17esp_pthread_cfg_t11inherit_cfgE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Inherit this configuration further </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_pthread_cfg_t11thread_nameE">
+<span id="_CPPv3N17esp_pthread_cfg_t11thread_nameE"></span><span id="_CPPv2N17esp_pthread_cfg_t11thread_nameE"></span><span id="esp_pthread_cfg_t::thread_name__cCP"></span><span class="target" id="structesp__pthread__cfg__t_1ae338f23ed59b1261d0b1c72dfb11c230"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">thread_name</span></span></span><a class="headerlink" href="#_CPPv4N17esp_pthread_cfg_t11thread_nameE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The thread name. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_pthread_cfg_t11pin_to_coreE">
+<span id="_CPPv3N17esp_pthread_cfg_t11pin_to_coreE"></span><span id="_CPPv2N17esp_pthread_cfg_t11pin_to_coreE"></span><span id="esp_pthread_cfg_t::pin_to_core__i"></span><span class="target" id="structesp__pthread__cfg__t_1a3ad132d5705a0239a31daa57efbb6c34"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pin_to_core</span></span></span><a class="headerlink" href="#_CPPv4N17esp_pthread_cfg_t11pin_to_coreE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The core id to pin the thread to. Has the same value range as xCoreId argument of xTaskCreatePinnedToCore. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_pthread_cfg_t16stack_alloc_capsE">
+<span id="_CPPv3N17esp_pthread_cfg_t16stack_alloc_capsE"></span><span id="_CPPv2N17esp_pthread_cfg_t16stack_alloc_capsE"></span><span id="esp_pthread_cfg_t::stack_alloc_caps__uint32_t"></span><span class="target" id="structesp__pthread__cfg__t_1a36502ffacbe1567099480f63de47162d"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stack_alloc_caps</span></span></span><a class="headerlink" href="#_CPPv4N17esp_pthread_cfg_t16stack_alloc_capsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>A bit mask of memory capabilities (MALLOC_CAPS*) to use when allocating the stack. The memory must be 8 bit accessible (MALLOC_CAP_8BIT). The developer is responsible for the correctenss of <code class="docutils literal notranslate"><span class="pre">stack_alloc_caps</span></code>. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.PTHREAD_STACK_MIN">
+<span class="target" id="esp__pthread_8h_1a8b3dc1c5c1a165d6143b1dce950e8266"></span><span class="sig-name descname"><span class="n"><span class="pre">PTHREAD_STACK_MIN</span></span></span><a class="headerlink" href="#c.PTHREAD_STACK_MIN" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=POSIX Support (Including POSIX Threads Support) (api-reference/system/pthread)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=POSIX Support (Including POSIX Threads Support) (api-reference/system/pthread)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="power_management.html" class="btn btn-neutral float-left" title="Power Management" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="random.html" class="btn btn-neutral float-right" title="Random Number Generation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

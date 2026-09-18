@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Exchange - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/ble/get-started/ble-data-exchange.html" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/ble/get-started/ble-data-exchange';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="SMP" href="../smp.html" />
+    <link rel="prev" title="Connection" href="ble-connection.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Bluetooth<sup>®</sup> Low Energy</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#overview">Overview</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#get-started">Get Started</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ble-introduction.html">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ble-device-discovery.html">Device Discovery</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ble-connection.html">Connection</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Data Exchange</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#security">Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#profile">Profile</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">API Guides</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+      <li class="breadcrumb-item active">Data Exchange</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/ble/get-started/ble-data-exchange.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="data-exchange">
+<h1>Data Exchange<a class="headerlink" href="#data-exchange" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../../zh_CN/v5.5.5/esp32/api-guides/ble/get-started/ble-data-exchange.html">[中文]</a></p>
+<p>This document is the fourth tutorial in the Getting Started series on Bluetooth Low Energy (Bluetooth LE), aiming to provide a brief overview of the data exchange process within Bluetooth LE connections. Subsequently, this tutorial introduces the code implementation of a GATT server, using the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/ble_get_started/nimble/NimBLE_GATT_Server">NimBLE_GATT_Server </a> example based on the NimBLE host layer stack.</p>
+<section id="learning-objectives">
+<h2>Learning Objectives<a class="headerlink" href="#learning-objectives" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Understand the data structure details of characteristic data and services</p></li>
+<li><p>Learn about different data access operations in GATT</p></li>
+<li><p>Learn about the code structure of the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/ble_get_started/nimble/NimBLE_GATT_Server">NimBLE_GATT_Server </a> example</p></li>
+</ul>
+</section>
+<section id="gatt-data-characteristics-and-services">
+<h2>GATT Data Characteristics and Services<a class="headerlink" href="#gatt-data-characteristics-and-services" title="Permalink to this heading"></a></h2>
+<p>GATT services are the infrastructure for data exchange between two devices in a Bluetooth LE connection, with the minimum data unit being an attribute. In the section on <a class="reference internal" href="ble-introduction.html#gatt-att-introduction"><span class="std std-ref">Data Representation and Exchange</span></a>, we briefly introduced the attributes at the ATT layer and the characteristic data, services, and specifications at the GATT layer. Below are details regarding the attribute-based data structure.</p>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<p>An attribute consists of the following four parts:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Handle</p></td>
+<td><p>A 16-bit unsigned integer representing the index of the attribute in the <a class="reference internal" href="#attribute-table"><span class="std std-ref">attribute table</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Type</p></td>
+<td><p>ATT attributes use UUID (Universally Unique Identifier) to differentiate types</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Access Permission</p></td>
+<td><p>Indicates whether encryption/authorization is needed; whether it is readable or writable</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>Value</p></td>
+<td><p>Actual user data or metadata of another attribute</p></td>
+</tr>
+</tbody>
+</table>
+<p>There are two types of UUIDs in Bluetooth LE:</p>
+<ol class="arabic simple">
+<li><p>16-bit UUIDs defined by SIG</p></li>
+<li><p>128-bit UUIDs customized by manufacturers</p></li>
+</ol>
+<p>Common characteristic and service UUIDs are provided in SIG's <a class="reference external" href="https://www.bluetooth.com/specifications/assigned-numbers/">Assigned Numbers</a> standard document, such as:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 60.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Type Name</p></th>
+<th class="head"><p>UUID</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Service</p></td>
+<td><p>Blood Pressure Service</p></td>
+<td><p><cite>0x1810</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p>Service</p></td>
+<td><p>Common Audio Service</p></td>
+<td><p><cite>0x1853</cite></p></td>
+</tr>
+<tr class="row-even"><td><p>Characteristic Data</p></td>
+<td><p>Age</p></td>
+<td><p><cite>0x2A80</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p>Characteristic Data</p></td>
+<td><p>Appearance</p></td>
+<td><p><cite>0x2A01</cite></p></td>
+</tr>
+</tbody>
+</table>
+<p>In fact, the definitions of these services and characteristic data are also provided by the SIG. For example, the value of the Heart Rate Measurement must include a flag field and a heart rate measurement field, and may include fields such as energy expended, RR-interval, and transmission interval, among others. Therefore, these definitions from SIG allow Bluetooth LE devices from different manufacturers to recognize each other's services or characteristic data, enabling cross-manufacturer communication.</p>
+<p>Manufacturers' customized 128-bit UUIDs are used for proprietary services or data characteristics, such as the UUID for the LED characteristic in this example: <cite>0x00001525-1212-EFDE-1523-785FEABCD123</cite>.</p>
+</section>
+<section id="characteristic-data">
+<h3>Characteristic Data<a class="headerlink" href="#characteristic-data" title="Permalink to this heading"></a></h3>
+<p id="characteristic-attributes">A characteristic data item typically consists of the following attributes:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Function</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Characteristic Declaration</p></td>
+<td><p>Contains properties, handle, and UUID info for the characteristic value</p></td>
+<td><p>UUID is 0x2803, read-only</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Characteristic Value</p></td>
+<td><p>user data</p></td>
+<td><p>UUID identifies the characteristic type</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Characteristic Descriptor</p></td>
+<td><p>Additional description for the characteristic data</p></td>
+<td><p>Optional attribute</p></td>
+</tr>
+</tbody>
+</table>
+<section id="relationship-between-characteristic-declaration-and-characteristic-value">
+<h4>Relationship between Characteristic Declaration and Characteristic Value<a class="headerlink" href="#relationship-between-characteristic-declaration-and-characteristic-value" title="Permalink to this heading"></a></h4>
+<p>Using the Heart Rate Measurement as an example, the relationship between the characteristic declaration and characteristic value is illustrated as follows:</p>
+<p>The table below is an attribute table, containing two attributes of the Heart Rate Measurement characteristic. Let's first look at the attribute with handle 0. Its UUID is <cite>0x2803</cite>, and the access permission is read-only, indicating that this is a characteristic declaration attribute. The attribute value shows that the read/write property is read-only, and the handle points to 1, indicating that the attribute with handle 1 is the value attribute for this characteristic. The UUID is <cite>0x2A37</cite>, meaning that this characteristic type is Heart Rate Measurement.</p>
+<p>Now, let's examine the attribute with handle 1. Its UUID is <cite>0x2A37</cite>, and the access permission is also read-only, corresponding directly with the characteristic declaration attribute. The value of this attribute consists of flag bits and measurement values, which complies with the SIG specification for Heart Rate Measurement characteristic data.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Handle</p></th>
+<th class="head"><p>UUID</p></th>
+<th class="head"><p>Permissions</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Attribute Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="3"><p>0</p></td>
+<td rowspan="3"><p><cite>0x2803</cite></p></td>
+<td rowspan="3"><p>Read-only</p></td>
+<td><p>Properties = Read-only</p></td>
+<td rowspan="3"><p>Characteristic Declaration</p></td>
+</tr>
+<tr class="row-odd"><td><p>Handle = 1</p></td>
+</tr>
+<tr class="row-even"><td><p>UUID = <cite>0x2A37</cite></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>1</p></td>
+<td rowspan="2"><p><cite>0x2A37</cite></p></td>
+<td rowspan="2"><p>Read-only</p></td>
+<td><p>Flags</p></td>
+<td rowspan="2"><p>Characteristic Value</p></td>
+</tr>
+<tr class="row-even"><td><p>Measurement value</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="characteristic-descriptors">
+<h4>Characteristic Descriptors<a class="headerlink" href="#characteristic-descriptors" title="Permalink to this heading"></a></h4>
+<p>Characteristic descriptors provide supplementary information about characteristic data. The most common is the Client Characteristic Configuration Descriptor (CCCD). When a characteristic supports server-initiated <a class="reference internal" href="#gatt-data-operation"><span class="std std-ref">data operations</span></a> (notifications or indications), CCCD must be used to describe the relevant information. This is a read-write attribute that allows the GATT client to inform the server whether notifications or indications should be enabled. Writing to this value is also referred to as subscribing or unsubscribing.</p>
+<p>The UUID for CCCD is <cite>0x2902</cite>, and its attribute value contains only 2 bits of information. The first bit indicates whether notifications are enabled, and the second bit indicates whether indications are enabled. By adding the CCCD to the attribute table and providing indication access permissions for the Heart Rate Measurement characteristic data, we obtain the complete form of the Heart Rate Measurement characteristic data in the attribute table as follows:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Handle</p></th>
+<th class="head"><p>UUID</p></th>
+<th class="head"><p>Permissions</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Attribute Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="3"><p>0</p></td>
+<td rowspan="3"><p><cite>0x2803</cite></p></td>
+<td rowspan="3"><p>Read-only</p></td>
+<td><p>Properties = Read/Indicate</p></td>
+<td rowspan="3"><p>Characteristic Declaration</p></td>
+</tr>
+<tr class="row-odd"><td><p>Handle = 1</p></td>
+</tr>
+<tr class="row-even"><td><p>UUID = <cite>0x2A37</cite></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>1</p></td>
+<td rowspan="2"><p><cite>0x2A37</cite></p></td>
+<td rowspan="2"><p>Read/Indicate</p></td>
+<td><p>Flags</p></td>
+<td rowspan="2"><p>Characteristic Value</p></td>
+</tr>
+<tr class="row-even"><td><p>Measurement value</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>2</p></td>
+<td rowspan="2"><p><cite>0x2902</cite></p></td>
+<td rowspan="2"><p>Read/Write</p></td>
+<td><p>Notification status</p></td>
+<td rowspan="2"><p>Characteristic Descriptor</p></td>
+</tr>
+<tr class="row-even"><td><p>Indication status</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="services">
+<h3>Services<a class="headerlink" href="#services" title="Permalink to this heading"></a></h3>
+<p>The data structure of a service can be broadly divided into two parts:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Service Declaration Attribute</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Characteristic Definition Attributes</p></td>
+</tr>
+</tbody>
+</table>
+<p>The three characteristic data attributes mentioned in the <a class="reference internal" href="#characteristic-attributes"><span class="std std-ref">Characteristic Data</span></a> belong to characteristic definition attributes. In essence, the data structure of a service consists of several characteristic data attributes along with a service declaration attribute.</p>
+<p>The UUID for the service declaration attribute is 0x2800, which is read-only and holds the UUID identifying the service type. For example, the UUID for the Heart Rate Service is <cite>0x180D</cite>, so its service declaration attribute can be represented as follows:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Handle</p></th>
+<th class="head"><p>UUID</p></th>
+<th class="head"><p>Permissions</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Attribute Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p><cite>0x2800</cite></p></td>
+<td><p>Read-only</p></td>
+<td><p><cite>0x180D</cite></p></td>
+<td><p>Service Declaration</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attribute-example">
+<h3>Attribute Example<a class="headerlink" href="#attribute-example" title="Permalink to this heading"></a></h3>
+<p id="attribute-table">The following is an example of a possible attribute table for a GATT server, using the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/ble_get_started/nimble/NimBLE_GATT_Server">NimBLE_GATT_Server </a> as an illustration. The example includes two services: the Heart Rate Service and the Automation IO Service. The former contains a Heart Rate Measurement characteristic, while the latter includes an LED characteristic. The complete attribute table for the GATT server is as follows:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Handle</p></th>
+<th class="head"><p>UUID</p></th>
+<th class="head"><p>Permissions</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Attribute Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p><cite>0x2800</cite></p></td>
+<td><p>Read-only</p></td>
+<td><p>UUID = <cite>0x180D</cite></p></td>
+<td><p>Service Declaration</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="3"><p>1</p></td>
+<td rowspan="3"><p><cite>0x2803</cite></p></td>
+<td rowspan="3"><p>Read-only</p></td>
+<td><p>Properties = Read/Indicate</p></td>
+<td rowspan="3"><p>Characteristic Declaration</p></td>
+</tr>
+<tr class="row-even"><td><p>Handle = 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>UUID = <cite>0x2A37</cite></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>2</p></td>
+<td rowspan="2"><p><cite>0x2A37</cite></p></td>
+<td rowspan="2"><p>Read/Indicate</p></td>
+<td><p>Flags</p></td>
+<td rowspan="2"><p>Characteristic Value</p></td>
+</tr>
+<tr class="row-odd"><td><p>Measurement value</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>3</p></td>
+<td rowspan="2"><p><cite>0x2902</cite></p></td>
+<td rowspan="2"><p>Read/Write</p></td>
+<td><p>Notification status</p></td>
+<td rowspan="2"><p>Characteristic Descriptor</p></td>
+</tr>
+<tr class="row-odd"><td><p>Indication status</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p><cite>0x2800</cite></p></td>
+<td><p>Read-only</p></td>
+<td><p>UUID = <cite>0x1815</cite></p></td>
+<td><p>Service Declaration</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="3"><p>5</p></td>
+<td rowspan="3"><p><cite>0x2803</cite></p></td>
+<td rowspan="3"><p>Read-only</p></td>
+<td><p>Properties = Write-only</p></td>
+<td rowspan="3"><p>Characteristic Declaration</p></td>
+</tr>
+<tr class="row-even"><td><p>Handle = 6</p></td>
+</tr>
+<tr class="row-odd"><td><p>UUID = <cite>0x00001525-1212-EFDE-1523-785FEABCD123</cite></p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p><cite>0x00001525-1212-EFDE-</cite>
+<cite>1523-785FE</cite>
+<cite>ABCD123</cite></p></td>
+<td><p>Write-only</p></td>
+<td><p>LED status</p></td>
+<td><p>Characteristic Value</p></td>
+</tr>
+</tbody>
+</table>
+<p>When a GATT client first establishes communication with a GATT server, it pulls metadata from the server's attribute table to discover the available services and characteristics. This process is known as <em>Service Discovery</em>.</p>
+</section>
+</section>
+<section id="gatt-data-operations">
+<h2>GATT Data Operations<a class="headerlink" href="#gatt-data-operations" title="Permalink to this heading"></a></h2>
+<p id="gatt-data-operation">Data operations refer to accessing characteristic data on a GATT server, which can be mainly categorized into two types:</p>
+<ol class="arabic simple">
+<li><p>Client-initiated operations</p></li>
+<li><p>Server-initiated operations</p></li>
+</ol>
+<section id="client-initiated-operations">
+<h3>Client-initiated Operations<a class="headerlink" href="#client-initiated-operations" title="Permalink to this heading"></a></h3>
+<p>Client-initiated operations include the following three types:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Read</strong></dt><dd><ul>
+<li><p>A straightforward operation to pull the current value of a specific characteristic from the GATT server.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Write</strong></dt><dd><ul>
+<li><p>Standard write operations require confirmation from the GATT server upon receiving the client's write request and data.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Write without response</strong></dt><dd><ul>
+<li><p>This is another form of write operation that does not require server acknowledgment.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="server-initiated-operations">
+<h3>Server-Initiated Operations<a class="headerlink" href="#server-initiated-operations" title="Permalink to this heading"></a></h3>
+<p>Server-initiated operations are divided into two types:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Notify</strong></dt><dd><ul>
+<li><p>A GATT server actively pushes data to the client without requiring a confirmation response.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Indicate</strong></dt><dd><ul>
+<li><p>Similar to notifications, but this requires confirmation from the client, which makes indication slower than notification.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Although both notifications and indications are initiated by the server, the prerequisite for these operations is that the client has enabled notifications or indications. Therefore, the data exchange process in GATT essentially begins with a client request for data.</p>
+</section>
+</section>
+<section id="hands-on-practice">
+<h2>Hands-On Practice<a class="headerlink" href="#hands-on-practice" title="Permalink to this heading"></a></h2>
+<p>Having grasped the relevant knowledge of GATT data exchange, let’s combine the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/ble_get_started/nimble/NimBLE_GATT_Server">NimBLE_GATT_Server </a> example code to learn how to build a simple GATT server using the NimBLE protocol stack and put our knowledge into practice.</p>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>An ESP32 development board</p></li>
+<li><p>ESP-IDF development environment</p></li>
+<li><p>The nRF Connect for Mobile application installed on your phone</p></li>
+</ol>
+<p>If you have not completed the ESP-IDF development environment setup, please refer to <a class="reference internal" href="../../../get-started/index.html"><span class="doc">IDF Get Started</span></a>.</p>
+</section>
+<section id="try-it-out">
+<h3>Try It Out<a class="headerlink" href="#try-it-out" title="Permalink to this heading"></a></h3>
+<p>Please refer to <a class="reference internal" href="ble-introduction.html#nimble-gatt-server-practice"><span class="std std-ref">Bluetooth LE Introduction Try It Out</span></a>.</p>
+</section>
+</section>
+<section id="code-explanation">
+<h2>Code Explanation<a class="headerlink" href="#code-explanation" title="Permalink to this heading"></a></h2>
+<section id="project-structure-overview">
+<h3>Project Structure Overview<a class="headerlink" href="#project-structure-overview" title="Permalink to this heading"></a></h3>
+<p>The root directory structure of <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/ble_get_started/nimble/NimBLE_GATT_Server">NimBLE_GATT_Server </a> is identical to that of <a class="reference internal" href="ble-connection.html#nimble-connection-project-structure"><span class="std std-ref">NimBLE_Connection</span></a>. Additionally, the <cite>main</cite> folder includes source code related to the GATT service and simulated heart rate generation.</p>
+</section>
+<section id="program-behavior-overview">
+<h3>Program Behavior Overview<a class="headerlink" href="#program-behavior-overview" title="Permalink to this heading"></a></h3>
+<p>The program behavior of this example is largely consistent with that of <a class="reference internal" href="ble-connection.html#nimble-connection-project-structure"><span class="std std-ref">NimBLE_Connection</span></a>, with the difference being that this example adds GATT services and handles access to GATT characteristic data through corresponding callback functions.</p>
+</section>
+<section id="entry-function">
+<h3>Entry Function<a class="headerlink" href="#entry-function" title="Permalink to this heading"></a></h3>
+<p id="nimble-gatt-server-entry-point">Based on <a class="reference internal" href="ble-connection.html#nimble-connection-entry-point"><span class="std std-ref">NimBLE_Connection</span></a>, a process to initialize the GATT service by calling the <cite>gatt_svc_init</cite> function has been added. Moreover, in addition to the NimBLE thread, a new <cite>heart_rate_task</cite> thread has been introduced, responsible for the random generation of simulated heart rate measurement data and indication handling. Relevant code is as follows:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">heart_rate_task</span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">param</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Task entry log */</span>
+<span class="w">    </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;heart rate task has been started!&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/* Loop forever */</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* Update heart rate value every 1 second */</span>
+<span class="w">        </span><span class="n">update_heart_rate</span><span class="p">();</span>
+<span class="w">        </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;heart rate updated to %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">get_heart_rate</span><span class="p">());</span>
+
+<span class="w">        </span><span class="cm">/* Send heart rate indication if enabled */</span>
+<span class="w">        </span><span class="n">send_heart_rate_indication</span><span class="p">();</span>
+
+<span class="w">        </span><span class="cm">/* Sleep */</span>
+<span class="w">        </span><span class="n">vTaskDelay</span><span class="p">(</span><span class="n">HEART_RATE_TASK_PERIOD</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* Clean up at exit */</span>
+<span class="w">    </span><span class="n">vTaskDelete</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">app_main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="n">xTaskCreate</span><span class="p">(</span><span class="n">heart_rate_task</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Heart Rate&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="o">*</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <cite>heart_rate_task</cite> thread runs at a frequency of 1 Hz, as <cite>HEART_RATE_TASK_PERIOD</cite> is defined as 1000 ms. Each time it executes, the thread calls the <cite>update_heart_rate</cite> function to randomly generate a new heart rate measurement and then calls <cite>send_heart_rate_indication</cite> to handle the indication operation.</p>
+</section>
+<section id="gatt-service-initialization">
+<h3>GATT Service Initialization<a class="headerlink" href="#gatt-service-initialization" title="Permalink to this heading"></a></h3>
+<p>In the <cite>gatt_svc.c</cite> file, there is a GATT service initialization function as follows:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">gatt_svc_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Local variables */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">rc</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* 1. GATT service initialization */</span>
+<span class="w">    </span><span class="n">ble_svc_gatt_init</span><span class="p">();</span>
+
+<span class="w">    </span><span class="cm">/* 2. Update GATT services counter */</span>
+<span class="w">    </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ble_gatts_count_cfg</span><span class="p">(</span><span class="n">gatt_svr_svcs</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">rc</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* 3. Add GATT services */</span>
+<span class="w">    </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ble_gatts_add_svcs</span><span class="p">(</span><span class="n">gatt_svr_svcs</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">rc</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This function first calls the <cite>ble_svc_gatt_init</cite> API to initialize the GATT Service. It's important to note that this GATT Service is a special service with the UUID <cite>0x1801</cite>, which is used by the GATT server to notify clients when services change (i.e., when GATT services are added or removed). In such cases, the client will re-execute the service discovery process to update its service information.</p>
+<p>Next, the function calls <cite>ble_gatts_count_cfg</cite> and <cite>ble_gatts_add_svcs</cite> APIs to add the services and characteristic data defined in the <cite>gatt_svr_svcs</cite> service table to the GATT server.</p>
+</section>
+<section id="gatt-service-table">
+<h3>GATT Service Table<a class="headerlink" href="#gatt-service-table" title="Permalink to this heading"></a></h3>
+<p>The <cite>gatt_svr_svcs service</cite> table is a crucial data structure in this example, defining all services and characteristic data used. The relevant code is as follows:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="cm">/* Heart rate service */</span>
+<span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ble_uuid16_t</span><span class="w"> </span><span class="n">heart_rate_svc_uuid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_UUID16_INIT</span><span class="p">(</span><span class="mh">0x180D</span><span class="p">);</span>
+
+<span class="p">...</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">heart_rate_chr_val_handle</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ble_uuid16_t</span><span class="w"> </span><span class="n">heart_rate_chr_uuid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_UUID16_INIT</span><span class="p">(</span><span class="mh">0x2A37</span><span class="p">);</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">heart_rate_chr_conn_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="p">...</span>
+
+<span class="cm">/* Automation IO service */</span>
+<span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ble_uuid16_t</span><span class="w"> </span><span class="n">auto_io_svc_uuid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_UUID16_INIT</span><span class="p">(</span><span class="mh">0x1815</span><span class="p">);</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">led_chr_val_handle</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ble_uuid128_t</span><span class="w"> </span><span class="n">led_chr_uuid</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="n">BLE_UUID128_INIT</span><span class="p">(</span><span class="mh">0x23</span><span class="p">,</span><span class="w"> </span><span class="mh">0xd1</span><span class="p">,</span><span class="w"> </span><span class="mh">0xbc</span><span class="p">,</span><span class="w"> </span><span class="mh">0xea</span><span class="p">,</span><span class="w"> </span><span class="mh">0x5f</span><span class="p">,</span><span class="w"> </span><span class="mh">0x78</span><span class="p">,</span><span class="w"> </span><span class="mh">0x23</span><span class="p">,</span><span class="w"> </span><span class="mh">0x15</span><span class="p">,</span><span class="w"> </span><span class="mh">0xde</span><span class="p">,</span><span class="w"> </span><span class="mh">0xef</span><span class="p">,</span>
+<span class="w">                    </span><span class="mh">0x12</span><span class="p">,</span><span class="w"> </span><span class="mh">0x12</span><span class="p">,</span><span class="w"> </span><span class="mh">0x25</span><span class="p">,</span><span class="w"> </span><span class="mh">0x15</span><span class="p">,</span><span class="w"> </span><span class="mh">0x00</span><span class="p">,</span><span class="w"> </span><span class="mh">0x00</span><span class="p">);</span>
+
+<span class="cm">/* GATT services table */</span>
+<span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">ble_gatt_svc_def</span><span class="w"> </span><span class="n">gatt_svr_svcs</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Heart rate service */</span>
+<span class="w">    </span><span class="p">{.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_GATT_SVC_TYPE_PRIMARY</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">uuid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">heart_rate_svc_uuid</span><span class="p">.</span><span class="n">u</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">characteristics</span><span class="w"> </span><span class="o">=</span>
+<span class="w">        </span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">ble_gatt_chr_def</span><span class="p">[]){</span>
+<span class="w">            </span><span class="p">{</span><span class="cm">/* Heart rate characteristic */</span>
+<span class="w">            </span><span class="p">.</span><span class="n">uuid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">heart_rate_chr_uuid</span><span class="p">.</span><span class="n">u</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">access_cb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">heart_rate_chr_access</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_GATT_CHR_F_READ</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">BLE_GATT_CHR_F_INDICATE</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">val_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">heart_rate_chr_val_handle</span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="cm">/* No more characteristics in this service. */</span>
+<span class="w">            </span><span class="p">}}},</span>
+
+<span class="w">    </span><span class="cm">/* Automation IO service */</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_GATT_SVC_TYPE_PRIMARY</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">uuid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">auto_io_svc_uuid</span><span class="p">.</span><span class="n">u</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">characteristics</span><span class="w"> </span><span class="o">=</span>
+<span class="w">            </span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">ble_gatt_chr_def</span><span class="p">[]){</span><span class="cm">/* LED characteristic */</span>
+<span class="w">                                        </span><span class="p">{.</span><span class="n">uuid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">led_chr_uuid</span><span class="p">.</span><span class="n">u</span><span class="p">,</span>
+<span class="w">                                        </span><span class="p">.</span><span class="n">access_cb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">led_chr_access</span><span class="p">,</span>
+<span class="w">                                        </span><span class="p">.</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLE_GATT_CHR_F_WRITE</span><span class="p">,</span>
+<span class="w">                                        </span><span class="p">.</span><span class="n">val_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">led_chr_val_handle</span><span class="p">},</span>
+<span class="w">                                        </span><span class="p">{</span><span class="mi">0</span><span class="p">}},</span>
+<span class="w">    </span><span class="p">},</span>
+
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="cm">/* No more services. */</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>The macros <cite>BLE_UUID16_INIT</cite> and <cite>BLE_UUID128_INIT</cite> provided by the NimBLE protocol stack allow for convenient conversion of 16-bit and 128-bit UUIDs from raw data into <cite>ble_uuid16_t</cite> and <cite>ble_uuid128_t</cite> type variables.</p>
+<p>The <cite>gatt_svr_svcs</cite> is an array of structures of type <cite>ble_gatt_svc_def</cite>. The <cite>ble_gatt_svc_def</cite> structure defines a service, with key fields being <cite>type</cite>, <cite>uuid</cite>, and <cite>characteristics</cite>. The <cite>type</cite> field indicates whether the service is primary or secondary, with all services in this example being primary. The <cite>uuid</cite> field represents the UUID of the service. The <cite>characteristics</cite> field is an array of <cite>ble_gatt_chr_def</cite> structures that stores the characteristics associated with the service.</p>
+<p>The <cite>ble_gatt_chr_def</cite> structure defines the characteristics, with key fields being <cite>uuid</cite>, <cite>access_cb</cite>, <cite>flags</cite>, and <cite>val_handle</cite>. The <cite>uuid</cite> field is the UUID of the characteristic. The <cite>access_cb</cite> field points to the access callback function for that characteristic. The <cite>flags</cite> field indicates the access permissions for the characteristic data. The <cite>val_handle</cite> field points to the variable handle address for the characteristic value.</p>
+<p>It's important to note that when the <cite>BLE_GATT_CHR_F_INDICATE</cite> flag is set for a characteristic, the NimBLE protocol stack automatically adds the CCCD, so there's no need to manually add the descriptor.</p>
+<p>Based on variable naming, it's clear that <cite>gatt_svr_svcs</cite> implements all property definitions in the <a class="reference internal" href="#attribute-table"><span class="std std-ref">attribute table</span></a>. Additionally, access to the Heart Rate Measurement characteristic is managed through the <cite>heart_rate_chr_access</cite> callback function, while access to the LED characteristic is managed through the <cite>led_chr_access</cite> callback function.</p>
+</section>
+<section id="characteristic-data-access-management">
+<h3>Characteristic Data Access Management<a class="headerlink" href="#characteristic-data-access-management" title="Permalink to this heading"></a></h3>
+<section id="led-access-management">
+<h4>LED Access Management<a class="headerlink" href="#led-access-management" title="Permalink to this heading"></a></h4>
+<p>Access to the LED characteristic data is managed through the <cite>led_chr_access</cite> callback function, with the relevant code as follows:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">led_chr_access</span><span class="p">(</span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">conn_handle</span><span class="p">,</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">attr_handle</span><span class="p">,</span>
+<span class="w">                        </span><span class="k">struct</span><span class="w"> </span><span class="nc">ble_gatt_access_ctxt</span><span class="w"> </span><span class="o">*</span><span class="n">ctxt</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Local variables */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">rc</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Handle access events */</span>
+<span class="w">    </span><span class="cm">/* Note: LED characteristic is write only */</span>
+<span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">ctxt</span><span class="o">-&gt;</span><span class="n">op</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="cm">/* Write characteristic event */</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">BLE_GATT_ACCESS_OP_WRITE_CHR</span><span class="p">:</span>
+<span class="w">        </span><span class="cm">/* Verify connection handle */</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">conn_handle</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">BLE_HS_CONN_HANDLE_NONE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;characteristic write; conn_handle=%d attr_handle=%d&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">conn_handle</span><span class="p">,</span><span class="w"> </span><span class="n">attr_handle</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span>
+<span class="w">                    </span><span class="s">&quot;characteristic write by nimble stack; attr_handle=%d&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">attr_handle</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="cm">/* Verify attribute handle */</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">attr_handle</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">led_chr_val_handle</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="cm">/* Verify access buffer length */</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ctxt</span><span class="o">-&gt;</span><span class="n">om</span><span class="o">-&gt;</span><span class="n">om_len</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="cm">/* Turn the LED on or off according to the operation bit */</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ctxt</span><span class="o">-&gt;</span><span class="n">om</span><span class="o">-&gt;</span><span class="n">om_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">led_on</span><span class="p">();</span>
+<span class="w">                    </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;led turned on!&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">led_off</span><span class="p">();</span>
+<span class="w">                    </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;led turned off!&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">goto</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">rc</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">goto</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Unknown event */</span>
+<span class="w">    </span><span class="k">default</span><span class="o">:</span>
+<span class="w">        </span><span class="k">goto</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="nl">error</span><span class="p">:</span>
+<span class="w">    </span><span class="n">ESP_LOGE</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span>
+<span class="w">            </span><span class="s">&quot;unexpected access operation to led characteristic, opcode: %d&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="n">ctxt</span><span class="o">-&gt;</span><span class="n">op</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">BLE_ATT_ERR_UNLIKELY</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>When the GATT client initiates access to the LED characteristic data, the NimBLE protocol stack will call the <cite>led_chr_access</cite> callback function, passing in the handle information and access context. The <cite>op</cite> field of <cite>ble_gatt_access_ctxt</cite> is used to identify different access events. Since the LED is a write-only characteristic, we only handle the <cite>BLE_GATT_ACCESS_OP_WRITE_CHR</cite> event.</p>
+<p>In this processing branch, we first validate the attribute handle to ensure that the client is accessing the LED characteristic. Then, based on the <cite>om</cite> field of <cite>ble_gatt_access_ctxt</cite>, we verify the length of the access data. Finally, we check if the data in <cite>om_data</cite> is equal to 1 to either turn the LED on or off.</p>
+<p>If any other access events occur, they are considered unexpected, and we proceed to the error branch to return.</p>
+</section>
+<section id="heart-rate-measurement-read-access-management">
+<h4>Heart Rate Measurement Read Access Management<a class="headerlink" href="#heart-rate-measurement-read-access-management" title="Permalink to this heading"></a></h4>
+<p>The heart rate measurement is a readable and indicative characteristic. The read access initiated by the client for heart rate measurement values is managed by the <cite>heart_rate_chr_access</cite> callback function, with the relevant code as follows:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">heart_rate_chr_access</span><span class="p">(</span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">conn_handle</span><span class="p">,</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">attr_handle</span><span class="p">,</span>
+<span class="w">                                </span><span class="k">struct</span><span class="w"> </span><span class="nc">ble_gatt_access_ctxt</span><span class="w"> </span><span class="o">*</span><span class="n">ctxt</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Local variables */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">rc</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Handle access events */</span>
+<span class="w">    </span><span class="cm">/* Note: Heart rate characteristic is read only */</span>
+<span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">ctxt</span><span class="o">-&gt;</span><span class="n">op</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="cm">/* Read characteristic event */</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">BLE_GATT_ACCESS_OP_READ_CHR</span><span class="p">:</span>
+<span class="w">        </span><span class="cm">/* Verify connection handle */</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">conn_handle</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">BLE_HS_CONN_HANDLE_NONE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;characteristic read; conn_handle=%d attr_handle=%d&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">conn_handle</span><span class="p">,</span><span class="w"> </span><span class="n">attr_handle</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;characteristic read by nimble stack; attr_handle=%d&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">attr_handle</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="cm">/* Verify attribute handle */</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">attr_handle</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">heart_rate_chr_val_handle</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="cm">/* Update access buffer value */</span>
+<span class="w">            </span><span class="n">heart_rate_chr_val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_heart_rate</span><span class="p">();</span>
+<span class="w">            </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os_mbuf_append</span><span class="p">(</span><span class="n">ctxt</span><span class="o">-&gt;</span><span class="n">om</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">heart_rate_chr_val</span><span class="p">,</span>
+<span class="w">                                </span><span class="k">sizeof</span><span class="p">(</span><span class="n">heart_rate_chr_val</span><span class="p">));</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">rc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">BLE_ATT_ERR_INSUFFICIENT_RES</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">goto</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Unknown event */</span>
+<span class="w">    </span><span class="k">default</span><span class="o">:</span>
+<span class="w">        </span><span class="k">goto</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="nl">error</span><span class="p">:</span>
+<span class="w">    </span><span class="n">ESP_LOGE</span><span class="p">(</span>
+<span class="w">        </span><span class="n">TAG</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;unexpected access operation to heart rate characteristic, opcode: %d&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="n">ctxt</span><span class="o">-&gt;</span><span class="n">op</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">BLE_ATT_ERR_UNLIKELY</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Similar to the LED access management, we use the <cite>op</cite> field of the <cite>ble_gatt_access_ctxt</cite> access context to determine the access event, handling the <cite>BLE_GATT_ACCESS_OP_READ_CHR</cite> event.</p>
+<p>In the handling branch, we first validate the attribute handle to confirm that the client is accessing the heart rate measurement attribute. Then, we call the <cite>get_heart_rate</cite> function to retrieve the latest heart rate measurement, storing it in the measurement area of the <cite>heart_rate_chr_val</cite> array. Finally, we copy the data from <cite>heart_rate_chr_val</cite> into the <cite>om</cite> field of the <cite>ble_gatt_access_ctxt</cite> access context. The NimBLE protocol stack will send the data in this field to the client after the current callback function ends, thus achieving read access to the Heart Rate Measurement characteristic value.</p>
+</section>
+<section id="heart-rate-measurement-indication">
+<h4>Heart Rate Measurement Indication<a class="headerlink" href="#heart-rate-measurement-indication" title="Permalink to this heading"></a></h4>
+<p>When the client enables indications for heart rate measurements, the processing flow is a bit more complicated. First, enabling or disabling the heart rate measurement indications is a subscription or unsubscription event at the GAP layer, so we need to add a handling branch for subscription events in the <cite>gap_event_handler</cite> callback function, as follows:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">gap_event_handler</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">ble_gap_event</span><span class="w"> </span><span class="o">*</span><span class="n">event</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="cm">/* Subscribe event */</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">BLE_GAP_EVENT_SUBSCRIBE</span><span class="p">:</span>
+<span class="w">        </span><span class="cm">/* Print subscription info to log */</span>
+<span class="w">        </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span>
+<span class="w">                </span><span class="s">&quot;subscribe event; conn_handle=%d attr_handle=%d &quot;</span>
+<span class="w">                </span><span class="s">&quot;reason=%d prevn=%d curn=%d previ=%d curi=%d&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">conn_handle</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">attr_handle</span><span class="p">,</span>
+<span class="w">                </span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">prev_notify</span><span class="p">,</span>
+<span class="w">                </span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">cur_notify</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">prev_indicate</span><span class="p">,</span>
+<span class="w">                </span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">cur_indicate</span><span class="p">);</span>
+
+<span class="w">        </span><span class="cm">/* GATT subscribe event callback */</span>
+<span class="w">        </span><span class="n">gatt_svr_subscribe_cb</span><span class="p">(</span><span class="n">event</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">rc</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The subscription event is represented by <cite>BLE_GAP_EVENT_SUBSCRIBE</cite>. In this handling branch, we do not process the subscription event directly; instead, we call the <cite>gatt_svr_subscribe_cb</cite> callback function to handle the subscription event. This reflects the layered design philosophy of software, as the subscription event affects the GATT server's behavior in sending characteristic data and is not directly related to the GAP layer. Thus, it should be passed to the GATT layer for processing.</p>
+<p>Next, let's take a look at the operations performed in the <cite>gatt_svr_subscribe_cb</cite> callback function.</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">gatt_svr_subscribe_cb</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">ble_gap_event</span><span class="w"> </span><span class="o">*</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Check connection handle */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">conn_handle</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">BLE_HS_CONN_HANDLE_NONE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;subscribe event; conn_handle=%d attr_handle=%d&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">conn_handle</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">attr_handle</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;subscribe by nimble stack; attr_handle=%d&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">attr_handle</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* Check attribute handle */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">attr_handle</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">heart_rate_chr_val_handle</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* Update heart rate subscription status */</span>
+<span class="w">        </span><span class="n">heart_rate_chr_conn_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">conn_handle</span><span class="p">;</span>
+<span class="w">        </span><span class="n">heart_rate_chr_conn_handle_inited</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">        </span><span class="n">heart_rate_ind_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="o">-&gt;</span><span class="n">subscribe</span><span class="p">.</span><span class="n">cur_indicate</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In this example, the callback handling is quite simple: it checks whether the attribute handle in the subscription event corresponds to the heart rate measurement attribute handle. If it does, it saves the corresponding connection handle and updates the indication status requested by the client.</p>
+<p>As mentioned in <a class="reference internal" href="#nimble-gatt-server-entry-point"><span class="std std-ref">Entry Function</span></a>, the <cite>send_heart_rate_indication</cite> function is called by the <cite>heart_rate_task</cite> thread at a frequency of 1 Hz. The implementation of this function is as follows:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">send_heart_rate_indication</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">heart_rate_ind_status</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">heart_rate_chr_conn_handle_inited</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ble_gatts_indicate</span><span class="p">(</span><span class="n">heart_rate_chr_conn_handle</span><span class="p">,</span>
+<span class="w">                        </span><span class="n">heart_rate_chr_val_handle</span><span class="p">);</span>
+<span class="w">        </span><span class="n">ESP_LOGI</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;heart rate indication sent!&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <cite>ble_gatts_indicate</cite> function is an API provided by the NimBLE protocol stack for sending indications. This means that when the indication status for the heart rate measurement is true and the corresponding connection handle is available, calling the <cite>send_heart_rate_indication</cite> function will send the heart rate measurement to the GATT client.</p>
+<p>To summarize, when a GATT client subscribes to heart rate measurements, the <cite>gap_event_handler</cite> receives the subscription event and passes it to the <cite>gatt_svr_subscribe_cb</cite> callback function, which updates the subscription status for heart rate measurements. In the <cite>heart_rate_task</cite> thread, it checks the subscription status every second; if the status is true, it sends the heart rate measurement to the client.</p>
+</section>
+</section>
+</section>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this heading"></a></h2>
+<p>Through this tutorial, you have learned how to create GATT services and their corresponding characteristic data using a service table, and you mastered the management of access to GATT characteristic data, including read, write, and subscription operations. You can now build more complex GATT service applications based on the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/ble_get_started/nimble/NimBLE_GATT_Server">NimBLE_GATT_Server </a> example.</p>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Data Exchange (api-guides/ble/get-started/ble-data-exchange)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Data Exchange (api-guides/ble/get-started/ble-data-exchange)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ble-connection.html" class="btn btn-neutral float-left" title="Connection" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../smp.html" class="btn btn-neutral float-right" title="SMP" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

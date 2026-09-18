@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Partition Tables - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/partition-tables.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/partition-tables';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Performance" href="performance/index.html" />
+    <link rel="prev" title="OpenThread" href="openthread.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Partition Tables</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#built-in-partition-tables">Built-in Partition Tables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-custom-tables">Creating Custom Tables</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#name-field">Name Field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#type-field">Type Field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subtype">SubType</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#extra-partition-subtypes">Extra Partition SubTypes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#offset-size">Offset &amp; Size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flags">Flags</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#generating-binary-partition-table">Generating Binary Partition Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#partition-size-checks">Partition Size Checks</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#md5-checksum">MD5 Checksum</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flashing-the-partition-table">Flashing the Partition Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#partition-tool-parttool-py">Partition Tool (<code class="docutils literal notranslate"><span class="pre">parttool.py</span></code>)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#python-api">Python API</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#command-line-interface">Command-line Interface</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Guides</a></li>
+      <li class="breadcrumb-item active">Partition Tables</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/partition-tables.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="partition-tables">
+<h1>Partition Tables<a class="headerlink" href="#partition-tables" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/api-guides/partition-tables.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>A single ESP32's flash can contain multiple apps, as well as many different kinds of data (calibration data, filesystems, parameter storage, etc). For this reason a partition table is flashed to (<a class="reference internal" href="../api-reference/kconfig-reference.html#config-partition-table-offset"><span class="std std-ref">default offset</span></a>) 0x8000 in the flash.</p>
+<p>The partition table length is 0xC00 bytes, as we allow a maximum of 95 entries. An MD5 checksum, used for checking the integrity of the partition table at runtime, is appended after the table data. Thus, the partition table occupies an entire flash sector, which size is 0x1000 (4 KB). As a result, any partition following it must be at least located at (<a class="reference internal" href="../api-reference/kconfig-reference.html#config-partition-table-offset"><span class="std std-ref">default offset</span></a>) + 0x1000.</p>
+<p>Each entry in the partition table has a name (label), type (app, data, or something else), subtype and the offset in flash where the partition is loaded.</p>
+<p>The simplest way to use the partition table is to open the project configuration menu (<code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">menuconfig</span></code>) and choose one of the simple predefined partition tables under <a class="reference internal" href="../api-reference/kconfig-reference.html#config-partition-table-type"><span class="std std-ref">CONFIG_PARTITION_TABLE_TYPE</span></a>:</p>
+<ul class="simple">
+<li><p>&quot;Single factory app, no OTA&quot;</p></li>
+<li><p>&quot;Factory app, two OTA definitions&quot;</p></li>
+</ul>
+<p>In both cases the factory app is flashed at offset 0x10000. If you execute <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">partition-table</span></code> then it will print a summary of the partition table.</p>
+</section>
+<section id="built-in-partition-tables">
+<h2>Built-in Partition Tables<a class="headerlink" href="#built-in-partition-tables" title="Permalink to this heading"></a></h2>
+<p>Here is the summary printed for the &quot;Single factory app, no OTA&quot; configuration:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># ESP-IDF Partition Table
+# Name,   Type, SubType, Offset,  Size, Flags
+nvs,      data, nvs,     0x9000,  0x6000,
+phy_init, data, phy,     0xf000,  0x1000,
+factory,  app,  factory, 0x10000, 1M,
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>At a 0x10000 (64 KB) offset in the flash is the app labelled &quot;factory&quot;. The bootloader runs this app by default.</p></li>
+<li><p>There are also two data regions defined in the partition table for storing NVS library partition and PHY init data.</p></li>
+</ul>
+<p>Here is the summary printed for the &quot;Factory app, two OTA definitions&quot; configuration:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># ESP-IDF Partition Table
+# Name,   Type, SubType, Offset,  Size, Flags
+nvs,      data, nvs,     0x9000,  0x4000,
+otadata,  data, ota,     0xd000,  0x2000,
+phy_init, data, phy,     0xf000,  0x1000,
+factory,  app,  factory, 0x10000,  1M,
+ota_0,    app,  ota_0,   0x110000, 1M,
+ota_1,    app,  ota_1,   0x210000, 1M,
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>There are now three app partition definitions. The type of the factory app (at 0x10000) and the next two &quot;OTA&quot; apps are all set to &quot;app&quot;, but their subtypes are different.</p></li>
+<li><p>There is also a new &quot;otadata&quot; slot, which holds the data for OTA updates. The bootloader consults this data in order to know which app to execute. If &quot;ota data&quot; is empty, it will execute the factory app.</p></li>
+</ul>
+</section>
+<section id="creating-custom-tables">
+<h2>Creating Custom Tables<a class="headerlink" href="#creating-custom-tables" title="Permalink to this heading"></a></h2>
+<p>If you choose &quot;Custom partition table CSV&quot; in <code class="docutils literal notranslate"><span class="pre">menuconfig</span></code>, then you can also enter the name of a CSV file (in the project directory) to use for your partition table. The CSV file can describe any number of definitions for the table you need.</p>
+<p>The CSV format is the same format as printed in the summaries shown above. However, not all fields are required in the CSV. For example, here is the &quot;input&quot; CSV for the OTA partition table:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Name,   Type, SubType,  Offset,   Size,  Flags
+nvs,      data, nvs,      0x9000,  0x4000
+otadata,  data, ota,      0xd000,  0x2000
+phy_init, data, phy,      0xf000,  0x1000
+factory,  app,  factory,  0x10000,  1M
+ota_0,    app,  ota_0,    ,         1M
+ota_1,    app,  ota_1,    ,         1M
+nvs_key,  data, nvs_keys, ,        0x1000
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Whitespace between fields is ignored, and so is any line starting with # (comments).</p></li>
+<li><p>Each non-comment line in the CSV file is a partition definition.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Offset</span></code> field for each partition is empty. The <code class="docutils literal notranslate"><span class="pre">gen_esp32part.py</span></code> tool fills in each blank offset, starting after the partition table and making sure each partition is aligned correctly.</p></li>
+</ul>
+<p>Here is an example of a CSV partition table that includes bootloader and partition table partitions:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># ESP-IDF Partition Table
+# Name,           Type,            SubType,  Offset,  Size,     Flags
+bootloader,       bootloader,      primary,  N/A,     N/A,
+partition_table,  partition_table, primary,  N/A,     N/A,
+nvs,              data,            nvs,      ,        0x6000,
+phy_init,         data,            phy,      ,        0x1000,
+factory,          app,             factory,  ,        1M,
+recoveryBloader,  bootloader,      recovery, N/A,     N/A,
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">gen_esp32part.py</span></code> tool will replace each <code class="docutils literal notranslate"><span class="pre">N/A</span></code> with appropriate values based on the selected Kconfig options: 0x1000 for the bootloader offset and <a class="reference internal" href="../api-reference/kconfig-reference.html#config-partition-table-offset"><span class="std std-ref">CONFIG_PARTITION_TABLE_OFFSET</span></a> for the partition table offset.</p>
+<section id="name-field">
+<h3>Name Field<a class="headerlink" href="#name-field" title="Permalink to this heading"></a></h3>
+<p>Name field can be any meaningful name. It is not significant to the ESP32. The maximum length of names is 16 bytes, including one null terminator. Names longer than the maximum length will be truncated.</p>
+</section>
+<section id="type-field">
+<h3>Type Field<a class="headerlink" href="#type-field" title="Permalink to this heading"></a></h3>
+<p>Partition type field can be specified as a name or a number 0-254 (or as hex 0x00-0xFE). Types 0x00-0x3F are reserved for ESP-IDF core functions.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">app</span></code> (0x00),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (0x01),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bootloader</span></code> (0x02). By default, this partition is not included in any CSV partition table files in ESP-IDF because it is not required and does not impact the system's functionality. It is only useful for the bootloader OTA updates and flash partitioning. Even if this partition is not present in the CSV file, it is still possible to perform the OTA.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">partition_table</span></code> (0x03). By default, this partition also is not included in any CSV partition table files in ESP-IDF.</p></li>
+<li><p>0x40-0xFE are reserved for <strong>custom partition types</strong>. If your app needs to store data in a format not already supported by ESP-IDF, then use a value from this range.</p></li>
+</ul>
+<p>See <a class="reference internal" href="../api-reference/storage/partition.html#_CPPv420esp_partition_type_t" title="esp_partition_type_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_partition_type_t</span></code></a> for the enum definitions for <code class="docutils literal notranslate"><span class="pre">app</span></code> and <code class="docutils literal notranslate"><span class="pre">data</span></code> partitions.</p>
+<p>If writing in C++ then specifying a application-defined partition type requires casting an integer to <a class="reference internal" href="../api-reference/storage/partition.html#_CPPv420esp_partition_type_t" title="esp_partition_type_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_partition_type_t</span></code></a> in order to use it with the <a class="reference internal" href="../api-reference/storage/partition.html#api-reference-partition-table"><span class="std std-ref">partition API</span></a>. For example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>static const esp_partition_type_t APP_PARTITION_TYPE_A = (esp_partition_type_t)0x40;
+</pre></div>
+</div>
+<p>The bootloader ignores any partition types other than <code class="docutils literal notranslate"><span class="pre">app</span></code> (0x00) and <code class="docutils literal notranslate"><span class="pre">data</span></code> (0x01).</p>
+</section>
+<section id="subtype">
+<h3>SubType<a class="headerlink" href="#subtype" title="Permalink to this heading"></a></h3>
+<p>The 8-bit SubType field is specific to a given partition type. ESP-IDF currently only specifies the meaning of the subtype field for <code class="docutils literal notranslate"><span class="pre">app</span></code> and <code class="docutils literal notranslate"><span class="pre">data</span></code> partition types.</p>
+<p>See enum <a class="reference internal" href="../api-reference/storage/partition.html#_CPPv423esp_partition_subtype_t" title="esp_partition_subtype_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_partition_subtype_t</span></code></a> for the full list of subtypes defined by ESP-IDF, including the following:</p>
+<ul class="simple">
+<li><p>When type is <code class="docutils literal notranslate"><span class="pre">app</span></code>, the SubType field can be specified as <code class="docutils literal notranslate"><span class="pre">factory</span></code> (0x00), <code class="docutils literal notranslate"><span class="pre">ota_0</span></code> (0x10) ... <code class="docutils literal notranslate"><span class="pre">ota_15</span></code> (0x1F) or <code class="docutils literal notranslate"><span class="pre">test</span></code> (0x20).</p></li>
+</ul>
+<ul>
+<li><p>When type is <code class="docutils literal notranslate"><span class="pre">bootloader</span></code>, the SubType field can be specified as:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">primary</span></code> (0x00). This is the 2nd stage bootloader, located at the 0x1000 address in flash memory. The tool automatically determines the appropriate size and offset for this subtype, so any size or offset specified for this subtype will be ignored. You can either leave these fields blank or use <code class="docutils literal notranslate"><span class="pre">N/A</span></code> as a placeholder.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ota</span></code> (0x01). This is a temporary bootloader partition used by the bootloader OTA update functionality to download a new image. The tool ignores the size for this subtype, allowing you to leave it blank or use <code class="docutils literal notranslate"><span class="pre">N/A</span></code>. You can only specify an offset, or leave it blank to have the tool calculate it based on the offsets of previously used partitions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">recovery</span></code> (0x02). This is the recovery bootloader partition used for safely performing OTA updates to the bootloader. The <code class="docutils literal notranslate"><span class="pre">gen_esp32part.py</span></code> tool automatically determines the address and size for this partition, so you can leave these fields blank or use <code class="docutils literal notranslate"><span class="pre">N/A</span></code> as a placeholder. The address must match an eFuse field, which is defined through a Kconfig option. If the normal bootloader loading path fails, the first stage (ROM) bootloader will attempt to load the recovery partition at the address specified by the eFuse field.</p></li>
+</ul>
+<p>The size of the bootloader type is calculated by the <code class="docutils literal notranslate"><span class="pre">gen_esp32part.py</span></code> tool  based on the specified <code class="docutils literal notranslate"><span class="pre">--offset</span></code> (the partition table offset) and <code class="docutils literal notranslate"><span class="pre">--primary-partition-offset</span></code> arguments. Specifically, the bootloader size is defined as (<a class="reference internal" href="../api-reference/kconfig-reference.html#config-partition-table-offset"><span class="std std-ref">CONFIG_PARTITION_TABLE_OFFSET</span></a> - 0x1000). This calculated size applies to all subtypes of the bootloader.</p>
+</div></blockquote>
+</li>
+<li><p>When type is <code class="docutils literal notranslate"><span class="pre">partition_table</span></code>, the SubType field can be specified as:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">primary</span></code> (0x00). This is the primary partition table, located at the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-partition-table-offset"><span class="std std-ref">CONFIG_PARTITION_TABLE_OFFSET</span></a> address in flash memory. The tool automatically determines the appropriate size and offset for this subtype, so any size or offset specified for this subtype will be ignored. You can either leave these fields blank or use <code class="docutils literal notranslate"><span class="pre">N/A</span></code> as a placeholder.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ota</span></code> (0x01). It is a temporary partition table partition used by the partition table OTA update functionality for downloading a new image. The tool ignores the size for this subtype, allowing you to leave it blank or use <code class="docutils literal notranslate"><span class="pre">N/A</span></code>. You can specify an offset, or leave it blank, in which case the tool will calculate it based on the offsets of previously allocated partitions.</p></li>
+</ul>
+<p>The size for the <code class="docutils literal notranslate"><span class="pre">partition_table</span></code> type is fixed at <code class="docutils literal notranslate"><span class="pre">0x1000</span></code> and applies uniformly across all subtypes of <code class="docutils literal notranslate"><span class="pre">partition_table</span></code>.</p>
+</div></blockquote>
+</li>
+<li><p>When type is <code class="docutils literal notranslate"><span class="pre">data</span></code>, the subtype field can be specified as <code class="docutils literal notranslate"><span class="pre">ota</span></code> (0x00), <code class="docutils literal notranslate"><span class="pre">phy</span></code> (0x01), <code class="docutils literal notranslate"><span class="pre">nvs</span></code> (0x02), nvs_keys (0x04), or a range of other component-specific subtypes (see <a class="reference internal" href="../api-reference/storage/partition.html#_CPPv423esp_partition_subtype_t" title="esp_partition_subtype_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">subtype</span> <span class="pre">enum</span></code></a>).</p>
+<blockquote>
+<div><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">ota</span></code> (0) is the <a class="reference internal" href="../api-reference/system/ota.html#ota-data-partition"><span class="std std-ref">OTA data partition</span></a> which stores information about the currently selected OTA app slot. This partition should be 0x2000 bytes in size. Refer to the <a class="reference internal" href="../api-reference/system/ota.html#ota-data-partition"><span class="std std-ref">OTA documentation</span></a> for more details.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phy</span></code> (1) is for storing PHY initialisation data. This allows PHY to be configured per-device, instead of in firmware.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>In the default configuration, the phy partition is not used and PHY initialisation data is compiled into the app itself. As such, this partition can be removed from the partition table to save space.</p></li>
+<li><p>To load PHY data from this partition, open the project configuration menu (<code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">menuconfig</span></code>) and enable <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-phy-init-data-in-partition"><span class="std std-ref">CONFIG_ESP_PHY_INIT_DATA_IN_PARTITION</span></a> option. You will also need to flash your devices with phy init data as the esp-idf build system does not do this automatically.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nvs</span></code> (2) is for the <a class="reference internal" href="../api-reference/storage/nvs_flash.html"><span class="doc">Non-Volatile Storage (NVS) API</span></a>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>NVS is used to store per-device PHY calibration data (different to initialisation data).</p></li>
+</ul>
+<ul class="simple">
+<li><p>NVS is used to store Wi-Fi data if the <a class="reference internal" href="../api-reference/network/esp_wifi.html"><span class="doc">esp_wifi_set_storage(WIFI_STORAGE_FLASH)</span></a> initialization function is used.</p></li>
+</ul>
+<ul class="simple">
+<li><p>The NVS API can also be used for other application data.</p></li>
+<li><p>It is strongly recommended that you include an NVS partition of at least 0x3000 bytes in your project.</p></li>
+<li><p>If using NVS API to store a lot of data, increase the NVS partition size from the default 0x6000 bytes.</p></li>
+<li><p>When NVS is used to store factory settings, it is recommended to keep these settings in a separate read-only NVS partition. The minimal size of a read-only NVS partition is 0x1000 bytes. See <a class="reference internal" href="../api-reference/storage/nvs_flash.html#read-only-nvs"><span class="std std-ref">Read-only NVS</span></a> for more details. ESP-IDF provides <a class="reference internal" href="../api-reference/storage/nvs_partition_gen.html"><span class="doc">NVS Partition Generator Utility</span></a> to generate NVS partitions with factory settings and to flash them along with the application.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nvs_keys</span></code> (4) is for the NVS key partition. See <a class="reference internal" href="../api-reference/storage/nvs_flash.html"><span class="doc">Non-Volatile Storage (NVS) API</span></a> for more details.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>It is used to store NVS encryption keys when <cite>NVS Encryption</cite> feature is enabled.</p></li>
+<li><p>The size of this partition should be 4096 bytes (minimum partition size).</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<ul>
+<li><p>There are other predefined data subtypes for data storage supported by ESP-IDF. These include:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">coredump</span></code> (0x03) is for storing core dumps while using a custom partition table CSV file. See <a class="reference internal" href="core_dump.html"><span class="doc">Core Dump</span></a> for more details.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">efuse</span></code> (0x05) is for emulating eFuse bits using <a class="reference internal" href="../api-reference/system/efuse.html#virtual-efuses"><span class="std std-ref">Virtual eFuses</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">undefined</span></code> (0x06) is implicitly used for data partitions with unspecified (empty) subtype, but it is possible to explicitly mark them as undefined as well.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fat</span></code> (0x81) is for <a class="reference internal" href="../api-reference/storage/fatfs.html"><span class="doc">FAT Filesystem Support</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spiffs</span></code> (0x82) is for <a class="reference internal" href="../api-reference/storage/spiffs.html"><span class="doc">SPIFFS Filesystem</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">littlefs</span></code> (0x83) is for <a class="reference external" href="https://github.com/littlefs-project/littlefs">LittleFS filesystem</a>. See <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/littlefs">storage/littlefs</a> example for more details.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<ul>
+<li><p>If the partition type is any application-defined value (range 0x40-0xFE), then <code class="docutils literal notranslate"><span class="pre">subtype</span></code> field can be any value chosen by the application (range 0x00-0xFE).</p>
+<blockquote>
+<div><p>Note that when writing in C++, an application-defined subtype value requires casting to type <a class="reference internal" href="../api-reference/storage/partition.html#_CPPv423esp_partition_subtype_t" title="esp_partition_subtype_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_partition_subtype_t</span></code></a> in order to use it with the <a class="reference internal" href="../api-reference/storage/partition.html#api-reference-partition-table"><span class="std std-ref">partition API</span></a>.</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="extra-partition-subtypes">
+<h3>Extra Partition SubTypes<a class="headerlink" href="#extra-partition-subtypes" title="Permalink to this heading"></a></h3>
+<p>A component can define a new partition subtype by setting the <code class="docutils literal notranslate"><span class="pre">EXTRA_PARTITION_SUBTYPES</span></code> property. This property is a CMake list, each entry of which is a comma separated string with <code class="docutils literal notranslate"><span class="pre">&lt;type&gt;,</span> <span class="pre">&lt;subtype&gt;,</span> <span class="pre">&lt;value&gt;</span></code> format. The build system uses this property to add extra subtypes and creates fields named <code class="docutils literal notranslate"><span class="pre">ESP_PARTITION_SUBTYPE_&lt;type&gt;_&lt;subtype&gt;</span></code> in <a class="reference internal" href="../api-reference/storage/partition.html#_CPPv423esp_partition_subtype_t" title="esp_partition_subtype_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_partition_subtype_t</span></code></a>. The project can use this subtype to define partitions in the partitions table CSV file and use the new fields in <a class="reference internal" href="../api-reference/storage/partition.html#_CPPv423esp_partition_subtype_t" title="esp_partition_subtype_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_partition_subtype_t</span></code></a>.</p>
+</section>
+<section id="offset-size">
+<span id="partition-offset-and-size"></span><h3>Offset &amp; Size<a class="headerlink" href="#offset-size" title="Permalink to this heading"></a></h3>
+<p><ul class="simple">
+<li><p>The offset represents the partition address in the SPI flash, which sector size is 0x1000 (4 KB). Thus, the offset must be a multiple of 4 KB.</p></li>
+<li><p>Partitions with blank offsets in the CSV file will start after the previous partition, or after the partition table in the case of the first partition.</p></li>
+<li><p>Partitions of type <code class="docutils literal notranslate"><span class="pre">app</span></code> have to be placed at offsets aligned to 0x10000 (64 KB). If you leave the offset field blank, <code class="docutils literal notranslate"><span class="pre">gen_esp32part.py</span></code> will automatically align the partition. If you specify an unaligned offset for an <code class="docutils literal notranslate"><span class="pre">app</span></code> partition, the tool will return an error.</p></li>
+<li><p>Partitions of type <code class="docutils literal notranslate"><span class="pre">app</span></code> should have the size aligned to the flash sector size (4 KB). If you specify an unaligned size for an <code class="docutils literal notranslate"><span class="pre">app</span></code> partition, the tool will return an error.</p></li>
+<li><p>If Secure Boot V1 is enabled, then the partition of type <code class="docutils literal notranslate"><span class="pre">app</span></code> needs to have size aligned to 0x10000 (64 KB) boundary.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">bootloader</span></code> offset and size are not affected by the Secure Boot V1 option. Whether Secure Boot V1 is enabled or not, the bootloader remains the same size and does not include the secure digest, which is flashed at offset 0x0 in the flash and occupies one sector (4096 bytes).</p></li>
+<li><p>Sizes and offsets can be specified as decimal numbers, hex numbers with the prefix 0x, or size multipliers K or M (1024 and 1024*1024 bytes).</p></li>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">bootloader</span></code> and <code class="docutils literal notranslate"><span class="pre">partition_table</span></code> types, specifying <code class="docutils literal notranslate"><span class="pre">N/A</span></code> for size and offset in the CSV file means that these values are automatically determined by the tool and cannot be manually defined. This requires setting the <code class="docutils literal notranslate"><span class="pre">--offset</span></code> and <code class="docutils literal notranslate"><span class="pre">--primary-partition-offset</span></code> arguments of <code class="docutils literal notranslate"><span class="pre">gen_esp32part.py</span></code>.</p></li>
+</ul>
+</p>
+<p>If you want the partitions in the partition table to work relative to any placement (<a class="reference internal" href="../api-reference/kconfig-reference.html#config-partition-table-offset"><span class="std std-ref">CONFIG_PARTITION_TABLE_OFFSET</span></a>) of the table itself, leave the offset field (in CSV file) for all partitions blank. Similarly, if changing the partition table offset then be aware that all blank partition offsets may change to match, and that any fixed offsets may now collide with the partition table (causing an error).</p>
+</section>
+<section id="flags">
+<h3>Flags<a class="headerlink" href="#flags" title="Permalink to this heading"></a></h3>
+<p>Two flags are currently supported, <code class="docutils literal notranslate"><span class="pre">encrypted</span></code> and <code class="docutils literal notranslate"><span class="pre">readonly</span></code>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">encrypted</span></code> flag is set, the partition will be encrypted if <a class="reference internal" href="../security/flash-encryption.html"><span class="doc">Flash Encryption</span></a> is enabled.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The following type partitions will always be encrypted, regardless of whether this flag is set or not:</p>
+<p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">app</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bootloader</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">partition_table</span></code>,</p></li>
+<li><p>type <code class="docutils literal notranslate"><span class="pre">data</span></code> and subtype <code class="docutils literal notranslate"><span class="pre">ota</span></code>,</p></li>
+<li><p>type <code class="docutils literal notranslate"><span class="pre">data</span></code> and subtype <code class="docutils literal notranslate"><span class="pre">nvs_keys</span></code>.</p></li>
+</ul>
+</p>
+</div>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">readonly</span></code> flag is set, the partition will be read-only. This flag is only supported for <code class="docutils literal notranslate"><span class="pre">data</span></code> type partitions except <code class="docutils literal notranslate"><span class="pre">ota</span></code> and <code class="docutils literal notranslate"><span class="pre">coredump</span></code> subtypes. This flag can help to protect against accidental writes to a partition that contains critical device-specific configuration data, e.g., factory data partition.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Using C file I/O API to open a file (<code class="docutils literal notranslate"><span class="pre">fopen</span></code>) in any write mode (<code class="docutils literal notranslate"><span class="pre">w</span></code>, <code class="docutils literal notranslate"><span class="pre">w+</span></code>, <code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">a+</span></code>, <code class="docutils literal notranslate"><span class="pre">r+</span></code>) will fail and return <code class="docutils literal notranslate"><span class="pre">NULL</span></code>. Using <code class="docutils literal notranslate"><span class="pre">open</span></code> with any other flag than <code class="docutils literal notranslate"><span class="pre">O_RDONLY</span></code> will fail and return <code class="docutils literal notranslate"><span class="pre">-1</span></code> while <code class="docutils literal notranslate"><span class="pre">errno</span></code> global variable will be set to <code class="docutils literal notranslate"><span class="pre">EROFS</span></code>. This is also true for any other POSIX syscall function performing write or erase operations. Opening a handle in read-write mode for NVS on a read-only partition will fail and return <a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_ERR_NOT_ALLOWED" title="ESP_ERR_NOT_ALLOWED"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_NOT_ALLOWED</span></code></a> error code. Using a lower level API like <code class="docutils literal notranslate"><span class="pre">esp_partition</span></code>, <code class="docutils literal notranslate"><span class="pre">spi_flash</span></code>, etc. to write to a read-only partition will result in <a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_ERR_NOT_ALLOWED" title="ESP_ERR_NOT_ALLOWED"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_NOT_ALLOWED</span></code></a> error code.</p>
+</div>
+</div></blockquote>
+<p>You can specify multiple flags by separating them with a colon. For example, <code class="docutils literal notranslate"><span class="pre">encrypted:readonly</span></code>.</p>
+</section>
+</section>
+<section id="generating-binary-partition-table">
+<h2>Generating Binary Partition Table<a class="headerlink" href="#generating-binary-partition-table" title="Permalink to this heading"></a></h2>
+<p>The partition table which is flashed to the ESP32 is in a binary format, not CSV. The tool <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/partition_table/gen_esp32part.py">partition_table/gen_esp32part.py</a> is used to convert between CSV and binary formats.</p>
+<p>If you configure the partition table CSV name in the project configuration (<code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">menuconfig</span></code>) and then build the project or run <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">partition-table</span></code>, this conversion is done as part of the build process.</p>
+<p>To convert CSV to Binary manually:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>python gen_esp32part.py input_partitions.csv binary_partitions.bin
+</pre></div>
+</div>
+<p>To convert binary format back to CSV manually:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>python gen_esp32part.py binary_partitions.bin input_partitions.csv
+</pre></div>
+</div>
+<p>To display the contents of a binary partition table on stdout (this is how the summaries displayed when running <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">partition-table</span></code> are generated:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>python gen_esp32part.py binary_partitions.bin
+</pre></div>
+</div>
+</section>
+<section id="partition-size-checks">
+<h2>Partition Size Checks<a class="headerlink" href="#partition-size-checks" title="Permalink to this heading"></a></h2>
+<p>The ESP-IDF build system will automatically check if generated binaries fit in the available partition space, and will fail with an error if a binary is too large.</p>
+<p>Currently these checks are performed for the following binaries:</p>
+<ul class="simple">
+<li><p>Bootloader binary must fit in space before partition table (see <a class="reference internal" href="bootloader.html#bootloader-size"><span class="std std-ref">Bootloader Size</span></a>).</p></li>
+<li><p>App binary should fit in at least one partition of type &quot;app&quot;. If the app binary does not fit in any app partition, the build will fail. If it only fits in some of the app partitions, a warning is printed about this.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the build process will fail if the size check returns an error, the binary files are still generated and can be flashed (although they may not work if they are too large for the available space.)</p>
+</div>
+<section id="md5-checksum">
+<h3>MD5 Checksum<a class="headerlink" href="#md5-checksum" title="Permalink to this heading"></a></h3>
+<p>The binary format of the partition table contains an MD5 checksum computed based on the partition table. This checksum is used for checking the integrity of the partition table during the boot.</p>
+<p>The MD5 checksum generation can be disabled by the <code class="docutils literal notranslate"><span class="pre">--disable-md5sum</span></code> option of <code class="docutils literal notranslate"><span class="pre">gen_esp32part.py</span></code> or by the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-partition-table-md5"><span class="std std-ref">CONFIG_PARTITION_TABLE_MD5</span></a> option. This is useful for example when one <a class="reference internal" href="../api-reference/kconfig-reference.html#config-app-compatible-pre-v3-1-bootloaders"><span class="std std-ref">uses a bootloader from ESP-IDF before v3.1</span></a> which cannot process MD5 checksums and the boot fails with the error message <code class="docutils literal notranslate"><span class="pre">invalid</span> <span class="pre">magic</span> <span class="pre">number</span> <span class="pre">0xebeb</span></code>.</p>
+</section>
+</section>
+<section id="flashing-the-partition-table">
+<h2>Flashing the Partition Table<a class="headerlink" href="#flashing-the-partition-table" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">partition-table-flash</span></code>: will flash the partition table with esptool.py.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">flash</span></code>: Will flash everything including the partition table.</p></li>
+</ul>
+<p>A manual flashing command is also printed as part of <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">partition-table</span></code> output.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that updating the partition table does not erase data that may have been stored according to the old partition table. You can use <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">erase-flash</span></code> (or <code class="docutils literal notranslate"><span class="pre">esptool.py</span> <span class="pre">erase_flash</span></code>) to erase the entire flash contents.</p>
+</div>
+</section>
+<section id="partition-tool-parttool-py">
+<h2>Partition Tool (<code class="docutils literal notranslate"><span class="pre">parttool.py</span></code>)<a class="headerlink" href="#partition-tool-parttool-py" title="Permalink to this heading"></a></h2>
+<p>The component <cite>partition_table</cite> provides a tool <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/partition_table/parttool.py">parttool.py </a> for performing partition-related operations on a target device. The following operations can be performed using the tool:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>reading a partition and saving the contents to a file (read_partition)</p></li>
+<li><p>writing the contents of a file to a partition (write_partition)</p></li>
+<li><p>erasing a partition (erase_partition)</p></li>
+<li><p>retrieving info such as name, offset, size and flag (&quot;encrypted&quot;) of a given partition (get_partition_info)</p></li>
+</ul>
+</div></blockquote>
+<p>The tool can either be imported and used from another Python script or invoked from shell script for users wanting to perform operation programmatically. This is facilitated by the tool's Python API and command-line interface, respectively.</p>
+<section id="python-api">
+<h3>Python API<a class="headerlink" href="#python-api" title="Permalink to this heading"></a></h3>
+<p>Before anything else, make sure that the <cite>parttool</cite> module is imported.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="n">idf_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;IDF_PATH&quot;</span><span class="p">]</span>  <span class="c1"># get value of IDF_PATH from environment</span>
+<span class="n">parttool_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">idf_path</span><span class="p">,</span> <span class="s2">&quot;components&quot;</span><span class="p">,</span> <span class="s2">&quot;partition_table&quot;</span><span class="p">)</span>  <span class="c1"># parttool.py lives in $IDF_PATH/components/partition_table</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parttool_dir</span><span class="p">)</span>  <span class="c1"># this enables Python to find parttool module</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">parttool</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>  <span class="c1"># import all names inside parttool module</span>
+</pre></div>
+</div>
+<p>The starting point for using the tool's Python API to do is create a <cite>ParttoolTarget</cite> object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a parttool.py target device connected on serial port /dev/ttyUSB1</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">ParttoolTarget</span><span class="p">(</span><span class="s2">&quot;/dev/ttyUSB1&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The created object can now be used to perform operations on the target device:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  <span class="c1"># Erase partition with name &#39;storage&#39;</span>
+<span class="n">target</span><span class="o">.</span><span class="n">erase_partition</span><span class="p">(</span><span class="n">PartitionName</span><span class="p">(</span><span class="s2">&quot;storage&quot;</span><span class="p">))</span>
+
+  <span class="c1"># Read partition with type &#39;data&#39; and subtype &#39;spiffs&#39; and save to file &#39;spiffs.bin&#39;</span>
+  <span class="n">target</span><span class="o">.</span><span class="n">read_partition</span><span class="p">(</span><span class="n">PartitionType</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;spiffs&quot;</span><span class="p">),</span> <span class="s2">&quot;spiffs.bin&quot;</span><span class="p">)</span>
+
+  <span class="c1"># Write to partition &#39;factory&#39; the contents of a file named &#39;factory.bin&#39;</span>
+  <span class="n">target</span><span class="o">.</span><span class="n">write_partition</span><span class="p">(</span><span class="n">PartitionName</span><span class="p">(</span><span class="s2">&quot;factory&quot;</span><span class="p">),</span> <span class="s2">&quot;factory.bin&quot;</span><span class="p">)</span>
+
+  <span class="c1"># Print the size of default boot partition</span>
+  <span class="n">storage</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_partition_info</span><span class="p">(</span><span class="n">PARTITION_BOOT_DEFAULT</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">storage</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The partition to operate on is specified using <cite>PartitionName</cite> or <cite>PartitionType</cite> or PARTITION_BOOT_DEFAULT. As the name implies, these can be used to refer to partitions of a particular name, type-subtype combination, or the default boot partition.</p>
+<p>More information on the Python API is available in the docstrings for the tool.</p>
+</section>
+<section id="command-line-interface">
+<h3>Command-line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this heading"></a></h3>
+<p>The command-line interface of <cite>parttool.py</cite> has the following structure:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>parttool.py<span class="w"> </span><span class="o">[</span>command-args<span class="o">]</span><span class="w"> </span><span class="o">[</span>subcommand<span class="o">]</span><span class="w"> </span><span class="o">[</span>subcommand-args<span class="o">]</span>
+
+-<span class="w"> </span>command-args<span class="w"> </span>-<span class="w"> </span>These<span class="w"> </span>are<span class="w"> </span>arguments<span class="w"> </span>that<span class="w"> </span>are<span class="w"> </span>needed<span class="w"> </span><span class="k">for</span><span class="w"> </span>executing<span class="w"> </span>the<span class="w"> </span>main<span class="w"> </span><span class="nb">command</span><span class="w"> </span><span class="o">(</span>parttool.py<span class="o">)</span>,<span class="w"> </span>mostly<span class="w"> </span>pertaining<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>target<span class="w"> </span>device
+-<span class="w"> </span>subcommand<span class="w"> </span>-<span class="w"> </span>This<span class="w"> </span>is<span class="w"> </span>the<span class="w"> </span>operation<span class="w"> </span>to<span class="w"> </span>be<span class="w"> </span>performed
+-<span class="w"> </span>subcommand-args<span class="w"> </span>-<span class="w"> </span>These<span class="w"> </span>are<span class="w"> </span>arguments<span class="w"> </span>that<span class="w"> </span>are<span class="w"> </span>specific<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>chosen<span class="w"> </span>operation
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Erase partition with name &#39;storage&#39;</span>
+parttool.py<span class="w"> </span>--port<span class="w"> </span><span class="s2">&quot;/dev/ttyUSB1&quot;</span><span class="w"> </span>erase_partition<span class="w"> </span>--partition-name<span class="o">=</span>storage
+
+<span class="c1"># Read partition with type &#39;data&#39; and subtype &#39;spiffs&#39; and save to file &#39;spiffs.bin&#39;</span>
+parttool.py<span class="w"> </span>--port<span class="w"> </span><span class="s2">&quot;/dev/ttyUSB1&quot;</span><span class="w"> </span>read_partition<span class="w"> </span>--partition-type<span class="o">=</span>data<span class="w"> </span>--partition-subtype<span class="o">=</span>spiffs<span class="w"> </span>--output<span class="w"> </span><span class="s2">&quot;spiffs.bin&quot;</span>
+
+<span class="c1"># Write to partition &#39;factory&#39; the contents of a file named &#39;factory.bin&#39;</span>
+parttool.py<span class="w"> </span>--port<span class="w"> </span><span class="s2">&quot;/dev/ttyUSB1&quot;</span><span class="w"> </span>write_partition<span class="w"> </span>--partition-name<span class="o">=</span>factory<span class="w"> </span>--input<span class="w"> </span><span class="s2">&quot;factory.bin&quot;</span>
+
+<span class="c1"># Print the size of default boot partition</span>
+parttool.py<span class="w"> </span>--port<span class="w"> </span><span class="s2">&quot;/dev/ttyUSB1&quot;</span><span class="w"> </span>get_partition_info<span class="w"> </span>--partition-boot-default<span class="w"> </span>--info<span class="w"> </span>size
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the device has already enabled <code class="docutils literal notranslate"><span class="pre">Flash</span> <span class="pre">Encryption</span></code> or <code class="docutils literal notranslate"><span class="pre">Secure</span> <span class="pre">Boot</span></code>, attempting to use commands that modify the flash content, such as <code class="docutils literal notranslate"><span class="pre">erase_partition</span></code> or <code class="docutils literal notranslate"><span class="pre">write_partition</span></code>, will result in an error. This error is generated by the erase command of <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code>, which is called first before writing. This error is done as a safety measure to prevent bricking your device.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>A fatal error occurred: Active security features detected, erasing flash is disabled as a safety measure. Use --force to override, please use with caution, otherwise it may brick your device!
+</pre></div>
+</div>
+<p>To work around this, you need use the <code class="docutils literal notranslate"><span class="pre">--force</span></code> flag with <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code>. Specifically, the <code class="docutils literal notranslate"><span class="pre">parttool.py</span></code> provides the <code class="docutils literal notranslate"><span class="pre">--esptool-erase-args</span></code> argument that help to pass this flag to <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Erase partition with name &#39;storage&#39;</span>
+<span class="c1"># If Flash Encryption or Secure Boot are enabled then add &quot;--esptool-erase-args=force&quot;</span>
+parttool.py<span class="w"> </span>--port<span class="w"> </span><span class="s2">&quot;/dev/ttyUSB1&quot;</span><span class="w"> </span>--esptool-erase-args<span class="o">=</span>force<span class="w"> </span>erase_partition<span class="w"> </span>--partition-name<span class="o">=</span>storage
+
+<span class="c1"># Write to partition &#39;factory&#39; the contents of a file named &#39;factory.bin&#39;</span>
+<span class="c1"># If Flash Encryption or Secure Boot are enabled then add &quot;--esptool-erase-args=force&quot;</span>
+parttool.py<span class="w"> </span>--port<span class="w"> </span><span class="s2">&quot;/dev/ttyUSB1&quot;</span><span class="w"> </span>--esptool-erase-args<span class="o">=</span>force<span class="w"> </span>write_partition<span class="w"> </span>--partition-name<span class="o">=</span>factory<span class="w"> </span>--input<span class="w"> </span><span class="s2">&quot;factory.bin&quot;</span>
+</pre></div>
+</div>
+</div>
+<p>More information can be obtained by specifying <cite>--help</cite> as argument:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Display possible subcommands and show main command argument descriptions</span>
+parttool.py<span class="w"> </span>--help
+
+<span class="c1"># Show descriptions for specific subcommand arguments</span>
+parttool.py<span class="w"> </span><span class="o">[</span>subcommand<span class="o">]</span><span class="w"> </span>--help
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Partition Tables (api-guides/partition-tables)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Partition Tables (api-guides/partition-tables)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="openthread.html" class="btn btn-neutral float-left" title="OpenThread" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="performance/index.html" class="btn btn-neutral float-right" title="Performance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

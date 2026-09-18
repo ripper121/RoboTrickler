@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fatal Errors - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/fatal-errors.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/fatal-errors';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="File System Considerations" href="file-system-considerations.html" />
+    <link rel="prev" title="Support for External RAM" href="external-ram.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Fatal Errors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panic-handler">Panic Handler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#register-dump-and-backtrace">Register Dump and Backtrace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gdb-stub">GDB Stub</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rtc-watchdog-timeout">RTC Watchdog Timeout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#guru-meditation-errors">Guru Meditation Errors</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#illegal-instr-msg">IllegalInstruction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#instrfetchprohibited">InstrFetchProhibited</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#loadprohibited-storeprohibited">LoadProhibited, StoreProhibited</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#integerdividebyzero">IntegerDivideByZero</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#loadstorealignment">LoadStoreAlignment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#loadstoreerror">LoadStoreError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#unhandled-debug-exception">Unhandled Debug Exception</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#interrupt-watchdog-timeout-on-cpu0-cpu1">Interrupt Watchdog Timeout on CPU0/CPU1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cache-err-msg">Cache error</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#other-fatal-errors">Other Fatal Errors</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#brownout">Brownout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#corrupt-heap">Corrupt Heap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stack-overflow">Stack overflow</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stack-smashing">Stack Smashing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#undefined-behavior-sanitizer-ubsan-checks">Undefined Behavior Sanitizer (UBSAN) Checks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Guides</a></li>
+      <li class="breadcrumb-item active">Fatal Errors</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/fatal-errors.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fatal-errors">
+<h1>Fatal Errors<a class="headerlink" href="#fatal-errors" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/api-guides/fatal-errors.html">[中文]</a></p>
+<section id="overview">
+<span id="id1"></span><h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>In certain situations, the execution of the program can not be continued in a well-defined way. In ESP-IDF, these situations include:</p>
+<ul>
+<li><p>CPU Exceptions: Illegal Instruction, Load/Store Alignment Error, Load/Store Prohibited error, Double Exception.</p></li>
+<li><p>System level checks and safeguards:</p>
+<blockquote>
+<div><p><ul class="simple">
+<li><p><a class="reference internal" href="../api-reference/system/wdts.html"><span class="doc">Interrupt watchdog</span></a> timeout</p></li>
+<li><p><a class="reference internal" href="../api-reference/system/wdts.html"><span class="doc">Task watchdog</span></a> timeout (only fatal if <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-task-wdt-panic"><span class="std std-ref">CONFIG_ESP_TASK_WDT_PANIC</span></a> is set)</p></li>
+<li><p>Cache access error</p></li>
+<li><p>Brownout detection event</p></li>
+<li><p>Stack overflow</p></li>
+<li><p>Stack smashing protection check</p></li>
+<li><p>Heap integrity check</p></li>
+<li><p>Undefined behavior sanitizer (UBSAN) checks</p></li>
+</ul>
+</p>
+</div></blockquote>
+</li>
+<li><p>Failed assertions, via <code class="docutils literal notranslate"><span class="pre">assert</span></code>, <code class="docutils literal notranslate"><span class="pre">configASSERT</span></code> and similar macros.</p></li>
+</ul>
+<p>This guide explains the procedure used in ESP-IDF for handling these errors, and provides suggestions on troubleshooting the errors.</p>
+</section>
+<section id="panic-handler">
+<span id="id2"></span><h2>Panic Handler<a class="headerlink" href="#panic-handler" title="Permalink to this heading"></a></h2>
+<p>Every error cause listed in the <a class="reference internal" href="#overview"><span class="std std-ref">Overview</span></a> will be handled by the <em>panic handler</em>.</p>
+<p>The panic handler will start by printing the cause of the error to the console. For CPU exceptions, the message will be similar to</p>
+<pre class="literal-block">Guru Meditation Error: Core 0 panic'ed (IllegalInstruction). Exception was unhandled.</pre>
+<p>For some of the system level checks (interrupt watchdog, cache access error), the message will be similar to</p>
+<pre class="literal-block">Guru Meditation Error: Core 0 panic'ed (Cache error). Exception was unhandled.</pre>
+<p>In all cases, the error cause will be printed in parentheses. See <a class="reference internal" href="#guru-meditation-errors"><span class="std std-ref">Guru Meditation Errors</span></a> for a list of possible error causes.</p>
+<p>Subsequent behavior of the panic handler can be set using <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-system-panic"><span class="std std-ref">CONFIG_ESP_SYSTEM_PANIC</span></a> configuration choice. The available options are:</p>
+<ul>
+<li><p>Print registers and reboot (<code class="docutils literal notranslate"><span class="pre">CONFIG_ESP_SYSTEM_PANIC_PRINT_REBOOT</span></code>) — default option.</p>
+<blockquote>
+<div><p>This will print register values at the point of the exception, print the backtrace, and restart the chip.</p>
+</div></blockquote>
+</li>
+<li><p>Print registers and halt (<code class="docutils literal notranslate"><span class="pre">CONFIG_ESP_SYSTEM_PANIC_PRINT_HALT</span></code>)</p>
+<blockquote>
+<div><p>Similar to the above option, but halt instead of rebooting. External reset is required to restart the program.</p>
+</div></blockquote>
+</li>
+<li><p>Silent reboot (<code class="docutils literal notranslate"><span class="pre">CONFIG_ESP_SYSTEM_PANIC_SILENT_REBOOT</span></code>)</p>
+<blockquote>
+<div><p>Do not print registers or backtrace, restart the chip immediately.</p>
+</div></blockquote>
+</li>
+<li><p>Invoke GDB Stub (<code class="docutils literal notranslate"><span class="pre">CONFIG_ESP_SYSTEM_PANIC_GDBSTUB</span></code>)</p>
+<blockquote>
+<div><p>Start GDB server which can communicate with GDB over console UART port. This option will only provide read-only debugging or post-mortem debugging. See <a class="reference internal" href="#id3">GDB Stub</a> for more details.</p>
+</div></blockquote>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">CONFIG_ESP_SYSTEM_PANIC_GDBSTUB</span></code> choice in the configuration option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-system-panic"><span class="std std-ref">CONFIG_ESP_SYSTEM_PANIC</span></a> is only available when the component <code class="docutils literal notranslate"><span class="pre">esp_gdbstub</span></code> is included in the build.</p>
+</div>
+<p>The behavior of the panic handler is affected by three other configuration options.</p>
+<ul>
+<li><p>If <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-debug-ocdaware"><span class="std std-ref">CONFIG_ESP_DEBUG_OCDAWARE</span></a> is enabled (which is the default), the panic handler will detect whether a JTAG debugger is connected. If it is, execution will be halted and control will be passed to the debugger. In this case, registers and backtrace are not dumped to the console, and GDBStub / Core Dump functions are not used.</p></li>
+<li><p>If the <a class="reference internal" href="core_dump.html"><span class="doc">Core Dump</span></a> feature is enabled, then the system state (task stacks and registers) will be dumped to either Flash or UART, for later analysis.</p></li>
+<li><p>If <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-panic-handler-iram"><span class="std std-ref">CONFIG_ESP_PANIC_HANDLER_IRAM</span></a> is disabled (disabled by default), the panic handler code is placed in flash memory, not IRAM. This means that if ESP-IDF crashes while flash cache is disabled, the panic handler will automatically re-enable flash cache before running GDB Stub or Core Dump. This adds some minor risk, if the flash cache status is also corrupted during the crash.</p>
+<blockquote>
+<div><p>If this option is enabled, the panic handler code (including required UART functions) is placed in IRAM, and hence will decrease the usable memory space in SRAM. But this may be necessary to debug some complex issues with crashes while flash cache is disabled (for example, when writing to SPI flash) or when flash cache is corrupted when an exception is triggered.</p>
+</div></blockquote>
+</li>
+<li><p>If <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-system-panic-reboot-delay-seconds"><span class="std std-ref">CONFIG_ESP_SYSTEM_PANIC_REBOOT_DELAY_SECONDS</span></a> is enabled (disabled by default) and set to a number higher than 0, the panic handler will delay the reboot for that amount of time in seconds. This can help if the tool used to monitor serial output does not provide a possibility to stop and examine the serial output. In that case, delaying the reboot will allow users to examine and debug the panic handler output (backtrace, etc.) for the duration of the delay. After the delay, the device will reboot. The reset reason is preserved.</p></li>
+</ul>
+<p>The following diagram illustrates the panic handler behavior:</p>
+<figure class="align-center" id="id7">
+<div class="align-default"><a class="reference internal image-reference" href="../_images/blockdiag-13989fc8b5f9309ba633392e085584ddf968bc96.png"><img height="1020.0" src="../_images/blockdiag-13989fc8b5f9309ba633392e085584ddf968bc96.png" width="960.0" /></a></div>
+<figcaption>
+<p><span class="caption-text">Panic Handler Flowchart (click to enlarge)</span><a class="headerlink" href="#id7" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="register-dump-and-backtrace">
+<h2>Register Dump and Backtrace<a class="headerlink" href="#register-dump-and-backtrace" title="Permalink to this heading"></a></h2>
+<p>Unless the <code class="docutils literal notranslate"><span class="pre">CONFIG_ESP_SYSTEM_PANIC_SILENT_REBOOT</span></code> option is enabled, the panic handler prints some of the CPU registers, and the backtrace, to the console.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Core 0 register dump:
+PC      : 0x400e14ed  PS      : 0x00060030  A0      : 0x800d0805  A1      : 0x3ffb5030
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000001  A5      : 0x3ffb50dc
+A6      : 0x00000000  A7      : 0x00000001  A8      : 0x00000000  A9      : 0x3ffb5000
+A10     : 0x00000000  A11     : 0x3ffb2bac  A12     : 0x40082d1c  A13     : 0x06ff1ff8
+A14     : 0x3ffb7078  A15     : 0x00000000  SAR     : 0x00000014  EXCCAUSE: 0x0000001d
+EXCVADDR: 0x00000000  LBEG    : 0x4000c46c  LEND    : 0x4000c477  LCOUNT  : 0xffffffff
+
+Backtrace: 0x400e14ed:0x3ffb5030 0x400d0802:0x3ffb5050
+</pre></div>
+</div>
+<p>The register values printed are the register values in the exception frame, i.e., values at the moment when the CPU exception or another fatal error has occurred.</p>
+<p>A Register dump is not printed if the panic handler has been executed as a result of an <code class="docutils literal notranslate"><span class="pre">abort()</span></code> call.</p>
+<p>In some cases, such as interrupt watchdog timeout, the panic handler may print additional CPU registers (EPC1-EPC4) and the registers/backtrace of the code running on the other CPU.</p>
+<p>The backtrace line contains PC:SP pairs, where PC is the Program Counter and SP is Stack Pointer, for each stack frame of the current task. If a fatal error happens inside an ISR, the backtrace may include PC:SP pairs both from the task which was interrupted, and from the ISR.</p>
+<p>If <a class="reference internal" href="tools/idf-monitor.html"><span class="doc">IDF Monitor</span></a> is used, Program Counter values will be converted to code locations (function name, file name, and line number), and the output will be annotated with additional lines:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Core 0 register dump:
+PC      : 0x400e14ed  PS      : 0x00060030  A0      : 0x800d0805  A1      : 0x3ffb5030
+0x400e14ed: app_main at /Users/user/esp/example/main/main.cpp:36
+
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000001  A5      : 0x3ffb50dc
+A6      : 0x00000000  A7      : 0x00000001  A8      : 0x00000000  A9      : 0x3ffb5000
+A10     : 0x00000000  A11     : 0x3ffb2bac  A12     : 0x40082d1c  A13     : 0x06ff1ff8
+0x40082d1c: _calloc_r at /Users/user/esp/esp-idf/components/newlib/syscalls.c:51
+
+A14     : 0x3ffb7078  A15     : 0x00000000  SAR     : 0x00000014  EXCCAUSE: 0x0000001d
+EXCVADDR: 0x00000000  LBEG    : 0x4000c46c  LEND    : 0x4000c477  LCOUNT  : 0xffffffff
+
+Backtrace: 0x400e14ed:0x3ffb5030 0x400d0802:0x3ffb5050
+0x400e14ed: app_main at /Users/user/esp/example/main/main.cpp:36
+
+0x400d0802: main_task at /Users/user/esp/esp-idf/components/esp32/cpu_start.c:470
+</pre></div>
+</div>
+<p>To find the location where a fatal error has happened, look at the lines which follow the &quot;Backtrace&quot; line. Fatal error location is the top line, and subsequent lines show the call stack.</p>
+</section>
+<section id="gdb-stub">
+<span id="id3"></span><h2>GDB Stub<a class="headerlink" href="#gdb-stub" title="Permalink to this heading"></a></h2>
+<p>If the <code class="docutils literal notranslate"><span class="pre">CONFIG_ESP_SYSTEM_PANIC_GDBSTUB</span></code> option is enabled, the panic handler will not reset the chip when a fatal error happens. Instead, it will start a GDB remote protocol server, commonly referred to as GDB Stub. When this happens, a GDB instance running on the host computer can be instructed to connect to the ESP32 UART port.</p>
+<p>If <a class="reference internal" href="tools/idf-monitor.html"><span class="doc">IDF Monitor</span></a> is used, GDB is started automatically when a GDB Stub prompt is detected on the UART. The output looks like this:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Entering gdb stub now.
+$T0b#e6GNU gdb (crosstool-NG crosstool-ng-1.22.0-80-gff1f415) 7.10
+Copyright (C) 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type &quot;show copying&quot;
+and &quot;show warranty&quot; for details.
+This GDB was configured as &quot;--host=x86_64-build_apple-darwin16.3.0 --target=xtensa-esp32-elf&quot;.
+Type &quot;show configuration&quot; for configuration details.
+For bug reporting instructions, please see:
+&lt;http://www.gnu.org/software/gdb/bugs/&gt;.
+Find the GDB manual and other documentation resources online at:
+&lt;http://www.gnu.org/software/gdb/documentation/&gt;.
+For help, type &quot;help&quot;.
+Type &quot;apropos word&quot; to search for commands related to &quot;word&quot;...
+Reading symbols from /Users/user/esp/example/build/example.elf...done.
+Remote debugging using /dev/cu.usbserial-31301
+0x400e1b41 in app_main ()
+    at /Users/user/esp/example/main/main.cpp:36
+36      *((int*) 0) = 0;
+(gdb)
+</pre></div>
+</div>
+<p>The GDB prompt can be used to inspect CPU registers, local and static variables, and arbitrary locations in memory. It is not possible to set breakpoints, change the PC, or continue execution. To reset the program, exit GDB and perform an external reset: Ctrl-T Ctrl-R in IDF Monitor, or using the external reset button on the development board.</p>
+</section>
+<section id="rtc-watchdog-timeout">
+<span id="id4"></span><h2>RTC Watchdog Timeout<a class="headerlink" href="#rtc-watchdog-timeout" title="Permalink to this heading"></a></h2>
+<p>The RTC watchdog is used in the startup code to keep track of execution time and it also helps to prevent a lock-up caused by an unstable power source. It is enabled by default (see <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-wdt-enable"><span class="std std-ref">CONFIG_BOOTLOADER_WDT_ENABLE</span></a>). If the execution time is exceeded, the RTC watchdog will restart the system. In this case, the first stage (ROM) bootloader will print a message with the <code class="docutils literal notranslate"><span class="pre">RTC</span> <span class="pre">Watchdog</span> <span class="pre">Timeout</span></code> reason for the reboot.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>rst:0x10 (RTCWDT_RTC_RESET)
+</pre></div>
+</div>
+<p>The RTC watchdog covers the execution time from the first stage (ROM) bootloader to application startup. It is initially set in the first stage (ROM) bootloader, then configured in the bootloader with the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-wdt-time-ms"><span class="std std-ref">CONFIG_BOOTLOADER_WDT_TIME_MS</span></a> option (9000 ms by default). During the application initialization stage, it is reconfigured because the source of the slow clock may have changed, and finally disabled right before the <code class="docutils literal notranslate"><span class="pre">app_main()</span></code> call. There is an option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-wdt-disable-in-user-code"><span class="std std-ref">CONFIG_BOOTLOADER_WDT_DISABLE_IN_USER_CODE</span></a> which prevents the RTC watchdog from being disabled before <code class="docutils literal notranslate"><span class="pre">app_main</span></code>. Instead, the RTC watchdog remains active and must be fed periodically in your application's code.</p>
+<p>The RTC watchdog is also used by the system <a class="reference internal" href="#panic-handler"><span class="std std-ref">panic handler</span></a> to protect the system from hanging during a panic. The RTC watchdog is reconfigured in the panic handler to have a timeout of 10 seconds. If the panic handler takes longer than 10 seconds to execute, the system will be reset by the RTC watchdog.</p>
+</section>
+<section id="guru-meditation-errors">
+<span id="id5"></span><h2>Guru Meditation Errors<a class="headerlink" href="#guru-meditation-errors" title="Permalink to this heading"></a></h2>
+<p>This section explains the meaning of different error causes, printed in parens after the <code class="docutils literal notranslate"><span class="pre">Guru</span> <span class="pre">Meditation</span> <span class="pre">Error:</span> <span class="pre">Core</span> <span class="pre">panic'ed</span></code> message.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See the <a class="reference external" href="https://en.wikipedia.org/wiki/Guru_Meditation">Guru Meditation Wikipedia article</a> for historical origins of &quot;Guru Meditation&quot;.</p>
+</div>
+<section id="illegal-instr-msg">
+<h3>IllegalInstruction<a class="headerlink" href="#illegal-instr-msg" title="Permalink to this heading"></a></h3>
+<p>This CPU exception indicates that the instruction which was executed was not a valid instruction. The most common reasons for this error include:</p>
+<ul>
+<li><p>FreeRTOS task function has returned. In FreeRTOS, if a task function needs to terminate, it should call <a class="reference internal" href="../api-reference/system/freertos_idf.html#_CPPv411vTaskDelete12TaskHandle_t" title="vTaskDelete"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskDelete()</span></code></a> and delete itself, instead of returning.</p></li>
+<li><p>Failure to read next instruction from SPI flash. This usually happens if:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Application has reconfigured the SPI flash pins as some other function (GPIO, UART, etc.). Consult the Hardware Design Guidelines and the datasheet for the chip or module for details about the SPI flash pins.</p></li>
+<li><p>Some external device has accidentally been connected to the SPI flash pins, and has interfered with communication between ESP32 and SPI flash.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>In C++ code, exiting from a non-void function without returning a value is considered to be an undefined behavior. When optimizations are enabled, the compiler will often omit the epilogue in such functions. This most often results in an IllegalInstruction exception. By default, ESP-IDF build system enables <code class="docutils literal notranslate"><span class="pre">-Werror=return-type</span></code> which means that missing return statements are treated as compile time errors. However if the application project disables compiler warnings, this issue might go undetected and the IllegalInstruction exception will occur at run time.</p></li>
+</ul>
+</section>
+<section id="instrfetchprohibited">
+<h3>InstrFetchProhibited<a class="headerlink" href="#instrfetchprohibited" title="Permalink to this heading"></a></h3>
+<p>This CPU exception indicates that the CPU could not read an instruction because the address of the instruction does not belong to a valid region in instruction RAM or ROM.</p>
+<p>Usually, this means an attempt to call a function pointer, which does not point to valid code. <code class="docutils literal notranslate"><span class="pre">PC</span></code> (Program Counter) register can be used as an indicator: it will be zero or will contain a garbage value (not <code class="docutils literal notranslate"><span class="pre">0x4xxxxxxx</span></code>).</p>
+</section>
+<section id="loadprohibited-storeprohibited">
+<h3>LoadProhibited, StoreProhibited<a class="headerlink" href="#loadprohibited-storeprohibited" title="Permalink to this heading"></a></h3>
+<p>These CPU exceptions happen when an application attempts to read from or write to an invalid memory location. The address which has been written/read is found in the <code class="docutils literal notranslate"><span class="pre">EXCVADDR</span></code> register in the register dump. If this address is zero, it usually means that the application has attempted to dereference a NULL pointer. If this address is close to zero, it usually means that the application has attempted to access a member of a structure, but the pointer to the structure is NULL. If this address is something else (garbage value, not in <code class="docutils literal notranslate"><span class="pre">0x3fxxxxxx</span></code> - <code class="docutils literal notranslate"><span class="pre">0x6xxxxxxx</span></code> range), it likely means that the pointer used to access the data is either not initialized or has been corrupted.</p>
+</section>
+<section id="integerdividebyzero">
+<h3>IntegerDivideByZero<a class="headerlink" href="#integerdividebyzero" title="Permalink to this heading"></a></h3>
+<p>Application has attempted to do an integer division by zero.</p>
+</section>
+<section id="loadstorealignment">
+<h3>LoadStoreAlignment<a class="headerlink" href="#loadstorealignment" title="Permalink to this heading"></a></h3>
+<p>Application has attempted to read or write a memory location, and the address alignment does not match the load/store size. For example, a 32-bit read can only be done from a 4-byte aligned address, and a 16-bit write can only be done to a 2-byte aligned address.</p>
+</section>
+<section id="loadstoreerror">
+<h3>LoadStoreError<a class="headerlink" href="#loadstoreerror" title="Permalink to this heading"></a></h3>
+<p>This exception may happen in the following cases:</p>
+<ul class="simple">
+<li><p>If the application has attempted to do an 8- or 16- bit read to, or write from, a memory region which only supports 32-bit reads/writes. For example, dereferencing a <code class="docutils literal notranslate"><span class="pre">char*</span></code> pointer to instruction memory (IRAM, IROM) will result in such an error.</p></li>
+<li><p>If the application has attempted to write to a read-only memory region, such as IROM or DROM.</p></li>
+</ul>
+</section>
+<section id="unhandled-debug-exception">
+<h3>Unhandled Debug Exception<a class="headerlink" href="#unhandled-debug-exception" title="Permalink to this heading"></a></h3>
+<p>This CPU exception happens when the instruction <code class="docutils literal notranslate"><span class="pre">BREAK</span></code> is executed.</p>
+</section>
+<section id="interrupt-watchdog-timeout-on-cpu0-cpu1">
+<h3>Interrupt Watchdog Timeout on CPU0/CPU1<a class="headerlink" href="#interrupt-watchdog-timeout-on-cpu0-cpu1" title="Permalink to this heading"></a></h3>
+<p>Indicates that an interrupt watchdog timeout has occurred. See <a class="reference internal" href="../api-reference/system/wdts.html"><span class="doc">Watchdogs</span></a> for more information.</p>
+</section>
+<section id="cache-err-msg">
+<span id="cache-error"></span><h3>Cache error<a class="headerlink" href="#cache-err-msg" title="Permalink to this heading"></a></h3>
+<p>In some situations, ESP-IDF will temporarily disable access to external SPI flash and SPI RAM via caches. For example, this happens when spi_flash APIs are used to read/write/erase/mmap regions of SPI flash. In these situations, tasks are suspended, and interrupt handlers not registered with <code class="docutils literal notranslate"><span class="pre">ESP_INTR_FLAG_IRAM</span></code> are disabled. Make sure that any interrupt handlers registered with this flag have all the code and data in IRAM/DRAM. For more details, see the <a class="reference internal" href="../api-reference/peripherals/spi_flash/spi_flash_concurrency.html#iram-safe-interrupt-handlers"><span class="std std-ref">SPI flash API documentation</span></a> and the <a class="reference internal" href="../api-reference/system/intr_alloc.html#iram-safe-interrupts-handlers"><span class="std std-ref">IRAM-Safe Interrupt Handlers</span></a> section.</p>
+</section>
+</section>
+<section id="other-fatal-errors">
+<h2>Other Fatal Errors<a class="headerlink" href="#other-fatal-errors" title="Permalink to this heading"></a></h2>
+<section id="brownout">
+<h3>Brownout<a class="headerlink" href="#brownout" title="Permalink to this heading"></a></h3>
+<p>ESP32 has a built-in brownout detector, which is enabled by default. The brownout detector can trigger a system reset if the supply voltage goes below a safe level. The brownout detector can be configured using <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-brownout-det"><span class="std std-ref">CONFIG_ESP_BROWNOUT_DET</span></a> and <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-brownout-det-lvl-sel"><span class="std std-ref">CONFIG_ESP_BROWNOUT_DET_LVL_SEL</span></a> options.</p>
+<p>When the brownout detector triggers, the following message is printed:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Brownout detector was triggered
+</pre></div>
+</div>
+<p>The chip is reset after the message is printed.</p>
+<p>Note that if the supply voltage is dropping at a fast rate, only part of the message may be seen on the console.</p>
+</section>
+<section id="corrupt-heap">
+<h3>Corrupt Heap<a class="headerlink" href="#corrupt-heap" title="Permalink to this heading"></a></h3>
+<p>ESP-IDF's heap implementation contains a number of run-time checks of the heap structure. Additional checks (&quot;Heap Poisoning&quot;) can be enabled in menuconfig. If one of the checks fails, a message similar to the following will be printed:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CORRUPT HEAP: Bad tail at 0x3ffe270a. Expected 0xbaad5678 got 0xbaac5678
+assertion &quot;head != NULL&quot; failed: file &quot;/Users/user/esp/esp-idf/components/heap/multi_heap_poisoning.c&quot;, line 201, function: multi_heap_free
+abort() was called at PC 0x400dca43 on core 0
+</pre></div>
+</div>
+<p>Consult <a class="reference internal" href="../api-reference/system/heap_debug.html"><span class="doc">Heap Memory Debugging</span></a> documentation for further information.</p>
+</section>
+<section id="stack-overflow">
+<h3>Stack overflow<a class="headerlink" href="#stack-overflow" title="Permalink to this heading"></a></h3>
+<section id="freertos-end-of-stack-watchpoint">
+<span id="id6"></span><h4>FreeRTOS End of Stack Watchpoint<a class="headerlink" href="#freertos-end-of-stack-watchpoint" title="Permalink to this heading"></a></h4>
+<p>ESP-IDF provides a custom FreeRTOS stack overflow detecting mechanism based on watchpoints. Every time FreeRTOS switches task context, one of the watchpoints is set to watch the last 32 bytes of stack.</p>
+<p>Generally, this may cause the watchpoint to be triggered up to 28 bytes earlier than expected. The value 32 is chosen because it is larger than the stack canary size in FreeRTOS (20 bytes). Adopting this approach ensures that the watchpoint triggers before the stack canary is corrupted, not after.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Not every stack overflow is guaranteed to trigger the watchpoint. It is possible that the task writes to memory beyond the stack canary location, in which case the watchpoint will not be triggered.</p>
+</div>
+<p>If watchpoint triggers, the message will be similar to:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Debug exception reason: Stack canary watchpoint triggered (task_name)
+</pre></div>
+</div>
+<p>This feature can be enabled by using the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-freertos-watchpoint-end-of-stack"><span class="std std-ref">CONFIG_FREERTOS_WATCHPOINT_END_OF_STACK</span></a> option.</p>
+</section>
+<section id="freertos-stack-checks">
+<h4>FreeRTOS Stack Checks<a class="headerlink" href="#freertos-stack-checks" title="Permalink to this heading"></a></h4>
+<p>See <a class="reference internal" href="../api-reference/kconfig-reference.html#config-freertos-check-stackoverflow"><span class="std std-ref">CONFIG_FREERTOS_CHECK_STACKOVERFLOW</span></a></p>
+</section>
+</section>
+<section id="stack-smashing">
+<h3>Stack Smashing<a class="headerlink" href="#stack-smashing" title="Permalink to this heading"></a></h3>
+<p>Stack smashing protection (based on GCC <code class="docutils literal notranslate"><span class="pre">-fstack-protector*</span></code> flags) can be enabled in ESP-IDF using <a class="reference internal" href="../api-reference/kconfig-reference.html#config-compiler-stack-check-mode"><span class="std std-ref">CONFIG_COMPILER_STACK_CHECK_MODE</span></a> option. If stack smashing is detected, message similar to the following will be printed:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Stack smashing protect failure!
+
+abort() was called at PC 0x400d2138 on core 0
+
+Backtrace: 0x4008e6c0:0x3ffc1780 0x4008e8b7:0x3ffc17a0 0x400d2138:0x3ffc17c0 0x400e79d5:0x3ffc17e0 0x400e79a7:0x3ffc1840 0x400e79df:0x3ffc18a0 0x400e2235:0x3ffc18c0 0x400e1916:0x3ffc18f0 0x400e19cd:0x3ffc1910 0x400e1a11:0x3ffc1930 0x400e1bb2:0x3ffc1950 0x400d2c44:0x3ffc1a80
+0
+</pre></div>
+</div>
+<p>The backtrace should point to the function where stack smashing has occurred. Check the function code for unbounded access to local arrays.</p>
+</section>
+<section id="undefined-behavior-sanitizer-ubsan-checks">
+<h3>Undefined Behavior Sanitizer (UBSAN) Checks<a class="headerlink" href="#undefined-behavior-sanitizer-ubsan-checks" title="Permalink to this heading"></a></h3>
+<p>Undefined behavior sanitizer (UBSAN) is a compiler feature which adds run-time checks for potentially incorrect operations, such as:</p>
+<ul class="simple">
+<li><p>overflows (multiplication overflow, signed integer overflow)</p></li>
+<li><p>shift base or exponent errors (e.g., shift by more than 32 bits)</p></li>
+<li><p>integer conversion errors</p></li>
+</ul>
+<p>See <a class="reference external" href="https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html">GCC documentation</a> of <code class="docutils literal notranslate"><span class="pre">-fsanitize=undefined</span></code> option for the complete list of supported checks.</p>
+<section id="enabling-ubsan">
+<h4>Enabling UBSAN<a class="headerlink" href="#enabling-ubsan" title="Permalink to this heading"></a></h4>
+<p>UBSAN is disabled by default. It can be enabled at file, component, or project level by adding the <code class="docutils literal notranslate"><span class="pre">-fsanitize=undefined</span></code> compiler option in the build system.</p>
+<p>When enabling UBSAN for code which uses the SOC hardware register header files (<code class="docutils literal notranslate"><span class="pre">soc/xxx_reg.h</span></code>), it is recommended to disable shift-base sanitizer using <code class="docutils literal notranslate"><span class="pre">-fno-sanitize=shift-base</span></code> option. This is due to the fact that ESP-IDF register header files currently contain patterns which cause false positives for this specific sanitizer option.</p>
+<p>To enable UBSAN at project level, add the following code at the end of the project's <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>idf_build_set_property(COMPILE_OPTIONS &quot;-fsanitize=undefined&quot; &quot;-fno-sanitize=shift-base&quot; APPEND)
+</pre></div>
+</div>
+<p>Alternatively, pass these options through the <code class="docutils literal notranslate"><span class="pre">EXTRA_CFLAGS</span></code> and <code class="docutils literal notranslate"><span class="pre">EXTRA_CXXFLAGS</span></code> environment variables.</p>
+<p>Enabling UBSAN results in significant increase of code and data size. Most applications, except for the trivial ones, will not fit into the available RAM of the microcontroller when UBSAN is enabled for the whole application. Therefore it is recommended that UBSAN is instead enabled for specific components under test.</p>
+<p>To enable UBSAN for a specific component (<code class="docutils literal notranslate"><span class="pre">component_name</span></code>) from the project's <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file, add the following code at the end of the file:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>idf_component_get_property(lib component_name COMPONENT_LIB)
+target_compile_options(${lib} PRIVATE &quot;-fsanitize=undefined&quot; &quot;-fno-sanitize=shift-base&quot;)
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See the build system documentation for more information about <a class="reference internal" href="build-system.html#cmake-build-properties"><span class="std std-ref">build properties</span></a> and <a class="reference internal" href="build-system.html#cmake-component-properties"><span class="std std-ref">component properties</span></a>.</p>
+</div>
+<p>To enable UBSAN for a specific component (<code class="docutils literal notranslate"><span class="pre">component_name</span></code>) from <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> of the same component, add the following at the end of the file:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>target_compile_options(${COMPONENT_LIB} PRIVATE &quot;-fsanitize=undefined&quot; &quot;-fno-sanitize=shift-base&quot;)
+</pre></div>
+</div>
+</section>
+<section id="ubsan-output">
+<h4>UBSAN Output<a class="headerlink" href="#ubsan-output" title="Permalink to this heading"></a></h4>
+<p>When UBSAN detects an error, a message and the backtrace are printed, for example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Undefined behavior of type out_of_bounds
+
+Backtrace:0x4008b383:0x3ffcd8b0 0x4008c791:0x3ffcd8d0 0x4008c587:0x3ffcd8f0 0x4008c6be:0x3ffcd950 0x400db74f:0x3ffcd970 0x400db99c:0x3ffcd9a0
+</pre></div>
+</div>
+<p>When using <a class="reference internal" href="tools/idf-monitor.html"><span class="doc">IDF Monitor</span></a>, the backtrace will be decoded to function names and source code locations, pointing to the location where the issue has happened (here it is <code class="docutils literal notranslate"><span class="pre">main.c:128</span></code>):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>0x4008b383: panic_abort at /path/to/esp-idf/components/esp_system/panic.c:367
+
+0x4008c791: esp_system_abort at /path/to/esp-idf/components/esp_system/system_api.c:106
+
+0x4008c587: __ubsan_default_handler at /path/to/esp-idf/components/esp_system/ubsan.c:152
+
+0x4008c6be: __ubsan_handle_out_of_bounds at /path/to/esp-idf/components/esp_system/ubsan.c:223
+
+0x400db74f: test_ub at main.c:128
+
+0x400db99c: app_main at main.c:56 (discriminator 1)
+</pre></div>
+</div>
+<p>The types of errors reported by UBSAN can be as follows:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">type_mismatch</span></code>, <code class="docutils literal notranslate"><span class="pre">type_mismatch_v1</span></code></p></td>
+<td><p>Incorrect pointer value: null, unaligned, not compatible with the given type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">add_overflow</span></code>, <code class="docutils literal notranslate"><span class="pre">sub_overflow</span></code>, <code class="docutils literal notranslate"><span class="pre">mul_overflow</span></code>, <code class="docutils literal notranslate"><span class="pre">negate_overflow</span></code></p></td>
+<td><p>Integer overflow during addition, subtraction, multiplication, negation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">divrem_overflow</span></code></p></td>
+<td><p>Integer division by 0 or <code class="docutils literal notranslate"><span class="pre">INT_MIN</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">shift_out_of_bounds</span></code></p></td>
+<td><p>Overflow in left or right shift operators.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">out_of_bounds</span></code></p></td>
+<td><p>Access outside of bounds of an array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">unreachable</span></code></p></td>
+<td><p>Unreachable code executed.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">missing_return</span></code></p></td>
+<td><p>Non-void function has reached its end without returning a value (C++ only).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vla_bound_not_positive</span></code></p></td>
+<td><p>Size of variable length array is not positive.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load_invalid_value</span></code></p></td>
+<td><p>Value of <code class="docutils literal notranslate"><span class="pre">bool</span></code> or <code class="docutils literal notranslate"><span class="pre">enum</span></code> (C++ only) variable is invalid (out of bounds).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">nonnull_arg</span></code></p></td>
+<td><p>Null argument passed to a function which is declared with a <code class="docutils literal notranslate"><span class="pre">nonnull</span></code> attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">nonnull_return</span></code></p></td>
+<td><p>Null value returned from a function which is declared with <code class="docutils literal notranslate"><span class="pre">returns_nonnull</span></code> attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">builtin_unreachable</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__builtin_unreachable</span></code> function called.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pointer_overflow</span></code></p></td>
+<td><p>Overflow in pointer arithmetic.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Fatal Errors (api-guides/fatal-errors)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Fatal Errors (api-guides/fatal-errors)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="external-ram.html" class="btn btn-neutral float-left" title="Support for External RAM" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="file-system-considerations.html" class="btn btn-neutral float-right" title="File System Considerations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

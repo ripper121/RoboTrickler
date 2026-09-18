@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bootloader Image Format - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/bootloader_image_format.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/system/bootloader_image_format';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Application Level Tracing" href="app_trace.html" />
+    <link rel="prev" title="App Image Format" href="app_image_format.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">System API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app_image_format.html">App Image Format</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Bootloader Image Format</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bootloader-description">Bootloader Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app_trace.html">Application Level Tracing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_function_with_shared_stack.html">Call Function with External Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chip_revision.html">Chip Revision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console.html">Console</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efuse.html">eFuse Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_err.html">Error Code and Helper Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_ota.html">ESP HTTPS OTA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_event.html">Event Loop Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos.html">FreeRTOS Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_idf.html">FreeRTOS (IDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_additions.html">FreeRTOS (Supplemental Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mem_alloc.html">Heap Memory Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mm.html">Memory Management for MMU Supported Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="heap_debug.html">Heap Memory Debugging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_timer.html">ESP Timer (High Resolution Timer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="internal-unstable.html">Internal and Unstable APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipc.html">Inter-Processor Call (IPC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intr_alloc.html">Interrupt Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="log.html">Logging library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc_system_api.html">Miscellaneous System APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ota.html">Over The Air Updates (OTA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="perfmon.html">Performance Monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="power_management.html">Power Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pthread.html">POSIX Support (Including POSIX Threads Support)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sleep_modes.html">Sleep Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soc_caps.html">SoC Capabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_time.html">System Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="himem.html">Himem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ulp.html">Ultra Low Power (ULP) coprocessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wdts.html">Watchdogs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">System API</a></li>
+      <li class="breadcrumb-item active">Bootloader Image Format</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/system/bootloader_image_format.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bootloader-image-format">
+<h1>Bootloader Image Format<a class="headerlink" href="#bootloader-image-format" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/system/bootloader_image_format.html">[中文]</a></p>
+<p>The bootloader image consists of the same structures as the application image, see <a class="reference internal" href="app_image_format.html#app-image-structures"><span class="std std-ref">Application Image Structures</span></a>. The only difference is in the <a class="reference internal" href="#image-format-bootloader-description"><span class="std std-ref">Bootloader Description</span></a> structure.</p>
+<p>To get information about the bootloader image, please run the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">esptool</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">chip</span> <span class="n">esp32</span> <span class="n">image_info</span> <span class="n">build</span><span class="o">/</span><span class="n">bootloader</span><span class="o">/</span><span class="n">bootloader</span><span class="o">.</span><span class="n">bin</span> <span class="o">--</span><span class="n">version</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>The resultant output will resemble the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">File</span> <span class="n">size</span><span class="p">:</span> <span class="mi">26576</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
+
+<span class="n">ESP32</span> <span class="n">image</span> <span class="n">header</span>
+<span class="o">==================</span>
+<span class="n">Image</span> <span class="n">version</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">Entry</span> <span class="n">point</span><span class="p">:</span> <span class="mh">0x40080658</span>
+<span class="n">Segments</span><span class="p">:</span> <span class="mi">4</span>
+<span class="n">Flash</span> <span class="n">size</span><span class="p">:</span> <span class="mi">2</span><span class="n">MB</span>
+<span class="n">Flash</span> <span class="n">freq</span><span class="p">:</span> <span class="mi">40</span><span class="n">m</span>
+<span class="n">Flash</span> <span class="n">mode</span><span class="p">:</span> <span class="n">DIO</span>
+
+<span class="n">ESP32</span> <span class="n">extended</span> <span class="n">image</span> <span class="n">header</span>
+<span class="o">===========================</span>
+<span class="n">WP</span> <span class="n">pin</span><span class="p">:</span> <span class="mh">0xee</span>
+<span class="n">Flash</span> <span class="n">pins</span> <span class="n">drive</span> <span class="n">settings</span><span class="p">:</span> <span class="n">clk_drv</span><span class="p">:</span> <span class="mh">0x0</span><span class="p">,</span> <span class="n">q_drv</span><span class="p">:</span> <span class="mh">0x0</span><span class="p">,</span> <span class="n">d_drv</span><span class="p">:</span> <span class="mh">0x0</span><span class="p">,</span> <span class="n">cs0_drv</span><span class="p">:</span> <span class="mh">0x0</span><span class="p">,</span> <span class="n">hd_drv</span><span class="p">:</span> <span class="mh">0x0</span><span class="p">,</span> <span class="n">wp_drv</span><span class="p">:</span> <span class="mh">0x0</span>
+<span class="n">Chip</span> <span class="n">ID</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">Minimal</span> <span class="n">chip</span> <span class="n">revision</span><span class="p">:</span> <span class="n">v0</span><span class="mf">.0</span><span class="p">,</span> <span class="p">(</span><span class="n">legacy</span> <span class="n">min_rev</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">Maximal</span> <span class="n">chip</span> <span class="n">revision</span><span class="p">:</span> <span class="n">v3</span><span class="mf">.99</span>
+
+<span class="n">Segments</span> <span class="n">information</span>
+<span class="o">====================</span>
+<span class="n">Segment</span>   <span class="n">Length</span>   <span class="n">Load</span> <span class="n">addr</span>   <span class="n">File</span> <span class="n">offs</span>  <span class="n">Memory</span> <span class="n">types</span>
+<span class="o">-------</span>  <span class="o">-------</span>  <span class="o">----------</span>  <span class="o">----------</span>  <span class="o">------------</span>
+    <span class="mi">1</span>  <span class="mh">0x01bb0</span>  <span class="mh">0x3fff0030</span>  <span class="mh">0x00000018</span>  <span class="n">BYTE_ACCESSIBLE</span><span class="p">,</span> <span class="n">DRAM</span><span class="p">,</span> <span class="n">DIRAM_DRAM</span>
+    <span class="mi">2</span>  <span class="mh">0x03c90</span>  <span class="mh">0x40078000</span>  <span class="mh">0x00001bd0</span>  <span class="n">CACHE_APP</span>
+    <span class="mi">3</span>  <span class="mh">0x00004</span>  <span class="mh">0x40080400</span>  <span class="mh">0x00005868</span>  <span class="n">IRAM</span>
+    <span class="mi">4</span>  <span class="mh">0x00f2c</span>  <span class="mh">0x40080404</span>  <span class="mh">0x00005874</span>  <span class="n">IRAM</span>
+
+<span class="n">ESP32</span> <span class="n">image</span> <span class="n">footer</span>
+<span class="o">==================</span>
+<span class="n">Checksum</span><span class="p">:</span> <span class="mh">0x65</span> <span class="p">(</span><span class="n">valid</span><span class="p">)</span>
+<span class="n">Validation</span> <span class="nb">hash</span><span class="p">:</span> <span class="mi">6</span><span class="n">f31a7f8512f26f6bce7c3b270f93bf6cf1ee4602c322998ca8ce27433527e92</span> <span class="p">(</span><span class="n">valid</span><span class="p">)</span>
+
+<span class="n">Bootloader</span> <span class="n">information</span>
+<span class="o">======================</span>
+<span class="n">Bootloader</span> <span class="n">version</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">ESP</span><span class="o">-</span><span class="n">IDF</span><span class="p">:</span> <span class="n">v5</span><span class="mf">.1</span><span class="o">-</span><span class="n">dev</span><span class="o">-</span><span class="mi">4304</span><span class="o">-</span><span class="n">gcb51a3b</span><span class="o">-</span><span class="n">dirty</span>
+<span class="n">Compile</span> <span class="n">time</span><span class="p">:</span> <span class="n">Mar</span> <span class="mi">30</span> <span class="mi">2023</span> <span class="mi">19</span><span class="p">:</span><span class="mi">14</span><span class="p">:</span><span class="mi">17</span>
+</pre></div>
+</div>
+<section id="bootloader-description">
+<span id="image-format-bootloader-description"></span><h2>Bootloader Description<a class="headerlink" href="#bootloader-description" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">DRAM0</span></code> segment of the bootloader binary starts with the <a class="reference internal" href="#_CPPv421esp_bootloader_desc_t" title="esp_bootloader_desc_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_bootloader_desc_t</span></code></a> structure which carries specific fields describing the bootloader. This structure is located at a fixed offset = sizeof(<a class="reference internal" href="app_image_format.html#_CPPv418esp_image_header_t" title="esp_image_header_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_image_header_t</span></code></a>) + sizeof(<a class="reference internal" href="app_image_format.html#_CPPv426esp_image_segment_header_t" title="esp_image_segment_header_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_image_segment_header_t</span></code></a>).</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">magic_byte</span></code>: the magic byte for the esp_bootloader_desc structure</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reserved</span></code>: reserved for the future IDF use</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">secure_version</span></code>: the secure version used by the bootloader anti-rollback feature, see <a class="reference internal" href="../kconfig-reference.html#config-bootloader-anti-rollback-enable"><span class="std std-ref">CONFIG_BOOTLOADER_ANTI_ROLLBACK_ENABLE</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">version</span></code>: bootloader version, see <a class="reference internal" href="../kconfig-reference.html#config-bootloader-project-ver"><span class="std std-ref">CONFIG_BOOTLOADER_PROJECT_VER</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idf_ver</span></code>: ESP-IDF version. <a class="footnote-reference brackets" href="#f1" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">date</span></code> and <code class="docutils literal notranslate"><span class="pre">time</span></code>: compile date and time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reserved2</span></code>: reserved for the future IDF use</p></li>
+</ul>
+</div></blockquote>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="f1" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>The maximum length is 32 characters, including null-termination character.</p>
+</aside>
+</aside>
+<p>To get the <a class="reference internal" href="#_CPPv421esp_bootloader_desc_t" title="esp_bootloader_desc_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_bootloader_desc_t</span></code></a> structure from the running bootloader, use <a class="reference internal" href="#_CPPv430esp_bootloader_get_descriptionv" title="esp_bootloader_get_description"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_bootloader_get_description()</span></code></a>.</p>
+<p>To get the <a class="reference internal" href="#_CPPv421esp_bootloader_desc_t" title="esp_bootloader_desc_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_bootloader_desc_t</span></code></a> structure from a running application, use <a class="reference internal" href="ota.html#_CPPv434esp_ota_get_bootloader_descriptionPK15esp_partition_tP21esp_bootloader_desc_t" title="esp_ota_get_bootloader_description"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_get_bootloader_description()</span></code></a>.</p>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_bootloader_format/include/esp_bootloader_desc.h">components/esp_bootloader_format/include/esp_bootloader_desc.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_bootloader_desc.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_bootloader_format</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_bootloader_format</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_bootloader_format
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_bootloader_format
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430esp_bootloader_get_descriptionv">
+<span id="_CPPv330esp_bootloader_get_descriptionv"></span><span id="_CPPv230esp_bootloader_get_descriptionv"></span><span id="esp_bootloader_get_description__void"></span><span class="target" id="esp__bootloader__desc_8h_1ad1e892c7a120b40752dcd66256eb4e0d"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv421esp_bootloader_desc_t" title="esp_bootloader_desc_t"><span class="n"><span class="pre">esp_bootloader_desc_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_bootloader_get_description</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430esp_bootloader_get_descriptionv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Return esp_bootloader_desc structure. </p>
+<p>Intended for use by the bootloader. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to esp_bootloader_desc structure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv421esp_bootloader_desc_t">
+<span id="_CPPv321esp_bootloader_desc_t"></span><span id="_CPPv221esp_bootloader_desc_t"></span><span id="esp_bootloader_desc_t"></span><span class="target" id="structesp__bootloader__desc__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_bootloader_desc_t</span></span></span><a class="headerlink" href="#_CPPv421esp_bootloader_desc_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Bootloader description structure. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bootloader_desc_t10magic_byteE">
+<span id="_CPPv3N21esp_bootloader_desc_t10magic_byteE"></span><span id="_CPPv2N21esp_bootloader_desc_t10magic_byteE"></span><span id="esp_bootloader_desc_t::magic_byte__uint8_t"></span><span class="target" id="structesp__bootloader__desc__t_1a638a883d6bd885e9865d54cce27e972f"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">magic_byte</span></span></span><a class="headerlink" href="#_CPPv4N21esp_bootloader_desc_t10magic_byteE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Magic byte ESP_BOOTLOADER_DESC_MAGIC_BYTE </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bootloader_desc_t8reservedE">
+<span id="_CPPv3N21esp_bootloader_desc_t8reservedE"></span><span id="_CPPv2N21esp_bootloader_desc_t8reservedE"></span><span id="esp_bootloader_desc_t::reserved__uint8_tA"></span><span class="target" id="structesp__bootloader__desc__t_1ae7935f89fe7bfbb93e6ec54aaa664066"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reserved</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21esp_bootloader_desc_t8reservedE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>reserved for IDF </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bootloader_desc_t14secure_versionE">
+<span id="_CPPv3N21esp_bootloader_desc_t14secure_versionE"></span><span id="_CPPv2N21esp_bootloader_desc_t14secure_versionE"></span><span id="esp_bootloader_desc_t::secure_version__uint8_t"></span><span class="target" id="structesp__bootloader__desc__t_1a08b77420da6758187bf5a3733400b28b"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">secure_version</span></span></span><a class="headerlink" href="#_CPPv4N21esp_bootloader_desc_t14secure_versionE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The version used by bootloader anti-rollback feature </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bootloader_desc_t7versionE">
+<span id="_CPPv3N21esp_bootloader_desc_t7versionE"></span><span id="_CPPv2N21esp_bootloader_desc_t7versionE"></span><span id="esp_bootloader_desc_t::version__uint32_t"></span><span class="target" id="structesp__bootloader__desc__t_1a24b6d094cd64cd5941c5042fc359ce56"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">version</span></span></span><a class="headerlink" href="#_CPPv4N21esp_bootloader_desc_t7versionE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Bootloader version </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bootloader_desc_t7idf_verE">
+<span id="_CPPv3N21esp_bootloader_desc_t7idf_verE"></span><span id="_CPPv2N21esp_bootloader_desc_t7idf_verE"></span><span id="esp_bootloader_desc_t::idf_ver__cA"></span><span class="target" id="structesp__bootloader__desc__t_1af21a106b427f1f640c298405e364f1fb"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">idf_ver</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">32</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21esp_bootloader_desc_t7idf_verE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Version IDF </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bootloader_desc_t9date_timeE">
+<span id="_CPPv3N21esp_bootloader_desc_t9date_timeE"></span><span id="_CPPv2N21esp_bootloader_desc_t9date_timeE"></span><span id="esp_bootloader_desc_t::date_time__cA"></span><span class="target" id="structesp__bootloader__desc__t_1ae6f2da594d17391758b810d8f7df1ca6"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">date_time</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">24</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21esp_bootloader_desc_t9date_timeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Compile date and time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_bootloader_desc_t9reserved2E">
+<span id="_CPPv3N21esp_bootloader_desc_t9reserved2E"></span><span id="_CPPv2N21esp_bootloader_desc_t9reserved2E"></span><span id="esp_bootloader_desc_t::reserved2__uint8_tA"></span><span class="target" id="structesp__bootloader__desc__t_1a889bbc65ac53ee0c920fb45ac81791cd"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reserved2</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">16</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21esp_bootloader_desc_t9reserved2E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>reserved for IDF </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_BOOTLOADER_DESC_MAGIC_BYTE">
+<span class="target" id="esp__bootloader__desc_8h_1a3f903872b3c025e978b568df1c5411c1"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_BOOTLOADER_DESC_MAGIC_BYTE</span></span></span><a class="headerlink" href="#c.ESP_BOOTLOADER_DESC_MAGIC_BYTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The magic byte for the esp_bootloader_desc structure that is in DRAM. </p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Bootloader Image Format (api-reference/system/bootloader_image_format)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Bootloader Image Format (api-reference/system/bootloader_image_format)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="app_image_format.html" class="btn btn-neutral float-left" title="App Image Format" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="app_trace.html" class="btn btn-neutral float-right" title="Application Level Tracing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

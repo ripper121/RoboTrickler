@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ICMP Echo - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/icmp_echo.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/protocols/icmp_echo';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="mDNS Service" href="mdns.html" />
+    <link rel="prev" title="HTTPS Server" href="esp_https_server.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Application Protocols</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="asio.html">ASIO Port</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modbus.html">ESP-Modbus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mqtt.html">ESP-MQTT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_tls.html">ESP-TLS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_http_client.html">ESP HTTP Client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_local_ctrl.html">ESP Local Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_serial_slave_link.html">ESP Serial Slave Link</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_crt_bundle.html">ESP x509 Certificate Bundle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_http_server.html">HTTP Server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_server.html">HTTPS Server</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ICMP Echo</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdns.html">mDNS Service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mbedtls.html">Mbed TLS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#ip-network-layer">IP Network Layer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Application Protocols</a></li>
+      <li class="breadcrumb-item active">ICMP Echo</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/protocols/icmp_echo.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="icmp-echo">
+<h1>ICMP Echo<a class="headerlink" href="#icmp-echo" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/protocols/icmp_echo.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>ICMP (Internet Control Message Protocol) is used for diagnostic or control purposes or generated in response to errors in IP operations. The common network util <code class="docutils literal notranslate"><span class="pre">ping</span></code> is implemented based on the ICMP packets with the type field value of 0, also called <code class="docutils literal notranslate"><span class="pre">Echo</span> <span class="pre">Reply</span></code>.</p>
+<p>During a ping session, the source host firstly sends out an ICMP echo request packet and wait for an ICMP echo reply with specific times. In this way, it also measures the round-trip time for the messages. After receiving a valid ICMP echo reply, the source host will generate statistics about the IP link layer (e.g., packet loss, elapsed time, etc).</p>
+<p>It is common that IoT device needs to check whether a remote server is alive or not. The device should show the warnings to users when it got offline. It can be achieved by creating a ping session and sending or parsing ICMP echo packets periodically.</p>
+<p>To make this internal procedure much easier for users, ESP-IDF provides some out-of-box APIs.</p>
+<section id="create-a-new-ping-session">
+<h3>Create a New Ping Session<a class="headerlink" href="#create-a-new-ping-session" title="Permalink to this heading"></a></h3>
+<p>To create a ping session, you need to fill in the <code class="docutils literal notranslate"><span class="pre">esp_ping_config_t</span></code> configuration structure firstly, specifying target IP address, interval times, and etc. Optionally, you can also register some callback functions with the <code class="docutils literal notranslate"><span class="pre">esp_ping_callbacks_t</span></code> structure.</p>
+<p>Example method to create a new ping session and register callbacks:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_on_ping_success</span><span class="p">(</span><span class="n">esp_ping_handle_t</span><span class="w"> </span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// optionally, get callback arguments</span>
+<span class="w">    </span><span class="c1">// const char* str = (const char*) args;</span>
+<span class="w">    </span><span class="c1">// printf(&quot;%s\r\n&quot;, str); // &quot;foo&quot;</span>
+<span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">ttl</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">seqno</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">elapsed_time</span><span class="p">,</span><span class="w"> </span><span class="n">recv_len</span><span class="p">;</span>
+<span class="w">    </span><span class="n">ip_addr_t</span><span class="w"> </span><span class="n">target_addr</span><span class="p">;</span>
+<span class="w">    </span><span class="n">esp_ping_get_profile</span><span class="p">(</span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_PING_PROF_SEQNO</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">seqno</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">seqno</span><span class="p">));</span>
+<span class="w">    </span><span class="n">esp_ping_get_profile</span><span class="p">(</span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_PING_PROF_TTL</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ttl</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">ttl</span><span class="p">));</span>
+<span class="w">    </span><span class="n">esp_ping_get_profile</span><span class="p">(</span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_PING_PROF_IPADDR</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">target_addr</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">target_addr</span><span class="p">));</span>
+<span class="w">    </span><span class="n">esp_ping_get_profile</span><span class="p">(</span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_PING_PROF_SIZE</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">recv_len</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">recv_len</span><span class="p">));</span>
+<span class="w">    </span><span class="n">esp_ping_get_profile</span><span class="p">(</span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_PING_PROF_TIMEGAP</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">elapsed_time</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">elapsed_time</span><span class="p">));</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d bytes from %s icmp_seq=%d ttl=%d time=%d ms</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="n">recv_len</span><span class="p">,</span><span class="w"> </span><span class="n">inet_ntoa</span><span class="p">(</span><span class="n">target_addr</span><span class="p">.</span><span class="n">u_addr</span><span class="p">.</span><span class="n">ip4</span><span class="p">),</span><span class="w"> </span><span class="n">seqno</span><span class="p">,</span><span class="w"> </span><span class="n">ttl</span><span class="p">,</span><span class="w"> </span><span class="n">elapsed_time</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_on_ping_timeout</span><span class="p">(</span><span class="n">esp_ping_handle_t</span><span class="w"> </span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">seqno</span><span class="p">;</span>
+<span class="w">    </span><span class="n">ip_addr_t</span><span class="w"> </span><span class="n">target_addr</span><span class="p">;</span>
+<span class="w">    </span><span class="n">esp_ping_get_profile</span><span class="p">(</span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_PING_PROF_SEQNO</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">seqno</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">seqno</span><span class="p">));</span>
+<span class="w">    </span><span class="n">esp_ping_get_profile</span><span class="p">(</span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_PING_PROF_IPADDR</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">target_addr</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">target_addr</span><span class="p">));</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;From %s icmp_seq=%d timeout</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">inet_ntoa</span><span class="p">(</span><span class="n">target_addr</span><span class="p">.</span><span class="n">u_addr</span><span class="p">.</span><span class="n">ip4</span><span class="p">),</span><span class="w"> </span><span class="n">seqno</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_on_ping_end</span><span class="p">(</span><span class="n">esp_ping_handle_t</span><span class="w"> </span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">transmitted</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">received</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">total_time_ms</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">esp_ping_get_profile</span><span class="p">(</span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_PING_PROF_REQUEST</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">transmitted</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">transmitted</span><span class="p">));</span>
+<span class="w">    </span><span class="n">esp_ping_get_profile</span><span class="p">(</span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_PING_PROF_REPLY</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">received</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">received</span><span class="p">));</span>
+<span class="w">    </span><span class="n">esp_ping_get_profile</span><span class="p">(</span><span class="n">hdl</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_PING_PROF_DURATION</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">total_time_ms</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">total_time_ms</span><span class="p">));</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d packets transmitted, %d received, time %dms</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">transmitted</span><span class="p">,</span><span class="w"> </span><span class="n">received</span><span class="p">,</span><span class="w"> </span><span class="n">total_time_ms</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">initialize_ping</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/* convert URL to IP address */</span>
+<span class="w">    </span><span class="n">ip_addr_t</span><span class="w"> </span><span class="n">target_addr</span><span class="p">;</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">addrinfo</span><span class="w"> </span><span class="n">hint</span><span class="p">;</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">addrinfo</span><span class="w"> </span><span class="o">*</span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hint</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">hint</span><span class="p">));</span>
+<span class="w">    </span><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">target_addr</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">target_addr</span><span class="p">));</span>
+<span class="w">    </span><span class="n">getaddrinfo</span><span class="p">(</span><span class="s">&quot;www.espressif.com&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">hint</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">res</span><span class="p">);</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">in_addr</span><span class="w"> </span><span class="n">addr4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="k">struct</span><span class="w"> </span><span class="nc">sockaddr_in</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="n">res</span><span class="o">-&gt;</span><span class="n">ai_addr</span><span class="p">))</span><span class="o">-&gt;</span><span class="n">sin_addr</span><span class="p">;</span>
+<span class="w">    </span><span class="n">inet_addr_to_ip4addr</span><span class="p">(</span><span class="n">ip_2_ip4</span><span class="p">(</span><span class="o">&amp;</span><span class="n">target_addr</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">addr4</span><span class="p">);</span>
+<span class="w">    </span><span class="n">freeaddrinfo</span><span class="p">(</span><span class="n">res</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">esp_ping_config_t</span><span class="w"> </span><span class="n">ping_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ESP_PING_DEFAULT_CONFIG</span><span class="p">();</span>
+<span class="w">    </span><span class="n">ping_config</span><span class="p">.</span><span class="n">target_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">target_addr</span><span class="p">;</span><span class="w">          </span><span class="c1">// target IP address</span>
+<span class="w">    </span><span class="n">ping_config</span><span class="p">.</span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ESP_PING_COUNT_INFINITE</span><span class="p">;</span><span class="w">    </span><span class="c1">// ping in infinite mode, esp_ping_stop can stop it</span>
+
+<span class="w">    </span><span class="cm">/* set callback functions */</span>
+<span class="w">    </span><span class="n">esp_ping_callbacks_t</span><span class="w"> </span><span class="n">cbs</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cbs</span><span class="p">.</span><span class="n">on_ping_success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">test_on_ping_success</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cbs</span><span class="p">.</span><span class="n">on_ping_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">test_on_ping_timeout</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cbs</span><span class="p">.</span><span class="n">on_ping_end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">test_on_ping_end</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cbs</span><span class="p">.</span><span class="n">cb_args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p">;</span><span class="w">  </span><span class="c1">// arguments that feeds to all callback functions, can be NULL</span>
+<span class="w">    </span><span class="n">cbs</span><span class="p">.</span><span class="n">cb_args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eth_event_group</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">esp_ping_handle_t</span><span class="w"> </span><span class="n">ping</span><span class="p">;</span>
+<span class="w">    </span><span class="n">esp_ping_new_session</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ping_config</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cbs</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ping</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="start-and-stop-ping-session">
+<h3>Start and Stop Ping Session<a class="headerlink" href="#start-and-stop-ping-session" title="Permalink to this heading"></a></h3>
+<p>You can start and stop ping session with the handle returned by <code class="docutils literal notranslate"><span class="pre">esp_ping_new_session</span></code>. Note that, the ping session does not start automatically after creation. If the ping session is stopped, and restart again, the sequence number in ICMP packets will recount from zero again.</p>
+</section>
+<section id="delete-a-ping-session">
+<h3>Delete a Ping Session<a class="headerlink" href="#delete-a-ping-session" title="Permalink to this heading"></a></h3>
+<p>If a ping session will not be used any more, you can delete it with <code class="docutils literal notranslate"><span class="pre">esp_ping_delete_session</span></code>. Please make sure the ping session is in stop state (i.e., you have called <code class="docutils literal notranslate"><span class="pre">esp_ping_stop</span></code> before or the ping session has finished all the procedures) when you call this function.</p>
+</section>
+<section id="get-runtime-statistics">
+<h3>Get Runtime Statistics<a class="headerlink" href="#get-runtime-statistics" title="Permalink to this heading"></a></h3>
+<p>As the example code above, you can call <code class="docutils literal notranslate"><span class="pre">esp_ping_get_profile</span></code> to get different runtime statistics of ping session in the callback function.</p>
+</section>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/protocols/icmp_echo">protocols/icmp_echo</a> demonstrates how to implement a simple ping command line utility to test if a remote host is reachable on the IP network, using ICMP echo request packets.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/lwip/include/apps/ping/ping_sock.h">components/lwip/include/apps/ping/ping_sock.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ping/ping_sock.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">lwip</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">lwip</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES lwip
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES lwip
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420esp_ping_new_sessionPK17esp_ping_config_tPK20esp_ping_callbacks_tP17esp_ping_handle_t">
+<span id="_CPPv320esp_ping_new_sessionPK17esp_ping_config_tPK20esp_ping_callbacks_tP17esp_ping_handle_t"></span><span id="_CPPv220esp_ping_new_sessionPK17esp_ping_config_tPK20esp_ping_callbacks_tP17esp_ping_handle_t"></span><span id="esp_ping_new_session__esp_ping_config_tCP.esp_ping_callbacks_tCP.esp_ping_handle_tP"></span><span class="target" id="ping__sock_8h_1ade1c5afbcc046c133587e3fabc21fdcb"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ping_new_session</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv417esp_ping_config_t" title="esp_ping_config_t"><span class="n"><span class="pre">esp_ping_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">config</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv420esp_ping_callbacks_t" title="esp_ping_callbacks_t"><span class="n"><span class="pre">esp_ping_callbacks_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">cbs</span></span>, <a class="reference internal" href="#_CPPv417esp_ping_handle_t" title="esp_ping_handle_t"><span class="n"><span class="pre">esp_ping_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">hdl_out</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420esp_ping_new_sessionPK17esp_ping_config_tPK20esp_ping_callbacks_tP17esp_ping_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Create a ping session. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> -- ping configuration </p></li>
+<li><p><strong>cbs</strong> -- a bunch of callback functions invoked by internal ping task </p></li>
+<li><p><strong>hdl_out</strong> -- handle of ping session </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG: invalid parameters (e.g. configuration is null, etc)</p></li>
+<li><p>ESP_ERR_NO_MEM: out of memory</p></li>
+<li><p>ESP_FAIL: other internal error (e.g. socket error)</p></li>
+<li><p>ESP_OK: create ping session successfully, user can take the ping handle to do follow-on jobs </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423esp_ping_delete_session17esp_ping_handle_t">
+<span id="_CPPv323esp_ping_delete_session17esp_ping_handle_t"></span><span id="_CPPv223esp_ping_delete_session17esp_ping_handle_t"></span><span id="esp_ping_delete_session__esp_ping_handle_t"></span><span class="target" id="ping__sock_8h_1a24e69e064ca14e32d68f08ce3df202e9"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ping_delete_session</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417esp_ping_handle_t" title="esp_ping_handle_t"><span class="n"><span class="pre">esp_ping_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">hdl</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423esp_ping_delete_session17esp_ping_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Delete a ping session. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hdl</strong> -- handle of ping session </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG: invalid parameters (e.g. ping handle is null, etc)</p></li>
+<li><p>ESP_OK: delete ping session successfully </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414esp_ping_start17esp_ping_handle_t">
+<span id="_CPPv314esp_ping_start17esp_ping_handle_t"></span><span id="_CPPv214esp_ping_start17esp_ping_handle_t"></span><span id="esp_ping_start__esp_ping_handle_t"></span><span class="target" id="ping__sock_8h_1a5dbea4c64930dd81234b15921a75f16f"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ping_start</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417esp_ping_handle_t" title="esp_ping_handle_t"><span class="n"><span class="pre">esp_ping_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">hdl</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414esp_ping_start17esp_ping_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Start the ping session. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hdl</strong> -- handle of ping session </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG: invalid parameters (e.g. ping handle is null, etc)</p></li>
+<li><p>ESP_OK: start ping session successfully </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413esp_ping_stop17esp_ping_handle_t">
+<span id="_CPPv313esp_ping_stop17esp_ping_handle_t"></span><span id="_CPPv213esp_ping_stop17esp_ping_handle_t"></span><span id="esp_ping_stop__esp_ping_handle_t"></span><span class="target" id="ping__sock_8h_1aefe545f2f27e0acaf69225ef3c530e31"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ping_stop</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417esp_ping_handle_t" title="esp_ping_handle_t"><span class="n"><span class="pre">esp_ping_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">hdl</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413esp_ping_stop17esp_ping_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stop the ping session. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hdl</strong> -- handle of ping session </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG: invalid parameters (e.g. ping handle is null, etc)</p></li>
+<li><p>ESP_OK: stop ping session successfully </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420esp_ping_get_profile17esp_ping_handle_t18esp_ping_profile_tPv8uint32_t">
+<span id="_CPPv320esp_ping_get_profile17esp_ping_handle_t18esp_ping_profile_tPv8uint32_t"></span><span id="_CPPv220esp_ping_get_profile17esp_ping_handle_t18esp_ping_profile_tPv8uint32_t"></span><span id="esp_ping_get_profile__esp_ping_handle_t.esp_ping_profile_t.voidP.uint32_t"></span><span class="target" id="ping__sock_8h_1ae0010bd2a3a3fb678308213f0257027b"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ping_get_profile</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417esp_ping_handle_t" title="esp_ping_handle_t"><span class="n"><span class="pre">esp_ping_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">hdl</span></span>, <a class="reference internal" href="#_CPPv418esp_ping_profile_t" title="esp_ping_profile_t"><span class="n"><span class="pre">esp_ping_profile_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">profile</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420esp_ping_get_profile17esp_ping_handle_t18esp_ping_profile_tPv8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get runtime profile of ping session. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hdl</strong> -- handle of ping session </p></li>
+<li><p><strong>profile</strong> -- type of profile </p></li>
+<li><p><strong>data</strong> -- profile data </p></li>
+<li><p><strong>size</strong> -- profile data size </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG: invalid parameters (e.g. ping handle is null, etc)</p></li>
+<li><p>ESP_ERR_INVALID_SIZE: the actual profile data size doesn't match the &quot;size&quot; parameter</p></li>
+<li><p>ESP_OK: get profile successfully </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv420esp_ping_callbacks_t">
+<span id="_CPPv320esp_ping_callbacks_t"></span><span id="_CPPv220esp_ping_callbacks_t"></span><span id="esp_ping_callbacks_t"></span><span class="target" id="structesp__ping__callbacks__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ping_callbacks_t</span></span></span><a class="headerlink" href="#_CPPv420esp_ping_callbacks_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of &quot;ping&quot; callback functions. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20esp_ping_callbacks_t7cb_argsE">
+<span id="_CPPv3N20esp_ping_callbacks_t7cb_argsE"></span><span id="_CPPv2N20esp_ping_callbacks_t7cb_argsE"></span><span id="esp_ping_callbacks_t::cb_args__voidP"></span><span class="target" id="structesp__ping__callbacks__t_1ac036b517ab4d1c3b9ee6eb4a3853ad07"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">cb_args</span></span></span><a class="headerlink" href="#_CPPv4N20esp_ping_callbacks_t7cb_argsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>arguments for callback functions </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20esp_ping_callbacks_t15on_ping_successE">
+<span id="_CPPv3N20esp_ping_callbacks_t15on_ping_successE"></span><span id="_CPPv2N20esp_ping_callbacks_t15on_ping_successE"></span><span class="target" id="structesp__ping__callbacks__t_1a1ce1f4bb3c9df241109c1325ec92fd41"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">on_ping_success</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv417esp_ping_handle_t" title="esp_ping_handle_t"><span class="n"><span class="pre">esp_ping_handle_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">hdl</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N20esp_ping_callbacks_t15on_ping_successE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Invoked by internal ping thread when received ICMP echo reply packet. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20esp_ping_callbacks_t15on_ping_timeoutE">
+<span id="_CPPv3N20esp_ping_callbacks_t15on_ping_timeoutE"></span><span id="_CPPv2N20esp_ping_callbacks_t15on_ping_timeoutE"></span><span class="target" id="structesp__ping__callbacks__t_1acfbf51961ab76ed1e315f4e70e6db88e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">on_ping_timeout</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv417esp_ping_handle_t" title="esp_ping_handle_t"><span class="n"><span class="pre">esp_ping_handle_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">hdl</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N20esp_ping_callbacks_t15on_ping_timeoutE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Invoked by internal ping thread when receive ICMP echo reply packet timeout. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20esp_ping_callbacks_t11on_ping_endE">
+<span id="_CPPv3N20esp_ping_callbacks_t11on_ping_endE"></span><span id="_CPPv2N20esp_ping_callbacks_t11on_ping_endE"></span><span class="target" id="structesp__ping__callbacks__t_1adf10a21bf7f2e65d0906fbf97166c004"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">on_ping_end</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv417esp_ping_handle_t" title="esp_ping_handle_t"><span class="n"><span class="pre">esp_ping_handle_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">hdl</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N20esp_ping_callbacks_t11on_ping_endE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Invoked by internal ping thread when a ping session is finished. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417esp_ping_config_t">
+<span id="_CPPv317esp_ping_config_t"></span><span id="_CPPv217esp_ping_config_t"></span><span id="esp_ping_config_t"></span><span class="target" id="structesp__ping__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ping_config_t</span></span></span><a class="headerlink" href="#_CPPv417esp_ping_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of &quot;ping&quot; configuration. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_ping_config_t5countE">
+<span id="_CPPv3N17esp_ping_config_t5countE"></span><span id="_CPPv2N17esp_ping_config_t5countE"></span><span id="esp_ping_config_t::count__uint32_t"></span><span class="target" id="structesp__ping__config__t_1aa7aae031d84a686d6ab4c7448eff9a90"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">count</span></span></span><a class="headerlink" href="#_CPPv4N17esp_ping_config_t5countE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>A &quot;ping&quot; session contains count procedures </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_ping_config_t11interval_msE">
+<span id="_CPPv3N17esp_ping_config_t11interval_msE"></span><span id="_CPPv2N17esp_ping_config_t11interval_msE"></span><span id="esp_ping_config_t::interval_ms__uint32_t"></span><span class="target" id="structesp__ping__config__t_1a9583d4ed8aafc4c0dea0b4bce6a4cf4f"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">interval_ms</span></span></span><a class="headerlink" href="#_CPPv4N17esp_ping_config_t11interval_msE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Milliseconds between each ping procedure </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_ping_config_t10timeout_msE">
+<span id="_CPPv3N17esp_ping_config_t10timeout_msE"></span><span id="_CPPv2N17esp_ping_config_t10timeout_msE"></span><span id="esp_ping_config_t::timeout_ms__uint32_t"></span><span class="target" id="structesp__ping__config__t_1a42a5755efd50968f19d48a32ed4dc024"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeout_ms</span></span></span><a class="headerlink" href="#_CPPv4N17esp_ping_config_t10timeout_msE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Timeout value (in milliseconds) of each ping procedure </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_ping_config_t9data_sizeE">
+<span id="_CPPv3N17esp_ping_config_t9data_sizeE"></span><span id="_CPPv2N17esp_ping_config_t9data_sizeE"></span><span id="esp_ping_config_t::data_size__uint32_t"></span><span class="target" id="structesp__ping__config__t_1ab5e98b206f2a592ab405271ddd2d9efe"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">data_size</span></span></span><a class="headerlink" href="#_CPPv4N17esp_ping_config_t9data_sizeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Size of the data next to ICMP packet header </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_ping_config_t3tosE">
+<span id="_CPPv3N17esp_ping_config_t3tosE"></span><span id="_CPPv2N17esp_ping_config_t3tosE"></span><span id="esp_ping_config_t::tos__i"></span><span class="target" id="structesp__ping__config__t_1aa6bb45533e5c0627fb8feaaf3b9f4a1e"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tos</span></span></span><a class="headerlink" href="#_CPPv4N17esp_ping_config_t3tosE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of Service, a field specified in the IP header </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_ping_config_t3ttlE">
+<span id="_CPPv3N17esp_ping_config_t3ttlE"></span><span id="_CPPv2N17esp_ping_config_t3ttlE"></span><span id="esp_ping_config_t::ttl__i"></span><span class="target" id="structesp__ping__config__t_1ae3ef4d7c2eab30f6938fa054301cf1f2"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ttl</span></span></span><a class="headerlink" href="#_CPPv4N17esp_ping_config_t3ttlE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Time to Live,a field specified in the IP header </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_ping_config_t11target_addrE">
+<span id="_CPPv3N17esp_ping_config_t11target_addrE"></span><span id="_CPPv2N17esp_ping_config_t11target_addrE"></span><span id="esp_ping_config_t::target_addr__ip_addr_t"></span><span class="target" id="structesp__ping__config__t_1af19946eae23aa66e8be475d7cf3bfe84"></span><span class="n"><span class="pre">ip_addr_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">target_addr</span></span></span><a class="headerlink" href="#_CPPv4N17esp_ping_config_t11target_addrE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Target IP address, either IPv4 or IPv6 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_ping_config_t15task_stack_sizeE">
+<span id="_CPPv3N17esp_ping_config_t15task_stack_sizeE"></span><span id="_CPPv2N17esp_ping_config_t15task_stack_sizeE"></span><span id="esp_ping_config_t::task_stack_size__uint32_t"></span><span class="target" id="structesp__ping__config__t_1a53d40f5d35ebcf1eb44df714d6e8693b"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">task_stack_size</span></span></span><a class="headerlink" href="#_CPPv4N17esp_ping_config_t15task_stack_sizeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stack size of internal ping task </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_ping_config_t9task_prioE">
+<span id="_CPPv3N17esp_ping_config_t9task_prioE"></span><span id="_CPPv2N17esp_ping_config_t9task_prioE"></span><span id="esp_ping_config_t::task_prio__uint32_t"></span><span class="target" id="structesp__ping__config__t_1aa2798dc57c97e8f61ea906bb88d384dc"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">task_prio</span></span></span><a class="headerlink" href="#_CPPv4N17esp_ping_config_t9task_prioE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Priority of internal ping task </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17esp_ping_config_t9interfaceE">
+<span id="_CPPv3N17esp_ping_config_t9interfaceE"></span><span id="_CPPv2N17esp_ping_config_t9interfaceE"></span><span id="esp_ping_config_t::interface__uint32_t"></span><span class="target" id="structesp__ping__config__t_1a3f153fceab7f99f54b4bda2d30c87ffd"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">interface</span></span></span><a class="headerlink" href="#_CPPv4N17esp_ping_config_t9interfaceE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Netif index, interface=0 means NETIF_NO_INDEX </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_PING_DEFAULT_CONFIG">
+<span class="target" id="ping__sock_8h_1aa82f2e1578d1a113f58bcf307fef80f1"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PING_DEFAULT_CONFIG</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.ESP_PING_DEFAULT_CONFIG" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Default ping configuration. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_PING_COUNT_INFINITE">
+<span class="target" id="ping__sock_8h_1a4e7208850d11732ee22d87c5e34ac958"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PING_COUNT_INFINITE</span></span></span><a class="headerlink" href="#c.ESP_PING_COUNT_INFINITE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set ping count to zero will ping target infinitely </p>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv417esp_ping_handle_t">
+<span id="_CPPv317esp_ping_handle_t"></span><span id="_CPPv217esp_ping_handle_t"></span><span id="esp_ping_handle_t"></span><span class="target" id="ping__sock_8h_1a4823dbe612a5ebf94ebb34c569193b66"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_ping_handle_t</span></span></span><a class="headerlink" href="#_CPPv417esp_ping_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of &quot;ping&quot; session handle. </p>
+</dd></dl>
+
+</section>
+<section id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv418esp_ping_profile_t">
+<span id="_CPPv318esp_ping_profile_t"></span><span id="_CPPv218esp_ping_profile_t"></span><span class="target" id="ping__sock_8h_1a2408d177206c0da8a6056b0fe60e7adb"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ping_profile_t</span></span></span><a class="headerlink" href="#_CPPv418esp_ping_profile_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Profile of ping session. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_ping_profile_t19ESP_PING_PROF_SEQNOE">
+<span id="_CPPv3N18esp_ping_profile_t19ESP_PING_PROF_SEQNOE"></span><span id="_CPPv2N18esp_ping_profile_t19ESP_PING_PROF_SEQNOE"></span><span class="target" id="ping__sock_8h_1a2408d177206c0da8a6056b0fe60e7adba80cea8758ea44e75d12b3f0e96cf6ca5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PING_PROF_SEQNO</span></span></span><a class="headerlink" href="#_CPPv4N18esp_ping_profile_t19ESP_PING_PROF_SEQNOE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sequence number of a ping procedure </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_ping_profile_t17ESP_PING_PROF_TOSE">
+<span id="_CPPv3N18esp_ping_profile_t17ESP_PING_PROF_TOSE"></span><span id="_CPPv2N18esp_ping_profile_t17ESP_PING_PROF_TOSE"></span><span class="target" id="ping__sock_8h_1a2408d177206c0da8a6056b0fe60e7adbaa2d25f3e011b0c61292422cedeaed0cd"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PING_PROF_TOS</span></span></span><a class="headerlink" href="#_CPPv4N18esp_ping_profile_t17ESP_PING_PROF_TOSE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of service of a ping procedure </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_ping_profile_t17ESP_PING_PROF_TTLE">
+<span id="_CPPv3N18esp_ping_profile_t17ESP_PING_PROF_TTLE"></span><span id="_CPPv2N18esp_ping_profile_t17ESP_PING_PROF_TTLE"></span><span class="target" id="ping__sock_8h_1a2408d177206c0da8a6056b0fe60e7adba497f8600f84db4fb6b7d34b10ee0ed90"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PING_PROF_TTL</span></span></span><a class="headerlink" href="#_CPPv4N18esp_ping_profile_t17ESP_PING_PROF_TTLE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Time to live of a ping procedure </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_ping_profile_t21ESP_PING_PROF_REQUESTE">
+<span id="_CPPv3N18esp_ping_profile_t21ESP_PING_PROF_REQUESTE"></span><span id="_CPPv2N18esp_ping_profile_t21ESP_PING_PROF_REQUESTE"></span><span class="target" id="ping__sock_8h_1a2408d177206c0da8a6056b0fe60e7adba6c11ce35abd692a314243c96d0c51412"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PING_PROF_REQUEST</span></span></span><a class="headerlink" href="#_CPPv4N18esp_ping_profile_t21ESP_PING_PROF_REQUESTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Number of request packets sent out </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_ping_profile_t19ESP_PING_PROF_REPLYE">
+<span id="_CPPv3N18esp_ping_profile_t19ESP_PING_PROF_REPLYE"></span><span id="_CPPv2N18esp_ping_profile_t19ESP_PING_PROF_REPLYE"></span><span class="target" id="ping__sock_8h_1a2408d177206c0da8a6056b0fe60e7adba04f5438c1863433d420b97749f443df2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PING_PROF_REPLY</span></span></span><a class="headerlink" href="#_CPPv4N18esp_ping_profile_t19ESP_PING_PROF_REPLYE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Number of reply packets received </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_ping_profile_t20ESP_PING_PROF_IPADDRE">
+<span id="_CPPv3N18esp_ping_profile_t20ESP_PING_PROF_IPADDRE"></span><span id="_CPPv2N18esp_ping_profile_t20ESP_PING_PROF_IPADDRE"></span><span class="target" id="ping__sock_8h_1a2408d177206c0da8a6056b0fe60e7adba52e4b08929baf0217412c0f472e94de5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PING_PROF_IPADDR</span></span></span><a class="headerlink" href="#_CPPv4N18esp_ping_profile_t20ESP_PING_PROF_IPADDRE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>IP address of replied target </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_ping_profile_t18ESP_PING_PROF_SIZEE">
+<span id="_CPPv3N18esp_ping_profile_t18ESP_PING_PROF_SIZEE"></span><span id="_CPPv2N18esp_ping_profile_t18ESP_PING_PROF_SIZEE"></span><span class="target" id="ping__sock_8h_1a2408d177206c0da8a6056b0fe60e7adbaccbeefc96ebc1a94997b254bb9b2a194"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PING_PROF_SIZE</span></span></span><a class="headerlink" href="#_CPPv4N18esp_ping_profile_t18ESP_PING_PROF_SIZEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Size of received packet </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_ping_profile_t21ESP_PING_PROF_TIMEGAPE">
+<span id="_CPPv3N18esp_ping_profile_t21ESP_PING_PROF_TIMEGAPE"></span><span id="_CPPv2N18esp_ping_profile_t21ESP_PING_PROF_TIMEGAPE"></span><span class="target" id="ping__sock_8h_1a2408d177206c0da8a6056b0fe60e7adbaa43c342567fc348007310c8a55c3b5dc"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PING_PROF_TIMEGAP</span></span></span><a class="headerlink" href="#_CPPv4N18esp_ping_profile_t21ESP_PING_PROF_TIMEGAPE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Elapsed time between request and reply packet </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_ping_profile_t22ESP_PING_PROF_DURATIONE">
+<span id="_CPPv3N18esp_ping_profile_t22ESP_PING_PROF_DURATIONE"></span><span id="_CPPv2N18esp_ping_profile_t22ESP_PING_PROF_DURATIONE"></span><span class="target" id="ping__sock_8h_1a2408d177206c0da8a6056b0fe60e7adba06985b3863cdeacd865dfb633747eaff"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PING_PROF_DURATION</span></span></span><a class="headerlink" href="#_CPPv4N18esp_ping_profile_t22ESP_PING_PROF_DURATIONE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Elapsed time of the whole ping session </p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=ICMP Echo (api-reference/protocols/icmp_echo)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=ICMP Echo (api-reference/protocols/icmp_echo)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="esp_https_server.html" class="btn btn-neutral float-left" title="HTTPS Server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mdns.html" class="btn btn-neutral float-right" title="mDNS Service" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

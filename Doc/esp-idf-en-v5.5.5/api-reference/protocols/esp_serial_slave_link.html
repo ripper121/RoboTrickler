@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESP Serial Slave Link - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/esp_serial_slave_link.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/protocols/esp_serial_slave_link';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Communication with ESP SDIO Slave" href="esp_sdio_slave_protocol.html" />
+    <link rel="prev" title="ESP Local Control" href="esp_local_ctrl.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Application Protocols</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="asio.html">ASIO Port</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modbus.html">ESP-Modbus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mqtt.html">ESP-MQTT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_tls.html">ESP-TLS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_http_client.html">ESP HTTP Client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_local_ctrl.html">ESP Local Control</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ESP Serial Slave Link</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#espressif-device-protocols">Espressif Device Protocols</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#terminology">Terminology</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#services-provided-by-esp-slave">Services Provided by ESP Slave</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initialization-of-esp-serial-slave-link">Initialization of ESP Serial Slave Link</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apis">APIs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-example">Application Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="esp_crt_bundle.html">ESP x509 Certificate Bundle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_http_server.html">HTTP Server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_server.html">HTTPS Server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icmp_echo.html">ICMP Echo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdns.html">mDNS Service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mbedtls.html">Mbed TLS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#ip-network-layer">IP Network Layer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Application Protocols</a></li>
+      <li class="breadcrumb-item active">ESP Serial Slave Link</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/protocols/esp_serial_slave_link.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="esp-serial-slave-link">
+<h1>ESP Serial Slave Link<a class="headerlink" href="#esp-serial-slave-link" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/protocols/esp_serial_slave_link.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>Espressif provides several chips that can work as slaves. These slave devices rely on some common buses, and have their own communication protocols over those buses. The <code class="docutils literal notranslate"><span class="pre">esp_serial_slave_link</span></code> component is designed for the master to communicate with ESP slave devices through those protocols over the bus drivers.</p>
+<p>After an <code class="docutils literal notranslate"><span class="pre">esp_serial_slave_link</span></code> device is initialized properly, the application can use it to communicate with the ESP slave devices conveniently.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The ESP-IDF component <code class="docutils literal notranslate"><span class="pre">esp_serial_slave_link</span></code> has been moved from ESP-IDF since version v5.0 to a separate repository:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/idf-extra-components/tree/master/esp_serial_slave_link">ESSL component on GitHub</a></p></li>
+</ul>
+<p>To add ESSL component in your project, please run <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">add-dependency</span> <span class="pre">espressif/esp_serial_slave_link</span></code>.</p>
+</div>
+</section>
+<section id="espressif-device-protocols">
+<h2>Espressif Device Protocols<a class="headerlink" href="#espressif-device-protocols" title="Permalink to this heading"></a></h2>
+<p>For more details about Espressif device protocols, see the following documents.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="esp_sdio_slave_protocol.html">Communication with ESP SDIO Slave</a></li>
+<li class="toctree-l1"><a class="reference internal" href="esp_spi_slave_protocol.html">ESP SPI Slave HD (Half Duplex) Mode Protocol</a></li>
+</ul>
+</div>
+</section>
+<section id="terminology">
+<h2>Terminology<a class="headerlink" href="#terminology" title="Permalink to this heading"></a></h2>
+<ul>
+<li><p>ESSL: Abbreviation for ESP Serial Slave Link, the component described by this document.</p></li>
+<li><p>Master: The device running the <code class="docutils literal notranslate"><span class="pre">esp_serial_slave_link</span></code> component.</p></li>
+<li><p>ESSL device: a virtual device on the master associated with an ESP slave device. The device context has the knowledge of the slave protocol above the bus, relying on some bus drivers to communicate with the slave.</p></li>
+<li><p>ESSL device handle: a handle to ESSL device context containing the configuration, status and data required by the ESSL component. The context stores the driver configurations, communication state, data shared by master and slave, etc.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The context should be initialized before it is used, and get deinitialized if not used any more. The master application operates on the ESSL device through this handle.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>ESP slave: the slave device connected to the bus, which ESSL component is designed to communicate with.</p></li>
+<li><p>Bus: The bus over which the master and the slave communicate with each other.</p></li>
+<li><p>Slave protocol: The special communication protocol specified by Espressif HW/SW over the bus.</p></li>
+<li><p>TX buffer num: a counter, which is on the slave and can be read by the master, indicates the accumulated buffer numbers that the slave has loaded to the hardware to receive data from the master.</p></li>
+<li><p>RX data size: a counter, which is on the slave and can be read by the master, indicates the accumulated data size that the slave has loaded to the hardware to send to the master.</p></li>
+</ul>
+</section>
+<section id="services-provided-by-esp-slave">
+<h2>Services Provided by ESP Slave<a class="headerlink" href="#services-provided-by-esp-slave" title="Permalink to this heading"></a></h2>
+<p>There are some common services provided by the Espressif slaves:</p>
+<ol class="arabic">
+<li><p>Tohost Interrupts: The slave can inform the master about certain events by the interrupt line. (optional)</p></li>
+<li><p>Frhost Interrupts: The master can inform the slave about certain events.</p></li>
+<li><p>TX FIFO (master to slave): The slave can receive data from the master in units of receiving buffers.</p>
+<p>The slave updates the TX buffer num to inform the master how much data it can receive, and the master then read the TX buffer num, and take off the used buffer number to know how many buffers are remaining.</p>
+</li>
+<li><p>RX FIFO (slave to master): The slave can send data in stream to the master. The SDIO slave can also indicate it has new data to send to master by the interrupt line.</p>
+<p>The slave updates the RX data size to inform the master how much data it has prepared to send, and then the master read the data size, and take off the data length it has already received to know how many data is remaining.</p>
+</li>
+<li><p>Shared registers: The master can read some part of the registers on the slave, and also write these registers to let the slave read.</p></li>
+</ol>
+<p>The services provided by the slave depends on the slave's model. See <a class="reference internal" href="esp_sdio_slave_protocol.html#esp-sdio-slave-caps"><span class="std std-ref">SDIO Slave Capabilities of Espressif Chips</span></a> and <a class="reference internal" href="esp_spi_slave_protocol.html#esp-spi-slave-caps"><span class="std std-ref">SPI Slave Capabilities of Espressif Chips</span></a> for more details.</p>
+</section>
+<section id="initialization-of-esp-serial-slave-link">
+<h2>Initialization of ESP Serial Slave Link<a class="headerlink" href="#initialization-of-esp-serial-slave-link" title="Permalink to this heading"></a></h2>
+<section id="esp-sdio-slave">
+<span id="essl-sdio-slave-init"></span><h3>ESP SDIO Slave<a class="headerlink" href="#esp-sdio-slave" title="Permalink to this heading"></a></h3>
+<p>The ESP SDIO slave link (ESSL SDIO) devices relies on the SDMMC component. It includes the usage of communicating with ESP SDIO Slave device via the SDMMC Host or SDSPI Host feature. The ESSL device should be initialized as below:</p>
+<ol class="arabic simple">
+<li><p>Initialize a SDMMC card (see <a class="reference internal" href="../storage/sdmmc.html"><span class="doc">Document of SDMMC driver</span></a>) structure.</p></li>
+<li><p>Call <a class="reference internal" href="../storage/sdmmc.html#_CPPv415sdmmc_card_initPK12sdmmc_host_tP12sdmmc_card_t" title="sdmmc_card_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_card_init()</span></code></a> to initialize the card.</p></li>
+<li><p>Initialize the ESSL device with <a class="reference internal" href="#_CPPv418essl_sdio_config_t" title="essl_sdio_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">essl_sdio_config_t</span></code></a>. The <code class="docutils literal notranslate"><span class="pre">card</span></code> member should be the <a class="reference internal" href="../storage/sdmmc.html#_CPPv412sdmmc_card_t" title="sdmmc_card_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">sdmmc_card_t</span></code></a> got in step 2, and the <code class="docutils literal notranslate"><span class="pre">recv_buffer_size</span></code> member should be filled correctly according to pre-negotiated value.</p></li>
+<li><p>Call <a class="reference internal" href="#_CPPv49essl_init13essl_handle_t8uint32_t" title="essl_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_init()</span></code></a> to do initialization of the SDIO part.</p></li>
+<li><p>Call <a class="reference internal" href="#_CPPv419essl_wait_for_ready13essl_handle_t8uint32_t" title="essl_wait_for_ready"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_wait_for_ready()</span></code></a> to wait for the slave to be ready.</p></li>
+</ol>
+</section>
+<section id="esp-spi-slave">
+<h3>ESP SPI Slave<a class="headerlink" href="#esp-spi-slave" title="Permalink to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are communicating with the ESP SDIO Slave device through SPI interface, you should use the <a class="reference internal" href="#essl-sdio-slave-init"><span class="std std-ref">SDIO interface</span></a> instead.</p>
+</div>
+<p>Has not been supported yet.</p>
+</section>
+</section>
+<section id="apis">
+<h2>APIs<a class="headerlink" href="#apis" title="Permalink to this heading"></a></h2>
+<p>After the initialization process above is performed, you can call the APIs below to make use of the services provided by the slave:</p>
+<section id="tohost-interrupts-optional">
+<h3>Tohost Interrupts (Optional)<a class="headerlink" href="#tohost-interrupts-optional" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Call <a class="reference internal" href="#_CPPv417essl_get_intr_ena13essl_handle_tP8uint32_t8uint32_t" title="essl_get_intr_ena"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_get_intr_ena()</span></code></a> to know which events trigger the interrupts to the master.</p></li>
+<li><p>Call <a class="reference internal" href="#_CPPv417essl_set_intr_ena13essl_handle_t8uint32_t8uint32_t" title="essl_set_intr_ena"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_set_intr_ena()</span></code></a> to set the events that trigger interrupts to the master.</p></li>
+<li><p>Call <a class="reference internal" href="#_CPPv413essl_wait_int13essl_handle_t8uint32_t" title="essl_wait_int"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_wait_int()</span></code></a> to wait until interrupt from the slave, or timeout.</p></li>
+<li><p>When interrupt is triggered, call <a class="reference internal" href="#_CPPv413essl_get_intr13essl_handle_tP8uint32_tP8uint32_t8uint32_t" title="essl_get_intr"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_get_intr()</span></code></a> to know which events are active, and call <a class="reference internal" href="#_CPPv415essl_clear_intr13essl_handle_t8uint32_t8uint32_t" title="essl_clear_intr"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_clear_intr()</span></code></a> to clear them.</p></li>
+</ol>
+</section>
+<section id="frhost-interrupts">
+<h3>Frhost Interrupts<a class="headerlink" href="#frhost-interrupts" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Call <a class="reference internal" href="#_CPPv420essl_send_slave_intr13essl_handle_t8uint32_t8uint32_t" title="essl_send_slave_intr"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_send_slave_intr()</span></code></a> to trigger general purpose interrupt of the slave.</p></li>
+</ol>
+</section>
+<section id="tx-fifo">
+<h3>TX FIFO<a class="headerlink" href="#tx-fifo" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Call <a class="reference internal" href="#_CPPv422essl_get_tx_buffer_num13essl_handle_tP8uint32_t8uint32_t" title="essl_get_tx_buffer_num"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_get_tx_buffer_num()</span></code></a> to know how many buffers the slave has prepared to receive data from the master. This is optional. The master will poll <code class="docutils literal notranslate"><span class="pre">tx_buffer_num</span></code> when it tries to send packets to the slave, until the slave has enough buffer or timeout.</p></li>
+<li><p>Call <a class="reference internal" href="#_CPPv416essl_send_packet13essl_handle_tPKv6size_t8uint32_t" title="essl_send_packet"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_send_packet()</span></code></a> to send data to the slave.</p></li>
+</ol>
+</section>
+<section id="rx-fifo">
+<h3>RX FIFO<a class="headerlink" href="#rx-fifo" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Call <a class="reference internal" href="#_CPPv421essl_get_rx_data_size13essl_handle_tP8uint32_t8uint32_t" title="essl_get_rx_data_size"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_get_rx_data_size()</span></code></a> to know how many data the slave has prepared to send to the master. This is optional. When the master tries to receive data from the slave, it updates the <code class="docutils literal notranslate"><span class="pre">rx_data_size</span></code> for once, if the current <code class="docutils literal notranslate"><span class="pre">rx_data_size</span></code> is shorter than the buffer size the master prepared to receive. And it may poll the <code class="docutils literal notranslate"><span class="pre">rx_data_size</span></code> if the <code class="docutils literal notranslate"><span class="pre">rx_data_size</span></code> keeps 0, until timeout.</p></li>
+<li><p>Call <a class="reference internal" href="#_CPPv415essl_get_packet13essl_handle_tPv6size_tP6size_t8uint32_t" title="essl_get_packet"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_get_packet()</span></code></a> to receive data from the slave.</p></li>
+</ol>
+</section>
+<section id="reset-counters-optional">
+<h3>Reset Counters (Optional)<a class="headerlink" href="#reset-counters-optional" title="Permalink to this heading"></a></h3>
+<p>Call <a class="reference internal" href="#_CPPv414essl_reset_cnt13essl_handle_t" title="essl_reset_cnt"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">essl_reset_cnt()</span></code></a> to reset the internal counter if you find the slave has reset its counter.</p>
+</section>
+</section>
+<section id="application-example">
+<h2>Application Example<a class="headerlink" href="#application-example" title="Permalink to this heading"></a></h2>
+<p>The example below shows how ESP32 SDIO host and slave communicate with each other. The host uses the ESSL SDIO:</p>
+<p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/peripherals/sdio">peripherals/sdio</a></p>
+<p>Please refer to the specific example README.md for details.</p>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/driver/test_apps/components/esp_serial_slave_link/include/esp_serial_slave_link/essl.h">components/driver/test_apps/components/esp_serial_slave_link/include/esp_serial_slave_link/essl.h</a></p></li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv49essl_init13essl_handle_t8uint32_t">
+<span id="_CPPv39essl_init13essl_handle_t8uint32_t"></span><span id="_CPPv29essl_init13essl_handle_t8uint32_t"></span><span id="essl_init__essl_handle_t.uint32_t"></span><span class="target" id="essl_8h_1a610a5ec3efcefa616436524518ff95bb"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_init</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49essl_init13essl_handle_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Initialize the slave. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of an ESSL device. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: If success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: Current device does not support this function.</p></li>
+<li><p>Other value returned from lower layer <code class="docutils literal notranslate"><span class="pre">init</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419essl_wait_for_ready13essl_handle_t8uint32_t">
+<span id="_CPPv319essl_wait_for_ready13essl_handle_t8uint32_t"></span><span id="_CPPv219essl_wait_for_ready13essl_handle_t8uint32_t"></span><span id="essl_wait_for_ready__essl_handle_t.uint32_t"></span><span class="target" id="essl_8h_1ab4ca52e11e74bae1b28486f2007b98d8"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_wait_for_ready</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419essl_wait_for_ready13essl_handle_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wait for interrupt of an ESSL slave device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of an ESSL device. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: If success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: Current device does not support this function.</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422essl_get_tx_buffer_num13essl_handle_tP8uint32_t8uint32_t">
+<span id="_CPPv322essl_get_tx_buffer_num13essl_handle_tP8uint32_t8uint32_t"></span><span id="_CPPv222essl_get_tx_buffer_num13essl_handle_tP8uint32_t8uint32_t"></span><span id="essl_get_tx_buffer_num__essl_handle_t.uint32_tP.uint32_t"></span><span class="target" id="essl_8h_1a33a7422d257902be015b73d52fbbebcd"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_get_tx_buffer_num</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_tx_num</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422essl_get_tx_buffer_num13essl_handle_tP8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get buffer num for the host to send data to the slave. The buffers are size of <code class="docutils literal notranslate"><span class="pre">buffer_size</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of a ESSL device. </p></li>
+<li><p><strong>out_tx_num</strong> -- Output of buffer num that host can send data to ESSL slave. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: This API is not supported in this mode</p></li>
+<li><p>One of the error codes from SDMMC/SPI host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421essl_get_rx_data_size13essl_handle_tP8uint32_t8uint32_t">
+<span id="_CPPv321essl_get_rx_data_size13essl_handle_tP8uint32_t8uint32_t"></span><span id="_CPPv221essl_get_rx_data_size13essl_handle_tP8uint32_t8uint32_t"></span><span id="essl_get_rx_data_size__essl_handle_t.uint32_tP.uint32_t"></span><span class="target" id="essl_8h_1addeebbd3ebf32acac562544c26b408fc"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_get_rx_data_size</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_rx_size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421essl_get_rx_data_size13essl_handle_tP8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the size, in bytes, of the data that the ESSL slave is ready to send</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of an ESSL device. </p></li>
+<li><p><strong>out_rx_size</strong> -- Output of data size to read from slave, in bytes </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: This API is not supported in this mode</p></li>
+<li><p>One of the error codes from SDMMC/SPI host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414essl_reset_cnt13essl_handle_t">
+<span id="_CPPv314essl_reset_cnt13essl_handle_t"></span><span id="_CPPv214essl_reset_cnt13essl_handle_t"></span><span id="essl_reset_cnt__essl_handle_t"></span><span class="target" id="essl_8h_1ac9ccc21f14f25ef391996b70e397b148"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_reset_cnt</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414essl_reset_cnt13essl_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Reset the counters of this component. Usually you don't need to do this unless you know the slave is reset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- Handle of an ESSL device.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: This API is not supported in this mode</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid argument, handle is not init. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416essl_send_packet13essl_handle_tPKv6size_t8uint32_t">
+<span id="_CPPv316essl_send_packet13essl_handle_tPKv6size_t8uint32_t"></span><span id="_CPPv216essl_send_packet13essl_handle_tPKv6size_t8uint32_t"></span><span id="essl_send_packet__essl_handle_t.voidCP.s.uint32_t"></span><span class="target" id="essl_8h_1a996ff5fcdc1e703bb9ef44ad4b6fa629"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_send_packet</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">start</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">length</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416essl_send_packet13essl_handle_tPKv6size_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Send a packet to the ESSL Slave. The Slave receives the packet into buffers whose size is <code class="docutils literal notranslate"><span class="pre">buffer_size</span></code> (configured during initialization).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of an ESSL device. </p></li>
+<li><p><strong>start</strong> -- Start address of the packet to send </p></li>
+<li><p><strong>length</strong> -- Length of data to send, if the packet is over-size, the it will be divided into blocks and hold into different buffers automatically. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid argument, handle is not init or other argument is not valid.</p></li>
+<li><p>ESP_ERR_TIMEOUT: No buffer to use, or error ftrom SDMMC host controller.</p></li>
+<li><p>ESP_ERR_NOT_FOUND: Slave is not ready for receiving.</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: This API is not supported in this mode</p></li>
+<li><p>One of the error codes from SDMMC/SPI host controller. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415essl_get_packet13essl_handle_tPv6size_tP6size_t8uint32_t">
+<span id="_CPPv315essl_get_packet13essl_handle_tPv6size_tP6size_t8uint32_t"></span><span id="_CPPv215essl_get_packet13essl_handle_tPv6size_tP6size_t8uint32_t"></span><span id="essl_get_packet__essl_handle_t.voidP.s.sP.uint32_t"></span><span class="target" id="essl_8h_1aaf5186ec71f7960f600f4d19744b041a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_get_packet</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_data</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_length</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415essl_get_packet13essl_handle_tPv6size_tP6size_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get a packet from ESSL slave.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of an ESSL device. </p></li>
+<li><p><strong>out_data</strong> -- <strong>[out]</strong> Data output address </p></li>
+<li><p><strong>size</strong> -- The size of the output buffer, if the buffer is smaller than the size of data to receive from slave, the driver returns <code class="docutils literal notranslate"><span class="pre">ESP_ERR_NOT_FINISHED</span></code></p></li>
+<li><p><strong>out_length</strong> -- <strong>[out]</strong> Output of length the data actually received from slave. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Success: All the data has been read from the slave.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid argument, The handle is not initialized or the other arguments are invalid.</p></li>
+<li><p>ESP_ERR_NOT_FINISHED: Read was successful, but there is still data remaining.</p></li>
+<li><p>ESP_ERR_NOT_FOUND: Slave is not ready to send data.</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: This API is not supported in this mode</p></li>
+<li><p>One of the error codes from SDMMC/SPI host controller. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414essl_write_reg13essl_handle_t7uint8_t7uint8_tP7uint8_t8uint32_t">
+<span id="_CPPv314essl_write_reg13essl_handle_t7uint8_t7uint8_tP7uint8_t8uint32_t"></span><span id="_CPPv214essl_write_reg13essl_handle_t7uint8_t7uint8_tP7uint8_t8uint32_t"></span><span id="essl_write_reg__essl_handle_t.uint8_t.uint8_t.uint8_tP.uint32_t"></span><span class="target" id="essl_8h_1a5f9fdc6e4d587a806bce00a84e4f7e25"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_write_reg</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">value_o</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414essl_write_reg13essl_handle_t7uint8_t7uint8_tP7uint8_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write general purpose R/W registers (8-bit) of ESSL slave.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>sdio 28-31 are reserved, the lower API helps to skip.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of an ESSL device. </p></li>
+<li><p><strong>addr</strong> -- Address of register to write. For SDIO, valid address: 0-59. For SPI, see <code class="docutils literal notranslate"><span class="pre">essl_spi.h</span></code></p></li>
+<li><p><strong>value</strong> -- Value to write to the register. </p></li>
+<li><p><strong>value_o</strong> -- Output of the returned written value. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>One of the error codes from SDMMC/SPI host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413essl_read_reg13essl_handle_t7uint8_tP7uint8_t8uint32_t">
+<span id="_CPPv313essl_read_reg13essl_handle_t7uint8_tP7uint8_t8uint32_t"></span><span id="_CPPv213essl_read_reg13essl_handle_t7uint8_tP7uint8_t8uint32_t"></span><span id="essl_read_reg__essl_handle_t.uint8_t.uint8_tP.uint32_t"></span><span class="target" id="essl_8h_1a6d7c71788b295c7ace744e91f6b02f03"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_read_reg</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">add</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">value_o</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413essl_read_reg13essl_handle_t7uint8_tP7uint8_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Read general purpose R/W registers (8-bit) of ESSL slave.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of a <code class="docutils literal notranslate"><span class="pre">essl</span></code> device. </p></li>
+<li><p><strong>add</strong> -- Address of register to read. For SDIO, Valid address: 0-27, 32-63 (28-31 reserved, return interrupt bits on read). For SPI, see <code class="docutils literal notranslate"><span class="pre">essl_spi.h</span></code></p></li>
+<li><p><strong>value_o</strong> -- Output value read from the register. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>One of the error codes from SDMMC/SPI host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413essl_wait_int13essl_handle_t8uint32_t">
+<span id="_CPPv313essl_wait_int13essl_handle_t8uint32_t"></span><span id="_CPPv213essl_wait_int13essl_handle_t8uint32_t"></span><span id="essl_wait_int__essl_handle_t.uint32_t"></span><span class="target" id="essl_8h_1a433045a94649f2333921391041d14c8f"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_wait_int</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413essl_wait_int13essl_handle_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>wait for an interrupt of the slave</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of an ESSL device. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: If interrupt is triggered.</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: Current device does not support this function.</p></li>
+<li><p>ESP_ERR_TIMEOUT: No interrupts before timeout. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415essl_clear_intr13essl_handle_t8uint32_t8uint32_t">
+<span id="_CPPv315essl_clear_intr13essl_handle_t8uint32_t8uint32_t"></span><span id="_CPPv215essl_clear_intr13essl_handle_t8uint32_t8uint32_t"></span><span id="essl_clear_intr__essl_handle_t.uint32_t.uint32_t"></span><span class="target" id="essl_8h_1af94bc0899ae981eda663bf3cb2031141"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_clear_intr</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">intr_mask</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415essl_clear_intr13essl_handle_t8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Clear interrupt bits of ESSL slave. All the bits set in the mask will be cleared, while other bits will stay the same.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of an ESSL device. </p></li>
+<li><p><strong>intr_mask</strong> -- Mask of interrupt bits to clear. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: Current device does not support this function.</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413essl_get_intr13essl_handle_tP8uint32_tP8uint32_t8uint32_t">
+<span id="_CPPv313essl_get_intr13essl_handle_tP8uint32_tP8uint32_t8uint32_t"></span><span id="_CPPv213essl_get_intr13essl_handle_tP8uint32_tP8uint32_t8uint32_t"></span><span id="essl_get_intr__essl_handle_t.uint32_tP.uint32_tP.uint32_t"></span><span class="target" id="essl_8h_1a3e5aa656463a4faa2e6ec32bd52c44e3"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_get_intr</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">intr_raw</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">intr_st</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413essl_get_intr13essl_handle_tP8uint32_tP8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get interrupt bits of ESSL slave.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of an ESSL device. </p></li>
+<li><p><strong>intr_raw</strong> -- Output of the raw interrupt bits. Set to NULL if only masked bits are read. </p></li>
+<li><p><strong>intr_st</strong> -- Output of the masked interrupt bits. set to NULL if only raw bits are read. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_INVALID_ARG: If both <code class="docutils literal notranslate"><span class="pre">intr_raw</span></code> and <code class="docutils literal notranslate"><span class="pre">intr_st</span></code> are NULL.</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: Current device does not support this function.</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417essl_set_intr_ena13essl_handle_t8uint32_t8uint32_t">
+<span id="_CPPv317essl_set_intr_ena13essl_handle_t8uint32_t8uint32_t"></span><span id="_CPPv217essl_set_intr_ena13essl_handle_t8uint32_t8uint32_t"></span><span id="essl_set_intr_ena__essl_handle_t.uint32_t.uint32_t"></span><span class="target" id="essl_8h_1acf5af0026d816f13636a6a8271fb89e9"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_set_intr_ena</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ena_mask</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417essl_set_intr_ena13essl_handle_t8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set interrupt enable bits of ESSL slave. The slave only sends interrupt on the line when there is a bit both the raw status and the enable are set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of an ESSL device. </p></li>
+<li><p><strong>ena_mask</strong> -- Mask of the interrupt bits to enable. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: Current device does not support this function.</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417essl_get_intr_ena13essl_handle_tP8uint32_t8uint32_t">
+<span id="_CPPv317essl_get_intr_ena13essl_handle_tP8uint32_t8uint32_t"></span><span id="_CPPv217essl_get_intr_ena13essl_handle_tP8uint32_t8uint32_t"></span><span id="essl_get_intr_ena__essl_handle_t.uint32_tP.uint32_t"></span><span class="target" id="essl_8h_1a150aadff74bd1d7e9f3ec724f17bdf51"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_get_intr_ena</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ena_mask_o</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417essl_get_intr_ena13essl_handle_tP8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get interrupt enable bits of ESSL slave.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of an ESSL device. </p></li>
+<li><p><strong>ena_mask_o</strong> -- Output of interrupt bit enable mask. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420essl_send_slave_intr13essl_handle_t8uint32_t8uint32_t">
+<span id="_CPPv320essl_send_slave_intr13essl_handle_t8uint32_t8uint32_t"></span><span id="_CPPv220essl_send_slave_intr13essl_handle_t8uint32_t8uint32_t"></span><span id="essl_send_slave_intr__essl_handle_t.uint32_t.uint32_t"></span><span class="target" id="essl_8h_1a6dd26a3ccf0cd270b8c73178a40e540e"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_send_slave_intr</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">intr_mask</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420essl_send_slave_intr13essl_handle_t8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Send interrupts to slave. Each bit of the interrupt will be triggered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of an ESSL device. </p></li>
+<li><p><strong>intr_mask</strong> -- Mask of interrupt bits to send to slave. </p></li>
+<li><p><strong>wait_ms</strong> -- Millisecond to wait before timeout, will not wait at all if set to 0-9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: Current device does not support this function.</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv413essl_handle_t">
+<span id="_CPPv313essl_handle_t"></span><span id="_CPPv213essl_handle_t"></span><span id="essl_handle_t"></span><span class="target" id="essl_8h_1a45a5348a2c36bddc89a6097235b5e2d4"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">essl_dev_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">essl_handle_t</span></span></span><a class="headerlink" href="#_CPPv413essl_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Handle of an ESSL device. </p>
+</dd></dl>
+
+</section>
+<section id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/driver/test_apps/components/esp_serial_slave_link/include/esp_serial_slave_link/essl_sdio.h">components/driver/test_apps/components/esp_serial_slave_link/include/esp_serial_slave_link/essl_sdio.h</a></p></li>
+</ul>
+</section>
+<section id="id2">
+<h3>Functions<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418essl_sdio_init_devP13essl_handle_tPK18essl_sdio_config_t">
+<span id="_CPPv318essl_sdio_init_devP13essl_handle_tPK18essl_sdio_config_t"></span><span id="_CPPv218essl_sdio_init_devP13essl_handle_tPK18essl_sdio_config_t"></span><span id="essl_sdio_init_dev__essl_handle_tP.essl_sdio_config_tCP"></span><span class="target" id="essl__sdio_8h_1a853cbaad6f230a6babe61a67544213c9"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_sdio_init_dev</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_handle</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418essl_sdio_config_t" title="essl_sdio_config_t"><span class="n"><span class="pre">essl_sdio_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">config</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418essl_sdio_init_devP13essl_handle_tPK18essl_sdio_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Initialize the ESSL SDIO device and get its handle. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out_handle</strong> -- Output of the handle. </p></li>
+<li><p><strong>config</strong> -- Configuration for the ESSL SDIO device. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: on success</p></li>
+<li><p>ESP_ERR_NO_MEM: memory exhausted. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420essl_sdio_deinit_dev13essl_handle_t">
+<span id="_CPPv320essl_sdio_deinit_dev13essl_handle_t"></span><span id="_CPPv220essl_sdio_deinit_dev13essl_handle_t"></span><span id="essl_sdio_deinit_dev__essl_handle_t"></span><span class="target" id="essl__sdio_8h_1aa5c3a09fd82866258d973fabf3f4252c"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_sdio_deinit_dev</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420essl_sdio_deinit_dev13essl_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Deinitialize and free the space used by the ESSL SDIO device. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- Handle of the ESSL SDIO device to deinit. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG: wrong handle passed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv418essl_sdio_config_t">
+<span id="_CPPv318essl_sdio_config_t"></span><span id="_CPPv218essl_sdio_config_t"></span><span id="essl_sdio_config_t"></span><span class="target" id="structessl__sdio__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_sdio_config_t</span></span></span><a class="headerlink" href="#_CPPv418essl_sdio_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Configuration for the ESSL SDIO device. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18essl_sdio_config_t4cardE">
+<span id="_CPPv3N18essl_sdio_config_t4cardE"></span><span id="_CPPv2N18essl_sdio_config_t4cardE"></span><span id="essl_sdio_config_t::card__sdmmc_card_tP"></span><span class="target" id="structessl__sdio__config__t_1aeac32fdcaa6afcfe544783de01afe282"></span><a class="reference internal" href="../storage/sdmmc.html#_CPPv412sdmmc_card_t" title="sdmmc_card_t"><span class="n"><span class="pre">sdmmc_card_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">card</span></span></span><a class="headerlink" href="#_CPPv4N18essl_sdio_config_t4cardE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The initialized sdmmc card pointer of the slave. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18essl_sdio_config_t16recv_buffer_sizeE">
+<span id="_CPPv3N18essl_sdio_config_t16recv_buffer_sizeE"></span><span id="_CPPv2N18essl_sdio_config_t16recv_buffer_sizeE"></span><span id="essl_sdio_config_t::recv_buffer_size__i"></span><span class="target" id="structessl__sdio__config__t_1a23182c72eb79bcc2b539757c1aaeb0d1"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">recv_buffer_size</span></span></span><a class="headerlink" href="#_CPPv4N18essl_sdio_config_t16recv_buffer_sizeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The pre-negotiated recv buffer size used by both the host and the slave. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="id3">
+<h3>Header File<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/driver/test_apps/components/esp_serial_slave_link/include/esp_serial_slave_link/essl_spi.h">components/driver/test_apps/components/esp_serial_slave_link/include/esp_serial_slave_link/essl_spi.h</a></p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>Functions<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417essl_spi_init_devP13essl_handle_tPK17essl_spi_config_t">
+<span id="_CPPv317essl_spi_init_devP13essl_handle_tPK17essl_spi_config_t"></span><span id="_CPPv217essl_spi_init_devP13essl_handle_tPK17essl_spi_config_t"></span><span id="essl_spi_init_dev__essl_handle_tP.essl_spi_config_tCP"></span><span class="target" id="essl__spi_8h_1a2a4fe9b34c8db7d14b1a0843303f58ae"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_init_dev</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_handle</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv417essl_spi_config_t" title="essl_spi_config_t"><span class="n"><span class="pre">essl_spi_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">init_config</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417essl_spi_init_devP13essl_handle_tPK17essl_spi_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Initialize the ESSL SPI device function list and get its handle. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out_handle</strong> -- <strong>[out]</strong> Output of the handle </p></li>
+<li><p><strong>init_config</strong> -- Configuration for the ESSL SPI device </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: On success</p></li>
+<li><p>ESP_ERR_NO_MEM: Memory exhausted</p></li>
+<li><p>ESP_ERR_INVALID_STATE: SPI driver is not initialized</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Wrong register ID </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419essl_spi_deinit_dev13essl_handle_t">
+<span id="_CPPv319essl_spi_deinit_dev13essl_handle_t"></span><span id="_CPPv219essl_spi_deinit_dev13essl_handle_t"></span><span id="essl_spi_deinit_dev__essl_handle_t"></span><span class="target" id="essl__spi_8h_1ac5cc491a86f721029d6b004cc06e4a59"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_deinit_dev</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413essl_handle_t" title="essl_handle_t"><span class="n"><span class="pre">essl_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419essl_spi_deinit_dev13essl_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Deinitialize the ESSL SPI device and free the memory used by the device. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- Handle of the ESSL SPI device </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: On success</p></li>
+<li><p>ESP_ERR_INVALID_STATE: ESSL SPI is not in use </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417essl_spi_read_regPv7uint8_tP7uint8_t8uint32_t">
+<span id="_CPPv317essl_spi_read_regPv7uint8_tP7uint8_t8uint32_t"></span><span id="_CPPv217essl_spi_read_regPv7uint8_tP7uint8_t8uint32_t"></span><span id="essl_spi_read_reg__voidP.uint8_t.uint8_tP.uint32_t"></span><span class="target" id="essl__spi_8h_1a7eca880a0e82c5086b68dc4e77579718"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_read_reg</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">arg</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_value</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417essl_spi_read_regPv7uint8_tP7uint8_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Read from the shared registers. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The registers for Master/Slave synchronization are reserved. Do not use them. (see <code class="docutils literal notranslate"><span class="pre">rx_sync_reg</span></code> in <code class="docutils literal notranslate"><a class="reference internal" href="#structessl__spi__config__t"><span class="std std-ref"><span class="pre">essl_spi_config_t</span></span></a></code>)</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> -- Context of the component. (Member <code class="docutils literal notranslate"><span class="pre">arg</span></code> from <code class="docutils literal notranslate"><span class="pre">essl_handle_t</span></code>) </p></li>
+<li><p><strong>addr</strong> -- Address of the shared registers. (Valid: 0 ~ SOC_SPI_MAXIMUM_BUFFER_SIZE, registers for M/S sync are reserved, see note1). </p></li>
+<li><p><strong>out_value</strong> -- <strong>[out]</strong> Read buffer for the shared registers. </p></li>
+<li><p><strong>wait_ms</strong> -- Time to wait before timeout (reserved for future use, user should set this to 0). </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>ESP_ERR_INVALID_STATE: ESSL SPI has not been initialized.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: The address argument is not valid. See note 1.</p></li>
+<li><p>or other return value from :cpp:func:<code class="docutils literal notranslate"><span class="pre">spi_device_transmit</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419essl_spi_get_packetPvPv6size_t8uint32_t">
+<span id="_CPPv319essl_spi_get_packetPvPv6size_t8uint32_t"></span><span id="_CPPv219essl_spi_get_packetPvPv6size_t8uint32_t"></span><span id="essl_spi_get_packet__voidP.voidP.s.uint32_t"></span><span class="target" id="essl__spi_8h_1aecb4ea2a885824a9264736194c22ef94"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_get_packet</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">arg</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_data</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419essl_spi_get_packetPvPv6size_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get a packet from Slave. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> -- Context of the component. (Member <code class="docutils literal notranslate"><span class="pre">arg</span></code> from <code class="docutils literal notranslate"><span class="pre">essl_handle_t</span></code>) </p></li>
+<li><p><strong>out_data</strong> -- <strong>[out]</strong> Output data address </p></li>
+<li><p><strong>size</strong> -- The size of the output data. </p></li>
+<li><p><strong>wait_ms</strong> -- Time to wait before timeout (reserved for future use, user should set this to 0). </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: On Success</p></li>
+<li><p>ESP_ERR_INVALID_STATE: ESSL SPI has not been initialized.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: The output data address is neither DMA capable nor 4 byte-aligned</p></li>
+<li><p>ESP_ERR_INVALID_SIZE: Master requires <code class="docutils literal notranslate"><span class="pre">size</span></code> bytes of data but Slave did not load enough bytes. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418essl_spi_write_regPv7uint8_t7uint8_tP7uint8_t8uint32_t">
+<span id="_CPPv318essl_spi_write_regPv7uint8_t7uint8_tP7uint8_t8uint32_t"></span><span id="_CPPv218essl_spi_write_regPv7uint8_t7uint8_tP7uint8_t8uint32_t"></span><span id="essl_spi_write_reg__voidP.uint8_t.uint8_t.uint8_tP.uint32_t"></span><span class="target" id="essl__spi_8h_1a3301e6db4f46c06283986df88b1ad4be"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_write_reg</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">arg</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_value</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418essl_spi_write_regPv7uint8_t7uint8_tP7uint8_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write to the shared registers. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The registers for Master/Slave synchronization are reserved. Do not use them. (see <code class="docutils literal notranslate"><span class="pre">tx_sync_reg</span></code> in <code class="docutils literal notranslate"><a class="reference internal" href="#structessl__spi__config__t"><span class="std std-ref"><span class="pre">essl_spi_config_t</span></span></a></code>) </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Feature of checking the actual written value (<code class="docutils literal notranslate"><span class="pre">out_value</span></code>) is not supported.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> -- Context of the component. (Member <code class="docutils literal notranslate"><span class="pre">arg</span></code> from <code class="docutils literal notranslate"><span class="pre">essl_handle_t</span></code>) </p></li>
+<li><p><strong>addr</strong> -- Address of the shared registers. (Valid: 0 ~ SOC_SPI_MAXIMUM_BUFFER_SIZE, registers for M/S sync are reserved, see note1) </p></li>
+<li><p><strong>value</strong> -- Buffer for data to send, should be align to 4. </p></li>
+<li><p><strong>out_value</strong> -- <strong>[out]</strong> Not supported, should be set to NULL. </p></li>
+<li><p><strong>wait_ms</strong> -- Time to wait before timeout (reserved for future use, user should set this to 0). </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>ESP_ERR_INVALID_STATE: ESSL SPI has not been initialized.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: The address argument is not valid. See note 1.</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: Should set <code class="docutils literal notranslate"><span class="pre">out_value</span></code> to NULL. See note 2.</p></li>
+<li><p>or other return value from :cpp:func:<code class="docutils literal notranslate"><span class="pre">spi_device_transmit</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420essl_spi_send_packetPvPKv6size_t8uint32_t">
+<span id="_CPPv320essl_spi_send_packetPvPKv6size_t8uint32_t"></span><span id="_CPPv220essl_spi_send_packetPvPKv6size_t8uint32_t"></span><span id="essl_spi_send_packet__voidP.voidCP.s.uint32_t"></span><span class="target" id="essl__spi_8h_1a3f7f3de30974ac070fb48ae1768f37df"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_send_packet</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">arg</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wait_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420essl_spi_send_packetPvPKv6size_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Send a packet to Slave. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> -- Context of the component. (Member <code class="docutils literal notranslate"><span class="pre">arg</span></code> from <code class="docutils literal notranslate"><span class="pre">essl_handle_t</span></code>) </p></li>
+<li><p><strong>data</strong> -- Address of the data to send </p></li>
+<li><p><strong>size</strong> -- Size of the data to send. </p></li>
+<li><p><strong>wait_ms</strong> -- Time to wait before timeout (reserved for future use, user should set this to 0). </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: On success</p></li>
+<li><p>ESP_ERR_INVALID_STATE: ESSL SPI has not been initialized.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: The data address is not DMA capable</p></li>
+<li><p>ESP_ERR_INVALID_SIZE: Master will send <code class="docutils literal notranslate"><span class="pre">size</span></code> bytes of data but Slave did not load enough RX buffer </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418essl_spi_reset_cntPv">
+<span id="_CPPv318essl_spi_reset_cntPv"></span><span id="_CPPv218essl_spi_reset_cntPv"></span><span id="essl_spi_reset_cnt__voidP"></span><span class="target" id="essl__spi_8h_1af12066b415dbb40552c8cb68b29dc978"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_reset_cnt</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418essl_spi_reset_cntPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Reset the counter in Master context. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Shall only be called if the slave has reset its counter. Else, Slave and Master would be desynchronized</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>arg</strong> -- Context of the component. (Member <code class="docutils literal notranslate"><span class="pre">arg</span></code> from <code class="docutils literal notranslate"><span class="pre">essl_handle_t</span></code>) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414essl_spi_rdbuf19spi_device_handle_tP7uint8_tii8uint32_t">
+<span id="_CPPv314essl_spi_rdbuf19spi_device_handle_tP7uint8_tii8uint32_t"></span><span id="_CPPv214essl_spi_rdbuf19spi_device_handle_tP7uint8_tii8uint32_t"></span><span id="essl_spi_rdbuf__spi_device_handle_t.uint8_tP.i.i.uint32_t"></span><span class="target" id="essl__spi_8h_1a8b456f2a4450e28933d2ea0af47e5e1f"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_rdbuf</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../peripherals/spi_master.html#_CPPv419spi_device_handle_t" title="spi_device_handle_t"><span class="n"><span class="pre">spi_device_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">spi</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_data</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">len</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">flags</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414essl_spi_rdbuf19spi_device_handle_tP7uint8_tii8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Read the shared buffer from the slave in ISR way. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The slave's HW doesn't guarantee the data in one SPI transaction is consistent. It sends data in unit of byte. In other words, if the slave SW attempts to update the shared register when a rdbuf SPI transaction is in-flight, the data got by the master will be the combination of bytes of different writes of slave SW.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">out_data</span></code> should be prepared in words and in the DRAM. The buffer may be written in words by the DMA. When a byte is written, the remaining bytes in the same word will also be overwritten, even the <code class="docutils literal notranslate"><span class="pre">len</span></code> is shorter than a word.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spi</strong> -- SPI device handle representing the slave </p></li>
+<li><p><strong>out_data</strong> -- <strong>[out]</strong> Buffer for read data, strongly suggested to be in the DRAM and aligned to 4 </p></li>
+<li><p><strong>addr</strong> -- Address of the slave shared buffer </p></li>
+<li><p><strong>len</strong> -- Length to read </p></li>
+<li><p><strong>flags</strong> -- <code class="docutils literal notranslate"><span class="pre">SPI_TRANS_*</span></code> flags to control the transaction mode of the transaction to send. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: on success</p></li>
+<li><p>or other return value from :cpp:func:<code class="docutils literal notranslate"><span class="pre">spi_device_transmit</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422essl_spi_rdbuf_polling19spi_device_handle_tP7uint8_tii8uint32_t">
+<span id="_CPPv322essl_spi_rdbuf_polling19spi_device_handle_tP7uint8_tii8uint32_t"></span><span id="_CPPv222essl_spi_rdbuf_polling19spi_device_handle_tP7uint8_tii8uint32_t"></span><span id="essl_spi_rdbuf_polling__spi_device_handle_t.uint8_tP.i.i.uint32_t"></span><span class="target" id="essl__spi_8h_1ae554b76b4333bf262d398d802e9307cb"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_rdbuf_polling</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../peripherals/spi_master.html#_CPPv419spi_device_handle_t" title="spi_device_handle_t"><span class="n"><span class="pre">spi_device_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">spi</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_data</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">len</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">flags</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422essl_spi_rdbuf_polling19spi_device_handle_tP7uint8_tii8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Read the shared buffer from the slave in polling way. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">out_data</span></code> should be prepared in words and in the DRAM. The buffer may be written in words by the DMA. When a byte is written, the remaining bytes in the same word will also be overwritten, even the <code class="docutils literal notranslate"><span class="pre">len</span></code> is shorter than a word.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spi</strong> -- SPI device handle representing the slave </p></li>
+<li><p><strong>out_data</strong> -- <strong>[out]</strong> Buffer for read data, strongly suggested to be in the DRAM and aligned to 4 </p></li>
+<li><p><strong>addr</strong> -- Address of the slave shared buffer </p></li>
+<li><p><strong>len</strong> -- Length to read </p></li>
+<li><p><strong>flags</strong> -- <code class="docutils literal notranslate"><span class="pre">SPI_TRANS_*</span></code> flags to control the transaction mode of the transaction to send. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: on success</p></li>
+<li><p>or other return value from :cpp:func:<code class="docutils literal notranslate"><span class="pre">spi_device_transmit</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414essl_spi_wrbuf19spi_device_handle_tPK7uint8_tii8uint32_t">
+<span id="_CPPv314essl_spi_wrbuf19spi_device_handle_tPK7uint8_tii8uint32_t"></span><span id="_CPPv214essl_spi_wrbuf19spi_device_handle_tPK7uint8_tii8uint32_t"></span><span id="essl_spi_wrbuf__spi_device_handle_t.uint8_tCP.i.i.uint32_t"></span><span class="target" id="essl__spi_8h_1a63bd49af6f3460d67fb6da2aebf007d9"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_wrbuf</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../peripherals/spi_master.html#_CPPv419spi_device_handle_t" title="spi_device_handle_t"><span class="n"><span class="pre">spi_device_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">spi</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">len</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">flags</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414essl_spi_wrbuf19spi_device_handle_tPK7uint8_tii8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write the shared buffer of the slave in ISR way. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">out_data</span></code> should be prepared in words and in the DRAM. The buffer may be written in words by the DMA. When a byte is written, the remaining bytes in the same word will also be overwritten, even the <code class="docutils literal notranslate"><span class="pre">len</span></code> is shorter than a word.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spi</strong> -- SPI device handle representing the slave </p></li>
+<li><p><strong>data</strong> -- Buffer for data to send, strongly suggested to be in the DRAM </p></li>
+<li><p><strong>addr</strong> -- Address of the slave shared buffer, </p></li>
+<li><p><strong>len</strong> -- Length to write </p></li>
+<li><p><strong>flags</strong> -- <code class="docutils literal notranslate"><span class="pre">SPI_TRANS_*</span></code> flags to control the transaction mode of the transaction to send. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>or other return value from :cpp:func:<code class="docutils literal notranslate"><span class="pre">spi_device_transmit</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422essl_spi_wrbuf_polling19spi_device_handle_tPK7uint8_tii8uint32_t">
+<span id="_CPPv322essl_spi_wrbuf_polling19spi_device_handle_tPK7uint8_tii8uint32_t"></span><span id="_CPPv222essl_spi_wrbuf_polling19spi_device_handle_tPK7uint8_tii8uint32_t"></span><span id="essl_spi_wrbuf_polling__spi_device_handle_t.uint8_tCP.i.i.uint32_t"></span><span class="target" id="essl__spi_8h_1a5b6c9c46eb22ee159f3e8eff7b31286c"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_wrbuf_polling</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../peripherals/spi_master.html#_CPPv419spi_device_handle_t" title="spi_device_handle_t"><span class="n"><span class="pre">spi_device_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">spi</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">len</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">flags</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422essl_spi_wrbuf_polling19spi_device_handle_tPK7uint8_tii8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write the shared buffer of the slave in polling way. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">out_data</span></code> should be prepared in words and in the DRAM. The buffer may be written in words by the DMA. When a byte is written, the remaining bytes in the same word will also be overwritten, even the <code class="docutils literal notranslate"><span class="pre">len</span></code> is shorter than a word.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spi</strong> -- SPI device handle representing the slave </p></li>
+<li><p><strong>data</strong> -- Buffer for data to send, strongly suggested to be in the DRAM </p></li>
+<li><p><strong>addr</strong> -- Address of the slave shared buffer, </p></li>
+<li><p><strong>len</strong> -- Length to write </p></li>
+<li><p><strong>flags</strong> -- <code class="docutils literal notranslate"><span class="pre">SPI_TRANS_*</span></code> flags to control the transaction mode of the transaction to send. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>or other return value from :cpp:func:<code class="docutils literal notranslate"><span class="pre">spi_device_polling_transmit</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414essl_spi_rddma19spi_device_handle_tP7uint8_tii8uint32_t">
+<span id="_CPPv314essl_spi_rddma19spi_device_handle_tP7uint8_tii8uint32_t"></span><span id="_CPPv214essl_spi_rddma19spi_device_handle_tP7uint8_tii8uint32_t"></span><span id="essl_spi_rddma__spi_device_handle_t.uint8_tP.i.i.uint32_t"></span><span class="target" id="essl__spi_8h_1a8ac1e77fe5d94f385b5aaf338fc1a3d1"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_rddma</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../peripherals/spi_master.html#_CPPv419spi_device_handle_t" title="spi_device_handle_t"><span class="n"><span class="pre">spi_device_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">spi</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_data</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">len</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">seg_len</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">flags</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414essl_spi_rddma19spi_device_handle_tP7uint8_tii8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Receive long buffer in segments from the slave through its DMA. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function combines several :cpp:func:<code class="docutils literal notranslate"><span class="pre">essl_spi_rddma_seg</span></code> and one :cpp:func:<code class="docutils literal notranslate"><span class="pre">essl_spi_rddma_done</span></code> at the end. Used when the slave is working in segment mode.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spi</strong> -- SPI device handle representing the slave </p></li>
+<li><p><strong>out_data</strong> -- <strong>[out]</strong> Buffer to hold the received data, strongly suggested to be in the DRAM and aligned to 4 </p></li>
+<li><p><strong>len</strong> -- Total length of data to receive. </p></li>
+<li><p><strong>seg_len</strong> -- Length of each segment, which is not larger than the maximum transaction length allowed for the spi device. Suggested to be multiples of 4. When set &lt; 0, means send all data in one segment (the <code class="docutils literal notranslate"><span class="pre">rddma_done</span></code> will still be sent.) </p></li>
+<li><p><strong>flags</strong> -- <code class="docutils literal notranslate"><span class="pre">SPI_TRANS_*</span></code> flags to control the transaction mode of the transaction to send. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>or other return value from :cpp:func:<code class="docutils literal notranslate"><span class="pre">spi_device_transmit</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418essl_spi_rddma_seg19spi_device_handle_tP7uint8_ti8uint32_t">
+<span id="_CPPv318essl_spi_rddma_seg19spi_device_handle_tP7uint8_ti8uint32_t"></span><span id="_CPPv218essl_spi_rddma_seg19spi_device_handle_tP7uint8_ti8uint32_t"></span><span id="essl_spi_rddma_seg__spi_device_handle_t.uint8_tP.i.uint32_t"></span><span class="target" id="essl__spi_8h_1abd07fa830b09689111682e445e6681f4"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_rddma_seg</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../peripherals/spi_master.html#_CPPv419spi_device_handle_t" title="spi_device_handle_t"><span class="n"><span class="pre">spi_device_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">spi</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_data</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">seg_len</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">flags</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418essl_spi_rddma_seg19spi_device_handle_tP7uint8_ti8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Read one data segment from the slave through its DMA. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To read long buffer, call :cpp:func:<code class="docutils literal notranslate"><span class="pre">essl_spi_rddma</span></code> instead.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spi</strong> -- SPI device handle representing the slave </p></li>
+<li><p><strong>out_data</strong> -- <strong>[out]</strong> Buffer to hold the received data. strongly suggested to be in the DRAM and aligned to 4 </p></li>
+<li><p><strong>seg_len</strong> -- Length of this segment </p></li>
+<li><p><strong>flags</strong> -- <code class="docutils literal notranslate"><span class="pre">SPI_TRANS_*</span></code> flags to control the transaction mode of the transaction to send. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>or other return value from :cpp:func:<code class="docutils literal notranslate"><span class="pre">spi_device_transmit</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419essl_spi_rddma_done19spi_device_handle_t8uint32_t">
+<span id="_CPPv319essl_spi_rddma_done19spi_device_handle_t8uint32_t"></span><span id="_CPPv219essl_spi_rddma_done19spi_device_handle_t8uint32_t"></span><span id="essl_spi_rddma_done__spi_device_handle_t.uint32_t"></span><span class="target" id="essl__spi_8h_1aac140f71a1893e30526992f2379a7ae9"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_rddma_done</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../peripherals/spi_master.html#_CPPv419spi_device_handle_t" title="spi_device_handle_t"><span class="n"><span class="pre">spi_device_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">spi</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">flags</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419essl_spi_rddma_done19spi_device_handle_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Send the <code class="docutils literal notranslate"><span class="pre">rddma_done</span></code> command to the slave. Upon receiving this command, the slave will stop sending the current buffer even there are data unsent, and maybe prepare the next buffer to send. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is required only when the slave is working in segment mode.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spi</strong> -- SPI device handle representing the slave </p></li>
+<li><p><strong>flags</strong> -- <code class="docutils literal notranslate"><span class="pre">SPI_TRANS_*</span></code> flags to control the transaction mode of the transaction to send. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>or other return value from :cpp:func:<code class="docutils literal notranslate"><span class="pre">spi_device_transmit</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414essl_spi_wrdma19spi_device_handle_tPK7uint8_tii8uint32_t">
+<span id="_CPPv314essl_spi_wrdma19spi_device_handle_tPK7uint8_tii8uint32_t"></span><span id="_CPPv214essl_spi_wrdma19spi_device_handle_tPK7uint8_tii8uint32_t"></span><span id="essl_spi_wrdma__spi_device_handle_t.uint8_tCP.i.i.uint32_t"></span><span class="target" id="essl__spi_8h_1a10401e9efa3b59572df2939088ccd2e8"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_wrdma</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../peripherals/spi_master.html#_CPPv419spi_device_handle_t" title="spi_device_handle_t"><span class="n"><span class="pre">spi_device_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">spi</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">len</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">seg_len</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">flags</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414essl_spi_wrdma19spi_device_handle_tPK7uint8_tii8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Send long buffer in segments to the slave through its DMA. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function combines several :cpp:func:<code class="docutils literal notranslate"><span class="pre">essl_spi_wrdma_seg</span></code> and one :cpp:func:<code class="docutils literal notranslate"><span class="pre">essl_spi_wrdma_done</span></code> at the end. Used when the slave is working in segment mode.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spi</strong> -- SPI device handle representing the slave </p></li>
+<li><p><strong>data</strong> -- Buffer for data to send, strongly suggested to be in the DRAM </p></li>
+<li><p><strong>len</strong> -- Total length of data to send. </p></li>
+<li><p><strong>seg_len</strong> -- Length of each segment, which is not larger than the maximum transaction length allowed for the spi device. Suggested to be multiples of 4. When set &lt; 0, means send all data in one segment (the <code class="docutils literal notranslate"><span class="pre">wrdma_done</span></code> will still be sent.) </p></li>
+<li><p><strong>flags</strong> -- <code class="docutils literal notranslate"><span class="pre">SPI_TRANS_*</span></code> flags to control the transaction mode of the transaction to send. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>or other return value from :cpp:func:<code class="docutils literal notranslate"><span class="pre">spi_device_transmit</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418essl_spi_wrdma_seg19spi_device_handle_tPK7uint8_ti8uint32_t">
+<span id="_CPPv318essl_spi_wrdma_seg19spi_device_handle_tPK7uint8_ti8uint32_t"></span><span id="_CPPv218essl_spi_wrdma_seg19spi_device_handle_tPK7uint8_ti8uint32_t"></span><span id="essl_spi_wrdma_seg__spi_device_handle_t.uint8_tCP.i.uint32_t"></span><span class="target" id="essl__spi_8h_1ac78d6f90c4a4b24750300bb1de77efcb"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_wrdma_seg</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../peripherals/spi_master.html#_CPPv419spi_device_handle_t" title="spi_device_handle_t"><span class="n"><span class="pre">spi_device_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">spi</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">seg_len</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">flags</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418essl_spi_wrdma_seg19spi_device_handle_tPK7uint8_ti8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Send one data segment to the slave through its DMA. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To send long buffer, call :cpp:func:<code class="docutils literal notranslate"><span class="pre">essl_spi_wrdma</span></code> instead.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spi</strong> -- SPI device handle representing the slave </p></li>
+<li><p><strong>data</strong> -- Buffer for data to send, strongly suggested to be in the DRAM </p></li>
+<li><p><strong>seg_len</strong> -- Length of this segment </p></li>
+<li><p><strong>flags</strong> -- <code class="docutils literal notranslate"><span class="pre">SPI_TRANS_*</span></code> flags to control the transaction mode of the transaction to send. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>or other return value from :cpp:func:<code class="docutils literal notranslate"><span class="pre">spi_device_transmit</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419essl_spi_wrdma_done19spi_device_handle_t8uint32_t">
+<span id="_CPPv319essl_spi_wrdma_done19spi_device_handle_t8uint32_t"></span><span id="_CPPv219essl_spi_wrdma_done19spi_device_handle_t8uint32_t"></span><span id="essl_spi_wrdma_done__spi_device_handle_t.uint32_t"></span><span class="target" id="essl__spi_8h_1ad9aeb91e8014eaae94a5bdf41a93cfc0"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_wrdma_done</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../peripherals/spi_master.html#_CPPv419spi_device_handle_t" title="spi_device_handle_t"><span class="n"><span class="pre">spi_device_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">spi</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">flags</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419essl_spi_wrdma_done19spi_device_handle_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Send the <code class="docutils literal notranslate"><span class="pre">wrdma_done</span></code> command to the slave. Upon receiving this command, the slave will stop receiving, process the received data, and maybe prepare the next buffer to receive. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is required only when the slave is working in segment mode.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spi</strong> -- SPI device handle representing the slave </p></li>
+<li><p><strong>flags</strong> -- <code class="docutils literal notranslate"><span class="pre">SPI_TRANS_*</span></code> flags to control the transaction mode of the transaction to send. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: success</p></li>
+<li><p>or other return value from :cpp:func:<code class="docutils literal notranslate"><span class="pre">spi_device_transmit</span></code>. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="id5">
+<h3>Structures<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417essl_spi_config_t">
+<span id="_CPPv317essl_spi_config_t"></span><span id="_CPPv217essl_spi_config_t"></span><span id="essl_spi_config_t"></span><span class="target" id="structessl__spi__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">essl_spi_config_t</span></span></span><a class="headerlink" href="#_CPPv417essl_spi_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Configuration of ESSL SPI device. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17essl_spi_config_t3spiE">
+<span id="_CPPv3N17essl_spi_config_t3spiE"></span><span id="_CPPv2N17essl_spi_config_t3spiE"></span><span id="essl_spi_config_t::spi__spi_device_handle_tP"></span><span class="target" id="structessl__spi__config__t_1a95979e3f6727932f3a4d8898072d9981"></span><a class="reference internal" href="../peripherals/spi_master.html#_CPPv419spi_device_handle_t" title="spi_device_handle_t"><span class="n"><span class="pre">spi_device_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">spi</span></span></span><a class="headerlink" href="#_CPPv4N17essl_spi_config_t3spiE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Pointer to SPI device handle. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17essl_spi_config_t11tx_buf_sizeE">
+<span id="_CPPv3N17essl_spi_config_t11tx_buf_sizeE"></span><span id="_CPPv2N17essl_spi_config_t11tx_buf_sizeE"></span><span id="essl_spi_config_t::tx_buf_size__uint32_t"></span><span class="target" id="structessl__spi__config__t_1ab1bfbd0655fe3df191819e6774a4be6d"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tx_buf_size</span></span></span><a class="headerlink" href="#_CPPv4N17essl_spi_config_t11tx_buf_sizeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The pre-negotiated Master TX buffer size used by both the host and the slave. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17essl_spi_config_t11tx_sync_regE">
+<span id="_CPPv3N17essl_spi_config_t11tx_sync_regE"></span><span id="_CPPv2N17essl_spi_config_t11tx_sync_regE"></span><span id="essl_spi_config_t::tx_sync_reg__uint8_t"></span><span class="target" id="structessl__spi__config__t_1a68b9e7bc555ff4103cdea7c9dba6ec20"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tx_sync_reg</span></span></span><a class="headerlink" href="#_CPPv4N17essl_spi_config_t11tx_sync_regE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The pre-negotiated register ID for Master-TX-SLAVE-RX synchronization. 1 word (4 Bytes) will be reserved for the synchronization. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17essl_spi_config_t11rx_sync_regE">
+<span id="_CPPv3N17essl_spi_config_t11rx_sync_regE"></span><span id="_CPPv2N17essl_spi_config_t11rx_sync_regE"></span><span id="essl_spi_config_t::rx_sync_reg__uint8_t"></span><span class="target" id="structessl__spi__config__t_1aa96bf65f1efeadfa3bcc338846e05079"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rx_sync_reg</span></span></span><a class="headerlink" href="#_CPPv4N17essl_spi_config_t11rx_sync_regE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The pre-negotiated register ID for Master-RX-Slave-TX synchronization. 1 word (4 Bytes) will be reserved for the synchronization. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=ESP Serial Slave Link (api-reference/protocols/esp_serial_slave_link)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=ESP Serial Slave Link (api-reference/protocols/esp_serial_slave_link)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="esp_local_ctrl.html" class="btn btn-neutral float-left" title="ESP Local Control" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="esp_sdio_slave_protocol.html" class="btn btn-neutral float-right" title="Communication with ESP SDIO Slave" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

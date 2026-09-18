@@ -21,6 +21,11 @@ String profileDeleteFilename = "";
 // the Core 1 startup path may block.
 bool recoverCorruptProfile(String badFilename, bool blocking)
 {
+    FilesystemLockGuard filesystemGuard;
+    if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable())
+    {
+        return false;
+    }
     String readError = getSdReadError();
     String message = String(langText("msg_profile_corrupted")) + badFilename;
     if (readError.length() > 0)
@@ -54,8 +59,7 @@ bool recoverCorruptProfile(String badFilename, bool blocking)
     strlcpy(config.profileName,          // <- destination
             CALIBRATE_PROFILE_NAME,      // <- source
             sizeof(config.profileName)); // <- destination's capacity
-    saveConfiguration("/config.txt", config);
-    profileSelectionUnsaved = false;
+    profileSelectionUnsaved = !saveConfiguration("/config.txt", config);
 
     if (ensureCalibrateProfile(config))
     {
@@ -106,7 +110,8 @@ bool loadSelectedProfile(bool blocking)
 
 void setProfile(int index)
 {
-    if ((index < 0) || (index >= profileListCount))
+    if (isWebFileUploadActive() || !activeFilesystemAvailable() ||
+        (index < 0) || (index >= profileListCount))
     {
         DEBUG_PRINT("Invalid profile index: ");
         DEBUG_PRINTLN(index);
@@ -159,7 +164,8 @@ bool deleteSelectedProfile()
 {
     // Deletion is two-stage so the LVGL confirm dialog can return through its
     // normal event callback instead of blocking the UI task.
-    if (messageBoxOpen)
+    FilesystemLockGuard filesystemGuard;
+    if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable() || messageBoxOpen)
     {
         return false;
     }
@@ -210,6 +216,13 @@ void finishProfileDeleteConfirm(bool confirmed)
         return;
     }
 
+    FilesystemLockGuard filesystemGuard;
+    if (!filesystemGuard || isWebFileUploadActive() || !activeFilesystemAvailable())
+    {
+        errorBox(langText("msg_sync_filesystems_unavailable"), false);
+        return;
+    }
+
     if ((profileName.length() <= 0) || (profileName == CALIBRATE_PROFILE_NAME))
     {
         errorBox(langText("msg_cannot_delete_profile"), false);
@@ -239,7 +252,13 @@ void finishProfileDeleteConfirm(bool confirmed)
 
     // setProfile() defers config saves; persist the calibrate selection before
     // the file disappears so config.txt never names a deleted profile.
-    saveConfiguration("/config.txt", config);
+    if (!saveConfiguration("/config.txt", config))
+    {
+        profileSelectionUnsaved = true;
+        errorBox(langText("status_saving_config_failed"), false);
+        return;
+    }
+
     profileSelectionUnsaved = false;
 
     if (!ACTIVE_FS.remove(filename.c_str()))

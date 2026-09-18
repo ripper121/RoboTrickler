@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SD SPI Host Driver - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/sdspi_host.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/peripherals/sdspi_host';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Sharing the SPI Bus Among SD Cards and Other SPI Devices" href="sdspi_share.html" />
+    <link rel="prev" title="SDMMC Host Driver" href="sdmmc_host.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Peripherals API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adc_oneshot.html">Analog to Digital Converter (ADC) Oneshot Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_continuous.html">Analog to Digital Converter (ADC) Continuous Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_calibration.html">Analog to Digital Converter (ADC) Calibration Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clk_tree.html">Clock Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dac.html">Digital To Analog Converter (DAC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gpio.html">GPIO &amp; RTC GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gptimer.html">General Purpose Timer (GPTimer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2c.html">Inter-Integrated Circuit (I2C)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2s.html">Inter-IC Sound (I2S)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lcd/index.html">LCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ledc.html">LED Control (LEDC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mcpwm.html">Motor Control Pulse Width Modulator (MCPWM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pcnt.html">Pulse Counter (PCNT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rmt.html">Remote Control Transceiver (RMT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sd_pullup_requirements.html">SD Pull-up Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdmmc_host.html">SDMMC Host Driver</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">SD SPI Host Driver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-use">How to Use</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#other-details">Other Details</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#related-docs">Related Docs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="sdio_slave.html">SDIO Card Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdm.html">Sigma-Delta Modulation (SDM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_flash/index.html">SPI Flash API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_master.html">SPI Master Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_slave.html">SPI Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cap_touch_sens.html">Capacitive Touch Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="twai.html">Two-Wire Automotive Interface (TWAI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uart.html">Universal Asynchronous Receiver/Transmitter (UART)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Peripherals API</a></li>
+      <li class="breadcrumb-item active">SD SPI Host Driver</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/peripherals/sdspi_host.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sd-spi-host-driver">
+<h1>SD SPI Host Driver<a class="headerlink" href="#sd-spi-host-driver" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/peripherals/sdspi_host.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>The SD SPI host driver allows communication with one or more SD cards using the SPI Master driver, which utilizes the SPI host. Each card is accessed through an SD SPI device, represented by an SD SPI handle <a class="reference internal" href="#_CPPv418sdspi_dev_handle_t" title="sdspi_dev_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">sdspi_dev_handle_t</span></code></a>, which returns when the device is attached to an SPI bus by calling <a class="reference internal" href="#_CPPv422sdspi_host_init_devicePK21sdspi_device_config_tP18sdspi_dev_handle_t" title="sdspi_host_init_device"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdspi_host_init_device()</span></code></a>. It is important to note that the SPI bus should be initialized beforehand by <a class="reference internal" href="spi_master.html#_CPPv418spi_bus_initialize17spi_host_device_tPK16spi_bus_config_t14spi_dma_chan_t" title="spi_bus_initialize"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">spi_bus_initialize()</span></code></a>.</p>
+<p>This driver's naming pattern was adopted from the <a class="reference internal" href="sdmmc_host.html"><span class="doc">SDMMC Host Driver</span></a> due to their similarity. Likewise, the APIs of both drivers are also very similar.</p>
+<p>SD SPI driver that accesses the SD card in SPI mode offers lower throughput but makes pin selection more flexible. With the help of the GPIO matrix, an SPI peripheral's signals can be routed to any ESP32 pin. Otherwise, if an SDMMC host driver is used (see <a class="reference internal" href="sdmmc_host.html"><span class="doc">SDMMC Host Driver</span></a>) to access the card in SD 1-bit/4-bit mode, higher throughput can be reached while requiring routing the signals through their dedicated IO_MUX pins only.</p>
+<p>With the help of <a class="reference internal" href="spi_master.html"><span class="doc">SPI Master Driver</span></a> the SD SPI host driver based on, the SPI bus can be shared among SD cards and other SPI devices. The SPI Master driver will handle exclusive access from different tasks.</p>
+<p>The SD SPI driver uses software-controlled CS signal.</p>
+</section>
+<section id="how-to-use">
+<h2>How to Use<a class="headerlink" href="#how-to-use" title="Permalink to this heading"></a></h2>
+<p>Firstly, use the macro <a class="reference internal" href="#c.SDSPI_DEVICE_CONFIG_DEFAULT" title="SDSPI_DEVICE_CONFIG_DEFAULT"><code class="xref c c-macro docutils literal notranslate"><span class="pre">SDSPI_DEVICE_CONFIG_DEFAULT</span></code></a> to initialize the structure <a class="reference internal" href="#_CPPv421sdspi_device_config_t" title="sdspi_device_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">sdspi_device_config_t</span></code></a>, which is used to initialize an SD SPI device. This macro will also fill in the default pin mappings, which are the same as the pin mappings of the SDMMC host driver. Modify the host and pins of the structure to desired value. Then call <code class="docutils literal notranslate"><span class="pre">sdspi_host_init_device</span></code> to initialize the SD SPI device and attach to its bus.</p>
+<p>Then use the <a class="reference internal" href="#c.SDSPI_HOST_DEFAULT" title="SDSPI_HOST_DEFAULT"><code class="xref c c-macro docutils literal notranslate"><span class="pre">SDSPI_HOST_DEFAULT</span></code></a> macro to initialize the <a class="reference internal" href="../storage/sdmmc.html#_CPPv412sdmmc_host_t" title="sdmmc_host_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">sdmmc_host_t</span></code></a> structure, which is used to store the state and configurations of the upper layer (SD/SDIO/MMC driver). Modify the <code class="docutils literal notranslate"><span class="pre">slot</span></code> parameter of the structure to the SD SPI device SD SPI handle just returned from <code class="docutils literal notranslate"><span class="pre">sdspi_host_init_device</span></code>. Call <code class="docutils literal notranslate"><span class="pre">sdmmc_card_init</span></code> with the <a class="reference internal" href="../storage/sdmmc.html#_CPPv412sdmmc_host_t" title="sdmmc_host_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">sdmmc_host_t</span></code></a> to probe and initialize the SD card.</p>
+<p>Now you can use SD/SDIO/MMC driver functions to access your card!</p>
+</section>
+<section id="other-details">
+<h2>Other Details<a class="headerlink" href="#other-details" title="Permalink to this heading"></a></h2>
+<p>Only the following driver's API functions are normally used by most applications:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv415sdspi_host_initv" title="sdspi_host_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdspi_host_init()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv422sdspi_host_init_devicePK21sdspi_device_config_tP18sdspi_dev_handle_t" title="sdspi_host_init_device"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdspi_host_init_device()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv424sdspi_host_remove_device18sdspi_dev_handle_t" title="sdspi_host_remove_device"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdspi_host_remove_device()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv417sdspi_host_deinitv" title="sdspi_host_deinit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdspi_host_deinit()</span></code></a></p></li>
+</ul>
+<p>Other functions are mostly used by the protocol level SD/SDIO/MMC driver via function pointers in the <a class="reference internal" href="../storage/sdmmc.html#_CPPv412sdmmc_host_t" title="sdmmc_host_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">sdmmc_host_t</span></code></a> structure. For more details, see <a class="reference internal" href="../storage/sdmmc.html"><span class="doc">SD/SDIO/MMC Driver</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>SD over SPI does not support speeds above <a class="reference internal" href="../storage/sdmmc.html#c.SDMMC_FREQ_DEFAULT" title="SDMMC_FREQ_DEFAULT"><code class="xref c c-macro docutils literal notranslate"><span class="pre">SDMMC_FREQ_DEFAULT</span></code></a> due to the limitations of the SPI driver.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you want to share the SPI bus among SD card and other SPI devices, there are some restrictions, see <a class="reference internal" href="sdspi_share.html"><span class="doc">Sharing the SPI Bus Among SD Cards and Other SPI Devices</span></a>.</p>
+</div>
+</section>
+<section id="related-docs">
+<h2>Related Docs<a class="headerlink" href="#related-docs" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sdspi_share.html">Sharing the SPI Bus Among SD Cards and Other SPI Devices</a></li>
+</ul>
+</div>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_sdspi/include/driver/sdspi_host.h">components/esp_driver_sdspi/include/driver/sdspi_host.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;driver/sdspi_host.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_driver_sdspi</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_driver_sdspi</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_driver_sdspi
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_driver_sdspi
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415sdspi_host_initv">
+<span id="_CPPv315sdspi_host_initv"></span><span id="_CPPv215sdspi_host_initv"></span><span id="sdspi_host_init__void"></span><span class="target" id="sdspi__host_8h_1aa75eb0b781d258b78d2c70a7f80c8bda"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_host_init</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415sdspi_host_initv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Initialize SD SPI driver. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread safe</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>other error codes may be returned in future versions </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422sdspi_host_init_devicePK21sdspi_device_config_tP18sdspi_dev_handle_t">
+<span id="_CPPv322sdspi_host_init_devicePK21sdspi_device_config_tP18sdspi_dev_handle_t"></span><span id="_CPPv222sdspi_host_init_devicePK21sdspi_device_config_tP18sdspi_dev_handle_t"></span><span id="sdspi_host_init_device__sdspi_device_config_tCP.sdspi_dev_handle_tP"></span><span class="target" id="sdspi__host_8h_1a066a08b4312f5b9379769a44b172ddbe"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_host_init_device</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv421sdspi_device_config_t" title="sdspi_device_config_t"><span class="n"><span class="pre">sdspi_device_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dev_config</span></span>, <a class="reference internal" href="#_CPPv418sdspi_dev_handle_t" title="sdspi_dev_handle_t"><span class="n"><span class="pre">sdspi_dev_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422sdspi_host_init_devicePK21sdspi_device_config_tP18sdspi_dev_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Attach and initialize an SD SPI device on the specific SPI bus. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread safe</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Initialize the SPI bus by <code class="docutils literal notranslate"><span class="pre">spi_bus_initialize()</span></code> before calling this function.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The SDIO over sdspi needs an extra interrupt line. Call <code class="docutils literal notranslate"><span class="pre">gpio_install_isr_service()</span></code> before this function.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dev_config</strong> -- pointer to device configuration structure </p></li>
+<li><p><strong>out_handle</strong> -- Output of the handle to the sdspi device.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if sdspi_host_init_device has invalid arguments</p></li>
+<li><p>ESP_ERR_NO_MEM if memory can not be allocated</p></li>
+<li><p>other errors from the underlying spi_master and gpio drivers </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424sdspi_host_remove_device18sdspi_dev_handle_t">
+<span id="_CPPv324sdspi_host_remove_device18sdspi_dev_handle_t"></span><span id="_CPPv224sdspi_host_remove_device18sdspi_dev_handle_t"></span><span id="sdspi_host_remove_device__sdspi_dev_handle_t"></span><span class="target" id="sdspi__host_8h_1afbf7f5e7dd64875e74fa20a0d52eca94"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_host_remove_device</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418sdspi_dev_handle_t" title="sdspi_dev_handle_t"><span class="n"><span class="pre">sdspi_dev_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424sdspi_host_remove_device18sdspi_dev_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Remove an SD SPI device. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- Handle of the SD SPI device </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Always ESP_OK </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425sdspi_host_do_transaction18sdspi_dev_handle_tP15sdmmc_command_t">
+<span id="_CPPv325sdspi_host_do_transaction18sdspi_dev_handle_tP15sdmmc_command_t"></span><span id="_CPPv225sdspi_host_do_transaction18sdspi_dev_handle_tP15sdmmc_command_t"></span><span id="sdspi_host_do_transaction__sdspi_dev_handle_t.sdmmc_command_tP"></span><span class="target" id="sdspi__host_8h_1a296d766217f86fa3da9d010f8270a3a7"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_host_do_transaction</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418sdspi_dev_handle_t" title="sdspi_dev_handle_t"><span class="n"><span class="pre">sdspi_dev_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <a class="reference internal" href="../storage/sdmmc.html#_CPPv415sdmmc_command_t" title="sdmmc_command_t"><span class="n"><span class="pre">sdmmc_command_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">cmdinfo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425sdspi_host_do_transaction18sdspi_dev_handle_tP15sdmmc_command_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Send command to the card and get response. </p>
+<p>This function returns when command is sent and response is received, or data is transferred, or timeout occurs.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread safe w.r.t. init/deinit functions, and bus width/clock speed configuration functions. Multiple tasks can call sdspi_host_do_transaction as long as other sdspi_host_* functions are not called.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of the sdspi device </p></li>
+<li><p><strong>cmdinfo</strong> -- pointer to structure describing command and data to transfer </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_TIMEOUT if response or data transfer has timed out</p></li>
+<li><p>ESP_ERR_INVALID_CRC if response or data transfer CRC check has failed</p></li>
+<li><p>ESP_ERR_INVALID_RESPONSE if the card has sent an invalid response </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423sdspi_host_set_card_clk18sdspi_dev_handle_t8uint32_t">
+<span id="_CPPv323sdspi_host_set_card_clk18sdspi_dev_handle_t8uint32_t"></span><span id="_CPPv223sdspi_host_set_card_clk18sdspi_dev_handle_t8uint32_t"></span><span id="sdspi_host_set_card_clk__sdspi_dev_handle_t.uint32_t"></span><span class="target" id="sdspi__host_8h_1af8810cf94347d4a7609605d7fc71e098"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_host_set_card_clk</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418sdspi_dev_handle_t" title="sdspi_dev_handle_t"><span class="n"><span class="pre">sdspi_dev_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">host</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">freq_khz</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423sdspi_host_set_card_clk18sdspi_dev_handle_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set card clock frequency. </p>
+<p>Currently only integer fractions of 40MHz clock can be used. For High Speed cards, 40MHz can be used. For Default Speed cards, 20MHz can be used.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread safe</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> -- Handle of the sdspi device </p></li>
+<li><p><strong>freq_khz</strong> -- card clock frequency, in kHz </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>other error codes may be returned in the future </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424sdspi_host_get_real_freq18sdspi_dev_handle_tPi">
+<span id="_CPPv324sdspi_host_get_real_freq18sdspi_dev_handle_tPi"></span><span id="_CPPv224sdspi_host_get_real_freq18sdspi_dev_handle_tPi"></span><span id="sdspi_host_get_real_freq__sdspi_dev_handle_t.iP"></span><span class="target" id="sdspi__host_8h_1a5a3454f8dc113698f852d34c43bfb00e"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_host_get_real_freq</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418sdspi_dev_handle_t" title="sdspi_dev_handle_t"><span class="n"><span class="pre">sdspi_dev_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">real_freq_khz</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424sdspi_host_get_real_freq18sdspi_dev_handle_tPi" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Calculate working frequency for specific device. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- SDSPI device handle </p></li>
+<li><p><strong>real_freq_khz</strong> -- <strong>[out]</strong> output parameter to hold the calculated frequency (in kHz)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG : <code class="docutils literal notranslate"><span class="pre">handle</span></code> is NULL or invalid or <code class="docutils literal notranslate"><span class="pre">real_freq_khz</span></code> parameter is NULL</p></li>
+<li><p>ESP_OK : Success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417sdspi_host_deinitv">
+<span id="_CPPv317sdspi_host_deinitv"></span><span id="_CPPv217sdspi_host_deinitv"></span><span id="sdspi_host_deinit__void"></span><span class="target" id="sdspi__host_8h_1a5243c9a98afecddf2780dea8c5ef2a6e"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_host_deinit</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417sdspi_host_deinitv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Release resources allocated using sdspi_host_init. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread safe</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_STATE if sdspi_host_init function has not been called </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424sdspi_host_io_int_enable18sdspi_dev_handle_t">
+<span id="_CPPv324sdspi_host_io_int_enable18sdspi_dev_handle_t"></span><span id="_CPPv224sdspi_host_io_int_enable18sdspi_dev_handle_t"></span><span id="sdspi_host_io_int_enable__sdspi_dev_handle_t"></span><span class="target" id="sdspi__host_8h_1a11cc080aaf31e62bd645ec3675fcf286"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_host_io_int_enable</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418sdspi_dev_handle_t" title="sdspi_dev_handle_t"><span class="n"><span class="pre">sdspi_dev_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424sdspi_host_io_int_enable18sdspi_dev_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable SDIO interrupt. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- Handle of the sdspi device</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422sdspi_host_io_int_wait18sdspi_dev_handle_t10TickType_t">
+<span id="_CPPv322sdspi_host_io_int_wait18sdspi_dev_handle_t10TickType_t"></span><span id="_CPPv222sdspi_host_io_int_wait18sdspi_dev_handle_t10TickType_t"></span><span id="sdspi_host_io_int_wait__sdspi_dev_handle_t.TickType_t"></span><span class="target" id="sdspi__host_8h_1aaffb7c1c084e9174d4ceec74d7582c21"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_host_io_int_wait</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418sdspi_dev_handle_t" title="sdspi_dev_handle_t"><span class="n"><span class="pre">sdspi_dev_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">TickType_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeout_ticks</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422sdspi_host_io_int_wait18sdspi_dev_handle_t10TickType_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wait for SDIO interrupt until timeout. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- Handle of the sdspi device </p></li>
+<li><p><strong>timeout_ticks</strong> -- Ticks to wait before timeout.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423sdspi_host_get_dma_infoiP18esp_dma_mem_info_t">
+<span id="_CPPv323sdspi_host_get_dma_infoiP18esp_dma_mem_info_t"></span><span id="_CPPv223sdspi_host_get_dma_infoiP18esp_dma_mem_info_t"></span><span id="sdspi_host_get_dma_info__i.esp_dma_mem_info_tP"></span><span class="target" id="sdspi__host_8h_1a1ac1c27a791d9f152f60c17618a02e1c"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_host_get_dma_info</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="n"><span class="pre">esp_dma_mem_info_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dma_mem_info</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423sdspi_host_get_dma_infoiP18esp_dma_mem_info_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the DMA memory information for the host driver. </p>
+<p><dl>
+<dt class="sig sig-object cpp">
+<em><span class="pre">Deprecated:</span></em></dt>
+<dd><p>This API is deprecated</p>
+</dd></dl>
+
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- <strong>[in]</strong> Not used </p></li>
+<li><p><strong>dma_mem_info</strong> -- <strong>[out]</strong> DMA memory information structure </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: ON success.</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid argument. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv433sdspi_host_check_buffer_alignmentiPKv6size_t">
+<span id="_CPPv333sdspi_host_check_buffer_alignmentiPKv6size_t"></span><span id="_CPPv233sdspi_host_check_buffer_alignmentiPKv6size_t"></span><span id="sdspi_host_check_buffer_alignment__i.voidCP.s"></span><span class="target" id="sdspi__host_8h_1a474444ca5f92e257a1b0fd2324dc0614"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_host_check_buffer_alignment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">buf</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv433sdspi_host_check_buffer_alignmentiPKv6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check if the buffer meets the alignment requirements. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> -- <strong>[in]</strong> slot number (SDMMC_HOST_SLOT_0 or SDMMC_HOST_SLOT_1) </p></li>
+<li><p><strong>buf</strong> -- <strong>[in]</strong> buffer pointer </p></li>
+<li><p><strong>size</strong> -- <strong>[in]</strong> buffer size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True for aligned buffer, false for not aligned buffer </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv421sdspi_device_config_t">
+<span id="_CPPv321sdspi_device_config_t"></span><span id="_CPPv221sdspi_device_config_t"></span><span id="sdspi_device_config_t"></span><span class="target" id="structsdspi__device__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_device_config_t</span></span></span><a class="headerlink" href="#_CPPv421sdspi_device_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Extra configuration for SD SPI device. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21sdspi_device_config_t7host_idE">
+<span id="_CPPv3N21sdspi_device_config_t7host_idE"></span><span id="_CPPv2N21sdspi_device_config_t7host_idE"></span><span id="sdspi_device_config_t::host_id__spi_host_device_t"></span><span class="target" id="structsdspi__device__config__t_1af130d58cd9ef35f8c2eaef831d822154"></span><a class="reference internal" href="spi_master.html#_CPPv417spi_host_device_t" title="spi_host_device_t"><span class="n"><span class="pre">spi_host_device_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">host_id</span></span></span><a class="headerlink" href="#_CPPv4N21sdspi_device_config_t7host_idE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>SPI host to use, SPIx_HOST (see spi_types.h). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21sdspi_device_config_t7gpio_csE">
+<span id="_CPPv3N21sdspi_device_config_t7gpio_csE"></span><span id="_CPPv2N21sdspi_device_config_t7gpio_csE"></span><span id="sdspi_device_config_t::gpio_cs__gpio_num_t"></span><span class="target" id="structsdspi__device__config__t_1ad491b69579118cdb9d000d96d6699522"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gpio_cs</span></span></span><a class="headerlink" href="#_CPPv4N21sdspi_device_config_t7gpio_csE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of CS signal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21sdspi_device_config_t7gpio_cdE">
+<span id="_CPPv3N21sdspi_device_config_t7gpio_cdE"></span><span id="_CPPv2N21sdspi_device_config_t7gpio_cdE"></span><span id="sdspi_device_config_t::gpio_cd__gpio_num_t"></span><span class="target" id="structsdspi__device__config__t_1a1f2f8e71c84b85518a1cb80abb0608b3"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gpio_cd</span></span></span><a class="headerlink" href="#_CPPv4N21sdspi_device_config_t7gpio_cdE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of card detect signal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21sdspi_device_config_t7gpio_wpE">
+<span id="_CPPv3N21sdspi_device_config_t7gpio_wpE"></span><span id="_CPPv2N21sdspi_device_config_t7gpio_wpE"></span><span id="sdspi_device_config_t::gpio_wp__gpio_num_t"></span><span class="target" id="structsdspi__device__config__t_1a48c5f636ed30d0b764dd7e98d7df2719"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gpio_wp</span></span></span><a class="headerlink" href="#_CPPv4N21sdspi_device_config_t7gpio_wpE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of write protect signal. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21sdspi_device_config_t8gpio_intE">
+<span id="_CPPv3N21sdspi_device_config_t8gpio_intE"></span><span id="_CPPv2N21sdspi_device_config_t8gpio_intE"></span><span id="sdspi_device_config_t::gpio_int__gpio_num_t"></span><span class="target" id="structsdspi__device__config__t_1a715f6d3401121fd45b826c636985611d"></span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gpio_int</span></span></span><a class="headerlink" href="#_CPPv4N21sdspi_device_config_t8gpio_intE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number of interrupt line (input) for SDIO card. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21sdspi_device_config_t16gpio_wp_polarityE">
+<span id="_CPPv3N21sdspi_device_config_t16gpio_wp_polarityE"></span><span id="_CPPv2N21sdspi_device_config_t16gpio_wp_polarityE"></span><span id="sdspi_device_config_t::gpio_wp_polarity__b"></span><span class="target" id="structsdspi__device__config__t_1a73f9c442e479a1457af127845b0c77a8"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gpio_wp_polarity</span></span></span><a class="headerlink" href="#_CPPv4N21sdspi_device_config_t16gpio_wp_polarityE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO write protect polarity 0 means &quot;active low&quot;, i.e. card is protected when the GPIO is low; 1 means &quot;active high&quot;, i.e. card is protected when GPIO is high. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21sdspi_device_config_t14duty_cycle_posE">
+<span id="_CPPv3N21sdspi_device_config_t14duty_cycle_posE"></span><span id="_CPPv2N21sdspi_device_config_t14duty_cycle_posE"></span><span id="sdspi_device_config_t::duty_cycle_pos__uint16_t"></span><span class="target" id="structsdspi__device__config__t_1aa56ecbdfbd45a424ae54367d8c46f54c"></span><span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">duty_cycle_pos</span></span></span><a class="headerlink" href="#_CPPv4N21sdspi_device_config_t14duty_cycle_posE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Duty cycle of positive clock, in 1/256th increments (128 = 50%/50% duty). Setting this to 0 (=not setting it) is equivalent to setting this to 128. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21sdspi_device_config_t13wait_for_misoE">
+<span id="_CPPv3N21sdspi_device_config_t13wait_for_misoE"></span><span id="_CPPv2N21sdspi_device_config_t13wait_for_misoE"></span><span id="sdspi_device_config_t::wait_for_miso__int8_t"></span><span class="target" id="structsdspi__device__config__t_1aa9876c33f904a31666fca6b173903b41"></span><span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wait_for_miso</span></span></span><a class="headerlink" href="#_CPPv4N21sdspi_device_config_t13wait_for_misoE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Timeout value in the driver will be waiting for MISO to be high before sending commands. Possible values are the following: 0: default value (40ms); -1: no waiting (0ms); 1-127: timeout in ms; else: invalid value, default will be used. This can be used to speed up transactions in certain scenarios but should not be needed if correct pull-up resistors are used. Use with care on devices where multiple SPI slaves use the same SPI bus. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDSPI_DEFAULT_HOST">
+<span class="target" id="sdspi__host_8h_1a4973228a8e3bb53a0fc24a2db667ddc7"></span><span class="sig-name descname"><span class="n"><span class="pre">SDSPI_DEFAULT_HOST</span></span></span><a class="headerlink" href="#c.SDSPI_DEFAULT_HOST" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDSPI_DEFAULT_DMA">
+<span class="target" id="sdspi__host_8h_1a7eac14fa1aa5e16dab6279568d371988"></span><span class="sig-name descname"><span class="n"><span class="pre">SDSPI_DEFAULT_DMA</span></span></span><a class="headerlink" href="#c.SDSPI_DEFAULT_DMA" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDSPI_HOST_DEFAULT">
+<span class="target" id="sdspi__host_8h_1a03f829f9748d4922a103228cc6322bb9"></span><span class="sig-name descname"><span class="n"><span class="pre">SDSPI_HOST_DEFAULT</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.SDSPI_HOST_DEFAULT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Default <a class="reference internal" href="../storage/sdmmc.html#structsdmmc__host__t"><span class="std std-ref">sdmmc_host_t</span></a> structure initializer for SD over SPI driver. </p>
+<p>Uses SPI mode and max frequency set to 20MHz</p>
+<p>'slot' should be set to an sdspi device initialized by <code class="docutils literal notranslate"><span class="pre">sdspi_host_init_device()</span></code>. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDSPI_SLOT_NO_CS">
+<span class="target" id="sdspi__host_8h_1ae37bf2424013124a0c7ae7a0058c5261"></span><span class="sig-name descname"><span class="n"><span class="pre">SDSPI_SLOT_NO_CS</span></span></span><a class="headerlink" href="#c.SDSPI_SLOT_NO_CS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>indicates that card select line is not used </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDSPI_SLOT_NO_CD">
+<span class="target" id="sdspi__host_8h_1a50f65a71b1742cdab00a7ef4b3801625"></span><span class="sig-name descname"><span class="n"><span class="pre">SDSPI_SLOT_NO_CD</span></span></span><a class="headerlink" href="#c.SDSPI_SLOT_NO_CD" title="Permalink to this definition"></a><br /></dt>
+<dd><p>indicates that card detect line is not used </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDSPI_SLOT_NO_WP">
+<span class="target" id="sdspi__host_8h_1abca992cef96260ca59a856fb715c696c"></span><span class="sig-name descname"><span class="n"><span class="pre">SDSPI_SLOT_NO_WP</span></span></span><a class="headerlink" href="#c.SDSPI_SLOT_NO_WP" title="Permalink to this definition"></a><br /></dt>
+<dd><p>indicates that write protect line is not used </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDSPI_SLOT_NO_INT">
+<span class="target" id="sdspi__host_8h_1a9586f1882e4b632e1e672424aaad896f"></span><span class="sig-name descname"><span class="n"><span class="pre">SDSPI_SLOT_NO_INT</span></span></span><a class="headerlink" href="#c.SDSPI_SLOT_NO_INT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>indicates that interrupt line is not used </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDSPI_IO_ACTIVE_LOW">
+<span class="target" id="sdspi__host_8h_1ae0c1c11d9eb319e4559b721b948a5945"></span><span class="sig-name descname"><span class="n"><span class="pre">SDSPI_IO_ACTIVE_LOW</span></span></span><a class="headerlink" href="#c.SDSPI_IO_ACTIVE_LOW" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDSPI_DEVICE_CONFIG_DEFAULT">
+<span class="target" id="sdspi__host_8h_1a9e9e66232fb96e5d6c82ba656bead8bc"></span><span class="sig-name descname"><span class="n"><span class="pre">SDSPI_DEVICE_CONFIG_DEFAULT</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.SDSPI_DEVICE_CONFIG_DEFAULT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Macro defining default configuration of SD SPI device. </p>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv418sdspi_dev_handle_t">
+<span id="_CPPv318sdspi_dev_handle_t"></span><span id="_CPPv218sdspi_dev_handle_t"></span><span id="sdspi_dev_handle_t"></span><span class="target" id="sdspi__host_8h_1a7d78980941c3a3c3b10af80c0db369ad"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdspi_dev_handle_t</span></span></span><a class="headerlink" href="#_CPPv418sdspi_dev_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Handle representing an SD SPI device. </p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=SD SPI Host Driver (api-reference/peripherals/sdspi_host)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=SD SPI Host Driver (api-reference/peripherals/sdspi_host)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sdmmc_host.html" class="btn btn-neutral float-left" title="SDMMC Host Driver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sdspi_share.html" class="btn btn-neutral float-right" title="Sharing the SPI Bus Among SD Cards and Other SPI Devices" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

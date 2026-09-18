@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESP Timer (High Resolution Timer) - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/esp_timer.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/system/esp_timer';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Internal and Unstable APIs" href="internal-unstable.html" />
+    <link rel="prev" title="Heap Memory Debugging" href="heap_debug.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">System API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app_image_format.html">App Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootloader_image_format.html">Bootloader Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app_trace.html">Application Level Tracing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_function_with_shared_stack.html">Call Function with External Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chip_revision.html">Chip Revision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console.html">Console</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efuse.html">eFuse Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_err.html">Error Code and Helper Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_ota.html">ESP HTTPS OTA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_event.html">Event Loop Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos.html">FreeRTOS Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_idf.html">FreeRTOS (IDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_additions.html">FreeRTOS (Supplemental Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mem_alloc.html">Heap Memory Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mm.html">Memory Management for MMU Supported Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="heap_debug.html">Heap Memory Debugging</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ESP Timer (High Resolution Timer)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#features-and-concepts">Features and Concepts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#system-integration">System Integration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="internal-unstable.html">Internal and Unstable APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipc.html">Inter-Processor Call (IPC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intr_alloc.html">Interrupt Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="log.html">Logging library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc_system_api.html">Miscellaneous System APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ota.html">Over The Air Updates (OTA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="perfmon.html">Performance Monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="power_management.html">Power Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pthread.html">POSIX Support (Including POSIX Threads Support)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sleep_modes.html">Sleep Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soc_caps.html">SoC Capabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_time.html">System Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="himem.html">Himem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ulp.html">Ultra Low Power (ULP) coprocessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wdts.html">Watchdogs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">System API</a></li>
+      <li class="breadcrumb-item active">ESP Timer (High Resolution Timer)</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/system/esp_timer.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="esp-timer-high-resolution-timer">
+<h1>ESP Timer (High Resolution Timer)<a class="headerlink" href="#esp-timer-high-resolution-timer" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/system/esp_timer.html">[中文]</a></p>
+<p>This document covers the ESP-IDF feature called ESP Timer. The contents are as follows:</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#overview" id="id3">Overview</a></p></li>
+<li><p><a class="reference internal" href="#features-and-concepts" id="id4">Features and Concepts</a></p>
+<ul>
+<li><p><a class="reference internal" href="#one-shot-and-periodic-timers" id="id5">One-Shot and Periodic Timers</a></p></li>
+<li><p><a class="reference internal" href="#callback-dispatch-methods" id="id6">Callback Dispatch Methods</a></p></li>
+<li><p><a class="reference internal" href="#obtaining-current-time" id="id7">Obtaining Current Time</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#system-integration" id="id8">System Integration</a></p>
+<ul>
+<li><p><a class="reference internal" href="#timeout-value-limits" id="id9">Timeout Value Limits</a></p></li>
+<li><p><a class="reference internal" href="#sleep-mode-considerations" id="id10">Sleep Mode Considerations</a></p></li>
+<li><p><a class="reference internal" href="#freertos-timers" id="id11">FreeRTOS Timers</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#usage" id="id12">Usage</a></p>
+<ul>
+<li><p><a class="reference internal" href="#general-procedure" id="id13">General Procedure</a></p></li>
+<li><p><a class="reference internal" href="#using-the-interrupt-dispatch-method" id="id14">Using the Interrupt Dispatch Method</a></p></li>
+<li><p><a class="reference internal" href="#handling-callbacks-in-light-sleep-mode" id="id15">Handling Callbacks in Light-sleep Mode</a></p></li>
+<li><p><a class="reference internal" href="#debugging-timers" id="id16">Debugging Timers</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#troubleshooting" id="id17">Troubleshooting</a></p>
+<ul>
+<li><p><a class="reference internal" href="#unstable-callback-dispatch-time" id="id18">Unstable Callback Dispatch Time</a></p></li>
+<li><p><a class="reference internal" href="#significant-delays-while-dispatching-callbacks" id="id19">Significant Delays while Dispatching Callbacks</a></p></li>
+<li><p><a class="reference internal" href="#repeated-callback-dispatches-after-sleep" id="id20">Repeated Callback Dispatches After Sleep</a></p></li>
+<li><p><a class="reference internal" href="#stack-overflow-while-dispatching-callbacks" id="id21">Stack Overflow While Dispatching Callbacks</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#application-examples" id="id22">Application Examples</a></p></li>
+<li><p><a class="reference internal" href="#api-reference" id="id23">API Reference</a></p>
+<ul>
+<li><p><a class="reference internal" href="#header-file" id="id24">Header File</a></p></li>
+<li><p><a class="reference internal" href="#functions" id="id25">Functions</a></p></li>
+<li><p><a class="reference internal" href="#structures" id="id26">Structures</a></p></li>
+<li><p><a class="reference internal" href="#type-definitions" id="id27">Type Definitions</a></p></li>
+<li><p><a class="reference internal" href="#enumerations" id="id28">Enumerations</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="overview">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>The ESP Timer feature allows for creating software timers and invoking their callback functions (dispatching callbacks) on timeout. ESP Timer is useful when user software needs to perform delayed or periodic actions, such as delayed device start/stop or periodic sampling of sensor data.</p>
+<p>ESP Timer hides the complexity associated with managing multiple timers, dispatching callbacks, accounting for clock frequency changes (if dynamic frequency scaling is enabled), and maintaining correct time after light sleep.</p>
+<p>For application scenarios that require better real-time performance (such as generating waveforms) or configurable timer resolution, it is recommended that <a class="reference internal" href="../peripherals/gptimer.html"><span class="doc">GPTimer</span></a> be used instead. Also, GPTimer has features not available in ESP Timer, such as event capture.</p>
+<p>Finally, FreeRTOS has its own software timers. As explained in <a class="reference internal" href="#freertos-timers"><span class="std std-ref">FreeRTOS Timers</span></a>, they have much lower resolution compared to ESP Timer, but FreeRTOS timers are portable (non-dependent on ESP-IDF) which might be an advantage in some cases.</p>
+</section>
+<section id="features-and-concepts">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Features and Concepts</a><a class="headerlink" href="#features-and-concepts" title="Permalink to this heading"></a></h2>
+<p>The ESP Timer API provides:</p>
+<ul class="simple">
+<li><p>One-shot and periodic timers</p></li>
+<li><p>Multiple callback dispatch methods</p></li>
+<li><p>Handling overdue callbacks</p></li>
+<li><p>Bit range: 64 bits</p></li>
+<li><p>Time resolution: one microsecond</p></li>
+</ul>
+<section id="one-shot-and-periodic-timers">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">One-Shot and Periodic Timers</a><a class="headerlink" href="#one-shot-and-periodic-timers" title="Permalink to this heading"></a></h3>
+<p>A one-shot timer invokes its callback function only once upon expiration and then stops operation. One-shot timers are useful for single delayed actions, such as turning off a device or reading a sensor after a specified time interval.</p>
+<p>A periodic timer invokes its callback function upon expiration and restarts itself automatically, resulting in the callback function being invoked at a defined interval until the periodic timer is manually stopped. Periodic timers are useful for repeated actions, such as sampling sensor data, updating display information, or generating a waveform.</p>
+</section>
+<section id="callback-dispatch-methods">
+<span id="callback-methods"></span><h3><a class="toc-backref" href="#id6" role="doc-backlink">Callback Dispatch Methods</a><a class="headerlink" href="#callback-dispatch-methods" title="Permalink to this heading"></a></h3>
+<p>Timer callbacks can be dispatched using the following methods:</p>
+<ul>
+<li><p>Task Dispatch method (default):</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Dispatches timer callbacks from a single high-priority ESP Timer task (esp_timer task (notified by ISR) &gt; callback).</p></li>
+<li><p>Suitable for handling timer callbacks that are not time-critical.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Interrupt Dispatch method (<a class="reference internal" href="#_CPPv4N20esp_timer_dispatch_t13ESP_TIMER_ISRE" title="esp_timer_dispatch_t::ESP_TIMER_ISR"><code class="xref cpp cpp-enumerator docutils literal notranslate"><span class="pre">ESP_TIMER_ISR</span></code></a>):</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Dispatches timer callbacks directly from an interrupt handler (ISR &gt; callback).</p></li>
+<li><p>Suitable for simple, low-latency timer callbacks which take a few microseconds to run.</p></li>
+<li><p>Ensures shorter delay between the event and the callback execution.</p></li>
+<li><p>Not affected by other active tasks.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<section id="task-dispatch-specifics">
+<h4>Task Dispatch Specifics<a class="headerlink" href="#task-dispatch-specifics" title="Permalink to this heading"></a></h4>
+<p>The execution of callbacks in the ESP Timer task is serialized. Thus, when multiple timeouts occur simultaneously, the execution time of one callback will delay the execution of subsequent callbacks. For this reason, it is recommended to keep the callbacks short. If the callback needs to perform more work, the work should be deferred to a lower-priority task using FreeRTOS primitives, such as queues and semaphores.</p>
+<p>If other FreeRTOS tasks with higher priority are running, such as an SPI flash operation, callback dispatching will be delayed until the ESP Timer task has a chance to run.</p>
+<p>To maintain predictable and timely execution of tasks, callbacks should never attempt block (waiting for resources) or yield (give up control) operations, because such operations disrupt the serialized execution of callbacks.</p>
+</section>
+<section id="interrupt-dispatch-specifics">
+<h4>Interrupt Dispatch Specifics<a class="headerlink" href="#interrupt-dispatch-specifics" title="Permalink to this heading"></a></h4>
+<p>Timers using the Interrupt Dispatch method have their callbacks executed from an interrupt handler. As interrupts can preempt all tasks, the Interrupt Dispatch method offers lower latency. Interrupt dispatched timer callbacks should never attempt to block and should not attempt to trigger a context switch via <code class="docutils literal notranslate"><span class="pre">portYIELD_FROM_ISR()</span></code>. Instead, the function <a class="reference internal" href="#_CPPv433esp_timer_isr_dispatch_need_yieldv" title="esp_timer_isr_dispatch_need_yield"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_isr_dispatch_need_yield()</span></code></a> should be used. The context switch will happen after all timers using the ISR dispatch method are processed.</p>
+<p>While using interrupt dispatched timers, the standard logging or debugging methods, such as <code class="docutils literal notranslate"><span class="pre">printf</span></code> should be avoided. To debug an application or display certain information in the console, the ESP-IDF logging macros should be used, such as <a class="reference internal" href="log.html#c.ESP_DRAM_LOGI" title="ESP_DRAM_LOGI"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_DRAM_LOGI</span></code></a>, <a class="reference internal" href="log.html#c.ESP_EARLY_LOGI" title="ESP_EARLY_LOGI"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_EARLY_LOGI</span></code></a>, etc. These macros are specifically designed to work in various contexts, including interrupt service routines.</p>
+</section>
+</section>
+<section id="obtaining-current-time">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Obtaining Current Time</a><a class="headerlink" href="#obtaining-current-time" title="Permalink to this heading"></a></h3>
+<p>The time passed since the initialization of ESP Timer can be obtained using the convenience function <a class="reference internal" href="#_CPPv418esp_timer_get_timev" title="esp_timer_get_time"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_get_time()</span></code></a>. The initialization happens shortly before the <code class="docutils literal notranslate"><span class="pre">app_main</span></code> function is called. This function is fast and has no locking mechanisms that could potentially introduce delays or conflicts. As a result, it can be useful for fine-grained timing, with the accuracy of 1 μs, in tasks as well as in ISR routines.</p>
+<p>Unlike the <code class="docutils literal notranslate"><span class="pre">gettimeofday()</span></code> function, <a class="reference internal" href="#_CPPv418esp_timer_get_timev" title="esp_timer_get_time"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_get_time()</span></code></a> has the following specifics:</p>
+<ul class="simple">
+<li><p>Upon wakeup from deep sleep, the initialization timer restarts from zero.</p></li>
+<li><p>The returned value has no timezone settings or daylight saving time adjustments.</p></li>
+</ul>
+</section>
+</section>
+<section id="system-integration">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">System Integration</a><a class="headerlink" href="#system-integration" title="Permalink to this heading"></a></h2>
+<p>This section mainly covers some aspects of how to optimize the operation of ESP Timer and integrate it with other ESP-IDF features.</p>
+<section id="timeout-value-limits">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Timeout Value Limits</a><a class="headerlink" href="#timeout-value-limits" title="Permalink to this heading"></a></h3>
+<p>As callback dispatching can never be instantaneous, the one-shot and periodic timers created with ESP Timer also have timeout value limits. These limits cannot be estimated precisely, because they depend on multiple factors.</p>
+<p>For reference, the ESP32 running at 240 MHz and using the Task Dispatch method has the approximate minimum timeout values as follows:</p>
+<ul>
+<li><p>One-shot timers: ~20 μs</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>If <a class="reference internal" href="#_CPPv420esp_timer_start_once18esp_timer_handle_t8uint64_t" title="esp_timer_start_once"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_start_once()</span></code></a> is called, this is the earliest time after which the system will be able to dispatch a callback.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Periodic timers: ~50 μs</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Periodic software timers with a smaller timeout value would simply consume most of the CPU time, which is impractical.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>The lower the CPU frequency, the higher the minimum timeout values will be. The general guideline is if the required timeout values are in the order of tens of microseconds, the user application needs to undergo thorough testing to ensure stable operation.</p>
+<p>If the minimum timeout values slightly exceed the requirements, the Interrupt Dispatch method might offer an improvement.</p>
+<p>For even smaller timeout values, for example, to generate or receive waveforms or do bit banging, the resolution of ESP Timer may be insufficient. In this case, it is recommended to use dedicated peripherals, such as <a class="reference internal" href="../peripherals/gptimer.html"><span class="doc">GPTimer</span></a> or <a class="reference internal" href="../peripherals/rmt.html"><span class="doc">RMT</span></a>, and their DMA features if available.</p>
+</section>
+<section id="sleep-mode-considerations">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Sleep Mode Considerations</a><a class="headerlink" href="#sleep-mode-considerations" title="Permalink to this heading"></a></h3>
+<p>If a timer is started, and there are no other tasks being executed during the wait time, the chip can be put into sleep to optimize power consumption.</p>
+<p>Sleep can be induced in the following ways:</p>
+<ul class="simple">
+<li><p><strong>Automatic sleep</strong> provided by <a class="reference internal" href="power_management.html"><span class="doc">Power Management APIs</span></a>: If no tasks are being executed, the chip can automatically enter light sleep and automatically wake up at the appropriate time for ESP Timer to dispatch a pending callback.</p></li>
+<li><p><strong>Manual sleep</strong> provided by <a class="reference internal" href="sleep_modes.html"><span class="doc">Sleep Mode APIs</span></a>: The chip can be put into sleep regardless of whether other tasks are being executed.</p></li>
+</ul>
+<p>For manually induced sleep, the following sleep modes exist:</p>
+<ul>
+<li><p>Deep-sleep mode: ESP Timer is deactivated</p>
+<blockquote>
+<div><p>The user application restarts from scratch upon wakeup from deep sleep. This makes deep sleep unsuitable for continuous ESP Timer operation. However, deep sleep can be used if the running timers are not expected to persist across wakeups.</p>
+</div></blockquote>
+</li>
+<li><p>Light-sleep mode: ESP Timer is suspended</p>
+<blockquote>
+<div><p>While in light sleep, ESP Timer counter and callbacks are suspended. Timekeeping is done by the RTC timer. Once the chip is woken up, the counter of ESP Timer is automatically advanced by the amount of time spent in sleep, then timekeeping and callback execution is resumed.</p>
+<p>At this point, ESP Timer will attempt to dispatch all unhandled callbacks if there are any. It can potentially lead to the overflow of ESP Timer callback execution queue. This behavior may be undesirable for certain applications, and the ways to avoid it are covered in <a class="reference internal" href="#handling-callbacks-in-light-sleep"><span class="std std-ref">Handling Callbacks in Light-sleep Mode</span></a>.</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="freertos-timers">
+<span id="id1"></span><h3><a class="toc-backref" href="#id11" role="doc-backlink">FreeRTOS Timers</a><a class="headerlink" href="#freertos-timers" title="Permalink to this heading"></a></h3>
+<p>Although FreeRTOS provides <a class="reference external" href="https://www.freertos.org/RTOS-software-timer.html">software timers</a>, they have limitations:</p>
+<ul class="simple">
+<li><p>FreeRTOS timer resolution is bound by the <a class="reference external" href="https://www.freertos.org/a00110.html#configTICK_RATE_HZ">tick frequency</a>, which is typically in the range of 100 to 1000 Hz.</p></li>
+<li><p>Timer callbacks are dispatched from a low-priority timer task that can be preempted by other tasks, leading to decreased timer precision and accuracy.</p></li>
+</ul>
+<p>However, FreeRTOS timers are portable (non-dependent on ESP-IDF) and are written to be deterministic as they do not dispatch callbacks from ISRs.</p>
+</section>
+</section>
+<section id="usage">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Usage</a><a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
+<p>While setting up your ESP-IDF project, make sure to:</p>
+<ul class="simple">
+<li><p>Add required component dependencies to your <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>.</p></li>
+<li><p>Include required header files in your <code class="docutils literal notranslate"><span class="pre">.c</span></code> files.</p></li>
+<li><p>(Optional) Set Kconfig options. For this, see <a class="reference internal" href="../kconfig-reference.html#component-config-esp-timer-high-resolution-timer"><span class="std std-ref">Kconfig Options</span></a> &gt; <em>ESP Timer (High Resolution Timer)</em></p></li>
+</ul>
+<section id="general-procedure">
+<span id="id2"></span><h3><a class="toc-backref" href="#id13" role="doc-backlink">General Procedure</a><a class="headerlink" href="#general-procedure" title="Permalink to this heading"></a></h3>
+<p>The general procedure to create, start, stop, and delete a timer is as follows:</p>
+<ol class="arabic">
+<li><p>Create a timer</p>
+<blockquote>
+<div><ul>
+<li><p>Define a timer handle using the type <a class="reference internal" href="#_CPPv418esp_timer_handle_t" title="esp_timer_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_timer_handle_t</span></code></a>.</p></li>
+<li><p>Set the timer configuration parameters by defining the structure <a class="reference internal" href="#_CPPv423esp_timer_create_args_t" title="esp_timer_create_args_t"><code class="xref cpp cpp-struct docutils literal notranslate"><span class="pre">esp_timer_create_args_t</span></code></a> which also includes the callback function.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is recommended to keep callbacks as short as possible to avoid delaying other callbacks.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>To create a timer, call the function <a class="reference internal" href="#_CPPv416esp_timer_createPK23esp_timer_create_args_tP18esp_timer_handle_t" title="esp_timer_create"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_create()</span></code></a>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Start the timer in one-shot mode or periodic mode depending on your requirements</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>To start the timer in one-shot mode, call <a class="reference internal" href="#_CPPv420esp_timer_start_once18esp_timer_handle_t8uint64_t" title="esp_timer_start_once"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_start_once()</span></code></a>.</p></li>
+<li><p>To start the timer in periodic mode, call <a class="reference internal" href="#_CPPv424esp_timer_start_periodic18esp_timer_handle_t8uint64_t" title="esp_timer_start_periodic"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_start_periodic()</span></code></a>; the timer will continue running until you explicitly stop it using <a class="reference internal" href="#_CPPv414esp_timer_stop18esp_timer_handle_t" title="esp_timer_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_stop()</span></code></a>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When executing a start function, ensure that the timer is not running. If a timer is running, either call <a class="reference internal" href="#_CPPv417esp_timer_restart18esp_timer_handle_t8uint64_t" title="esp_timer_restart"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_restart()</span></code></a> or stop it first using <a class="reference internal" href="#_CPPv414esp_timer_stop18esp_timer_handle_t" title="esp_timer_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_stop()</span></code></a> and then call one of the start functions.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Stop the timer</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>To stop the running timer, call the function <a class="reference internal" href="#_CPPv414esp_timer_stop18esp_timer_handle_t" title="esp_timer_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_stop()</span></code></a>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Delete the timer</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>When the timer is no longer needed, delete it to free up memory using the function <a class="reference internal" href="#_CPPv416esp_timer_delete18esp_timer_handle_t" title="esp_timer_delete"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_delete()</span></code></a>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="using-the-interrupt-dispatch-method">
+<span id="using-esp-timer-isr-callback-method"></span><h3><a class="toc-backref" href="#id14" role="doc-backlink">Using the Interrupt Dispatch Method</a><a class="headerlink" href="#using-the-interrupt-dispatch-method" title="Permalink to this heading"></a></h3>
+<p>Out of the available <a class="reference internal" href="#callback-methods"><span class="std std-ref">callback dispatch methods</span></a>, if you choose the Interrupt Dispatch method, follow these steps:</p>
+<ol class="arabic">
+<li><p>Set Kconfig options</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Enable <a class="reference internal" href="../kconfig-reference.html#config-esp-timer-supports-isr-dispatch-method"><span class="std std-ref">CONFIG_ESP_TIMER_SUPPORTS_ISR_DISPATCH_METHOD</span></a>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Create a timer</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Set the timer configuration parameters by defining the structure <a class="reference internal" href="#_CPPv423esp_timer_create_args_t" title="esp_timer_create_args_t"><code class="xref cpp cpp-struct docutils literal notranslate"><span class="pre">esp_timer_create_args_t</span></code></a>:</p></li>
+</ul>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="n">esp_timer_create_args_t</span><span class="w"> </span><span class="n">timer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">dispatch_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ESP_TIMER_ISR</span><span class="p">,</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>To create a timer, call the function <a class="reference internal" href="#_CPPv416esp_timer_createPK23esp_timer_create_args_tP18esp_timer_handle_t" title="esp_timer_create"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_create()</span></code></a>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+<p>For further steps, refer to <a class="reference internal" href="#general-procedure"><span class="std std-ref">General Procedure</span></a>.</p>
+</section>
+<section id="handling-callbacks-in-light-sleep-mode">
+<span id="handling-callbacks-in-light-sleep"></span><h3><a class="toc-backref" href="#id15" role="doc-backlink">Handling Callbacks in Light-sleep Mode</a><a class="headerlink" href="#handling-callbacks-in-light-sleep-mode" title="Permalink to this heading"></a></h3>
+<p>Light sleep allows you to save power while maintaining the ability to quickly wake up for specific actions. To use ESP Timer in conjunction with Light-sleep mode, see <a class="reference internal" href="sleep_modes.html"><span class="doc">Sleep Mode APIs</span></a>.</p>
+<p>During light sleep, to keep unhandled callbacks under control and avoid potential overflow of ESP Timer callback execution queue on wakeup, do one of the following:</p>
+<ul class="simple">
+<li><p>Prevent the invocation of callbacks in the first place: stop the timer before entering light sleep by using <a class="reference internal" href="#_CPPv414esp_timer_stop18esp_timer_handle_t" title="esp_timer_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_stop()</span></code></a>.</p></li>
+<li><p>If calling the stop function is not desirable for any reason, use the option <a class="reference internal" href="#_CPPv4N23esp_timer_create_args_t21skip_unhandled_eventsE" title="esp_timer_create_args_t::skip_unhandled_events"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_timer_create_args_t::skip_unhandled_events</span></code></a>. In this case, if a periodic timer expires one or more times during light sleep, then only one callback is executed on wakeup.</p></li>
+</ul>
+</section>
+<section id="debugging-timers">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Debugging Timers</a><a class="headerlink" href="#debugging-timers" title="Permalink to this heading"></a></h3>
+<p>The function <a class="reference internal" href="#_CPPv414esp_timer_dumpP4FILE" title="esp_timer_dump"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_dump()</span></code></a> allows dumping information about either all or only running timers: the parameters for timers, the number of times the timers were started, triggered, skipped, and time taken by timer callbacks to execute. This information can be helpful in debugging.</p>
+<p>To debug timers, use the following procedure:</p>
+<ol class="arabic">
+<li><p>Set Kconfig options for more detailed output:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Enable <a class="reference internal" href="../kconfig-reference.html#config-esp-timer-profiling"><span class="std std-ref">CONFIG_ESP_TIMER_PROFILING</span></a>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Enabling this option increases code size and heap memory usage.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Wherever required in your code, call the function <a class="reference internal" href="#_CPPv414esp_timer_dumpP4FILE" title="esp_timer_dump"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_timer_dump()</span></code></a> to print the information and use it to debug your timers.</p></li>
+<li><p>Once debugging is complete, consider disabling <a class="reference internal" href="../kconfig-reference.html#config-esp-timer-profiling"><span class="std std-ref">CONFIG_ESP_TIMER_PROFILING</span></a>.</p></li>
+</ol>
+</section>
+</section>
+<section id="troubleshooting">
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Troubleshooting</a><a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
+<section id="unstable-callback-dispatch-time">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Unstable Callback Dispatch Time</a><a class="headerlink" href="#unstable-callback-dispatch-time" title="Permalink to this heading"></a></h3>
+<p>While dispatching the same callback function repeatedly, if the response time varies considerably, try to stabilize it by doing the following:</p>
+<p><ul class="simple">
+<li><p>Use the <a class="reference internal" href="#using-esp-timer-isr-callback-method"><span class="std std-ref">Interrupt Dispatch method</span></a>.</p></li>
+<li><p>Use the Kconfig option <a class="reference internal" href="../kconfig-reference.html#config-esp-timer-task-affinity"><span class="std std-ref">CONFIG_ESP_TIMER_TASK_AFFINITY</span></a> to run the ESP Timer task on any of the available cores.</p></li>
+</ul>
+</p>
+</section>
+<section id="significant-delays-while-dispatching-callbacks">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Significant Delays while Dispatching Callbacks</a><a class="headerlink" href="#significant-delays-while-dispatching-callbacks" title="Permalink to this heading"></a></h3>
+<p>If dispatching a callback function takes a considerable amount of time, the problem can lie in the callback function itself. More precisely, as all callback functions are processed one by one in a single esp_timer task, the delays might be caused by other callback functions earlier in the queue.</p>
+<p>For this reason, make sure that all callback functions in your application can execute on their own quickly and without any blocking operations.</p>
+</section>
+<section id="repeated-callback-dispatches-after-sleep">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">Repeated Callback Dispatches After Sleep</a><a class="headerlink" href="#repeated-callback-dispatches-after-sleep" title="Permalink to this heading"></a></h3>
+<p>If the callback functions are executed repeatedly upon wakeup from sleep, see <a class="reference internal" href="#handling-callbacks-in-light-sleep"><span class="std std-ref">Handling Callbacks in Light-sleep Mode</span></a>.</p>
+</section>
+<section id="stack-overflow-while-dispatching-callbacks">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Stack Overflow While Dispatching Callbacks</a><a class="headerlink" href="#stack-overflow-while-dispatching-callbacks" title="Permalink to this heading"></a></h3>
+<p>If you see a stack overflow error when executing a callback function, consider reducing the stack usage within your callback function. Alternatively, try increasing the size of the ESP Timer task stack by adjusting <a class="reference internal" href="../kconfig-reference.html#config-esp-timer-task-stack-size"><span class="std std-ref">CONFIG_ESP_TIMER_TASK_STACK_SIZE</span></a>.</p>
+</section>
+</section>
+<section id="application-examples">
+<h2><a class="toc-backref" href="#id22" role="doc-backlink">Application Examples</a><a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/esp_timer">system/esp_timer</a> creates and starts one-shot and periodic software timers, shows how they work with Light-sleep mode, and then stops and deletes the timers.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">API Reference</a><a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">Header File</a><a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_timer/include/esp_timer.h">components/esp_timer/include/esp_timer.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_timer.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_timer</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_timer</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_timer
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_timer
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Functions</a><a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420esp_timer_early_initv">
+<span id="_CPPv320esp_timer_early_initv"></span><span id="_CPPv220esp_timer_early_initv"></span><span id="esp_timer_early_init__void"></span><span class="target" id="esp__timer_8h_1a7a32da63894bf6521e534ab23bba0f58"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_early_init</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420esp_timer_early_initv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Minimal initialization of esp_timer. </p>
+<p>
+This function can be called very early in startup process, after this call only <a class="reference internal" href="#esp__timer_8h_1ab38881d22858adab666843cee4ba6589"><span class="std std-ref">esp_timer_get_time()</span></a> function can be used.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is called from startup code. Applications do not need to call this function before using other esp_timer APIs.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414esp_timer_initv">
+<span id="_CPPv314esp_timer_initv"></span><span id="_CPPv214esp_timer_initv"></span><span id="esp_timer_init__void"></span><span class="target" id="esp__timer_8h_1a42969ce85c4da7a83e6be1da1c4ce12e"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_init</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414esp_timer_initv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Initialize esp_timer library. </p>
+<p>
+This function will be called from startup code on every core. If Kconfig option <code class="docutils literal notranslate"><span class="pre">CONFIG_ESP_TIMER_ISR_AFFINITY</span></code> is set to <code class="docutils literal notranslate"><span class="pre">NO_AFFINITY</span></code>, it allocates the timer ISR on MULTIPLE cores and creates the timer task which can be run on any core.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is called from startup code. Applications do not need to call this function before using other esp_timer APIs. Before calling this function, <a class="reference internal" href="#esp__timer_8h_1a7a32da63894bf6521e534ab23bba0f58"><span class="std std-ref">esp_timer_early_init()</span></a> must be called by the startup code.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_NO_MEM if allocation has failed</p></li>
+<li><p>ESP_ERR_INVALID_STATE if already initialized</p></li>
+<li><p>other errors from interrupt allocator </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416esp_timer_deinitv">
+<span id="_CPPv316esp_timer_deinitv"></span><span id="_CPPv216esp_timer_deinitv"></span><span id="esp_timer_deinit__void"></span><span class="target" id="esp__timer_8h_1a00d3d28d6efe5337c863bcc957cadcce"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_deinit</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416esp_timer_deinitv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>De-initialize esp_timer library. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Normally this function should not be called from applications</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_STATE if not yet initialized </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416esp_timer_createPK23esp_timer_create_args_tP18esp_timer_handle_t">
+<span id="_CPPv316esp_timer_createPK23esp_timer_create_args_tP18esp_timer_handle_t"></span><span id="_CPPv216esp_timer_createPK23esp_timer_create_args_tP18esp_timer_handle_t"></span><span id="esp_timer_create__esp_timer_create_args_tCP.esp_timer_handle_tP"></span><span class="target" id="esp__timer_8h_1a74e9327734f0b5a209863df5a21d43a1"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_create</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423esp_timer_create_args_t" title="esp_timer_create_args_t"><span class="n"><span class="pre">esp_timer_create_args_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">create_args</span></span>, <a class="reference internal" href="#_CPPv418esp_timer_handle_t" title="esp_timer_handle_t"><span class="n"><span class="pre">esp_timer_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416esp_timer_createPK23esp_timer_create_args_tP18esp_timer_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Create an esp_timer instance. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When timer no longer needed, delete it using <a class="reference internal" href="#esp__timer_8h_1a2f8afce187cdaf5f91f1b713ec12617f"><span class="std std-ref">esp_timer_delete()</span></a>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>create_args</strong> -- Pointer to a structure with timer creation arguments. Not saved by the library, can be allocated on the stack. </p></li>
+<li><p><strong>out_handle</strong> -- <strong>[out]</strong> Output, pointer to esp_timer_handle_t variable that holds the created timer handle.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if some of the create_args are not valid</p></li>
+<li><p>ESP_ERR_INVALID_STATE if esp_timer library is not initialized yet</p></li>
+<li><p>ESP_ERR_NO_MEM if memory allocation fails </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420esp_timer_start_once18esp_timer_handle_t8uint64_t">
+<span id="_CPPv320esp_timer_start_once18esp_timer_handle_t8uint64_t"></span><span id="_CPPv220esp_timer_start_once18esp_timer_handle_t8uint64_t"></span><span id="esp_timer_start_once__esp_timer_handle_t.uint64_t"></span><span class="target" id="esp__timer_8h_1a9b7c15d78638b13ad515d9471aa4c68f"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_start_once</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418esp_timer_handle_t" title="esp_timer_handle_t"><span class="n"><span class="pre">esp_timer_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">timer</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeout_us</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420esp_timer_start_once18esp_timer_handle_t8uint64_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Start a one-shot timer. </p>
+<p>Timer represented by <code class="docutils literal notranslate"><span class="pre">timer</span></code> should not be running when this function is called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timer</strong> -- timer handle created using <a class="reference internal" href="#esp__timer_8h_1a74e9327734f0b5a209863df5a21d43a1"><span class="std std-ref">esp_timer_create()</span></a></p></li>
+<li><p><strong>timeout_us</strong> -- timer timeout, in microseconds relative to the current moment </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if the handle is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE if the timer is already running </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424esp_timer_start_periodic18esp_timer_handle_t8uint64_t">
+<span id="_CPPv324esp_timer_start_periodic18esp_timer_handle_t8uint64_t"></span><span id="_CPPv224esp_timer_start_periodic18esp_timer_handle_t8uint64_t"></span><span id="esp_timer_start_periodic__esp_timer_handle_t.uint64_t"></span><span class="target" id="esp__timer_8h_1a9a7b439c818e9bda87b0101b92439686"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_start_periodic</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418esp_timer_handle_t" title="esp_timer_handle_t"><span class="n"><span class="pre">esp_timer_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">timer</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">period</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424esp_timer_start_periodic18esp_timer_handle_t8uint64_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Start a periodic timer. </p>
+<p>Timer represented by <code class="docutils literal notranslate"><span class="pre">timer</span></code> should not be running when this function is called. This function starts the timer which will trigger every <code class="docutils literal notranslate"><span class="pre">period</span></code> microseconds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timer</strong> -- timer handle created using <a class="reference internal" href="#esp__timer_8h_1a74e9327734f0b5a209863df5a21d43a1"><span class="std std-ref">esp_timer_create()</span></a></p></li>
+<li><p><strong>period</strong> -- timer period, in microseconds </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if the handle is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE if the timer is already running </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417esp_timer_restart18esp_timer_handle_t8uint64_t">
+<span id="_CPPv317esp_timer_restart18esp_timer_handle_t8uint64_t"></span><span id="_CPPv217esp_timer_restart18esp_timer_handle_t8uint64_t"></span><span id="esp_timer_restart__esp_timer_handle_t.uint64_t"></span><span class="target" id="esp__timer_8h_1a71fa2f051c37750636c7c7511072af2c"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_restart</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418esp_timer_handle_t" title="esp_timer_handle_t"><span class="n"><span class="pre">esp_timer_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">timer</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeout_us</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417esp_timer_restart18esp_timer_handle_t8uint64_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Restart a currently running timer. </p>
+<p><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Type of <code class="docutils literal notranslate"><span class="pre">timer</span></code></p></th>
+<th class="head"><p>Action    </p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>One-shot timer   </p></td>
+<td><p>Restarted immediately and times out once in <code class="docutils literal notranslate"><span class="pre">timeout_us</span></code> microseconds    </p></td>
+</tr>
+<tr class="row-odd"><td><p>Periodic timer   </p></td>
+<td><p>Restarted immediately with a new period of <code class="docutils literal notranslate"><span class="pre">timeout_us</span></code> microseconds   </p></td>
+</tr>
+</tbody>
+</table>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timer</strong> -- timer handle created using <a class="reference internal" href="#esp__timer_8h_1a74e9327734f0b5a209863df5a21d43a1"><span class="std std-ref">esp_timer_create()</span></a></p></li>
+<li><p><strong>timeout_us</strong> -- Timeout in microseconds relative to the current time. In case of a periodic timer, also represents the new period. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if the handle is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE if the timer is not running </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414esp_timer_stop18esp_timer_handle_t">
+<span id="_CPPv314esp_timer_stop18esp_timer_handle_t"></span><span id="_CPPv214esp_timer_stop18esp_timer_handle_t"></span><span id="esp_timer_stop__esp_timer_handle_t"></span><span class="target" id="esp__timer_8h_1ac590077ed12c097ce62cd75dec10fa46"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_stop</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418esp_timer_handle_t" title="esp_timer_handle_t"><span class="n"><span class="pre">esp_timer_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">timer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414esp_timer_stop18esp_timer_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stop a running timer. </p>
+<p>This function stops the timer previously started using <a class="reference internal" href="#esp__timer_8h_1a9b7c15d78638b13ad515d9471aa4c68f"><span class="std std-ref">esp_timer_start_once()</span></a> or <a class="reference internal" href="#esp__timer_8h_1a9a7b439c818e9bda87b0101b92439686"><span class="std std-ref">esp_timer_start_periodic()</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timer</strong> -- timer handle created using <a class="reference internal" href="#esp__timer_8h_1a74e9327734f0b5a209863df5a21d43a1"><span class="std std-ref">esp_timer_create()</span></a></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_STATE if the timer is not running </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416esp_timer_delete18esp_timer_handle_t">
+<span id="_CPPv316esp_timer_delete18esp_timer_handle_t"></span><span id="_CPPv216esp_timer_delete18esp_timer_handle_t"></span><span id="esp_timer_delete__esp_timer_handle_t"></span><span class="target" id="esp__timer_8h_1a2f8afce187cdaf5f91f1b713ec12617f"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_delete</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418esp_timer_handle_t" title="esp_timer_handle_t"><span class="n"><span class="pre">esp_timer_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">timer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416esp_timer_delete18esp_timer_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Delete an esp_timer instance. </p>
+<p>The timer must be stopped before deleting. A one-shot timer which has expired does not need to be stopped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timer</strong> -- timer handle created using <a class="reference internal" href="#esp__timer_8h_1a74e9327734f0b5a209863df5a21d43a1"><span class="std std-ref">esp_timer_create()</span></a></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_STATE if the timer is running </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_timer_get_timev">
+<span id="_CPPv318esp_timer_get_timev"></span><span id="_CPPv218esp_timer_get_timev"></span><span id="esp_timer_get_time__void"></span><span class="target" id="esp__timer_8h_1ab38881d22858adab666843cee4ba6589"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_get_time</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_timer_get_timev" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get time in microseconds since boot. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of microseconds since the initialization of ESP Timer </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424esp_timer_get_next_alarmv">
+<span id="_CPPv324esp_timer_get_next_alarmv"></span><span id="_CPPv224esp_timer_get_next_alarmv"></span><span id="esp_timer_get_next_alarm__void"></span><span class="target" id="esp__timer_8h_1a7d841bf7010449014062cb46b71731e7"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_get_next_alarm</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424esp_timer_get_next_alarmv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the timestamp of the next expected timeout. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Timestamp of the nearest timer event, in microseconds. The timebase is the same as for the values returned by <a class="reference internal" href="#esp__timer_8h_1ab38881d22858adab666843cee4ba6589"><span class="std std-ref">esp_timer_get_time()</span></a>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv436esp_timer_get_next_alarm_for_wake_upv">
+<span id="_CPPv336esp_timer_get_next_alarm_for_wake_upv"></span><span id="_CPPv236esp_timer_get_next_alarm_for_wake_upv"></span><span id="esp_timer_get_next_alarm_for_wake_up__void"></span><span class="target" id="esp__timer_8h_1a7d71d07b487b4c2632a49c3d73ad9bf3"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_get_next_alarm_for_wake_up</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv436esp_timer_get_next_alarm_for_wake_upv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the timestamp of the next expected timeout excluding those timers that should not interrupt light sleep (such timers have <a class="reference internal" href="#structesp__timer__create__args__t_1a31a7b7ee58ea66bbbbbd034980a03c21"><span class="std std-ref">esp_timer_create_args_t::skip_unhandled_events</span></a> enabled) </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Timestamp of the nearest timer event, in microseconds. The timebase is the same as for the values returned by <a class="reference internal" href="#esp__timer_8h_1ab38881d22858adab666843cee4ba6589"><span class="std std-ref">esp_timer_get_time()</span></a>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420esp_timer_get_period18esp_timer_handle_tP8uint64_t">
+<span id="_CPPv320esp_timer_get_period18esp_timer_handle_tP8uint64_t"></span><span id="_CPPv220esp_timer_get_period18esp_timer_handle_tP8uint64_t"></span><span id="esp_timer_get_period__esp_timer_handle_t.uint64_tP"></span><span class="target" id="esp__timer_8h_1adad828ccb7966794d9166c62af20d696"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_get_period</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418esp_timer_handle_t" title="esp_timer_handle_t"><span class="n"><span class="pre">esp_timer_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">timer</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">period</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420esp_timer_get_period18esp_timer_handle_tP8uint64_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the period of a timer. </p>
+<p>This function fetches the timeout period of a timer. For a one-shot timer, the timeout period will be 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timer</strong> -- timer handle created using <a class="reference internal" href="#esp__timer_8h_1a74e9327734f0b5a209863df5a21d43a1"><span class="std std-ref">esp_timer_create()</span></a></p></li>
+<li><p><strong>period</strong> -- memory to store the timer period value in microseconds </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if the arguments are invalid </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_timer_get_expiry_time18esp_timer_handle_tP8uint64_t">
+<span id="_CPPv325esp_timer_get_expiry_time18esp_timer_handle_tP8uint64_t"></span><span id="_CPPv225esp_timer_get_expiry_time18esp_timer_handle_tP8uint64_t"></span><span id="esp_timer_get_expiry_time__esp_timer_handle_t.uint64_tP"></span><span class="target" id="esp__timer_8h_1ae2d885738e1bccf73e50104c359ac534"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_get_expiry_time</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418esp_timer_handle_t" title="esp_timer_handle_t"><span class="n"><span class="pre">esp_timer_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">timer</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">expiry</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_timer_get_expiry_time18esp_timer_handle_tP8uint64_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the expiry time of a one-shot timer. </p>
+<p>This function fetches the expiry time of a one-shot timer.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Passing the timer handle of a periodic timer will result in an error.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timer</strong> -- timer handle created using <a class="reference internal" href="#esp__timer_8h_1a74e9327734f0b5a209863df5a21d43a1"><span class="std std-ref">esp_timer_create()</span></a></p></li>
+<li><p><strong>expiry</strong> -- memory to store the timeout value in microseconds </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if the arguments are invalid</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED if the timer type is periodic </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414esp_timer_dumpP4FILE">
+<span id="_CPPv314esp_timer_dumpP4FILE"></span><span id="_CPPv214esp_timer_dumpP4FILE"></span><span id="esp_timer_dump__FILEP"></span><span class="target" id="esp__timer_8h_1a697a7a2c879cf180ddf2d90d4b842ddc"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_dump</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">FILE</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stream</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414esp_timer_dumpP4FILE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Dump the list of timers to a stream. </p>
+<p>By default, this function prints the list of active (running) timers. The output format is:</p>
+<p>| Name | Period | Alarm |</p>
+<p><ul class="simple">
+<li><p>Name — timer pointer</p></li>
+<li><p>Period — period of timer in microseconds, or 0 for one-shot timer</p></li>
+<li><p>Alarm - time of the next alarm in microseconds since boot, or 0 if the timer is not started</p></li>
+</ul>
+</p>
+<p>To print the list of all created timers, enable Kconfig option <code class="docutils literal notranslate"><span class="pre">CONFIG_ESP_TIMER_PROFILING</span></code>. In this case, the output format is:</p>
+<p>| Name | Period | Alarm | Times_armed | Times_trigg | Times_skip | Cb_exec_time |</p>
+<p><ul class="simple">
+<li><p>Name — timer name</p></li>
+<li><p>Period — same as above</p></li>
+<li><p>Alarm — same as above</p></li>
+<li><p>Times_armed — number of times the timer was armed via esp_timer_start_X</p></li>
+<li><p>Times_triggered - number of times the callback was triggered</p></li>
+<li><p>Times_skipped - number of times the callback was skipped</p></li>
+<li><p>Callback_exec_time - total time taken by callback to execute, across all calls</p></li>
+</ul>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stream</strong> -- stream (such as stdout) to which to dump the information </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_NO_MEM if can not allocate temporary buffer for the output </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv433esp_timer_isr_dispatch_need_yieldv">
+<span id="_CPPv333esp_timer_isr_dispatch_need_yieldv"></span><span id="_CPPv233esp_timer_isr_dispatch_need_yieldv"></span><span id="esp_timer_isr_dispatch_need_yield__void"></span><span class="target" id="esp__timer_8h_1a85df6b8e535fb671c587b263d0b3fdaa"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_isr_dispatch_need_yield</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv433esp_timer_isr_dispatch_need_yieldv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Requests a context switch from a timer callback function. </p>
+<p>This only works for a timer that has an ISR dispatch method. The context switch will be called after all ISR dispatch timers have been processed. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419esp_timer_is_active18esp_timer_handle_t">
+<span id="_CPPv319esp_timer_is_active18esp_timer_handle_t"></span><span id="_CPPv219esp_timer_is_active18esp_timer_handle_t"></span><span id="esp_timer_is_active__esp_timer_handle_t"></span><span class="target" id="esp__timer_8h_1a8bacacd656c2bae4ece55eace4c76b28"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_is_active</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418esp_timer_handle_t" title="esp_timer_handle_t"><span class="n"><span class="pre">esp_timer_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">timer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419esp_timer_is_active18esp_timer_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns status of a timer, active or not. </p>
+<p>This function is used to identify if the timer is still active (running) or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timer</strong> -- timer handle created using <a class="reference internal" href="#esp__timer_8h_1a74e9327734f0b5a209863df5a21d43a1"><span class="std std-ref">esp_timer_create()</span></a></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>1 if timer is still active (running)</p></li>
+<li><p>0 if timer is not active </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_timer_new_etm_alarm_eventP22esp_etm_event_handle_t">
+<span id="_CPPv329esp_timer_new_etm_alarm_eventP22esp_etm_event_handle_t"></span><span id="_CPPv229esp_timer_new_etm_alarm_eventP22esp_etm_event_handle_t"></span><span id="esp_timer_new_etm_alarm_event__esp_etm_event_handle_tP"></span><span class="target" id="esp__timer_8h_1aaf0b9af156deeadffc67e766c651bd74"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_new_etm_alarm_event</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">esp_etm_event_handle_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_event</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_timer_new_etm_alarm_eventP22esp_etm_event_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the ETM event handle of esp_timer underlying alarm event. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The created ETM event object can be deleted later using esp_etm_del_event()</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The ETM event is generated by the underlying hardware - systimer; therefore, if the esp_timer is not clocked by systimer, then no ETM event will be generated.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>out_event</strong> -- <strong>[out]</strong> Returned ETM event handle </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3><a class="toc-backref" href="#id26" role="doc-backlink">Structures</a><a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv423esp_timer_create_args_t">
+<span id="_CPPv323esp_timer_create_args_t"></span><span id="_CPPv223esp_timer_create_args_t"></span><span id="esp_timer_create_args_t"></span><span class="target" id="structesp__timer__create__args__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_create_args_t</span></span></span><a class="headerlink" href="#_CPPv423esp_timer_create_args_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Timer configuration passed to <a class="reference internal" href="#esp__timer_8h_1a74e9327734f0b5a209863df5a21d43a1"><span class="std std-ref">esp_timer_create()</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_timer_create_args_t8callbackE">
+<span id="_CPPv3N23esp_timer_create_args_t8callbackE"></span><span id="_CPPv2N23esp_timer_create_args_t8callbackE"></span><span id="esp_timer_create_args_t::callback__esp_timer_cb_t"></span><span class="target" id="structesp__timer__create__args__t_1ad3310759baf90dd68e74475d341cb496"></span><a class="reference internal" href="#_CPPv414esp_timer_cb_t" title="esp_timer_cb_t"><span class="n"><span class="pre">esp_timer_cb_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">callback</span></span></span><a class="headerlink" href="#_CPPv4N23esp_timer_create_args_t8callbackE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Callback function to execute when timer expires. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_timer_create_args_t3argE">
+<span id="_CPPv3N23esp_timer_create_args_t3argE"></span><span id="_CPPv2N23esp_timer_create_args_t3argE"></span><span id="esp_timer_create_args_t::arg__voidP"></span><span class="target" id="structesp__timer__create__args__t_1af71d6a46c7b77a019ab96fb17ec5fdd3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">arg</span></span></span><a class="headerlink" href="#_CPPv4N23esp_timer_create_args_t3argE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Argument to pass to callback. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_timer_create_args_t15dispatch_methodE">
+<span id="_CPPv3N23esp_timer_create_args_t15dispatch_methodE"></span><span id="_CPPv2N23esp_timer_create_args_t15dispatch_methodE"></span><span id="esp_timer_create_args_t::dispatch_method__esp_timer_dispatch_t"></span><span class="target" id="structesp__timer__create__args__t_1a65b38dd3f911631d5682b5c07affc654"></span><a class="reference internal" href="#_CPPv420esp_timer_dispatch_t" title="esp_timer_dispatch_t"><span class="n"><span class="pre">esp_timer_dispatch_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dispatch_method</span></span></span><a class="headerlink" href="#_CPPv4N23esp_timer_create_args_t15dispatch_methodE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Dispatch callback from task or ISR; if not specified, esp_timer task. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_timer_create_args_t4nameE">
+<span id="_CPPv3N23esp_timer_create_args_t4nameE"></span><span id="_CPPv2N23esp_timer_create_args_t4nameE"></span><span id="esp_timer_create_args_t::name__cCP"></span><span class="target" id="structesp__timer__create__args__t_1a02146c48bb4a0cb37a3879fdec1c96b1"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">name</span></span></span><a class="headerlink" href="#_CPPv4N23esp_timer_create_args_t4nameE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Timer name, used in <a class="reference internal" href="#esp__timer_8h_1a697a7a2c879cf180ddf2d90d4b842ddc"><span class="std std-ref">esp_timer_dump()</span></a> function. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23esp_timer_create_args_t21skip_unhandled_eventsE">
+<span id="_CPPv3N23esp_timer_create_args_t21skip_unhandled_eventsE"></span><span id="_CPPv2N23esp_timer_create_args_t21skip_unhandled_eventsE"></span><span id="esp_timer_create_args_t::skip_unhandled_events__b"></span><span class="target" id="structesp__timer__create__args__t_1a31a7b7ee58ea66bbbbbd034980a03c21"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">skip_unhandled_events</span></span></span><a class="headerlink" href="#_CPPv4N23esp_timer_create_args_t21skip_unhandled_eventsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Setting to skip unhandled events in light sleep for periodic timers. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">Type Definitions</a><a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv418esp_timer_handle_t">
+<span id="_CPPv318esp_timer_handle_t"></span><span id="_CPPv218esp_timer_handle_t"></span><span id="esp_timer_handle_t"></span><span class="target" id="esp__timer_8h_1a946e475d8cd1667fccdaab52c94c45bb"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">esp_timer</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_handle_t</span></span></span><a class="headerlink" href="#_CPPv418esp_timer_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Opaque type representing a single timer handle. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv414esp_timer_cb_t">
+<span id="_CPPv314esp_timer_cb_t"></span><span id="_CPPv214esp_timer_cb_t"></span><span id="esp_timer_cb_t"></span><span class="target" id="esp__timer_8h_1a5482b9e4b1838dfc76cfe076c390fcaa"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_cb_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">arg</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv414esp_timer_cb_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Timer callback function type. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Param arg<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pointer to opaque user-specific data </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="enumerations">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">Enumerations</a><a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv420esp_timer_dispatch_t">
+<span id="_CPPv320esp_timer_dispatch_t"></span><span id="_CPPv220esp_timer_dispatch_t"></span><span class="target" id="esp__timer_8h_1adfa3461062412704963cbb0274b5117c"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_timer_dispatch_t</span></span></span><a class="headerlink" href="#_CPPv420esp_timer_dispatch_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Method to dispatch timer callback. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N20esp_timer_dispatch_t14ESP_TIMER_TASKE">
+<span id="_CPPv3N20esp_timer_dispatch_t14ESP_TIMER_TASKE"></span><span id="_CPPv2N20esp_timer_dispatch_t14ESP_TIMER_TASKE"></span><span class="target" id="esp__timer_8h_1adfa3461062412704963cbb0274b5117ca2a1b9bba35bac0d0bfe57ae4e2851aa6"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_TIMER_TASK</span></span></span><a class="headerlink" href="#_CPPv4N20esp_timer_dispatch_t14ESP_TIMER_TASKE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Callback is dispatched from esp_timer task. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N20esp_timer_dispatch_t13ESP_TIMER_ISRE">
+<span id="_CPPv3N20esp_timer_dispatch_t13ESP_TIMER_ISRE"></span><span id="_CPPv2N20esp_timer_dispatch_t13ESP_TIMER_ISRE"></span><span class="target" id="esp__timer_8h_1adfa3461062412704963cbb0274b5117ca4b789c43d60fb0686da8acaa26d9e6f8"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_TIMER_ISR</span></span></span><a class="headerlink" href="#_CPPv4N20esp_timer_dispatch_t13ESP_TIMER_ISRE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Callback is dispatched from interrupt handler. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N20esp_timer_dispatch_t13ESP_TIMER_MAXE">
+<span id="_CPPv3N20esp_timer_dispatch_t13ESP_TIMER_MAXE"></span><span id="_CPPv2N20esp_timer_dispatch_t13ESP_TIMER_MAXE"></span><span class="target" id="esp__timer_8h_1adfa3461062412704963cbb0274b5117ca996e6fe4af4092ee898bb893aa5dd8e8"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_TIMER_MAX</span></span></span><a class="headerlink" href="#_CPPv4N20esp_timer_dispatch_t13ESP_TIMER_MAXE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sentinel value for the number of callback dispatch methods. </p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=ESP Timer (High Resolution Timer) (api-reference/system/esp_timer)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=ESP Timer (High Resolution Timer) (api-reference/system/esp_timer)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="heap_debug.html" class="btn btn-neutral float-left" title="Heap Memory Debugging" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="internal-unstable.html" class="btn btn-neutral float-right" title="Internal and Unstable APIs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

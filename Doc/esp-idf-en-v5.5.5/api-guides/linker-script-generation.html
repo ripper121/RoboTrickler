@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linker Script Generation - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/linker-script-generation.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/linker-script-generation';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Low Power Modes" href="low-power-mode/index.html" />
+    <link rel="prev" title="Component Configuration Guide" href="kconfig/component-configuration-guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Linker Script Generation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#quick-start">Quick Start</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#creating-and-specifying-a-linker-fragment-file">Creating and Specifying a Linker Fragment File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#specifying-placements">Specifying Placements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#the-default-placements">The 'default' Placements</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#linker-script-generation-internals">Linker Script Generation Internals</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#linker-fragment-files">Linker Fragment Files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#linker-script-template">Linker Script Template</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Guides</a></li>
+      <li class="breadcrumb-item active">Linker Script Generation</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/linker-script-generation.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="linker-script-generation">
+<h1>Linker Script Generation<a class="headerlink" href="#linker-script-generation" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/api-guides/linker-script-generation.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>There are several <a class="reference internal" href="memory-types.html#memory-layout"><span class="std std-ref">memory regions</span></a> where code and data can be placed. Code and read-only data are placed by default in flash, writable data in RAM, etc. However, it is sometimes necessary to change these default placements.</p>
+<p>For example, it may be necessary to place:</p>
+<p><ul class="simple">
+<li><p>critical code in RAM for performance reasons.</p></li>
+<li><p>executable code in IRAM so that it can be ran while cache is disabled.</p></li>
+<li><p>code in RTC memory for use in a wake stub.</p></li>
+<li><p>code in RTC memory for use by the ULP coprocessor.</p></li>
+</ul>
+</p>
+<p>With the linker script generation mechanism, it is possible to specify these placements at the component level within ESP-IDF. The component presents information on how it would like to place its symbols, objects or the entire archive. During build, the information presented by the components are collected, parsed and processed; and the placement rules generated is used to link the app.</p>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading"></a></h2>
+<p>This section presents a guide for quickly placing code/data to RAM and RTC memory - placements ESP-IDF provides out-of-the-box.</p>
+<p>For this guide, suppose we have the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>components
+└── my_component
+    ├── CMakeLists.txt
+    ├── Kconfig
+    ├── src/
+    │   ├── my_src1.c
+    │   ├── my_src2.c
+    │   └── my_src3.c
+    └── my_linker_fragment_file.lf
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>a component named <code class="docutils literal notranslate"><span class="pre">my_component</span></code> that is archived as library <code class="docutils literal notranslate"><span class="pre">libmy_component.a</span></code> during build</p></li>
+<li><p>three source files archived under the library, <code class="docutils literal notranslate"><span class="pre">my_src1.c</span></code>, <code class="docutils literal notranslate"><span class="pre">my_src2.c</span></code> and <code class="docutils literal notranslate"><span class="pre">my_src3.c</span></code> which are compiled as <code class="docutils literal notranslate"><span class="pre">my_src1.o</span></code>, <code class="docutils literal notranslate"><span class="pre">my_src2.o</span></code> and <code class="docutils literal notranslate"><span class="pre">my_src3.o</span></code>, respectively</p></li>
+<li><p>under <code class="docutils literal notranslate"><span class="pre">my_src1.o</span></code>, the function <code class="docutils literal notranslate"><span class="pre">my_function1</span></code> is defined; under <code class="docutils literal notranslate"><span class="pre">my_src2.o</span></code>, the function <code class="docutils literal notranslate"><span class="pre">my_function2</span></code> is defined</p></li>
+<li><p>there is bool-type config <code class="docutils literal notranslate"><span class="pre">PERFORMANCE_MODE</span></code> (y/n) and int type config <code class="docutils literal notranslate"><span class="pre">PERFORMANCE_LEVEL</span></code> (with range 0-3) in <code class="docutils literal notranslate"><span class="pre">my_component</span></code>'s Kconfig</p></li>
+</ul>
+<section id="creating-and-specifying-a-linker-fragment-file">
+<h3>Creating and Specifying a Linker Fragment File<a class="headerlink" href="#creating-and-specifying-a-linker-fragment-file" title="Permalink to this heading"></a></h3>
+<p>Before anything else, a linker fragment file needs to be created. A linker fragment file is simply a text file with a <code class="docutils literal notranslate"><span class="pre">.lf</span></code> extension upon which the desired placements will be written. After creating the file, it is then necessary to present it to the build system. The instructions for the build systems supported by ESP-IDF are as follows:</p>
+<p>In the component's <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file, specify argument <code class="docutils literal notranslate"><span class="pre">LDFRAGMENTS</span></code> in the <code class="docutils literal notranslate"><span class="pre">idf_component_register</span></code> call. The value of <code class="docutils literal notranslate"><span class="pre">LDFRAGMENTS</span></code> can either be an absolute path or a relative path from the component directory to the created linker fragment file.</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="c"># file paths relative to CMakeLists.txt</span>
+<span class="nb">idf_component_register</span><span class="p">(</span><span class="s">...</span>
+<span class="w">                       </span><span class="s">LDFRAGMENTS</span><span class="w"> </span><span class="s2">&quot;path/to/linker_fragment_file.lf&quot;</span><span class="w"> </span><span class="s2">&quot;path/to/another_linker_fragment_file.lf&quot;</span>
+<span class="w">                       </span><span class="s">...</span>
+<span class="w">                       </span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="specifying-placements">
+<h3>Specifying Placements<a class="headerlink" href="#specifying-placements" title="Permalink to this heading"></a></h3>
+<p>It is possible to specify placements at the following levels of granularity:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>object file (<code class="docutils literal notranslate"><span class="pre">.obj</span></code> or <code class="docutils literal notranslate"><span class="pre">.o</span></code> files)</p></li>
+<li><p>symbol (function/variable)</p></li>
+<li><p>archive (<code class="docutils literal notranslate"><span class="pre">.a</span></code> files)</p></li>
+</ul>
+</div></blockquote>
+<section id="placing-object-files">
+<span id="ldgen-placing-object-files"></span><h4>Placing Object Files<a class="headerlink" href="#placing-object-files" title="Permalink to this heading"></a></h4>
+<p>Suppose the entirety of <code class="docutils literal notranslate"><span class="pre">my_src1.o</span></code> is performance-critical, so it is desirable to place it in RAM. On the other hand, the entirety of <code class="docutils literal notranslate"><span class="pre">my_src2.o</span></code> contains symbols needed coming out of deep sleep, so it needs to be put under RTC memory.</p>
+<p>In the linker fragment file, we can write:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[mapping:my_component]
+archive: libmy_component.a
+entries:
+    my_src1 (noflash)     # places all my_src1 code/read-only data under IRAM/DRAM
+    my_src2 (rtc)         # places all my_src2 code/ data and read-only data under RTC fast memory/RTC slow memory
+</pre></div>
+</div>
+<p>What happens to <code class="docutils literal notranslate"><span class="pre">my_src3.o</span></code>? Since it is not specified, default placements are used for <code class="docutils literal notranslate"><span class="pre">my_src3.o</span></code>. More on default placements <a class="reference internal" href="#ldgen-default-placements"><span class="std std-ref">here</span></a>.</p>
+</section>
+<section id="placing-symbols">
+<h4>Placing Symbols<a class="headerlink" href="#placing-symbols" title="Permalink to this heading"></a></h4>
+<p>Continuing our example, suppose that among functions defined under <code class="docutils literal notranslate"><span class="pre">object1.o</span></code>, only <code class="docutils literal notranslate"><span class="pre">my_function1</span></code> is performance-critical; and under <code class="docutils literal notranslate"><span class="pre">object2.o</span></code>, only <code class="docutils literal notranslate"><span class="pre">my_function2</span></code> needs to execute after the chip comes out of deep sleep. This could be accomplished by writing:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[mapping:my_component]
+archive: libmy_component.a
+entries:
+    my_src1:my_function1 (noflash)
+    my_src2:my_function2 (rtc)
+</pre></div>
+</div>
+<p>The default placements are used for the rest of the functions in <code class="docutils literal notranslate"><span class="pre">my_src1.o</span></code> and <code class="docutils literal notranslate"><span class="pre">my_src2.o</span></code> and the entire <code class="docutils literal notranslate"><span class="pre">object3.o</span></code>. Something similar can be achieved for placing data by writing the variable name instead of the function name, like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my_src1</span><span class="p">:</span><span class="n">my_variable</span> <span class="p">(</span><span class="n">noflash</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>There are <a class="reference internal" href="#ldgen-symbol-granularity-placements"><span class="std std-ref">limitations</span></a> in placing code/data at symbol granularity. In order to ensure proper placements, an alternative would be to group relevant code and data into source files, and <a class="reference internal" href="#ldgen-placing-object-files"><span class="std std-ref">use object-granularity placements</span></a>.</p>
+</div>
+</section>
+<section id="placing-entire-archive">
+<h4>Placing Entire Archive<a class="headerlink" href="#placing-entire-archive" title="Permalink to this heading"></a></h4>
+<p>In this example, suppose that the entire component archive needs to be placed in RAM. This can be written as:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[mapping:my_component]
+archive: libmy_component.a
+entries:
+    * (noflash)
+</pre></div>
+</div>
+<p>Similarly, this places the entire component in RTC memory:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[mapping:my_component]
+archive: libmy_component.a
+entries:
+    * (rtc)
+</pre></div>
+</div>
+</section>
+<section id="configuration-dependent-placements">
+<span id="ldgen-conditional-placements"></span><h4>Configuration-Dependent Placements<a class="headerlink" href="#configuration-dependent-placements" title="Permalink to this heading"></a></h4>
+<p>Suppose that the entire component library should only have special placement when a certain condition is true; for example, when <code class="docutils literal notranslate"><span class="pre">CONFIG_PERFORMANCE_MODE</span> <span class="pre">==</span> <span class="pre">y</span></code>. This could be written as:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[mapping:my_component]
+archive: libmy_component.a
+entries:
+    if PERFORMANCE_MODE = y:
+        * (noflash)
+    else:
+        * (default)
+</pre></div>
+</div>
+<p>For a more complex config-dependent placement, suppose the following requirements: when <code class="docutils literal notranslate"><span class="pre">CONFIG_PERFORMANCE_LEVEL</span> <span class="pre">==</span> <span class="pre">1</span></code>, only <code class="docutils literal notranslate"><span class="pre">object1.o</span></code> is put in RAM; when <code class="docutils literal notranslate"><span class="pre">CONFIG_PERFORMANCE_LEVEL</span> <span class="pre">==</span> <span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">object1.o</span></code> and <code class="docutils literal notranslate"><span class="pre">object2.o</span></code>; and when <code class="docutils literal notranslate"><span class="pre">CONFIG_PERFORMANCE_LEVEL</span> <span class="pre">==</span> <span class="pre">3</span></code> all object files under the archive are to be put into RAM. When these three are false however, put entire library in RTC memory. This scenario is a bit contrived, but, it can be written as:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[mapping:my_component]
+archive: libmy_component.a
+entries:
+    if PERFORMANCE_LEVEL = 1:
+        my_src1 (noflash)
+    elif PERFORMANCE_LEVEL = 2:
+        my_src1 (noflash)
+        my_src2 (noflash)
+    elif PERFORMANCE_LEVEL = 3:
+        my_src1 (noflash)
+        my_src2 (noflash)
+        my_src3 (noflash)
+    else:
+        * (rtc)
+</pre></div>
+</div>
+<p>Nesting condition-checking is also possible. The following is equivalent to the snippet above:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[mapping:my_component]
+archive: libmy_component.a
+entries:
+    if PERFORMANCE_LEVEL &lt;= 3 &amp;&amp; PERFORMANCE_LEVEL &gt; 0:
+        if PERFORMANCE_LEVEL &gt;= 1:
+            object1 (noflash)
+            if PERFORMANCE_LEVEL &gt;= 2:
+                object2 (noflash)
+                if PERFORMANCE_LEVEL &gt;= 3:
+                    object2 (noflash)
+    else:
+        * (rtc)
+</pre></div>
+</div>
+</section>
+</section>
+<section id="the-default-placements">
+<span id="ldgen-default-placements"></span><h3>The 'default' Placements<a class="headerlink" href="#the-default-placements" title="Permalink to this heading"></a></h3>
+<p>Up until this point, the term  'default placements' has been mentioned as fallback placements when the placement rules <code class="docutils literal notranslate"><span class="pre">rtc</span></code> and <code class="docutils literal notranslate"><span class="pre">noflash</span></code> are not specified. It is important to note that the tokens <code class="docutils literal notranslate"><span class="pre">noflash</span></code> or <code class="docutils literal notranslate"><span class="pre">rtc</span></code> are not merely keywords, but are actually entities called fragments, specifically <a class="reference internal" href="#ldgen-scheme-fragment"><span class="std std-ref">schemes</span></a>.</p>
+<p>In the same manner as <code class="docutils literal notranslate"><span class="pre">rtc</span></code> and <code class="docutils literal notranslate"><span class="pre">noflash</span></code> are schemes, there exists a <code class="docutils literal notranslate"><span class="pre">default</span></code> scheme which defines what the default placement rules should be. As the name suggests, it is where code and data are usually placed, i.e., code/constants is placed in flash, variables placed in RAM, etc.  More on the default scheme <a class="reference internal" href="#ldgen-default-scheme"><span class="std std-ref">here</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For an example of an ESP-IDF component using the linker script generation mechanism, see <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/freertos/CMakeLists.txt">freertos/CMakeLists.txt</a>. <code class="docutils literal notranslate"><span class="pre">freertos</span></code> uses this to place its object files to the instruction RAM for performance reasons.</p>
+</div>
+<p>This marks the end of the quick start guide. The following text discusses the internals of the mechanism in a little bit more detail. The following sections should be helpful in creating custom placements or modifying default behavior.</p>
+</section>
+</section>
+<section id="linker-script-generation-internals">
+<h2>Linker Script Generation Internals<a class="headerlink" href="#linker-script-generation-internals" title="Permalink to this heading"></a></h2>
+<p>Linking is the last step in the process of turning C/C++ source files into an executable. It is performed by the toolchain's linker, and accepts linker scripts which specify code/data placements, among other things. With the linker script generation mechanism, this process is no different, except that the linker script passed to the linker is dynamically generated from: (1) the collected <a class="reference internal" href="#ldgen-linker-fragment-files"><span class="std std-ref">linker fragment files</span></a> and (2) <a class="reference internal" href="#ldgen-linker-script-template"><span class="std std-ref">linker script template</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The tool that implements the linker script generation mechanism lives under <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/tools/ldgen">tools/ldgen</a>.</p>
+</div>
+<section id="linker-fragment-files">
+<span id="ldgen-linker-fragment-files"></span><h3>Linker Fragment Files<a class="headerlink" href="#linker-fragment-files" title="Permalink to this heading"></a></h3>
+<p>As mentioned in the quick start guide, fragment files are simple text files with the <code class="docutils literal notranslate"><span class="pre">.lf</span></code> extension containing the desired placements. This is a simplified description of what fragment files contain, however. What fragment files actually contain are 'fragments'. Fragments are entities which contain pieces of information which, when put together, form placement rules that tell where to place sections of object files in the output binary. There are three types of fragments: <a class="reference internal" href="#ldgen-sections-fragment"><span class="std std-ref">sections</span></a>, <a class="reference internal" href="#ldgen-scheme-fragment"><span class="std std-ref">scheme</span></a> and <a class="reference internal" href="#ldgen-mapping-fragment"><span class="std std-ref">mapping</span></a>.</p>
+<section id="grammar">
+<h4>Grammar<a class="headerlink" href="#grammar" title="Permalink to this heading"></a></h4>
+<p>The three fragment types share a common grammar:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[type:name]
+key: value
+key:
+    value
+    value
+    value
+    ...
+</pre></div>
+</div>
+<ul>
+<li><p>type: Corresponds to the fragment type, can either be <code class="docutils literal notranslate"><span class="pre">sections</span></code>, <code class="docutils literal notranslate"><span class="pre">scheme</span></code> or <code class="docutils literal notranslate"><span class="pre">mapping</span></code>.</p></li>
+<li><p>name: The name of the fragment, should be unique for the specified fragment type.</p></li>
+<li><p>key, value: Contents of the fragment; each fragment type may support different keys and different grammars for the key values.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>For <a class="reference internal" href="#ldgen-sections-fragment"><span class="std std-ref">sections</span></a> and <a class="reference internal" href="#ldgen-scheme-fragment"><span class="std std-ref">scheme</span></a>, the only supported key is <code class="docutils literal notranslate"><span class="pre">entries</span></code></p></li>
+<li><p>For <a class="reference internal" href="#ldgen-mapping-fragment"><span class="std std-ref">mappings</span></a>, both <code class="docutils literal notranslate"><span class="pre">archive</span></code> and <code class="docutils literal notranslate"><span class="pre">entries</span></code> are supported.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In cases where multiple fragments of the same type and name are encountered, an exception is thrown.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The only valid characters for fragment names and keys are alphanumeric characters and underscore.</p>
+</div>
+<p id="ldgen-condition-checking"><strong>Condition Checking</strong></p>
+<p>Condition checking enable the linker script generation to be configuration-aware. Depending on whether expressions involving configuration values are true or not, a particular set of values for a key can be used. The evaluation uses <code class="docutils literal notranslate"><span class="pre">eval_string</span></code> from kconfiglib package and adheres to its required syntax and limitations. Supported operators are as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>comparison</dt><dd><ul>
+<li><p>LessThan <code class="docutils literal notranslate"><span class="pre">&lt;</span></code></p></li>
+<li><p>LessThanOrEqualTo <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code></p></li>
+<li><p>MoreThan <code class="docutils literal notranslate"><span class="pre">&gt;</span></code></p></li>
+<li><p>MoreThanOrEqualTo <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code></p></li>
+<li><p>Equal <code class="docutils literal notranslate"><span class="pre">=</span></code></p></li>
+<li><p>NotEqual <code class="docutils literal notranslate"><span class="pre">!=</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>logical</dt><dd><ul>
+<li><p>Or <code class="docutils literal notranslate"><span class="pre">||</span></code></p></li>
+<li><p>And <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code></p></li>
+<li><p>Negation <code class="docutils literal notranslate"><span class="pre">!</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>grouping</dt><dd><ul>
+<li><p>Parenthesis <code class="docutils literal notranslate"><span class="pre">()</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>Condition checking behaves as you would expect an <code class="docutils literal notranslate"><span class="pre">if...elseif/elif...else</span></code> block in other languages. Condition-checking is possible for both key values and entire fragments. The two sample fragments below are equivalent:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Value for keys is dependent on config
+[type:name]
+key_1:
+    if CONDITION = y:
+        value_1
+    else:
+        value_2
+key_2:
+    if CONDITION = y:
+        value_a
+    else:
+        value_b
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Entire fragment definition is dependent on config
+if CONDITION = y:
+    [type:name]
+    key_1:
+        value_1
+    key_2:
+        value_a
+else:
+    [type:name]
+    key_1:
+        value_2
+    key_2:
+        value_b
+</pre></div>
+</div>
+<p><strong>Comments</strong></p>
+<p>Comment in linker fragment files begin with <code class="docutils literal notranslate"><span class="pre">#</span></code>. Like in other languages, comment are used to provide helpful descriptions and documentation and are ignored during processing.</p>
+</section>
+<section id="types">
+<h4>Types<a class="headerlink" href="#types" title="Permalink to this heading"></a></h4>
+<p id="ldgen-sections-fragment"><strong>Sections</strong></p>
+<p>Sections fragments defines a list of object file sections that the GCC compiler emits. It may be a default section (e.g., <code class="docutils literal notranslate"><span class="pre">.text</span></code>, <code class="docutils literal notranslate"><span class="pre">.data</span></code>) or it may be user defined section through the <code class="docutils literal notranslate"><span class="pre">__attribute__</span></code> keyword.</p>
+<p>The use of an optional '+' indicates the inclusion of the section in the list, as well as sections that start with it. This is the preferred method over listing both explicitly.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[sections:name]
+entries:
+    .section+
+    .section
+    ...
+</pre></div>
+</div>
+<p>Example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Non-preferred
+[sections:text]
+entries:
+    .text
+    .text.*
+    .literal
+    .literal.*
+
+# Preferred, equivalent to the one above
+[sections:text]
+entries:
+    .text+              # means .text and .text.*
+    .literal+           # means .literal and .literal.*
+</pre></div>
+</div>
+<p id="ldgen-scheme-fragment"><strong>Scheme</strong></p>
+<p>Scheme fragments define what <code class="docutils literal notranslate"><span class="pre">target</span></code> a sections fragment is assigned to.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[scheme:name]
+entries:
+    sections -&gt; target
+    sections -&gt; target
+    ...
+</pre></div>
+</div>
+<p>Example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[scheme:noflash]
+entries:
+    text -&gt; iram0_text          # the entries under the sections fragment named text will go to iram0_text
+    rodata -&gt; dram0_data        # the entries under the sections fragment named rodata will go to dram0_data
+</pre></div>
+</div>
+<p id="ldgen-default-scheme">The <code class="docutils literal notranslate"><span class="pre">default</span></code> scheme</p>
+<p>There exists a special scheme with the name <code class="docutils literal notranslate"><span class="pre">default</span></code>. This scheme is special because catch-all placement rules are generated from its entries. This means that, if one of its entries is <code class="docutils literal notranslate"><span class="pre">text</span> <span class="pre">-&gt;</span> <span class="pre">flash_text</span></code>, the placement rule will be generated for the target <code class="docutils literal notranslate"><span class="pre">flash_text</span></code>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>*(.literal .literal.* .text .text.*)
+</pre></div>
+</div>
+<p>These catch-all rules then effectively serve as fallback rules for those whose mappings were not specified.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">default</span> <span class="pre">scheme</span></code> is defined in <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_system/app.lf">esp_system/app.lf</a>. The <code class="docutils literal notranslate"><span class="pre">noflash</span></code> and <code class="docutils literal notranslate"><span class="pre">rtc</span></code> scheme fragments which are
+built-in schemes referenced in the quick start guide are also defined in this file.</p>
+<p id="ldgen-mapping-fragment"><strong>Mapping</strong></p>
+<p>Mapping fragments define what scheme fragment to use for mappable entities, i.e., object files, function names, variable names, archives.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[mapping:name]
+archive: archive                # output archive file name, as built (i.e., libxxx.a)
+entries:
+    object:symbol (scheme)      # symbol granularity
+    object (scheme)             # object granularity
+    * (scheme)                  # archive granularity
+</pre></div>
+</div>
+<p>There are three levels of placement granularity:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>symbol: The object file name and symbol name are specified. The symbol name can be a function name or a variable name.</p></li>
+<li><p>object: Only the object file name is specified.</p></li>
+<li><p>archive: <code class="docutils literal notranslate"><span class="pre">*</span></code> is specified, which is a short-hand for all the object files under the archive.</p></li>
+</ul>
+</div></blockquote>
+<p>To know what an entry means, let us expand a sample object-granularity placement:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>object (scheme)
+</pre></div>
+</div>
+<p>Then expanding the scheme fragment from its entries definitions, we have:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>object (sections -&gt; target,
+        sections -&gt; target,
+        ...)
+</pre></div>
+</div>
+<p>Expanding the sections fragment with its entries definition:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>object (.section,      # given this object file
+        .section,      # put its sections listed here at this
+        ... -&gt; target, # target
+
+        .section,
+        .section,      # same should be done for these sections
+        ... -&gt; target,
+
+        ...)           # and so on
+</pre></div>
+</div>
+<p>Example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[mapping:map]
+archive: libfreertos.a
+entries:
+    * (noflash)
+</pre></div>
+</div>
+<p>Aside from the entity and scheme, flags can also be specified in an entry. The following flags are supported (note: &lt;&gt; = argument name, [] = optional):</p>
+<ol class="arabic">
+<li><p>ALIGN(&lt;alignment&gt;[, pre, post])</p>
+<blockquote>
+<div><p>Align the placement by the amount specified in <code class="docutils literal notranslate"><span class="pre">alignment</span></code>. Generates</p>
+</div></blockquote>
+</li>
+</ol>
+<ol class="arabic" start="2">
+<li><p>SORT([&lt;sort_by_first&gt;, &lt;sort_by_second&gt;])</p>
+<blockquote>
+<div><p>Emits <code class="docutils literal notranslate"><span class="pre">SORT_BY_NAME</span></code>, <code class="docutils literal notranslate"><span class="pre">SORT_BY_ALIGNMENT</span></code>, <code class="docutils literal notranslate"><span class="pre">SORT_BY_INIT_PRIORITY</span></code> or <code class="docutils literal notranslate"><span class="pre">SORT</span></code> in the input section description.</p>
+<p>Possible values for <code class="docutils literal notranslate"><span class="pre">sort_by_first</span></code> and <code class="docutils literal notranslate"><span class="pre">sort_by_second</span></code> are: <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">alignment</span></code>, <code class="docutils literal notranslate"><span class="pre">init_priority</span></code>.</p>
+<p>If both <code class="docutils literal notranslate"><span class="pre">sort_by_first</span></code> and <code class="docutils literal notranslate"><span class="pre">sort_by_second</span></code> are not specified, the input sections are sorted by name. If both are specified, then the nested sorting follows the same rules discussed in <a class="reference external" href="https://sourceware.org/binutils/docs/ld/Input-Section-Wildcards.html">https://sourceware.org/binutils/docs/ld/Input-Section-Wildcards.html</a>.</p>
+</div></blockquote>
+</li>
+<li><p>KEEP()</p>
+<blockquote>
+<div><p>Prevent the linker from discarding the placement by surrounding the input section description with KEEP command. See <a class="reference external" href="https://sourceware.org/binutils/docs/ld/Input-Section-Keep.html">https://sourceware.org/binutils/docs/ld/Input-Section-Keep.html</a> for more details.</p>
+</div></blockquote>
+</li>
+</ol>
+<p>4.SURROUND(&lt;name&gt;)</p>
+<blockquote>
+<div><p>Generate symbols before and after the placement. The generated symbols follow the naming <code class="docutils literal notranslate"><span class="pre">_&lt;name&gt;_start</span></code> and <code class="docutils literal notranslate"><span class="pre">_&lt;name&gt;_end</span></code>. For example, if <code class="docutils literal notranslate"><span class="pre">name</span></code> == sym1,</p>
+</div></blockquote>
+<p>When adding flags, the specific <code class="docutils literal notranslate"><span class="pre">section</span> <span class="pre">-&gt;</span> <span class="pre">target</span></code> in the scheme needs to be specified. For multiple <code class="docutils literal notranslate"><span class="pre">section</span> <span class="pre">-&gt;</span> <span class="pre">target</span></code>, use a comma as a separator. For example,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Notes:
+# A. semicolon after entity-scheme
+# B. comma before section2 -&gt; target2
+# C. section1 -&gt; target1 and section2 -&gt; target2 should be defined in entries of scheme1
+entity1 (scheme1);
+    section1 -&gt; target1 KEEP() ALIGN(4, pre, post),
+    section2 -&gt; target2 SURROUND(sym) ALIGN(4, post) SORT()
+</pre></div>
+</div>
+<p>Putting it all together, the following mapping fragment, for example,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[mapping:name]
+archive: lib1.a
+entries:
+    obj1 (noflash);
+        rodata -&gt; dram0_data KEEP() SORT() ALIGN(8) SURROUND(my_sym)
+</pre></div>
+</div>
+<p>generates an output on the linker script:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>. = ALIGN(8)
+_my_sym_start = ABSOLUTE(.)
+KEEP(lib1.a:obj1.*( SORT(.rodata) SORT(.rodata.*) ))
+_my_sym_end = ABSOLUTE(.)
+</pre></div>
+</div>
+<p>Note that ALIGN and SURROUND, as mentioned in the flag descriptions, are order sensitive. Therefore, if for the same mapping fragment these two are switched, the following is generated instead:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>_my_sym_start = ABSOLUTE(.)
+. = ALIGN(8)
+KEEP(lib1.a:obj1.*( SORT(.rodata) SORT(.rodata.*) ))
+_my_sym_end = ABSOLUTE(.)
+</pre></div>
+</div>
+</section>
+<section id="on-symbol-granularity-placements">
+<span id="ldgen-symbol-granularity-placements"></span><h4>On Symbol-Granularity Placements<a class="headerlink" href="#on-symbol-granularity-placements" title="Permalink to this heading"></a></h4>
+<p>Symbol granularity placements is possible due to compiler flags <code class="docutils literal notranslate"><span class="pre">-ffunction-sections</span></code> and <code class="docutils literal notranslate"><span class="pre">-ffdata-sections</span></code>. ESP-IDF compiles with these flags by default.
+If the user opts to remove these flags, then the symbol-granularity placements will not work. Furthermore, even with the presence of these flags, there are still other limitations to keep in mind due to the dependence on the compiler's emitted output sections.</p>
+<p>For example, with <code class="docutils literal notranslate"><span class="pre">-ffunction-sections</span></code>, separate sections are emitted for each function; with section names predictably constructed i.e., <code class="docutils literal notranslate"><span class="pre">.text.{func_name}</span></code> and <code class="docutils literal notranslate"><span class="pre">.literal.{func_name}</span></code>. This is not the case for string literals within the function, as they go to pooled or generated section names.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">-fdata-sections</span></code>, for global scope data the compiler predictably emits either <code class="docutils literal notranslate"><span class="pre">.data.{var_name}</span></code>, <code class="docutils literal notranslate"><span class="pre">.rodata.{var_name}</span></code> or <code class="docutils literal notranslate"><span class="pre">.bss.{var_name}</span></code>; and so <code class="docutils literal notranslate"><span class="pre">Type</span> <span class="pre">I</span></code> mapping entry works for these.
+However, this is not the case for static data declared in function scope, as the generated section name is a result of mangling the variable name with some other information.</p>
+</section>
+</section>
+<section id="linker-script-template">
+<span id="ldgen-linker-script-template"></span><h3>Linker Script Template<a class="headerlink" href="#linker-script-template" title="Permalink to this heading"></a></h3>
+<p>The linker script template is the skeleton in which the generated placement rules are put into. It is an otherwise ordinary linker script, with a specific marker syntax that indicates where the generated placement rules are placed.</p>
+<p>To reference the placement rules collected under a <code class="docutils literal notranslate"><span class="pre">target</span></code> token, the following syntax is used:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mapping[target]
+</pre></div>
+</div>
+<p>Example:</p>
+<p>The example below is an excerpt from a possible linker script template. It defines an output section <code class="docutils literal notranslate"><span class="pre">.iram0.text</span></code>, and inside is a marker referencing the target <code class="docutils literal notranslate"><span class="pre">iram0_text</span></code>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.iram0.text :
+{
+    /* Code marked as running out of IRAM */
+    _iram_text_start = ABSOLUTE(.);
+
+    /* Marker referencing iram0_text */
+    mapping[iram0_text]
+
+    _iram_text_end = ABSOLUTE(.);
+} &gt; iram0_0_seg
+</pre></div>
+</div>
+<p>Suppose the generator collected the fragment definitions below:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[sections:text]
+    .text+
+    .literal+
+
+[sections:iram]
+    .iram1+
+
+[scheme:default]
+entries:
+    text -&gt; flash_text
+    iram -&gt; iram0_text
+
+[scheme:noflash]
+entries:
+    text -&gt; iram0_text
+
+[mapping:freertos]
+archive: libfreertos.a
+entries:
+    * (noflash)
+</pre></div>
+</div>
+<p>Then the corresponding excerpt from the generated linker script will be as follows:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="n">iram0</span><span class="p">.</span><span class="n">text</span><span class="w"> </span><span class="o">:</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Code marked as running out of IRAM */</span>
+<span class="w">    </span><span class="n">_iram_text_start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ABSOLUTE</span><span class="p">(.);</span>
+
+<span class="w">    </span><span class="cm">/* Placement rules generated from the processed fragments, placed where the marker was in the template */</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(.</span><span class="n">iram1</span><span class="w"> </span><span class="p">.</span><span class="n">iram1</span><span class="p">.</span><span class="o">*</span><span class="p">)</span>
+<span class="w">    </span><span class="o">*</span><span class="n">libfreertos</span><span class="p">.</span><span class="n">a</span><span class="o">:</span><span class="p">(.</span><span class="n">literal</span><span class="w"> </span><span class="p">.</span><span class="n">text</span><span class="w"> </span><span class="p">.</span><span class="n">literal</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="p">.</span><span class="n">text</span><span class="p">.</span><span class="o">*</span><span class="p">)</span>
+
+<span class="w">    </span><span class="n">_iram_text_end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ABSOLUTE</span><span class="p">(.);</span>
+<span class="p">}</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">iram0_0_seg</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">*libfreertos.a:(.literal</span> <span class="pre">.text</span> <span class="pre">.literal.*</span> <span class="pre">.text.*)</span></code></p>
+<blockquote>
+<div><p>Rule generated from the entry <code class="docutils literal notranslate"><span class="pre">*</span> <span class="pre">(noflash)</span></code> of the <code class="docutils literal notranslate"><span class="pre">freertos</span></code> mapping fragment. All <code class="docutils literal notranslate"><span class="pre">text</span></code> sections of all object files under the archive <code class="docutils literal notranslate"><span class="pre">libfreertos.a</span></code> will be collected under the target <code class="docutils literal notranslate"><span class="pre">iram0_text</span></code> (as per the <code class="docutils literal notranslate"><span class="pre">noflash</span></code> scheme) and placed wherever in the template <code class="docutils literal notranslate"><span class="pre">iram0_text</span></code> is referenced by a marker.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">*(.iram1</span> <span class="pre">.iram1.*)</span></code></p>
+<blockquote>
+<div><p>Rule generated from the default scheme entry <code class="docutils literal notranslate"><span class="pre">iram</span> <span class="pre">-&gt;</span> <span class="pre">iram0_text</span></code>. Since the default scheme specifies an <code class="docutils literal notranslate"><span class="pre">iram</span> <span class="pre">-&gt;</span> <span class="pre">iram0_text</span></code> entry, it too is placed wherever <code class="docutils literal notranslate"><span class="pre">iram0_text</span></code> is referenced by a marker. Since it is a rule generated from the default scheme, it comes first among all other rules collected under the same target name.</p>
+<p>The linker script template currently used is <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_system/ld/esp32/sections.ld.in">esp_system/ld/esp32/sections.ld.in</a>; the generated output script <code class="docutils literal notranslate"><span class="pre">sections.ld</span></code> is put under its build directory.</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Linker Script Generation (api-guides/linker-script-generation)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Linker Script Generation (api-guides/linker-script-generation)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="kconfig/component-configuration-guide.html" class="btn btn-neutral float-left" title="Component Configuration Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="low-power-mode/index.html" class="btn btn-neutral float-right" title="Low Power Modes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

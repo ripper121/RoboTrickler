@@ -129,6 +129,10 @@ void updateScaleProtocolButtonLabel()
 
 void cycleScaleProtocol_event_cb(lv_event_t *e)
 {
+  if (isWebFileUploadActive())
+  {
+    return;
+  }
   strlcpy(config.scaleProtocol, nextScaleProtocol(config.scaleProtocol), sizeof(config.scaleProtocol));
   serialFlush();
   saveConfiguration("/config.txt", config);
@@ -139,6 +143,10 @@ void cycleScaleProtocol_event_cb(lv_event_t *e)
 void toggleWifi_event_cb(lv_event_t *e)
 {
   (void)e;
+  if (isWebFileUploadActive())
+  {
+    return;
+  }
   config.wifiEnabled = !config.wifiEnabled;
   saveConfiguration("/config.txt", config);
   applyWifiEnabled();

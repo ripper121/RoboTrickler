@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architecture - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/esp-ble-mesh/ble-mesh-architecture.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/esp-ble-mesh/ble-mesh-architecture';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="FAQ" href="ble-mesh-faq.html" />
+    <link rel="prev" title="Feature List" href="ble-mesh-feature-list.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="ble-mesh-index.html">ESP-BLE-MESH</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ble-mesh-index.html#getting-started">Getting Started</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ble-mesh-index.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ble-mesh-index.html#demo-videos">Demo Videos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ble-mesh-index.html#faq">FAQ</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="ble-mesh-index.html#related-documents">Related Documents</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ble-mesh-feature-list.html">Feature List</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Architecture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ble-mesh-faq.html">FAQ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ble-mesh-terminology.html">Terminology</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ble-mesh-index.html#bluetooth-sig-documentation">Bluetooth SIG Documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Guides</a></li>
+          <li class="breadcrumb-item"><a href="../ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+          <li class="breadcrumb-item"><a href="ble-mesh-index.html">ESP-BLE-MESH</a></li>
+      <li class="breadcrumb-item active">Architecture</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/esp-ble-mesh/ble-mesh-architecture.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="architecture">
+<h1>Architecture<a class="headerlink" href="#architecture" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-guides/esp-ble-mesh/ble-mesh-architecture.html">[中文]</a></p>
+<p>This document introduces ESP-BLE-MESH architecture overview, ESP-BLE-MESH architecture implementation as well as ESP-BLE-MESH auxiliary routines.</p>
+<ul class="simple">
+<li><p>ESP-BLE-MESH Architecture Overview</p>
+<ul>
+<li><p>Describes the five major parts of ESP-BLE-MESH architecture and the functionality of each part.</p></li>
+</ul>
+</li>
+<li><p>ESP-BLE-MESH Architecture Implementation</p>
+<ul>
+<li><p>Describes the basic functions of ESP-BLE-MESH files, the correspondence between files and ESP-BLE-MESH architecture, and the interface for calling among files.</p></li>
+</ul>
+</li>
+<li><p>ESP-BLE-MESH Auxiliary Routines</p>
+<ul>
+<li><p>Describe the auxiliary routines of ESP-BLE-MESH, such as Mesh network management, Mesh features, etc.</p></li>
+</ul>
+</li>
+</ul>
+<section id="esp-ble-mesh-architecture-overview">
+<h2>1. ESP-BLE-MESH Architecture Overview<a class="headerlink" href="#esp-ble-mesh-architecture-overview" title="Permalink to this heading"></a></h2>
+<p>Currently ESP-BLE-MESH has implemented most functions of Mesh Profile and all the Client Models defined in Mesh Model specification. Those missing functions/models are under development and will be provided soon. ESP-BLE-MESH architecture has been granted the official Bluetooth <a class="reference external" href="https://launchstudio.bluetooth.com/ListingDetails/76255">certification</a>.</p>
+<figure class="align-center" id="id1">
+<img alt="../../_images/esp-ble-mesh-architecture.png" src="../../_images/esp-ble-mesh-architecture.png" />
+<figcaption>
+<p><span class="caption-text">Figure 1.1 ESP-BLE-MESH Architecture Diagram</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>ESP-BLE-MESH architecture includes five key parts:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Protocol</span> <span class="pre">Stack</span></code></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Networking</span></code> is responsible for processing of messages of ESP-BLE-MESH nodes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Provisioning</span></code> is responsible for provisioning flow of ESP-BLE-MESH devices.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Models</span></code> is responsible for the implementation of SIG-defined models.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Network</span> <span class="pre">Management</span></code></p>
+<ul>
+<li><p>Implements several network management procedures, including node removal procedure, IV Index recovery procedure, etc.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Features</span></code></p>
+<ul>
+<li><p>Include several ESP-BLE-MESH features, e.g., Low Power feature, Friend feature, Relay feature, etc.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Bearer</span> <span class="pre">Layer</span></code></p>
+<ul>
+<li><p>Includes <code class="docutils literal notranslate"><span class="pre">Advertising</span> <span class="pre">Bearer</span></code> and <code class="docutils literal notranslate"><span class="pre">GATT</span> <span class="pre">Bearer</span></code>. The bearer layer is crucial to ESP-BLE-MESH protocol stack which is built on Bluetooth Low-Energy technology, because the protocol stack must make use of the bearer layer to transmit data via the BLE advertising channel and connection channel.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Applications</span></code></p>
+<ul>
+<li><p>Based on ESP-BLE-MESH protocol stack and <code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Models</span></code>.</p></li>
+<li><p>By calling API and handling Event, <code class="docutils literal notranslate"><span class="pre">Applications</span></code> interact with <code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Networking</span></code> and <code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Provisioning</span></code> in ESP-BLE-MESH protocol stack, as well as a series of Models provided by <code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Models</span></code>.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="mesh-protocol-stack">
+<h2>1.1 Mesh Protocol Stack<a class="headerlink" href="#mesh-protocol-stack" title="Permalink to this heading"></a></h2>
+<section id="mesh-networking">
+<h3>1.1.1 Mesh Networking<a class="headerlink" href="#mesh-networking" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Networking</span></code> in the protocol stack architecture implements the following functions:</p>
+<ul class="simple">
+<li><p>The communication between nodes in the Mesh network.</p></li>
+<li><p>Encryption and decryption of messages in the Mesh network.</p></li>
+<li><p>Management of Mesh network resources (Network Key, IV Index, etc.).</p></li>
+<li><p>Segmentation and reassembly of Mesh network messages.</p></li>
+<li><p>Model mapping of messages between different models.</p></li>
+<li><p>For more features, please see <a class="reference internal" href="ble-mesh-feature-list.html"><span class="doc">Feature List</span></a>.</p></li>
+</ul>
+<p>The implementation of <code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Networking</span></code> functions is based on hierarchy structure. Functions of each layer are shown in Table 1.1:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Table 1.1  Mesh Networking Architecture Description</span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 21.1%" />
+<col style="width: 78.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Layer</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Access Layer</p></td>
+<td><p>Access Layer not only defines the format of application data, but also defines and controls the encryption and decryption of the data packets conducted by Upper Transport Layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Upper Transport Layer</p></td>
+<td><p>Upper Transport Layer encrypts, decrypts, and authenticates application data to and from the access layer; it also handles special messages called &quot;transport control messages&quot;, including messages related to &quot;friendship&quot; and heartbeat messages.</p></td>
+</tr>
+<tr class="row-even"><td><p>Lower Transport Layer</p></td>
+<td><p>Lower Transport Layer handles segmentation and reassembly of PDU.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Network Layer</p></td>
+<td><p>Network Layer defines the address type and format of the network messages, and implements the relay function of the device.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mesh-provisioning">
+<h3>1.1.2 Mesh Provisioning<a class="headerlink" href="#mesh-provisioning" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Provisioning</span></code> in the protocol stack architecture implements the following functions:</p>
+<ul class="simple">
+<li><p>Provisioning of unprovisioned devices.</p></li>
+<li><p>Allocation of Mesh network resources (unicast address, IV Index, NetKey, etc.).</p></li>
+<li><p>Four authentication methods support during provisioning.</p></li>
+<li><p>For more features, please see <a class="reference internal" href="ble-mesh-feature-list.html"><span class="doc">Feature List</span></a>.</p></li>
+</ul>
+<p>The implementation of <code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Provisioning</span></code> functions is based on hierarchy structure. Functions of each layer are shown in Table 1.2:</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Table 1.2  Mesh Provisioning Architecture Description</span><a class="headerlink" href="#id3" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 21.1%" />
+<col style="width: 78.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Layer</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Provisioning PDUs</p></td>
+<td><p>Provisioning PDUs from different layers are handled using provisioning protocol.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Generic Provisioning PDU/Proxy PDU</p></td>
+<td><p>The Provisioning PDUs are transmitted to an unprovisioned device using a Generic Provisioning layer or Proxy protocol layer.</p></td>
+</tr>
+<tr class="row-even"><td><p>PB-ADV/PB-GATT</p></td>
+<td><p>These layers define how the Provisioning PDUs are transmitted as transactions that can be segmented and reassembled.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Advertising/Provisioning Service</p></td>
+<td><p>The provisioning bearers define how sessions are established such that the transactions from the generic provisioning layer can be delivered to a single device.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mesh-models">
+<h3>1.1.3 Mesh Models<a class="headerlink" href="#mesh-models" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Models</span></code> in the protocol stack architecture implements the following functions:</p>
+<ul class="simple">
+<li><p>Configuration Client/Server Models</p></li>
+<li><p>Health Client/Server Models</p></li>
+<li><p>Generic Client/Server Models</p></li>
+<li><p>Sensor Client/Server Models</p></li>
+<li><p>Time and Scenes Client/Server Models</p></li>
+<li><p>Lighting Client/Server Models</p></li>
+</ul>
+<p>Functions of each layer are shown in Table 1.3:</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Table 1.3  Mesh Models Architecture Description</span><a class="headerlink" href="#id4" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 21.1%" />
+<col style="width: 78.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Layer</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Model Layer</p></td>
+<td><p>Model Layer implements models used to standardize the operation of typical user scenarios, including Generic Client/Server Models, Sensor Client/Server Models, Time and Scenes Client/Server Models, Lighting Client/Server Models and several vendor models.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Foundation Model Layer</p></td>
+<td><p>Foundation Model Layer implements models related to ESP-BLE-MESH configuration, management, self diagnosis, etc.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="mesh-network-management">
+<h2>1.2 Mesh Network Management<a class="headerlink" href="#mesh-network-management" title="Permalink to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Network</span> <span class="pre">Management</span></code> implements the following functions:</p>
+<ul class="simple">
+<li><p>Node removal procedure is used to remove a node from the network.</p></li>
+<li><p>IV Index recovery procedure is used to recover a node's IV Index.</p></li>
+<li><p>IV update procedure is used to update the nodes' IV Index.</p></li>
+<li><p>Key refresh procedure is used to update the nodes' NetKey, AppKey, etc.</p></li>
+<li><p>Network creation procedure is used to create a mesh network.</p></li>
+<li><p>NVS storage is used to store node's networking information.</p></li>
+</ul>
+</section>
+<section id="mesh-features">
+<h2>1.3 Mesh Features<a class="headerlink" href="#mesh-features" title="Permalink to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Features</span></code> includes the following options:</p>
+<ul class="simple">
+<li><p>Low Power feature is used to reduce node's power consumption.</p></li>
+<li><p>Friend feature is used to store messages for Low Power nodes.</p></li>
+<li><p>Relay feature is used to relay/forward Network PDUs received by a node over the advertising bearer.</p></li>
+<li><p>Proxy Server/Client are two node roles in proxy protocol, which enable nodes to send and receive Network PDUs, mesh beacons, proxy configuration messages and Provisioning PDUs over a connection-oriented bearer.</p></li>
+</ul>
+</section>
+<section id="mesh-bearer-layer">
+<h2>1.4 Mesh Bearer Layer<a class="headerlink" href="#mesh-bearer-layer" title="Permalink to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Bearers</span></code> in the protocol stack architecture are responsible for passing of data between ESP-BLE-MESH protocol stack and Bluetooth Low Energy Core.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Bearers</span></code> can be taken as a carrier layer based on Bluetooth Low Energy Core, which implements the function of receiving and transmitting data for the ESP-BLE-MESH protocol stack.</p>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Table 1.3  Mesh Bearers Description</span><a class="headerlink" href="#id5" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 21.1%" />
+<col style="width: 78.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Layer</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GATT Bearer</p></td>
+<td><p>The GATT Bearer uses the Proxy protocol to transmit and receive <code class="docutils literal notranslate"><span class="pre">Proxy</span> <span class="pre">PDUs</span></code> between two devices over a GATT connection.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Advertising Bearer</p></td>
+<td><p>When using the Advertising Bearer, a mesh packet shall be sent in the Advertising Data of a <code class="docutils literal notranslate"><span class="pre">Bluetooth</span> <span class="pre">Low</span> <span class="pre">Energy</span> <span class="pre">advertising</span> <span class="pre">PDU</span></code> using the Mesh Message AD Type.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mesh-applications">
+<h2>1.5 Mesh Applications<a class="headerlink" href="#mesh-applications" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Applications</span></code> in the protocol stack architecture implement the corresponding functions by calling the API provided by the ESP-BLE-MESH protocol stack and processing the Event reported by the protocol stack. There are some common applications, such as gateway, lighting and etc.</p>
+<p>Interaction between application layer (<code class="docutils literal notranslate"><span class="pre">Applications</span></code>) and <code class="docutils literal notranslate"><span class="pre">API/Event</span></code></p>
+<ul>
+<li><p>Application layer calls API</p>
+<ul class="simple">
+<li><p>Call the provisioning-related API for provisioning.</p></li>
+<li><p>Call the model-related API to send messages.</p></li>
+<li><p>Call the device-attributes-related API to get local information about the device.</p></li>
+</ul>
+</li>
+<li><p>Application layer processes Event</p>
+<p>The application layer is designed based on events, which take parameters to the application layer. Events are mainly divided into two categories.</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>The events completed by calling API.</dt><dd><ul>
+<li><p>Such as nodes sending messages.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>The events that the protocol stack actively reports to the application layer.</dt><dd><ul>
+<li><p>The Event that the protocol stack actively reports.</p></li>
+<li><p>The Event that Model actively reports.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The event is reported by the callback function registered by the application layer, and the callback function also contains the corresponding processing of the event.</p></li>
+</ul>
+<p>Interaction between <code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">/</span> <span class="pre">Event</span></code> and ESP-BLE-MESH protocol stack</p>
+<ul class="simple">
+<li><p>API used by user mainly calls functions provided by <code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Networking</span></code>, <code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Provisioning</span></code> and <code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Models</span></code>.</p></li>
+<li><p>The interaction between <code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">/</span> <span class="pre">Event</span></code> and the protocol stack does not operate across the hierarchy of the protocol stack. For example, API does not call functions related to <code class="docutils literal notranslate"><span class="pre">Network</span> <span class="pre">Layer</span></code>.</p></li>
+</ul>
+</section>
+<section id="esp-ble-mesh-architecture-implementation">
+<h2>2. ESP-BLE-MESH Architecture Implementation<a class="headerlink" href="#esp-ble-mesh-architecture-implementation" title="Permalink to this heading"></a></h2>
+<p>The design and implementation of ESP-BLE-MESH architecture is based on layers and modules. In details, Section 2.1 (Mesh Networking Implementation), Section 2.2 (Mesh Provisioning Implementation) and Section 2.3 (Mesh Bearers Implementation) are based on layers, and Section 2.4 (Mesh Models Implementation) is on modules.</p>
+<ul class="simple">
+<li><p><strong>Layer-based Approach</strong>: With Layer-based approach, the architecture is designed according to the layers specified in the Mesh Profile Specification. Each layer has its unique files which include APIs of this layer and etc. The specific design is shown in Figure 2.1.</p></li>
+<li><p><strong>Module-based Approach</strong>: Every file implements an independent function that can be called by other programs.</p></li>
+</ul>
+<figure class="align-center" id="id6">
+<img alt="../../_images/esp-ble-mesh-interface.png" src="../../_images/esp-ble-mesh-interface.png" />
+<figcaption>
+<p><span class="caption-text">Figure 2.1 ESP-BLE-MESH Architecture Implementation Diagram</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The design of ESP-BLE-MESH architecture uses layer-based approach. The sequence of layers which data packets are processed through is fixed, i.e., the processing of packets will form a <code class="docutils literal notranslate"><span class="pre">message</span> <span class="pre">flow</span></code>. Thus, we could see flows of messages from the Protocol Stack Interface Diagram in Figure 2.1.</p>
+</section>
+<section id="mesh-protocol-stack-implementation">
+<h2>2.1 Mesh Protocol Stack Implementation<a class="headerlink" href="#mesh-protocol-stack-implementation" title="Permalink to this heading"></a></h2>
+<section id="mesh-networking-implementation">
+<h3>2.1.1 Mesh Networking Implementation<a class="headerlink" href="#mesh-networking-implementation" title="Permalink to this heading"></a></h3>
+<p>The list of files and the functions implemented in each file in <code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Networking</span></code> are shown in Table 2.1:</p>
+<table class="docutils align-default" id="id7">
+<caption><span class="caption-text">Table 2.1  Mesh Networking File Description
+ :widths: 40 150
+ :header-rows: 1</span><a class="headerlink" href="#id7" title="Permalink to this table"></a></caption>
+<tbody>
+<tr class="row-odd"><td><p>File</p></td>
+<td><p>Functionality</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/access.c">access.c </a></p></td>
+<td><p>ESP-BLE-MESH Access Layer</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/transport.c">transport.c </a></p></td>
+<td><p>ESP-BLE-MESH Lower/Upper Transport Layer</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/net.c">net.c </a></p></td>
+<td><p>ESP-BLE-MESH Network Layer</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/adv.c">adv.c </a></p></td>
+<td><p>A task used to send ESP-BLE-MESH advertising packets, a callback used to handle received advertising packets and APIs used to allocate adv buffers</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mesh-provisioning-implementation">
+<h3>2.1.2 Mesh Provisioning Implementation<a class="headerlink" href="#mesh-provisioning-implementation" title="Permalink to this heading"></a></h3>
+<p>The implementation of Mesh Provisioning is divided into two chunks due to the Node/Provisioner coexistence.</p>
+<p>Specific files that provide implementation of provisioning of Node are shown in Table 2.2:</p>
+<table class="docutils align-default" id="id8">
+<caption><span class="caption-text">Table 2.2  Mesh Provisioning (Node) File Description</span><a class="headerlink" href="#id8" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 21.1%" />
+<col style="width: 78.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Functionality</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/prov_node.c">prov_node.c </a></p></td>
+<td><p>ESP-BLE-MESH Node provisioning (PB-ADV &amp; PB-GATT)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/proxy_server.c">proxy_server.c </a></p></td>
+<td><p>ESP-BLE-MESH Proxy Server related functionalities</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/beacon.c">beacon.c </a></p></td>
+<td><p>APIs used to handle ESP-BLE-MESH Beacons</p></td>
+</tr>
+</tbody>
+</table>
+<p>Specific files that implement functions of Provisioner are shown in Table 2.3:</p>
+<table class="docutils align-default" id="id9">
+<caption><span class="caption-text">Table 2.3  Mesh Provisioning (Provisioner) File Description</span><a class="headerlink" href="#id9" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 21.1%" />
+<col style="width: 78.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Functionality</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/prov_pvnr.c">prov_pvnr.c </a></p></td>
+<td><p>ESP-BLE-MESH Provisioner provisioning (PB-ADV &amp; PB-GATT)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/proxy_client.c">proxy_client.c </a></p></td>
+<td><p>ESP-BLE-MESH Proxy Client related functionalities</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/pvnr_mgmt.c">pvnr_mgmt.c </a></p></td>
+<td><p>ESP-BLE-MESH Provisioner networking related functionalities</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mesh-models-implementation">
+<h3>2.1.3 Mesh Models Implementation<a class="headerlink" href="#mesh-models-implementation" title="Permalink to this heading"></a></h3>
+<p>Mesh Models are used to implement the specific functions of model in nodes. Server model is used to maintain node status. Client model is used to obtain and modify node state.</p>
+<table class="docutils align-default" id="id10">
+<caption><span class="caption-text">Table 2.4  Mesh Models File Description</span><a class="headerlink" href="#id10" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 21.1%" />
+<col style="width: 78.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Functionality</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/cfg_cli.c">cfg_cli.c </a></p></td>
+<td><p>Send Configuration Client messages and receive corresponding response messages</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/cfg_srv.c">cfg_srv.c </a></p></td>
+<td><p>Receive Configuration Client messages and send proper response messages</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/health_cli.c">health_cli.c </a></p></td>
+<td><p>Send Health Client messages and receive corresponding response messages</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/health_srv.c">health_srv.c </a></p></td>
+<td><p>Receive Health Client messages and send proper response messages</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/models/client/client_common.c">client_common.c </a></p></td>
+<td><p>ESP-BLE-MESH model related operations</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/models/client/generic_client.c">generic_client.c </a></p></td>
+<td><p>Send ESP-BLE-MESH Generic Client messages and receive corresponding response messages</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/models/client/lighting_client.c">lighting_client.c </a></p></td>
+<td><p>Send ESP-BLE-MESH Lighting Client messages and receive corresponding response messages</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/models/client/sensor_client.c">sensor_client.c </a></p></td>
+<td><p>Send ESP-BLE-MESH Sensor Client messages and receive corresponding response messages</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/models/client/time_scene_client.c">time_scene_client.c </a></p></td>
+<td><p>Send ESP-BLE-MESH Time Scene Client messages and receive corresponding response messages</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/models/server/generic_server.c">generic_server.c </a></p></td>
+<td><p>Receive ESP-BLE-MESH Generic Client messages and send corresponding response messages</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/models/server/lighting_server.c">lighting_server.c </a></p></td>
+<td><p>Receive ESP-BLE-MESH Lighting Client messages and send corresponding response messages</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/models/server/sensor_server.c">sensor_server.c </a></p></td>
+<td><p>Receive ESP-BLE-MESH Sensor Client messages and send corresponding response messages</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/models/server/time_scene_server.c">time_scene_server.c </a></p></td>
+<td><p>Receive ESP-BLE-MESH Time Scene Client messages and send corresponding response messages</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mesh-bearers-implementation">
+<h3>2.2 Mesh Bearers Implementation<a class="headerlink" href="#mesh-bearers-implementation" title="Permalink to this heading"></a></h3>
+<p>Portability is fully considered in the implementation of Mesh Bearers. When the ESP-BLE-MESH protocol stack is being ported to other platforms, users only need to modify <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/bluedroid_host/adapter.c">adapter.c </a> (example of <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/nimble_host/adapter.c">NimBLE version </a>).</p>
+<table class="docutils align-default" id="id11">
+<caption><span class="caption-text">Table 2.5  Mesh Bearers File Description</span><a class="headerlink" href="#id11" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 21.1%" />
+<col style="width: 78.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Functionality</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/bluedroid_host/adapter.c">adapter.c </a></p></td>
+<td><p>ESP-BLE-MESH Bearer Layer adapter，This file provides the interfaces used to receive and send ESP-BLE-MESH ADV &amp; GATT related packets.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/bluedroid_host/adapter.c">adapter.c </a> is the implementation of <code class="docutils literal notranslate"><span class="pre">Advertising</span> <span class="pre">Bearer</span></code> and <code class="docutils literal notranslate"><span class="pre">GATT</span> <span class="pre">Bearer</span></code> in Mesh Networking framework.</p>
+</div>
+</section>
+<section id="mesh-applications-implementation">
+<h3>2.3 Mesh Applications Implementation<a class="headerlink" href="#mesh-applications-implementation" title="Permalink to this heading"></a></h3>
+<p>We have provided a series of application examples for customer development, and users can develop products based on <a class="reference internal" href="ble-mesh-index.html#esp-ble-mesh-examples"><span class="std std-ref">Examples</span></a>.</p>
+</section>
+</section>
+<section id="auxiliary-routine">
+<h2>3. Auxiliary Routine<a class="headerlink" href="#auxiliary-routine" title="Permalink to this heading"></a></h2>
+<p>Auxiliary routine refers to optional functions in the ESP-BLE-MESH protocol stack. The design of the auxiliary routine generally implement the truncation of code through <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-ble-mesh"><span class="std std-ref">CONFIG_BLE_MESH</span></a>.</p>
+<section id="features">
+<h3>3.1 Features<a class="headerlink" href="#features" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Low Power</p></li>
+<li><p>Friend</p></li>
+<li><p>Relay</p></li>
+<li><p>Proxy Client/Server</p></li>
+</ul>
+</section>
+<section id="network-management">
+<h3>3.2 Network Management<a class="headerlink" href="#network-management" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Node Removal procedure</p></li>
+<li><p>IV Index Recovery procedure</p></li>
+<li><p>IV Update procedure</p></li>
+<li><p>Key Refresh procedure</p></li>
+<li><p>Network Creation procedure</p></li>
+<li><p>NVS Storage</p></li>
+</ul>
+</section>
+<section id="auxiliary-routine-implementation">
+<h3>3.3 Auxiliary Routine Implementation<a class="headerlink" href="#auxiliary-routine-implementation" title="Permalink to this heading"></a></h3>
+<p>When adopting the design of independent module, the two main factors should be considered:</p>
+<ul class="simple">
+<li><p>The module can not be implemented hierarchically, and it can be completely independent, which means it does not rely on the implementation of other modules.</p></li>
+<li><p>The functions in the module will be used repeatedly, so it is reasonable to design it into a module. Independent module is shown in Table 3.1:</p></li>
+</ul>
+<table class="docutils align-default" id="id12">
+<caption><span class="caption-text">Table 3.1 Module File Description</span><a class="headerlink" href="#id12" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 21.1%" />
+<col style="width: 78.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Functionality</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/lpn.c">lpn.c </a></p></td>
+<td><p>ESP-BLE-MESH Low Power functionality</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/friend.c">friend.c </a></p></td>
+<td><p>ESP-BLE-MESH Friend functionality</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/net.c">net.c </a></p></td>
+<td><p>ESP-BLE-MESH Relay feature, network creation, IV Update procedure, IV Index recovery procedure, Key Refresh procedure related functionalities</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/proxy_server.c">proxy_server.c </a></p></td>
+<td><p>ESP-BLE-MESH Proxy Server related functionalities</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/proxy_client.c">proxy_client.c </a></p></td>
+<td><p>ESP-BLE-MESH Proxy Client related functionalities</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/storage/settings.c">settings.c </a></p></td>
+<td><p>ESP-BLE-MESH NVS storage functionality</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bt/esp_ble_mesh/core/main.c">main.c </a></p></td>
+<td><p>ESP-BLE-MESH stack initialize, stack enable, node removal related functionalities</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Architecture (api-guides/esp-ble-mesh/ble-mesh-architecture)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Architecture (api-guides/esp-ble-mesh/ble-mesh-architecture)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ble-mesh-feature-list.html" class="btn btn-neutral float-left" title="Feature List" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ble-mesh-faq.html" class="btn btn-neutral float-right" title="FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

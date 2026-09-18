@@ -141,6 +141,7 @@ bool activeFsIsSd = false;
 bool sdMounted = false;
 bool littleFsMounted = false;
 SPIClass *sdSpi = NULL;
+SemaphoreHandle_t filesystemMutex = NULL;
 #define ACTIVE_FS (*activeFs)
 
 enum FilesystemSyncDirection
@@ -204,6 +205,7 @@ enum TricklerState
   TRICKLER_CALIBRATION_PROMPT
 };
 TricklerState tricklerState = TRICKLER_IDLE;
+portMUX_TYPE tricklerStateMux = portMUX_INITIALIZER_UNLOCKED;
 bool firstProfileMovePending = true;
 int sessionCount = 0;
 bool restartNow = false;
@@ -247,7 +249,7 @@ void setup()
 
 static void handleTricklerState(uint32_t &readWeightTime)
 {
-  switch (tricklerState)
+  switch (getTricklerState())
   {
     case TRICKLER_IDLE:
     case TRICKLER_CALIBRATION_PROMPT:

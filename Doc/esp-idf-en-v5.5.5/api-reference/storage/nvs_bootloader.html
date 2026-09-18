@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NVS Bootloader - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/storage/nvs_bootloader.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/storage/nvs_bootloader';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="NVS Encryption" href="nvs_encryption.html" />
+    <link rel="prev" title="Non-Volatile Storage Library" href="nvs_flash.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Storage API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="fatfs.html">FAT Filesystem Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fatfsgen.html">Generating and Parsing FATFS on Host</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mass_mfg.html">Manufacturing Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_flash.html">Non-Volatile Storage Library</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">NVS Bootloader</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-example">Application Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_encryption.html">NVS Encryption</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_partition_gen.html">NVS Partition Generator Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_partition_parse.html">NVS Partition Parser Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdmmc.html">SD/SDIO/MMC Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="partition.html">Partitions API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spiffs.html">SPIFFS Filesystem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vfs.html">Virtual Filesystem Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wear-levelling.html">Wear Levelling API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="storage-security.html">Storage Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Storage API</a></li>
+      <li class="breadcrumb-item active">NVS Bootloader</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/storage/nvs_bootloader.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nvs-bootloader">
+<h1>NVS Bootloader<a class="headerlink" href="#nvs-bootloader" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/storage/nvs_bootloader.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>This guide provides an overview of the NVS (Non-Volatile Storage) functionality available for custom bootloader code, along with its limitations.</p>
+<p>Due to the constraints of the bootloader runtime environment, custom bootloader code cannot use the full NVS API directly. Instead, NVS provides a simplified API that offers read-only access to NVS data.</p>
+<p>The API supports reading all NVS datatypes except for blobs. One call to the API can read multiple NVS entries at once. Values can be read from different namespaces within the same NVS partition. The array of input-output structures serves as placeholders for the data read from NVS, with a fixed size of up to 8 bytes.</p>
+<p>To read string entries, the API requires the caller to provide a buffer and its size, due to the heap memory allocation restriction in the bootloader.</p>
+<section id="reading-encrypted-nvs-partitions">
+<h3>Reading encrypted NVS partitions<a class="headerlink" href="#reading-encrypted-nvs-partitions" title="Permalink to this heading"></a></h3>
+<p>The API also supports decrypting NVS data, if the NVS partition is encrypted using one of the schemes as mentioned in the <a class="reference internal" href="nvs_encryption.html"><span class="doc">NVS Encryption</span></a> guide.</p>
+<p>Applications are expected to follow the steps below in order to enable decryption of a NVS partition using the <a class="reference internal" href="#_CPPv419nvs_bootloader_readPKcK6size_tA_26nvs_bootloader_read_list_t" title="nvs_bootloader_read"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_bootloader_read()</span></code></a> API:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Populate the NVS security configuration structure <a class="reference internal" href="nvs_flash.html#_CPPv413nvs_sec_cfg_t" title="nvs_sec_cfg_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">nvs_sec_cfg_t</span></code></a> according to the selected NVS encryption scheme (Please refer to <a class="reference internal" href="nvs_encryption.html"><span class="doc">NVS Encryption</span></a> for more details).</p></li>
+<li><p>Read NVS security configuration set by the specified security scheme using the <a class="reference internal" href="#_CPPv432nvs_bootloader_read_security_cfgP16nvs_sec_scheme_tP13nvs_sec_cfg_t" title="nvs_bootloader_read_security_cfg"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_bootloader_read_security_cfg()</span></code></a> API.</p></li>
+<li><p>Initialise the NVS flash partition with the above read security configuration using the <a class="reference internal" href="#_CPPv426nvs_bootloader_secure_initPK13nvs_sec_cfg_t" title="nvs_bootloader_secure_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_bootloader_secure_init()</span></code></a> API.</p></li>
+<li><p>Perform NVS read operations using the <a class="reference internal" href="#_CPPv419nvs_bootloader_readPKcK6size_tA_26nvs_bootloader_read_list_t" title="nvs_bootloader_read"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_bootloader_read()</span></code></a> API.</p></li>
+<li><p>Deinitialise and clear the security configuration of the NVS flash partition using the <a class="reference internal" href="#_CPPv428nvs_bootloader_secure_deinitv" title="nvs_bootloader_secure_deinit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_bootloader_secure_deinit()</span></code></a> API.</p></li>
+</ol>
+</div></blockquote>
+</section>
+</section>
+<section id="application-example">
+<h2>Application Example<a class="headerlink" href="#application-example" title="Permalink to this heading"></a></h2>
+<p>You can find code examples in <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/nvs/nvs_bootloader">storage/nvs/nvs_bootloader</a> (in the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/nvs">storage/nvs</a> directory of ESP-IDF examples).</p>
+<p>This section demonstrates how to prepare data in the input-output structure for various data types, namespaces, and keys. It includes an example of reading string data from NVS.</p>
+<p>The example also shows how to check if a read operation was successful, or if there were inconsistencies in the data or if certain values were not found in NVS. The example prints the values (or error codes) returned by the API to the console.</p>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/nvs_flash/include/nvs_bootloader.h">components/nvs_flash/include/nvs_bootloader.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;nvs_bootloader.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">nvs_flash</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">nvs_flash</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES nvs_flash
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES nvs_flash
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419nvs_bootloader_readPKcK6size_tA_26nvs_bootloader_read_list_t">
+<span id="_CPPv319nvs_bootloader_readPKcK6size_tA_26nvs_bootloader_read_list_t"></span><span id="_CPPv219nvs_bootloader_readPKcK6size_tA_26nvs_bootloader_read_list_t"></span><span id="nvs_bootloader_read__cCP.sC.nvs_bootloader_read_list_tA"></span><span class="target" id="nvs__bootloader_8h_1a46d4dc1eca91364a1b0100e419747859"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nvs_bootloader_read</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">partition_name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">read_list_count</span></span>, <a class="reference internal" href="#_CPPv426nvs_bootloader_read_list_t" title="nvs_bootloader_read_list_t"><span class="n"><span class="pre">nvs_bootloader_read_list_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">read_list</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419nvs_bootloader_readPKcK6size_tA_26nvs_bootloader_read_list_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Reads data specified from the specified NVS partition. </p>
+<p>This function reads data from the NVS partition specified by <code class="docutils literal notranslate"><span class="pre">partition_name</span></code>. Multiple NVS entries can be read in a single call. The list of entries to read is specified in the <code class="docutils literal notranslate"><span class="pre">read_list</span></code> array. Function indicates overall success or failure by its return value. In case it is ESP_OK or ESP_ERR_INVALID_ARG, result of validation / reading of individual entry is returned in the <code class="docutils literal notranslate"><span class="pre">result_code</span></code> member of each element of the <code class="docutils literal notranslate"><span class="pre">read_list</span></code> array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>partition_name</strong> -- The name of the NVS partition to read from. </p></li>
+<li><p><strong>read_list_count</strong> -- The number of elements in the <code class="docutils literal notranslate"><span class="pre">read_list</span></code> array. </p></li>
+<li><p><strong>read_list</strong> -- An array of <code class="docutils literal notranslate"><a class="reference internal" href="#structnvs__bootloader__read__list__t"><span class="std std-ref"><span class="pre">nvs_bootloader_read_list_t</span></span></a></code> structures specifying the keys and buffers for reading data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The return value of the function in this file can be one of the following:<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_OK</span></code>: The function successfully checked all input parameters and executed successfully. The individual <code class="docutils literal notranslate"><span class="pre">result_code</span></code> in <code class="docutils literal notranslate"><span class="pre">read_list</span></code> indicates the result of the lookup for a particular requested key.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_INVALID_ARG</span></code>: The validity of all <code class="docutils literal notranslate"><span class="pre">read_list</span></code> input parameters was checked and failed for at least one of the parameters. The individual <code class="docutils literal notranslate"><span class="pre">result_code</span></code> in <code class="docutils literal notranslate"><span class="pre">read_list</span></code> provides the detailed reason. This error code is also returned when read_list is null or read_list_count is 0.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_NVS_INVALID_NAME</span></code>: The partition name specified is too long or is null.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_NVS_PART_NOT_FOUND</span></code>: The partition was not found in the partition table.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_NVS_CORRUPT_KEY_PART</span></code>: Encryption-related problems.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_NVS_WRONG_ENCRYPTION</span></code>: Encryption-related problems.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_INVALID_STATE</span></code>: NVS partition or pages related errors - wrong size of partition, header inconsistent / entries inconsistencies, multiple active pages, page in state INVALID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_NO_MEM</span></code>: Cannot allocate memory required to perform the function.</p></li>
+<li><p>Technical errors in underlying storage. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426nvs_bootloader_secure_initPK13nvs_sec_cfg_t">
+<span id="_CPPv326nvs_bootloader_secure_initPK13nvs_sec_cfg_t"></span><span id="_CPPv226nvs_bootloader_secure_initPK13nvs_sec_cfg_t"></span><span id="nvs_bootloader_secure_init__nvs_sec_cfg_tCP"></span><span class="target" id="nvs__bootloader_8h_1a221d1c861d62f3fcbb25b92f59601850"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nvs_bootloader_secure_init</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="nvs_flash.html#_CPPv413nvs_sec_cfg_t" title="nvs_sec_cfg_t"><span class="n"><span class="pre">nvs_sec_cfg_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">sec_cfg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426nvs_bootloader_secure_initPK13nvs_sec_cfg_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Initialize internal NVS security context, thus, enabling the NVS bootloader read API to decrypt encrypted NVS partitions. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Once <code class="docutils literal notranslate"><a class="reference internal" href="#nvs__bootloader_8h_1a221d1c861d62f3fcbb25b92f59601850"><span class="std std-ref"><span class="pre">nvs_bootloader_secure_init()</span></span></a></code> is performed, <code class="docutils literal notranslate"><a class="reference internal" href="#nvs__bootloader_8h_1a46d4dc1eca91364a1b0100e419747859"><span class="std std-ref"><span class="pre">nvs_bootloader_read()</span></span></a></code> can correctly read only those NVS partitions that are encrypted using the given <code class="docutils literal notranslate"><a class="reference internal" href="nvs_flash.html#structnvs__sec__cfg__t"><span class="std std-ref"><span class="pre">nvs_sec_cfg_t</span></span></a></code> security config, until <code class="docutils literal notranslate"><a class="reference internal" href="#nvs__bootloader_8h_1ad8b8c30c76becd83b240ce4102126efb"><span class="std std-ref"><span class="pre">nvs_bootloader_secure_deinit()</span></span></a></code> clears the internal NVS security context.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sec_cfg</strong> -- NVS security key that would be used for decrypting the NVS partition </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK if security initialization is successful </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428nvs_bootloader_secure_deinitv">
+<span id="_CPPv328nvs_bootloader_secure_deinitv"></span><span id="_CPPv228nvs_bootloader_secure_deinitv"></span><span id="nvs_bootloader_secure_deinit__void"></span><span class="target" id="nvs__bootloader_8h_1ad8b8c30c76becd83b240ce4102126efb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nvs_bootloader_secure_deinit</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428nvs_bootloader_secure_deinitv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Clear the internal NVS security context. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv432nvs_bootloader_read_security_cfgP16nvs_sec_scheme_tP13nvs_sec_cfg_t">
+<span id="_CPPv332nvs_bootloader_read_security_cfgP16nvs_sec_scheme_tP13nvs_sec_cfg_t"></span><span id="_CPPv232nvs_bootloader_read_security_cfgP16nvs_sec_scheme_tP13nvs_sec_cfg_t"></span><span id="nvs_bootloader_read_security_cfg__nvs_sec_scheme_tP.nvs_sec_cfg_tP"></span><span class="target" id="nvs__bootloader_8h_1ac8491fd0847eb4033d44263aa5aca4c9"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nvs_bootloader_read_security_cfg</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="nvs_flash.html#_CPPv416nvs_sec_scheme_t" title="nvs_sec_scheme_t"><span class="n"><span class="pre">nvs_sec_scheme_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">scheme_cfg</span></span>, <a class="reference internal" href="nvs_flash.html#_CPPv413nvs_sec_cfg_t" title="nvs_sec_cfg_t"><span class="n"><span class="pre">nvs_sec_cfg_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">cfg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv432nvs_bootloader_read_security_cfgP16nvs_sec_scheme_tP13nvs_sec_cfg_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Reads NVS bootloader security configuration set by the specified security scheme. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scheme_cfg</strong> -- <strong>[in]</strong> Security scheme specific configuration</p></li>
+<li><p><strong>cfg</strong> -- <strong>[out]</strong> Security configuration (encryption keys)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK, if cfg was read successfully;</p></li>
+<li><p>ESP_ERR_INVALID_ARG, if scheme_cfg or cfg is NULL;</p></li>
+<li><p>ESP_FAIL, if the key reading process fails </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="unions">
+<h3>Unions<a class="headerlink" href="#unions" title="Permalink to this heading"></a></h3>
+<dl class="cpp union">
+<dt class="sig sig-object cpp" id="_CPPv434nvs_bootloader_value_placeholder_t">
+<span id="_CPPv334nvs_bootloader_value_placeholder_t"></span><span id="_CPPv234nvs_bootloader_value_placeholder_t"></span><span class="target" id="unionnvs__bootloader__value__placeholder__t"></span><span class="k"><span class="pre">union</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nvs_bootloader_value_placeholder_t</span></span></span><a class="headerlink" href="#_CPPv434nvs_bootloader_value_placeholder_t" title="Permalink to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;nvs_bootloader.h&gt;</em></div>
+<p>Union of value placeholders for all nvs_type_t supported by bootloader code. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N34nvs_bootloader_value_placeholder_t6u8_valE">
+<span id="_CPPv3N34nvs_bootloader_value_placeholder_t6u8_valE"></span><span id="_CPPv2N34nvs_bootloader_value_placeholder_t6u8_valE"></span><span id="nvs_bootloader_value_placeholder_t::u8_val__uint8_t"></span><span class="target" id="unionnvs__bootloader__value__placeholder__t_1ad7824f75ff562beed29500c9c5ef1e21"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u8_val</span></span></span><a class="headerlink" href="#_CPPv4N34nvs_bootloader_value_placeholder_t6u8_valE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Placeholder for unsigned 8 bit integer variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N34nvs_bootloader_value_placeholder_t6i8_valE">
+<span id="_CPPv3N34nvs_bootloader_value_placeholder_t6i8_valE"></span><span id="_CPPv2N34nvs_bootloader_value_placeholder_t6i8_valE"></span><span id="nvs_bootloader_value_placeholder_t::i8_val__int8_t"></span><span class="target" id="unionnvs__bootloader__value__placeholder__t_1a5dc95e19080f899a7163e01354bb26fa"></span><span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i8_val</span></span></span><a class="headerlink" href="#_CPPv4N34nvs_bootloader_value_placeholder_t6i8_valE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Placeholder for signed 8 bit integer variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N34nvs_bootloader_value_placeholder_t7u16_valE">
+<span id="_CPPv3N34nvs_bootloader_value_placeholder_t7u16_valE"></span><span id="_CPPv2N34nvs_bootloader_value_placeholder_t7u16_valE"></span><span id="nvs_bootloader_value_placeholder_t::u16_val__uint16_t"></span><span class="target" id="unionnvs__bootloader__value__placeholder__t_1ad98f977fc539f979d8b99147f78198e1"></span><span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u16_val</span></span></span><a class="headerlink" href="#_CPPv4N34nvs_bootloader_value_placeholder_t7u16_valE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Placeholder for unsigned 16 bit integer variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N34nvs_bootloader_value_placeholder_t7i16_valE">
+<span id="_CPPv3N34nvs_bootloader_value_placeholder_t7i16_valE"></span><span id="_CPPv2N34nvs_bootloader_value_placeholder_t7i16_valE"></span><span id="nvs_bootloader_value_placeholder_t::i16_val__int16_t"></span><span class="target" id="unionnvs__bootloader__value__placeholder__t_1aee7f520d955215c74696b39a239e191a"></span><span class="n"><span class="pre">int16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i16_val</span></span></span><a class="headerlink" href="#_CPPv4N34nvs_bootloader_value_placeholder_t7i16_valE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Placeholder for signed 16 bit integer variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N34nvs_bootloader_value_placeholder_t7u32_valE">
+<span id="_CPPv3N34nvs_bootloader_value_placeholder_t7u32_valE"></span><span id="_CPPv2N34nvs_bootloader_value_placeholder_t7u32_valE"></span><span id="nvs_bootloader_value_placeholder_t::u32_val__uint32_t"></span><span class="target" id="unionnvs__bootloader__value__placeholder__t_1a87202e815af0d36c73b84516a5c31c99"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u32_val</span></span></span><a class="headerlink" href="#_CPPv4N34nvs_bootloader_value_placeholder_t7u32_valE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Placeholder for unsigned 32 bit integer variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N34nvs_bootloader_value_placeholder_t7i32_valE">
+<span id="_CPPv3N34nvs_bootloader_value_placeholder_t7i32_valE"></span><span id="_CPPv2N34nvs_bootloader_value_placeholder_t7i32_valE"></span><span id="nvs_bootloader_value_placeholder_t::i32_val__int32_t"></span><span class="target" id="unionnvs__bootloader__value__placeholder__t_1a4fa418ca7c793df1ab574db14e6e946c"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i32_val</span></span></span><a class="headerlink" href="#_CPPv4N34nvs_bootloader_value_placeholder_t7i32_valE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Placeholder for signed 32 bit integer variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N34nvs_bootloader_value_placeholder_t7u64_valE">
+<span id="_CPPv3N34nvs_bootloader_value_placeholder_t7u64_valE"></span><span id="_CPPv2N34nvs_bootloader_value_placeholder_t7u64_valE"></span><span id="nvs_bootloader_value_placeholder_t::u64_val__uint64_t"></span><span class="target" id="unionnvs__bootloader__value__placeholder__t_1ae52aea65da860d3767b9824c48c88a9f"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u64_val</span></span></span><a class="headerlink" href="#_CPPv4N34nvs_bootloader_value_placeholder_t7u64_valE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Placeholder for unsigned 64 bit integer variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N34nvs_bootloader_value_placeholder_t7i64_valE">
+<span id="_CPPv3N34nvs_bootloader_value_placeholder_t7i64_valE"></span><span id="_CPPv2N34nvs_bootloader_value_placeholder_t7i64_valE"></span><span id="nvs_bootloader_value_placeholder_t::i64_val__int64_t"></span><span class="target" id="unionnvs__bootloader__value__placeholder__t_1a3d441cb0cd95a0b922ba32ec368f2ac1"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i64_val</span></span></span><a class="headerlink" href="#_CPPv4N34nvs_bootloader_value_placeholder_t7i64_valE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Placeholder for signed 64 bit integer variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N34nvs_bootloader_value_placeholder_t7str_valE">
+<span id="_CPPv3N34nvs_bootloader_value_placeholder_t7str_valE"></span><span id="_CPPv2N34nvs_bootloader_value_placeholder_t7str_valE"></span><span id="nvs_bootloader_value_placeholder_t::str_val__nvs_bootloader_str_value_placeholder_t"></span><span class="target" id="unionnvs__bootloader__value__placeholder__t_1affc3d3f79c0d9e9d47df33d2a544a3af"></span><a class="reference internal" href="#_CPPv438nvs_bootloader_str_value_placeholder_t" title="nvs_bootloader_str_value_placeholder_t"><span class="n"><span class="pre">nvs_bootloader_str_value_placeholder_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">str_val</span></span></span><a class="headerlink" href="#_CPPv4N34nvs_bootloader_value_placeholder_t7str_valE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Placeholder for string buffer information </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv438nvs_bootloader_str_value_placeholder_t">
+<span id="_CPPv338nvs_bootloader_str_value_placeholder_t"></span><span id="_CPPv238nvs_bootloader_str_value_placeholder_t"></span><span id="nvs_bootloader_str_value_placeholder_t"></span><span class="target" id="structnvs__bootloader__str__value__placeholder__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nvs_bootloader_str_value_placeholder_t</span></span></span><a class="headerlink" href="#_CPPv438nvs_bootloader_str_value_placeholder_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Placeholders for buffer pointer and length of string type. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N38nvs_bootloader_str_value_placeholder_t8buff_ptrE">
+<span id="_CPPv3N38nvs_bootloader_str_value_placeholder_t8buff_ptrE"></span><span id="_CPPv2N38nvs_bootloader_str_value_placeholder_t8buff_ptrE"></span><span id="nvs_bootloader_str_value_placeholder_t::buff_ptr__cP"></span><span class="target" id="structnvs__bootloader__str__value__placeholder__t_1a79bd1fcac7e53ab5557eda7539915168"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">buff_ptr</span></span></span><a class="headerlink" href="#_CPPv4N38nvs_bootloader_str_value_placeholder_t8buff_ptrE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Pointer to the buffer where string and terminating zero character will be read </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N38nvs_bootloader_str_value_placeholder_t8buff_lenE">
+<span id="_CPPv3N38nvs_bootloader_str_value_placeholder_t8buff_lenE"></span><span id="_CPPv2N38nvs_bootloader_str_value_placeholder_t8buff_lenE"></span><span id="nvs_bootloader_str_value_placeholder_t::buff_len__s"></span><span class="target" id="structnvs__bootloader__str__value__placeholder__t_1aafb4a41d01119b4c3c50b8d1f9b324d0"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">buff_len</span></span></span><a class="headerlink" href="#_CPPv4N38nvs_bootloader_str_value_placeholder_t8buff_lenE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Buffer length in bytes </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv426nvs_bootloader_read_list_t">
+<span id="_CPPv326nvs_bootloader_read_list_t"></span><span id="_CPPv226nvs_bootloader_read_list_t"></span><span id="nvs_bootloader_read_list_t"></span><span class="target" id="structnvs__bootloader__read__list__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nvs_bootloader_read_list_t</span></span></span><a class="headerlink" href="#_CPPv426nvs_bootloader_read_list_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Structure representing one NVS bootloader entry. </p>
+<p>This structure serves as read operation input parameters and result value and status placeholder. Before calling the <code class="docutils literal notranslate"><span class="pre">nvs_bootloader_read</span></code> function, populate the namespace_name, key_name and value_type members. If string value has to be read, provide also buffer and its length in the <code class="docutils literal notranslate"><span class="pre">value.str_val</span></code> member.</p>
+<p>The result_code member will be populated by the function with the result of the read operation. There are 2 possible situations and interpretations of the result_code: If the return value of the <code class="docutils literal notranslate"><span class="pre">nvs_bootloader_read</span></code> was ESP_OK, the result_code will be one of the following:<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_OK</span></code>: Entry found, value member contains the data. This is the only case when the value member is populated.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_NVS_TYPE_MISMATCH</span></code>: Entry was found, but requested datatype doesn't match datatype found in NVS</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_NVS_NOT_FOUND</span></code>: Data was not found.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_INVALID_SIZE</span></code>: the value found for string is longer than the space provided in placeholder (str_val.buff_len) If the return value of the function was ESP_ERR_INVALID_ARG, the result_code will be one of the following:</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_NVS_NOT_FOUND</span></code>: Check of this parameters was successful.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_NVS_INVALID_NAME</span></code>: namespace_name is NULL or too long</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_NVS_KEY_TOO_LONG</span></code>: key_name NULL or too long</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_INVALID_SIZE</span></code>: the size of the buffer provided for NVS_TYPE_STR in placeholder (str_val.buff_len) is zero or exceeds maximum value NVS_CONST_STR_LEN_MAX_SIZE</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ESP_ERR_INVALID_ARG</span></code>: Invalid datatype requested </p></li>
+</ul>
+</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26nvs_bootloader_read_list_t14namespace_nameE">
+<span id="_CPPv3N26nvs_bootloader_read_list_t14namespace_nameE"></span><span id="_CPPv2N26nvs_bootloader_read_list_t14namespace_nameE"></span><span id="nvs_bootloader_read_list_t::namespace_name__cCP"></span><span class="target" id="structnvs__bootloader__read__list__t_1af4ec9167edcf1f1f1f75dff112351f62"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">namespace_name</span></span></span><a class="headerlink" href="#_CPPv4N26nvs_bootloader_read_list_t14namespace_nameE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Namespace of the entry </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26nvs_bootloader_read_list_t8key_nameE">
+<span id="_CPPv3N26nvs_bootloader_read_list_t8key_nameE"></span><span id="_CPPv2N26nvs_bootloader_read_list_t8key_nameE"></span><span id="nvs_bootloader_read_list_t::key_name__cCP"></span><span class="target" id="structnvs__bootloader__read__list__t_1af7f857e88be64a6bfed8549a6ebe75b6"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">key_name</span></span></span><a class="headerlink" href="#_CPPv4N26nvs_bootloader_read_list_t8key_nameE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Key of the entry </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26nvs_bootloader_read_list_t10value_typeE">
+<span id="_CPPv3N26nvs_bootloader_read_list_t10value_typeE"></span><span id="_CPPv2N26nvs_bootloader_read_list_t10value_typeE"></span><span id="nvs_bootloader_read_list_t::value_type__nvs_type_t"></span><span class="target" id="structnvs__bootloader__read__list__t_1ae7b1aae80016596d433f447fce2b8e27"></span><a class="reference internal" href="nvs_flash.html#_CPPv410nvs_type_t" title="nvs_type_t"><span class="n"><span class="pre">nvs_type_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">value_type</span></span></span><a class="headerlink" href="#_CPPv4N26nvs_bootloader_read_list_t10value_typeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Expected datatype to be read, can be any of NVS_TYPE_U*, NVS_TYPE_I* or NVS_TYPE_STR </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26nvs_bootloader_read_list_t11result_codeE">
+<span id="_CPPv3N26nvs_bootloader_read_list_t11result_codeE"></span><span id="_CPPv2N26nvs_bootloader_read_list_t11result_codeE"></span><span id="nvs_bootloader_read_list_t::result_code__esp_err_t"></span><span class="target" id="structnvs__bootloader__read__list__t_1a935c4f5c5cf894c6cdfdbb3e2b5b5f58"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">result_code</span></span></span><a class="headerlink" href="#_CPPv4N26nvs_bootloader_read_list_t11result_codeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Result code of this entry. Explanation is in general description of the struct <a class="reference internal" href="#structnvs__bootloader__read__list__t"><span class="std std-ref">nvs_bootloader_read_list_t</span></a></p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26nvs_bootloader_read_list_t5valueE">
+<span id="_CPPv3N26nvs_bootloader_read_list_t5valueE"></span><span id="_CPPv2N26nvs_bootloader_read_list_t5valueE"></span><span id="nvs_bootloader_read_list_t::value__nvs_bootloader_value_placeholder_t"></span><span class="target" id="structnvs__bootloader__read__list__t_1a35db981ff6280a33993bc1ab581153e8"></span><a class="reference internal" href="#_CPPv434nvs_bootloader_value_placeholder_t" title="nvs_bootloader_value_placeholder_t"><span class="n"><span class="pre">nvs_bootloader_value_placeholder_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">value</span></span></span><a class="headerlink" href="#_CPPv4N26nvs_bootloader_read_list_t5valueE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Placeholder for value read </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26nvs_bootloader_read_list_t15namespace_indexE">
+<span id="_CPPv3N26nvs_bootloader_read_list_t15namespace_indexE"></span><span id="_CPPv2N26nvs_bootloader_read_list_t15namespace_indexE"></span><span id="nvs_bootloader_read_list_t::namespace_index__uint8_t"></span><span class="target" id="structnvs__bootloader__read__list__t_1a8ca376962a00d1bbaad2f4b85ce3d437"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">namespace_index</span></span></span><a class="headerlink" href="#_CPPv4N26nvs_bootloader_read_list_t15namespace_indexE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Index of the namespace (internal variable, do not use) </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=NVS Bootloader (api-reference/storage/nvs_bootloader)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=NVS Bootloader (api-reference/storage/nvs_bootloader)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nvs_flash.html" class="btn btn-neutral float-left" title="Non-Volatile Storage Library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nvs_encryption.html" class="btn btn-neutral float-right" title="NVS Encryption" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

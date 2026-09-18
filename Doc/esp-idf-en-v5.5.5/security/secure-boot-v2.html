@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secure Boot v2 - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/security/secure-boot-v2.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'security/secure-boot-v2';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Security Features Enablement Workflows" href="security-features-enablement-workflows.html" />
+    <link rel="prev" title="Secure Boot" href="secure-boot-v1.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Security Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="security.html">Security Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flash-encryption.html">Flash Encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="secure-boot-v1.html">Secure Boot</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Secure Boot v2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#background">Background</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advantages">Advantages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#secure-boot-v2-process">Secure Boot v2 Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#signature-block-format">Signature Block Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#secure-padding">Secure Padding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#verifying-a-signature-block">Verifying a Signature Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#verifying-an-image">Verifying an Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bootloader-size">Bootloader Size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#efuse-usage">eFuse Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-enable-secure-boot-v2">How To Enable Secure Boot v2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#restrictions-after-secure-boot-is-enabled">Restrictions After Secure Boot Is Enabled</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#burning-read-protected-keys">Burning read-protected keys</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#generating-secure-boot-signing-key">Generating Secure Boot Signing Key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#remote-signing-of-images">Remote Signing of Images</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#signing-using-idf-py">Signing Using <code class="docutils literal notranslate"><span class="pre">idf.py</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signing-using-pre-calculated-signatures">Signing Using Pre-calculated Signatures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signing-using-an-external-hardware-security-module-hsm">Signing Using an External Hardware Security Module (HSM)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#secure-boot-best-practices">Secure Boot Best Practices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#technical-details">Technical Details</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generating-and-verifying-signatures-using-idf-py">Generating and Verifying Signatures Using <code class="docutils literal notranslate"><span class="pre">idf.py</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generating-and-verifying-signatures-using-openssl">Generating and Verifying signatures using OpenSSL</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#secure-boot-flash-encryption">Secure Boot &amp; Flash Encryption</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#signed-app-verification-without-hardware-secure-boot">Signed App Verification Without Hardware Secure Boot</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-enable-signed-app-verification">How To Enable Signed App Verification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-features">Advanced Features</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#jtag-debugging">JTAG Debugging</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="security-features-enablement-workflows.html">Security Features Enablement Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vulnerabilities.html">Vulnerabilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Security Guides</a></li>
+      <li class="breadcrumb-item active">Secure Boot v2</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/security/secure-boot-v2.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="secure-boot-v2">
+<h1>Secure Boot v2<a class="headerlink" href="#secure-boot-v2" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/security/secure-boot-v2.html">[中文]</a></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This document is about Secure Boot v2, supported on ESP32 (v3.0 onwards).</p>
+<p>For ESP32 before chip revision v3.0, refer to <a class="reference internal" href="secure-boot-v1.html"><span class="doc">Secure Boot</span></a>. It is recommended to use Secure Boot v2 if you have a chip revision that supports it. Secure Boot v2 is safer and more flexible than Secure Boot V1.</p>
+<p>Secure Boot v2 uses RSA-PSS based app and <a class="reference internal" href="../api-guides/startup.html#second-stage-bootloader"><span class="std std-ref">Second Stage Bootloader</span></a> verification. This document can also be used as a reference for signing apps using the RSA-PSS scheme without signing the bootloader.</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Secure</span> <span class="pre">Boot</span> <span class="pre">v2</span></code> and <code class="docutils literal notranslate"><span class="pre">RSA</span> <span class="pre">App</span> <span class="pre">Signing</span> <span class="pre">Scheme</span></code> options are available for ESP32 from chip revision v3.0 onwards. To use these options in menuconfig, set <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp32-rev-min"><span class="std std-ref">CONFIG_ESP32_REV_MIN</span></a> greater than or equal to <cite>v3.0</cite>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In this guide, most used commands are in the form of <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">secure-&lt;command&gt;</span></code>, which is a wrapper around corresponding <code class="docutils literal notranslate"><span class="pre">espsecure.py</span> <span class="pre">&lt;command&gt;</span></code>. The <code class="docutils literal notranslate"><span class="pre">idf.py</span></code> based commands provides more user-friendly experience, although may lack some of the advanced functionality of their <code class="docutils literal notranslate"><span class="pre">espsecure.py</span></code> based counterparts.</p>
+</div>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this heading"></a></h2>
+<p>Secure Boot protects a device from running any unauthorized (i.e., unsigned) code by checking that each piece of software that is being booted is signed. On an ESP32, these pieces of software include the second stage bootloader and each application binary. Note that the first stage (ROM) bootloader does not require signing as it is ROM code and thus cannot be changed.</p>
+<p>An RSA-based Secure Boot verification scheme, i.e., Secure Boot v2, is implemented on ESP32 (v3.0 onwards).</p>
+<p>The Secure Boot process on ESP32 involves the following steps:</p>
+<ol class="arabic simple">
+<li><p>The first stage (ROM) bootloader loads the second stage bootloader, and the second stage bootloader's RSA-PSS signature is verified. Only if the verification is successful, the second stage bootloader is executed.</p></li>
+<li><p>When the second stage bootloader loads a particular application image, the application's RSA-PSS signature is verified. If the verification is successful, the application image is executed.</p></li>
+</ol>
+</section>
+<section id="advantages">
+<h2>Advantages<a class="headerlink" href="#advantages" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>The RSA-PSS's public key is stored on the device. The corresponding RSA-PSS private key is kept at a secret place and is never accessed by the device.</p></li>
+</ul>
+<ul class="simple">
+<li><p>Only one public key can be generated and stored in the chip during manufacturing.</p></li>
+</ul>
+<ul class="simple">
+<li><p>The same image format and signature verification method is applied for applications and the second stage bootloader.</p></li>
+<li><p>No secrets are stored on the device. Therefore, it is immune to passive side-channel attacks, e.g., timing or power analysis.</p></li>
+</ul>
+</section>
+<section id="secure-boot-v2-process">
+<h2>Secure Boot v2 Process<a class="headerlink" href="#secure-boot-v2-process" title="Permalink to this heading"></a></h2>
+<p>This is an overview of the Secure Boot v2 Process. Instructions on how to enable Secure Boot are supplied in section <a class="reference internal" href="#secure-boot-v2-howto"><span class="std std-ref">How To Enable Secure Boot v2</span></a>.</p>
+<p>Secure Boot v2 verifies the bootloader image and application binary images using a dedicated <em>signature block</em>. Each image has a separately generated signature block which is appended to the end of the image.</p>
+<p>Only one signature block can be appended to the bootloader or application image in ESP32 chip revision v3.0.</p>
+<p>Each signature block contains a signature of the preceding image as well as the corresponding RSA-3072 public key. For more details about the format, refer to <a class="reference internal" href="#signature-block-format"><span class="std std-ref">Signature Block Format</span></a>. A digest of the RSA-3072 public key is stored in the eFuse.</p>
+<p>The application image is not only verified on every boot but also on each over the air (OTA) update. If the currently selected OTA app image cannot be verified, the bootloader will fall back and look for another correctly signed application image.</p>
+<p>The Secure Boot v2 process follows these steps:</p>
+<ol class="arabic simple">
+<li><p>On startup, the ROM code checks the Secure Boot v2 bit in the eFuse. If Secure Boot is disabled, a normal boot will be executed; if Secure Boot is enabled, the boot will proceed according to the following steps.</p></li>
+<li><p>The ROM code verifies the bootloader's signature block, see <a class="reference internal" href="#verify-signature-block"><span class="std std-ref">Verifying a Signature Block</span></a>. If this fails, the boot process will be aborted.</p></li>
+<li><p>The ROM code verifies the bootloader image using the raw image data, its corresponding signature block(s), and the eFuse, see <a class="reference internal" href="#verify-image"><span class="std std-ref">Verifying an Image</span></a>. If this fails, the boot process will be aborted.</p></li>
+<li><p>The ROM code executes the bootloader.</p></li>
+<li><p>The bootloader verifies the application image's signature block, see <a class="reference internal" href="#verify-signature-block"><span class="std std-ref">Verifying a Signature Block</span></a>. If this fails, the boot process will be aborted.</p></li>
+<li><p>The bootloader verifies the application image using the raw image data, its corresponding signature blocks, and the eFuse, see <a class="reference internal" href="#verify-image"><span class="std std-ref">Verifying an Image</span></a>. If this fails, the boot process will be aborted. If the verification fails but another application image is found, the bootloader will then try to verify that other image using steps 5 to 7. This repeats until a valid image is found or no other images are found.</p></li>
+<li><p>The bootloader executes the verified application image.</p></li>
+</ol>
+</section>
+<section id="signature-block-format">
+<span id="id1"></span><h2>Signature Block Format<a class="headerlink" href="#signature-block-format" title="Permalink to this heading"></a></h2>
+<p>The signature block starts on a 4 KB aligned boundary and has a flash sector of its own. The signature is calculated over all bytes in the image including the padding bytes, see <a class="reference internal" href="#secure-padding"><span class="std std-ref">Secure Padding</span></a>.</p>
+<p>The content of each signature block is shown in the following table:</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Content of a RSA Signature Block</span><a class="headerlink" href="#id4" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 16.7%" />
+<col style="width: 16.7%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Offset</strong></p></th>
+<th class="head"><p><strong>Size (bytes)</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>Magic byte.</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>Version number byte, currently 0x02, and 0x01 is for Secure Boot V1.</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>Padding bytes. Reserved, should be zero.</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>32</p></td>
+<td><p>SHA-256 hash of only the image content, not including the signature block.</p></td>
+</tr>
+<tr class="row-even"><td><p>36</p></td>
+<td><p>384</p></td>
+<td><p>RSA Public Modulus used for signature verification, value 'n' in RFC8017.</p></td>
+</tr>
+<tr class="row-odd"><td><p>420</p></td>
+<td><p>4</p></td>
+<td><p>RSA Public Exponent used for signature verification, value 'e' in RFC8017.</p></td>
+</tr>
+<tr class="row-even"><td><p>424</p></td>
+<td><p>384</p></td>
+<td><p>Pre-calculated R, derived from 'n'.</p></td>
+</tr>
+<tr class="row-odd"><td><p>808</p></td>
+<td><p>4</p></td>
+<td><p>Pre-calculated M', derived from 'n'.</p></td>
+</tr>
+<tr class="row-even"><td><p>812</p></td>
+<td><p>384</p></td>
+<td><p>RSA-PSS Signature result (section 8.1.1 of RFC8017) of image content, computed using the following PSS parameters: SHA256 hash, MGF1 function, salt length 32 bytes, default trailer field 0xBC.</p></td>
+</tr>
+<tr class="row-odd"><td><p>1196</p></td>
+<td><p>4</p></td>
+<td><p>CRC32 of the preceding 1196 bytes.</p></td>
+</tr>
+<tr class="row-even"><td><p>1200</p></td>
+<td><p>16</p></td>
+<td><p>Zero padding to length 1216 bytes.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>R and M' are used for hardware-assisted Montgomery Multiplication.</p>
+</div>
+<p>The remainder of the signature sector is erased flash (0xFF) which allows writing other signature blocks after the previous signature block.</p>
+</section>
+<section id="secure-padding">
+<span id="id2"></span><h2>Secure Padding<a class="headerlink" href="#secure-padding" title="Permalink to this heading"></a></h2>
+<p>In the Secure Boot v2 scheme, the application image is padded to the flash MMU page size boundary to ensure that only verified contents are mapped in the internal address space, which is known as secure padding. The signature of the image is calculated after padding and then the signature block (4 KB) gets appended to the image.</p>
+<p><ul class="simple">
+<li><p>Default flash MMU page size is 64 KB</p></li>
+<li><p>Secure padding is applied through the option <code class="docutils literal notranslate"><span class="pre">--secure-pad-v2</span></code> in the <code class="docutils literal notranslate"><span class="pre">elf2image</span></code> conversion using <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code></p></li>
+</ul>
+</p>
+<p>The following table explains the Secure Boot v2 signed image with secure padding and signature block appended:</p>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Contents of a signed application</span><a class="headerlink" href="#id5" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 33.3%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Offset</strong></p></th>
+<th class="head"><p><strong>Size (KB)</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>580</p></td>
+<td><p>Unsigned application size, as an example</p></td>
+</tr>
+<tr class="row-odd"><td><p>580</p></td>
+<td><p>60</p></td>
+<td><p>Secure padding, aligned to the next 64 KB boundary</p></td>
+</tr>
+<tr class="row-even"><td><p>640</p></td>
+<td><p>4</p></td>
+<td><p>Signature block</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please note that the application image always starts on the next flash MMU page size boundary, default 64 KB, and hence the space left over after the signature block shown above can be utilized to store any other data partitions, e.g., <code class="docutils literal notranslate"><span class="pre">nvs</span></code>.</p>
+</div>
+</section>
+<section id="verifying-a-signature-block">
+<span id="verify-signature-block"></span><h2>Verifying a Signature Block<a class="headerlink" href="#verifying-a-signature-block" title="Permalink to this heading"></a></h2>
+<p>A signature block is valid if the first byte is <code class="docutils literal notranslate"><span class="pre">0xe7</span></code> and a valid CRC32 is stored at offset 1196. Otherwise, it is invalid.</p>
+</section>
+<section id="verifying-an-image">
+<span id="verify-image"></span><h2>Verifying an Image<a class="headerlink" href="#verifying-an-image" title="Permalink to this heading"></a></h2>
+<p>An image is verified if the public key stored in any signature block is valid for this device, and if the signature stored in that signature block matches with the signature calculated for the image data read from flash.</p>
+<ol class="arabic simple">
+<li><p>Compare the SHA-256 hash digest of the public key embedded in the bootloader's signature block with the digest(s) saved in the eFuses. If the public key's hash does not match any of the hashes from the eFuses, the verification fails.</p></li>
+<li><p>Generate the application image digest and match it with the image digest in the signature block. If the digests do not match, the verification fails.</p></li>
+</ol>
+<ol class="arabic simple" start="3">
+<li><p>Use the public key to verify the signature of the bootloader image, using RSA-PSS (section 8.1.2 of RFC8017) with the image digest calculated in step (2) for comparison.</p></li>
+</ol>
+</section>
+<section id="bootloader-size">
+<h2>Bootloader Size<a class="headerlink" href="#bootloader-size" title="Permalink to this heading"></a></h2>
+<p>Enabling Secure Boot and/or flash encryption will increase the size of the bootloader, which might require updating the partition table offset. See <a class="reference internal" href="../api-guides/bootloader.html#bootloader-size"><span class="std std-ref">Bootloader Size</span></a>.</p>
+<p>When <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-boot-build-signed-binaries"><span class="std std-ref">CONFIG_SECURE_BOOT_BUILD_SIGNED_BINARIES</span></a> is disabled, the bootloader will use the <code class="docutils literal notranslate"><span class="pre">--pad-to-size</span></code> option in <code class="docutils literal notranslate"><span class="pre">elf2image</span></code> command of <code class="docutils literal notranslate"><span class="pre">esptool</span></code> for sector padding, with a size of 4 KB per sector.</p>
+</section>
+<section id="efuse-usage">
+<span id="id3"></span><h2>eFuse Usage<a class="headerlink" href="#efuse-usage" title="Permalink to this heading"></a></h2>
+<p>ESP32 chip revision v3.0:</p>
+<ul class="simple">
+<li><p>ABS_DONE_1 - Enables Secure Boot protection on boot.</p></li>
+<li><p>BLK2 - Stores the SHA-256 digest of the public key. SHA-256 hash of public key modulus, exponent, pre-calculated R &amp; M' values is written to an eFuse key block. This digest is represented as 776 bytes, with offsets of 36 to 812, as per the <a class="reference internal" href="#signature-block-format"><span class="std std-ref">Signature Block Format</span></a>. The write-protection bit must be set, but the read-protection bit must not.</p></li>
+</ul>
+<p>The key(s) must be readable in order to give software access to it. If the key(s) is read-protected then the software reads the key(s) as all zeros and the signature verification process will fail, and the boot process will be aborted.</p>
+</section>
+<section id="how-to-enable-secure-boot-v2">
+<span id="secure-boot-v2-howto"></span><h2>How To Enable Secure Boot v2<a class="headerlink" href="#how-to-enable-secure-boot-v2" title="Permalink to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Open the <a class="reference internal" href="../api-guides/kconfig/project-configuration-guide.html#project-configuration-menu"><span class="std std-ref">Editing the Configuration</span></a>, in <code class="docutils literal notranslate"><span class="pre">Security</span> <span class="pre">features</span></code> set <code class="docutils literal notranslate"><span class="pre">Enable</span> <span class="pre">hardware</span> <span class="pre">Secure</span> <span class="pre">Boot</span> <span class="pre">in</span> <span class="pre">bootloader</span></code> to enable Secure Boot.</p></li>
+</ol>
+<ol class="arabic simple" start="2">
+<li><p>For ESP32, Secure Boot v2 is available only ESP32 chip revision v3.0 onwards. To view the <code class="docutils literal notranslate"><span class="pre">Secure</span> <span class="pre">Boot</span> <span class="pre">v2</span></code> option, the chip revision should be changed to ESP32 chip revision v3.0. To change the chip revision, set <code class="docutils literal notranslate"><span class="pre">Minimum</span> <span class="pre">Supported</span> <span class="pre">ESP32</span> <span class="pre">Revision</span></code> to v3.0 in <code class="docutils literal notranslate"><span class="pre">Component</span> <span class="pre">Config</span></code> &gt; <code class="docutils literal notranslate"><span class="pre">ESP32-</span> <span class="pre">Specific</span></code>.</p></li>
+<li><p>Specify the path to the Secure Boot signing key, relative to the project directory.</p></li>
+<li><p>Select the desired UART ROM download mode in <code class="docutils literal notranslate"><span class="pre">UART</span> <span class="pre">ROM</span> <span class="pre">download</span> <span class="pre">mode</span></code>. By default the UART ROM download mode has been kept enabled in order to prevent permanently disabling it in the development phase, this option is a potentially insecure option. It is recommended to disable the UART download mode for better security.</p></li>
+</ol>
+<ol class="arabic simple" start="5">
+<li><p>Set other menuconfig options as desired. Then exit menuconfig and save your configuration.</p></li>
+<li><p>The first time you run <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">build</span></code>, if the signing key is not found then an error message will be printed with a command to generate a signing key via <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">secure-generate-signing-key</span></code>.</p></li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>A signing key generated this way will use the best random number source available to the OS and its Python installation, which is <cite>/dev/urandom</cite> on OSX/Linux and <cite>CryptGenRandom()</cite> on Windows. If this random number source is weak, then the private key will be weak.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>For production environments, we recommend generating the key pair using OpenSSL or another industry-standard encryption program. See <a class="reference internal" href="#secure-boot-v2-generate-key"><span class="std std-ref">Generating Secure Boot Signing Key</span></a> for more details.</p>
+</div>
+<ol class="arabic simple" start="7">
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">bootloader</span></code> to build a Secure Boot-enabled bootloader. The build output will include a prompt for a flashing command, using <code class="docutils literal notranslate"><span class="pre">esptool.py</span> <span class="pre">write_flash</span></code>.</p></li>
+<li><p>When you are ready to flash the bootloader, run the specified command and then wait for flashing to complete. You have to enter it yourself, this step is not performed by the build system.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">flash</span></code> to build and flash the partition table and the just-built app image. The app image will be signed using the signing key you generated in step 6.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">flash</span></code> does not flash the bootloader if Secure Boot is enabled.</p>
+</div>
+<ol class="arabic simple" start="10">
+<li><p>Reset the ESP32 and it will boot the second stage bootloader you flashed. The second stage bootloader will enable Secure Boot on the chip, and then it verifies the app image signature and boots the app. You should watch the serial console output from the ESP32 to verify that Secure Boot is enabled and no errors have occurred due to the build configuration.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Secure Boot will not be enabled until after a valid partition table and app image have been flashed. This is to prevent accidents before the system is fully configured.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the ESP32 is reset or powered down during the first boot, it will start the process again on the next boot.</p>
+</div>
+<ol class="arabic simple" start="11">
+<li><p>On subsequent boots, the Secure Boot hardware will verify that the second stage bootloader has not changed, and the second stage bootloader will verify the signed app image using the validated public key portion of its appended signature block.</p></li>
+</ol>
+</section>
+<section id="restrictions-after-secure-boot-is-enabled">
+<h2>Restrictions After Secure Boot Is Enabled<a class="headerlink" href="#restrictions-after-secure-boot-is-enabled" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Any updated bootloader or app will need to be signed with a key matching the digest already stored in eFuse.</p></li>
+<li><p>Please note that enabling Secure Boot or flash encryption disables the USB-OTG USB stack in the ROM, disallowing updates via the serial emulation or Device Firmware Update (DFU) on that port.</p></li>
+<li><p>After Secure Boot is enabled, further read-protection of eFuse keys is not possible. This is done to prevent an attacker from read-protecting the eFuse block that contains the Secure Boot public key digest, which could result in immediate denial of service and potentially enable a fault injection attack to bypass the signature verification. For further information on read-protected keys, see the details below.</p></li>
+</ul>
+<section id="burning-read-protected-keys">
+<h3>Burning read-protected keys<a class="headerlink" href="#burning-read-protected-keys" title="Permalink to this heading"></a></h3>
+<p><strong>Read protected keys</strong>:
+The following keys must be read-protected on the device, the respective hardware will have access them directly (not readable by software):</p>
+<p><ul class="simple">
+<li><p>Flash encryption key</p></li>
+</ul>
+</p>
+<p><strong>Non-read protected keys</strong>:
+The following keys must not be read-protected on the device as the software needs to access them (readable by software):</p>
+<p><ul class="simple">
+<li><p>Secure boot public key digest</p></li>
+<li><p>User data</p></li>
+</ul>
+</p>
+<p>When Secure Boot is enabled, it shall disable the ability to read-protect further eFuses by default. If you want keep the ability to read-protect an eFuse later in the application (e.g, a key mentioned in the above list of read-protected keys), then you need to enable the config <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-boot-v2-allow-efuse-rd-dis"><span class="std std-ref">CONFIG_SECURE_BOOT_V2_ALLOW_EFUSE_RD_DIS</span></a> at the same time when you enable Secure Boot.</p>
+<p>Ideally, it is strongly recommended that all such keys must been burned before enabling secure boot. However, if you need to enable <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-boot-v2-allow-efuse-rd-dis"><span class="std std-ref">CONFIG_SECURE_BOOT_V2_ALLOW_EFUSE_RD_DIS</span></a>, make sure that you burn the eFuse ESP_EFUSE_WR_DIS_EFUSE_RD_DISABLE, using <a class="reference internal" href="../api-reference/system/efuse.html#_CPPv425esp_efuse_write_field_bitA_PK16esp_efuse_desc_t" title="esp_efuse_write_field_bit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_efuse_write_field_bit()</span></code></a>, once all the read-protected eFuse keys have been programmed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If <a class="reference internal" href="flash-encryption.html"><span class="doc">Flash Encryption</span></a> is enabled by the second stage bootloader at the time of enabling Secure Boot, it ensures that the flash encryption key generated on the first boot shall already be read-protected.</p>
+</div>
+</section>
+</section>
+<section id="generating-secure-boot-signing-key">
+<span id="secure-boot-v2-generate-key"></span><h2>Generating Secure Boot Signing Key<a class="headerlink" href="#generating-secure-boot-signing-key" title="Permalink to this heading"></a></h2>
+<p>The build system will prompt you with a command to generate a new signing key via <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">secure-generate-signing-key</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--version</span> <span class="pre">2</span></code> parameter will generate the RSA 3072 private key for Secure Boot v2. Additionally <code class="docutils literal notranslate"><span class="pre">--scheme</span> <span class="pre">rsa3072</span></code> can be passed as well to generate RSA 3072 private key.</p>
+<p>The strength of the signing key is proportional to (a) the random number source of the system, and (b) the correctness of the algorithm used. For production devices, we recommend generating signing keys from a system with a quality entropy source and using the best available RSA-PSS key generation utilities.</p>
+<p>For example, to generate a signing key using the OpenSSL command line:</p>
+<p>For RSA 3072</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">genrsa</span> <span class="o">-</span><span class="n">out</span> <span class="n">my_secure_boot_signing_key</span><span class="o">.</span><span class="n">pem</span> <span class="mi">3072</span>
+</pre></div>
+</div>
+<p>Remember that the strength of the Secure Boot system depends on keeping the signing key private.</p>
+</section>
+<section id="remote-signing-of-images">
+<span id="remote-sign-v2-image"></span><h2>Remote Signing of Images<a class="headerlink" href="#remote-signing-of-images" title="Permalink to this heading"></a></h2>
+<section id="signing-using-idf-py">
+<h3>Signing Using <code class="docutils literal notranslate"><span class="pre">idf.py</span></code><a class="headerlink" href="#signing-using-idf-py" title="Permalink to this heading"></a></h3>
+<p>For production builds, it can be good practice to use a remote signing server rather than have the signing key on the build machine (which is the default ESP-IDF Secure Boot configuration). The <code class="docutils literal notranslate"><span class="pre">espsecure.py</span></code> command line program can be used to sign app images and partition table data for Secure Boot, on a remote system.</p>
+<p>To use remote signing, disable the option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-boot-build-signed-binaries"><span class="std std-ref">CONFIG_SECURE_BOOT_BUILD_SIGNED_BINARIES</span></a> and build the firmware. The private signing key does not need to be present on the build system.</p>
+<p>After the app image and partition table are built, the build system will print signing steps using <code class="docutils literal notranslate"><span class="pre">idf.py</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">idf</span><span class="o">.</span><span class="n">py</span> <span class="n">secure</span><span class="o">-</span><span class="n">sign</span><span class="o">-</span><span class="n">data</span> <span class="n">BINARY_FILE</span> <span class="o">--</span><span class="n">keyfile</span> <span class="n">PRIVATE_SIGNING_KEY</span>
+</pre></div>
+</div>
+<p>The above command appends the image signature to the existing binary. You can use the <cite>--output</cite> argument to write the signed binary to a separate file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">idf</span><span class="o">.</span><span class="n">py</span> <span class="n">secure</span><span class="o">-</span><span class="n">sign</span><span class="o">-</span><span class="n">data</span> <span class="o">--</span><span class="n">keyfile</span> <span class="n">PRIVATE_SIGNING_KEY</span> <span class="o">--</span><span class="n">output</span> <span class="n">SIGNED_BINARY_FILE</span> <span class="n">BINARY_FILE</span>
+</pre></div>
+</div>
+</section>
+<section id="signing-using-pre-calculated-signatures">
+<h3>Signing Using Pre-calculated Signatures<a class="headerlink" href="#signing-using-pre-calculated-signatures" title="Permalink to this heading"></a></h3>
+<p>If you have valid pre-calculated signatures generated for an image and their corresponding public keys, you can use these signatures to generate a signature sector and append it to the image. Note that the pre-calculated signature should be calculated over all bytes in the image including the secure-padding bytes.</p>
+<p>In such cases, the firmware image should be built by disabling the option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-boot-build-signed-binaries"><span class="std std-ref">CONFIG_SECURE_BOOT_BUILD_SIGNED_BINARIES</span></a>. This image will be secure-padded and to generate a signed binary use the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">idf</span><span class="o">.</span><span class="n">py</span> <span class="n">secure</span><span class="o">-</span><span class="n">sign</span><span class="o">-</span><span class="n">data</span> <span class="o">--</span><span class="n">pub</span><span class="o">-</span><span class="n">key</span> <span class="n">PUBLIC_SIGNING_KEY</span> <span class="o">--</span><span class="n">signature</span> <span class="n">SIGNATURE_FILE</span> <span class="o">--</span><span class="n">output</span> <span class="n">SIGNED_BINARY_FILE</span> <span class="n">BINARY_FILE</span>
+</pre></div>
+</div>
+<p>The above command verifies the signature, generates a signature block (refer to <a class="reference internal" href="#signature-block-format"><span class="std std-ref">Signature Block Format</span></a>), and appends it to the binary file.</p>
+</section>
+<section id="signing-using-an-external-hardware-security-module-hsm">
+<h3>Signing Using an External Hardware Security Module (HSM)<a class="headerlink" href="#signing-using-an-external-hardware-security-module-hsm" title="Permalink to this heading"></a></h3>
+<p>For security reasons, you might also use an external Hardware Security Module (HSM) to store your private signing key, which cannot be accessed directly but has an interface to generate the signature of a binary file and its corresponding public key.</p>
+<p>In such cases, disable the option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-boot-build-signed-binaries"><span class="std std-ref">CONFIG_SECURE_BOOT_BUILD_SIGNED_BINARIES</span></a> and build the firmware. This secure-padded image then can be used to supply the external HSM for generating a signature. Refer to <a class="reference external" href="https://docs.espressif.com/projects/esptool/en/latest/esp32/espsecure/index.html#remote-signing-using-an-external-hsm">Signing using an External HSM</a> to generate a signed image.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For all the above three remote signing workflows, the signed binary is written to the filename provided to the <code class="docutils literal notranslate"><span class="pre">--output</span></code> argument.</p>
+</div>
+</section>
+</section>
+<section id="secure-boot-best-practices">
+<h2>Secure Boot Best Practices<a class="headerlink" href="#secure-boot-best-practices" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Generate the signing key on a system with a quality source of entropy.</p></li>
+<li><p>Keep the signing key private at all times. A leak of this key will compromise the Secure Boot system.</p></li>
+<li><p>Do not allow any third party to observe any aspects of the key generation or signing process using <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">secure-</span></code> commands. Both processes are vulnerable to timing or other side-channel attacks.</p></li>
+<li><p>Enable all Secure Boot options in the Secure Boot Configuration. These include flash encryption, disabling of JTAG, disabling BASIC ROM interpreter, and disabling the UART bootloader encrypted flash access.</p></li>
+<li><p>Use Secure Boot in combination with <a class="reference internal" href="flash-encryption.html"><span class="doc">Flash Encryption</span></a> to prevent local readout of the flash contents.</p></li>
+</ul>
+</section>
+<section id="technical-details">
+<span id="secure-boot-v2-technical-details"></span><h2>Technical Details<a class="headerlink" href="#technical-details" title="Permalink to this heading"></a></h2>
+<p>The following sections contain low-level reference descriptions of various Secure Boot elements.</p>
+<p>Secure Boot is integrated into the ESP-IDF build system, so <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">build</span></code> will sign an app image, and <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">bootloader</span></code> will produce a signed bootloader if <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-boot-build-signed-binaries"><span class="std std-ref">CONFIG_SECURE_BOOT_BUILD_SIGNED_BINARIES</span></a> is enabled.</p>
+<p>However, it is possible to use the <code class="docutils literal notranslate"><span class="pre">idf.py</span></code> or the <code class="docutils literal notranslate"><span class="pre">openssl</span></code> tool to generate standalone signatures and verify them. Using <code class="docutils literal notranslate"><span class="pre">idf.py</span></code> is recommended, but in case you need to generate or verify signatures in non-ESP-IDF environments, you could also use the <code class="docutils literal notranslate"><span class="pre">openssl</span></code> commands as the Secure Boot v2 signature generation is compliant with the standard signing algorithms.</p>
+<section id="generating-and-verifying-signatures-using-idf-py">
+<h3>Generating and Verifying Signatures Using <code class="docutils literal notranslate"><span class="pre">idf.py</span></code><a class="headerlink" href="#generating-and-verifying-signatures-using-idf-py" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>To sign a binary image:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">idf</span><span class="o">.</span><span class="n">py</span> <span class="n">secure</span><span class="o">-</span><span class="n">sign</span><span class="o">-</span><span class="n">data</span> <span class="o">--</span><span class="n">keyfile</span> <span class="o">./</span><span class="n">my_signing_key</span><span class="o">.</span><span class="n">pem</span> <span class="o">--</span><span class="n">output</span> <span class="o">./</span><span class="n">image_signed</span><span class="o">.</span><span class="n">bin</span> <span class="n">image</span><span class="o">-</span><span class="n">unsigned</span><span class="o">.</span><span class="n">bin</span>
+</pre></div>
+</div>
+<p>Keyfile is the PEM file containing an RSA-3072 private signing key.</p>
+<ol class="arabic simple" start="2">
+<li><p>To verify a signed binary image:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">idf</span><span class="o">.</span><span class="n">py</span> <span class="n">secure</span><span class="o">-</span><span class="n">verify</span><span class="o">-</span><span class="n">signature</span> <span class="o">--</span><span class="n">keyfile</span> <span class="o">./</span><span class="n">my_signing_key</span><span class="o">.</span><span class="n">pem</span> <span class="n">image_signed</span><span class="o">.</span><span class="n">bin</span>
+</pre></div>
+</div>
+<p>Keyfile is the PEM file containing an RSA-3072 public/private signing key.</p>
+</section>
+<section id="generating-and-verifying-signatures-using-openssl">
+<h3>Generating and Verifying signatures using OpenSSL<a class="headerlink" href="#generating-and-verifying-signatures-using-openssl" title="Permalink to this heading"></a></h3>
+<p>It is preferred to use the <code class="docutils literal notranslate"><span class="pre">idf.py</span></code> tool to generate and verify signatures, but in case you need to perform these operations using OpenSSL, following are the reference commands to do so:</p>
+<ol class="arabic">
+<li><p>Generate digest of the image binary file whose signature needs to be calculated.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>openssl<span class="w"> </span>dgst<span class="w"> </span>-sha256<span class="w"> </span>-binary<span class="w"> </span>BINARY_FILE<span class="w">  </span>&gt;<span class="w"> </span>DIGEST_BINARY_FILE
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Generate signature of the image using the above calculated digest.</p></li>
+<li><p>Verify the generated signature.</p></li>
+</ol>
+</section>
+</section>
+<section id="secure-boot-flash-encryption">
+<span id="secure-boot-v2-and-flash-encr"></span><h2>Secure Boot &amp; Flash Encryption<a class="headerlink" href="#secure-boot-flash-encryption" title="Permalink to this heading"></a></h2>
+<p>If Secure Boot is used without <a class="reference internal" href="flash-encryption.html"><span class="doc">Flash Encryption</span></a>, it is possible to launch a <code class="docutils literal notranslate"><span class="pre">time-of-check</span> <span class="pre">to</span> <span class="pre">time-of-use</span></code> attack, where flash contents are swapped after the image is verified and running. Therefore, it is recommended to use both features together.</p>
+</section>
+<section id="signed-app-verification-without-hardware-secure-boot">
+<span id="signed-app-verify-v2"></span><h2>Signed App Verification Without Hardware Secure Boot<a class="headerlink" href="#signed-app-verification-without-hardware-secure-boot" title="Permalink to this heading"></a></h2>
+<p>The Secure Boot v2 signature of apps can be verified during an OTA update without the need to enable the hardware Secure Boot option. This approach utilizes the same app signature scheme as Secure Boot v2. However, unlike hardware Secure Boot, Software secure boot does not provide protection against an attacker with write access to flash memory, who could potentially bypass the signature verification.</p>
+<p>This may be desirable in cases where the delay of Secure Boot verification on startup is unacceptable, and/or where the threat model does not include physical access or attackers writing to the bootloader or app partitions in flash.</p>
+<p>In this mode, the public key that is present in the signature block of the currently running app will be used to verify the signature of a newly updated app. The signature on the running app is not verified during the update process, it is assumed to be valid. In this way, the system creates a chain of trust from the running app to the newly updated app.</p>
+<p>For this reason, it is essential that the initial app flashed to the device is also signed. Upon startup, the application checks for signatures. If no valid signatures are found, the app will abort and no updates can be applied. This is done in order to prevent a situation where no further updates are possible and the device shall be bricked. The app should have only one valid signature block in the first position. Note again that, unlike hardware Secure Boot v2, the signature of the running app is not verified on boot. The system only verifies a signature block in the first position and ignores any other appended signatures.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In general, it is recommended to use full hardware Secure Boot unless certain that this option is sufficient for application security needs.</p>
+</div>
+<section id="how-to-enable-signed-app-verification">
+<span id="signed-app-verify-v2-howto"></span><h3>How To Enable Signed App Verification<a class="headerlink" href="#how-to-enable-signed-app-verification" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Open <a class="reference internal" href="../api-guides/kconfig/project-configuration-guide.html#project-configuration-menu"><span class="std std-ref">Editing the Configuration</span></a> &gt; <code class="docutils literal notranslate"><span class="pre">Security</span> <span class="pre">features</span></code>.</p></li>
+</ol>
+<ol class="arabic simple" start="2">
+<li><p>Ensure <code class="docutils literal notranslate"><span class="pre">App</span> <span class="pre">Signing</span> <span class="pre">Scheme</span></code> is <code class="docutils literal notranslate"><span class="pre">RSA</span></code>. For the ESP32 chip revision v3.0 chip, select <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp32-rev-min"><span class="std std-ref">CONFIG_ESP32_REV_MIN</span></a> to <code class="docutils literal notranslate"><span class="pre">v3.0</span></code> to get the <code class="docutils literal notranslate"><span class="pre">RSA</span></code> option available.</p></li>
+</ol>
+<ol class="arabic simple" start="3">
+<li><p>Enable <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-signed-apps-no-secure-boot"><span class="std std-ref">CONFIG_SECURE_SIGNED_APPS_NO_SECURE_BOOT</span></a>.</p></li>
+<li><p>By default, <code class="docutils literal notranslate"><span class="pre">Sign</span> <span class="pre">binaries</span> <span class="pre">during</span> <span class="pre">build</span></code> will be enabled by selecting the <code class="docutils literal notranslate"><span class="pre">Require</span> <span class="pre">signed</span> <span class="pre">app</span> <span class="pre">images</span></code> option, which will sign binary files as a part of the build process. The file named in <code class="docutils literal notranslate"><span class="pre">Secure</span> <span class="pre">Boot</span> <span class="pre">private</span> <span class="pre">signing</span> <span class="pre">key</span></code> will be used to sign the image.</p></li>
+<li><p>If you disable the <code class="docutils literal notranslate"><span class="pre">Sign</span> <span class="pre">binaries</span> <span class="pre">during</span> <span class="pre">build</span></code> option then all app binaries must be manually signed by following instructions in <a class="reference internal" href="#remote-sign-v2-image"><span class="std std-ref">Remote Signing of Images</span></a>.</p></li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>It is very important that all apps flashed have been signed, either during the build or after the build.</p>
+</div>
+</section>
+</section>
+<section id="advanced-features">
+<h2>Advanced Features<a class="headerlink" href="#advanced-features" title="Permalink to this heading"></a></h2>
+<section id="jtag-debugging">
+<h3>JTAG Debugging<a class="headerlink" href="#jtag-debugging" title="Permalink to this heading"></a></h3>
+<p>By default, when Secure Boot is enabled, JTAG debugging is disabled via eFuse. The bootloader does this on the first boot, at the same time it enables Secure Boot.</p>
+<p>See <a class="reference internal" href="../api-guides/jtag-debugging/tips-and-quirks.html#jtag-debugging-security-features"><span class="std std-ref">JTAG with Flash Encryption or Secure Boot</span></a> for more information about using JTAG Debugging with either Secure Boot or signed app verification enabled.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Secure Boot v2 (security/secure-boot-v2)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Secure Boot v2 (security/secure-boot-v2)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="secure-boot-v1.html" class="btn btn-neutral float-left" title="Secure Boot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="security-features-enablement-workflows.html" class="btn btn-neutral float-right" title="Security Features Enablement Workflows" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

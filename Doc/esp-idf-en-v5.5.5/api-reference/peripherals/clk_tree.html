@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clock Tree - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/clk_tree.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/peripherals/clk_tree';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Digital To Analog Converter (DAC)" href="dac.html" />
+    <link rel="prev" title="Analog to Digital Converter (ADC) Calibration Driver" href="adc_calibration.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Peripherals API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adc_oneshot.html">Analog to Digital Converter (ADC) Oneshot Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_continuous.html">Analog to Digital Converter (ADC) Continuous Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_calibration.html">Analog to Digital Converter (ADC) Calibration Driver</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Clock Tree</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-usage">API Usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dac.html">Digital To Analog Converter (DAC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gpio.html">GPIO &amp; RTC GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gptimer.html">General Purpose Timer (GPTimer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2c.html">Inter-Integrated Circuit (I2C)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2s.html">Inter-IC Sound (I2S)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lcd/index.html">LCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ledc.html">LED Control (LEDC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mcpwm.html">Motor Control Pulse Width Modulator (MCPWM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pcnt.html">Pulse Counter (PCNT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rmt.html">Remote Control Transceiver (RMT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sd_pullup_requirements.html">SD Pull-up Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdmmc_host.html">SDMMC Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdspi_host.html">SD SPI Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdio_slave.html">SDIO Card Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdm.html">Sigma-Delta Modulation (SDM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_flash/index.html">SPI Flash API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_master.html">SPI Master Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_slave.html">SPI Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cap_touch_sens.html">Capacitive Touch Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="twai.html">Two-Wire Automotive Interface (TWAI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uart.html">Universal Asynchronous Receiver/Transmitter (UART)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Peripherals API</a></li>
+      <li class="breadcrumb-item active">Clock Tree</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/peripherals/clk_tree.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="clock-tree">
+<h1>Clock Tree<a class="headerlink" href="#clock-tree" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/peripherals/clk_tree.html">[中文]</a></p>
+<p>The clock subsystem of ESP32 is used to source and distribute system/module clocks from a range of root clocks. The clock tree driver maintains the basic functionality of the system clock and the intricate relationship among module clocks.</p>
+<p>This document starts with the introduction to root and module clocks. Then it covers the clock tree APIs that can be called to monitor the status of the module clocks at runtime.</p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h2>
+<p>This section lists definitions of ESP32's supported root clocks and module clocks. These definitions are commonly used in the driver configuration, to help select a proper source clock for the peripheral.</p>
+<section id="root-clocks">
+<h3>Root Clocks<a class="headerlink" href="#root-clocks" title="Permalink to this heading"></a></h3>
+<p>Root clocks generate reliable clock signals. These clock signals then pass through various gates, muxes, dividers, or multipliers to become the clock sources for every functional module: the CPU core(s), Wi-Fi, Bluetooth, the RTC, and the peripherals.</p>
+<p>ESP32's root clocks are listed in <a class="reference internal" href="#_CPPv414soc_root_clk_t" title="soc_root_clk_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">soc_root_clk_t</span></code></a>:</p>
+<blockquote>
+<div><p><ul>
+<li><p>Internal 8 MHz RC Oscillator (RC_FAST)</p>
+<blockquote>
+<div><p>This RC oscillator generates a about 8.5 MHz clock signal output as the <code class="docutils literal notranslate"><span class="pre">RC_FAST_CLK</span></code>.</p>
+<p>The about 8.5 MHz signal output is also passed into a configurable divider, which by default divides the input clock frequency by 256, to generate a <code class="docutils literal notranslate"><span class="pre">RC_FAST_D256_CLK</span></code>.</p>
+<p>The exact frequency of <code class="docutils literal notranslate"><span class="pre">RC_FAST_CLK</span></code> can be computed in runtime through calibration on the <code class="docutils literal notranslate"><span class="pre">RC_FAST_D256_CLK</span></code>.</p>
+</div></blockquote>
+</li>
+<li><p>External 2 ~ 40 MHz Crystal (XTAL)</p></li>
+<li><p>Internal 150 kHz RC Oscillator (RC_SLOW)</p>
+<blockquote>
+<div><p>This RC oscillator generates a about 150kHz clock signal output as the <code class="docutils literal notranslate"><span class="pre">RC_SLOW_CLK</span></code>. The exact frequency of this clock can be computed in runtime through calibration.</p>
+</div></blockquote>
+</li>
+</ul>
+<ul>
+<li><p>External 32 kHz Crystal - optional (XTAL32K)</p>
+<blockquote>
+<div><p>The clock source for this <code class="docutils literal notranslate"><span class="pre">XTAL32K_CLK</span></code> can be either a 32 kHz crystal connecting to the <code class="docutils literal notranslate"><span class="pre">32K_XP</span></code> and <code class="docutils literal notranslate"><span class="pre">32K_XN</span></code> pins or a 32 kHz clock signal generated by an external circuit. The external signal must be connected to the <code class="docutils literal notranslate"><span class="pre">32K_XN</span></code> pin. Additionally, a 1 nF capacitor must be placed between the <code class="docutils literal notranslate"><span class="pre">32K_XP</span></code> pin and ground. In this case, the <code class="docutils literal notranslate"><span class="pre">32K_XP</span></code> pin cannot be used as a GPIO pin.</p>
+<p><code class="docutils literal notranslate"><span class="pre">XTAL32K_CLK</span></code> can also be calibrated to get its exact frequency.</p>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</div></blockquote>
+<p>Typically, the frequency of the signal generated from an RC oscillator circuit is less accurate and more sensitive to the environment compared to the signal generated from a crystal. ESP32 provides several clock source options for the <code class="docutils literal notranslate"><span class="pre">RTC_SLOW_CLK</span></code>, and it is possible to make the choice based on the requirements for system time accuracy and power consumption. For more details, please refer to <a class="reference internal" href="../system/system_time.html#rtc-clock-source-choice"><span class="std std-ref">RTC Timer Clock Sources</span></a>.</p>
+</section>
+<section id="module-clocks">
+<h3>Module Clocks<a class="headerlink" href="#module-clocks" title="Permalink to this heading"></a></h3>
+<p>ESP32's available module clocks are listed in <a class="reference internal" href="#_CPPv416soc_module_clk_t" title="soc_module_clk_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">soc_module_clk_t</span></code></a>. Each module clock has a unique ID. You can get more information on each clock by checking the documented enum value.</p>
+</section>
+</section>
+<section id="api-usage">
+<h2>API Usage<a class="headerlink" href="#api-usage" title="Permalink to this heading"></a></h2>
+<p>The clock tree driver provides an all-in-one API to get the frequency of the module clocks, <a class="reference internal" href="#_CPPv428esp_clk_tree_src_get_freq_hz16soc_module_clk_t33esp_clk_tree_src_freq_precision_tP8uint32_t" title="esp_clk_tree_src_get_freq_hz"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_clk_tree_src_get_freq_hz()</span></code></a>. This function allows you to obtain the clock frequency at any time by providing the clock name <a class="reference internal" href="#_CPPv416soc_module_clk_t" title="soc_module_clk_t"><code class="xref cpp cpp-enum docutils literal notranslate"><span class="pre">soc_module_clk_t</span></code></a> and specifying the desired precision level for the returned frequency value <a class="reference internal" href="#_CPPv433esp_clk_tree_src_freq_precision_t" title="esp_clk_tree_src_freq_precision_t"><code class="xref cpp cpp-enum docutils literal notranslate"><span class="pre">esp_clk_tree_src_freq_precision_t</span></code></a>.</p>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/soc/esp32/include/soc/clk_tree_defs.h">components/soc/esp32/include/soc/clk_tree_defs.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;soc/clk_tree_defs.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_CLK_RC_FAST_FREQ_APPROX">
+<span class="target" id="clk__tree__defs_8h_1a2d9c2a278cbccc1ffdcf046186b6f388"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_CLK_RC_FAST_FREQ_APPROX</span></span></span><a class="headerlink" href="#c.SOC_CLK_RC_FAST_FREQ_APPROX" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Approximate RC_FAST_CLK frequency in Hz </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_CLK_RC_SLOW_FREQ_APPROX">
+<span class="target" id="clk__tree__defs_8h_1a819977319b1e50a63ac580b35dd2a9a5"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_CLK_RC_SLOW_FREQ_APPROX</span></span></span><a class="headerlink" href="#c.SOC_CLK_RC_SLOW_FREQ_APPROX" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Approximate RC_SLOW_CLK frequency in Hz </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_CLK_RC_FAST_D256_FREQ_APPROX">
+<span class="target" id="clk__tree__defs_8h_1a208ae4a100152c181fd9ff8133688f0a"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_CLK_RC_FAST_D256_FREQ_APPROX</span></span></span><a class="headerlink" href="#c.SOC_CLK_RC_FAST_D256_FREQ_APPROX" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Approximate RC_FAST_D256_CLK frequency in Hz </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_CLK_XTAL32K_FREQ_APPROX">
+<span class="target" id="clk__tree__defs_8h_1a27e443da251c4ea6cc6a7b8dc49841a0"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_CLK_XTAL32K_FREQ_APPROX</span></span></span><a class="headerlink" href="#c.SOC_CLK_XTAL32K_FREQ_APPROX" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Approximate XTAL32K_CLK frequency in Hz </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_GPTIMER_CLKS">
+<span class="target" id="clk__tree__defs_8h_1a5612c246790c8201e0b9c72292ae9a03"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_GPTIMER_CLKS</span></span></span><a class="headerlink" href="#c.SOC_GPTIMER_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of GPTimer. </p>
+<p>The following code can be used to iterate all possible clocks: <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">soc_periph_gptimer_clk_src_t</span><span class="w"> </span><span class="n">gptimer_clks</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">soc_periph_gptimer_clk_src_t</span><span class="p">)</span><span class="n">SOC_GPTIMER_CLKS</span><span class="p">;</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">gptimer_clks</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">gptimer_clks</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">soc_periph_gptimer_clk_src_t</span><span class="w"> </span><span class="n">clk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gptimer_clks</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="c1">// Test GPTimer with the clock `clk`</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_LCD_CLKS">
+<span class="target" id="clk__tree__defs_8h_1ac6121478d18391be7c37d85dc2611a31"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_LCD_CLKS</span></span></span><a class="headerlink" href="#c.SOC_LCD_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of LCD. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_RMT_CLKS">
+<span class="target" id="clk__tree__defs_8h_1a3a2d1f75c89646a3a9c13e2e12c027f2"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_RMT_CLKS</span></span></span><a class="headerlink" href="#c.SOC_RMT_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of RMT. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_UART_CLKS">
+<span class="target" id="clk__tree__defs_8h_1a58f9d213ef0822113c7291a1cc3d877c"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_UART_CLKS</span></span></span><a class="headerlink" href="#c.SOC_UART_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of UART. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_MCPWM_TIMER_CLKS">
+<span class="target" id="clk__tree__defs_8h_1a83941a1f8068654a3931d3f8db988e11"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MCPWM_TIMER_CLKS</span></span></span><a class="headerlink" href="#c.SOC_MCPWM_TIMER_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of MCPWM Timer. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_MCPWM_CAPTURE_CLKS">
+<span class="target" id="clk__tree__defs_8h_1aa87324589afd5ed8e17ecfeeff799a17"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MCPWM_CAPTURE_CLKS</span></span></span><a class="headerlink" href="#c.SOC_MCPWM_CAPTURE_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of MCPWM Capture Timer. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_MCPWM_CARRIER_CLKS">
+<span class="target" id="clk__tree__defs_8h_1a7a8d447a361c04e1fa6b1b4def3257a0"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MCPWM_CARRIER_CLKS</span></span></span><a class="headerlink" href="#c.SOC_MCPWM_CARRIER_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of MCPWM Carrier. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_I2S_CLKS">
+<span class="target" id="clk__tree__defs_8h_1a272c1c7fd683cac94963e7a799965d1b"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_I2S_CLKS</span></span></span><a class="headerlink" href="#c.SOC_I2S_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of I2S. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_I2C_CLKS">
+<span class="target" id="clk__tree__defs_8h_1a57824d6f05fa8f71091a1814cb96e135"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_I2C_CLKS</span></span></span><a class="headerlink" href="#c.SOC_I2C_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of I2C. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_SPI_CLKS">
+<span class="target" id="clk__tree__defs_8h_1abf4fb635445971bdc344ef6580413ef7"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_SPI_CLKS</span></span></span><a class="headerlink" href="#c.SOC_SPI_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of SPI. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_SDM_CLKS">
+<span class="target" id="clk__tree__defs_8h_1a5db2167f14cbdd5e7f1cbce8992058ea"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_SDM_CLKS</span></span></span><a class="headerlink" href="#c.SOC_SDM_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of SDM. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_DAC_DIGI_CLKS">
+<span class="target" id="clk__tree__defs_8h_1ac2f10c6134a03db4bcbc8bc5d307cfb9"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_DAC_DIGI_CLKS</span></span></span><a class="headerlink" href="#c.SOC_DAC_DIGI_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of DAC digital controller. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_DAC_COSINE_CLKS">
+<span class="target" id="clk__tree__defs_8h_1a8895d252704813d9a7f7eba1329fcf0e"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_DAC_COSINE_CLKS</span></span></span><a class="headerlink" href="#c.SOC_DAC_COSINE_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of DAC cosine wave generator. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_TWAI_CLKS">
+<span class="target" id="clk__tree__defs_8h_1abf0469c8a4cbc4fd5e2a71f18e499aaa"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_TWAI_CLKS</span></span></span><a class="headerlink" href="#c.SOC_TWAI_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of TWAI. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_ADC_DIGI_CLKS">
+<span class="target" id="clk__tree__defs_8h_1a33330dd89c3671b50aa3f0d938550858"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_ADC_DIGI_CLKS</span></span></span><a class="headerlink" href="#c.SOC_ADC_DIGI_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of ADC digital controller. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_ADC_RTC_CLKS">
+<span class="target" id="clk__tree__defs_8h_1aa71e3f9065b0eac97d4e0682362c72d6"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_ADC_RTC_CLKS</span></span></span><a class="headerlink" href="#c.SOC_ADC_RTC_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of ADC RTC controller. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_MWDT_CLKS">
+<span class="target" id="clk__tree__defs_8h_1a622b1e85c49e9c8f52e535eb979eaed4"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MWDT_CLKS</span></span></span><a class="headerlink" href="#c.SOC_MWDT_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of MWDT. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_LEDC_CLKS">
+<span class="target" id="clk__tree__defs_8h_1ab54c5be77e5e264826516946f00a088e"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_LEDC_CLKS</span></span></span><a class="headerlink" href="#c.SOC_LEDC_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of LEDC. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOC_SDMMC_CLKS">
+<span class="target" id="clk__tree__defs_8h_1ac7a5c14d78ec0bca8f3c5ad76be53752"></span><span class="sig-name descname"><span class="n"><span class="pre">SOC_SDMMC_CLKS</span></span></span><a class="headerlink" href="#c.SOC_SDMMC_CLKS" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Array initializer for all supported clock sources of SDMMC. </p>
+</dd></dl>
+
+</section>
+<section id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv414soc_root_clk_t">
+<span id="_CPPv314soc_root_clk_t"></span><span id="_CPPv214soc_root_clk_t"></span><span class="target" id="clk__tree__defs_8h_1ae4404487821059e2b6c06f25a988a51a"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_root_clk_t</span></span></span><a class="headerlink" href="#_CPPv414soc_root_clk_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Root clock. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14soc_root_clk_t24SOC_ROOT_CLK_INT_RC_FASTE">
+<span id="_CPPv3N14soc_root_clk_t24SOC_ROOT_CLK_INT_RC_FASTE"></span><span id="_CPPv2N14soc_root_clk_t24SOC_ROOT_CLK_INT_RC_FASTE"></span><span class="target" id="clk__tree__defs_8h_1ae4404487821059e2b6c06f25a988a51aae6c01233e645c24bd2bb9ac2b4fbd354"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_ROOT_CLK_INT_RC_FAST</span></span></span><a class="headerlink" href="#_CPPv4N14soc_root_clk_t24SOC_ROOT_CLK_INT_RC_FASTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Internal 8MHz RC oscillator </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14soc_root_clk_t24SOC_ROOT_CLK_INT_RC_SLOWE">
+<span id="_CPPv3N14soc_root_clk_t24SOC_ROOT_CLK_INT_RC_SLOWE"></span><span id="_CPPv2N14soc_root_clk_t24SOC_ROOT_CLK_INT_RC_SLOWE"></span><span class="target" id="clk__tree__defs_8h_1ae4404487821059e2b6c06f25a988a51aaef25dda51ea0848ff8782a4fb804c30c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_ROOT_CLK_INT_RC_SLOW</span></span></span><a class="headerlink" href="#_CPPv4N14soc_root_clk_t24SOC_ROOT_CLK_INT_RC_SLOWE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Internal 150kHz RC oscillator </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14soc_root_clk_t21SOC_ROOT_CLK_EXT_XTALE">
+<span id="_CPPv3N14soc_root_clk_t21SOC_ROOT_CLK_EXT_XTALE"></span><span id="_CPPv2N14soc_root_clk_t21SOC_ROOT_CLK_EXT_XTALE"></span><span class="target" id="clk__tree__defs_8h_1ae4404487821059e2b6c06f25a988a51aa3b89b6627bce78caffe53e12309cc017"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_ROOT_CLK_EXT_XTAL</span></span></span><a class="headerlink" href="#_CPPv4N14soc_root_clk_t21SOC_ROOT_CLK_EXT_XTALE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>External 2~40MHz crystal </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14soc_root_clk_t24SOC_ROOT_CLK_EXT_XTAL32KE">
+<span id="_CPPv3N14soc_root_clk_t24SOC_ROOT_CLK_EXT_XTAL32KE"></span><span id="_CPPv2N14soc_root_clk_t24SOC_ROOT_CLK_EXT_XTAL32KE"></span><span class="target" id="clk__tree__defs_8h_1ae4404487821059e2b6c06f25a988a51aa641329cda0cf5c4672d61e43cd5b852c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_ROOT_CLK_EXT_XTAL32K</span></span></span><a class="headerlink" href="#_CPPv4N14soc_root_clk_t24SOC_ROOT_CLK_EXT_XTAL32KE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>External 32kHz crystal/clock signal </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv417soc_cpu_clk_src_t">
+<span id="_CPPv317soc_cpu_clk_src_t"></span><span id="_CPPv217soc_cpu_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a45840c0e8de3b728c16a1d3866788bcd"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_cpu_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv417soc_cpu_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>CPU_CLK mux inputs, which are the supported clock sources for the CPU_CLK. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Enum values are matched with the register field values on purpose </p>
+</div>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17soc_cpu_clk_src_t20SOC_CPU_CLK_SRC_XTALE">
+<span id="_CPPv3N17soc_cpu_clk_src_t20SOC_CPU_CLK_SRC_XTALE"></span><span id="_CPPv2N17soc_cpu_clk_src_t20SOC_CPU_CLK_SRC_XTALE"></span><span class="target" id="clk__tree__defs_8h_1a45840c0e8de3b728c16a1d3866788bcdad8570dbacf376dfe01fad6f619e00933"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_CPU_CLK_SRC_XTAL</span></span></span><a class="headerlink" href="#_CPPv4N17soc_cpu_clk_src_t20SOC_CPU_CLK_SRC_XTALE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select XTAL_CLK as CPU_CLK source </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17soc_cpu_clk_src_t19SOC_CPU_CLK_SRC_PLLE">
+<span id="_CPPv3N17soc_cpu_clk_src_t19SOC_CPU_CLK_SRC_PLLE"></span><span id="_CPPv2N17soc_cpu_clk_src_t19SOC_CPU_CLK_SRC_PLLE"></span><span class="target" id="clk__tree__defs_8h_1a45840c0e8de3b728c16a1d3866788bcda48e88e08257c1dae814ba6a1fb08db72"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_CPU_CLK_SRC_PLL</span></span></span><a class="headerlink" href="#_CPPv4N17soc_cpu_clk_src_t19SOC_CPU_CLK_SRC_PLLE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_CLK as CPU_CLK source (PLL_CLK is the output of 40MHz crystal oscillator frequency multiplier, can be 480MHz or 320MHz) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17soc_cpu_clk_src_t23SOC_CPU_CLK_SRC_RC_FASTE">
+<span id="_CPPv3N17soc_cpu_clk_src_t23SOC_CPU_CLK_SRC_RC_FASTE"></span><span id="_CPPv2N17soc_cpu_clk_src_t23SOC_CPU_CLK_SRC_RC_FASTE"></span><span class="target" id="clk__tree__defs_8h_1a45840c0e8de3b728c16a1d3866788bcdae91cf0dc3775cfdb0330a86acc49524e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_CPU_CLK_SRC_RC_FAST</span></span></span><a class="headerlink" href="#_CPPv4N17soc_cpu_clk_src_t23SOC_CPU_CLK_SRC_RC_FASTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select RC_FAST_CLK as CPU_CLK source </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17soc_cpu_clk_src_t20SOC_CPU_CLK_SRC_APLLE">
+<span id="_CPPv3N17soc_cpu_clk_src_t20SOC_CPU_CLK_SRC_APLLE"></span><span id="_CPPv2N17soc_cpu_clk_src_t20SOC_CPU_CLK_SRC_APLLE"></span><span class="target" id="clk__tree__defs_8h_1a45840c0e8de3b728c16a1d3866788bcdadaa0cff0e10e6ba0d860c8bd79a5c1f7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_CPU_CLK_SRC_APLL</span></span></span><a class="headerlink" href="#_CPPv4N17soc_cpu_clk_src_t20SOC_CPU_CLK_SRC_APLLE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APLL_CLK as CPU_CLK source </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17soc_cpu_clk_src_t23SOC_CPU_CLK_SRC_INVALIDE">
+<span id="_CPPv3N17soc_cpu_clk_src_t23SOC_CPU_CLK_SRC_INVALIDE"></span><span id="_CPPv2N17soc_cpu_clk_src_t23SOC_CPU_CLK_SRC_INVALIDE"></span><span class="target" id="clk__tree__defs_8h_1a45840c0e8de3b728c16a1d3866788bcda2eebbd6d348a81f2bb552a3e0f12741c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_CPU_CLK_SRC_INVALID</span></span></span><a class="headerlink" href="#_CPPv4N17soc_cpu_clk_src_t23SOC_CPU_CLK_SRC_INVALIDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Invalid CPU_CLK source </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv422soc_rtc_slow_clk_src_t">
+<span id="_CPPv322soc_rtc_slow_clk_src_t"></span><span id="_CPPv222soc_rtc_slow_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a30481dd30916313ca87a28190193f685"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_rtc_slow_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv422soc_rtc_slow_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RTC_SLOW_CLK mux inputs, which are the supported clock sources for the RTC_SLOW_CLK. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Enum values are matched with the register field values on purpose </p>
+</div>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22soc_rtc_slow_clk_src_t28SOC_RTC_SLOW_CLK_SRC_RC_SLOWE">
+<span id="_CPPv3N22soc_rtc_slow_clk_src_t28SOC_RTC_SLOW_CLK_SRC_RC_SLOWE"></span><span id="_CPPv2N22soc_rtc_slow_clk_src_t28SOC_RTC_SLOW_CLK_SRC_RC_SLOWE"></span><span class="target" id="clk__tree__defs_8h_1a30481dd30916313ca87a28190193f685ad6dfe28e6134e2b87ace466b42c89552"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_RTC_SLOW_CLK_SRC_RC_SLOW</span></span></span><a class="headerlink" href="#_CPPv4N22soc_rtc_slow_clk_src_t28SOC_RTC_SLOW_CLK_SRC_RC_SLOWE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select RC_SLOW_CLK as RTC_SLOW_CLK source </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22soc_rtc_slow_clk_src_t28SOC_RTC_SLOW_CLK_SRC_XTAL32KE">
+<span id="_CPPv3N22soc_rtc_slow_clk_src_t28SOC_RTC_SLOW_CLK_SRC_XTAL32KE"></span><span id="_CPPv2N22soc_rtc_slow_clk_src_t28SOC_RTC_SLOW_CLK_SRC_XTAL32KE"></span><span class="target" id="clk__tree__defs_8h_1a30481dd30916313ca87a28190193f685a04f638b0f2dbc0f0f6a1d448bc79b306"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_RTC_SLOW_CLK_SRC_XTAL32K</span></span></span><a class="headerlink" href="#_CPPv4N22soc_rtc_slow_clk_src_t28SOC_RTC_SLOW_CLK_SRC_XTAL32KE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select XTAL32K_CLK as RTC_SLOW_CLK source </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22soc_rtc_slow_clk_src_t33SOC_RTC_SLOW_CLK_SRC_RC_FAST_D256E">
+<span id="_CPPv3N22soc_rtc_slow_clk_src_t33SOC_RTC_SLOW_CLK_SRC_RC_FAST_D256E"></span><span id="_CPPv2N22soc_rtc_slow_clk_src_t33SOC_RTC_SLOW_CLK_SRC_RC_FAST_D256E"></span><span class="target" id="clk__tree__defs_8h_1a30481dd30916313ca87a28190193f685ac3c5eb9ea624987f07003a15b44ad003"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_RTC_SLOW_CLK_SRC_RC_FAST_D256</span></span></span><a class="headerlink" href="#_CPPv4N22soc_rtc_slow_clk_src_t33SOC_RTC_SLOW_CLK_SRC_RC_FAST_D256E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select RC_FAST_D256_CLK (referred as FOSC_DIV or 8m_d256/8md256 in TRM and reg. description) as RTC_SLOW_CLK source </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22soc_rtc_slow_clk_src_t28SOC_RTC_SLOW_CLK_SRC_INVALIDE">
+<span id="_CPPv3N22soc_rtc_slow_clk_src_t28SOC_RTC_SLOW_CLK_SRC_INVALIDE"></span><span id="_CPPv2N22soc_rtc_slow_clk_src_t28SOC_RTC_SLOW_CLK_SRC_INVALIDE"></span><span class="target" id="clk__tree__defs_8h_1a30481dd30916313ca87a28190193f685a9eecc07c83db1e96dbe443f433adcde1"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_RTC_SLOW_CLK_SRC_INVALID</span></span></span><a class="headerlink" href="#_CPPv4N22soc_rtc_slow_clk_src_t28SOC_RTC_SLOW_CLK_SRC_INVALIDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Invalid RTC_SLOW_CLK source </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv422soc_rtc_fast_clk_src_t">
+<span id="_CPPv322soc_rtc_fast_clk_src_t"></span><span id="_CPPv222soc_rtc_fast_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a926dbabd262855380f38121359e51501"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_rtc_fast_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv422soc_rtc_fast_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RTC_FAST_CLK mux inputs, which are the supported clock sources for the RTC_FAST_CLK. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Enum values are matched with the register field values on purpose </p>
+</div>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_XTAL_D4E">
+<span id="_CPPv3N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_XTAL_D4E"></span><span id="_CPPv2N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_XTAL_D4E"></span><span class="target" id="clk__tree__defs_8h_1a926dbabd262855380f38121359e51501ae045dd29bee05cba9671f3618c051bcb"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_RTC_FAST_CLK_SRC_XTAL_D4</span></span></span><a class="headerlink" href="#_CPPv4N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_XTAL_D4E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select XTAL_D4_CLK (may referred as XTAL_CLK_DIV_4) as RTC_FAST_CLK source </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_RC_FASTE">
+<span id="_CPPv3N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_RC_FASTE"></span><span id="_CPPv2N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_RC_FASTE"></span><span class="target" id="clk__tree__defs_8h_1a926dbabd262855380f38121359e51501a9b5c3b82388f720edb8b8bf68392d4ac"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_RTC_FAST_CLK_SRC_RC_FAST</span></span></span><a class="headerlink" href="#_CPPv4N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_RC_FASTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select RC_FAST_CLK as RTC_FAST_CLK source </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_INVALIDE">
+<span id="_CPPv3N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_INVALIDE"></span><span id="_CPPv2N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_INVALIDE"></span><span class="target" id="clk__tree__defs_8h_1a926dbabd262855380f38121359e51501ac7e8dfb1badae7064a48c9e2ca64d8bd"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_RTC_FAST_CLK_SRC_INVALID</span></span></span><a class="headerlink" href="#_CPPv4N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_INVALIDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Invalid RTC_FAST_CLK source </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1a926dbabd262855380f38121359e51501aa13a301344c064bce4a34ce7ed6e5a74"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_RTC_FAST_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N22soc_rtc_fast_clk_src_t28SOC_RTC_FAST_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>XTAL_D4_CLK is the default clock source for RTC_FAST_CLK </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22soc_rtc_fast_clk_src_t29SOC_RTC_FAST_CLK_SRC_XTAL_DIVE">
+<span id="_CPPv3N22soc_rtc_fast_clk_src_t29SOC_RTC_FAST_CLK_SRC_XTAL_DIVE"></span><span id="_CPPv2N22soc_rtc_fast_clk_src_t29SOC_RTC_FAST_CLK_SRC_XTAL_DIVE"></span><span class="target" id="clk__tree__defs_8h_1a926dbabd262855380f38121359e51501a3b29373d3c84337b59d94cd45de57377"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_RTC_FAST_CLK_SRC_XTAL_DIV</span></span></span><a class="headerlink" href="#_CPPv4N22soc_rtc_fast_clk_src_t29SOC_RTC_FAST_CLK_SRC_XTAL_DIVE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Alias name for <code class="docutils literal notranslate"><span class="pre">SOC_RTC_FAST_CLK_SRC_XTAL_D4</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv415soc_xtal_freq_t">
+<span id="_CPPv315soc_xtal_freq_t"></span><span id="_CPPv215soc_xtal_freq_t"></span><span class="target" id="clk__tree__defs_8h_1a024f0d24911b2475d8c0e6a4dbda7c60"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_xtal_freq_t</span></span></span><a class="headerlink" href="#_CPPv415soc_xtal_freq_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Possible main XTAL frequency options on the target. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Enum values equal to the frequency value in MHz </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Not all frequency values listed here are supported in IDF. Please check SOC_XTAL_SUPPORT_XXX in soc_caps.h for the supported ones. </p>
+</div>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15soc_xtal_freq_t18SOC_XTAL_FREQ_AUTOE">
+<span id="_CPPv3N15soc_xtal_freq_t18SOC_XTAL_FREQ_AUTOE"></span><span id="_CPPv2N15soc_xtal_freq_t18SOC_XTAL_FREQ_AUTOE"></span><span class="target" id="clk__tree__defs_8h_1a024f0d24911b2475d8c0e6a4dbda7c60a41402e5baf36d33c29539cdf8b6f94c4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_XTAL_FREQ_AUTO</span></span></span><a class="headerlink" href="#_CPPv4N15soc_xtal_freq_t18SOC_XTAL_FREQ_AUTOE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Automatic XTAL frequency detention </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15soc_xtal_freq_t17SOC_XTAL_FREQ_24ME">
+<span id="_CPPv3N15soc_xtal_freq_t17SOC_XTAL_FREQ_24ME"></span><span id="_CPPv2N15soc_xtal_freq_t17SOC_XTAL_FREQ_24ME"></span><span class="target" id="clk__tree__defs_8h_1a024f0d24911b2475d8c0e6a4dbda7c60a411264708646d12e37db811af92d7c1a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_XTAL_FREQ_24M</span></span></span><a class="headerlink" href="#_CPPv4N15soc_xtal_freq_t17SOC_XTAL_FREQ_24ME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>24MHz XTAL </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15soc_xtal_freq_t17SOC_XTAL_FREQ_26ME">
+<span id="_CPPv3N15soc_xtal_freq_t17SOC_XTAL_FREQ_26ME"></span><span id="_CPPv2N15soc_xtal_freq_t17SOC_XTAL_FREQ_26ME"></span><span class="target" id="clk__tree__defs_8h_1a024f0d24911b2475d8c0e6a4dbda7c60a2e9c74bfd4ff9637efb467689021a28c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_XTAL_FREQ_26M</span></span></span><a class="headerlink" href="#_CPPv4N15soc_xtal_freq_t17SOC_XTAL_FREQ_26ME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>26MHz XTAL </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15soc_xtal_freq_t17SOC_XTAL_FREQ_40ME">
+<span id="_CPPv3N15soc_xtal_freq_t17SOC_XTAL_FREQ_40ME"></span><span id="_CPPv2N15soc_xtal_freq_t17SOC_XTAL_FREQ_40ME"></span><span class="target" id="clk__tree__defs_8h_1a024f0d24911b2475d8c0e6a4dbda7c60ae2a96663a406a9a6f5a296c1a4a65a15"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_XTAL_FREQ_40M</span></span></span><a class="headerlink" href="#_CPPv4N15soc_xtal_freq_t17SOC_XTAL_FREQ_40ME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>40MHz XTAL </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv416soc_module_clk_t">
+<span id="_CPPv316soc_module_clk_t"></span><span id="_CPPv216soc_module_clk_t"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9e"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_module_clk_t</span></span></span><a class="headerlink" href="#_CPPv416soc_module_clk_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Supported clock sources for modules (CPU, peripherals, RTC, etc.) </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>enum starts from 1, to save 0 for special purpose </p>
+</div>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t15SOC_MOD_CLK_CPUE">
+<span id="_CPPv3N16soc_module_clk_t15SOC_MOD_CLK_CPUE"></span><span id="_CPPv2N16soc_module_clk_t15SOC_MOD_CLK_CPUE"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9ea5175585f3152f104d419f433e34db3f4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_CPU</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t15SOC_MOD_CLK_CPUE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>CPU_CLK can be sourced from XTAL, PLL, RC_FAST, or APLL by configuring soc_cpu_clk_src_t </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t20SOC_MOD_CLK_RTC_FASTE">
+<span id="_CPPv3N16soc_module_clk_t20SOC_MOD_CLK_RTC_FASTE"></span><span id="_CPPv2N16soc_module_clk_t20SOC_MOD_CLK_RTC_FASTE"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9ea36689e98a3b557d435d3a8ff25f3dc63"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_RTC_FAST</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t20SOC_MOD_CLK_RTC_FASTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RTC_FAST_CLK can be sourced from XTAL_D4 or RC_FAST by configuring soc_rtc_fast_clk_src_t </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t20SOC_MOD_CLK_RTC_SLOWE">
+<span id="_CPPv3N16soc_module_clk_t20SOC_MOD_CLK_RTC_SLOWE"></span><span id="_CPPv2N16soc_module_clk_t20SOC_MOD_CLK_RTC_SLOWE"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9ea95fb375206bef4f091f5548f030d8473"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_RTC_SLOW</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t20SOC_MOD_CLK_RTC_SLOWE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RTC_SLOW_CLK can be sourced from RC_SLOW, XTAL32K, or RC_FAST_D256 by configuring soc_rtc_slow_clk_src_t </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t15SOC_MOD_CLK_APBE">
+<span id="_CPPv3N16soc_module_clk_t15SOC_MOD_CLK_APBE"></span><span id="_CPPv2N16soc_module_clk_t15SOC_MOD_CLK_APBE"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9ea797a7fecc950de74471b360f23b1ce3a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_APB</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t15SOC_MOD_CLK_APBE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>APB_CLK is highly dependent on the CPU_CLK source </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t18SOC_MOD_CLK_PLL_D2E">
+<span id="_CPPv3N16soc_module_clk_t18SOC_MOD_CLK_PLL_D2E"></span><span id="_CPPv2N16soc_module_clk_t18SOC_MOD_CLK_PLL_D2E"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9eae039777c46bb0a44cd714927bfa91318"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_PLL_D2</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t18SOC_MOD_CLK_PLL_D2E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PLL_D2_CLK is derived from PLL, it has a fixed divider of 2 </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t21SOC_MOD_CLK_PLL_F160ME">
+<span id="_CPPv3N16soc_module_clk_t21SOC_MOD_CLK_PLL_F160ME"></span><span id="_CPPv2N16soc_module_clk_t21SOC_MOD_CLK_PLL_F160ME"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9eac79cb4e4c4d32e6397d12c2ab58d74e1"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_PLL_F160M</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t21SOC_MOD_CLK_PLL_F160ME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PLL_F160M_CLK is derived from PLL, and has a fixed frequency of 160MHz </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t19SOC_MOD_CLK_XTAL32KE">
+<span id="_CPPv3N16soc_module_clk_t19SOC_MOD_CLK_XTAL32KE"></span><span id="_CPPv2N16soc_module_clk_t19SOC_MOD_CLK_XTAL32KE"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9ea96f14822b91243f0cc73b5ca3a51bcd7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_XTAL32K</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t19SOC_MOD_CLK_XTAL32KE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>XTAL32K_CLK comes from the external 32kHz crystal, passing a clock gating to the peripherals </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t19SOC_MOD_CLK_RC_FASTE">
+<span id="_CPPv3N16soc_module_clk_t19SOC_MOD_CLK_RC_FASTE"></span><span id="_CPPv2N16soc_module_clk_t19SOC_MOD_CLK_RC_FASTE"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9ea9004477725d03fb3597c0441293710e1"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_RC_FAST</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t19SOC_MOD_CLK_RC_FASTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RC_FAST_CLK comes from the internal 8MHz rc oscillator, passing a clock gating to the peripherals </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t24SOC_MOD_CLK_RC_FAST_D256E">
+<span id="_CPPv3N16soc_module_clk_t24SOC_MOD_CLK_RC_FAST_D256E"></span><span id="_CPPv2N16soc_module_clk_t24SOC_MOD_CLK_RC_FAST_D256E"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9eada5df0d7d7a29faab2f62f0e1efbdd98"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_RC_FAST_D256</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t24SOC_MOD_CLK_RC_FAST_D256E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RC_FAST_D256_CLK comes from the internal 8MHz rc oscillator, divided by 256, and passing a clock gating to the peripherals </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t16SOC_MOD_CLK_XTALE">
+<span id="_CPPv3N16soc_module_clk_t16SOC_MOD_CLK_XTALE"></span><span id="_CPPv2N16soc_module_clk_t16SOC_MOD_CLK_XTALE"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9ea2ea32dce8f0dfbbf6ae1f778c8f69451"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_XTAL</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t16SOC_MOD_CLK_XTALE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>XTAL_CLK comes from the external crystal (2~40MHz) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t20SOC_MOD_CLK_REF_TICKE">
+<span id="_CPPv3N16soc_module_clk_t20SOC_MOD_CLK_REF_TICKE"></span><span id="_CPPv2N16soc_module_clk_t20SOC_MOD_CLK_REF_TICKE"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9ea9756fb2a42549ce92dd73ed64a4b1cbc"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_REF_TICK</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t20SOC_MOD_CLK_REF_TICKE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>REF_TICK is derived from APB, it has a fixed frequency of 1MHz even when APB frequency changes </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t16SOC_MOD_CLK_APLLE">
+<span id="_CPPv3N16soc_module_clk_t16SOC_MOD_CLK_APLLE"></span><span id="_CPPv2N16soc_module_clk_t16SOC_MOD_CLK_APLLE"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9ea1fb4419f4f7ad473a08c8743947dd69e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_APLL</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t16SOC_MOD_CLK_APLLE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>APLL is sourced from PLL, and its frequency is configurable through APLL configuration registers </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16soc_module_clk_t19SOC_MOD_CLK_INVALIDE">
+<span id="_CPPv3N16soc_module_clk_t19SOC_MOD_CLK_INVALIDE"></span><span id="_CPPv2N16soc_module_clk_t19SOC_MOD_CLK_INVALIDE"></span><span class="target" id="clk__tree__defs_8h_1a0a7ee49ee90e4427ed22b19259fe7d9ea7feac4a5dd69cfb5bf7acbb1faae835f"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOC_MOD_CLK_INVALID</span></span></span><a class="headerlink" href="#_CPPv4N16soc_module_clk_t19SOC_MOD_CLK_INVALIDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Indication of the end of the available module clock sources </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv429soc_periph_systimer_clk_src_t">
+<span id="_CPPv329soc_periph_systimer_clk_src_t"></span><span id="_CPPv229soc_periph_systimer_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1abd8a3163a4791210e3a151b091f29ba4"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_systimer_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv429soc_periph_systimer_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of SYSTIMER clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N29soc_periph_systimer_clk_src_t21SYSTIMER_CLK_SRC_XTALE">
+<span id="_CPPv3N29soc_periph_systimer_clk_src_t21SYSTIMER_CLK_SRC_XTALE"></span><span id="_CPPv2N29soc_periph_systimer_clk_src_t21SYSTIMER_CLK_SRC_XTALE"></span><span class="target" id="clk__tree__defs_8h_1abd8a3163a4791210e3a151b091f29ba4a0fb44147b37b6f8b7f5626b318b17257"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SYSTIMER_CLK_SRC_XTAL</span></span></span><a class="headerlink" href="#_CPPv4N29soc_periph_systimer_clk_src_t21SYSTIMER_CLK_SRC_XTALE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>SYSTIMER source clock is XTAL </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N29soc_periph_systimer_clk_src_t24SYSTIMER_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N29soc_periph_systimer_clk_src_t24SYSTIMER_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N29soc_periph_systimer_clk_src_t24SYSTIMER_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1abd8a3163a4791210e3a151b091f29ba4ab215b40824fd51df3c7d4e30930540bb"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SYSTIMER_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N29soc_periph_systimer_clk_src_t24SYSTIMER_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>SYSTIMER source clock default choice is XTAL </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv428soc_periph_gptimer_clk_src_t">
+<span id="_CPPv328soc_periph_gptimer_clk_src_t"></span><span id="_CPPv228soc_periph_gptimer_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a33c3a3ab7404788da757467dba1b8f92"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_gptimer_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv428soc_periph_gptimer_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of GPTimer clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N28soc_periph_gptimer_clk_src_t19GPTIMER_CLK_SRC_APBE">
+<span id="_CPPv3N28soc_periph_gptimer_clk_src_t19GPTIMER_CLK_SRC_APBE"></span><span id="_CPPv2N28soc_periph_gptimer_clk_src_t19GPTIMER_CLK_SRC_APBE"></span><span class="target" id="clk__tree__defs_8h_1a33c3a3ab7404788da757467dba1b8f92ac06158dd4e920ffc5b78f8711be4a9d9"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GPTIMER_CLK_SRC_APB</span></span></span><a class="headerlink" href="#_CPPv4N28soc_periph_gptimer_clk_src_t19GPTIMER_CLK_SRC_APBE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N28soc_periph_gptimer_clk_src_t23GPTIMER_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N28soc_periph_gptimer_clk_src_t23GPTIMER_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N28soc_periph_gptimer_clk_src_t23GPTIMER_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1a33c3a3ab7404788da757467dba1b8f92a1f24378975b79a0cdd7187d641c4a1dd"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GPTIMER_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N28soc_periph_gptimer_clk_src_t23GPTIMER_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the default choice </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv430soc_periph_tg_clk_src_legacy_t">
+<span id="_CPPv330soc_periph_tg_clk_src_legacy_t"></span><span id="_CPPv230soc_periph_tg_clk_src_legacy_t"></span><span class="target" id="clk__tree__defs_8h_1ac9352139e51b072f69b26c1d674af260"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_tg_clk_src_legacy_t</span></span></span><a class="headerlink" href="#_CPPv430soc_periph_tg_clk_src_legacy_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of Timer Group clock source, reserved for the legacy timer group driver. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N30soc_periph_tg_clk_src_legacy_t17TIMER_SRC_CLK_APBE">
+<span id="_CPPv3N30soc_periph_tg_clk_src_legacy_t17TIMER_SRC_CLK_APBE"></span><span id="_CPPv2N30soc_periph_tg_clk_src_legacy_t17TIMER_SRC_CLK_APBE"></span><span class="target" id="clk__tree__defs_8h_1ac9352139e51b072f69b26c1d674af260abb58ef0f6ff527fae445d018665f6e05"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TIMER_SRC_CLK_APB</span></span></span><a class="headerlink" href="#_CPPv4N30soc_periph_tg_clk_src_legacy_t17TIMER_SRC_CLK_APBE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Timer group source clock is APB </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N30soc_periph_tg_clk_src_legacy_t21TIMER_SRC_CLK_DEFAULTE">
+<span id="_CPPv3N30soc_periph_tg_clk_src_legacy_t21TIMER_SRC_CLK_DEFAULTE"></span><span id="_CPPv2N30soc_periph_tg_clk_src_legacy_t21TIMER_SRC_CLK_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1ac9352139e51b072f69b26c1d674af260a6f62cc0afbc16c6eb7627f0692ba19a0"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TIMER_SRC_CLK_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N30soc_periph_tg_clk_src_legacy_t21TIMER_SRC_CLK_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Timer group source clock default choice is APB </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv424soc_periph_lcd_clk_src_t">
+<span id="_CPPv324soc_periph_lcd_clk_src_t"></span><span id="_CPPv224soc_periph_lcd_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1aae80c9452eb9be2da9f60460b7b2d3ba"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_lcd_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv424soc_periph_lcd_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of LCD clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_lcd_clk_src_t19LCD_CLK_SRC_PLL160ME">
+<span id="_CPPv3N24soc_periph_lcd_clk_src_t19LCD_CLK_SRC_PLL160ME"></span><span id="_CPPv2N24soc_periph_lcd_clk_src_t19LCD_CLK_SRC_PLL160ME"></span><span class="target" id="clk__tree__defs_8h_1aae80c9452eb9be2da9f60460b7b2d3baaaa408b03a489328643dc6ae05b22d5f0"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LCD_CLK_SRC_PLL160M</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_lcd_clk_src_t19LCD_CLK_SRC_PLL160ME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_160M as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_lcd_clk_src_t19LCD_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N24soc_periph_lcd_clk_src_t19LCD_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N24soc_periph_lcd_clk_src_t19LCD_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1aae80c9452eb9be2da9f60460b7b2d3baa090a55091e88d4242e22e83dc12c2396"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LCD_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_lcd_clk_src_t19LCD_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_160M as the default choice </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv424soc_periph_rmt_clk_src_t">
+<span id="_CPPv324soc_periph_rmt_clk_src_t"></span><span id="_CPPv224soc_periph_rmt_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a7e8f3021bf2cf4f63a80b2b3fe0507d9"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_rmt_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv424soc_periph_rmt_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of RMT clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_rmt_clk_src_t15RMT_CLK_SRC_APBE">
+<span id="_CPPv3N24soc_periph_rmt_clk_src_t15RMT_CLK_SRC_APBE"></span><span id="_CPPv2N24soc_periph_rmt_clk_src_t15RMT_CLK_SRC_APBE"></span><span class="target" id="clk__tree__defs_8h_1a7e8f3021bf2cf4f63a80b2b3fe0507d9a276c7c7831a9da10f6ea00a5bd1799bd"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RMT_CLK_SRC_APB</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_rmt_clk_src_t15RMT_CLK_SRC_APBE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_rmt_clk_src_t20RMT_CLK_SRC_REF_TICKE">
+<span id="_CPPv3N24soc_periph_rmt_clk_src_t20RMT_CLK_SRC_REF_TICKE"></span><span id="_CPPv2N24soc_periph_rmt_clk_src_t20RMT_CLK_SRC_REF_TICKE"></span><span class="target" id="clk__tree__defs_8h_1a7e8f3021bf2cf4f63a80b2b3fe0507d9af4ca57941c3ff89a30b3dbf29411a382"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RMT_CLK_SRC_REF_TICK</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_rmt_clk_src_t20RMT_CLK_SRC_REF_TICKE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select REF_TICK as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_rmt_clk_src_t19RMT_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N24soc_periph_rmt_clk_src_t19RMT_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N24soc_periph_rmt_clk_src_t19RMT_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1a7e8f3021bf2cf4f63a80b2b3fe0507d9a2a62d169c50149994650986a5b435e62"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RMT_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_rmt_clk_src_t19RMT_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the default choice </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv431soc_periph_rmt_clk_src_legacy_t">
+<span id="_CPPv331soc_periph_rmt_clk_src_legacy_t"></span><span id="_CPPv231soc_periph_rmt_clk_src_legacy_t"></span><span class="target" id="clk__tree__defs_8h_1ab23b35e48de3f92c7fdab995d8c67406"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_rmt_clk_src_legacy_t</span></span></span><a class="headerlink" href="#_CPPv431soc_periph_rmt_clk_src_legacy_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of RMT clock source, reserved for the legacy RMT driver. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N31soc_periph_rmt_clk_src_legacy_t15RMT_BASECLK_APBE">
+<span id="_CPPv3N31soc_periph_rmt_clk_src_legacy_t15RMT_BASECLK_APBE"></span><span id="_CPPv2N31soc_periph_rmt_clk_src_legacy_t15RMT_BASECLK_APBE"></span><span class="target" id="clk__tree__defs_8h_1ab23b35e48de3f92c7fdab995d8c67406ab24eba9e39a934cf2d27bc04e4bc23ac"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RMT_BASECLK_APB</span></span></span><a class="headerlink" href="#_CPPv4N31soc_periph_rmt_clk_src_legacy_t15RMT_BASECLK_APBE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RMT source clock is APB CLK </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N31soc_periph_rmt_clk_src_legacy_t15RMT_BASECLK_REFE">
+<span id="_CPPv3N31soc_periph_rmt_clk_src_legacy_t15RMT_BASECLK_REFE"></span><span id="_CPPv2N31soc_periph_rmt_clk_src_legacy_t15RMT_BASECLK_REFE"></span><span class="target" id="clk__tree__defs_8h_1ab23b35e48de3f92c7fdab995d8c67406afa630dbc082d3d1d14d900b0c27d9a19"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RMT_BASECLK_REF</span></span></span><a class="headerlink" href="#_CPPv4N31soc_periph_rmt_clk_src_legacy_t15RMT_BASECLK_REFE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RMT source clock is REF_TICK </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N31soc_periph_rmt_clk_src_legacy_t19RMT_BASECLK_DEFAULTE">
+<span id="_CPPv3N31soc_periph_rmt_clk_src_legacy_t19RMT_BASECLK_DEFAULTE"></span><span id="_CPPv2N31soc_periph_rmt_clk_src_legacy_t19RMT_BASECLK_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1ab23b35e48de3f92c7fdab995d8c67406a604719bc76542438fa61d47bd8a812f2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RMT_BASECLK_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N31soc_periph_rmt_clk_src_legacy_t19RMT_BASECLK_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RMT source clock default choice is APB </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv432soc_periph_uart_clk_src_legacy_t">
+<span id="_CPPv332soc_periph_uart_clk_src_legacy_t"></span><span id="_CPPv232soc_periph_uart_clk_src_legacy_t"></span><span class="target" id="clk__tree__defs_8h_1ab474dfd1fd3e489ca48d9394ac9ace31"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_uart_clk_src_legacy_t</span></span></span><a class="headerlink" href="#_CPPv432soc_periph_uart_clk_src_legacy_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of UART clock source, reserved for the legacy UART driver. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N32soc_periph_uart_clk_src_legacy_t13UART_SCLK_APBE">
+<span id="_CPPv3N32soc_periph_uart_clk_src_legacy_t13UART_SCLK_APBE"></span><span id="_CPPv2N32soc_periph_uart_clk_src_legacy_t13UART_SCLK_APBE"></span><span class="target" id="clk__tree__defs_8h_1ab474dfd1fd3e489ca48d9394ac9ace31a051c72bf300b17427fe9f2cb377b83d2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UART_SCLK_APB</span></span></span><a class="headerlink" href="#_CPPv4N32soc_periph_uart_clk_src_legacy_t13UART_SCLK_APBE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>UART source clock is APB CLK </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N32soc_periph_uart_clk_src_legacy_t18UART_SCLK_REF_TICKE">
+<span id="_CPPv3N32soc_periph_uart_clk_src_legacy_t18UART_SCLK_REF_TICKE"></span><span id="_CPPv2N32soc_periph_uart_clk_src_legacy_t18UART_SCLK_REF_TICKE"></span><span class="target" id="clk__tree__defs_8h_1ab474dfd1fd3e489ca48d9394ac9ace31ad95c9db48ca2d1e764bbb6d3b14d1a18"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UART_SCLK_REF_TICK</span></span></span><a class="headerlink" href="#_CPPv4N32soc_periph_uart_clk_src_legacy_t18UART_SCLK_REF_TICKE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>UART source clock is REF_TICK </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N32soc_periph_uart_clk_src_legacy_t17UART_SCLK_DEFAULTE">
+<span id="_CPPv3N32soc_periph_uart_clk_src_legacy_t17UART_SCLK_DEFAULTE"></span><span id="_CPPv2N32soc_periph_uart_clk_src_legacy_t17UART_SCLK_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1ab474dfd1fd3e489ca48d9394ac9ace31ac420ad306b35b84ed2361b3e7b87d349"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UART_SCLK_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N32soc_periph_uart_clk_src_legacy_t17UART_SCLK_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>UART source clock default choice is APB </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv432soc_periph_mcpwm_timer_clk_src_t">
+<span id="_CPPv332soc_periph_mcpwm_timer_clk_src_t"></span><span id="_CPPv232soc_periph_mcpwm_timer_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a9a623534d8333d503a9fd96c445c644a"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_mcpwm_timer_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv432soc_periph_mcpwm_timer_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of MCPWM timer clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N32soc_periph_mcpwm_timer_clk_src_t27MCPWM_TIMER_CLK_SRC_PLL160ME">
+<span id="_CPPv3N32soc_periph_mcpwm_timer_clk_src_t27MCPWM_TIMER_CLK_SRC_PLL160ME"></span><span id="_CPPv2N32soc_periph_mcpwm_timer_clk_src_t27MCPWM_TIMER_CLK_SRC_PLL160ME"></span><span class="target" id="clk__tree__defs_8h_1a9a623534d8333d503a9fd96c445c644aa4cef776682570ccd92fbf8c947066e6b"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MCPWM_TIMER_CLK_SRC_PLL160M</span></span></span><a class="headerlink" href="#_CPPv4N32soc_periph_mcpwm_timer_clk_src_t27MCPWM_TIMER_CLK_SRC_PLL160ME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_F160M as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N32soc_periph_mcpwm_timer_clk_src_t27MCPWM_TIMER_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N32soc_periph_mcpwm_timer_clk_src_t27MCPWM_TIMER_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N32soc_periph_mcpwm_timer_clk_src_t27MCPWM_TIMER_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1a9a623534d8333d503a9fd96c445c644aa14511007283ea208760f118079c4bf50"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MCPWM_TIMER_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N32soc_periph_mcpwm_timer_clk_src_t27MCPWM_TIMER_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_F160M as the default clock choice </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv434soc_periph_mcpwm_capture_clk_src_t">
+<span id="_CPPv334soc_periph_mcpwm_capture_clk_src_t"></span><span id="_CPPv234soc_periph_mcpwm_capture_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a1472a142645134c26153fb4faa5d42e2"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_mcpwm_capture_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv434soc_periph_mcpwm_capture_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of MCPWM capture clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N34soc_periph_mcpwm_capture_clk_src_t25MCPWM_CAPTURE_CLK_SRC_APBE">
+<span id="_CPPv3N34soc_periph_mcpwm_capture_clk_src_t25MCPWM_CAPTURE_CLK_SRC_APBE"></span><span id="_CPPv2N34soc_periph_mcpwm_capture_clk_src_t25MCPWM_CAPTURE_CLK_SRC_APBE"></span><span class="target" id="clk__tree__defs_8h_1a1472a142645134c26153fb4faa5d42e2a133dfc6b2ee35982f3fb74deda3b0645"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MCPWM_CAPTURE_CLK_SRC_APB</span></span></span><a class="headerlink" href="#_CPPv4N34soc_periph_mcpwm_capture_clk_src_t25MCPWM_CAPTURE_CLK_SRC_APBE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N34soc_periph_mcpwm_capture_clk_src_t29MCPWM_CAPTURE_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N34soc_periph_mcpwm_capture_clk_src_t29MCPWM_CAPTURE_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N34soc_periph_mcpwm_capture_clk_src_t29MCPWM_CAPTURE_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1a1472a142645134c26153fb4faa5d42e2a94d8e670a80f3415fbda7b69e05f5b33"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MCPWM_CAPTURE_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N34soc_periph_mcpwm_capture_clk_src_t29MCPWM_CAPTURE_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the default clock choice </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv434soc_periph_mcpwm_carrier_clk_src_t">
+<span id="_CPPv334soc_periph_mcpwm_carrier_clk_src_t"></span><span id="_CPPv234soc_periph_mcpwm_carrier_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1afb07d58d93dc5dafe2e383d80b408a44"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_mcpwm_carrier_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv434soc_periph_mcpwm_carrier_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of MCPWM carrier clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N34soc_periph_mcpwm_carrier_clk_src_t29MCPWM_CARRIER_CLK_SRC_PLL160ME">
+<span id="_CPPv3N34soc_periph_mcpwm_carrier_clk_src_t29MCPWM_CARRIER_CLK_SRC_PLL160ME"></span><span id="_CPPv2N34soc_periph_mcpwm_carrier_clk_src_t29MCPWM_CARRIER_CLK_SRC_PLL160ME"></span><span class="target" id="clk__tree__defs_8h_1afb07d58d93dc5dafe2e383d80b408a44a1683f93e902c7b4a0b6235c0197da1e8"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MCPWM_CARRIER_CLK_SRC_PLL160M</span></span></span><a class="headerlink" href="#_CPPv4N34soc_periph_mcpwm_carrier_clk_src_t29MCPWM_CARRIER_CLK_SRC_PLL160ME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_F160M as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N34soc_periph_mcpwm_carrier_clk_src_t29MCPWM_CARRIER_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N34soc_periph_mcpwm_carrier_clk_src_t29MCPWM_CARRIER_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N34soc_periph_mcpwm_carrier_clk_src_t29MCPWM_CARRIER_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1afb07d58d93dc5dafe2e383d80b408a44af69dd918e644225570bb738573bfefd2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MCPWM_CARRIER_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N34soc_periph_mcpwm_carrier_clk_src_t29MCPWM_CARRIER_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_F160M as the default clock choice </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv424soc_periph_i2s_clk_src_t">
+<span id="_CPPv324soc_periph_i2s_clk_src_t"></span><span id="_CPPv224soc_periph_i2s_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1aed9d0efae5bd48b2f0f24d2ff99fd414"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_i2s_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv424soc_periph_i2s_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>I2S clock source enum. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_i2s_clk_src_t19I2S_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N24soc_periph_i2s_clk_src_t19I2S_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N24soc_periph_i2s_clk_src_t19I2S_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1aed9d0efae5bd48b2f0f24d2ff99fd414ab73318e2d60d0242512cfafa8d414144"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">I2S_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_i2s_clk_src_t19I2S_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_F160M as the default source clock 
+
+ </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_i2s_clk_src_t20I2S_CLK_SRC_PLL_160ME">
+<span id="_CPPv3N24soc_periph_i2s_clk_src_t20I2S_CLK_SRC_PLL_160ME"></span><span id="_CPPv2N24soc_periph_i2s_clk_src_t20I2S_CLK_SRC_PLL_160ME"></span><span class="target" id="clk__tree__defs_8h_1aed9d0efae5bd48b2f0f24d2ff99fd414a4508f302a2af1651b16576ee2d0d806e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">I2S_CLK_SRC_PLL_160M</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_i2s_clk_src_t20I2S_CLK_SRC_PLL_160ME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_F160M as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_i2s_clk_src_t16I2S_CLK_SRC_APLLE">
+<span id="_CPPv3N24soc_periph_i2s_clk_src_t16I2S_CLK_SRC_APLLE"></span><span id="_CPPv2N24soc_periph_i2s_clk_src_t16I2S_CLK_SRC_APLLE"></span><span class="target" id="clk__tree__defs_8h_1aed9d0efae5bd48b2f0f24d2ff99fd414a5e1082a2efabb39177be16d2eed259f8"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">I2S_CLK_SRC_APLL</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_i2s_clk_src_t16I2S_CLK_SRC_APLLE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APLL as the source clock </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv424soc_periph_i2c_clk_src_t">
+<span id="_CPPv324soc_periph_i2c_clk_src_t"></span><span id="_CPPv224soc_periph_i2c_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a86116f8039ec7675d924a5abab6ad5fd"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_i2c_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv424soc_periph_i2c_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of I2C clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_i2c_clk_src_t15I2C_CLK_SRC_APBE">
+<span id="_CPPv3N24soc_periph_i2c_clk_src_t15I2C_CLK_SRC_APBE"></span><span id="_CPPv2N24soc_periph_i2c_clk_src_t15I2C_CLK_SRC_APBE"></span><span class="target" id="clk__tree__defs_8h_1a86116f8039ec7675d924a5abab6ad5fda733e39066ff5f5f37a1c0875cda23fbe"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">I2C_CLK_SRC_APB</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_i2c_clk_src_t15I2C_CLK_SRC_APBE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_i2c_clk_src_t19I2C_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N24soc_periph_i2c_clk_src_t19I2C_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N24soc_periph_i2c_clk_src_t19I2C_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1a86116f8039ec7675d924a5abab6ad5fda9986e15dca9ab75806800477af399fb7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">I2C_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_i2c_clk_src_t19I2C_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv424soc_periph_spi_clk_src_t">
+<span id="_CPPv324soc_periph_spi_clk_src_t"></span><span id="_CPPv224soc_periph_spi_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a57023b65c8df5feddc4aee2eec3b2b25"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_spi_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv424soc_periph_spi_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of SPI clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_spi_clk_src_t19SPI_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N24soc_periph_spi_clk_src_t19SPI_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N24soc_periph_spi_clk_src_t19SPI_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1a57023b65c8df5feddc4aee2eec3b2b25ae9d7988aecfb45295acefaa11aff0f13"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SPI_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_spi_clk_src_t19SPI_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as SPI source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_spi_clk_src_t15SPI_CLK_SRC_APBE">
+<span id="_CPPv3N24soc_periph_spi_clk_src_t15SPI_CLK_SRC_APBE"></span><span id="_CPPv2N24soc_periph_spi_clk_src_t15SPI_CLK_SRC_APBE"></span><span class="target" id="clk__tree__defs_8h_1a57023b65c8df5feddc4aee2eec3b2b25a3e7789ddd1aea02e2b1135c1992056a7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SPI_CLK_SRC_APB</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_spi_clk_src_t15SPI_CLK_SRC_APBE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as SPI source clock </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv424soc_periph_sdm_clk_src_t">
+<span id="_CPPv324soc_periph_sdm_clk_src_t"></span><span id="_CPPv224soc_periph_sdm_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a06914a5a5da1881bec24b9c840eba2fc"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_sdm_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv424soc_periph_sdm_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sigma Delta Modulator clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_sdm_clk_src_t15SDM_CLK_SRC_APBE">
+<span id="_CPPv3N24soc_periph_sdm_clk_src_t15SDM_CLK_SRC_APBE"></span><span id="_CPPv2N24soc_periph_sdm_clk_src_t15SDM_CLK_SRC_APBE"></span><span class="target" id="clk__tree__defs_8h_1a06914a5a5da1881bec24b9c840eba2fcaa8d8d5b8c0c3e8b9b8cfc002f52e57af"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SDM_CLK_SRC_APB</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_sdm_clk_src_t15SDM_CLK_SRC_APBE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24soc_periph_sdm_clk_src_t19SDM_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N24soc_periph_sdm_clk_src_t19SDM_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N24soc_periph_sdm_clk_src_t19SDM_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1a06914a5a5da1881bec24b9c840eba2fcad0bbb514255adad984c7f82981a3e2f7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SDM_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N24soc_periph_sdm_clk_src_t19SDM_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the default clock choice </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv429soc_periph_dac_digi_clk_src_t">
+<span id="_CPPv329soc_periph_dac_digi_clk_src_t"></span><span id="_CPPv229soc_periph_dac_digi_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1ae18b7622e67a887ec5afc701a6efa31b"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_dac_digi_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv429soc_periph_dac_digi_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC digital controller clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N29soc_periph_dac_digi_clk_src_t22DAC_DIGI_CLK_SRC_PLLD2E">
+<span id="_CPPv3N29soc_periph_dac_digi_clk_src_t22DAC_DIGI_CLK_SRC_PLLD2E"></span><span id="_CPPv2N29soc_periph_dac_digi_clk_src_t22DAC_DIGI_CLK_SRC_PLLD2E"></span><span class="target" id="clk__tree__defs_8h_1ae18b7622e67a887ec5afc701a6efa31bab16c3b80498709847cdf8051af4aba1d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_DIGI_CLK_SRC_PLLD2</span></span></span><a class="headerlink" href="#_CPPv4N29soc_periph_dac_digi_clk_src_t22DAC_DIGI_CLK_SRC_PLLD2E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_D2 as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N29soc_periph_dac_digi_clk_src_t21DAC_DIGI_CLK_SRC_APLLE">
+<span id="_CPPv3N29soc_periph_dac_digi_clk_src_t21DAC_DIGI_CLK_SRC_APLLE"></span><span id="_CPPv2N29soc_periph_dac_digi_clk_src_t21DAC_DIGI_CLK_SRC_APLLE"></span><span class="target" id="clk__tree__defs_8h_1ae18b7622e67a887ec5afc701a6efa31bafb01a5700664261cce35c3c2cddd3d56"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_DIGI_CLK_SRC_APLL</span></span></span><a class="headerlink" href="#_CPPv4N29soc_periph_dac_digi_clk_src_t21DAC_DIGI_CLK_SRC_APLLE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APLL as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N29soc_periph_dac_digi_clk_src_t24DAC_DIGI_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N29soc_periph_dac_digi_clk_src_t24DAC_DIGI_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N29soc_periph_dac_digi_clk_src_t24DAC_DIGI_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1ae18b7622e67a887ec5afc701a6efa31ba71143d721d9ae59d5c190251e3032e19"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_DIGI_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N29soc_periph_dac_digi_clk_src_t24DAC_DIGI_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_D2 as the default source clock 
+
+ </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv431soc_periph_dac_cosine_clk_src_t">
+<span id="_CPPv331soc_periph_dac_cosine_clk_src_t"></span><span id="_CPPv231soc_periph_dac_cosine_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a2b2033eb3ffea8b2e338bdeb33b827c2"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_dac_cosine_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv431soc_periph_dac_cosine_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC cosine wave generator clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N31soc_periph_dac_cosine_clk_src_t27DAC_COSINE_CLK_SRC_RTC_FASTE">
+<span id="_CPPv3N31soc_periph_dac_cosine_clk_src_t27DAC_COSINE_CLK_SRC_RTC_FASTE"></span><span id="_CPPv2N31soc_periph_dac_cosine_clk_src_t27DAC_COSINE_CLK_SRC_RTC_FASTE"></span><span class="target" id="clk__tree__defs_8h_1a2b2033eb3ffea8b2e338bdeb33b827c2a27af664a16d74a7a816d80ba4fe2a940"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_COSINE_CLK_SRC_RTC_FAST</span></span></span><a class="headerlink" href="#_CPPv4N31soc_periph_dac_cosine_clk_src_t27DAC_COSINE_CLK_SRC_RTC_FASTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select RTC FAST as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N31soc_periph_dac_cosine_clk_src_t26DAC_COSINE_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N31soc_periph_dac_cosine_clk_src_t26DAC_COSINE_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N31soc_periph_dac_cosine_clk_src_t26DAC_COSINE_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1a2b2033eb3ffea8b2e338bdeb33b827c2a2910a4e225b35769d474e99e8dc3bf95"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_COSINE_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N31soc_periph_dac_cosine_clk_src_t26DAC_COSINE_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select RTC FAST as the default source clock </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv425soc_periph_twai_clk_src_t">
+<span id="_CPPv325soc_periph_twai_clk_src_t"></span><span id="_CPPv225soc_periph_twai_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1abb638b6873f566cf2c865ae9d569e18c"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_twai_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv425soc_periph_twai_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>TWAI clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N25soc_periph_twai_clk_src_t16TWAI_CLK_SRC_APBE">
+<span id="_CPPv3N25soc_periph_twai_clk_src_t16TWAI_CLK_SRC_APBE"></span><span id="_CPPv2N25soc_periph_twai_clk_src_t16TWAI_CLK_SRC_APBE"></span><span class="target" id="clk__tree__defs_8h_1abb638b6873f566cf2c865ae9d569e18cab2d2fc9213d85e798af352ffbdc10d0d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TWAI_CLK_SRC_APB</span></span></span><a class="headerlink" href="#_CPPv4N25soc_periph_twai_clk_src_t16TWAI_CLK_SRC_APBE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N25soc_periph_twai_clk_src_t20TWAI_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N25soc_periph_twai_clk_src_t20TWAI_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N25soc_periph_twai_clk_src_t20TWAI_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1abb638b6873f566cf2c865ae9d569e18cabf29df537b489aa9a5729a7d6270d668"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TWAI_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N25soc_periph_twai_clk_src_t20TWAI_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the default clock choice </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv429soc_periph_adc_digi_clk_src_t">
+<span id="_CPPv329soc_periph_adc_digi_clk_src_t"></span><span id="_CPPv229soc_periph_adc_digi_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a45ab6f463efdd6a6cc1f5a11e467e663"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_adc_digi_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv429soc_periph_adc_digi_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>ADC digital controller clock source. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>ADC DMA mode is clocked from I2S on ESP32, using <code class="docutils literal notranslate"><span class="pre">ADC_DIGI_</span></code> here for compatibility Its clock source is same as I2S </p>
+</div>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N29soc_periph_adc_digi_clk_src_t26ADC_DIGI_CLK_SRC_PLL_F160ME">
+<span id="_CPPv3N29soc_periph_adc_digi_clk_src_t26ADC_DIGI_CLK_SRC_PLL_F160ME"></span><span id="_CPPv2N29soc_periph_adc_digi_clk_src_t26ADC_DIGI_CLK_SRC_PLL_F160ME"></span><span class="target" id="clk__tree__defs_8h_1a45ab6f463efdd6a6cc1f5a11e467e663a1b4a662e7126711fc18766e85dee6d40"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ADC_DIGI_CLK_SRC_PLL_F160M</span></span></span><a class="headerlink" href="#_CPPv4N29soc_periph_adc_digi_clk_src_t26ADC_DIGI_CLK_SRC_PLL_F160ME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select F160M as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N29soc_periph_adc_digi_clk_src_t21ADC_DIGI_CLK_SRC_APLLE">
+<span id="_CPPv3N29soc_periph_adc_digi_clk_src_t21ADC_DIGI_CLK_SRC_APLLE"></span><span id="_CPPv2N29soc_periph_adc_digi_clk_src_t21ADC_DIGI_CLK_SRC_APLLE"></span><span class="target" id="clk__tree__defs_8h_1a45ab6f463efdd6a6cc1f5a11e467e663a305d57e172238110adddacfc93cbda77"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ADC_DIGI_CLK_SRC_APLL</span></span></span><a class="headerlink" href="#_CPPv4N29soc_periph_adc_digi_clk_src_t21ADC_DIGI_CLK_SRC_APLLE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APLL as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N29soc_periph_adc_digi_clk_src_t24ADC_DIGI_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N29soc_periph_adc_digi_clk_src_t24ADC_DIGI_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N29soc_periph_adc_digi_clk_src_t24ADC_DIGI_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1a45ab6f463efdd6a6cc1f5a11e467e663a3c8368ba8b9383d73bd4e31230d4cba5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ADC_DIGI_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N29soc_periph_adc_digi_clk_src_t24ADC_DIGI_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select F160M as the default clock choice </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv428soc_periph_adc_rtc_clk_src_t">
+<span id="_CPPv328soc_periph_adc_rtc_clk_src_t"></span><span id="_CPPv228soc_periph_adc_rtc_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a38e33e51ac0bbd8a9a5cf063d54f8b4c"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_adc_rtc_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv428soc_periph_adc_rtc_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>ADC RTC controller clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N28soc_periph_adc_rtc_clk_src_t23ADC_RTC_CLK_SRC_RC_FASTE">
+<span id="_CPPv3N28soc_periph_adc_rtc_clk_src_t23ADC_RTC_CLK_SRC_RC_FASTE"></span><span id="_CPPv2N28soc_periph_adc_rtc_clk_src_t23ADC_RTC_CLK_SRC_RC_FASTE"></span><span class="target" id="clk__tree__defs_8h_1a38e33e51ac0bbd8a9a5cf063d54f8b4ca969db7df6f9c8dc9bc7f3a0e0b8eabc4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ADC_RTC_CLK_SRC_RC_FAST</span></span></span><a class="headerlink" href="#_CPPv4N28soc_periph_adc_rtc_clk_src_t23ADC_RTC_CLK_SRC_RC_FASTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select RC_FAST as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N28soc_periph_adc_rtc_clk_src_t23ADC_RTC_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N28soc_periph_adc_rtc_clk_src_t23ADC_RTC_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N28soc_periph_adc_rtc_clk_src_t23ADC_RTC_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1a38e33e51ac0bbd8a9a5cf063d54f8b4ca21edc1c83c269f7217321befbe3e3669"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ADC_RTC_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N28soc_periph_adc_rtc_clk_src_t23ADC_RTC_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select RC_FAST as the default clock choice </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv425soc_periph_mwdt_clk_src_t">
+<span id="_CPPv325soc_periph_mwdt_clk_src_t"></span><span id="_CPPv225soc_periph_mwdt_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1ad48e26a9ea9a3ee7f41932b6e7fe68b0"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_mwdt_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv425soc_periph_mwdt_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>MWDT clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N25soc_periph_mwdt_clk_src_t16MWDT_CLK_SRC_APBE">
+<span id="_CPPv3N25soc_periph_mwdt_clk_src_t16MWDT_CLK_SRC_APBE"></span><span id="_CPPv2N25soc_periph_mwdt_clk_src_t16MWDT_CLK_SRC_APBE"></span><span class="target" id="clk__tree__defs_8h_1ad48e26a9ea9a3ee7f41932b6e7fe68b0a232bf9182c2ddf60552f955e2b598266"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MWDT_CLK_SRC_APB</span></span></span><a class="headerlink" href="#_CPPv4N25soc_periph_mwdt_clk_src_t16MWDT_CLK_SRC_APBE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N25soc_periph_mwdt_clk_src_t20MWDT_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N25soc_periph_mwdt_clk_src_t20MWDT_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N25soc_periph_mwdt_clk_src_t20MWDT_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1ad48e26a9ea9a3ee7f41932b6e7fe68b0a56ce99be3fa3e7ae012e9fe32b613e86"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MWDT_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N25soc_periph_mwdt_clk_src_t20MWDT_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the default clock choice </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv432soc_periph_ledc_clk_src_legacy_t">
+<span id="_CPPv332soc_periph_ledc_clk_src_legacy_t"></span><span id="_CPPv232soc_periph_ledc_clk_src_legacy_t"></span><span class="target" id="clk__tree__defs_8h_1ae15e3f0761a9c0b2a5a9f4595be60f44"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_ledc_clk_src_legacy_t</span></span></span><a class="headerlink" href="#_CPPv432soc_periph_ledc_clk_src_legacy_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of LEDC clock source, reserved for the legacy LEDC driver. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N32soc_periph_ledc_clk_src_legacy_t13LEDC_AUTO_CLKE">
+<span id="_CPPv3N32soc_periph_ledc_clk_src_legacy_t13LEDC_AUTO_CLKE"></span><span id="_CPPv2N32soc_periph_ledc_clk_src_legacy_t13LEDC_AUTO_CLKE"></span><span class="target" id="clk__tree__defs_8h_1ae15e3f0761a9c0b2a5a9f4595be60f44ac7506046745a74241d00cda2dba56a96"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LEDC_AUTO_CLK</span></span></span><a class="headerlink" href="#_CPPv4N32soc_periph_ledc_clk_src_legacy_t13LEDC_AUTO_CLKE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>LEDC source clock will be automatically selected based on the giving resolution and duty parameter when init the timer </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N32soc_periph_ledc_clk_src_legacy_t16LEDC_USE_APB_CLKE">
+<span id="_CPPv3N32soc_periph_ledc_clk_src_legacy_t16LEDC_USE_APB_CLKE"></span><span id="_CPPv2N32soc_periph_ledc_clk_src_legacy_t16LEDC_USE_APB_CLKE"></span><span class="target" id="clk__tree__defs_8h_1ae15e3f0761a9c0b2a5a9f4595be60f44a12e8d70c9384372d1c035beb657e795c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LEDC_USE_APB_CLK</span></span></span><a class="headerlink" href="#_CPPv4N32soc_periph_ledc_clk_src_legacy_t16LEDC_USE_APB_CLKE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select APB as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N32soc_periph_ledc_clk_src_legacy_t20LEDC_USE_RC_FAST_CLKE">
+<span id="_CPPv3N32soc_periph_ledc_clk_src_legacy_t20LEDC_USE_RC_FAST_CLKE"></span><span id="_CPPv2N32soc_periph_ledc_clk_src_legacy_t20LEDC_USE_RC_FAST_CLKE"></span><span class="target" id="clk__tree__defs_8h_1ae15e3f0761a9c0b2a5a9f4595be60f44aca7f5af86d15bcc1682007857ae7e1b9"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LEDC_USE_RC_FAST_CLK</span></span></span><a class="headerlink" href="#_CPPv4N32soc_periph_ledc_clk_src_legacy_t20LEDC_USE_RC_FAST_CLKE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select RC_FAST as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N32soc_periph_ledc_clk_src_legacy_t17LEDC_USE_REF_TICKE">
+<span id="_CPPv3N32soc_periph_ledc_clk_src_legacy_t17LEDC_USE_REF_TICKE"></span><span id="_CPPv2N32soc_periph_ledc_clk_src_legacy_t17LEDC_USE_REF_TICKE"></span><span class="target" id="clk__tree__defs_8h_1ae15e3f0761a9c0b2a5a9f4595be60f44abbb44509497f1b3d5255e2ee7bb37e3c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LEDC_USE_REF_TICK</span></span></span><a class="headerlink" href="#_CPPv4N32soc_periph_ledc_clk_src_legacy_t17LEDC_USE_REF_TICKE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select REF_TICK as the source clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N32soc_periph_ledc_clk_src_legacy_t18LEDC_USE_RTC8M_CLKE">
+<span id="_CPPv3N32soc_periph_ledc_clk_src_legacy_t18LEDC_USE_RTC8M_CLKE"></span><span id="_CPPv2N32soc_periph_ledc_clk_src_legacy_t18LEDC_USE_RTC8M_CLKE"></span><span class="target" id="clk__tree__defs_8h_1ae15e3f0761a9c0b2a5a9f4595be60f44a747f552531283dc73c184d6ee796d92e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LEDC_USE_RTC8M_CLK</span></span></span><a class="headerlink" href="#_CPPv4N32soc_periph_ledc_clk_src_legacy_t18LEDC_USE_RTC8M_CLKE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Alias of 'LEDC_USE_RC_FAST_CLK' </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv426soc_periph_sdmmc_clk_src_t">
+<span id="_CPPv326soc_periph_sdmmc_clk_src_t"></span><span id="_CPPv226soc_periph_sdmmc_clk_src_t"></span><span class="target" id="clk__tree__defs_8h_1a5ecf8b6263b251c45d2b82538c8111e3"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_periph_sdmmc_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv426soc_periph_sdmmc_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of SDMMC clock source. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26soc_periph_sdmmc_clk_src_t21SDMMC_CLK_SRC_DEFAULTE">
+<span id="_CPPv3N26soc_periph_sdmmc_clk_src_t21SDMMC_CLK_SRC_DEFAULTE"></span><span id="_CPPv2N26soc_periph_sdmmc_clk_src_t21SDMMC_CLK_SRC_DEFAULTE"></span><span class="target" id="clk__tree__defs_8h_1a5ecf8b6263b251c45d2b82538c8111e3a7d42b79eee5974956056cd42e0cfeef2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SDMMC_CLK_SRC_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N26soc_periph_sdmmc_clk_src_t21SDMMC_CLK_SRC_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_160M as the default choice </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26soc_periph_sdmmc_clk_src_t21SDMMC_CLK_SRC_PLL160ME">
+<span id="_CPPv3N26soc_periph_sdmmc_clk_src_t21SDMMC_CLK_SRC_PLL160ME"></span><span id="_CPPv2N26soc_periph_sdmmc_clk_src_t21SDMMC_CLK_SRC_PLL160ME"></span><span class="target" id="clk__tree__defs_8h_1a5ecf8b6263b251c45d2b82538c8111e3a6839051d5d44b1b403f18a03a07d3f90"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SDMMC_CLK_SRC_PLL160M</span></span></span><a class="headerlink" href="#_CPPv4N26soc_periph_sdmmc_clk_src_t21SDMMC_CLK_SRC_PLL160ME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Select PLL_160M as the source clock </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv419soc_clkout_sig_id_t">
+<span id="_CPPv319soc_clkout_sig_id_t"></span><span id="_CPPv219soc_clkout_sig_id_t"></span><span class="target" id="clk__tree__defs_8h_1a5e428a4f0f0a85573865b7342a93e7d9"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soc_clkout_sig_id_t</span></span></span><a class="headerlink" href="#_CPPv419soc_clkout_sig_id_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19soc_clkout_sig_id_t15CLKOUT_SIG_I2S0E">
+<span id="_CPPv3N19soc_clkout_sig_id_t15CLKOUT_SIG_I2S0E"></span><span id="_CPPv2N19soc_clkout_sig_id_t15CLKOUT_SIG_I2S0E"></span><span class="target" id="clk__tree__defs_8h_1a5e428a4f0f0a85573865b7342a93e7d9a43ac80f986b41c43544e782243e8b0dd"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CLKOUT_SIG_I2S0</span></span></span><a class="headerlink" href="#_CPPv4N19soc_clkout_sig_id_t15CLKOUT_SIG_I2S0E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>I2S0 clock, depends on the i2s driver configuration </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19soc_clkout_sig_id_t14CLKOUT_SIG_PLLE">
+<span id="_CPPv3N19soc_clkout_sig_id_t14CLKOUT_SIG_PLLE"></span><span id="_CPPv2N19soc_clkout_sig_id_t14CLKOUT_SIG_PLLE"></span><span class="target" id="clk__tree__defs_8h_1a5e428a4f0f0a85573865b7342a93e7d9a00cdadf82f718e4be107877c3ab90098"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CLKOUT_SIG_PLL</span></span></span><a class="headerlink" href="#_CPPv4N19soc_clkout_sig_id_t14CLKOUT_SIG_PLLE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PLL_CLK is the output of crystal oscillator frequency multiplier </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19soc_clkout_sig_id_t18CLKOUT_SIG_RC_SLOWE">
+<span id="_CPPv3N19soc_clkout_sig_id_t18CLKOUT_SIG_RC_SLOWE"></span><span id="_CPPv2N19soc_clkout_sig_id_t18CLKOUT_SIG_RC_SLOWE"></span><span class="target" id="clk__tree__defs_8h_1a5e428a4f0f0a85573865b7342a93e7d9aa221cd02c4fa5f44e4974e58fc36060b"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CLKOUT_SIG_RC_SLOW</span></span></span><a class="headerlink" href="#_CPPv4N19soc_clkout_sig_id_t18CLKOUT_SIG_RC_SLOWE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RC slow clock, depends on the RTC_CLK_SRC configuration </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19soc_clkout_sig_id_t15CLKOUT_SIG_XTALE">
+<span id="_CPPv3N19soc_clkout_sig_id_t15CLKOUT_SIG_XTALE"></span><span id="_CPPv2N19soc_clkout_sig_id_t15CLKOUT_SIG_XTALE"></span><span class="target" id="clk__tree__defs_8h_1a5e428a4f0f0a85573865b7342a93e7d9a74d12f0b2bad435f0b54d5faf5379c1d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CLKOUT_SIG_XTAL</span></span></span><a class="headerlink" href="#_CPPv4N19soc_clkout_sig_id_t15CLKOUT_SIG_XTALE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Main crystal oscillator clock </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19soc_clkout_sig_id_t15CLKOUT_SIG_APLLE">
+<span id="_CPPv3N19soc_clkout_sig_id_t15CLKOUT_SIG_APLLE"></span><span id="_CPPv2N19soc_clkout_sig_id_t15CLKOUT_SIG_APLLE"></span><span class="target" id="clk__tree__defs_8h_1a5e428a4f0f0a85573865b7342a93e7d9a2f7646e0f8112dabbd203aee428cb471"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CLKOUT_SIG_APLL</span></span></span><a class="headerlink" href="#_CPPv4N19soc_clkout_sig_id_t15CLKOUT_SIG_APLLE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Divided by PLL, frequency is configurable </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19soc_clkout_sig_id_t19CLKOUT_SIG_REF_TICKE">
+<span id="_CPPv3N19soc_clkout_sig_id_t19CLKOUT_SIG_REF_TICKE"></span><span id="_CPPv2N19soc_clkout_sig_id_t19CLKOUT_SIG_REF_TICKE"></span><span class="target" id="clk__tree__defs_8h_1a5e428a4f0f0a85573865b7342a93e7d9ab32b7f37d297480ef533c1f6fc7c6dda"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CLKOUT_SIG_REF_TICK</span></span></span><a class="headerlink" href="#_CPPv4N19soc_clkout_sig_id_t19CLKOUT_SIG_REF_TICKE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Divided by APB clock, usually be 1MHz </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19soc_clkout_sig_id_t19CLKOUT_SIG_PLL_F80ME">
+<span id="_CPPv3N19soc_clkout_sig_id_t19CLKOUT_SIG_PLL_F80ME"></span><span id="_CPPv2N19soc_clkout_sig_id_t19CLKOUT_SIG_PLL_F80ME"></span><span class="target" id="clk__tree__defs_8h_1a5e428a4f0f0a85573865b7342a93e7d9afb89b937c3984b3b756fafdb967c69ad"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CLKOUT_SIG_PLL_F80M</span></span></span><a class="headerlink" href="#_CPPv4N19soc_clkout_sig_id_t19CLKOUT_SIG_PLL_F80ME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>From PLL, usually be 80MHz </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19soc_clkout_sig_id_t18CLKOUT_SIG_RC_FASTE">
+<span id="_CPPv3N19soc_clkout_sig_id_t18CLKOUT_SIG_RC_FASTE"></span><span id="_CPPv2N19soc_clkout_sig_id_t18CLKOUT_SIG_RC_FASTE"></span><span class="target" id="clk__tree__defs_8h_1a5e428a4f0f0a85573865b7342a93e7d9a945b1ee517acba5e2896c514408ca977"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CLKOUT_SIG_RC_FAST</span></span></span><a class="headerlink" href="#_CPPv4N19soc_clkout_sig_id_t18CLKOUT_SIG_RC_FASTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RC fast clock, about 8MHz </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19soc_clkout_sig_id_t15CLKOUT_SIG_I2S1E">
+<span id="_CPPv3N19soc_clkout_sig_id_t15CLKOUT_SIG_I2S1E"></span><span id="_CPPv2N19soc_clkout_sig_id_t15CLKOUT_SIG_I2S1E"></span><span class="target" id="clk__tree__defs_8h_1a5e428a4f0f0a85573865b7342a93e7d9acd060d7168a15cd36ec331c0e85cb499"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CLKOUT_SIG_I2S1</span></span></span><a class="headerlink" href="#_CPPv4N19soc_clkout_sig_id_t15CLKOUT_SIG_I2S1E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>I2S1 clock, depends on the i2s driver configuration </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19soc_clkout_sig_id_t18CLKOUT_SIG_INVALIDE">
+<span id="_CPPv3N19soc_clkout_sig_id_t18CLKOUT_SIG_INVALIDE"></span><span id="_CPPv2N19soc_clkout_sig_id_t18CLKOUT_SIG_INVALIDE"></span><span class="target" id="clk__tree__defs_8h_1a5e428a4f0f0a85573865b7342a93e7d9a67d2dc45851011e24b1a41ea35f526e3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CLKOUT_SIG_INVALID</span></span></span><a class="headerlink" href="#_CPPv4N19soc_clkout_sig_id_t18CLKOUT_SIG_INVALIDE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_hw_support/include/esp_clk_tree.h">components/esp_hw_support/include/esp_clk_tree.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_clk_tree.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_clk_tree_src_get_freq_hz16soc_module_clk_t33esp_clk_tree_src_freq_precision_tP8uint32_t">
+<span id="_CPPv328esp_clk_tree_src_get_freq_hz16soc_module_clk_t33esp_clk_tree_src_freq_precision_tP8uint32_t"></span><span id="_CPPv228esp_clk_tree_src_get_freq_hz16soc_module_clk_t33esp_clk_tree_src_freq_precision_tP8uint32_t"></span><span id="esp_clk_tree_src_get_freq_hz__soc_module_clk_t.esp_clk_tree_src_freq_precision_t.uint32_tP"></span><span class="target" id="esp__clk__tree_8h_1ac3a41c7ee1c636aade578cf61dd74da2"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_clk_tree_src_get_freq_hz</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416soc_module_clk_t" title="soc_module_clk_t"><span class="n"><span class="pre">soc_module_clk_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">clk_src</span></span>, <a class="reference internal" href="#_CPPv433esp_clk_tree_src_freq_precision_t" title="esp_clk_tree_src_freq_precision_t"><span class="n"><span class="pre">esp_clk_tree_src_freq_precision_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">precision</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">freq_value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_clk_tree_src_get_freq_hz16soc_module_clk_t33esp_clk_tree_src_freq_precision_tP8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get frequency of module clock source. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clk_src</strong> -- <strong>[in]</strong> Clock source available to modules, in soc_module_clk_t </p></li>
+<li><p><strong>precision</strong> -- <strong>[in]</strong> Degree of precision, one of esp_clk_tree_src_freq_precision_t values This arg only applies to the clock sources that their frequencies can vary: SOC_MOD_CLK_RTC_FAST, SOC_MOD_CLK_RTC_SLOW, SOC_MOD_CLK_RC_FAST, SOC_MOD_CLK_RC_FAST_D256, SOC_MOD_CLK_XTAL32K For other clock sources, this field is ignored. </p></li>
+<li><p><strong>freq_value</strong> -- <strong>[out]</strong> Frequency of the clock source, in Hz</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_FAIL Calibration failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="id2">
+<h3>Enumerations<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv433esp_clk_tree_src_freq_precision_t">
+<span id="_CPPv333esp_clk_tree_src_freq_precision_t"></span><span id="_CPPv233esp_clk_tree_src_freq_precision_t"></span><span class="target" id="esp__clk__tree_8h_1a48e414f28fbd2060d36d58f611f3e7fb"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_clk_tree_src_freq_precision_t</span></span></span><a class="headerlink" href="#_CPPv433esp_clk_tree_src_freq_precision_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Degree of precision of frequency value to be returned by esp_clk_tree_src_get_freq_hz() </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N33esp_clk_tree_src_freq_precision_t38ESP_CLK_TREE_SRC_FREQ_PRECISION_CACHEDE">
+<span id="_CPPv3N33esp_clk_tree_src_freq_precision_t38ESP_CLK_TREE_SRC_FREQ_PRECISION_CACHEDE"></span><span id="_CPPv2N33esp_clk_tree_src_freq_precision_t38ESP_CLK_TREE_SRC_FREQ_PRECISION_CACHEDE"></span><span class="target" id="esp__clk__tree_8h_1a48e414f28fbd2060d36d58f611f3e7fbabbc6fb4dce04f8502ac09ed460313d33"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_CLK_TREE_SRC_FREQ_PRECISION_CACHED</span></span></span><a class="headerlink" href="#_CPPv4N33esp_clk_tree_src_freq_precision_t38ESP_CLK_TREE_SRC_FREQ_PRECISION_CACHEDE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N33esp_clk_tree_src_freq_precision_t38ESP_CLK_TREE_SRC_FREQ_PRECISION_APPROXE">
+<span id="_CPPv3N33esp_clk_tree_src_freq_precision_t38ESP_CLK_TREE_SRC_FREQ_PRECISION_APPROXE"></span><span id="_CPPv2N33esp_clk_tree_src_freq_precision_t38ESP_CLK_TREE_SRC_FREQ_PRECISION_APPROXE"></span><span class="target" id="esp__clk__tree_8h_1a48e414f28fbd2060d36d58f611f3e7fbae14f3a05e3cf6dcb89765bb77d6e314a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_CLK_TREE_SRC_FREQ_PRECISION_APPROX</span></span></span><a class="headerlink" href="#_CPPv4N33esp_clk_tree_src_freq_precision_t38ESP_CLK_TREE_SRC_FREQ_PRECISION_APPROXE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N33esp_clk_tree_src_freq_precision_t37ESP_CLK_TREE_SRC_FREQ_PRECISION_EXACTE">
+<span id="_CPPv3N33esp_clk_tree_src_freq_precision_t37ESP_CLK_TREE_SRC_FREQ_PRECISION_EXACTE"></span><span id="_CPPv2N33esp_clk_tree_src_freq_precision_t37ESP_CLK_TREE_SRC_FREQ_PRECISION_EXACTE"></span><span class="target" id="esp__clk__tree_8h_1a48e414f28fbd2060d36d58f611f3e7fba29b3ae292f436c569907a44148d841d2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_CLK_TREE_SRC_FREQ_PRECISION_EXACT</span></span></span><a class="headerlink" href="#_CPPv4N33esp_clk_tree_src_freq_precision_t37ESP_CLK_TREE_SRC_FREQ_PRECISION_EXACTE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N33esp_clk_tree_src_freq_precision_t39ESP_CLK_TREE_SRC_FREQ_PRECISION_INVALIDE">
+<span id="_CPPv3N33esp_clk_tree_src_freq_precision_t39ESP_CLK_TREE_SRC_FREQ_PRECISION_INVALIDE"></span><span id="_CPPv2N33esp_clk_tree_src_freq_precision_t39ESP_CLK_TREE_SRC_FREQ_PRECISION_INVALIDE"></span><span class="target" id="esp__clk__tree_8h_1a48e414f28fbd2060d36d58f611f3e7fba8aa53e32e71183b10ba30baf207da6c7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_CLK_TREE_SRC_FREQ_PRECISION_INVALID</span></span></span><a class="headerlink" href="#_CPPv4N33esp_clk_tree_src_freq_precision_t39ESP_CLK_TREE_SRC_FREQ_PRECISION_INVALIDE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Clock Tree (api-reference/peripherals/clk_tree)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Clock Tree (api-reference/peripherals/clk_tree)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="adc_calibration.html" class="btn btn-neutral float-left" title="Analog to Digital Converter (ADC) Calibration Driver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dac.html" class="btn btn-neutral float-right" title="Digital To Analog Converter (DAC)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

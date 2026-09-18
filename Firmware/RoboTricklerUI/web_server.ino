@@ -92,7 +92,7 @@ void registerWebServerRoutes()
   // The web editor uses this endpoint for multipart uploads. The upload
   // handler writes directly to the LittleFS path supplied as the filename.
   server.on("/system/resources/edit", HTTP_POST, []()
-            { returnOk(); }, handleFileUpload);
+            { finishFileUploadRequest(); }, handleFileUpload);
   server.onNotFound(handleNotFound);
   server.on("/generate_204", handleNotFound);
   server.on("/favicon.ico", handleNotFound);

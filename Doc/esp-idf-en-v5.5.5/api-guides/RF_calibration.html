@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RF Calibration - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/RF_calibration.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/RF_calibration';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Standard I/O and Console Output" href="stdio.html" />
+    <link rel="prev" title="Reproducible Builds" href="reproducible-builds.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">RF Calibration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#partial-calibration">Partial Calibration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#full-calibration">Full Calibration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#no-calibration">No Calibration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#phy-initialization-data">PHY Initialization Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#api-reference">API Reference</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#header-file">Header File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#structures">Structures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#enumerations">Enumerations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Header File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Structures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Enumerations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Guides</a></li>
+      <li class="breadcrumb-item active">RF Calibration</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/RF_calibration.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rf-calibration">
+<h1>RF Calibration<a class="headerlink" href="#rf-calibration" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/api-guides/RF_calibration.html">[中文]</a></p>
+<p>ESP32 supports three RF calibration methods during RF initialization:</p>
+<ol class="arabic simple">
+<li><p>Partial calibration</p></li>
+<li><p>Full calibration</p></li>
+<li><p>No calibration</p></li>
+</ol>
+<section id="partial-calibration">
+<h2>Partial Calibration<a class="headerlink" href="#partial-calibration" title="Permalink to this heading"></a></h2>
+<p>During RF initialization, the partial calibration method is used by default for RF calibration. It is done based on the full calibration data which is stored in the NVS. To use this method, please go to <code class="docutils literal notranslate"><span class="pre">menuconfig</span></code> and enable <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-phy-calibration-and-data-storage"><span class="std std-ref">CONFIG_ESP_PHY_CALIBRATION_AND_DATA_STORAGE</span></a>.</p>
+</section>
+<section id="full-calibration">
+<h2>Full Calibration<a class="headerlink" href="#full-calibration" title="Permalink to this heading"></a></h2>
+<p>Full calibration is triggered in the following conditions:</p>
+<ol class="arabic simple">
+<li><p>NVS does not exist.</p></li>
+<li><p>The NVS partition to store calibration data has been erased.</p></li>
+<li><p>Hardware MAC address has changed.</p></li>
+<li><p>PHY library version has changed.</p></li>
+<li><p>The RF calibration data loaded from the NVS partition is broken.</p></li>
+</ol>
+<p>Full calibration takes 100 ms longer than the partial calibration method. If boot duration is not of critical importance to the application, the full calibration method is recommended. To switch to the full calibration method, go to <code class="docutils literal notranslate"><span class="pre">menuconfig</span></code> and disable <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-phy-calibration-and-data-storage"><span class="std std-ref">CONFIG_ESP_PHY_CALIBRATION_AND_DATA_STORAGE</span></a>. If you use the default method of RF calibration, there are two ways to add the function of triggering full calibration as a last-resort remedy.</p>
+<ol class="arabic simple">
+<li><p>Erase the NVS partition if you do not mind all of the data stored in the NVS partition is erased. That is indeed the easiest way.</p></li>
+<li><p>Call API <a class="reference internal" href="#_CPPv429esp_phy_erase_cal_data_in_nvsv" title="esp_phy_erase_cal_data_in_nvs"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_phy_erase_cal_data_in_nvs()</span></code></a> before initializing Wi-Fi and Bluetooth®/Bluetooth Low Energy based on some conditions (e.g., an option provided in some diagnostic mode). In this case, only the PHY namespace of the NVS partition is erased.</p></li>
+</ol>
+</section>
+<section id="no-calibration">
+<h2>No Calibration<a class="headerlink" href="#no-calibration" title="Permalink to this heading"></a></h2>
+<p>The no calibration method is only used when the device wakes up from Deep-sleep mode.</p>
+</section>
+<section id="phy-initialization-data">
+<h2>PHY Initialization Data<a class="headerlink" href="#phy-initialization-data" title="Permalink to this heading"></a></h2>
+<p>The PHY initialization data is used for RF calibration. There are two ways to get the PHY initialization data.</p>
+<p>One is to use the default initialization data which is located in the header file <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_phy/esp32/include/phy_init_data.h">components/esp_phy/esp32/include/phy_init_data.h</a>. It is embedded into the application binary after compiling and then stored into read-only memory (DROM). To use the default initialization data, please go to <code class="docutils literal notranslate"><span class="pre">menuconfig</span></code> and disable <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-phy-init-data-in-partition"><span class="std std-ref">CONFIG_ESP_PHY_INIT_DATA_IN_PARTITION</span></a>.</p>
+<p>An alternative is to store the initialization data in a PHY data partition. A PHY data partition is included in the default partition table. However, when using a custom partition table, please ensure that a PHY data partition (type: <code class="docutils literal notranslate"><span class="pre">data</span></code>, subtype: <code class="docutils literal notranslate"><span class="pre">phy</span></code>) is included in the custom partition table. Whether you are using a custom partition table or the default partition table, if initialization data is stored in a partition, it has to be flashed there, otherwise a runtime error occurs. If you want to use initialization data stored in a partition, go to <code class="docutils literal notranslate"><span class="pre">menuconfig</span></code> and enable the option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-phy-init-data-in-partition"><span class="std std-ref">CONFIG_ESP_PHY_INIT_DATA_IN_PARTITION</span></a>.</p>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_phy/include/esp_phy_init.h">components/esp_phy/include/esp_phy_init.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_phy_init.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_phy</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_phy</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_phy
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_phy
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421esp_phy_get_init_datav">
+<span id="_CPPv321esp_phy_get_init_datav"></span><span id="_CPPv221esp_phy_get_init_datav"></span><span id="esp_phy_get_init_data__void"></span><span class="target" id="esp__phy__init_8h_1a92a7552fb08c384ce8981c04bba7b68b"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419esp_phy_init_data_t" title="esp_phy_init_data_t"><span class="n"><span class="pre">esp_phy_init_data_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_get_init_data</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421esp_phy_get_init_datav" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get PHY init data. </p>
+<p>If &quot;Use a partition to store PHY init data&quot; option is set in menuconfig, This function will load PHY init data from a partition. Otherwise, PHY init data will be compiled into the application itself, and this function will return a pointer to PHY init data located in read-only memory (DROM).</p>
+<p>If &quot;Use a partition to store PHY init data&quot; option is enabled, this function may return NULL if the data loaded from flash is not valid.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Call esp_phy_release_init_data to release the pointer obtained using this function after the call to esp_wifi_init.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pointer to PHY init data structure </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_phy_release_init_dataPK19esp_phy_init_data_t">
+<span id="_CPPv325esp_phy_release_init_dataPK19esp_phy_init_data_t"></span><span id="_CPPv225esp_phy_release_init_dataPK19esp_phy_init_data_t"></span><span id="esp_phy_release_init_data__esp_phy_init_data_tCP"></span><span class="target" id="esp__phy__init_8h_1ad87ad8864c259c6ab31c8c7684894fd0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_release_init_data</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419esp_phy_init_data_t" title="esp_phy_init_data_t"><span class="n"><span class="pre">esp_phy_init_data_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_phy_release_init_dataPK19esp_phy_init_data_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Release PHY init data. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> -- pointer to PHY init data structure obtained from esp_phy_get_init_data function </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430esp_phy_load_cal_data_from_nvsP26esp_phy_calibration_data_t">
+<span id="_CPPv330esp_phy_load_cal_data_from_nvsP26esp_phy_calibration_data_t"></span><span id="_CPPv230esp_phy_load_cal_data_from_nvsP26esp_phy_calibration_data_t"></span><span id="esp_phy_load_cal_data_from_nvs__esp_phy_calibration_data_tP"></span><span class="target" id="esp__phy__init_8h_1a9a0bc6917e617987a8c0f91afe946cc4"></span><a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_load_cal_data_from_nvs</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv426esp_phy_calibration_data_t" title="esp_phy_calibration_data_t"><span class="n"><span class="pre">esp_phy_calibration_data_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_cal_data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430esp_phy_load_cal_data_from_nvsP26esp_phy_calibration_data_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Function called by esp_phy_load_cal_and_init to load PHY calibration data. </p>
+<p>This is a convenience function which can be used to load PHY calibration data from NVS. Data can be stored to NVS using esp_phy_store_cal_data_to_nvs function.</p>
+<p>If calibration data is not present in the NVS, or data is not valid (was obtained for a chip with a different MAC address, or obtained for a different version of software), this function will return an error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>out_cal_data</strong> -- pointer to calibration data structure to be filled with loaded data. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_phy_store_cal_data_to_nvsPK26esp_phy_calibration_data_t">
+<span id="_CPPv329esp_phy_store_cal_data_to_nvsPK26esp_phy_calibration_data_t"></span><span id="_CPPv229esp_phy_store_cal_data_to_nvsPK26esp_phy_calibration_data_t"></span><span id="esp_phy_store_cal_data_to_nvs__esp_phy_calibration_data_tCP"></span><span class="target" id="esp__phy__init_8h_1acf7853ee5936658561598ff620b2a980"></span><a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_store_cal_data_to_nvs</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv426esp_phy_calibration_data_t" title="esp_phy_calibration_data_t"><span class="n"><span class="pre">esp_phy_calibration_data_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">cal_data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_phy_store_cal_data_to_nvsPK26esp_phy_calibration_data_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Function called by esp_phy_load_cal_and_init to store PHY calibration data. </p>
+<p>This is a convenience function which can be used to store PHY calibration data to the NVS. Calibration data is returned by esp_phy_load_cal_and_init function. Data saved using this function to the NVS can later be loaded using esp_phy_store_cal_data_to_nvs function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cal_data</strong> -- pointer to calibration data which has to be saved. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_phy_erase_cal_data_in_nvsv">
+<span id="_CPPv329esp_phy_erase_cal_data_in_nvsv"></span><span id="_CPPv229esp_phy_erase_cal_data_in_nvsv"></span><span id="esp_phy_erase_cal_data_in_nvs__void"></span><span class="target" id="esp__phy__init_8h_1af8792097886096341ab34bd13b8ffe90"></span><a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_erase_cal_data_in_nvs</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_phy_erase_cal_data_in_nvsv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Erase PHY calibration data which is stored in the NVS. </p>
+<p>This is a function which can be used to trigger full calibration as a last-resort remedy if partial calibration is used. It can be called in the application based on some conditions (e.g. an option provided in some diagnostic mode).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ESP_OK on success </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>others on fail. Please refer to NVS API return value error number. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414esp_phy_enable15esp_phy_modem_t">
+<span id="_CPPv314esp_phy_enable15esp_phy_modem_t"></span><span id="_CPPv214esp_phy_enable15esp_phy_modem_t"></span><span id="esp_phy_enable__esp_phy_modem_t"></span><span class="target" id="esp__phy__init_8h_1a8b0e81034f6ca7387db20e52da25ac76"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_enable</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415esp_phy_modem_t" title="esp_phy_modem_t"><span class="n"><span class="pre">esp_phy_modem_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">modem</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414esp_phy_enable15esp_phy_modem_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable PHY and RF module. </p>
+<p>PHY and RF module should be enabled in order to use WiFi or BT. Now PHY and RF enabling job is done automatically when start WiFi or BT. Users should not call this API in their application.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>modem</strong> -- the modem to call the phy enable. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415esp_phy_disable15esp_phy_modem_t">
+<span id="_CPPv315esp_phy_disable15esp_phy_modem_t"></span><span id="_CPPv215esp_phy_disable15esp_phy_modem_t"></span><span id="esp_phy_disable__esp_phy_modem_t"></span><span class="target" id="esp__phy__init_8h_1a7c0da58420dbe6027eeceb1ef9afad63"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_disable</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415esp_phy_modem_t" title="esp_phy_modem_t"><span class="n"><span class="pre">esp_phy_modem_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">modem</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415esp_phy_disable15esp_phy_modem_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable PHY and RF module. </p>
+<p>PHY module should be disabled in order to shutdown WiFi or BT. Now PHY and RF disabling job is done automatically when stop WiFi or BT. Users should not call this API in their application.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>modem</strong> -- the modem to call the phy disable. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415esp_btbb_enablev">
+<span id="_CPPv315esp_btbb_enablev"></span><span id="_CPPv215esp_btbb_enablev"></span><span id="esp_btbb_enable__void"></span><span class="target" id="esp__phy__init_8h_1a8e381b46fbcf54f0541c80085527a811"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_btbb_enable</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415esp_btbb_enablev" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable BTBB module. </p>
+<p>BTBB module should be enabled in order to use IEEE802154 or BT. Now BTBB enabling job is done automatically when start IEEE802154 or BT. Users should not call this API in their application. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416esp_btbb_disablev">
+<span id="_CPPv316esp_btbb_disablev"></span><span id="_CPPv216esp_btbb_disablev"></span><span id="esp_btbb_disable__void"></span><span class="target" id="esp__phy__init_8h_1a45fede9589090bcab616d59edc58cd82"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_btbb_disable</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416esp_btbb_disablev" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable BTBB module. </p>
+<p>Disable BTBB module, used by IEEE802154 or Bluetooth. Users should not call this API in their application. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_phy_load_cal_and_initv">
+<span id="_CPPv325esp_phy_load_cal_and_initv"></span><span id="_CPPv225esp_phy_load_cal_and_initv"></span><span id="esp_phy_load_cal_and_init__void"></span><span class="target" id="esp__phy__init_8h_1a6954d8f4ef8eccf2dcad43be58357030"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_load_cal_and_init</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_phy_load_cal_and_initv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Load calibration data from NVS and initialize PHY and RF module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_phy_modem_initv">
+<span id="_CPPv318esp_phy_modem_initv"></span><span id="_CPPv218esp_phy_modem_initv"></span><span id="esp_phy_modem_init__void"></span><span class="target" id="esp__phy__init_8h_1ae6a91f38962443ca2e03c249ce1df49a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_modem_init</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_phy_modem_initv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Initialize backup memory for Phy power up/down. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420esp_phy_modem_deinitv">
+<span id="_CPPv320esp_phy_modem_deinitv"></span><span id="_CPPv220esp_phy_modem_deinitv"></span><span id="esp_phy_modem_deinit__void"></span><span class="target" id="esp__phy__init_8h_1af92c2f4597972649d7e34309e3c90731"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_modem_deinit</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420esp_phy_modem_deinitv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Deinitialize backup memory for Phy power up/down Set phy_init_flag if all modems deinit on ESP32C3. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_phy_common_clock_enablev">
+<span id="_CPPv327esp_phy_common_clock_enablev"></span><span id="_CPPv227esp_phy_common_clock_enablev"></span><span id="esp_phy_common_clock_enable__void"></span><span class="target" id="esp__phy__init_8h_1a7df1782fbc19d87f760cae75986593ed"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_common_clock_enable</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_phy_common_clock_enablev" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable WiFi/BT common clock. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_phy_common_clock_disablev">
+<span id="_CPPv328esp_phy_common_clock_disablev"></span><span id="_CPPv228esp_phy_common_clock_disablev"></span><span id="esp_phy_common_clock_disable__void"></span><span class="target" id="esp__phy__init_8h_1ac31bcc66e260706d8a84f7a9660ef9f1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_common_clock_disable</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_phy_common_clock_disablev" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable WiFi/BT common clock. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420esp_phy_rf_get_on_tsv">
+<span id="_CPPv320esp_phy_rf_get_on_tsv"></span><span id="_CPPv220esp_phy_rf_get_on_tsv"></span><span id="esp_phy_rf_get_on_ts__void"></span><span class="target" id="esp__phy__init_8h_1add183a17a0c0b05970eaa737d3b672b6"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_rf_get_on_ts</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420esp_phy_rf_get_on_tsv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the time stamp when PHY/RF was switched on. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>return 0 if PHY/RF is never switched on. Otherwise return time in microsecond since boot when phy/rf was last switched on </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_phy_update_country_infoPKc">
+<span id="_CPPv327esp_phy_update_country_infoPKc"></span><span id="_CPPv227esp_phy_update_country_infoPKc"></span><span id="esp_phy_update_country_info__cCP"></span><span class="target" id="esp__phy__init_8h_1a2f80e0ec15c9d271d119a8d2b2ae0938"></span><a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_update_country_info</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">country</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_phy_update_country_infoPKc" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Update the corresponding PHY init type according to the country code of Wi-Fi. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>country</strong> -- country code </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>esp_err_t code describing the error on fail </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419get_phy_version_strv">
+<span id="_CPPv319get_phy_version_strv"></span><span id="_CPPv219get_phy_version_strv"></span><span id="get_phy_version_str__void"></span><span class="target" id="esp__phy__init_8h_1aa8be1b62cd187bd4c1ae4c871c25234a"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">get_phy_version_str</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419get_phy_version_strv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get PHY lib version. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PHY lib version. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418phy_init_param_set7uint8_t">
+<span id="_CPPv318phy_init_param_set7uint8_t"></span><span id="_CPPv218phy_init_param_set7uint8_t"></span><span id="phy_init_param_set__uint8_t"></span><span class="target" id="esp__phy__init_8h_1a30564d3ad917c16a9d0a09e5eb08a3e0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">phy_init_param_set</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">param</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418phy_init_param_set7uint8_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set PHY init parameters. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param</strong> -- is 1 means combo module </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419phy_wifi_enable_set7uint8_t">
+<span id="_CPPv319phy_wifi_enable_set7uint8_t"></span><span id="_CPPv219phy_wifi_enable_set7uint8_t"></span><span id="phy_wifi_enable_set__uint8_t"></span><span class="target" id="esp__phy__init_8h_1a46c0e7435c01598f13babd93586104b3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">phy_wifi_enable_set</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">enable</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419phy_wifi_enable_set7uint8_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wi-Fi RX enable. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enable</strong> -- True for enable wifi receiving mode as default, false for closing wifi receiving mode as default. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_wifi_bt_power_domain_onv">
+<span id="_CPPv327esp_wifi_bt_power_domain_onv"></span><span id="_CPPv227esp_wifi_bt_power_domain_onv"></span><span id="esp_wifi_bt_power_domain_on__void"></span><span class="target" id="esp__phy__init_8h_1afe0fe5dba8aafaf68e502eef56b9f6a5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_bt_power_domain_on</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_wifi_bt_power_domain_onv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Power on Bluetooth Wi-Fi power domain. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_wifi_bt_power_domain_offv">
+<span id="_CPPv328esp_wifi_bt_power_domain_offv"></span><span id="_CPPv228esp_wifi_bt_power_domain_offv"></span><span id="esp_wifi_bt_power_domain_off__void"></span><span class="target" id="esp__phy__init_8h_1aaf0ccb5259b6e49a005284da4143ddc3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_bt_power_domain_off</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_wifi_bt_power_domain_offv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Power off Bluetooth Wi-Fi power domain. </p>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419esp_phy_init_data_t">
+<span id="_CPPv319esp_phy_init_data_t"></span><span id="_CPPv219esp_phy_init_data_t"></span><span id="esp_phy_init_data_t"></span><span class="target" id="structesp__phy__init__data__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_init_data_t</span></span></span><a class="headerlink" href="#_CPPv419esp_phy_init_data_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Structure holding PHY init parameters. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_init_data_t6paramsE">
+<span id="_CPPv3N19esp_phy_init_data_t6paramsE"></span><span id="_CPPv2N19esp_phy_init_data_t6paramsE"></span><span id="esp_phy_init_data_t::params__uint8_tA"></span><span class="target" id="structesp__phy__init__data__t_1ad43fe7c74ae3a033b43c6e7d3e268871"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">params</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">128</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19esp_phy_init_data_t6paramsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>opaque PHY initialization parameters </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv426esp_phy_calibration_data_t">
+<span id="_CPPv326esp_phy_calibration_data_t"></span><span id="_CPPv226esp_phy_calibration_data_t"></span><span id="esp_phy_calibration_data_t"></span><span class="target" id="structesp__phy__calibration__data__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_calibration_data_t</span></span></span><a class="headerlink" href="#_CPPv426esp_phy_calibration_data_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Opaque PHY calibration data. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26esp_phy_calibration_data_t7versionE">
+<span id="_CPPv3N26esp_phy_calibration_data_t7versionE"></span><span id="_CPPv2N26esp_phy_calibration_data_t7versionE"></span><span id="esp_phy_calibration_data_t::version__uint8_tA"></span><span class="target" id="structesp__phy__calibration__data__t_1a2e3d4f817372ed99848353f8ea8c4ee7"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">version</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">4</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N26esp_phy_calibration_data_t7versionE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PHY version </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26esp_phy_calibration_data_t3macE">
+<span id="_CPPv3N26esp_phy_calibration_data_t3macE"></span><span id="_CPPv2N26esp_phy_calibration_data_t3macE"></span><span id="esp_phy_calibration_data_t::mac__uint8_tA"></span><span class="target" id="structesp__phy__calibration__data__t_1a9d2f4bd15d300f8e4d17b8708dd3b400"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mac</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">6</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N26esp_phy_calibration_data_t3macE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The MAC address of the station </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26esp_phy_calibration_data_t6opaqueE">
+<span id="_CPPv3N26esp_phy_calibration_data_t6opaqueE"></span><span id="_CPPv2N26esp_phy_calibration_data_t6opaqueE"></span><span id="esp_phy_calibration_data_t::opaque__uint8_tA"></span><span class="target" id="structesp__phy__calibration__data__t_1adbdc51050eb7d30fde75725703a427dd"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">opaque</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">1894</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N26esp_phy_calibration_data_t6opaqueE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>calibration data </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv415esp_phy_modem_t">
+<span id="_CPPv315esp_phy_modem_t"></span><span id="_CPPv215esp_phy_modem_t"></span><span class="target" id="esp__phy__init_8h_1ad7ba1945e436830ffb629ec723628181"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_modem_t</span></span></span><a class="headerlink" href="#_CPPv415esp_phy_modem_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PHY enable or disable modem. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15esp_phy_modem_t14PHY_MODEM_WIFIE">
+<span id="_CPPv3N15esp_phy_modem_t14PHY_MODEM_WIFIE"></span><span id="_CPPv2N15esp_phy_modem_t14PHY_MODEM_WIFIE"></span><span class="target" id="esp__phy__init_8h_1ad7ba1945e436830ffb629ec723628181af961c239623e47eaedecc0ba1f9144f2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_MODEM_WIFI</span></span></span><a class="headerlink" href="#_CPPv4N15esp_phy_modem_t14PHY_MODEM_WIFIE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PHY modem WIFI 
+
+ </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15esp_phy_modem_t12PHY_MODEM_BTE">
+<span id="_CPPv3N15esp_phy_modem_t12PHY_MODEM_BTE"></span><span id="_CPPv2N15esp_phy_modem_t12PHY_MODEM_BTE"></span><span class="target" id="esp__phy__init_8h_1ad7ba1945e436830ffb629ec723628181a8e92d71e94425f9bc86dc47d039476d7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_MODEM_BT</span></span></span><a class="headerlink" href="#_CPPv4N15esp_phy_modem_t12PHY_MODEM_BTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PHY modem BT 
+
+ </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15esp_phy_modem_t20PHY_MODEM_IEEE802154E">
+<span id="_CPPv3N15esp_phy_modem_t20PHY_MODEM_IEEE802154E"></span><span id="_CPPv2N15esp_phy_modem_t20PHY_MODEM_IEEE802154E"></span><span class="target" id="esp__phy__init_8h_1ad7ba1945e436830ffb629ec723628181a7b1852f749bf64b24551a7c5ea14afd3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_MODEM_IEEE802154</span></span></span><a class="headerlink" href="#_CPPv4N15esp_phy_modem_t20PHY_MODEM_IEEE802154E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PHY modem IEEE802154 </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15esp_phy_modem_t13PHY_MODEM_MAXE">
+<span id="_CPPv3N15esp_phy_modem_t13PHY_MODEM_MAXE"></span><span id="_CPPv2N15esp_phy_modem_t13PHY_MODEM_MAXE"></span><span class="target" id="esp__phy__init_8h_1ad7ba1945e436830ffb629ec723628181a8054c8ada7f5ed51095a47458c943556"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_MODEM_MAX</span></span></span><a class="headerlink" href="#_CPPv4N15esp_phy_modem_t13PHY_MODEM_MAXE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Don't use it. Used by ESP_PHY_MODEM_COUNT_MAX </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv426esp_phy_calibration_mode_t">
+<span id="_CPPv326esp_phy_calibration_mode_t"></span><span id="_CPPv226esp_phy_calibration_mode_t"></span><span class="target" id="esp__phy__init_8h_1af7fb71a55a58929ff09a546210d2aef5"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_calibration_mode_t</span></span></span><a class="headerlink" href="#_CPPv426esp_phy_calibration_mode_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PHY calibration mode. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26esp_phy_calibration_mode_t18PHY_RF_CAL_PARTIALE">
+<span id="_CPPv3N26esp_phy_calibration_mode_t18PHY_RF_CAL_PARTIALE"></span><span id="_CPPv2N26esp_phy_calibration_mode_t18PHY_RF_CAL_PARTIALE"></span><span class="target" id="esp__phy__init_8h_1af7fb71a55a58929ff09a546210d2aef5a76cfbc29a9d9d66db1b82e76fa063235"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RF_CAL_PARTIAL</span></span></span><a class="headerlink" href="#_CPPv4N26esp_phy_calibration_mode_t18PHY_RF_CAL_PARTIALE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Do part of RF calibration. This should be used after power-on reset. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26esp_phy_calibration_mode_t15PHY_RF_CAL_NONEE">
+<span id="_CPPv3N26esp_phy_calibration_mode_t15PHY_RF_CAL_NONEE"></span><span id="_CPPv2N26esp_phy_calibration_mode_t15PHY_RF_CAL_NONEE"></span><span class="target" id="esp__phy__init_8h_1af7fb71a55a58929ff09a546210d2aef5a14109ad369e111c87d4528f54bb2753f"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RF_CAL_NONE</span></span></span><a class="headerlink" href="#_CPPv4N26esp_phy_calibration_mode_t15PHY_RF_CAL_NONEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Don't do any RF calibration. This mode is only suggested to be used after deep sleep reset. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26esp_phy_calibration_mode_t15PHY_RF_CAL_FULLE">
+<span id="_CPPv3N26esp_phy_calibration_mode_t15PHY_RF_CAL_FULLE"></span><span id="_CPPv2N26esp_phy_calibration_mode_t15PHY_RF_CAL_FULLE"></span><span class="target" id="esp__phy__init_8h_1af7fb71a55a58929ff09a546210d2aef5ab32cb78bea22245f36a7b9d0bb34aeae"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RF_CAL_FULL</span></span></span><a class="headerlink" href="#_CPPv4N26esp_phy_calibration_mode_t15PHY_RF_CAL_FULLE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Do full RF calibration. Produces best results, but also consumes a lot of time and current. Suggested to be used once. </p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_phy/include/esp_phy_cert_test.h">components/esp_phy/include/esp_phy_cert_test.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_phy_cert_test.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_phy</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_phy</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_phy
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_phy
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id2">
+<h3>Functions<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424esp_wifi_power_domain_onv">
+<span id="_CPPv324esp_wifi_power_domain_onv"></span><span id="_CPPv224esp_wifi_power_domain_onv"></span><span id="esp_wifi_power_domain_on__void"></span><span class="target" id="esp__phy__cert__test_8h_1ad8e2a331390bd1bd9224fc32d153ee9a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_power_domain_on</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424esp_wifi_power_domain_onv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wifi power domain power on. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_wifi_power_domain_offv">
+<span id="_CPPv325esp_wifi_power_domain_offv"></span><span id="_CPPv225esp_wifi_power_domain_offv"></span><span id="esp_wifi_power_domain_off__void"></span><span class="target" id="esp__phy__cert__test_8h_1aa0d40c8fc4915f2ef2c7ec691f80b47d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_power_domain_off</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_wifi_power_domain_offv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wifi power domain power off. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421esp_phy_rftest_config7uint8_t">
+<span id="_CPPv321esp_phy_rftest_config7uint8_t"></span><span id="_CPPv221esp_phy_rftest_config7uint8_t"></span><span id="esp_phy_rftest_config__uint8_t"></span><span class="target" id="esp__phy__cert__test_8h_1abbf452c81d9b0b8d8e904f7b934abbde"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_rftest_config</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">conf</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421esp_phy_rftest_config7uint8_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Environment variable configuration. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conf</strong> -- Set to 1 to enter RF test mode. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419esp_phy_rftest_initv">
+<span id="_CPPv319esp_phy_rftest_initv"></span><span id="_CPPv219esp_phy_rftest_initv"></span><span id="esp_phy_rftest_init__void"></span><span class="target" id="esp__phy__cert__test_8h_1a1dc7aba2662ffd0d1d862be1f8ff21a5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_rftest_init</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419esp_phy_rftest_initv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RF initialization configuration. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420esp_phy_tx_contin_enb">
+<span id="_CPPv320esp_phy_tx_contin_enb"></span><span id="_CPPv220esp_phy_tx_contin_enb"></span><span id="esp_phy_tx_contin_en__b"></span><span class="target" id="esp__phy__cert__test_8h_1a6b953b665416d3db03a3a8e767ab89b5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_tx_contin_en</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">contin_en</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420esp_phy_tx_contin_enb" title="Permalink to this definition"></a><br /></dt>
+<dd><p>TX Continuous mode. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contin_en</strong> -- Set to true for continuous packet sending, which can be used for certification testing; Set to false to cancel continuous mode, which is the default mode and can be used for WLAN tester. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417esp_phy_cbw40m_enb">
+<span id="_CPPv317esp_phy_cbw40m_enb"></span><span id="_CPPv217esp_phy_cbw40m_enb"></span><span id="esp_phy_cbw40m_en__b"></span><span class="target" id="esp__phy__cert__test_8h_1a30f59db93dd8c06297bca30f7812a968"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_cbw40m_en</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">en</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417esp_phy_cbw40m_enb" title="Permalink to this definition"></a><br /></dt>
+<dd><p>HT40/HT20 mode selection. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>en</strong> -- Set to false to enter 11n HT20 mode; Set to true to enter 11n HT40 mode; </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415esp_phy_wifi_tx8uint32_t19esp_phy_wifi_rate_t6int8_t8uint32_t8uint32_t8uint32_t">
+<span id="_CPPv315esp_phy_wifi_tx8uint32_t19esp_phy_wifi_rate_t6int8_t8uint32_t8uint32_t8uint32_t"></span><span id="_CPPv215esp_phy_wifi_tx8uint32_t19esp_phy_wifi_rate_t6int8_t8uint32_t8uint32_t8uint32_t"></span><span id="esp_phy_wifi_tx__uint32_t.esp_phy_wifi_rate_t.int8_t.uint32_t.uint32_t.uint32_t"></span><span class="target" id="esp__phy__cert__test_8h_1a1d2a0e2195ca96cbe3c29e129e69c2c9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_wifi_tx</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span>, <a class="reference internal" href="#_CPPv419esp_phy_wifi_rate_t" title="esp_phy_wifi_rate_t"><span class="n"><span class="pre">esp_phy_wifi_rate_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">rate</span></span>, <span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">backoff</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">length_byte</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">packet_delay</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">packet_num</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415esp_phy_wifi_tx8uint32_t19esp_phy_wifi_rate_t6int8_t8uint32_t8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wi-Fi TX command. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chan</strong> -- channel setting, 1~14; </p></li>
+<li><p><strong>rate</strong> -- rate setting; </p></li>
+<li><p><strong>backoff</strong> -- Transmit power attenuation, unit is 0.25dB. For example, 4 means that the power is attenuated by 1dB; </p></li>
+<li><p><strong>length_byte</strong> -- TX packet length configuration, indicating PSDU Length, unit is byte; </p></li>
+<li><p><strong>packet_delay</strong> -- TX packet interval configuration, unit is us; </p></li>
+<li><p><strong>packet_num</strong> -- The number of packets sent, 0 means sending packets continuously, other values represent the number of packets to send. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423esp_phy_test_start_stop7uint8_t">
+<span id="_CPPv323esp_phy_test_start_stop7uint8_t"></span><span id="_CPPv223esp_phy_test_start_stop7uint8_t"></span><span id="esp_phy_test_start_stop__uint8_t"></span><span class="target" id="esp__phy__cert__test_8h_1a68ba1ba94ff904b1240d6f883e269926"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_test_start_stop</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423esp_phy_test_start_stop7uint8_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Test start/stop command, used to stop transmitting or receiving state. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> -- Value should be set to 3 before TX/RX. Set value to 0 to end TX/RX state. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415esp_phy_wifi_rx8uint32_t19esp_phy_wifi_rate_t">
+<span id="_CPPv315esp_phy_wifi_rx8uint32_t19esp_phy_wifi_rate_t"></span><span id="_CPPv215esp_phy_wifi_rx8uint32_t19esp_phy_wifi_rate_t"></span><span id="esp_phy_wifi_rx__uint32_t.esp_phy_wifi_rate_t"></span><span class="target" id="esp__phy__cert__test_8h_1ae0c4e1e349a9e142e71b93ab161ae9f9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_wifi_rx</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span>, <a class="reference internal" href="#_CPPv419esp_phy_wifi_rate_t" title="esp_phy_wifi_rate_t"><span class="n"><span class="pre">esp_phy_wifi_rate_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">rate</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415esp_phy_wifi_rx8uint32_t19esp_phy_wifi_rate_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wi-Fi RX command. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chan</strong> -- channel setting, 1~14; </p></li>
+<li><p><strong>rate</strong> -- rate setting; </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420esp_phy_wifi_tx_tone8uint32_t8uint32_t8uint32_t">
+<span id="_CPPv320esp_phy_wifi_tx_tone8uint32_t8uint32_t8uint32_t"></span><span id="_CPPv220esp_phy_wifi_tx_tone8uint32_t8uint32_t8uint32_t"></span><span id="esp_phy_wifi_tx_tone__uint32_t.uint32_t.uint32_t"></span><span class="target" id="esp__phy__cert__test_8h_1a192a742059e57cdf570a51bff1dd59e5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_wifi_tx_tone</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">start</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">backoff</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420esp_phy_wifi_tx_tone8uint32_t8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wi-Fi Carrier Wave(CW) TX command. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> -- enable CW, 1 means transmit, 0 means stop transmitting; </p></li>
+<li><p><strong>chan</strong> -- CW channel setting, 1~14; </p></li>
+<li><p><strong>backoff</strong> -- CW power attenuation parameter, unit is 0.25dB. 4 indicates the power is attenuated by 1dB. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414esp_phy_ble_tx8uint32_t8uint32_t8uint32_t18esp_phy_ble_type_t8uint32_t18esp_phy_ble_rate_t8uint32_t">
+<span id="_CPPv314esp_phy_ble_tx8uint32_t8uint32_t8uint32_t18esp_phy_ble_type_t8uint32_t18esp_phy_ble_rate_t8uint32_t"></span><span id="_CPPv214esp_phy_ble_tx8uint32_t8uint32_t8uint32_t18esp_phy_ble_type_t8uint32_t18esp_phy_ble_rate_t8uint32_t"></span><span id="esp_phy_ble_tx__uint32_t.uint32_t.uint32_t.esp_phy_ble_type_t.uint32_t.esp_phy_ble_rate_t.uint32_t"></span><span class="target" id="esp__phy__cert__test_8h_1a2e69c4baca86a52508a89bb7a24eaec7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_ble_tx</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">txpwr</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">len</span></span>, <a class="reference internal" href="#_CPPv418esp_phy_ble_type_t" title="esp_phy_ble_type_t"><span class="n"><span class="pre">esp_phy_ble_type_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">data_type</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">syncw</span></span>, <a class="reference internal" href="#_CPPv418esp_phy_ble_rate_t" title="esp_phy_ble_rate_t"><span class="n"><span class="pre">esp_phy_ble_rate_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">rate</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">tx_num_in</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414esp_phy_ble_tx8uint32_t8uint32_t8uint32_t18esp_phy_ble_type_t8uint32_t18esp_phy_ble_rate_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>BLE TX command. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>txpwr</strong> -- Transmit power level. Tx power is about (level-8)*3 dBm, step is 3dB. Level 8 is around 0 dBm; </p></li>
+<li><p><strong>chan</strong> -- channel setting, range is 0~39, corresponding frequency = 2402+chan*2; </p></li>
+<li><p><strong>len</strong> -- Payload length setting, range is 0-255, unit is byte, 37 bytes is employed generally; </p></li>
+<li><p><strong>data_type</strong> -- Data type setting; </p></li>
+<li><p><strong>syncw</strong> -- Packet identification (need to be provided by the packet generator or instrument manufacturer), 0x71764129 is employed generally; </p></li>
+<li><p><strong>rate</strong> -- rate setting; </p></li>
+<li><p><strong>tx_num_in</strong> -- The number of packets sent, 0 means sending packets continuously, other values represent the number of packets to send. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414esp_phy_ble_rx8uint32_t8uint32_t18esp_phy_ble_rate_t">
+<span id="_CPPv314esp_phy_ble_rx8uint32_t8uint32_t18esp_phy_ble_rate_t"></span><span id="_CPPv214esp_phy_ble_rx8uint32_t8uint32_t18esp_phy_ble_rate_t"></span><span id="esp_phy_ble_rx__uint32_t.uint32_t.esp_phy_ble_rate_t"></span><span class="target" id="esp__phy__cert__test_8h_1adaca25ac95f18090993001867184cd90"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_ble_rx</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">syncw</span></span>, <a class="reference internal" href="#_CPPv418esp_phy_ble_rate_t" title="esp_phy_ble_rate_t"><span class="n"><span class="pre">esp_phy_ble_rate_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">rate</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414esp_phy_ble_rx8uint32_t8uint32_t18esp_phy_ble_rate_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>BLE RX command. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chan</strong> -- channel selection, range is 0-39; Channels 0, 1, 2~10 correspond to 2404MHz, 2406MHz, 2408MHz~2424MHz respectively; Channels 11, 12, 13~36 correspond to 2428MHz, 2430MHz, 2432MHz~2478MHz respectively; Channel 37: 2402MHz, Channel 38: 2426MHz, Channel 39: 2480MHz; </p></li>
+<li><p><strong>syncw</strong> -- Packet identification (need to be provided by the packet generator or instrument manufacturer), 0x71764129 is employed generally; </p></li>
+<li><p><strong>rate</strong> -- rate setting; </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_phy_bt_tx_tone8uint32_t8uint32_t8uint32_t">
+<span id="_CPPv318esp_phy_bt_tx_tone8uint32_t8uint32_t8uint32_t"></span><span id="_CPPv218esp_phy_bt_tx_tone8uint32_t8uint32_t8uint32_t"></span><span id="esp_phy_bt_tx_tone__uint32_t.uint32_t.uint32_t"></span><span class="target" id="esp__phy__cert__test_8h_1ab55c7c7aa774de11dd6c84d43f836eb6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_bt_tx_tone</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">start</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">power</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_phy_bt_tx_tone8uint32_t8uint32_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>BLE Carrier Wave(CW) TX command. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> -- enable CW, 1 means transmit, 0 means stop transmitting; </p></li>
+<li><p><strong>chan</strong> -- Single carrier transmission channel selection, range is 0~39, corresponding frequency freq = 2402+chan*2; </p></li>
+<li><p><strong>power</strong> -- CW power attenuation parameter, unit is 0.25dB. 4 indicates the power is attenuated by 1dB. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421esp_phy_get_rx_resultP19esp_phy_rx_result_t">
+<span id="_CPPv321esp_phy_get_rx_resultP19esp_phy_rx_result_t"></span><span id="_CPPv221esp_phy_get_rx_resultP19esp_phy_rx_result_t"></span><span id="esp_phy_get_rx_result__esp_phy_rx_result_tP"></span><span class="target" id="esp__phy__cert__test_8h_1a4c57577f4008c746ce4b40f6d8468bd6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_get_rx_result</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_phy_rx_result_t" title="esp_phy_rx_result_t"><span class="n"><span class="pre">esp_phy_rx_result_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rx_result</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421esp_phy_get_rx_resultP19esp_phy_rx_result_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get some RX information. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rx_result</strong> -- This struct for storing RX information; </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="id3">
+<h3>Structures<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419esp_phy_rx_result_t">
+<span id="_CPPv319esp_phy_rx_result_t"></span><span id="_CPPv219esp_phy_rx_result_t"></span><span id="esp_phy_rx_result_t"></span><span class="target" id="structesp__phy__rx__result__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_rx_result_t</span></span></span><a class="headerlink" href="#_CPPv419esp_phy_rx_result_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Structure holding PHY RX result. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_rx_result_t20phy_rx_correct_countE">
+<span id="_CPPv3N19esp_phy_rx_result_t20phy_rx_correct_countE"></span><span id="_CPPv2N19esp_phy_rx_result_t20phy_rx_correct_countE"></span><span id="esp_phy_rx_result_t::phy_rx_correct_count__uint32_t"></span><span class="target" id="structesp__phy__rx__result__t_1a4ed6c52a472977cd8caa9d88c6fd2656"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">phy_rx_correct_count</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_rx_result_t20phy_rx_correct_countE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The number of desired packets received </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_rx_result_t11phy_rx_rssiE">
+<span id="_CPPv3N19esp_phy_rx_result_t11phy_rx_rssiE"></span><span id="_CPPv2N19esp_phy_rx_result_t11phy_rx_rssiE"></span><span id="esp_phy_rx_result_t::phy_rx_rssi__i"></span><span class="target" id="structesp__phy__rx__result__t_1abb965012f08aa9a9871b20947886dbc3"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">phy_rx_rssi</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_rx_result_t11phy_rx_rssiE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Average RSSI of desired packets </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_rx_result_t18phy_rx_total_countE">
+<span id="_CPPv3N19esp_phy_rx_result_t18phy_rx_total_countE"></span><span id="_CPPv2N19esp_phy_rx_result_t18phy_rx_total_countE"></span><span id="esp_phy_rx_result_t::phy_rx_total_count__uint32_t"></span><span class="target" id="structesp__phy__rx__result__t_1a279c8dd01fad513313e277a56b2b4a0c"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">phy_rx_total_count</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_rx_result_t18phy_rx_total_countE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The number of total packets received </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_rx_result_t18phy_rx_result_flagE">
+<span id="_CPPv3N19esp_phy_rx_result_t18phy_rx_result_flagE"></span><span id="_CPPv2N19esp_phy_rx_result_t18phy_rx_result_flagE"></span><span id="esp_phy_rx_result_t::phy_rx_result_flag__uint32_t"></span><span class="target" id="structesp__phy__rx__result__t_1a8d5d419631e09edead0390478562d7f3"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">phy_rx_result_flag</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_rx_result_t18phy_rx_result_flagE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>0 means no RX info; 1 means the latest Wi-Fi RX info; 2 means the latest BLE RX info. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="id4">
+<h3>Enumerations<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv419esp_phy_wifi_rate_t">
+<span id="_CPPv319esp_phy_wifi_rate_t"></span><span id="_CPPv219esp_phy_wifi_rate_t"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_wifi_rate_t</span></span></span><a class="headerlink" href="#_CPPv419esp_phy_wifi_rate_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t11PHY_RATE_1ME">
+<span id="_CPPv3N19esp_phy_wifi_rate_t11PHY_RATE_1ME"></span><span id="_CPPv2N19esp_phy_wifi_rate_t11PHY_RATE_1ME"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339add64fe384b441eb47d2a0fa055853358"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_1M</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t11PHY_RATE_1ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t11PHY_RATE_2ME">
+<span id="_CPPv3N19esp_phy_wifi_rate_t11PHY_RATE_2ME"></span><span id="_CPPv2N19esp_phy_wifi_rate_t11PHY_RATE_2ME"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a14a00c40796dbe398ee0e8eab6c05182"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_2M</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t11PHY_RATE_2ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_5M5E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t12PHY_RATE_5M5E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t12PHY_RATE_5M5E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a1a3a52e14a9192e0c37ef3691f7aab76"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_5M5</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_5M5E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_11ME">
+<span id="_CPPv3N19esp_phy_wifi_rate_t12PHY_RATE_11ME"></span><span id="_CPPv2N19esp_phy_wifi_rate_t12PHY_RATE_11ME"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339af03331618c752e70016f2d963809c817"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_11M</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_11ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t11PHY_RATE_6ME">
+<span id="_CPPv3N19esp_phy_wifi_rate_t11PHY_RATE_6ME"></span><span id="_CPPv2N19esp_phy_wifi_rate_t11PHY_RATE_6ME"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a73bcc3fc8b4d3ca44a3d627de4b44815"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_6M</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t11PHY_RATE_6ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t11PHY_RATE_9ME">
+<span id="_CPPv3N19esp_phy_wifi_rate_t11PHY_RATE_9ME"></span><span id="_CPPv2N19esp_phy_wifi_rate_t11PHY_RATE_9ME"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339abec2e56abac9d2c52a9a861e9fa4e854"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_9M</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t11PHY_RATE_9ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_12ME">
+<span id="_CPPv3N19esp_phy_wifi_rate_t12PHY_RATE_12ME"></span><span id="_CPPv2N19esp_phy_wifi_rate_t12PHY_RATE_12ME"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a39a51effd145a9ddcf0a6c9b04e4f583"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_12M</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_12ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_18ME">
+<span id="_CPPv3N19esp_phy_wifi_rate_t12PHY_RATE_18ME"></span><span id="_CPPv2N19esp_phy_wifi_rate_t12PHY_RATE_18ME"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339ac5632caa44f30757aee6b7a7d49b2175"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_18M</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_18ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_24ME">
+<span id="_CPPv3N19esp_phy_wifi_rate_t12PHY_RATE_24ME"></span><span id="_CPPv2N19esp_phy_wifi_rate_t12PHY_RATE_24ME"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a356daec3246099cc2d8c09a5a1910ded"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_24M</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_24ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_36ME">
+<span id="_CPPv3N19esp_phy_wifi_rate_t12PHY_RATE_36ME"></span><span id="_CPPv2N19esp_phy_wifi_rate_t12PHY_RATE_36ME"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a29dc10c72e34343383fc95189a6a9450"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_36M</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_36ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_48ME">
+<span id="_CPPv3N19esp_phy_wifi_rate_t12PHY_RATE_48ME"></span><span id="_CPPv2N19esp_phy_wifi_rate_t12PHY_RATE_48ME"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a0c44a8e9cbff3dee4c031d0ee3cd056c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_48M</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_48ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_54ME">
+<span id="_CPPv3N19esp_phy_wifi_rate_t12PHY_RATE_54ME"></span><span id="_CPPv2N19esp_phy_wifi_rate_t12PHY_RATE_54ME"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339aeedf7d17aff1a696d26d594e29ea0d45"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_54M</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t12PHY_RATE_54ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS0E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t13PHY_RATE_MCS0E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t13PHY_RATE_MCS0E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a863f6d45e1490d4539180d03461b5270"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_MCS0</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS0E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS1E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t13PHY_RATE_MCS1E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t13PHY_RATE_MCS1E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339abc64c7a5504d78e1e1a097ed15c109a8"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_MCS1</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS1E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS2E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t13PHY_RATE_MCS2E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t13PHY_RATE_MCS2E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a8becd4fdd52801cb714b86c4f36c1608"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_MCS2</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS2E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS3E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t13PHY_RATE_MCS3E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t13PHY_RATE_MCS3E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a3eb303561933d1265736236a9a246f7d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_MCS3</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS3E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS4E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t13PHY_RATE_MCS4E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t13PHY_RATE_MCS4E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339ab505599d0eb58cb6fe3020aed4b48484"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_MCS4</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS4E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS5E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t13PHY_RATE_MCS5E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t13PHY_RATE_MCS5E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a49a8e79e9f62d4a22b7e14d0964640f9"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_MCS5</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS5E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS6E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t13PHY_RATE_MCS6E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t13PHY_RATE_MCS6E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a74af93abefc3d4f74aa5113e5e2fa8d7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_MCS6</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS6E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS7E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t13PHY_RATE_MCS7E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t13PHY_RATE_MCS7E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339ad21828acd7d3041de81425676ff802f8"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_MCS7</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t13PHY_RATE_MCS7E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS0E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS0E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS0E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a3e51fd416b37bd8c40ce93e20282752d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_11AX_MCS0</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS0E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS1E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS1E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS1E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a50d3b2d5b2639d1ab9187338a056ba4d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_11AX_MCS1</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS1E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS2E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS2E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS2E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a92ecf0c58dffc2a87992e0430650e576"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_11AX_MCS2</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS2E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS3E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS3E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS3E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339ac731756bc1064fb21cbb2f3106272542"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_11AX_MCS3</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS3E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS4E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS4E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS4E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339ab57655e98fae6b9a51a1c519e7baa218"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_11AX_MCS4</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS4E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS5E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS5E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS5E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339ad9568e50159e8d7ee29fb515b407587c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_11AX_MCS5</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS5E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS6E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS6E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS6E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a80ebde0fa6ea9098453eba85758e017f"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_11AX_MCS6</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS6E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS7E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS7E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS7E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a208d10c0781ce56a99b862f946711d8c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_11AX_MCS7</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS7E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS8E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS8E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS8E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339acc88902647ad8c8ea17bb7d5f7b98e73"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_11AX_MCS8</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS8E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS9E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS9E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS9E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a8ab38960f3942f9e47856deb7968039c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_11AX_MCS9</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t18PHY_RATE_11AX_MCS9E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS0E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS0E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS0E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a8bb5be7f2368c927d409a6ae92f606cb"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_VHT_MCS0</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS0E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS1E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS1E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS1E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a8aa5e266648da859ce78e2b860106403"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_VHT_MCS1</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS1E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS2E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS2E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS2E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a6b376324b56544c391bac3dc97505d85"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_VHT_MCS2</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS2E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS3E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS3E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS3E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339abd241954e8c2bc098d395ddd019b6dd1"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_VHT_MCS3</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS3E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS4E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS4E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS4E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a834b5f4000b2ab43e895651dc6980eb4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_VHT_MCS4</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS4E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS5E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS5E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS5E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a9cd545f277f49e71974fac76a6816c90"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_VHT_MCS5</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS5E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS6E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS6E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS6E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339ac4dc86746ff080ee176493f862e3fe10"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_VHT_MCS6</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS6E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS7E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS7E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS7E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a167a5ca297b56bce69554746053a643c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_VHT_MCS7</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS7E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS8E">
+<span id="_CPPv3N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS8E"></span><span id="_CPPv2N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS8E"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339a27d41f743a23d87ce8f8b1db84ea2eab"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_RATE_VHT_MCS8</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t17PHY_RATE_VHT_MCS8E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N19esp_phy_wifi_rate_t17PHY_WIFI_RATE_MAXE">
+<span id="_CPPv3N19esp_phy_wifi_rate_t17PHY_WIFI_RATE_MAXE"></span><span id="_CPPv2N19esp_phy_wifi_rate_t17PHY_WIFI_RATE_MAXE"></span><span class="target" id="esp__phy__cert__test_8h_1a9528bb787cba085f000c698056216339ac642dd6e0572a0ddb8fa69bd35943cd0"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_WIFI_RATE_MAX</span></span></span><a class="headerlink" href="#_CPPv4N19esp_phy_wifi_rate_t17PHY_WIFI_RATE_MAXE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv418esp_phy_ble_rate_t">
+<span id="_CPPv318esp_phy_ble_rate_t"></span><span id="_CPPv218esp_phy_ble_rate_t"></span><span class="target" id="esp__phy__cert__test_8h_1aed5f04ff8ac601c3890a5fee5ca4929e"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_ble_rate_t</span></span></span><a class="headerlink" href="#_CPPv418esp_phy_ble_rate_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_phy_ble_rate_t15PHY_BLE_RATE_1ME">
+<span id="_CPPv3N18esp_phy_ble_rate_t15PHY_BLE_RATE_1ME"></span><span id="_CPPv2N18esp_phy_ble_rate_t15PHY_BLE_RATE_1ME"></span><span class="target" id="esp__phy__cert__test_8h_1aed5f04ff8ac601c3890a5fee5ca4929eac25a96f61dee2b30f047075b10d1401c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_BLE_RATE_1M</span></span></span><a class="headerlink" href="#_CPPv4N18esp_phy_ble_rate_t15PHY_BLE_RATE_1ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_phy_ble_rate_t15PHY_BLE_RATE_2ME">
+<span id="_CPPv3N18esp_phy_ble_rate_t15PHY_BLE_RATE_2ME"></span><span id="_CPPv2N18esp_phy_ble_rate_t15PHY_BLE_RATE_2ME"></span><span class="target" id="esp__phy__cert__test_8h_1aed5f04ff8ac601c3890a5fee5ca4929ea80fa53f9406ac289941051ab17764091"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_BLE_RATE_2M</span></span></span><a class="headerlink" href="#_CPPv4N18esp_phy_ble_rate_t15PHY_BLE_RATE_2ME" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_phy_ble_rate_t17PHY_BLE_RATE_125KE">
+<span id="_CPPv3N18esp_phy_ble_rate_t17PHY_BLE_RATE_125KE"></span><span id="_CPPv2N18esp_phy_ble_rate_t17PHY_BLE_RATE_125KE"></span><span class="target" id="esp__phy__cert__test_8h_1aed5f04ff8ac601c3890a5fee5ca4929eab64593f27908616675ccdb6b1b673276"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_BLE_RATE_125K</span></span></span><a class="headerlink" href="#_CPPv4N18esp_phy_ble_rate_t17PHY_BLE_RATE_125KE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_phy_ble_rate_t17PHY_BLE_RATE_500kE">
+<span id="_CPPv3N18esp_phy_ble_rate_t17PHY_BLE_RATE_500kE"></span><span id="_CPPv2N18esp_phy_ble_rate_t17PHY_BLE_RATE_500kE"></span><span class="target" id="esp__phy__cert__test_8h_1aed5f04ff8ac601c3890a5fee5ca4929ea89596c41cf098f71b62685754de428af"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_BLE_RATE_500k</span></span></span><a class="headerlink" href="#_CPPv4N18esp_phy_ble_rate_t17PHY_BLE_RATE_500kE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_phy_ble_rate_t16PHY_BLE_RATE_MAXE">
+<span id="_CPPv3N18esp_phy_ble_rate_t16PHY_BLE_RATE_MAXE"></span><span id="_CPPv2N18esp_phy_ble_rate_t16PHY_BLE_RATE_MAXE"></span><span class="target" id="esp__phy__cert__test_8h_1aed5f04ff8ac601c3890a5fee5ca4929ea98be9842551862861382de2a70f7264c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_BLE_RATE_MAX</span></span></span><a class="headerlink" href="#_CPPv4N18esp_phy_ble_rate_t16PHY_BLE_RATE_MAXE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv418esp_phy_ble_type_t">
+<span id="_CPPv318esp_phy_ble_type_t"></span><span id="_CPPv218esp_phy_ble_type_t"></span><span class="target" id="esp__phy__cert__test_8h_1a9f90c066d0f5096e7dded9841993421f"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_phy_ble_type_t</span></span></span><a class="headerlink" href="#_CPPv418esp_phy_ble_type_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_phy_ble_type_t17PHY_BLE_TYPE_1010E">
+<span id="_CPPv3N18esp_phy_ble_type_t17PHY_BLE_TYPE_1010E"></span><span id="_CPPv2N18esp_phy_ble_type_t17PHY_BLE_TYPE_1010E"></span><span class="target" id="esp__phy__cert__test_8h_1a9f90c066d0f5096e7dded9841993421fa4c58b582caa6767f82e10c6a4183d70d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_BLE_TYPE_1010</span></span></span><a class="headerlink" href="#_CPPv4N18esp_phy_ble_type_t17PHY_BLE_TYPE_1010E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_phy_ble_type_t21PHY_BLE_TYPE_00001111E">
+<span id="_CPPv3N18esp_phy_ble_type_t21PHY_BLE_TYPE_00001111E"></span><span id="_CPPv2N18esp_phy_ble_type_t21PHY_BLE_TYPE_00001111E"></span><span class="target" id="esp__phy__cert__test_8h_1a9f90c066d0f5096e7dded9841993421fa20e91d7af6714412601a4a8e41a633d1"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_BLE_TYPE_00001111</span></span></span><a class="headerlink" href="#_CPPv4N18esp_phy_ble_type_t21PHY_BLE_TYPE_00001111E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_phy_ble_type_t18PHY_BLE_TYPE_prbs9E">
+<span id="_CPPv3N18esp_phy_ble_type_t18PHY_BLE_TYPE_prbs9E"></span><span id="_CPPv2N18esp_phy_ble_type_t18PHY_BLE_TYPE_prbs9E"></span><span class="target" id="esp__phy__cert__test_8h_1a9f90c066d0f5096e7dded9841993421fad5873d37fb7f177682c71dd6467581a7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_BLE_TYPE_prbs9</span></span></span><a class="headerlink" href="#_CPPv4N18esp_phy_ble_type_t18PHY_BLE_TYPE_prbs9E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_phy_ble_type_t21PHY_BLE_TYPE_00111100E">
+<span id="_CPPv3N18esp_phy_ble_type_t21PHY_BLE_TYPE_00111100E"></span><span id="_CPPv2N18esp_phy_ble_type_t21PHY_BLE_TYPE_00111100E"></span><span class="target" id="esp__phy__cert__test_8h_1a9f90c066d0f5096e7dded9841993421fa334e6ae5d922f07695bef36d5f792b59"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_BLE_TYPE_00111100</span></span></span><a class="headerlink" href="#_CPPv4N18esp_phy_ble_type_t21PHY_BLE_TYPE_00111100E" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_phy_ble_type_t16PHY_BLE_TYPE_MAXE">
+<span id="_CPPv3N18esp_phy_ble_type_t16PHY_BLE_TYPE_MAXE"></span><span id="_CPPv2N18esp_phy_ble_type_t16PHY_BLE_TYPE_MAXE"></span><span class="target" id="esp__phy__cert__test_8h_1a9f90c066d0f5096e7dded9841993421fa9dc65d17a88dd13a6ca5bd9cee2dd395"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PHY_BLE_TYPE_MAX</span></span></span><a class="headerlink" href="#_CPPv4N18esp_phy_ble_type_t16PHY_BLE_TYPE_MAXE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=RF Calibration (api-guides/RF_calibration)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=RF Calibration (api-guides/RF_calibration)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reproducible-builds.html" class="btn btn-neutral float-left" title="Reproducible Builds" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stdio.html" class="btn btn-neutral float-right" title="Standard I/O and Console Output" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

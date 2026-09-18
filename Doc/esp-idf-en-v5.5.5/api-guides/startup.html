@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Application Startup Flow - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/startup.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/startup';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Bluetooth® Architecture" href="bt-architecture/index.html" />
+    <link rel="prev" title="Application Level Tracing Library" href="app_trace.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Application Startup Flow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#first-stage-rom-bootloader">First stage (ROM) bootloader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#second-stage-bootloader">Second Stage Bootloader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#application-startup">Application Startup</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#port-initialization">Port Initialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#system-initialization">System Initialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-the-main-task">Running the Main Task</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#second-core-startup">Second Core Startup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Guides</a></li>
+      <li class="breadcrumb-item active">Application Startup Flow</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/startup.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="application-startup-flow">
+<h1>Application Startup Flow<a class="headerlink" href="#application-startup-flow" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/api-guides/startup.html">[中文]</a></p>
+<p>This note explains various steps which happen before <code class="docutils literal notranslate"><span class="pre">app_main</span></code> function of an ESP-IDF application is called.</p>
+<p>The high level view of startup process is as follows:</p>
+<p><ol class="arabic simple">
+<li><p><a class="reference internal" href="#first-stage-bootloader"><span class="std std-ref">First stage (ROM) bootloader</span></a> loads the second stage bootloader image to RAM (IRAM &amp; DRAM) from flash offset 0x1000.</p></li>
+<li><p><a class="reference internal" href="#second-stage-bootloader"><span class="std std-ref">Second Stage Bootloader</span></a> loads partition table and main app image from flash. Main app incorporates both RAM segments and read-only segments mapped via flash cache.</p></li>
+<li><p><a class="reference internal" href="#application-startup"><span class="std std-ref">Application Startup</span></a> executes. At this point, the second CPU and RTOS scheduler are started, which then run the <code class="docutils literal notranslate"><span class="pre">main_task</span></code>, leading to the execution of <code class="docutils literal notranslate"><span class="pre">app_main</span></code>.</p></li>
+</ol>
+</p>
+<p>This process is explained in detail in the following sections.</p>
+<section id="first-stage-rom-bootloader">
+<span id="first-stage-bootloader"></span><h2>First stage (ROM) bootloader<a class="headerlink" href="#first-stage-rom-bootloader" title="Permalink to this heading"></a></h2>
+<p>After SoC reset, PRO CPU will start running immediately, executing reset vector code, while APP CPU will be held in reset. During startup process, PRO CPU does all the initialization. APP CPU reset is de-asserted in the <code class="docutils literal notranslate"><span class="pre">call_start_cpu0</span></code> function of application startup code. Reset vector code is located in the mask ROM of the ESP32 chip and cannot be modified.</p>
+<p>Startup code called from the reset vector determines the boot mode by checking <code class="docutils literal notranslate"><span class="pre">GPIO_STRAP_REG</span></code> register for bootstrap pin states. Depending on the reset reason, the following takes place:</p>
+<p><ol class="arabic simple">
+<li><p>Reset from deep sleep: if the value in <code class="docutils literal notranslate"><span class="pre">RTC_CNTL_STORE6_REG</span></code> is non-zero, and CRC value of RTC memory in <code class="docutils literal notranslate"><span class="pre">RTC_CNTL_STORE7_REG</span></code> is valid, use <code class="docutils literal notranslate"><span class="pre">RTC_CNTL_STORE6_REG</span></code> as an entry point address and jump immediately to it. If <code class="docutils literal notranslate"><span class="pre">RTC_CNTL_STORE6_REG</span></code> is zero, or <code class="docutils literal notranslate"><span class="pre">RTC_CNTL_STORE7_REG</span></code> contains invalid CRC, or once the code called via <code class="docutils literal notranslate"><span class="pre">RTC_CNTL_STORE6_REG</span></code> returns, proceed with boot as if it was a power-on reset. <strong>Note</strong>: to run customized code at this point, a deep sleep stub mechanism is provided. Please see <a class="reference internal" href="deep-sleep-stub.html"><span class="doc">deep sleep</span></a> documentation for this.</p></li>
+<li><p>For power-on reset, software SoC reset, and watchdog SoC reset: check the <code class="docutils literal notranslate"><span class="pre">GPIO_STRAP_REG</span></code> register if a custom boot mode (such as UART Download Mode) is requested. If this is the case, this custom loader mode is executed from ROM. Otherwise, proceed with boot as if it was due to software CPU reset. Consult ESP32 datasheet for a description of SoC boot modes and how to execute them.</p></li>
+<li><p>For software CPU reset and watchdog CPU reset: configure SPI flash based on EFUSE values, and attempt to load the code from flash. This step is described in more detail in the next paragraphs.</p></li>
+</ol>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>During normal boot modes the RTC watchdog is enabled when this happens, so if the process is interrupted or stalled then the watchdog will reset the SOC automatically and repeat the boot process. This may cause the SoC to strap into a new boot mode, if the strapping GPIOs have changed.</p>
+</div>
+<p>Second stage bootloader binary image is loaded from flash starting at address 0x1000. If <a class="reference internal" href="../security/secure-boot-v1.html"><span class="doc">Secure Boot</span></a> is in use then the first 4 kB sector of flash is used to store secure boot IV and digest of the bootloader image. Otherwise, this sector is unused.</p>
+</section>
+<section id="second-stage-bootloader">
+<span id="id1"></span><h2>Second Stage Bootloader<a class="headerlink" href="#second-stage-bootloader" title="Permalink to this heading"></a></h2>
+<p>In ESP-IDF, the binary image which resides at offset 0x1000 in flash is the second stage bootloader. Second stage bootloader source code is available in <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/components/bootloader">components/bootloader</a> directory of ESP-IDF. Second stage bootloader is used in ESP-IDF to add flexibility to flash layout (using partition tables), and allow for various flows associated with flash encryption, secure boot, and over-the-air updates (OTA) to take place.</p>
+<p>When the first stage (ROM) bootloader is finished checking and loading the second stage bootloader, it jumps to the second stage bootloader entry point found in the binary image header.</p>
+<p>Second stage bootloader reads the partition table found by default at offset 0x8000 (<a class="reference internal" href="../api-reference/kconfig-reference.html#config-partition-table-offset"><span class="std std-ref">configurable value</span></a>). See <a class="reference internal" href="partition-tables.html"><span class="doc">partition tables</span></a> documentation for more information. The bootloader finds factory and OTA app partitions. If OTA app partitions are found in the partition table, the bootloader consults the <code class="docutils literal notranslate"><span class="pre">otadata</span></code> partition to determine which one should be booted. See <a class="reference internal" href="../api-reference/system/ota.html"><span class="doc">Over The Air Updates (OTA)</span></a> for more information.</p>
+<p>For a full description of the configuration options available for the ESP-IDF bootloader, see <a class="reference internal" href="bootloader.html"><span class="doc">Bootloader</span></a>.</p>
+<p>For the selected partition, second stage bootloader reads the binary image from flash one segment at a time:</p>
+<ul class="simple">
+<li><p>For segments with load addresses in internal <a class="reference internal" href="memory-types.html#iram"><span class="std std-ref">IRAM (Instruction RAM)</span></a> or <a class="reference internal" href="memory-types.html#dram"><span class="std std-ref">DRAM (Data RAM)</span></a>, the contents are copied from flash to the load address.</p></li>
+<li><p>For segments which have load addresses in <a class="reference internal" href="memory-types.html#drom"><span class="std std-ref">DROM (Data Stored in flash)</span></a> or <a class="reference internal" href="memory-types.html#irom"><span class="std std-ref">IROM (Code Executed from flash)</span></a> regions, the flash MMU is configured to provide the correct mapping from the flash to the load address.</p></li>
+</ul>
+<p>Note that the second stage bootloader configures flash MMU for both PRO and APP CPUs, but it only enables flash MMU for PRO CPU. Reason for this is that second stage bootloader code is loaded into the memory region used by APP CPU cache. The duty of enabling cache for APP CPU is passed on to the application.</p>
+<p>Once all segments are processed - meaning code is loaded and flash MMU is set up, second stage bootloader verifies the integrity of the application and then jumps to the application entry point found in the binary image header.</p>
+</section>
+<section id="application-startup">
+<span id="id2"></span><h2>Application Startup<a class="headerlink" href="#application-startup" title="Permalink to this heading"></a></h2>
+<p>Application startup covers everything that happens after the app starts executing and before the <code class="docutils literal notranslate"><span class="pre">app_main</span></code> function starts running inside the main task. This is split into three stages:</p>
+<ul class="simple">
+<li><p>Port initialization of hardware and basic C runtime environment.</p></li>
+<li><p>System initialization of software services and FreeRTOS.</p></li>
+<li><p>Running the main task and calling <code class="docutils literal notranslate"><span class="pre">app_main</span></code>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Understanding all stages of ESP-IDF app initialization is often not necessary. To understand initialization from the application developer's perspective only, skip forward to <a class="reference internal" href="#app-main-task"><span class="std std-ref">Running the Main Task</span></a>.</p>
+</div>
+<section id="port-initialization">
+<h3>Port Initialization<a class="headerlink" href="#port-initialization" title="Permalink to this heading"></a></h3>
+<p>ESP-IDF application entry point is <code class="docutils literal notranslate"><span class="pre">call_start_cpu0</span></code> function found in <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_system/port/cpu_start.c">components/esp_system/port/cpu_start.c</a>. This function is executed by the second stage bootloader, and never returns.</p>
+<p>This port-layer initialization function initializes the basic C Runtime Environment (&quot;CRT&quot;) and performs initial configuration of the SoC's internal hardware:</p>
+<p><ul class="simple">
+<li><p>Reconfigure CPU exceptions for the app (allowing app interrupt handlers to run, and causing <a class="reference internal" href="fatal-errors.html"><span class="doc">Fatal Errors</span></a> to be handled using the options configured for the app rather than the simpler error handler provided by ROM).</p></li>
+<li><p>If the option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-wdt-enable"><span class="std std-ref">CONFIG_BOOTLOADER_WDT_ENABLE</span></a> is not set then the RTC watchdog timer is disabled.</p></li>
+<li><p>Initialize internal memory (data &amp; bss).</p></li>
+<li><p>Finish configuring the MMU cache.</p></li>
+<li><p>Enable PSRAM if configured.</p></li>
+<li><p>Set the CPU clocks to the frequencies configured for the project.</p></li>
+<li><p>Reconfigure the main SPI flash based on the app header settings (necessary for compatibility with bootloader versions before ESP-IDF V4.0, see <a class="reference internal" href="bootloader.html#bootloader-compatibility"><span class="std std-ref">Bootloader Compatibility</span></a>).</p></li>
+<li><p>If the app is configured to run on multiple cores, start the other core and wait for it to initialize as well (inside the similar &quot;port layer&quot; initialization function <code class="docutils literal notranslate"><span class="pre">call_start_cpu1</span></code>).</p></li>
+</ul>
+</p>
+<p>Once <code class="docutils literal notranslate"><span class="pre">call_start_cpu0</span></code> completes running, it calls the &quot;system layer&quot; initialization function <code class="docutils literal notranslate"><span class="pre">start_cpu0</span></code> found in <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_system/startup.c">components/esp_system/startup.c</a>. Other cores will also complete port-layer initialization and call <code class="docutils literal notranslate"><span class="pre">start_other_cores</span></code> found in the same file.</p>
+</section>
+<section id="system-initialization">
+<h3>System Initialization<a class="headerlink" href="#system-initialization" title="Permalink to this heading"></a></h3>
+<p>The main system initialization function is <code class="docutils literal notranslate"><span class="pre">start_cpu0</span></code>. By default, this function is weak-linked to the function <code class="docutils literal notranslate"><span class="pre">start_cpu0_default</span></code>. This means that it is possible to override this function to add some additional initialization steps.</p>
+<p>The primary system initialization stage includes:</p>
+<p><ul class="simple">
+<li><p>Log information about this application (project name, <a class="reference internal" href="../api-reference/system/misc_system_api.html#app-version"><span class="std std-ref">App Version</span></a>, etc.) if default log level enables this.</p></li>
+<li><p>Initialize the heap allocator (before this point all allocations must be static or on the stack).</p></li>
+<li><p>Initialize newlib component syscalls and time functions.</p></li>
+<li><p>Configure the brownout detector.</p></li>
+<li><p>Setup libc stdin, stdout, and stderr according to the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-console-uart"><span class="std std-ref">serial console configuration</span></a>.</p></li>
+<li><p>Perform any security-related checks, including burning efuses that should be burned for this configuration (including <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-uart-rom-dl-mode"><span class="std std-ref">disabling ROM download mode on ESP32 V3</span></a>, <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp32-disable-basic-rom-console"><span class="std std-ref">CONFIG_ESP32_DISABLE_BASIC_ROM_CONSOLE</span></a>).</p></li>
+<li><p>Initialize SPI flash API support.</p></li>
+<li><p>Call global C++ constructors and any C functions marked with <code class="docutils literal notranslate"><span class="pre">__attribute__((constructor))</span></code>.</p></li>
+</ul>
+</p>
+<p>Secondary system initialization allows individual components to be initialized. If a component has an initialization function annotated with the <code class="docutils literal notranslate"><span class="pre">ESP_SYSTEM_INIT_FN</span></code> macro, it will be called as part of secondary initialization. Component initialization functions have priorities assigned to them to ensure the desired initialization order. The priorities are documented in <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_system/system_init_fn.txt">esp_system/system_init_fn.txt</a> and <code class="docutils literal notranslate"><span class="pre">ESP_SYSTEM_INIT_FN</span></code> definition in source code are checked against this file.</p>
+</section>
+<section id="running-the-main-task">
+<span id="app-main-task"></span><h3>Running the Main Task<a class="headerlink" href="#running-the-main-task" title="Permalink to this heading"></a></h3>
+<p>After all other components are initialized, the main task is created and the FreeRTOS scheduler starts running.</p>
+<p>After doing some more initialization tasks (that require the scheduler to have started), the main task runs the application-provided function <code class="docutils literal notranslate"><span class="pre">app_main</span></code> in the firmware.</p>
+<p>The main task that runs <code class="docutils literal notranslate"><span class="pre">app_main</span></code> has a fixed RTOS priority (one higher than the minimum) and a <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-main-task-stack-size"><span class="std std-ref">configurable stack size</span></a>.</p>
+<p>The main task core affinity is also configurable: <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-main-task-affinity"><span class="std std-ref">CONFIG_ESP_MAIN_TASK_AFFINITY</span></a>.</p>
+<p>Unlike normal FreeRTOS tasks (or embedded C <code class="docutils literal notranslate"><span class="pre">main</span></code> functions), the <code class="docutils literal notranslate"><span class="pre">app_main</span></code> task is allowed to return. If this happens, The task is cleaned up and the system will continue running with other RTOS tasks scheduled normally. Therefore, it is possible to implement <code class="docutils literal notranslate"><span class="pre">app_main</span></code> as either a function that creates other application tasks and then returns, or as a main application task itself.</p>
+</section>
+<section id="second-core-startup">
+<h3>Second Core Startup<a class="headerlink" href="#second-core-startup" title="Permalink to this heading"></a></h3>
+<p>A similar but simpler startup process happens on the APP CPU:</p>
+<p>When running system initialization, the code on PRO CPU sets the entry point for APP CPU, de-asserts APP CPU reset, and waits for a global flag to be set by the code running on APP CPU, indicating that it has started. Once this is done, APP CPU jumps to <code class="docutils literal notranslate"><span class="pre">call_start_cpu1</span></code> function in <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_system/port/cpu_start.c">components/esp_system/port/cpu_start.c</a>.</p>
+<p>While PRO CPU does initialization in <code class="docutils literal notranslate"><span class="pre">start_cpu0</span></code> function, APP CPU runs <code class="docutils literal notranslate"><span class="pre">start_cpu_other_cores</span></code> function. Similar to <code class="docutils literal notranslate"><span class="pre">start_cpu0</span></code>, this function is weak-linked and defaults to the <code class="docutils literal notranslate"><span class="pre">start_cpu_other_cores_default</span></code> function but can be replaced with a different function by the application.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">start_cpu_other_cores_default</span></code> function does some core-specific system initialization and then waits for the PRO CPU to start the FreeRTOS scheduler, at which point it executes <code class="docutils literal notranslate"><span class="pre">esp_startup_start_app_other_cores</span></code> which is another weak-linked function defaulting to <code class="docutils literal notranslate"><span class="pre">esp_startup_start_app_other_cores_default</span></code>.</p>
+<p>By default <code class="docutils literal notranslate"><span class="pre">esp_startup_start_app_other_cores_default</span></code> does nothing but spin in a busy-waiting loop until the scheduler of the PRO CPU triggers an interrupt to start the RTOS scheduler on the APP CPU.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Application Startup Flow (api-guides/startup)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Application Startup Flow (api-guides/startup)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="app_trace.html" class="btn btn-neutral float-left" title="Application Level Tracing Library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bt-architecture/index.html" class="btn btn-neutral float-right" title="Bluetooth® Architecture" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

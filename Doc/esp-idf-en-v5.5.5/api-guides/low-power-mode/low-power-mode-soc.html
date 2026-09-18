@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction to Low Power Mode for Systemic Power Management - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/low-power-mode/low-power-mode-soc.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/low-power-mode/low-power-mode-soc';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Introduction to Low Power Mode in Wi-Fi Scenarios" href="low-power-mode-wifi.html" />
+    <link rel="prev" title="Low Power Modes" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Low Power Modes</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#overview">Overview</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Introduction to Low Power Mode for Systemic Power Management</a></li>
+<li class="toctree-l4"><a class="reference internal" href="low-power-mode-wifi.html">Introduction to Low Power Mode in Wi-Fi Scenarios</a></li>
+<li class="toctree-l4"><a class="reference internal" href="low-power-mode-ble.html">Introduction to Low Power Mode in Bluetooth<sup>®</sup> Low Energy Scenarios</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Low Power Modes</a></li>
+      <li class="breadcrumb-item active">Introduction to Low Power Mode for Systemic Power Management</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/low-power-mode/low-power-mode-soc.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction-to-low-power-mode-for-systemic-power-management">
+<h1>Introduction to Low Power Mode for Systemic Power Management<a class="headerlink" href="#introduction-to-low-power-mode-for-systemic-power-management" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-guides/low-power-mode/low-power-mode-soc.html">[中文]</a></p>
+<p>The ESP32 supports various low power modes. From a systemic perspective on power management, the typical modes include DFS, Light-sleep mode, and Deep-sleep mode. These modes reduce power consumption by lowering clock frequencies (DFS) or entering sleep states without affecting system functionality. During sleep, unnecessary power domains are shut down, or clock gating is applied to peripherals not in use. Sleep modes are further classified into Light-sleep mode and Deep-sleep mode based on whether powering down domains would disrupt program execution context.</p>
+<p>Furthermore, for common use cases of the ESP32 such as Wi-Fi/Bluetooth operation, ESP-IDF segment the modes above and optimize them specifically, which will be introduced in subsequent sections.</p>
+<p>This section will first introduce low power modes from a systemic perspective, without considering specific use cases.</p>
+<section id="dfs">
+<h2>DFS<a class="headerlink" href="#dfs" title="Permalink to this heading"></a></h2>
+<p>Dynamic Frequency Scaling (DFS) is a fundamental feature of the power management mechanism integrated into ESP-IDF. DFS adjusts the Advanced Peripheral Bus (APB) frequency and CPU frequency based on the application's holding of power locks. When holding a high-performance lock, it utilizes high frequency, while in idle states without holding power locks, it switches to low frequency to reduce power consumption, thereby minimizing the power consumption of running applications as much as possible.</p>
+<p>The frequency adjustment mechanism of DFS operates based on the maximum frequency demand dictated by held power locks. Additionally, the values of <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-hz"><span class="std std-ref">CONFIG_FREERTOS_HZ</span></a> also influence the frequency adjustments of DFS. Higher values lead to a higher frequency of task scheduling, then the system can also more quickly re-adjust the clock frequencies according to the system requirements. For further details regarding the frequency adjustment mechanism, please refer to <a class="reference internal" href="../../api-reference/system/power_management.html"><span class="doc">Power Management</span></a>.</p>
+<p>The following graph illustrates the ideal current situation during the operation of the DFS mechanism.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>          Hold CPU and APB MAX lock
+                    │
+                    │    Release CPU MAX lock
+           ▲        │      /
+  Current  │        ▼     /
+           │   ──────────┐       Release APB MAX lock
+           │             │           /
+           │             │          /
+           │             └─────────┐
+           │             ▲         │
+           │             │         │
+           │   m-th tick │         └───────────
+           │                       ▲
+           │                       │
+           │             n-th tick │
+           └──────────────────────────────────────►
+                                              Time
+Ideal DFS Mechanism Frequency Adjustment Current Graph
+</pre></div>
+</div>
+<p>DFS is suitable for scenarios where the CPU must remain active but low power consumption is required. Therefore, DFS is often activated with other low power modes, as will be detailed in the following sections.</p>
+</section>
+<section id="light-sleep-mode">
+<span id="id1"></span><h2>Light-sleep Mode<a class="headerlink" href="#light-sleep-mode" title="Permalink to this heading"></a></h2>
+<p>Light-sleep mode is a low power mode preset in the ESP32. Users can switch to Light-sleep mode by calling <a class="reference internal" href="../../api-reference/system/sleep_modes.html#_CPPv421esp_light_sleep_startv" title="esp_light_sleep_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_light_sleep_start()</span></code></a> interface. Upon entering sleep, the chip will shut down unnecessary power domains and apply clock gating to modules not in use, based on the current operational states of peripherals. The ESP32 supports various wake-up sources. Please refer to <a class="reference internal" href="../../api-reference/system/sleep_modes.html"><span class="doc">Sleep Modes</span></a> for more information. When the chip wakes up from Light-sleep mode, the CPU continues running from the context it was in before entering sleep, and the operational states of peripherals remain unaffected. To effectively reduce chip power consumption under Light-sleep mode, it is highly recommended that users utilize Auto Light-sleep mode described below.</p>
+<p>Auto Light-sleep mode is a low power mode provided by ESP-IDF <a class="reference internal" href="../../api-reference/system/power_management.html"><span class="doc">Power Management</span></a> component that leverages FreeRTOS's Tickless IDLE feature. When the application releases all power locks and all FreeRTOS tasks are in a blocked or suspended state, the system automatically calculates the next time point when an event will wake the operating system. If this calculated time point exceeds a set duration (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-idle-time-before-sleep"><span class="std std-ref">CONFIG_FREERTOS_IDLE_TIME_BEFORE_SLEEP</span></a>), the <code class="docutils literal notranslate"><span class="pre">esp_pm</span></code> component automatically configures the timer wake-up source and enters light sleep to reduce power consumption. To enable this mode, users need to set the <code class="docutils literal notranslate"><span class="pre">light_sleep_enable</span></code> field to true in <a class="reference internal" href="../../api-reference/system/power_management.html#_CPPv415esp_pm_config_t" title="esp_pm_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_pm_config_t</span></code></a> when configuring DFS. For more details, please refer to <a class="reference internal" href="#dfs-configuration">DFS Configuration</a>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>                              ┌────────┐
+                              │        │
+                              │  DFS   │
+                              │        │
+                              └───┬────┘
+                                  │
+                                  ▼
+┌──────────┐   when idle      ┌──────────┐ exceed set time ┌──────────┐
+│          │  ─────────────►  │          │  ────────────►  │          │
+│          │                  │          │                 │   auto   │
+│  active  │                  │   IDLE   │                 │  light   │
+│          │                  │          │                 │   sleep  │
+│          │  ◄─────────────  │          │                 │          │
+└──────────┘     not idle     └──────────┘                 └──────┬───┘
+  ▲                                                               │
+  │                      configure wake-up source                 │
+  └───────────────────────────────────────────────────────────────┘
+
+                    Auto Light-sleep Mode Workflow
+</pre></div>
+</div>
+<p>Based on the workflow of Auto Light-sleep mode, its ideal current graph can be obtained, with key nodes marked on the chart.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>        ▲  DFS frequency reduced
+Current |        │    exceed set idle time
+        |        ▼     / light sleep
+        |     ┌──┐    /      ┌──┐
+        |     │  └──┐        │  └──┐
+        |     |     |        |     |
+        |     │     │        │     │
+        |  ───┘     └────────┘     └────
+        │                     \
+        │              wake-up source wakes up
+        └───────────────────────────────►
+                                     Time
+  Ideal Current Graph of Auto Light-sleep Mode
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>To better illustrate the main changes of Auto Light-sleep mode, the DFS frequency reduction process is omitted from the graph above.</p></li>
+<li><p>Auto Light-sleep mode is suitable for scenarios where real-time response to external demands is not required.</p></li>
+<li><p>Auto Light-sleep mode operates based on timer wake-up sources. Therefore, users should not manually configure timer wake-up sources in their application.</p></li>
+</ul>
+</div>
+</section>
+<section id="deep-sleep-mode">
+<span id="id2"></span><h2>Deep-sleep Mode<a class="headerlink" href="#deep-sleep-mode" title="Permalink to this heading"></a></h2>
+<p>Deep-sleep mode is designed to achieve better power performance by retaining only RTC/LP memory and peripherals during sleep, while all other modules are shut down. Similar to Light-sleep mode, Deep-sleep mode is entered through API calls and requires configuration of wake-up sources for awakening. Users can switch to Deep-sleep mode by calling <a class="reference internal" href="../../api-reference/system/sleep_modes.html#_CPPv420esp_deep_sleep_startv" title="esp_deep_sleep_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_deep_sleep_start()</span></code></a> interface.</p>
+<p>Deep-sleep mode requires the configuration of wake-up sources. The ESP32 supports multiple wake-up sources. For a complete list of wake-up sources, please refer to <a class="reference internal" href="../../api-reference/system/sleep_modes.html"><span class="doc">Sleep Modes</span></a>. These wake-up sources can also be combined so that any wake-up source can trigger the awakening. If no wake-up source is configured when entering deep sleep, the chip will remain in sleep state until an external reset occurs. Unlike Light-sleep mode, Deep-sleep mode upon awakening will lose the CPU's running context before, so the bootloader needs to be run again to enter the user program.</p>
+<p>The workflow of Deep-sleep mode is shown as below:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>┌───────┐  call API  ┌───────┐
+│       ├───────────►│ deep  │
+│active │            │ sleep │
+│       │            │       │
+└───────┘            └───┬───┘
+    ▲                    │
+    └────────────────────┘
+    wake-up source wakes up
+  Deep-sleep Mode Workflow
+</pre></div>
+</div>
+<p>The primary application scenario of Deep-sleep mode determines that the system will awaken only after a long period and will return to deep sleep state after completing its task. The ideal current graph is as follows.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>        ▲
+Current |
+        |               call API
+        |                  │
+        |                  ▼
+        |               ┌────┐
+        |               │    │
+        | wake-up source|    |
+        |  wakes up  \  |    |
+        |             \ │    │
+        │     ──────────┘    └────────────────
+        │
+        └──────────────────────────────────────────►
+                                               Time
+       Ideal Current Graph of Deep-sleep Mode
+</pre></div>
+</div>
+<p>Deep-sleep mode can be utilized in low power sensor applications or situations where data transmission is not required for most of the time, commonly referred to as standby mode.</p>
+<p>Devices can wake up periodically from deep sleep to measure and upload data, and then return to deep sleep. Alternatively, it can store multiple data sets in RTC memory and transmit them all at once upon the next wake-up. This feature can be implemented using the deep-sleep-stub functionality. For details, please refer to <a class="reference internal" href="../deep-sleep-stub.html"><span class="doc">Deep-sleep Wake Stubs</span></a>.</p>
+</section>
+<section id="low-power-mode-configuration-on-pure-system">
+<h2>Low Power Mode Configuration on Pure System<a class="headerlink" href="#low-power-mode-configuration-on-pure-system" title="Permalink to this heading"></a></h2>
+<p>After introducing low power modes from a systemic perspective, this section will present common configuration options, recommended configuration options for each mode, and configurations steps.</p>
+</section>
+<section id="common-configuration-options">
+<h2>Common Configuration Options<a class="headerlink" href="#common-configuration-options" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The configuration options below are briefly introduced. For more detailed information, please click the link behind each option.</p>
+</div>
+<ul class="simple">
+<li><dl class="simple">
+<dt>single/dual core operation mode (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-unicore"><span class="std std-ref">CONFIG_FREERTOS_UNICORE</span></a>)</dt><dd><p>For multi-core chips, the single core operation mode can be selected.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>RTOS Tick rate (Hz) (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-hz"><span class="std std-ref">CONFIG_FREERTOS_HZ</span></a>)</dt><dd><p>This parameter denotes the frequency of the system's periodic task scheduling.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="dfs-configuration">
+<h2>DFS Configuration<a class="headerlink" href="#dfs-configuration" title="Permalink to this heading"></a></h2>
+<p>DFS offers the following configurable options:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">max_freq_mhz</span></code></dt><dd><p>This parameter denotes the maximum CPU frequency (MHz), i.e., the frequency at which the CPU operates at its highest performance level. It is typically set to the maximum value specified by the chip parameters.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">min_freq_mhz</span></code></dt><dd><p>This parameter denotes the minimum CPU frequency (MHz), i.e., the CPU's operating frequency when the system is in an idle state. This field can be set to the crystal oscillator (XTAL) frequency value or the XTAL frequency value divided by an integer.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">light_sleep_enable</span></code></dt><dd><p>Enabling this option allows the system to automatically enter the light sleep during idle periods, i.e., enabling Auto Light-sleep mode, as detailed earlier.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Specific configuration steps are as follows:</p>
+<ol class="arabic simple">
+<li><p>Enable <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-pm-enable"><span class="std std-ref">CONFIG_PM_ENABLE</span></a></p></li>
+<li><p>Configure <code class="docutils literal notranslate"><span class="pre">max_freq_mhz</span></code> and <code class="docutils literal notranslate"><span class="pre">min_freq_mhz</span></code> as follows:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">esp_pm_config_t</span> <span class="n">pm_config</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="o">.</span><span class="n">max_freq_mhz</span> <span class="o">=</span> <span class="n">CONFIG_EXAMPLE_MAX_CPU_FREQ_MHZ</span><span class="p">,</span>
+        <span class="o">.</span><span class="n">min_freq_mhz</span> <span class="o">=</span> <span class="n">CONFIG_EXAMPLE_MIN_CPU_FREQ_MHZ</span><span class="p">,</span>
+        <span class="o">.</span><span class="n">light_sleep_enable</span> <span class="o">=</span> <span class="n">false</span>
+<span class="p">};</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">esp_pm_configure</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pm_config</span><span class="p">));</span>
+</pre></div>
+</div>
+</div></blockquote>
+<section id="recommended-configuration">
+<h3>Recommended Configuration<a class="headerlink" href="#recommended-configuration" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Configuration Name</p></th>
+<th class="head"><p>Configuration Status</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Enable power management component (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-pm-enable"><span class="std std-ref">CONFIG_PM_ENABLE</span></a>)</p></td>
+<td><p>ON</p></td>
+</tr>
+<tr class="row-odd"><td><p>RTOS Tick rate (Hz) (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-hz"><span class="std std-ref">CONFIG_FREERTOS_HZ</span></a>)</p></td>
+<td><p>1000</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_freq_mhz</span></code></p></td>
+<td><p>The maximum CPU frequency supported by ESP32</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">min_freq_mhz</span></code></p></td>
+<td><p>{CONFIG_XTAL_FREQ}</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">light_sleep_enable</span></code></p></td>
+<td><p>false</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Configurations not mentioned in the above table are set to default.</p>
+</div>
+</section>
+</section>
+<section id="light-sleep-mode-configuration">
+<h2>Light-sleep Mode Configuration<a class="headerlink" href="#light-sleep-mode-configuration" title="Permalink to this heading"></a></h2>
+<p>This section introduces the recommended configuration and configuration steps for Auto Light-sleep mode.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The configuration options below are briefly introduced. For more detailed information, please click the link behind each option.</p>
+</div>
+<ul>
+<li><p>Minimum IDLE Tick count before entering sleep state (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-idle-time-before-sleep"><span class="std std-ref">CONFIG_FREERTOS_IDLE_TIME_BEFORE_SLEEP</span></a>)</p></li>
+<li><p>Put light sleep related codes in IRAM (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-pm-slp-iram-opt"><span class="std std-ref">CONFIG_PM_SLP_IRAM_OPT</span></a>)</p></li>
+<li><p>Put RTOS IDLE related codes in IRAM (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-pm-rtos-idle-opt"><span class="std std-ref">CONFIG_PM_RTOS_IDLE_OPT</span></a>)</p></li>
+<li><p>RTC slow clock source (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-rtc-clk-src"><span class="std std-ref">CONFIG_RTC_CLK_SRC</span></a>)</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 40.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Clock Source</p></th>
+<th class="head"><p>Timer Accuracy</p></th>
+<th class="head"><p>Frequency Offset</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RTC_CLK_SRC_INT_RC</p></td>
+<td><p>High</p></td>
+<td><p>Large</p></td>
+</tr>
+<tr class="row-odd"><td><p>RTC_CLK_SRC_EXT_CRYS</p></td>
+<td><p>Low</p></td>
+<td><p>Small</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p>Disable all GPIO when chip at sleep (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-pm-slp-disable-gpio"><span class="std std-ref">CONFIG_PM_SLP_DISABLE_GPIO</span></a>)</p></li>
+</ul>
+<ul>
+<li><p>Power down flash in light sleep (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-sleep-power-down-flash"><span class="std std-ref">CONFIG_ESP_SLEEP_POWER_DOWN_FLASH</span></a>)</p>
+<blockquote>
+<div><p>Due to the shared power pins between flash and PSRAM, cutting power to PSRAM would result in data loss. Therefore, to ensure light sleep does not disrupt program execution, enabling this option requires that the system does not utilize PSRAM.</p>
+</div></blockquote>
+</li>
+</ul>
+<ul class="simple">
+<li><p>Power down the RTC digital peripheral module. Automatically powered down the RTC digital peripherals during system sleep is the default system power management policy. Users can call <cite>esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON)</cite> to enable the RTC digital peripheral module while in sleep mode.</p></li>
+</ul>
+<p>Configuration Steps:</p>
+<ol class="arabic simple">
+<li><p>Configure wake-up sources (refer to <a class="reference internal" href="../../api-reference/system/sleep_modes.html"><span class="doc">Sleep Modes</span></a> for details)</p></li>
+<li><p>Enable <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-pm-enable"><span class="std std-ref">CONFIG_PM_ENABLE</span></a></p></li>
+<li><p>Enable <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-use-tickless-idle"><span class="std std-ref">CONFIG_FREERTOS_USE_TICKLESS_IDLE</span></a></p></li>
+<li><p>Configure DFS parameters</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">light_sleep_enable</span></code> = true, detailed as follows:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">esp_pm_config_t</span> <span class="n">pm_config</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="o">.</span><span class="n">max_freq_mhz</span> <span class="o">=</span> <span class="n">CONFIG_EXAMPLE_MAX_CPU_FREQ_MHZ</span><span class="p">,</span>
+  <span class="o">.</span><span class="n">min_freq_mhz</span> <span class="o">=</span> <span class="n">CONFIG_EXAMPLE_MIN_CPU_FREQ_MHZ</span><span class="p">,</span>
+  <span class="c1">#if CONFIG_FREERTOS_USE_TICKLESS_IDLE</span>
+  <span class="o">.</span><span class="n">light_sleep_enable</span> <span class="o">=</span> <span class="n">true</span>
+  <span class="c1">#endif</span>
+<span class="p">};</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">esp_pm_configure</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pm_config</span><span class="p">));</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="6">
+<li><p>Additional relevant parameters for configuration introduction</p></li>
+</ol>
+<section id="id3">
+<h3>Recommended Configuration<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Configuration Name</p></th>
+<th class="head"><p>Configuration Status</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Enable power management component (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-pm-enable"><span class="std std-ref">CONFIG_PM_ENABLE</span></a>)</p></td>
+<td><p>ON</p></td>
+</tr>
+<tr class="row-odd"><td><p>Enable RTOS Tickless IDLE mode (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-use-tickless-idle"><span class="std std-ref">CONFIG_FREERTOS_USE_TICKLESS_IDLE</span></a>)</p></td>
+<td><p>ON</p></td>
+</tr>
+<tr class="row-even"><td><p>RTOS Tick rate (Hz) (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-hz"><span class="std std-ref">CONFIG_FREERTOS_HZ</span></a>)</p></td>
+<td><p>1000</p></td>
+</tr>
+<tr class="row-odd"><td><p>Minimum IDLE Tick count before entering sleep mode (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-idle-time-before-sleep"><span class="std std-ref">CONFIG_FREERTOS_IDLE_TIME_BEFORE_SLEEP</span></a>)</p></td>
+<td><p>3</p></td>
+</tr>
+<tr class="row-even"><td><p>Put light sleep related codes in IRAM (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-pm-slp-iram-opt"><span class="std std-ref">CONFIG_PM_SLP_IRAM_OPT</span></a>)</p></td>
+<td><p>OFF</p></td>
+</tr>
+<tr class="row-odd"><td><p>Put RTOS IDLE related codes in IRAM (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-pm-rtos-idle-opt"><span class="std std-ref">CONFIG_PM_RTOS_IDLE_OPT</span></a>)</p></td>
+<td><p>OFF</p></td>
+</tr>
+<tr class="row-even"><td><p>RTC slow clock source (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-rtc-clk-src"><span class="std std-ref">CONFIG_RTC_CLK_SRC</span></a>)</p></td>
+<td><p>Internal 150 kHz OSC</p></td>
+</tr>
+<tr class="row-odd"><td><p>Disable all GPIO when chip at sleep (<a class="reference internal" href="../../api-reference/kconfig-reference.html#config-pm-slp-disable-gpio"><span class="std std-ref">CONFIG_PM_SLP_DISABLE_GPIO</span></a>)</p></td>
+<td><p>ON</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_freq_mhz</span></code></p></td>
+<td><p>160</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">min_freq_mhz</span></code></p></td>
+<td><p>{CONFIG_XTAL_FREQ}</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">light_sleep_enable</span></code></p></td>
+<td><p>true</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Configurations not mentioned in the above table are set to default.</p>
+</div>
+</section>
+</section>
+<section id="deep-sleep-mode-configuration">
+<h2>Deep-sleep Mode Configuration<a class="headerlink" href="#deep-sleep-mode-configuration" title="Permalink to this heading"></a></h2>
+<p>For Deep-sleep mode, other configurations are of minimal significance except wake-up source-related configurations.</p>
+<p>Configuration Steps:</p>
+<ol class="arabic simple">
+<li><p>Configure wake-up sources (refer to <a class="reference internal" href="../../api-reference/system/sleep_modes.html"><span class="doc">Sleep Modes</span></a> for details)</p></li>
+<li><p>Call the API, as follows</p></li>
+</ol>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>/* Enter deep sleep */
+esp_deep_sleep_start();
+</pre></div>
+</div>
+<p>Users can keep specific modules powered on during sleep using the following configuration options:</p>
+<ul>
+<li><dl>
+<dt>Power up External 40 MHz XTAL</dt><dd><p>In some special applications, certain modules require high clock accuracy and stability during sleep (e.g., BT). In such cases, it is recommended to enable the External 40 MHz XTAL during sleep.
+Code to enable and disable, as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">esp_sleep_pd_config</span><span class="p">(</span><span class="n">ESP_PD_DOMAIN_XTAL</span><span class="p">,</span> <span class="n">ESP_PD_OPTION_ON</span><span class="p">));</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">esp_sleep_pd_config</span><span class="p">(</span><span class="n">ESP_PD_DOMAIN_XTAL</span><span class="p">,</span> <span class="n">ESP_PD_OPTION_OFF</span><span class="p">));</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>Power up Internal 8 MHz OSC</dt><dd><p>In some special applications, certain modules (e.g., LEDC) use the Internal 8 MHz OSC as a clock source and need to function normally during light sleep. In such cases, it is recommended to enable the Internal 8 MHz OSC during sleep.
+Code to enable and disable, as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">esp_sleep_pd_config</span><span class="p">(</span><span class="n">ESP_PD_DOMAIN_RTC8M</span><span class="p">,</span> <span class="n">ESP_PD_OPTION_ON</span><span class="p">));</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">esp_sleep_pd_config</span><span class="p">(</span><span class="n">ESP_PD_DOMAIN_RTC8M</span><span class="p">,</span> <span class="n">ESP_PD_OPTION_OFF</span><span class="p">));</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Introduction to Low Power Mode for Systemic Power Management (api-guides/low-power-mode/low-power-mode-soc)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Introduction to Low Power Mode for Systemic Power Management (api-guides/low-power-mode/low-power-mode-soc)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Low Power Modes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="low-power-mode-wifi.html" class="btn btn-neutral float-right" title="Introduction to Low Power Mode in Wi-Fi Scenarios" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

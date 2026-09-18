@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GCC - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/migration-guides/release-5.x/5.0/gcc.html" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'migration-guides/release-5.x/5.0/gcc';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Networking" href="networking.html" />
+    <link rel="prev" title="Build System" href="build-system.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Migration Guides</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html#esp-idf-5-x-migration-guide">ESP-IDF 5.x Migration Guide</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Migration from 4.4 to 5.0</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="bluetooth-classic.html">Bluetooth Classic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bluetooth-low-energy.html">Bluetooth Low Energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">GCC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="networking.html">Networking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="peripherals.html">Peripherals</a></li>
+<li class="toctree-l4"><a class="reference internal" href="protocols.html">Protocols</a></li>
+<li class="toctree-l4"><a class="reference internal" href="provisioning.html">Provisioning</a></li>
+<li class="toctree-l4"><a class="reference internal" href="removed-components.html">Removed or Deprecated Components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="storage.html">Storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="system.html">System</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tools.html">Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../5.1/index.html">Migration from 5.0 to 5.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.2/index.html">Migration from 5.1 to 5.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.3/index.html">Migration from 5.2 to 5.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.4/index.html">Migration from 5.3 to 5.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.5/index.html">Migration from 5.4 to 5.5</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Migration Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Migration from 4.4 to 5.0</a></li>
+      <li class="breadcrumb-item active">GCC</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/migration-guides/release-5.x/5.0/gcc.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gcc">
+<h1>GCC<a class="headerlink" href="#gcc" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../../zh_CN/v5.5.5/esp32/migration-guides/release-5.x/5.0/gcc.html">[中文]</a></p>
+<section id="gcc-version">
+<h2>GCC Version<a class="headerlink" href="#gcc-version" title="Permalink to this heading"></a></h2>
+<p>The previous GCC version was GCC 8.4.0. This has now been upgraded to GCC 11.2.0 on all targets. Users that need to port their code from GCC 8.4.0 to 11.2.0 should refer to the series of official GCC porting guides listed below:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://gcc.gnu.org/gcc-9/porting_to.html">Porting to GCC 9</a></p></li>
+<li><p><a class="reference external" href="https://gcc.gnu.org/gcc-10/porting_to.html">Porting to GCC 10</a></p></li>
+<li><p><a class="reference external" href="https://gcc.gnu.org/gcc-11/porting_to.html">Porting to GCC 11</a></p></li>
+</ul>
+</section>
+<section id="warnings">
+<h2>Warnings<a class="headerlink" href="#warnings" title="Permalink to this heading"></a></h2>
+<p>The upgrade to GCC 11.2.0 has resulted in the addition of new warnings, or enhancements to existing warnings. The full details of all GCC warnings can be found in <a class="reference external" href="https://gcc.gnu.org/onlinedocs/gcc-11.2.0/gcc/Warning-Options.html">GCC Warning Options</a>. Users are advised to double-check their code, then fix the warnings if possible. Unfortunately, depending on the warning and the complexity of the user's code, some warnings will be false positives that require non-trivial fixes. In such cases, users can choose to suppress the warning in multiple ways. This section outlines some common warnings that users are likely to encounter, and ways to suppress them.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Users are advised to check that a warning is indeed a false positive before attempting to suppress them it.</p>
+</div>
+<section id="wstringop-overflow-wstringop-overread-wstringop-truncation-and-warray-bounds">
+<h3><code class="docutils literal notranslate"><span class="pre">-Wstringop-overflow</span></code>, <code class="docutils literal notranslate"><span class="pre">-Wstringop-overread</span></code>, <code class="docutils literal notranslate"><span class="pre">-Wstringop-truncation</span></code>, and <code class="docutils literal notranslate"><span class="pre">-Warray-bounds</span></code><a class="headerlink" href="#wstringop-overflow-wstringop-overread-wstringop-truncation-and-warray-bounds" title="Permalink to this heading"></a></h3>
+<p>Users that use memory/string copy/compare functions will run into one of the <code class="docutils literal notranslate"><span class="pre">-Wstringop</span></code> warnings if the compiler cannot properly determine the size of the memory/string. The examples below demonstrate code that triggers these warnings and how to suppress them.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma GCC diagnostic push</span>
+<span class="cp">#pragma GCC diagnostic ignored &quot;-Wstringop-overflow&quot;</span>
+<span class="cp">#pragma GCC diagnostic ignored &quot;-Warray-bounds&quot;</span>
+<span class="w">    </span><span class="n">memset</span><span class="p">(</span><span class="n">RTC_SLOW_MEM</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">CONFIG_ULP_COPROC_RESERVE_MEM</span><span class="p">);</span><span class="w"> </span><span class="c1">// &lt;&lt;-- This line leads to warnings</span>
+<span class="cp">#pragma GCC diagnostic pop</span>
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma GCC diagnostic push</span>
+<span class="cp">#if     __GNUC__ &gt;= 11</span>
+<span class="cp">#pragma GCC diagnostic ignored &quot;-Wstringop-overread&quot; </span><span class="c1">// &lt;&lt;-- This key had been introduced since GCC 11</span>
+<span class="cp">#endif</span>
+<span class="cp">#pragma GCC diagnostic ignored &quot;-Warray-bounds&quot;</span>
+<span class="w">            </span><span class="n">memcpy</span><span class="p">(</span><span class="n">backup_write_data</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">EFUSE_PGM_DATA0_REG</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">backup_write_data</span><span class="p">));</span><span class="w"> </span><span class="c1">// &lt;&lt;-- This line leads to warnings</span>
+<span class="cp">#pragma GCC diagnostic pop</span>
+</pre></div>
+</div>
+</section>
+<section id="waddress-of-packed-member">
+<h3><code class="docutils literal notranslate"><span class="pre">-Waddress-of-packed-member</span></code><a class="headerlink" href="#waddress-of-packed-member" title="Permalink to this heading"></a></h3>
+<p>GCC will issue this warning when accessing an unaligned member of a packed <code class="docutils literal notranslate"><span class="pre">struct</span></code> due to the incurred penalty of unaligned memory access. However, all ESP chips (on both Xtensa and RISC-V architectures) allow for unaligned memory access and incur no extra penalty. Thus, this warning can be ignored in most cases.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>components/bt/host/bluedroid/btc/profile/std/gatt/btc_gatt_util.c: In function &#39;btc_to_bta_gatt_id&#39;:
+components/bt/host/bluedroid/btc/profile/std/gatt/btc_gatt_util.c:105:21: warning: taking address of packed member of &#39;struct &lt;anonymous&gt;&#39; may result in an unaligned pointer value [-Waddress-of-packed-member]
+  105 |     btc_to_bta_uuid(&amp;p_dest-&gt;uuid, &amp;p_src-&gt;uuid);
+      |                     ^~~~~~~~~~~~~
+</pre></div>
+</div>
+<p>If the warning occurs in multiple places across multiple source files, users can suppress the warning at the CMake level as demonstrated below.</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">set_source_files_properties</span><span class="p">(</span>
+<span class="w">    </span><span class="s2">&quot;host/bluedroid/bta/gatt/bta_gattc_act.c&quot;</span>
+<span class="w">    </span><span class="s2">&quot;host/bluedroid/bta/gatt/bta_gattc_cache.c&quot;</span>
+<span class="w">    </span><span class="s2">&quot;host/bluedroid/btc/profile/std/gatt/btc_gatt_util.c&quot;</span>
+<span class="w">    </span><span class="s2">&quot;host/bluedroid/btc/profile/std/gatt/btc_gatts.c&quot;</span>
+<span class="w">    </span><span class="s">PROPERTIES</span><span class="w"> </span><span class="s">COMPILE_FLAGS</span><span class="w"> </span><span class="s">-Wno-address-of-packed-member</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>However, if there are only one or two instances, users can suppress the warning directly in the source code itself as demonstrated below.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma GCC diagnostic push</span>
+<span class="cp">#if     __GNUC__ &gt;= 9</span>
+<span class="cp">#pragma GCC diagnostic ignored &quot;-Waddress-of-packed-member&quot; &lt;&lt;-- This key had been introduced since GCC 9</span>
+<span class="cp">#endif</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="o">*</span><span class="w"> </span><span class="n">reg_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span><span class="n">src</span><span class="p">;</span>
+<span class="cp">#pragma GCC diagnostic pop</span>
+</pre></div>
+</div>
+</section>
+<section id="llabs-for-64-bit-integers">
+<h3><code class="docutils literal notranslate"><span class="pre">llabs()</span></code> for 64-bit Integers<a class="headerlink" href="#llabs-for-64-bit-integers" title="Permalink to this heading"></a></h3>
+<p>The function <code class="docutils literal notranslate"><span class="pre">abs()</span></code> from stdlib.h takes <code class="docutils literal notranslate"><span class="pre">int</span></code> argument. Please use <code class="docutils literal notranslate"><span class="pre">llabs()</span></code> for types that are intended to be 64-bit. It is particularly important for <code class="docutils literal notranslate"><span class="pre">time_t</span></code>.</p>
+</section>
+</section>
+<section id="espressif-toolchain-changes">
+<h2>Espressif Toolchain Changes<a class="headerlink" href="#espressif-toolchain-changes" title="Permalink to this heading"></a></h2>
+<section id="int32-t-and-uint32-t-for-xtensa-compiler">
+<h3><code class="docutils literal notranslate"><span class="pre">int32_t</span></code> and <code class="docutils literal notranslate"><span class="pre">uint32_t</span></code> for Xtensa Compiler<a class="headerlink" href="#int32-t-and-uint32-t-for-xtensa-compiler" title="Permalink to this heading"></a></h3>
+<p>The types <code class="docutils literal notranslate"><span class="pre">int32_t</span></code> and <code class="docutils literal notranslate"><span class="pre">uint32_t</span></code> have been changed from the previous <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code> to <code class="docutils literal notranslate"><span class="pre">long</span></code> and <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">long</span></code> respectively for the Xtensa compiler. This change now matches upstream GCC which <code class="docutils literal notranslate"><span class="pre">long</span></code> integers for <code class="docutils literal notranslate"><span class="pre">int32_t</span></code> and <code class="docutils literal notranslate"><span class="pre">uint32_t</span></code> on Xtensa, RISC-V, and other architectures.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 45.0%" />
+<col style="width: 35.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>2021r2 and older, GCC 8</p></th>
+<th class="head"><p>2022r1, GCC 11</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Xtensa</p></td>
+<td><p>(unsigned) int</p></td>
+<td><p>(unsigned) long</p></td>
+</tr>
+<tr class="row-odd"><td><p>riscv32</p></td>
+<td><p>(unsigned) long</p></td>
+<td><p>(unsigned) long</p></td>
+</tr>
+</tbody>
+</table>
+<p>The change mostly affects code that formats strings using types provided by <code class="docutils literal notranslate"><span class="pre">&lt;inttypes.h&gt;</span></code>. When using these fixed-width types (e.g., <code class="docutils literal notranslate"><span class="pre">uint32_t</span></code>), users will need to replace placeholders such as <code class="docutils literal notranslate"><span class="pre">%i</span></code> and <code class="docutils literal notranslate"><span class="pre">%x</span></code> with <code class="docutils literal notranslate"><span class="pre">PRIi32</span></code> and <code class="docutils literal notranslate"><span class="pre">PRIx32</span></code> respectively. Types <em>not</em> defined in <code class="docutils literal notranslate"><span class="pre">&lt;inttypes.h&gt;</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">int</span></code>) do <em>not</em> need this special formatting.</p>
+<p>In other cases, it should be noted that enums have the <code class="docutils literal notranslate"><span class="pre">int</span></code> type.</p>
+<p>In common, <code class="docutils literal notranslate"><span class="pre">int32_t</span></code> and <code class="docutils literal notranslate"><span class="pre">int</span></code>, as well as <code class="docutils literal notranslate"><span class="pre">uint32_t</span></code> and <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code>, are different types.</p>
+<p>If users do not make the aforementioned updates to format strings in their applications, the following error will be reported during compilation:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>/Users/name/esp/esp-rainmaker/components/esp-insights/components/esp_diagnostics/include/esp_diagnostics.h:238:29: error: format &#39;%u&#39; expects argument of type &#39;unsigned int&#39;, but argument 3 has type &#39;uint32_t&#39; {aka &#39;long unsigned int&#39;} [-Werror=format=]
+238 |     esp_diag_log_event(tag, &quot;EV (%u) %s: &quot; format, esp_log_timestamp(), tag, ##__VA_ARGS__); \
+    |                             ^~~~~~~~~~~~~~         ~~~~~~~~~~~~~~~~~~~
+    |                                                    |
+    |                                                    uint32_t {aka long unsigned int}
+                                              uint32_t {aka long unsigned int}
+</pre></div>
+</div>
+</section>
+<section id="removing-config-compiler-disable-gcc8-warnings-build-option">
+<h3>Removing <code class="docutils literal notranslate"><span class="pre">CONFIG_COMPILER_DISABLE_GCC8_WARNINGS</span></code> Build Option<a class="headerlink" href="#removing-config-compiler-disable-gcc8-warnings-build-option" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">CONFIG_COMPILER_DISABLE_GCC8_WARNINGS</span></code> option was introduced to allow building of legacy code dating from the rigid GCC 5 toolchain. However, enough time has passed to allow for the warnings to be fixed, thus this option has been removed.</p>
+<p>For now in GCC 11, users are advised to review their code and fix the compiler warnings where possible.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=GCC (migration-guides/release-5.x/5.0/gcc)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=GCC (migration-guides/release-5.x/5.0/gcc)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="build-system.html" class="btn btn-neutral float-left" title="Build System" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="networking.html" class="btn btn-neutral float-right" title="Networking" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

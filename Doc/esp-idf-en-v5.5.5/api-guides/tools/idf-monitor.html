@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IDF Monitor - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/tools/idf-monitor.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/tools/idf-monitor';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="IDF Docker Image" href="idf-docker-image.html" />
+    <link rel="prev" title="IDF Frontend - idf.py" href="idf-py.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Tools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="idf-py.html">IDF Frontend - <code class="docutils literal notranslate"><span class="pre">idf.py</span></code></a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">IDF Monitor</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#keyboard-shortcuts">Keyboard Shortcuts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#automatic-coloring">Automatic Coloring</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#esp-idf-specific-features">ESP-IDF-specific Features</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuration-file">Configuration File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#known-issues-with-idf-monitor">Known Issues with IDF Monitor</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="idf-docker-image.html">IDF Docker Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idf-windows-installer.html">IDF Windows Installer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idf-component-manager.html">IDF Component Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idf-clang-tidy.html">IDF Clang-Tidy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idf-tools.html">Downloadable IDF Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idf-size.html">IDF Size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idf-sbom.html">IDF SBOM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idf-diag.html">IDF Diag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qemu.html">QEMU Emulator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Tools</a></li>
+      <li class="breadcrumb-item active">IDF Monitor</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/tools/idf-monitor.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="idf-monitor">
+<h1>IDF Monitor<a class="headerlink" href="#idf-monitor" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-guides/tools/idf-monitor.html">[中文]</a></p>
+<p>IDF Monitor uses the <a class="reference external" href="https://github.com/espressif/esp-idf-monitor">esp-idf-monitor</a> package as a serial terminal program which relays serial data to and from the target device's serial port. It also provides some ESP-IDF-specific features.</p>
+<p>IDF Monitor can be launched from an ESP-IDF project by running <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">monitor</span></code>.</p>
+<section id="keyboard-shortcuts">
+<h2>Keyboard Shortcuts<a class="headerlink" href="#keyboard-shortcuts" title="Permalink to this heading"></a></h2>
+<p>For easy interaction with IDF Monitor, use the keyboard shortcuts given in the table. These keyboard shortcuts can be customized, for more details see <a class="reference internal" href="#id2">Configuration File</a> section.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 15.8%" />
+<col style="width: 26.3%" />
+<col style="width: 57.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Keyboard Shortcut</p></th>
+<th class="head"><p>Action</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Ctrl + ]</p></td>
+<td><p>Exit the program</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Ctrl + T</p></td>
+<td><p>Menu escape key</p></td>
+<td><p>Press and follow it by one of the keys given below.</p></td>
+</tr>
+<tr class="row-even"><td><ul class="simple">
+<li><p>Ctrl + T</p></li>
+</ul>
+</td>
+<td><p>Send the menu character itself to remote</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><ul class="simple">
+<li><p>Ctrl + ]</p></li>
+</ul>
+</td>
+<td><p>Send the exit character itself to remote</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><ul class="simple">
+<li><p>Ctrl + P</p></li>
+</ul>
+</td>
+<td><p>Reset target into bootloader to pause app via RTS and DTR lines</p></td>
+<td><p>Reset the target into the bootloader using the RTS and DTR lines (if connected). This stops the board from executing the application, making it useful when waiting for another device to start. For additional details, refer to <a class="reference internal" href="#target-reset-into-bootloader"><span class="std std-ref">Target Reset into Bootloader</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><ul class="simple">
+<li><p>Ctrl + R</p></li>
+</ul>
+</td>
+<td><p>Reset target board via RTS</p></td>
+<td><p>Reset the target board and re-starts the application via the RTS line (if connected).</p></td>
+</tr>
+<tr class="row-even"><td><ul class="simple">
+<li><p>Ctrl + F</p></li>
+</ul>
+</td>
+<td><p>Build and flash the project</p></td>
+<td><p>Pause idf_monitor to run the project <code class="docutils literal notranslate"><span class="pre">flash</span></code> target, then resumes idf_monitor. Any changed source files are recompiled and then re-flashed. Target <code class="docutils literal notranslate"><span class="pre">encrypted-flash</span></code> is run if idf_monitor was started with argument <code class="docutils literal notranslate"><span class="pre">-E</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><ul class="simple">
+<li><p>Ctrl + A (or A)</p></li>
+</ul>
+</td>
+<td><p>Build and flash the app only</p></td>
+<td><p>Pause idf_monitor to run the <code class="docutils literal notranslate"><span class="pre">app-flash</span></code> target, then resumes idf_monitor. Similar to the <code class="docutils literal notranslate"><span class="pre">flash</span></code> target, but only the main app is built and re-flashed. Target <code class="docutils literal notranslate"><span class="pre">encrypted-app-flash</span></code> is run if idf_monitor was started with argument <code class="docutils literal notranslate"><span class="pre">-E</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><ul class="simple">
+<li><p>Ctrl + Y</p></li>
+</ul>
+</td>
+<td><p>Stop/resume log output printing on screen</p></td>
+<td><p>Discard all incoming serial data while activated. Allows to quickly pause and examine log output without quitting the monitor.</p></td>
+</tr>
+<tr class="row-odd"><td><ul class="simple">
+<li><p>Ctrl + L</p></li>
+</ul>
+</td>
+<td><p>Stop/resume log output saved to file</p></td>
+<td><p>Create a file in the project directory and the output is written to that file until this is disabled with the same keyboard shortcut (or IDF Monitor exits).</p></td>
+</tr>
+<tr class="row-even"><td><ul class="simple">
+<li><p>Ctrl + I (or I)</p></li>
+</ul>
+</td>
+<td><p>Stop/resume printing timestamps</p></td>
+<td><p>IDF Monitor can print a timestamp in the beginning of each line. The timestamp format can be changed by the <code class="docutils literal notranslate"><span class="pre">--timestamp-format</span></code> command line argument.</p></td>
+</tr>
+<tr class="row-odd"><td><ul class="simple">
+<li><p>Ctrl + H (or H)</p></li>
+</ul>
+</td>
+<td><p>Display all keyboard shortcuts</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><ul class="simple">
+<li><p>Ctrl + X (or X)</p></li>
+</ul>
+</td>
+<td><p>Exit the program</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Ctrl + C</p></td>
+<td><p>Interrupt running application</p></td>
+<td><p>Pause IDF Monitor and runs <a class="reference external" href="https://sourceware.org/gdb/download/onlinedocs/">GDB</a> project debugger to debug the application at runtime. This requires <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-system-gdbstub-runtime"><span class="std std-ref">CONFIG_ESP_SYSTEM_GDBSTUB_RUNTIME</span></a> option to be enabled.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Any keys pressed, other than <code class="docutils literal notranslate"><span class="pre">Ctrl-]</span></code> and <code class="docutils literal notranslate"><span class="pre">Ctrl-T</span></code>, will be sent through the serial port.</p>
+</section>
+<section id="automatic-coloring">
+<h2>Automatic Coloring<a class="headerlink" href="#automatic-coloring" title="Permalink to this heading"></a></h2>
+<p>IDF Monitor automatically colors the output based on the log level. This feature reduces the number of bytes transferred over the serial console by avoiding redundant log formatting, which can improve performance by reducing latency in log transmission. Other benefits include adding colors to precompiled libraries (such as Wi-Fi) and reduced binary size of the application.</p>
+<p>The automatic coloring is enabled by default. To disable it, use the command line option <code class="docutils literal notranslate"><span class="pre">--disable-auto-color</span></code>.</p>
+<p>The coloring is done based on the log level followed by optional timestamp and tag. For option to enable coloring on the ESP32 side, see <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-log-colors"><span class="std std-ref">CONFIG_LOG_COLORS</span></a>.</p>
+<p>For more details on the log, see <a class="reference internal" href="../../api-reference/system/log.html"><span class="doc">Logging</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The automatic coloring will not work properly if the message contains new lines. In this case the IDF Monitor will only color the first line of the message.</p>
+</div>
+</section>
+<section id="esp-idf-specific-features">
+<h2>ESP-IDF-specific Features<a class="headerlink" href="#esp-idf-specific-features" title="Permalink to this heading"></a></h2>
+<section id="automatic-address-decoding">
+<h3>Automatic Address Decoding<a class="headerlink" href="#automatic-address-decoding" title="Permalink to this heading"></a></h3>
+<p>Whenever the chip outputs a hexadecimal address that points to executable code, IDF monitor looks up the location in the source code (file name and line number) and prints the location on the next line in yellow.</p>
+<p>If an ESP-IDF app crashes and panics, a register dump and backtrace are produced, such as the following:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Guru Meditation Error of type StoreProhibited occurred on core  0. Exception was unhandled.
+Register dump:
+PC      : 0x400f360d  PS      : 0x00060330  A0      : 0x800dbf56  A1      : 0x3ffb7e00
+A2      : 0x3ffb136c  A3      : 0x00000005  A4      : 0x00000000  A5      : 0x00000000
+A6      : 0x00000000  A7      : 0x00000080  A8      : 0x00000000  A9      : 0x3ffb7dd0
+A10     : 0x00000003  A11     : 0x00060f23  A12     : 0x00060f20  A13     : 0x3ffba6d0
+A14     : 0x00000047  A15     : 0x0000000f  SAR     : 0x00000019  EXCCAUSE: 0x0000001d
+EXCVADDR: 0x00000000  LBEG    : 0x4000c46c  LEND    : 0x4000c477  LCOUNT  : 0x00000000
+
+Backtrace: 0x400f360d:0x3ffb7e00 0x400dbf56:0x3ffb7e20 0x400dbf5e:0x3ffb7e40 0x400dbf82:0x3ffb7e60 0x400d071d:0x3ffb7e90
+</pre></div>
+</div>
+<p>IDF Monitor adds more details to the dump:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Guru Meditation Error of type StoreProhibited occurred on core  0. Exception was unhandled.
+Register dump:
+PC      : 0x400f360d  PS      : 0x00060330  A0      : 0x800dbf56  A1      : 0x3ffb7e00
+0x400f360d: do_something_to_crash at /home/gus/esp/32/idf/examples/get-started/hello_world/main/./hello_world_main.c:57
+(inlined by) inner_dont_crash at /home/gus/esp/32/idf/examples/get-started/hello_world/main/./hello_world_main.c:52
+A2      : 0x3ffb136c  A3      : 0x00000005  A4      : 0x00000000  A5      : 0x00000000
+A6      : 0x00000000  A7      : 0x00000080  A8      : 0x00000000  A9      : 0x3ffb7dd0
+A10     : 0x00000003  A11     : 0x00060f23  A12     : 0x00060f20  A13     : 0x3ffba6d0
+A14     : 0x00000047  A15     : 0x0000000f  SAR     : 0x00000019  EXCCAUSE: 0x0000001d
+EXCVADDR: 0x00000000  LBEG    : 0x4000c46c  LEND    : 0x4000c477  LCOUNT  : 0x00000000
+
+Backtrace: 0x400f360d:0x3ffb7e00 0x400dbf56:0x3ffb7e20 0x400dbf5e:0x3ffb7e40 0x400dbf82:0x3ffb7e60 0x400d071d:0x3ffb7e90
+0x400f360d: do_something_to_crash at /home/gus/esp/32/idf/examples/get-started/hello_world/main/./hello_world_main.c:57
+(inlined by) inner_dont_crash at /home/gus/esp/32/idf/examples/get-started/hello_world/main/./hello_world_main.c:52
+0x400dbf56: still_dont_crash at /home/gus/esp/32/idf/examples/get-started/hello_world/main/./hello_world_main.c:47
+0x400dbf5e: dont_crash at /home/gus/esp/32/idf/examples/get-started/hello_world/main/./hello_world_main.c:42
+0x400dbf82: app_main at /home/gus/esp/32/idf/examples/get-started/hello_world/main/./hello_world_main.c:33
+0x400d071d: main_task at /home/gus/esp/32/idf/components/esp32/./cpu_start.c:254
+</pre></div>
+</div>
+<p>To decode each address, IDF Monitor runs the following command in the background:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>xtensa-esp32-elf-addr2line -pfiaC -e build/PROJECT.elf ADDRESS
+</pre></div>
+</div>
+<p>If an address is not matched in the app source code, IDF monitor also checks the ROM code. Instead of printing the source file name and line number, only the function name followed by <code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">ROM</span></code> is displayed:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>abort() was called at PC 0x40007c69 on core 0
+0x40007c69: ets_write_char in ROM
+
+Backtrace: 0x40081656:0x3ffb4ac0 0x40085729:0x3ffb4ae0 0x4008a7ce:0x3ffb4b00 0x40007c69:0x3ffb4b70 0x40008148:0x3ffb4b90 0x400d51d7:0x3ffb4c20 0x400e31bc:0x3ffb4c50 0x40087bc5:0x3ffb4c80
+0x40081656: panic_abort at /Users/espressif/esp-idf/components/esp_system/panic.c:452
+0x40085729: esp_system_abort at /Users/espressif/esp-idf/components/esp_system/port/esp_system_chip.c:90
+0x4008a7ce: abort at /Users/espressif/esp-idf/components/newlib/abort.c:38
+0x40007c69: ets_write_char in ROM
+0x40008148: ets_printf in ROM
+0x400d51d7: app_main at /Users/espressif/esp-idf/examples/get-started/hello_world/main/hello_world_main.c:49
+0x400e31bc: main_task at /Users/espressif/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+0x40087bc5: vPortTaskWrapper at /Users/espressif/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+.....
+</pre></div>
+</div>
+<p>The ROM ELF file is automatically loaded from a location based on the <code class="docutils literal notranslate"><span class="pre">IDF_PATH</span></code> and <code class="docutils literal notranslate"><span class="pre">ESP_ROM_ELF_DIR</span></code> environment variables. This can be overridden by calling <code class="docutils literal notranslate"><span class="pre">esp_idf_monitor</span></code> and providing a path to a specific ROM ELF file: <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">esp_idf_monitor</span> <span class="pre">--rom-elf-file</span> <span class="pre">[path</span> <span class="pre">to</span> <span class="pre">ROM</span> <span class="pre">ELF</span> <span class="pre">file]</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Set environment variable <code class="docutils literal notranslate"><span class="pre">ESP_MONITOR_DECODE</span></code> to <code class="docutils literal notranslate"><span class="pre">0</span></code> or call esp_idf_monitor with specific command line option: <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">esp_idf_monitor</span> <span class="pre">--disable-address-decoding</span></code> to disable address decoding.</p>
+</div>
+</section>
+<section id="target-reset-on-connection">
+<h3>Target Reset on Connection<a class="headerlink" href="#target-reset-on-connection" title="Permalink to this heading"></a></h3>
+<p>By default, IDF Monitor will reset the target when connecting to it. The reset of the target chip is performed using the DTR and RTS serial lines. To prevent IDF Monitor from automatically resetting the target on connection, call IDF Monitor with the <code class="docutils literal notranslate"><span class="pre">--no-reset</span></code> option (e.g., <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">monitor</span> <span class="pre">--no-reset</span></code>). You can also set the environment variable <code class="docutils literal notranslate"><span class="pre">ESP_IDF_MONITOR_NO_RESET</span></code> to <code class="docutils literal notranslate"><span class="pre">1</span></code> to achieve the same behavior.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--no-reset</span></code> option applies the same behavior even when connecting IDF Monitor to a particular port (e.g., <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">monitor</span> <span class="pre">--no-reset</span> <span class="pre">-p</span> <span class="pre">[PORT]</span></code>).</p>
+</div>
+</section>
+<section id="target-reset-into-bootloader">
+<span id="id1"></span><h3>Target Reset into Bootloader<a class="headerlink" href="#target-reset-into-bootloader" title="Permalink to this heading"></a></h3>
+<p>IDF Monitor provides the capability to reset a chip into the bootloader using a pre-defined reset sequence that has been tuned to work in most environments. Additionally, users have the flexibility to set a custom reset sequence, allowing for fine-tuning and adaptability to diverse scenarios.</p>
+<section id="using-pre-defined-reset-sequence">
+<h4>Using Pre-defined Reset Sequence<a class="headerlink" href="#using-pre-defined-reset-sequence" title="Permalink to this heading"></a></h4>
+<p>IDF Monitor's default reset sequence is designed to work seamlessly across a wide range of environments. To trigger a reset into the bootloader using the default sequence, no additional configuration is required.</p>
+</section>
+<section id="custom-reset-sequence">
+<h4>Custom Reset Sequence<a class="headerlink" href="#custom-reset-sequence" title="Permalink to this heading"></a></h4>
+<p>For more advanced users or specific use cases, IDF Monitor supports the configuration of a custom reset sequence using <a class="reference internal" href="#configuration-file"><span class="std std-ref">Configuration File</span></a>. This is particularly useful in extreme edge cases where the default sequence may not suffice.</p>
+<p>If you would like to use a custom reset sequence, take a look at the <a class="reference external" href="https://github.com/espressif/esp-idf-monitor/blob/v1.5.0/README.md#documentation">IDF Monitor documentation</a> for more details.</p>
+</section>
+</section>
+<section id="launching-gdb-with-gdbstub">
+<h3>Launching GDB with GDBStub<a class="headerlink" href="#launching-gdb-with-gdbstub" title="Permalink to this heading"></a></h3>
+<p>GDBStub is a useful runtime debugging feature that runs on the target and connects to the host over the serial port to receive debugging commands. GDBStub supports commands such as reading memory and variables, examining call stack frames etc. Although GDBStub is less versatile than JTAG debugging, it does not require any special hardware (such as a JTAG to USB bridge) as communication is done entirely over the serial port.</p>
+<p>A target can be configured to run GDBStub in the background by setting the <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-system-gdbstub-runtime"><span class="std std-ref">CONFIG_ESP_SYSTEM_GDBSTUB_RUNTIME</span></a>. GDBStub will run in the background until a <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> message is sent over the serial port and causes the GDBStub to break (i.e., stop the execution of) the program, thus allowing GDBStub to handle debugging commands.</p>
+<p>Furthermore, the panic handler can be configured to run GDBStub on a crash by setting the <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-system-panic"><span class="std std-ref">CONFIG_ESP_SYSTEM_PANIC</span></a> to <code class="docutils literal notranslate"><span class="pre">GDBStub</span> <span class="pre">on</span> <span class="pre">panic</span></code>. When a crash occurs, GDBStub will output a special string pattern over the serial port to indicate that it is running.</p>
+<p>In both cases (i.e., sending the <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> message, or receiving the special string pattern), IDF Monitor will automatically launch GDB in order to allow the user to send debugging commands. After GDB exits, the target is reset via the RTS serial line. If this line is not connected, users can reset their target (by pressing the board's Reset button).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the background, IDF Monitor runs the following command to launch GDB:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>xtensa-esp32-elf-gdb -ex &quot;set serial baud BAUD&quot; -ex &quot;target remote PORT&quot; -ex interrupt build/PROJECT.elf :idf_target:`Hello NAME chip`
+</pre></div>
+</div>
+</div>
+</section>
+<section id="output-filtering">
+<h3>Output Filtering<a class="headerlink" href="#output-filtering" title="Permalink to this heading"></a></h3>
+<p>IDF monitor can be invoked as <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">monitor</span> <span class="pre">--print-filter=&quot;xyz&quot;</span></code>, where <code class="docutils literal notranslate"><span class="pre">--print-filter</span></code> is the parameter for output filtering. The default value is an empty string, which means that everything is printed. Filtering can also be configured using the <code class="docutils literal notranslate"><span class="pre">ESP_IDF_MONITOR_PRINT_FILTER</span></code> environment variable.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When using both the environment variable <code class="docutils literal notranslate"><span class="pre">ESP_IDF_MONITOR_PRINT_FILTER</span></code> and the argument <code class="docutils literal notranslate"><span class="pre">--print-filter</span></code>, the setting from the CLI argument will take precedence.</p>
+</div>
+<p>Restrictions on what to print can be specified as a series of <code class="docutils literal notranslate"><span class="pre">&lt;tag&gt;:&lt;log_level&gt;</span></code> items where <code class="docutils literal notranslate"><span class="pre">&lt;tag&gt;</span></code> is the tag string and <code class="docutils literal notranslate"><span class="pre">&lt;log_level&gt;</span></code> is a character from the set <code class="docutils literal notranslate"><span class="pre">{N,</span> <span class="pre">E,</span> <span class="pre">W,</span> <span class="pre">I,</span> <span class="pre">D,</span> <span class="pre">V,</span> <span class="pre">*}</span></code> referring to a level for <a class="reference internal" href="../../api-reference/system/log.html"><span class="doc">logging</span></a>.</p>
+<p>For example, <code class="docutils literal notranslate"><span class="pre">--print_filter=&quot;tag1:W&quot;</span></code> matches and prints only the outputs written with <code class="docutils literal notranslate"><span class="pre">ESP_LOGW(&quot;tag1&quot;,</span> <span class="pre">...)</span></code> or at lower verbosity level, i.e., <code class="docutils literal notranslate"><span class="pre">ESP_LOGE(&quot;tag1&quot;,</span> <span class="pre">...)</span></code>. Not specifying a <code class="docutils literal notranslate"><span class="pre">&lt;log_level&gt;</span></code> or using <code class="docutils literal notranslate"><span class="pre">*</span></code> defaults to a Verbose level.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Use primary logging to disable at compilation the outputs you do not need through the <a class="reference internal" href="../../api-reference/system/log.html"><span class="doc">logging library</span></a>. Output filtering with the IDF monitor is a secondary solution that can be useful for adjusting the filtering options without recompiling the application.</p>
+</div>
+<p>Your app tags must not contain spaces, asterisks <code class="docutils literal notranslate"><span class="pre">*</span></code>, or colons <code class="docutils literal notranslate"><span class="pre">:</span></code> to be compatible with the output filtering feature.</p>
+<p>If the last line of the output in your app is not followed by a carriage return, the output filtering might get confused, i.e., the monitor starts to print the line and later finds out that the line should not have been written. This is a known issue and can be avoided by always adding a carriage return (especially when no output follows immediately afterwards).</p>
+</section>
+<section id="examples-of-filtering-rules">
+<h3>Examples of Filtering Rules:<a class="headerlink" href="#examples-of-filtering-rules" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">*</span></code> can be used to match any tags. However, the string <code class="docutils literal notranslate"><span class="pre">--print_filter=&quot;*:I</span> <span class="pre">tag1:E&quot;</span></code> with regards to <code class="docutils literal notranslate"><span class="pre">tag1</span></code> prints errors only, because the rule for <code class="docutils literal notranslate"><span class="pre">tag1</span></code> has a higher priority over the rule for <code class="docutils literal notranslate"><span class="pre">*</span></code>.</p></li>
+<li><p>The default (empty) rule is equivalent to <code class="docutils literal notranslate"><span class="pre">*:V</span></code> because matching every tag at the Verbose level or lower means matching everything.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;*:N&quot;</span></code> suppresses not only the outputs from logging functions, but also the prints made by <code class="docutils literal notranslate"><span class="pre">printf</span></code>, etc. To avoid this, use <code class="docutils literal notranslate"><span class="pre">*:E</span></code> or a higher verbosity level.</p></li>
+<li><p>Rules <code class="docutils literal notranslate"><span class="pre">&quot;tag1:V&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;tag1:v&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;tag1:&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;tag1:*&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;tag1&quot;</span></code> are equivalent.</p></li>
+<li><p>Rule <code class="docutils literal notranslate"><span class="pre">&quot;tag1:W</span> <span class="pre">tag1:E&quot;</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">&quot;tag1:E&quot;</span></code> because any consequent occurrence of the same tag name overwrites the previous one.</p></li>
+<li><p>Rule <code class="docutils literal notranslate"><span class="pre">&quot;tag1:I</span> <span class="pre">tag2:W&quot;</span></code> only prints <code class="docutils literal notranslate"><span class="pre">tag1</span></code> at the Info verbosity level or lower and <code class="docutils literal notranslate"><span class="pre">tag2</span></code> at the Warning verbosity level or lower.</p></li>
+<li><p>Rule <code class="docutils literal notranslate"><span class="pre">&quot;tag1:I</span> <span class="pre">tag2:W</span> <span class="pre">tag3:N&quot;</span></code> is essentially equivalent to the previous one because <code class="docutils literal notranslate"><span class="pre">tag3:N</span></code> specifies that <code class="docutils literal notranslate"><span class="pre">tag3</span></code> should not be printed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tag3:N</span></code> in the rule <code class="docutils literal notranslate"><span class="pre">&quot;tag1:I</span> <span class="pre">tag2:W</span> <span class="pre">tag3:N</span> <span class="pre">*:V&quot;</span></code> is more meaningful because without <code class="docutils literal notranslate"><span class="pre">tag3:N</span></code> the <code class="docutils literal notranslate"><span class="pre">tag3</span></code> messages could have been printed; the errors for <code class="docutils literal notranslate"><span class="pre">tag1</span></code> and <code class="docutils literal notranslate"><span class="pre">tag2</span></code> will be printed at the specified (or lower) verbosity level and everything else will be printed by default.</p></li>
+</ul>
+</section>
+<section id="a-more-complex-filtering-example">
+<h3>A More Complex Filtering Example<a class="headerlink" href="#a-more-complex-filtering-example" title="Permalink to this heading"></a></h3>
+<p>The following log snippet was acquired without any filtering options:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>load:0x40078000,len:13564
+entry 0x40078d4c
+E (31) esp_image: image at 0x30000 has invalid magic byte
+W (31) esp_image: image at 0x30000 has invalid SPI mode 255
+E (39) boot: Factory app partition is not bootable
+I (568) cpu_start: Pro cpu up.
+I (569) heap_init: Initializing. RAM available for dynamic allocation:
+I (603) cpu_start: Pro cpu start user code
+D (309) light_driver: [light_init, 74]:status: 1, mode: 2
+D (318) vfs: esp_vfs_register_fd_range is successful for range &lt;54; 64) and VFS ID 1
+I (328) wifi: wifi driver task: 3ffdbf84, prio:23, stack:4096, core=0
+</pre></div>
+</div>
+<p>The captured output for the filtering options <code class="docutils literal notranslate"><span class="pre">--print_filter=&quot;wifi</span> <span class="pre">esp_image:E</span> <span class="pre">light_driver:I&quot;</span></code> is given below:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>E (31) esp_image: image at 0x30000 has invalid magic byte
+I (328) wifi: wifi driver task: 3ffdbf84, prio:23, stack:4096, core=0
+</pre></div>
+</div>
+<p>The options <code class="docutils literal notranslate"><span class="pre">--print_filter=&quot;light_driver:D</span> <span class="pre">esp_image:N</span> <span class="pre">boot:N</span> <span class="pre">cpu_start:N</span> <span class="pre">vfs:N</span> <span class="pre">wifi:N</span> <span class="pre">*:V&quot;</span></code> show the following output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>load:0x40078000,len:13564
+entry 0x40078d4c
+I (569) heap_init: Initializing. RAM available for dynamic allocation:
+D (309) light_driver: [light_init, 74]:status: 1, mode: 2
+</pre></div>
+</div>
+</section>
+</section>
+<section id="configuration-file">
+<span id="id2"></span><h2>Configuration File<a class="headerlink" href="#configuration-file" title="Permalink to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">esp-idf-monitor</span></code> offers option to change its default behavior with configuration file. This file can be used for example to set custom key bindings, or set a custom reset sequence for resetting the chip into bootloader mode.</p>
+<p>For more details on the configuration file, see the <a class="reference external" href="https://github.com/espressif/esp-idf-monitor/blob/v1.5.0/README.md#documentation">IDF Monitor documentation</a>.</p>
+</section>
+<section id="known-issues-with-idf-monitor">
+<h2>Known Issues with IDF Monitor<a class="headerlink" href="#known-issues-with-idf-monitor" title="Permalink to this heading"></a></h2>
+<p>The following issues are currently known:</p>
+<ul>
+<li><p>Autocoloring cannot detect the log level if the message contains new lines. In this case, the IDF Monitor will only color the first line of the message.</p>
+<p>To work around this issue, enable <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-log-colors"><span class="std std-ref">CONFIG_LOG_COLORS</span></a> in menuconfig. Please note that this might have some impact on binary size and performance.</p>
+</li>
+<li><p>On Windows, if the terminal is closed without first closing the IDF Monitor, some drivers may fail to release the serial port. To release the port, you may need to unplug and replug the USB cable, or in some cases even restart the computer. This issue has been observed with the CH9102 USB-to-UART bridge. Other drivers, such as CP210x and CH340, should work fine.</p>
+<p>To prevent this issue, make sure to close the IDF Monitor properly before exiting the terminal, or consider using an alternative USB-to-UART bridge.</p>
+</li>
+</ul>
+<p>If you experience any other issues while using IDF Monitor, check our <a class="reference external" href="https://github.com/espressif/esp-idf-monitor/issues">GitHub repository</a> for a list of known issues and their current status. If you come across a problem that hasn't been documented yet, we encourage you to create a new issue report.</p>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=IDF Monitor (api-guides/tools/idf-monitor)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=IDF Monitor (api-guides/tools/idf-monitor)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="idf-py.html" class="btn btn-neutral float-left" title="IDF Frontend - idf.py" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="idf-docker-image.html" class="btn btn-neutral float-right" title="IDF Docker Image" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

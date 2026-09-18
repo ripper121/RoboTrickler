@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unit Testing in ESP32 - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/unit-tests.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/unit-tests';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Running ESP-IDF Applications on Host" href="host-apps.html" />
+    <link rel="prev" title="QEMU Emulator" href="tools/qemu.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Unit Testing in ESP32</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#normal-test-cases">Normal Test Cases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multi-device-test-cases">Multi-device Test Cases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multi-stage-test-cases">Multi-stage Test Cases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tests-for-different-targets">Tests For Different Targets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-unit-test-app">Building Unit Test App</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-unit-tests">Running Unit Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#project-structure-and-automated-workflows">Project Structure and Automated Workflows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#timing-code-with-cache-compensated-timer">Timing Code with Cache Compensated Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mocks">Mocks</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mock-a-component">Mock a Component</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#adjustments-in-unit-test">Adjustments in Unit Test</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Guides</a></li>
+      <li class="breadcrumb-item active">Unit Testing in ESP32</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/unit-tests.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="unit-testing-in-esp32">
+<h1>Unit Testing in ESP32<a class="headerlink" href="#unit-testing-in-esp32" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/api-guides/unit-tests.html">[中文]</a></p>
+<p>ESP-IDF provides the following methods to test software.</p>
+<ul class="simple">
+<li><p>Target based tests using a central unit test application which runs on the esp32. These tests use the <a class="reference external" href="https://www.throwtheswitch.org/unity">Unity</a> unit test framework. They can be integrated into an ESP-IDF component by placing them in the component's <code class="docutils literal notranslate"><span class="pre">test</span></code> subdirectory. This document mainly introduces this target based tests.</p></li>
+<li><p>Linux-host based unit tests in which part of the hardware can be abstracted via mocks. Currently, Linux-host based tests are still under development and only a small fraction of IDF components support them. More information on running IDF applications on the host can be found here: <a class="reference internal" href="host-apps.html"><span class="doc">Running Applications on the Host Machine</span></a>.</p></li>
+</ul>
+<section id="normal-test-cases">
+<h2>Normal Test Cases<a class="headerlink" href="#normal-test-cases" title="Permalink to this heading"></a></h2>
+<p>Unit tests are located in the <code class="docutils literal notranslate"><span class="pre">test</span></code> subdirectory of a component. Tests are written in C, and a single C source file can contain multiple test cases. Test files start with the word &quot;test&quot;.</p>
+<p>Each test file should include the <code class="docutils literal notranslate"><span class="pre">unity.h</span></code> header and the header for the C module to be tested.</p>
+<p>Tests are added in a function in the C file as follows:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">TEST_CASE</span><span class="p">(</span><span class="s">&quot;test name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;[module name]&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">        </span><span class="c1">// Add test here</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The first argument is a descriptive name for the test.</p></li>
+<li><p>The second argument is an identifier in square brackets. Identifiers are used to group related test, or tests with specific properties.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There is no need to add a main function with <code class="docutils literal notranslate"><span class="pre">UNITY_BEGIN()</span></code> and <code class="docutils literal notranslate"><span class="pre">​UNITY_END()</span></code> in each test case. <code class="docutils literal notranslate"><span class="pre">unity_platform.c</span></code> will run <code class="docutils literal notranslate"><span class="pre">UNITY_BEGIN()</span></code> autonomously, and run the test cases, then call <code class="docutils literal notranslate"><span class="pre">​UNITY_END()</span></code>.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">test</span></code> subdirectory should contain a <a class="reference internal" href="build-system.html#component-directories"><span class="std std-ref">component CMakeLists.txt</span></a>, since they are themselves components (i.e., a test component). ESP-IDF uses the Unity test framework located in the <code class="docutils literal notranslate"><span class="pre">unity</span></code> component. Thus, each test component should specify the <code class="docutils literal notranslate"><span class="pre">unity</span></code> component as a component requirement using the <code class="docutils literal notranslate"><span class="pre">REQUIRES</span></code> argument. Normally, components <a class="reference internal" href="build-system.html#cmake-file-globbing"><span class="std std-ref">should list their sources manually</span></a>; for component tests however, this requirement is relaxed and the use of the <code class="docutils literal notranslate"><span class="pre">SRC_DIRS</span></code> argument in <code class="docutils literal notranslate"><span class="pre">idf_component_register</span></code> is advised.</p>
+<p>Overall, the minimal <code class="docutils literal notranslate"><span class="pre">test</span></code> subdirectory <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file should contain the following:</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">idf_component_register</span><span class="p">(</span><span class="s">SRC_DIRS</span><span class="w"> </span><span class="s2">&quot;.&quot;</span>
+<span class="w">                       </span><span class="s">INCLUDE_DIRS</span><span class="w"> </span><span class="s2">&quot;.&quot;</span>
+<span class="w">                       </span><span class="s">REQUIRES</span><span class="w"> </span><span class="s">unity</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference external" href="http://www.throwtheswitch.org/unity">http://www.throwtheswitch.org/unity</a> for more information about writing tests in Unity.</p>
+</section>
+<section id="multi-device-test-cases">
+<h2>Multi-device Test Cases<a class="headerlink" href="#multi-device-test-cases" title="Permalink to this heading"></a></h2>
+<p>The normal test cases will be executed on one DUT (Device Under Test). However, components that require some form of communication (e.g., GPIO, SPI) require another device to communicate with, thus cannot be tested through normal test cases. Multi-device test cases involve writing multiple test functions, and running them on multiple DUTs.</p>
+<p>The following is an example of a multi-device test case:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">gpio_master_test</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">gpio_config_t</span><span class="w"> </span><span class="n">slave_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="p">.</span><span class="n">pin_bit_mask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">MASTER_GPIO_PIN</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GPIO_MODE_INPUT</span><span class="p">,</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">gpio_config</span><span class="p">(</span><span class="o">&amp;</span><span class="n">slave_config</span><span class="p">);</span>
+<span class="w">    </span><span class="n">unity_wait_for_signal</span><span class="p">(</span><span class="s">&quot;output high level&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">TEST_ASSERT</span><span class="p">(</span><span class="n">gpio_get_level</span><span class="p">(</span><span class="n">MASTER_GPIO_PIN</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">gpio_slave_test</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">gpio_config_t</span><span class="w"> </span><span class="n">master_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="p">.</span><span class="n">pin_bit_mask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">SLAVE_GPIO_PIN</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GPIO_MODE_OUTPUT</span><span class="p">,</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">gpio_config</span><span class="p">(</span><span class="o">&amp;</span><span class="n">master_config</span><span class="p">);</span>
+<span class="w">    </span><span class="n">gpio_set_level</span><span class="p">(</span><span class="n">SLAVE_GPIO_PIN</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="n">unity_send_signal</span><span class="p">(</span><span class="s">&quot;output high level&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">TEST_CASE_MULTIPLE_DEVICES</span><span class="p">(</span><span class="s">&quot;gpio multiple devices test example&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;[driver]&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">gpio_master_test</span><span class="p">,</span><span class="w"> </span><span class="n">gpio_slave_test</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The macro <code class="docutils literal notranslate"><span class="pre">TEST_CASE_MULTIPLE_DEVICES</span></code> is used to declare a multi-device test case.</p>
+<ul class="simple">
+<li><p>The first argument is test case name.</p></li>
+<li><p>The second argument is test case description.</p></li>
+<li><p>From the third argument, up to 5 test functions can be defined, each function will be the entry point of tests running on each DUT.</p></li>
+</ul>
+<p>Running test cases from different DUTs could require synchronizing between DUTs. We provide <code class="docutils literal notranslate"><span class="pre">unity_wait_for_signal</span></code> and <code class="docutils literal notranslate"><span class="pre">unity_send_signal</span></code> to support synchronizing with UART. As the scenario in the above example, the slave should get GPIO level after master set level. DUT UART console will prompt and user interaction is required:</p>
+<p>DUT1 (master) console:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Waiting for signal: [output high level]!
+Please press &quot;Enter&quot; key to once any board send this signal.
+</pre></div>
+</div>
+<p>DUT2 (slave) console:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Send signal: [output high level]!
+</pre></div>
+</div>
+<p>Once the signal is sent from DUT2, you need to press &quot;Enter&quot; on DUT1, then DUT1 unblocks from <code class="docutils literal notranslate"><span class="pre">unity_wait_for_signal</span></code> and starts to change GPIO level.</p>
+</section>
+<section id="multi-stage-test-cases">
+<h2>Multi-stage Test Cases<a class="headerlink" href="#multi-stage-test-cases" title="Permalink to this heading"></a></h2>
+<p>The normal test cases are expected to finish without reset (or only need to check if reset happens). Sometimes we expect to run some specific tests after certain kinds of reset. For example, we want to test if the reset reason is correct after a wake up from deep sleep. We need to create a deep-sleep reset first and then check the reset reason. To support this, we can define multi-stage test cases, to group a set of test functions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">void</span> <span class="n">trigger_deepsleep</span><span class="p">(</span><span class="n">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">esp_sleep_enable_timer_wakeup</span><span class="p">(</span><span class="mi">2000</span><span class="p">);</span>
+    <span class="n">esp_deep_sleep_start</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="n">void</span> <span class="n">check_deepsleep_reset_reason</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">soc_reset_reason_t</span> <span class="n">reason</span> <span class="o">=</span> <span class="n">esp_rom_get_reset_reason</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">TEST_ASSERT</span><span class="p">(</span><span class="n">reason</span> <span class="o">==</span> <span class="n">RESET_REASON_CORE_DEEP_SLEEP</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">TEST_CASE_MULTIPLE_STAGES</span><span class="p">(</span><span class="s2">&quot;reset reason check for deepsleep&quot;</span><span class="p">,</span> <span class="s2">&quot;[esp32]&quot;</span><span class="p">,</span> <span class="n">trigger_deepsleep</span><span class="p">,</span> <span class="n">check_deepsleep_reset_reason</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Multi-stage test cases present a group of test functions to users. It needs user interactions (select cases and select different stages) to run the case.</p>
+</section>
+<section id="tests-for-different-targets">
+<h2>Tests For Different Targets<a class="headerlink" href="#tests-for-different-targets" title="Permalink to this heading"></a></h2>
+<p>Some tests (especially those related to hardware) cannot run on all targets. Below is a guide how to make your unit tests run on only specified targets.</p>
+<ol class="arabic">
+<li><p>Wrap your test code by <code class="docutils literal notranslate"><span class="pre">!(TEMPORARY_)DISABLED_FOR_TARGETS()</span></code> macros and place them either in the original test file, or separate the code into files grouped by functions, but make sure all these files will be processed by the compiler. E.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#if !TEMPORARY_DISABLED_FOR_TARGETS(ESP32, ESP8266)</span>
+<span class="n">TEST_CASE</span><span class="p">(</span><span class="s2">&quot;a test that is not ready for esp32 and esp8266 yet&quot;</span><span class="p">,</span> <span class="s2">&quot;[]&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="p">}</span>
+<span class="c1">#endif //!TEMPORARY_DISABLED_FOR_TARGETS(ESP32, ESP8266)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Once you need one of the tests to be compiled on a specified target, just modify the targets in the disabled list. It's more encouraged to use some general conception that can be described in <code class="docutils literal notranslate"><span class="pre">soc_caps.h</span></code> to control the disabling of tests. If this is done but some of the tests are not ready yet, use both of them (and remove <code class="docutils literal notranslate"><span class="pre">!(TEMPORARY_)DISABLED_FOR_TARGETS()</span></code> later). E.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#if SOC_SDIO_SLAVE_SUPPORTED</span>
+<span class="c1">#if !TEMPORARY_DISABLED_FOR_TARGETS(ESP64)</span>
+<span class="n">TEST_CASE</span><span class="p">(</span><span class="s2">&quot;a sdio slave tests that is not ready for esp64 yet&quot;</span><span class="p">,</span> <span class="s2">&quot;[sdio_slave]&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="o">//</span><span class="n">available</span> <span class="k">for</span> <span class="n">esp32</span> <span class="n">now</span><span class="p">,</span> <span class="ow">and</span> <span class="n">will</span> <span class="n">be</span> <span class="n">available</span> <span class="k">for</span> <span class="n">esp64</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">future</span>
+<span class="p">}</span>
+<span class="c1">#endif //!TEMPORARY_DISABLED_FOR_TARGETS(ESP64)</span>
+<span class="c1">#endif //SOC_SDIO_SLAVE_SUPPORTED</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>For test code that you are 100% for sure that will not be supported (e.g., no peripheral at all), use <code class="docutils literal notranslate"><span class="pre">DISABLED_FOR_TARGETS</span></code>; for test code that should be disabled temporarily, or due to lack of runners, etc., use <code class="docutils literal notranslate"><span class="pre">TEMPORARY_DISABLED_FOR_TARGETS</span></code>.</p></li>
+</ol>
+<p>Some old ways of disabling unit tests for targets, that have obvious disadvantages, are deprecated:</p>
+<ul>
+<li><p>DON'T put the test code under <code class="docutils literal notranslate"><span class="pre">test/target</span></code> folder and use CMakeLists.txt to choose one of the target folder. This is prevented because test code is more likely to be reused than the implementations. If you put something into <code class="docutils literal notranslate"><span class="pre">test/esp32</span></code> just to avoid building it on esp32s2, it's hard to make the code tidy if you want to enable the test again on esp32s3.</p></li>
+<li><p>DON'T use <code class="docutils literal notranslate"><span class="pre">CONFIG_IDF_TARGET_xxx</span></code> macros to disable the test items any more. This makes it harder to track disabled tests and enable them again. Also, a black-list style <code class="docutils literal notranslate"><span class="pre">#if</span> <span class="pre">!disabled</span></code> is preferred to white-list style <code class="docutils literal notranslate"><span class="pre">#if</span> <span class="pre">CONFIG_IDF_TARGET_xxx</span></code>, since you will not silently disable cases when new targets are added in the future. But for test implementations, it's allowed to use <code class="docutils literal notranslate"><span class="pre">#if</span> <span class="pre">CONFIG_IDF_TARGET_xxx</span></code> to pick one of the implementation code.</p>
+<ul>
+<li><p>Test item: some items that will be performed on some targets, but skipped on other targets. E.g.</p>
+<p>There are three test items SD 1-bit, SD 4-bit and SDSPI. For ESP32-S2, which doesn't have SD host, among the tests only SDSPI is enabled on ESP32-S2.</p>
+</li>
+<li><p>Test implementation: some code will always happen, but in different ways. E.g.</p>
+<p>There is no SDIO PKT_LEN register on ESP8266. If you want to get the length from the slave as a step in the test process, you can have different implementation code protected by <code class="docutils literal notranslate"><span class="pre">#if</span> <span class="pre">CONFIG_IDF_TARGET_</span></code> reading in different ways.</p>
+<p>But please avoid using <code class="docutils literal notranslate"><span class="pre">#else</span></code> macro. When new target is added, the test case will fail at building stage, so that the maintainer will be aware of this, and choose one of the implementations explicitly.</p>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="building-unit-test-app">
+<h2>Building Unit Test App<a class="headerlink" href="#building-unit-test-app" title="Permalink to this heading"></a></h2>
+<p>Follow the setup instructions in the top-level esp-idf README. Make sure that <code class="docutils literal notranslate"><span class="pre">IDF_PATH</span></code> environment variable is set to point to the path of esp-idf top-level directory.</p>
+<p>Change into <code class="docutils literal notranslate"><span class="pre">tools/unit-test-app</span></code> directory to configure and build it:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">menuconfig</span></code> - configure unit test app.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">-T</span> <span class="pre">all</span> <span class="pre">build</span></code> - build unit test app with tests for each component having tests in the <code class="docutils literal notranslate"><span class="pre">test</span></code> subdirectory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">-T</span> <span class="pre">&quot;xxx</span> <span class="pre">yyy&quot;</span> <span class="pre">build</span></code> - build unit test app with tests for some space-separated specific components (For instance: <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">-T</span> <span class="pre">heap</span> <span class="pre">build</span></code> - build unit tests only for <code class="docutils literal notranslate"><span class="pre">heap</span></code> component directory).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">-T</span> <span class="pre">all</span> <span class="pre">-E</span> <span class="pre">&quot;xxx</span> <span class="pre">yyy&quot;</span> <span class="pre">build</span></code> - build unit test app with all unit tests, except for unit tests of some components (For instance: <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">-T</span> <span class="pre">all</span> <span class="pre">-E</span> <span class="pre">&quot;ulp</span> <span class="pre">mbedtls&quot;</span> <span class="pre">build</span></code> - build all unit tests excludes <code class="docutils literal notranslate"><span class="pre">ulp</span></code> and <code class="docutils literal notranslate"><span class="pre">mbedtls</span></code> components).</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Due to inherent limitations of Windows command prompt, following syntax has to be used in order to build unit-test-app with multiple components: <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">-T</span> <span class="pre">xxx</span> <span class="pre">-T</span> <span class="pre">yyy</span> <span class="pre">build</span></code> or with escaped quotes: <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">-T</span> <span class="pre">\`&quot;xxx</span> <span class="pre">yyy\`&quot;</span> <span class="pre">build</span></code> in PowerShell or <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">-T</span> <span class="pre">\^&quot;ssd1306</span> <span class="pre">hts221\^&quot;</span> <span class="pre">build</span></code> in Windows command prompt.</p>
+</div>
+<p>When the build finishes, it will print instructions for flashing the chip. You can simply run <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">flash</span></code> to flash all build output.</p>
+<p>You can also run <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">-T</span> <span class="pre">all</span> <span class="pre">flash</span></code> or <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">-T</span> <span class="pre">xxx</span> <span class="pre">flash</span></code> to build and flash. Everything needed will be rebuilt automatically before flashing.</p>
+<p>Use menuconfig to set the serial port for flashing. For more information, see <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/tools/unit-test-app/README.md">tools/unit-test-app/README.md</a>.</p>
+</section>
+<section id="running-unit-tests">
+<h2>Running Unit Tests<a class="headerlink" href="#running-unit-tests" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We also provide the pytest-based framework <a class="reference external" href="https://github.com/espressif/pytest-embedded">pytest-embedded</a> to help make running unit-tests more convenient and efficient. If you need to run tests in CI or run multiple tests in a row we recommend checking out this project. For more information see <a class="reference external" href="https://docs.espressif.com/projects/pytest-embedded/en/latest/">Pytest-embedded Docs</a> and <a class="reference internal" href="../contribute/esp-idf-tests-with-pytest.html"><span class="doc">ESP-IDF Tests with Pytest Guide</span></a>.</p>
+</div>
+<p>After flashing reset the ESP32 and it will boot the unit test app.</p>
+<p>When unit test app is idle, press &quot;Enter&quot; will make it print test menu with all available tests:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Here</span><span class="s1">&#39;s the test menu, pick your combo:</span>
+<span class="p">(</span><span class="mi">1</span><span class="p">)</span>     <span class="s2">&quot;esp_ota_begin() verifies arguments&quot;</span> <span class="p">[</span><span class="n">ota</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">2</span><span class="p">)</span>     <span class="s2">&quot;esp_ota_get_next_update_partition logic&quot;</span> <span class="p">[</span><span class="n">ota</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">3</span><span class="p">)</span>     <span class="s2">&quot;Verify bootloader image in flash&quot;</span> <span class="p">[</span><span class="n">bootloader_support</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">4</span><span class="p">)</span>     <span class="s2">&quot;Verify unit test app image&quot;</span> <span class="p">[</span><span class="n">bootloader_support</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">5</span><span class="p">)</span>     <span class="s2">&quot;can use new and delete&quot;</span> <span class="p">[</span><span class="n">cxx</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">6</span><span class="p">)</span>     <span class="s2">&quot;can call virtual functions&quot;</span> <span class="p">[</span><span class="n">cxx</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">7</span><span class="p">)</span>     <span class="s2">&quot;can use static initializers for non-POD types&quot;</span> <span class="p">[</span><span class="n">cxx</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">8</span><span class="p">)</span>     <span class="s2">&quot;can use std::vector&quot;</span> <span class="p">[</span><span class="n">cxx</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">9</span><span class="p">)</span>     <span class="s2">&quot;static initialization guards work as expected&quot;</span> <span class="p">[</span><span class="n">cxx</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">10</span><span class="p">)</span>    <span class="s2">&quot;global initializers run in the correct order&quot;</span> <span class="p">[</span><span class="n">cxx</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">11</span><span class="p">)</span>    <span class="s2">&quot;before scheduler has started, static initializers work correctly&quot;</span> <span class="p">[</span><span class="n">cxx</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">12</span><span class="p">)</span>    <span class="s2">&quot;adc2 work with wifi&quot;</span> <span class="p">[</span><span class="n">adc</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">13</span><span class="p">)</span>    <span class="s2">&quot;gpio master/slave test example&quot;</span> <span class="p">[</span><span class="n">ignore</span><span class="p">][</span><span class="n">misc</span><span class="p">][</span><span class="n">test_env</span><span class="o">=</span><span class="n">UT_T2_1</span><span class="p">][</span><span class="n">multi_device</span><span class="p">]</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">)</span>     <span class="s2">&quot;gpio_master_test&quot;</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">)</span>     <span class="s2">&quot;gpio_slave_test&quot;</span>
+<span class="p">(</span><span class="mi">14</span><span class="p">)</span>    <span class="s2">&quot;SPI Master clockdiv calculation routines&quot;</span> <span class="p">[</span><span class="n">spi</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">15</span><span class="p">)</span>    <span class="s2">&quot;SPI Master test&quot;</span> <span class="p">[</span><span class="n">spi</span><span class="p">][</span><span class="n">ignore</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">16</span><span class="p">)</span>    <span class="s2">&quot;SPI Master test, interaction of multiple devs&quot;</span> <span class="p">[</span><span class="n">spi</span><span class="p">][</span><span class="n">ignore</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">17</span><span class="p">)</span>    <span class="s2">&quot;SPI Master no response when switch from host1 (SPI2) to host2 (SPI3)&quot;</span> <span class="p">[</span><span class="n">spi</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">18</span><span class="p">)</span>    <span class="s2">&quot;SPI Master DMA test, TX and RX in different regions&quot;</span> <span class="p">[</span><span class="n">spi</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">19</span><span class="p">)</span>    <span class="s2">&quot;SPI Master DMA test: length, start, not aligned&quot;</span> <span class="p">[</span><span class="n">spi</span><span class="p">]</span>
+<span class="p">(</span><span class="mi">20</span><span class="p">)</span>    <span class="s2">&quot;reset reason check for deepsleep&quot;</span> <span class="p">[</span><span class="n">esp32</span><span class="p">][</span><span class="n">test_env</span><span class="o">=</span><span class="n">UT_T2_1</span><span class="p">][</span><span class="n">multi_stage</span><span class="p">]</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">)</span>     <span class="s2">&quot;trigger_deepsleep&quot;</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">)</span>     <span class="s2">&quot;check_deepsleep_reset_reason&quot;</span>
+</pre></div>
+</div>
+<p>The normal case will print the case name and description. Master-slave cases will also print the sub-menu (the registered test function names).</p>
+<p>Test cases can be run by inputting one of the following:</p>
+<ul class="simple">
+<li><p>Test case name in quotation marks to run a single test case</p></li>
+<li><p>Test case index to run a single test case</p></li>
+<li><p>Module name in square brackets to run all test cases for a specific module</p></li>
+<li><p>An asterisk to run all test cases</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">[multi_device]</span></code> and <code class="docutils literal notranslate"><span class="pre">[multi_stage]</span></code> tags tell the test runner whether a test case is a multiple devices or multiple stages of test case. These tags are automatically added by <code class="docutils literal notranslate"><span class="pre">`TEST_CASE_MULTIPLE_STAGES</span></code> and <code class="docutils literal notranslate"><span class="pre">TEST_CASE_MULTIPLE_DEVICES</span></code> macros.</p>
+<p>After you select a multi-device test case, it will print sub-menu:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Running</span> <span class="n">gpio</span> <span class="n">master</span><span class="o">/</span><span class="n">slave</span> <span class="n">test</span> <span class="n">example</span><span class="o">...</span>
+<span class="n">gpio</span> <span class="n">master</span><span class="o">/</span><span class="n">slave</span> <span class="n">test</span> <span class="n">example</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">)</span>     <span class="s2">&quot;gpio_master_test&quot;</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">)</span>     <span class="s2">&quot;gpio_slave_test&quot;</span>
+</pre></div>
+</div>
+<p>You need to input a number to select the test running on the DUT.</p>
+<p>Similar to multi-device test cases, multi-stage test cases will also print sub-menu:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Running</span> <span class="n">reset</span> <span class="n">reason</span> <span class="n">check</span> <span class="k">for</span> <span class="n">deepsleep</span><span class="o">...</span>
+<span class="n">reset</span> <span class="n">reason</span> <span class="n">check</span> <span class="k">for</span> <span class="n">deepsleep</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">)</span>     <span class="s2">&quot;trigger_deepsleep&quot;</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">)</span>     <span class="s2">&quot;check_deepsleep_reset_reason&quot;</span>
+</pre></div>
+</div>
+<p>First time you execute this case, input <code class="docutils literal notranslate"><span class="pre">1</span></code> to run first stage (trigger deepsleep). After DUT is rebooted and able to run test cases, select this case again and input <code class="docutils literal notranslate"><span class="pre">2</span></code> to run the second stage. The case only passes if the last stage passes and all previous stages trigger reset.</p>
+</section>
+<section id="project-structure-and-automated-workflows">
+<h2>Project Structure and Automated Workflows<a class="headerlink" href="#project-structure-and-automated-workflows" title="Permalink to this heading"></a></h2>
+<p>A good starting point on how to structure and test an application is the <a class="reference external" href="https://github.com/espressif/gh-esp-test-template">Github ESP Test Template</a> project. It shows how to set up and run tests both in simulation and on real hardware, using GitHub CI workflows.</p>
+<p>For more complex projects, tests would typically be split into several test-apps, testing each component separately. In these cases, you can use the tool <a class="reference external" href="https://github.com/espressif/idf-build-apps">IDF Build Apps</a> to automate finding and building all test-apps in your project.</p>
+</section>
+<section id="timing-code-with-cache-compensated-timer">
+<span id="cache-compensated-timer"></span><h2>Timing Code with Cache Compensated Timer<a class="headerlink" href="#timing-code-with-cache-compensated-timer" title="Permalink to this heading"></a></h2>
+<p>Instructions and data stored in external memory (e.g., SPI Flash and SPI RAM) are accessed through the CPU's unified instruction and data cache. When code or data is in cache, access is very fast (i.e., a cache hit).</p>
+<p>However, if the instruction or data is not in cache, it needs to be fetched from external memory (i.e., a cache miss). Access to external memory is significantly slower, as the CPU must execute stall cycles whilst waiting for the instruction or data to be retrieved from external memory. This can cause the overall code execution speed to vary depending on the number of cache hits or misses.</p>
+<p>Code and data placements can vary between builds, and some arrangements may be more favorable with regards to cache access (i.e., minimizing cache misses). This can technically affect execution speed, however these factors are usually irrelevant as their effect 'average out' over the device's operation.</p>
+<p>The effect of the cache on execution speed, however, can be relevant in benchmarking scenarios (especially micro benchmarks). There might be some variability in measured time between runs and between different builds. A technique for eliminating for some of the variability is to place code and data in instruction or data RAM (IRAM/DRAM), respectively. The CPU can access IRAM and DRAM directly, eliminating the cache out of the equation. However, this might not always be viable as the size of IRAM and DRAM is limited.</p>
+<p>The cache compensated timer is an alternative to placing the code/data to be benchmarked in IRAM/DRAM. This timer uses the processor's internal event counters in order to determine the amount of time spent on waiting for code/data in case of a cache miss, then subtract that from the recorded wall time.</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// Start the timer</span>
+<span class="n">ccomp_timer_start</span><span class="p">();</span>
+
+<span class="c1">// Function to time</span>
+<span class="n">func_code_to_time</span><span class="p">();</span>
+
+<span class="c1">// Stop the timer, and return the elapsed time in microseconds relative to</span>
+<span class="c1">// ccomp_timer_start</span>
+<span class="kt">int64_t</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ccomp_timer_stop</span><span class="p">();</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>One limitation of the cache compensated timer is that the task that benchmarked functions should be pinned to a core. This is due to each core having its own event counters that are independent of each other. For example, if <code class="docutils literal notranslate"><span class="pre">ccomp_timer_start</span></code> gets called on one core, put to sleep by the scheduler, wakes up, and gets rescheduled on the other core, then the corresponding <code class="docutils literal notranslate"><span class="pre">ccomp_timer_stop</span></code> will be invalid.</p>
+</section>
+<section id="mocks">
+<span id="id1"></span><h2>Mocks<a class="headerlink" href="#mocks" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently, mocking is only possible with some selected components when running on the Linux host. In the future, we plan to make essential components in IDF mock-able. This will also include mocking when running on the ESP32.</p>
+</div>
+<p>One of the biggest problems regarding unit testing on embedded systems are the strong hardware dependencies. Running unit tests directly on the ESP32 can be especially difficult for higher layer components for the following reasons:</p>
+<ul class="simple">
+<li><p>Decreased test reliability due to lower layer components and/or hardware setup.</p></li>
+<li><p>Increased difficulty in testing edge cases due to limitations of lower layer components and/or hardware setup</p></li>
+<li><p>Increased difficulty in identifying the root cause due to the large number of dependencies influencing the behavior</p></li>
+</ul>
+<p>When testing a particular component, (i.e., the component under test), mocking allows the dependencies of the component under test to be substituted (i.e., mocked) entirely in software. Through mocking, hardware details are emulated and specified at run time, but only if necessary. To allow mocking, ESP-IDF integrates the <a class="reference external" href="https://www.throwtheswitch.org/cmock">CMock</a> mocking framework as a component. With the addition of some CMake functions in the ESP-IDF build system, it is possible to conveniently mock the entirety (or a part) of an IDF component.</p>
+<p>Ideally, all components that the component under test is dependent on should be mocked, thus allowing the test environment complete control over all interactions with the component under test. However, if mocking all dependent components becomes too complex or too tedious (e.g., because you need to mock too many function calls) you have the following options:</p>
+<p><ul class="simple">
+<li><p>Include more &quot;real&quot; IDF code in the tests. This may work but increases the dependency on the &quot;real&quot; code's behavior. Furthermore, once a test fails, you may not know if the failure is in your actual code under test or the &quot;real&quot; IDF code.</p></li>
+<li><p>Re-evaluate the design of the code under test and attempt to reduce its dependencies by dividing the code under test into more manageable components. This may seem burdensome but it is quite common that unit tests expose software design weaknesses. Fixing design weaknesses will not only help with unit testing in the short term, but will help future code maintenance as well.</p></li>
+</ul>
+</p>
+<p>Refer to <a class="reference external" href="https://github.com/ThrowTheSwitch/CMock/blob/eeecc49/docs/CMock_Summary.md">cmock/CMock/docs/CMock_Summary.md</a> for more details on how CMock works and how to create and use mocks.</p>
+<section id="requirements">
+<h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h3>
+<p>Mocking with CMock requires <code class="docutils literal notranslate"><span class="pre">Ruby</span></code> on the host machine. Furthermore, since mocking currently only works on the Linux target, the requirements of the latter also need to be fulfilled:</p>
+<ul class="simple">
+<li><p>Installed ESP-IDF including all ESP-IDF requirements</p></li>
+<li><p>System package requirements (<code class="docutils literal notranslate"><span class="pre">libbsd</span></code>, <code class="docutils literal notranslate"><span class="pre">libbsd-dev</span></code>)</p></li>
+<li><p>A recent enough Linux or macOS version and GCC compiler</p></li>
+<li><p>All components the application depends on must be either supported on the Linux target (Linux/POSIX simulator) or mock-able</p></li>
+</ul>
+<p>An application that runs on the Linux target has to set the <code class="docutils literal notranslate"><span class="pre">COMPONENTS</span></code> variable to <code class="docutils literal notranslate"><span class="pre">main</span></code> in the CMakeLists.txt of the application's root directory:</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="s">COMPONENTS</span><span class="w"> </span><span class="s">main</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This prevents the automatic inclusion of all components from ESP-IDF to the build process which is otherwise done for convenience.</p>
+</section>
+<section id="mock-a-component">
+<h3>Mock a Component<a class="headerlink" href="#mock-a-component" title="Permalink to this heading"></a></h3>
+<p>If a mocked component, called a <em>component mock</em>, is already available in ESP-IDF, then it can be used right away as long as it satisfies the required functionality. Refer to <a class="reference internal" href="host-apps.html#component-linux-mock-support"><span class="std std-ref">Component Linux/Mock Support Overview</span></a> to see which components are mocked already. Then refer to <a class="reference internal" href="#adjustments-for-mocks"><span class="std std-ref">Adjustments in Unit Test</span></a> in order to use the component mock.</p>
+<p>It is necessary to create component mocks if they are not yet provided in ESP-IDF. To create a component mock, the component needs to be overwritten in a particular way. Overriding a component entails creating a component with the exact same name as the original component, then letting the build system discover it later than the original component (see <a class="reference internal" href="build-system.html#cmake-components-same-name"><span class="std std-ref">Multiple components with the same name</span></a> for more details).</p>
+<p>In the component mock, the following parts are specified:</p>
+<p><ul class="simple">
+<li><p>The headers providing the functions to generate mocks for</p></li>
+<li><p>Include paths of the aforementioned headers</p></li>
+<li><p>Dependencies of the mock component (this is necessary e.g. if the headers include files from other components)</p></li>
+</ul>
+</p>
+<p>All these parts have to be specified using the IDF build system function <code class="docutils literal notranslate"><span class="pre">idf_component_mock</span></code>. You can use the IDF build system function <code class="docutils literal notranslate"><span class="pre">idf_component_get_property</span></code> with the tag <code class="docutils literal notranslate"><span class="pre">COMPONENT_OVERRIDEN_DIR</span></code> to access the component directory of the original component and then register the mock component parts using <code class="docutils literal notranslate"><span class="pre">idf_component_mock</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>idf_component_get_property(original_component_dir &lt;original-component-name&gt; COMPONENT_OVERRIDEN_DIR)
+...
+idf_component_mock(INCLUDE_DIRS &quot;${original_component_dir}/include&quot;
+    REQUIRES freertos
+    MOCK_HEADER_FILES ${original_component_dir}/include/header_containing_functions_to_mock.h)
+</pre></div>
+</div>
+<p>The component mock also requires a separate <code class="docutils literal notranslate"><span class="pre">mock</span></code> directory containing a <code class="docutils literal notranslate"><span class="pre">mock_config.yaml</span></code> file that configures CMock. A simple <code class="docutils literal notranslate"><span class="pre">mock_config.yaml</span></code> could look like this:</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">:cmock</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">:plugins</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">expect</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">expect_any_args</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>For more details about the CMock configuration yaml file, have a look at <a class="reference external" href="https://github.com/ThrowTheSwitch/CMock/blob/eeecc49/docs/CMock_Summary.md">cmock/CMock/docs/CMock_Summary.md</a>.</p>
+<p>Note that the component mock does not have to mock the original component in its entirety. As long as the test project's dependencies and dependencies of other code to the original components are satisfied by the component mock, partial mocking is adequate. In fact, most of the component mocks in IDF in <code class="docutils literal notranslate"><span class="pre">tools/mocks</span></code> are only partially mocking the original component.</p>
+<p>Examples of component mocks can be found under <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/tools/mocks">tools/mocks</a> in the IDF directory. General information on how to <em>override an IDF component</em> can be found in <a class="reference internal" href="build-system.html#cmake-components-same-name"><span class="std std-ref">Multiple components with the same name</span></a>. There are several examples for testing code while mocking dependencies with CMock (non-exhaustive list):</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/nvs_flash/host_test/nvs_page_test/README.md">unit test for the NVS Page class </a>.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_event/host_test/esp_event_unit_test/main/esp_event_test.cpp">unit test for esp_event </a>.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-mqtt/blob/0e9ec17/host_test/README.md">unit test for mqtt </a>.</p></li>
+</ul>
+</section>
+<section id="adjustments-in-unit-test">
+<span id="adjustments-for-mocks"></span><h3>Adjustments in Unit Test<a class="headerlink" href="#adjustments-in-unit-test" title="Permalink to this heading"></a></h3>
+<p>The unit test needs to inform the cmake build system to mock dependent components (i.e., it needs to override the original component with the mock component). This is done by either placing the component mock into the project's <code class="docutils literal notranslate"><span class="pre">components</span></code> directory or adding the mock component's directory using the following line in the project's root <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>:</p>
+<blockquote>
+<div><div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="s">APPEND</span><span class="w"> </span><span class="s">EXTRA_COMPONENT_DIRS</span><span class="w"> </span><span class="s2">&quot;&lt;mock_component_dir&gt;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Both methods will override existing components in ESP-IDF with the component mock. The latter is particularly convenient if you use component mocks that are already supplied by IDF.</p>
+<p>Users can refer to the <code class="docutils literal notranslate"><span class="pre">esp_event</span></code> host-based unit test and its <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_event/host_test/esp_event_unit_test/CMakeLists.txt">esp_event/host_test/esp_event_unit_test/CMakeLists.txt</a> as an example of a component mock.</p>
+</section>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/unit_test">system/unit_test</a> demonstrates how to use the Unity library to add unit tests to custom components in an ESP32 development environment, showcasing features such as assertions, test registration, and the use of UNITY_BEGIN() and UNITY_END() macros.</p>
+</section>
+<section id="related-documentation">
+<h2>Related Documentation<a class="headerlink" href="#related-documentation" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.espressif.com/projects/vscode-esp-idf-extension/en/latest/additionalfeatures/unit-testing.html">Unit Testing with Unity in VS Code</a></p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Unit Testing in ESP32 (api-guides/unit-tests)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Unit Testing in ESP32 (api-guides/unit-tests)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tools/qemu.html" class="btn btn-neutral float-left" title="QEMU Emulator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="host-apps.html" class="btn btn-neutral float-right" title="Running ESP-IDF Applications on Host" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

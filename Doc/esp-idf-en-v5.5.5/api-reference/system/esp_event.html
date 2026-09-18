@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Loop Library - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/esp_event.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/system/esp_event';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="FreeRTOS Overview" href="freertos.html" />
+    <link rel="prev" title="ESP HTTPS OTA" href="esp_https_ota.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">System API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app_image_format.html">App Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootloader_image_format.html">Bootloader Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app_trace.html">Application Level Tracing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_function_with_shared_stack.html">Call Function with External Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chip_revision.html">Chip Revision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console.html">Console</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efuse.html">eFuse Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_err.html">Error Code and Helper Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_ota.html">ESP HTTPS OTA</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Event Loop Library</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-esp-event-apis">Using <code class="docutils literal notranslate"><span class="pre">esp_event</span></code> APIs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#declaring-and-defining-events">Declaring and Defining Events</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#default-event-loop">Default Event Loop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#notes-on-handler-registration">Notes on Handler Registration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#event-loop-profiling">Event Loop Profiling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#related-documents">Related Documents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="freertos.html">FreeRTOS Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_idf.html">FreeRTOS (IDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_additions.html">FreeRTOS (Supplemental Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mem_alloc.html">Heap Memory Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mm.html">Memory Management for MMU Supported Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="heap_debug.html">Heap Memory Debugging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_timer.html">ESP Timer (High Resolution Timer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="internal-unstable.html">Internal and Unstable APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipc.html">Inter-Processor Call (IPC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intr_alloc.html">Interrupt Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="log.html">Logging library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc_system_api.html">Miscellaneous System APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ota.html">Over The Air Updates (OTA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="perfmon.html">Performance Monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="power_management.html">Power Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pthread.html">POSIX Support (Including POSIX Threads Support)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sleep_modes.html">Sleep Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soc_caps.html">SoC Capabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_time.html">System Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="himem.html">Himem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ulp.html">Ultra Low Power (ULP) coprocessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wdts.html">Watchdogs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">System API</a></li>
+      <li class="breadcrumb-item active">Event Loop Library</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/system/esp_event.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="event-loop-library">
+<h1>Event Loop Library<a class="headerlink" href="#event-loop-library" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/system/esp_event.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>The event loop library allows components to declare events so that other components can register handlers -- codes that executes when those events occur. This allows loosely-coupled components to attach desired behavior to state changes of other components without application involvement. This also simplifies event processing by serializing and deferring code execution to another context.</p>
+<p>One common case is, if a high-level library is using the Wi-Fi library: it may subscribe to <a class="reference internal" href="../../api-guides/wifi.html#wifi-programming-model"><span class="std std-ref">ESP32 Wi-Fi Programming Model</span></a> directly and act on those events.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Various modules of the Bluetooth stack deliver events to applications via dedicated callback functions instead of via the Event Loop Library.</p>
+</div>
+</section>
+<section id="using-esp-event-apis">
+<h2>Using <code class="docutils literal notranslate"><span class="pre">esp_event</span></code> APIs<a class="headerlink" href="#using-esp-event-apis" title="Permalink to this heading"></a></h2>
+<p>There are two objects of concern for users of this library: events and event loops.</p>
+<p>An event indicates an important occurrence, such as a successful Wi-Fi connection to an access point. A two-part identifier should be used when referencing events, see <a class="reference internal" href="#esp-event-declaring-defining-events"><span class="std std-ref">declaring and defining events</span></a> for details. The event loop is the bridge between events and event handlers. The event source publishes events to the event loop using the APIs provided by the event loop library, and event handlers registered to the event loop respond to specific types of events.</p>
+<p>Using this library roughly entails the following flow:</p>
+<ol class="arabic simple">
+<li><p>The user defines a function that should run when an event is posted to a loop. This function is referred to as the event handler, and should have the same signature as <a class="reference internal" href="#_CPPv419esp_event_handler_t" title="esp_event_handler_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_event_handler_t</span></code></a>.</p></li>
+<li><p>An event loop is created using <a class="reference internal" href="#_CPPv421esp_event_loop_createPK21esp_event_loop_args_tP23esp_event_loop_handle_t" title="esp_event_loop_create"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_loop_create()</span></code></a>, which outputs a handle to the loop of type <a class="reference internal" href="#_CPPv423esp_event_loop_handle_t" title="esp_event_loop_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_event_loop_handle_t</span></code></a>. Event loops created using this API are referred to as user event loops. There is, however, a special type of event loop called the default event loop which is discussed in <a class="reference internal" href="#esp-event-default-loops"><span class="std std-ref">default event loop</span></a>.</p></li>
+<li><p>Components register event handlers to the loop using <a class="reference internal" href="#_CPPv431esp_event_handler_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPv" title="esp_event_handler_register_with"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_handler_register_with()</span></code></a>. Handlers can be registered with multiple loops, see <a class="reference internal" href="#esp-event-handler-registration"><span class="std std-ref">notes on handler registration</span></a>.</p></li>
+<li><p>Event sources post an event to the loop using <a class="reference internal" href="#_CPPv417esp_event_post_to23esp_event_loop_handle_t16esp_event_base_t7int32_tPKv6size_t10TickType_t" title="esp_event_post_to"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_post_to()</span></code></a>.</p></li>
+<li><p>Components wanting to remove their handlers from being called can do so by unregistering from the loop using <a class="reference internal" href="#_CPPv433esp_event_handler_unregister_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_t" title="esp_event_handler_unregister_with"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_handler_unregister_with()</span></code></a>.</p></li>
+<li><p>Event loops that are no longer needed can be deleted using <a class="reference internal" href="#_CPPv421esp_event_loop_delete23esp_event_loop_handle_t" title="esp_event_loop_delete"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_loop_delete()</span></code></a>.</p></li>
+</ol>
+<p>In code, the flow above may look like as follows:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// 1. Define the event handler</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">run_on_event</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">handler_arg</span><span class="p">,</span><span class="w"> </span><span class="n">esp_event_base_t</span><span class="w"> </span><span class="n">base</span><span class="p">,</span><span class="w"> </span><span class="kt">int32_t</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">event_data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Event handler logic</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">app_main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// 2. A configuration structure of type esp_event_loop_args_t is needed to specify the properties of the loop to be created. A handle of type esp_event_loop_handle_t is obtained, which is needed by the other APIs to reference the loop to perform their operations.</span>
+<span class="w">    </span><span class="n">esp_event_loop_args_t</span><span class="w"> </span><span class="n">loop_args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="p">.</span><span class="n">queue_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">task_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+<span class="w">        </span><span class="p">.</span><span class="n">task_priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">task_stack_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">task_core_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+<span class="w">    </span><span class="p">};</span>
+
+<span class="w">    </span><span class="n">esp_event_loop_handle_t</span><span class="w"> </span><span class="n">loop_handle</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">esp_event_loop_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">loop_args</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">loop_handle</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 3. Register event handler defined in (1). MY_EVENT_BASE and MY_EVENT_ID specify a hypothetical event that handler run_on_event should execute when it gets posted to the loop.</span>
+<span class="w">    </span><span class="n">esp_event_handler_register_with</span><span class="p">(</span><span class="n">loop_handle</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_BASE</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_ID</span><span class="p">,</span><span class="w"> </span><span class="n">run_on_event</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="c1">// 4. Post events to the loop. This queues the event on the event loop. At some point, the event loop executes the event handler registered to the posted event, in this case, run_on_event. To simplify the process, this example calls esp_event_post_to from app_main, but posting can be done from any other task (which is the more interesting use case).</span>
+<span class="w">    </span><span class="n">esp_event_post_to</span><span class="p">(</span><span class="n">loop_handle</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_BASE</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_ID</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="c1">// 5. Unregistering an unneeded handler</span>
+<span class="w">    </span><span class="n">esp_event_handler_unregister_with</span><span class="p">(</span><span class="n">loop_handle</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_BASE</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_ID</span><span class="p">,</span><span class="w"> </span><span class="n">run_on_event</span><span class="p">);</span>
+
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="c1">// 6. Deleting an unneeded event loop</span>
+<span class="w">    </span><span class="n">esp_event_loop_delete</span><span class="p">(</span><span class="n">loop_handle</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="declaring-and-defining-events">
+<span id="esp-event-declaring-defining-events"></span><h2>Declaring and Defining Events<a class="headerlink" href="#declaring-and-defining-events" title="Permalink to this heading"></a></h2>
+<p>As mentioned previously, events consist of two-part identifiers: the event base and the event ID. The event base identifies an independent group of events; the event ID identifies the event within that group. Think of the event base and event ID as a person's last name and first name, respectively. A last name identifies a family, and the first name identifies a person within that family.</p>
+<p>The event loop library provides macros to declare and define the event base easily.</p>
+<p>Event base declaration:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ESP_EVENT_DECLARE_BASE</span><span class="p">(</span><span class="n">EVENT_BASE</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Event base definition:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ESP_EVENT_DEFINE_BASE</span><span class="p">(</span><span class="n">EVENT_BASE</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In ESP-IDF, the base identifiers for system events are uppercase and are postfixed with <code class="docutils literal notranslate"><span class="pre">_EVENT</span></code>. For example, the base for Wi-Fi events is declared and defined as <code class="docutils literal notranslate"><span class="pre">WIFI_EVENT</span></code>, the Ethernet event base <code class="docutils literal notranslate"><span class="pre">ETHERNET_EVENT</span></code>, and so on. The purpose is to have event bases look like constants (although they are global variables considering the definitions of macros <code class="docutils literal notranslate"><span class="pre">ESP_EVENT_DECLARE_BASE</span></code> and <code class="docutils literal notranslate"><span class="pre">ESP_EVENT_DEFINE_BASE</span></code>).</p>
+</div>
+<p>For event IDs, declaring them as enumerations is recommended. Once again, for visibility, these are typically placed in public header files.</p>
+<p>Event ID:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">EVENT_ID_1</span><span class="p">,</span>
+<span class="w">    </span><span class="n">EVENT_ID_2</span><span class="p">,</span>
+<span class="w">    </span><span class="n">EVENT_ID_3</span><span class="p">,</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="default-event-loop">
+<span id="esp-event-default-loops"></span><h2>Default Event Loop<a class="headerlink" href="#default-event-loop" title="Permalink to this heading"></a></h2>
+<p>The default event loop is a special type of loop used for system events (Wi-Fi events, for example). The handle for this loop is hidden from the user, and the creation, deletion, handler registration/deregistration, and posting of events are done through a variant of the APIs for user event loops. The table below enumerates those variants, and the user event loops equivalent.</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>User Event Loops</p></th>
+<th class="head"><p>Default Event Loops</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="#_CPPv421esp_event_loop_createPK21esp_event_loop_args_tP23esp_event_loop_handle_t" title="esp_event_loop_create"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_loop_create()</span></code></a></p></td>
+<td><p><a class="reference internal" href="#_CPPv429esp_event_loop_create_defaultv" title="esp_event_loop_create_default"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_loop_create_default()</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#_CPPv421esp_event_loop_delete23esp_event_loop_handle_t" title="esp_event_loop_delete"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_loop_delete()</span></code></a></p></td>
+<td><p><a class="reference internal" href="#_CPPv429esp_event_loop_delete_defaultv" title="esp_event_loop_delete_default"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_loop_delete_default()</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#_CPPv431esp_event_handler_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPv" title="esp_event_handler_register_with"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_handler_register_with()</span></code></a></p></td>
+<td><p><a class="reference internal" href="#_CPPv426esp_event_handler_register16esp_event_base_t7int32_t19esp_event_handler_tPv" title="esp_event_handler_register"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_handler_register()</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#_CPPv433esp_event_handler_unregister_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_t" title="esp_event_handler_unregister_with"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_handler_unregister_with()</span></code></a></p></td>
+<td><p><a class="reference internal" href="#_CPPv428esp_event_handler_unregister16esp_event_base_t7int32_t19esp_event_handler_t" title="esp_event_handler_unregister"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_handler_unregister()</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#_CPPv417esp_event_post_to23esp_event_loop_handle_t16esp_event_base_t7int32_tPKv6size_t10TickType_t" title="esp_event_post_to"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_post_to()</span></code></a></p></td>
+<td><p><a class="reference internal" href="#_CPPv414esp_event_post16esp_event_base_t7int32_tPKv6size_t10TickType_t" title="esp_event_post"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_post()</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+<p>If you compare the signatures for both, they are mostly similar except for the lack of loop handle specification for the default event loop APIs.</p>
+<p>Other than the API difference and the special designation to which system events are posted, there is no difference in how default event loops and user event loops behave. It is even possible for users to post their own events to the default event loop, should the user opt to not create their own loops to save memory.</p>
+</section>
+<section id="notes-on-handler-registration">
+<span id="esp-event-handler-registration"></span><h2>Notes on Handler Registration<a class="headerlink" href="#notes-on-handler-registration" title="Permalink to this heading"></a></h2>
+<p>It is possible to register a single handler to multiple events individually by using multiple calls to <a class="reference internal" href="#_CPPv431esp_event_handler_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPv" title="esp_event_handler_register_with"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_handler_register_with()</span></code></a>. For those multiple calls, the specific event base and event ID can be specified with which the handler should execute.</p>
+<p>However, in some cases, it is desirable for a handler to execute on the following situations:</p>
+<ol class="arabic simple">
+<li><p>all events that get posted to a loop</p></li>
+<li><p>all events of a particular base identifier</p></li>
+</ol>
+<p>This is possible using the special event base identifier <code class="docutils literal notranslate"><span class="pre">ESP_EVENT_ANY_BASE</span></code> and special event ID <code class="docutils literal notranslate"><span class="pre">ESP_EVENT_ANY_ID</span></code>. These special identifiers may be passed as the event base and event ID arguments for <a class="reference internal" href="#_CPPv431esp_event_handler_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPv" title="esp_event_handler_register_with"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_handler_register_with()</span></code></a>.</p>
+<p>Therefore, the valid arguments to <a class="reference internal" href="#_CPPv431esp_event_handler_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPv" title="esp_event_handler_register_with"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_handler_register_with()</span></code></a> are:</p>
+<ol class="arabic simple">
+<li><p>&lt;event base&gt;, &lt;event ID&gt; - handler executes when the event with base &lt;event base&gt; and event ID &lt;event ID&gt; gets posted to the loop</p></li>
+<li><p>&lt;event base&gt;, ESP_EVENT_ANY_ID - handler executes when any event with base &lt;event base&gt; gets posted to the loop</p></li>
+<li><p>ESP_EVENT_ANY_BASE, ESP_EVENT_ANY_ID - handler executes when any event gets posted to the loop</p></li>
+</ol>
+<p>As an example, suppose the following handler registrations were performed:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">esp_event_handler_register_with</span><span class="p">(</span><span class="n">loop_handle</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_BASE</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_ID</span><span class="p">,</span><span class="w"> </span><span class="n">run_on_event_1</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+<span class="n">esp_event_handler_register_with</span><span class="p">(</span><span class="n">loop_handle</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_BASE</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_EVENT_ANY_ID</span><span class="p">,</span><span class="w"> </span><span class="n">run_on_event_2</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+<span class="n">esp_event_handler_register_with</span><span class="p">(</span><span class="n">loop_handle</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_EVENT_ANY_BASE</span><span class="p">,</span><span class="w"> </span><span class="n">ESP_EVENT_ANY_ID</span><span class="p">,</span><span class="w"> </span><span class="n">run_on_event_3</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</pre></div>
+</div>
+<p>If the hypothetical event <code class="docutils literal notranslate"><span class="pre">MY_EVENT_BASE</span></code>, <code class="docutils literal notranslate"><span class="pre">MY_EVENT_ID</span></code> is posted, all three handlers <code class="docutils literal notranslate"><span class="pre">run_on_event_1</span></code>, <code class="docutils literal notranslate"><span class="pre">run_on_event_2</span></code>, and <code class="docutils literal notranslate"><span class="pre">run_on_event_3</span></code> would execute.</p>
+<p>If the hypothetical event <code class="docutils literal notranslate"><span class="pre">MY_EVENT_BASE</span></code>, <code class="docutils literal notranslate"><span class="pre">MY_OTHER_EVENT_ID</span></code> is posted, only  <code class="docutils literal notranslate"><span class="pre">run_on_event_2</span></code> and <code class="docutils literal notranslate"><span class="pre">run_on_event_3</span></code> would execute.</p>
+<p>If the hypothetical event <code class="docutils literal notranslate"><span class="pre">MY_OTHER_EVENT_BASE</span></code>, <code class="docutils literal notranslate"><span class="pre">MY_OTHER_EVENT_ID</span></code> is posted, only <code class="docutils literal notranslate"><span class="pre">run_on_event_3</span></code> would execute.</p>
+<section id="handler-un-registering-itself">
+<h3>Handler Un-Registering Itself<a class="headerlink" href="#handler-un-registering-itself" title="Permalink to this heading"></a></h3>
+<p>In general, an event handler run by an event loop is <strong>not allowed to do any registering/unregistering activity on that event loop</strong>. There is one exception, though: un-registering itself is allowed for the handler. E.g., it is possible to do the following:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">run_on_event</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">handler_arg</span><span class="p">,</span><span class="w"> </span><span class="n">esp_event_base_t</span><span class="w"> </span><span class="n">base</span><span class="p">,</span><span class="w"> </span><span class="kt">int32_t</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">event_data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">esp_event_loop_handle_t</span><span class="w"> </span><span class="o">*</span><span class="n">loop_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">esp_event_loop_handle_t</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">handler_arg</span><span class="p">;</span>
+<span class="w">    </span><span class="n">esp_event_handler_unregister_with</span><span class="p">(</span><span class="o">*</span><span class="n">loop_handle</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_BASE</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_ID</span><span class="p">,</span><span class="w"> </span><span class="n">run_on_event</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">app_main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">esp_event_loop_handle_t</span><span class="w"> </span><span class="n">loop_handle</span><span class="p">;</span>
+<span class="w">    </span><span class="n">esp_event_loop_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">loop_args</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">loop_handle</span><span class="p">);</span>
+<span class="w">    </span><span class="n">esp_event_handler_register_with</span><span class="p">(</span><span class="n">loop_handle</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_BASE</span><span class="p">,</span><span class="w"> </span><span class="n">MY_EVENT_ID</span><span class="p">,</span><span class="w"> </span><span class="n">run_on_event</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">loop_handle</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// ... post-event MY_EVENT_BASE, MY_EVENT_ID and run loop at some point</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="handler-registration-and-handler-dispatch-order">
+<h3>Handler Registration and Handler Dispatch Order<a class="headerlink" href="#handler-registration-and-handler-dispatch-order" title="Permalink to this heading"></a></h3>
+<p>The general rule is that, for handlers that match a certain posted event during dispatch, those which are registered first also get executed first. The user can then control which handlers get executed first by registering them before other handlers, provided that all registrations are performed using a single task. If the user plans to take advantage of this behavior, caution must be exercised if there are multiple tasks registering handlers. While the 'first registered, first executed' behavior still holds true, the task which gets executed first also gets its handlers registered first. Handlers registered one after the other by a single task are still dispatched in the order relative to each other, but if that task gets pre-empted in between registration by another task that also registers handlers; then during dispatch those handlers also get executed in between.</p>
+</section>
+</section>
+<section id="event-loop-profiling">
+<h2>Event Loop Profiling<a class="headerlink" href="#event-loop-profiling" title="Permalink to this heading"></a></h2>
+<p>A configuration option <a class="reference internal" href="../kconfig-reference.html#config-esp-event-loop-profiling"><span class="std std-ref">CONFIG_ESP_EVENT_LOOP_PROFILING</span></a> can be enabled in order to activate statistics collection for all event loops created. The function <a class="reference internal" href="#_CPPv414esp_event_dumpP4FILE" title="esp_event_dump"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_dump()</span></code></a> can be used to output the collected statistics to a file stream. More details on the information included in the dump can be found in the <a class="reference internal" href="#_CPPv414esp_event_dumpP4FILE" title="esp_event_dump"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_event_dump()</span></code></a> API Reference.</p>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/esp_event/default_event_loop">system/esp_event/default_event_loop</a> demonstrates how to use the default event loop system of ESP32 to post and handle events, including declaring and defining events, creating the default event loop, posting events to the loop, and registering/unregistering event handlers.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/esp_event/user_event_loops">system/esp_event/user_event_loops</a> demonstrates how to create and use user event loops on ESP32, including creating and running event loops, registering and unregistering handlers, and posting events, with the ability to handle different use cases beyond the default event loop.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_event/include/esp_event.h">components/esp_event/include/esp_event.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_event.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_event</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_event</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_event
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_event
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421esp_event_loop_createPK21esp_event_loop_args_tP23esp_event_loop_handle_t">
+<span id="_CPPv321esp_event_loop_createPK21esp_event_loop_args_tP23esp_event_loop_handle_t"></span><span id="_CPPv221esp_event_loop_createPK21esp_event_loop_args_tP23esp_event_loop_handle_t"></span><span id="esp_event_loop_create__esp_event_loop_args_tCP.esp_event_loop_handle_tP"></span><span class="target" id="esp__event_8h_1a991511e760a8515e93e3e5d56b0779c1"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_loop_create</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv421esp_event_loop_args_t" title="esp_event_loop_args_t"><span class="n"><span class="pre">esp_event_loop_args_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">event_loop_args</span></span>, <a class="reference internal" href="#_CPPv423esp_event_loop_handle_t" title="esp_event_loop_handle_t"><span class="n"><span class="pre">esp_event_loop_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">event_loop</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421esp_event_loop_createPK21esp_event_loop_args_tP23esp_event_loop_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Create a new event loop. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_loop_args</strong> -- <strong>[in]</strong> configuration structure for the event loop to create </p></li>
+<li><p><strong>event_loop</strong> -- <strong>[out]</strong> handle to the created event loop</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG: event_loop_args or event_loop was NULL</p></li>
+<li><p>ESP_ERR_NO_MEM: Cannot allocate memory for event loops list</p></li>
+<li><p>ESP_FAIL: Failed to create task loop</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421esp_event_loop_delete23esp_event_loop_handle_t">
+<span id="_CPPv321esp_event_loop_delete23esp_event_loop_handle_t"></span><span id="_CPPv221esp_event_loop_delete23esp_event_loop_handle_t"></span><span id="esp_event_loop_delete__esp_event_loop_handle_t"></span><span class="target" id="esp__event_8h_1a2c88d55eee3cde083b04b62b16677060"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_loop_delete</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423esp_event_loop_handle_t" title="esp_event_loop_handle_t"><span class="n"><span class="pre">esp_event_loop_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_loop</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421esp_event_loop_delete23esp_event_loop_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Delete an existing event loop. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event_loop</strong> -- <strong>[in]</strong> event loop to delete, must not be NULL</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_event_loop_create_defaultv">
+<span id="_CPPv329esp_event_loop_create_defaultv"></span><span id="_CPPv229esp_event_loop_create_defaultv"></span><span id="esp_event_loop_create_default__void"></span><span class="target" id="esp__event_8h_1a64668fee1eab610522aeaaf7281f926e"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_loop_create_default</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_event_loop_create_defaultv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Create default event loop. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_NO_MEM: Cannot allocate memory for event loops list</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Default event loop has already been created</p></li>
+<li><p>ESP_FAIL: Failed to create task loop</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_event_loop_delete_defaultv">
+<span id="_CPPv329esp_event_loop_delete_defaultv"></span><span id="_CPPv229esp_event_loop_delete_defaultv"></span><span id="esp_event_loop_delete_default__void"></span><span class="target" id="esp__event_8h_1ac265ace38d3b6ccf65c27bec715cf9f2"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_loop_delete_default</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_event_loop_delete_defaultv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Delete the default event loop. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_event_loop_run23esp_event_loop_handle_t10TickType_t">
+<span id="_CPPv318esp_event_loop_run23esp_event_loop_handle_t10TickType_t"></span><span id="_CPPv218esp_event_loop_run23esp_event_loop_handle_t10TickType_t"></span><span id="esp_event_loop_run__esp_event_loop_handle_t.TickType_t"></span><span class="target" id="esp__event_8h_1a2dcf3c67ff7f66d41c2f4942c90e341b"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_loop_run</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423esp_event_loop_handle_t" title="esp_event_loop_handle_t"><span class="n"><span class="pre">esp_event_loop_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_loop</span></span>, <span class="n"><span class="pre">TickType_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ticks_to_run</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_event_loop_run23esp_event_loop_handle_t10TickType_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Dispatch events posted to an event loop. </p>
+<p>This function is used to dispatch events posted to a loop with no dedicated task, i.e. task name was set to NULL in event_loop_args argument during loop creation. This function includes an argument to limit the amount of time it runs, returning control to the caller when that time expires (or some time afterwards). There is no guarantee that a call to this function will exit at exactly the time of expiry. There is also no guarantee that events have been dispatched during the call, as the function might have spent all the allotted time waiting on the event queue. Once an event has been dequeued, however, it is guaranteed to be dispatched. This guarantee contributes to not being able to exit exactly at time of expiry as (1) blocking on internal mutexes is necessary for dispatching the dequeued event, and (2) during dispatch of the dequeued event there is no way to control the time occupied by handler code execution. The guaranteed time of exit is therefore the allotted time + amount of time required to dispatch the last dequeued event.</p>
+<p>In cases where waiting on the queue times out, ESP_OK is returned and not ESP_ERR_TIMEOUT, since it is normal behavior.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>encountering an unknown event that has been posted to the loop will only generate a warning, not an error.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_loop</strong> -- <strong>[in]</strong> event loop to dispatch posted events from, must not be NULL </p></li>
+<li><p><strong>ticks_to_run</strong> -- <strong>[in]</strong> number of ticks to run the loop</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426esp_event_handler_register16esp_event_base_t7int32_t19esp_event_handler_tPv">
+<span id="_CPPv326esp_event_handler_register16esp_event_base_t7int32_t19esp_event_handler_tPv"></span><span id="_CPPv226esp_event_handler_register16esp_event_base_t7int32_t19esp_event_handler_tPv"></span><span id="esp_event_handler_register__esp_event_base_t.int32_t.esp_event_handler_t.voidP"></span><span class="target" id="esp__event_8h_1a432e12c13505fbad2ceb04083ca0089c"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_handler_register</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_base</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_id</span></span>, <a class="reference internal" href="#_CPPv419esp_event_handler_t" title="esp_event_handler_t"><span class="n"><span class="pre">esp_event_handler_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_handler</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">event_handler_arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426esp_event_handler_register16esp_event_base_t7int32_t19esp_event_handler_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Register an event handler to the system event loop (legacy). </p>
+<p>This function can be used to register a handler for either: (1) specific events, (2) all events of a certain event base, or (3) all events known by the system event loop.</p>
+<p><ul class="simple">
+<li><p>specific events: specify exact event_base and event_id</p></li>
+<li><p>all events of a certain base: specify exact event_base and use ESP_EVENT_ANY_ID as the event_id</p></li>
+<li><p>all events known by the loop: use ESP_EVENT_ANY_BASE for event_base and ESP_EVENT_ANY_ID as the event_id</p></li>
+</ul>
+</p>
+<p>Registering multiple handlers to events is possible. Registering a single handler to multiple events is also possible. However, registering the same handler to the same event multiple times would cause the overwriting of the event_handler_arg but the handler will be kept at the same position in the list associated with the event that triggers it. It means that the call order of registered handlers for that event will remain the same.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>the event loop library does not maintain a copy of event_handler_arg, therefore the user should ensure that event_handler_arg still points to a valid location by the time the handler gets called</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_base</strong> -- <strong>[in]</strong> the base ID of the event to register the handler for </p></li>
+<li><p><strong>event_id</strong> -- <strong>[in]</strong> the ID of the event to register the handler for </p></li>
+<li><p><strong>event_handler</strong> -- <strong>[in]</strong> the handler function which gets called when the event is dispatched </p></li>
+<li><p><strong>event_handler_arg</strong> -- <strong>[in]</strong> data, aside from event data, that is passed to the handler when it is called</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_NO_MEM: Cannot allocate memory for the handler</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid combination of event base and event ID</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv431esp_event_handler_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPv">
+<span id="_CPPv331esp_event_handler_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPv"></span><span id="_CPPv231esp_event_handler_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPv"></span><span id="esp_event_handler_register_with__esp_event_loop_handle_t.esp_event_base_t.int32_t.esp_event_handler_t.voidP"></span><span class="target" id="esp__event_8h_1a133723d207f19e24fd703f169e21136b"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_handler_register_with</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423esp_event_loop_handle_t" title="esp_event_loop_handle_t"><span class="n"><span class="pre">esp_event_loop_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_loop</span></span>, <a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_base</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_id</span></span>, <a class="reference internal" href="#_CPPv419esp_event_handler_t" title="esp_event_handler_t"><span class="n"><span class="pre">esp_event_handler_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_handler</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">event_handler_arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv431esp_event_handler_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Register an event handler to a specific loop (legacy). </p>
+<p>This function behaves in the same manner as esp_event_handler_register, except the additional specification of the event loop to register the handler to.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>the event loop library does not maintain a copy of event_handler_arg, therefore the user should ensure that event_handler_arg still points to a valid location by the time the handler gets called</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_loop</strong> -- <strong>[in]</strong> the event loop to register this handler function to, must not be NULL </p></li>
+<li><p><strong>event_base</strong> -- <strong>[in]</strong> the base ID of the event to register the handler for </p></li>
+<li><p><strong>event_id</strong> -- <strong>[in]</strong> the ID of the event to register the handler for </p></li>
+<li><p><strong>event_handler</strong> -- <strong>[in]</strong> the handler function which gets called when the event is dispatched </p></li>
+<li><p><strong>event_handler_arg</strong> -- <strong>[in]</strong> data, aside from event data, that is passed to the handler when it is called</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_NO_MEM: Cannot allocate memory for the handler</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid combination of event base and event ID</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv440esp_event_handler_instance_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPvP28esp_event_handler_instance_t">
+<span id="_CPPv340esp_event_handler_instance_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPvP28esp_event_handler_instance_t"></span><span id="_CPPv240esp_event_handler_instance_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPvP28esp_event_handler_instance_t"></span><span id="esp_event_handler_instance_register_with__esp_event_loop_handle_t.esp_event_base_t.int32_t.esp_event_handler_t.voidP.esp_event_handler_instance_tP"></span><span class="target" id="esp__event_8h_1a2aca507a075d3478d738a9ba0fe7aedb"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_handler_instance_register_with</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423esp_event_loop_handle_t" title="esp_event_loop_handle_t"><span class="n"><span class="pre">esp_event_loop_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_loop</span></span>, <a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_base</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_id</span></span>, <a class="reference internal" href="#_CPPv419esp_event_handler_t" title="esp_event_handler_t"><span class="n"><span class="pre">esp_event_handler_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_handler</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">event_handler_arg</span></span>, <a class="reference internal" href="#_CPPv428esp_event_handler_instance_t" title="esp_event_handler_instance_t"><span class="n"><span class="pre">esp_event_handler_instance_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">instance</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv440esp_event_handler_instance_register_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_tPvP28esp_event_handler_instance_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Register an instance of event handler to a specific loop. </p>
+<p>This function can be used to register a handler for either: (1) specific events, (2) all events of a certain event base, or (3) all events known by the system event loop.</p>
+<p><ul class="simple">
+<li><p>specific events: specify exact event_base and event_id</p></li>
+<li><p>all events of a certain base: specify exact event_base and use ESP_EVENT_ANY_ID as the event_id</p></li>
+<li><p>all events known by the loop: use ESP_EVENT_ANY_BASE for event_base and ESP_EVENT_ANY_ID as the event_id</p></li>
+</ul>
+</p>
+<p>Besides the error, the function returns an instance object as output parameter to identify each registration. This is necessary to remove (unregister) the registration before the event loop is deleted.</p>
+<p>Registering multiple handlers to events, registering a single handler to multiple events as well as registering the same handler to the same event multiple times is possible. Each registration yields a distinct instance object which identifies it over the registration lifetime.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>the event loop library does not maintain a copy of event_handler_arg, therefore the user should ensure that event_handler_arg still points to a valid location by the time the handler gets called</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Calling this function with instance set to NULL is equivalent to calling esp_event_handler_register_with.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_loop</strong> -- <strong>[in]</strong> the event loop to register this handler function to, must not be NULL </p></li>
+<li><p><strong>event_base</strong> -- <strong>[in]</strong> the base ID of the event to register the handler for </p></li>
+<li><p><strong>event_id</strong> -- <strong>[in]</strong> the ID of the event to register the handler for </p></li>
+<li><p><strong>event_handler</strong> -- <strong>[in]</strong> the handler function which gets called when the event is dispatched </p></li>
+<li><p><strong>event_handler_arg</strong> -- <strong>[in]</strong> data, aside from event data, that is passed to the handler when it is called </p></li>
+<li><p><strong>instance</strong> -- <strong>[out]</strong> An event handler instance object related to the registered event handler and data, can be NULL. This needs to be kept if the specific callback instance should be unregistered before deleting the whole event loop. Registering the same event handler multiple times is possible and yields distinct instance objects. The data can be the same for all registrations. If no unregistration is needed, but the handler should be deleted when the event loop is deleted, instance can be NULL.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_NO_MEM: Cannot allocate memory for the handler</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid combination of event base and event ID or instance is NULL</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv435esp_event_handler_instance_register16esp_event_base_t7int32_t19esp_event_handler_tPvP28esp_event_handler_instance_t">
+<span id="_CPPv335esp_event_handler_instance_register16esp_event_base_t7int32_t19esp_event_handler_tPvP28esp_event_handler_instance_t"></span><span id="_CPPv235esp_event_handler_instance_register16esp_event_base_t7int32_t19esp_event_handler_tPvP28esp_event_handler_instance_t"></span><span id="esp_event_handler_instance_register__esp_event_base_t.int32_t.esp_event_handler_t.voidP.esp_event_handler_instance_tP"></span><span class="target" id="esp__event_8h_1affa67e02d3f3cda89b3726425fc8cedc"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_handler_instance_register</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_base</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_id</span></span>, <a class="reference internal" href="#_CPPv419esp_event_handler_t" title="esp_event_handler_t"><span class="n"><span class="pre">esp_event_handler_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_handler</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">event_handler_arg</span></span>, <a class="reference internal" href="#_CPPv428esp_event_handler_instance_t" title="esp_event_handler_instance_t"><span class="n"><span class="pre">esp_event_handler_instance_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">instance</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv435esp_event_handler_instance_register16esp_event_base_t7int32_t19esp_event_handler_tPvP28esp_event_handler_instance_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Register an instance of event handler to the default loop. </p>
+<p>This function does the same as esp_event_handler_instance_register_with, except that it registers the handler to the default event loop.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>the event loop library does not maintain a copy of event_handler_arg, therefore the user should ensure that event_handler_arg still points to a valid location by the time the handler gets called</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Calling this function with instance set to NULL is equivalent to calling esp_event_handler_register.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_base</strong> -- <strong>[in]</strong> the base ID of the event to register the handler for </p></li>
+<li><p><strong>event_id</strong> -- <strong>[in]</strong> the ID of the event to register the handler for </p></li>
+<li><p><strong>event_handler</strong> -- <strong>[in]</strong> the handler function which gets called when the event is dispatched </p></li>
+<li><p><strong>event_handler_arg</strong> -- <strong>[in]</strong> data, aside from event data, that is passed to the handler when it is called </p></li>
+<li><p><strong>instance</strong> -- <strong>[out]</strong> An event handler instance object related to the registered event handler and data, can be NULL. This needs to be kept if the specific callback instance should be unregistered before deleting the whole event loop. Registering the same event handler multiple times is possible and yields distinct instance objects. The data can be the same for all registrations. If no unregistration is needed, but the handler should be deleted when the event loop is deleted, instance can be NULL.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_NO_MEM: Cannot allocate memory for the handler</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid combination of event base and event ID or instance is NULL</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_event_handler_unregister16esp_event_base_t7int32_t19esp_event_handler_t">
+<span id="_CPPv328esp_event_handler_unregister16esp_event_base_t7int32_t19esp_event_handler_t"></span><span id="_CPPv228esp_event_handler_unregister16esp_event_base_t7int32_t19esp_event_handler_t"></span><span id="esp_event_handler_unregister__esp_event_base_t.int32_t.esp_event_handler_t"></span><span class="target" id="esp__event_8h_1a2b88455e5300630804a3d56bce9f89cb"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_handler_unregister</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_base</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_id</span></span>, <a class="reference internal" href="#_CPPv419esp_event_handler_t" title="esp_event_handler_t"><span class="n"><span class="pre">esp_event_handler_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_handler</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_event_handler_unregister16esp_event_base_t7int32_t19esp_event_handler_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Unregister a handler with the system event loop (legacy). </p>
+<p>Unregisters a handler, so it will no longer be called during dispatch. Handlers can be unregistered for any combination of event_base and event_id which were previously registered. To unregister a handler, the event_base and event_id arguments must match exactly the arguments passed to esp_event_handler_register() when that handler was registered. Passing ESP_EVENT_ANY_BASE and/or ESP_EVENT_ANY_ID will only unregister handlers that were registered with the same wildcard arguments.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When using ESP_EVENT_ANY_ID, handlers registered to specific event IDs using the same base will not be unregistered. When using ESP_EVENT_ANY_BASE, events registered to specific bases will also not be unregistered. This avoids accidental unregistration of handlers registered by other users or components.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_base</strong> -- <strong>[in]</strong> the base of the event with which to unregister the handler </p></li>
+<li><p><strong>event_id</strong> -- <strong>[in]</strong> the ID of the event with which to unregister the handler </p></li>
+<li><p><strong>event_handler</strong> -- <strong>[in]</strong> the handler to unregister</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK success </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ESP_ERR_INVALID_ARG invalid combination of event base and event ID </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>others fail </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv433esp_event_handler_unregister_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_t">
+<span id="_CPPv333esp_event_handler_unregister_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_t"></span><span id="_CPPv233esp_event_handler_unregister_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_t"></span><span id="esp_event_handler_unregister_with__esp_event_loop_handle_t.esp_event_base_t.int32_t.esp_event_handler_t"></span><span class="target" id="esp__event_8h_1a63e9705c5d649d73f5e255dac761bc5c"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_handler_unregister_with</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423esp_event_loop_handle_t" title="esp_event_loop_handle_t"><span class="n"><span class="pre">esp_event_loop_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_loop</span></span>, <a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_base</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_id</span></span>, <a class="reference internal" href="#_CPPv419esp_event_handler_t" title="esp_event_handler_t"><span class="n"><span class="pre">esp_event_handler_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_handler</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv433esp_event_handler_unregister_with23esp_event_loop_handle_t16esp_event_base_t7int32_t19esp_event_handler_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Unregister a handler from a specific event loop (legacy). </p>
+<p>This function behaves in the same manner as esp_event_handler_unregister, except the additional specification of the event loop to unregister the handler with.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_loop</strong> -- <strong>[in]</strong> the event loop with which to unregister this handler function, must not be NULL </p></li>
+<li><p><strong>event_base</strong> -- <strong>[in]</strong> the base of the event with which to unregister the handler </p></li>
+<li><p><strong>event_id</strong> -- <strong>[in]</strong> the ID of the event with which to unregister the handler </p></li>
+<li><p><strong>event_handler</strong> -- <strong>[in]</strong> the handler to unregister</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid combination of event base and event ID</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv442esp_event_handler_instance_unregister_with23esp_event_loop_handle_t16esp_event_base_t7int32_t28esp_event_handler_instance_t">
+<span id="_CPPv342esp_event_handler_instance_unregister_with23esp_event_loop_handle_t16esp_event_base_t7int32_t28esp_event_handler_instance_t"></span><span id="_CPPv242esp_event_handler_instance_unregister_with23esp_event_loop_handle_t16esp_event_base_t7int32_t28esp_event_handler_instance_t"></span><span id="esp_event_handler_instance_unregister_with__esp_event_loop_handle_t.esp_event_base_t.int32_t.esp_event_handler_instance_t"></span><span class="target" id="esp__event_8h_1a4a0724cb909c68bea21bad090b9677e5"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_handler_instance_unregister_with</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423esp_event_loop_handle_t" title="esp_event_loop_handle_t"><span class="n"><span class="pre">esp_event_loop_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_loop</span></span>, <a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_base</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_id</span></span>, <a class="reference internal" href="#_CPPv428esp_event_handler_instance_t" title="esp_event_handler_instance_t"><span class="n"><span class="pre">esp_event_handler_instance_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">instance</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv442esp_event_handler_instance_unregister_with23esp_event_loop_handle_t16esp_event_base_t7int32_t28esp_event_handler_instance_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Unregister a handler instance from a specific event loop. </p>
+<p>Unregisters a handler instance, so it will no longer be called during dispatch. Handler instances can be unregistered for any combination of event_base and event_id which were previously registered. To unregister a handler instance, the event_base and event_id arguments must match exactly the arguments passed to esp_event_handler_instance_register() when that handler instance was registered. Passing ESP_EVENT_ANY_BASE and/or ESP_EVENT_ANY_ID will only unregister handler instances that were registered with the same wildcard arguments.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When using ESP_EVENT_ANY_ID, handlers registered to specific event IDs using the same base will not be unregistered. When using ESP_EVENT_ANY_BASE, events registered to specific bases will also not be unregistered. This avoids accidental unregistration of handlers registered by other users or components.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_loop</strong> -- <strong>[in]</strong> the event loop with which to unregister this handler function, must not be NULL </p></li>
+<li><p><strong>event_base</strong> -- <strong>[in]</strong> the base of the event with which to unregister the handler </p></li>
+<li><p><strong>event_id</strong> -- <strong>[in]</strong> the ID of the event with which to unregister the handler </p></li>
+<li><p><strong>instance</strong> -- <strong>[in]</strong> the instance object of the registration to be unregistered</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid combination of event base and event ID</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv437esp_event_handler_instance_unregister16esp_event_base_t7int32_t28esp_event_handler_instance_t">
+<span id="_CPPv337esp_event_handler_instance_unregister16esp_event_base_t7int32_t28esp_event_handler_instance_t"></span><span id="_CPPv237esp_event_handler_instance_unregister16esp_event_base_t7int32_t28esp_event_handler_instance_t"></span><span id="esp_event_handler_instance_unregister__esp_event_base_t.int32_t.esp_event_handler_instance_t"></span><span class="target" id="esp__event_8h_1adc2bfe7675f240fcf708c52561809d81"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_handler_instance_unregister</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_base</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_id</span></span>, <a class="reference internal" href="#_CPPv428esp_event_handler_instance_t" title="esp_event_handler_instance_t"><span class="n"><span class="pre">esp_event_handler_instance_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">instance</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv437esp_event_handler_instance_unregister16esp_event_base_t7int32_t28esp_event_handler_instance_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Unregister a handler from the system event loop. </p>
+<p>This function does the same as esp_event_handler_instance_unregister_with, except that it unregisters the handler instance from the default event loop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_base</strong> -- <strong>[in]</strong> the base of the event with which to unregister the handler </p></li>
+<li><p><strong>event_id</strong> -- <strong>[in]</strong> the ID of the event with which to unregister the handler </p></li>
+<li><p><strong>instance</strong> -- <strong>[in]</strong> the instance object of the registration to be unregistered</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid combination of event base and event ID</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414esp_event_post16esp_event_base_t7int32_tPKv6size_t10TickType_t">
+<span id="_CPPv314esp_event_post16esp_event_base_t7int32_tPKv6size_t10TickType_t"></span><span id="_CPPv214esp_event_post16esp_event_base_t7int32_tPKv6size_t10TickType_t"></span><span id="esp_event_post__esp_event_base_t.int32_t.voidCP.s.TickType_t"></span><span class="target" id="esp__event_8h_1a997f11fd3d5fadd31c4ab68abc4009fc"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_post</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_base</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_id</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">event_data</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_data_size</span></span>, <span class="n"><span class="pre">TickType_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ticks_to_wait</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414esp_event_post16esp_event_base_t7int32_tPKv6size_t10TickType_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Posts an event to the system default event loop. The event loop library keeps a copy of event_data and manages the copy's lifetime automatically (allocation + deletion); this ensures that the data the handler receives is always valid. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_base</strong> -- <strong>[in]</strong> the event base that identifies the event </p></li>
+<li><p><strong>event_id</strong> -- <strong>[in]</strong> the event ID that identifies the event </p></li>
+<li><p><strong>event_data</strong> -- <strong>[in]</strong> the data, specific to the event occurrence, that gets passed to the handler </p></li>
+<li><p><strong>event_data_size</strong> -- <strong>[in]</strong> the size of the event data </p></li>
+<li><p><strong>ticks_to_wait</strong> -- <strong>[in]</strong> number of ticks to block on a full event queue</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_TIMEOUT: Time to wait for event queue to unblock expired, queue full when posting from ISR</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid combination of event base and event ID</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417esp_event_post_to23esp_event_loop_handle_t16esp_event_base_t7int32_tPKv6size_t10TickType_t">
+<span id="_CPPv317esp_event_post_to23esp_event_loop_handle_t16esp_event_base_t7int32_tPKv6size_t10TickType_t"></span><span id="_CPPv217esp_event_post_to23esp_event_loop_handle_t16esp_event_base_t7int32_tPKv6size_t10TickType_t"></span><span id="esp_event_post_to__esp_event_loop_handle_t.esp_event_base_t.int32_t.voidCP.s.TickType_t"></span><span class="target" id="esp__event_8h_1af05701b428b1c9e22991680a1e8785ba"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_post_to</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423esp_event_loop_handle_t" title="esp_event_loop_handle_t"><span class="n"><span class="pre">esp_event_loop_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_loop</span></span>, <a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_base</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_id</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">event_data</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_data_size</span></span>, <span class="n"><span class="pre">TickType_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ticks_to_wait</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417esp_event_post_to23esp_event_loop_handle_t16esp_event_base_t7int32_tPKv6size_t10TickType_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Posts an event to the specified event loop. The event loop library keeps a copy of event_data and manages the copy's lifetime automatically (allocation + deletion); this ensures that the data the handler receives is always valid. </p>
+<p>This function behaves in the same manner as esp_event_post, except the additional specification of the event loop to post the event to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_loop</strong> -- <strong>[in]</strong> the event loop to post to, must not be NULL </p></li>
+<li><p><strong>event_base</strong> -- <strong>[in]</strong> the event base that identifies the event </p></li>
+<li><p><strong>event_id</strong> -- <strong>[in]</strong> the event ID that identifies the event </p></li>
+<li><p><strong>event_data</strong> -- <strong>[in]</strong> the data, specific to the event occurrence, that gets passed to the handler </p></li>
+<li><p><strong>event_data_size</strong> -- <strong>[in]</strong> the size of the event data </p></li>
+<li><p><strong>ticks_to_wait</strong> -- <strong>[in]</strong> number of ticks to block on a full event queue</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_TIMEOUT: Time to wait for event queue to unblock expired, queue full when posting from ISR</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid combination of event base and event ID</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_event_isr_post16esp_event_base_t7int32_tPKv6size_tP10BaseType_t">
+<span id="_CPPv318esp_event_isr_post16esp_event_base_t7int32_tPKv6size_tP10BaseType_t"></span><span id="_CPPv218esp_event_isr_post16esp_event_base_t7int32_tPKv6size_tP10BaseType_t"></span><span id="esp_event_isr_post__esp_event_base_t.int32_t.voidCP.s.BaseType_tP"></span><span class="target" id="esp__event_8h_1a5bb5e9e30ea47e6232af4bbdd16481b7"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_isr_post</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_base</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_id</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">event_data</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_data_size</span></span>, <span class="n"><span class="pre">BaseType_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">task_unblocked</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_event_isr_post16esp_event_base_t7int32_tPKv6size_tP10BaseType_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Special variant of esp_event_post for posting events from interrupt handlers. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>this function is only available when CONFIG_ESP_EVENT_POST_FROM_ISR is enabled </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>when this function is called from an interrupt handler placed in IRAM, this function should be placed in IRAM as well by enabling CONFIG_ESP_EVENT_POST_FROM_IRAM_ISR</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_base</strong> -- <strong>[in]</strong> the event base that identifies the event </p></li>
+<li><p><strong>event_id</strong> -- <strong>[in]</strong> the event ID that identifies the event </p></li>
+<li><p><strong>event_data</strong> -- <strong>[in]</strong> the data, specific to the event occurrence, that gets passed to the handler </p></li>
+<li><p><strong>event_data_size</strong> -- <strong>[in]</strong> the size of the event data; max is 4 bytes </p></li>
+<li><p><strong>task_unblocked</strong> -- <strong>[out]</strong> an optional parameter (can be NULL) which indicates that an event task with higher priority than currently running task has been unblocked by the posted event; a context switch should be requested before the interrupt is existed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_FAIL: Event queue for the default event loop full</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid combination of event base and event ID, data size of more than 4 bytes</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421esp_event_isr_post_to23esp_event_loop_handle_t16esp_event_base_t7int32_tPKv6size_tP10BaseType_t">
+<span id="_CPPv321esp_event_isr_post_to23esp_event_loop_handle_t16esp_event_base_t7int32_tPKv6size_tP10BaseType_t"></span><span id="_CPPv221esp_event_isr_post_to23esp_event_loop_handle_t16esp_event_base_t7int32_tPKv6size_tP10BaseType_t"></span><span id="esp_event_isr_post_to__esp_event_loop_handle_t.esp_event_base_t.int32_t.voidCP.s.BaseType_tP"></span><span class="target" id="esp__event_8h_1abb6a369b230b7f8ce0a71b9a1fdf73a5"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_isr_post_to</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423esp_event_loop_handle_t" title="esp_event_loop_handle_t"><span class="n"><span class="pre">esp_event_loop_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_loop</span></span>, <a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">event_base</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_id</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">event_data</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event_data_size</span></span>, <span class="n"><span class="pre">BaseType_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">task_unblocked</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421esp_event_isr_post_to23esp_event_loop_handle_t16esp_event_base_t7int32_tPKv6size_tP10BaseType_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Special variant of esp_event_post_to for posting events from interrupt handlers. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>this function is only available when CONFIG_ESP_EVENT_POST_FROM_ISR is enabled </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>when this function is called from an interrupt handler placed in IRAM, this function should be placed in IRAM as well by enabling CONFIG_ESP_EVENT_POST_FROM_IRAM_ISR</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_loop</strong> -- <strong>[in]</strong> the event loop to post to, must not be NULL </p></li>
+<li><p><strong>event_base</strong> -- <strong>[in]</strong> the event base that identifies the event </p></li>
+<li><p><strong>event_id</strong> -- <strong>[in]</strong> the event ID that identifies the event </p></li>
+<li><p><strong>event_data</strong> -- <strong>[in]</strong> the data, specific to the event occurrence, that gets passed to the handler </p></li>
+<li><p><strong>event_data_size</strong> -- <strong>[in]</strong> the size of the event data </p></li>
+<li><p><strong>task_unblocked</strong> -- <strong>[out]</strong> an optional parameter (can be NULL) which indicates that an event task with higher priority than currently running task has been unblocked by the posted event; a context switch should be requested before the interrupt is existed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_FAIL: Event queue for the loop full</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Invalid combination of event base and event ID, data size of more than 4 bytes</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414esp_event_dumpP4FILE">
+<span id="_CPPv314esp_event_dumpP4FILE"></span><span id="_CPPv214esp_event_dumpP4FILE"></span><span id="esp_event_dump__FILEP"></span><span class="target" id="esp__event_8h_1aece9cc703d28ae3f42775677d15bee7e"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_dump</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">FILE</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">file</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414esp_event_dumpP4FILE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Dumps statistics of all event loops. </p>
+<p>Dumps event loop info in the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="n">event</span> <span class="n">loop</span>
+          <span class="n">handler</span>
+          <span class="n">handler</span>
+          <span class="o">...</span>
+      <span class="n">event</span> <span class="n">loop</span>
+          <span class="n">handler</span>
+          <span class="n">handler</span>
+          <span class="o">...</span>
+
+ <span class="n">where</span><span class="p">:</span>
+
+  <span class="n">event</span> <span class="n">loop</span>
+      <span class="nb">format</span><span class="p">:</span> <span class="n">address</span><span class="p">,</span><span class="n">name</span> <span class="n">rx</span><span class="p">:</span><span class="n">total_received</span> <span class="n">dr</span><span class="p">:</span><span class="n">total_dropped</span>
+      <span class="n">where</span><span class="p">:</span>
+          <span class="n">address</span> <span class="o">-</span> <span class="n">memory</span> <span class="n">address</span> <span class="n">of</span> <span class="n">the</span> <span class="n">event</span> <span class="n">loop</span>
+          <span class="n">name</span> <span class="o">-</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">event</span> <span class="n">loop</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span> <span class="k">if</span> <span class="n">no</span> <span class="n">dedicated</span> <span class="n">task</span>
+          <span class="n">total_received</span> <span class="o">-</span> <span class="n">number</span> <span class="n">of</span> <span class="n">successfully</span> <span class="n">posted</span> <span class="n">events</span>
+          <span class="n">total_dropped</span> <span class="o">-</span> <span class="n">number</span> <span class="n">of</span> <span class="n">events</span> <span class="n">unsuccessfully</span> <span class="n">posted</span> <span class="n">due</span> <span class="n">to</span> <span class="n">queue</span> <span class="n">being</span> <span class="n">full</span>
+
+  <span class="n">handler</span>
+      <span class="nb">format</span><span class="p">:</span> <span class="n">address</span> <span class="n">ev</span><span class="p">:</span><span class="n">base</span><span class="p">,</span><span class="nb">id</span> <span class="n">inv</span><span class="p">:</span><span class="n">total_invoked</span> <span class="n">run</span><span class="p">:</span><span class="n">total_runtime</span>
+      <span class="n">where</span><span class="p">:</span>
+          <span class="n">address</span> <span class="o">-</span> <span class="n">address</span> <span class="n">of</span> <span class="n">the</span> <span class="n">handler</span> <span class="n">function</span>
+          <span class="n">base</span><span class="p">,</span><span class="nb">id</span> <span class="o">-</span> <span class="n">the</span> <span class="n">event</span> <span class="n">specified</span> <span class="n">by</span> <span class="n">event</span> <span class="n">base</span> <span class="ow">and</span> <span class="n">ID</span> <span class="n">this</span> <span class="n">handler</span> <span class="n">executes</span>
+          <span class="n">total_invoked</span> <span class="o">-</span> <span class="n">number</span> <span class="n">of</span> <span class="n">times</span> <span class="n">this</span> <span class="n">handler</span> <span class="n">has</span> <span class="n">been</span> <span class="n">invoked</span>
+          <span class="n">total_runtime</span> <span class="o">-</span> <span class="n">total</span> <span class="n">amount</span> <span class="n">of</span> <span class="n">time</span> <span class="n">used</span> <span class="k">for</span> <span class="n">invoking</span> <span class="n">this</span> <span class="n">handler</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>this function is a noop when CONFIG_ESP_EVENT_LOOP_PROFILING is disabled</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file</strong> -- <strong>[in]</strong> the file stream to output to</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Success</p></li>
+<li><p>ESP_ERR_NO_MEM: Cannot allocate memory for event loops list</p></li>
+<li><p>Others: Fail </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv421esp_event_loop_args_t">
+<span id="_CPPv321esp_event_loop_args_t"></span><span id="_CPPv221esp_event_loop_args_t"></span><span id="esp_event_loop_args_t"></span><span class="target" id="structesp__event__loop__args__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_loop_args_t</span></span></span><a class="headerlink" href="#_CPPv421esp_event_loop_args_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Configuration for creating event loops. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_event_loop_args_t10queue_sizeE">
+<span id="_CPPv3N21esp_event_loop_args_t10queue_sizeE"></span><span id="_CPPv2N21esp_event_loop_args_t10queue_sizeE"></span><span id="esp_event_loop_args_t::queue_size__int32_t"></span><span class="target" id="structesp__event__loop__args__t_1a0e7ad4ca0cb4274e852e95f9ad033ecf"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">queue_size</span></span></span><a class="headerlink" href="#_CPPv4N21esp_event_loop_args_t10queue_sizeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>size of the event loop queue </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_event_loop_args_t9task_nameE">
+<span id="_CPPv3N21esp_event_loop_args_t9task_nameE"></span><span id="_CPPv2N21esp_event_loop_args_t9task_nameE"></span><span id="esp_event_loop_args_t::task_name__cCP"></span><span class="target" id="structesp__event__loop__args__t_1a897f1bd2a140a6f6bf56e7921b3828b2"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">task_name</span></span></span><a class="headerlink" href="#_CPPv4N21esp_event_loop_args_t9task_nameE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>name of the event loop task; if NULL, a dedicated task is not created for event loop </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_event_loop_args_t13task_priorityE">
+<span id="_CPPv3N21esp_event_loop_args_t13task_priorityE"></span><span id="_CPPv2N21esp_event_loop_args_t13task_priorityE"></span><span id="esp_event_loop_args_t::task_priority__UBaseType_t"></span><span class="target" id="structesp__event__loop__args__t_1a7c2def310a9c60ba16e057e79c714220"></span><span class="n"><span class="pre">UBaseType_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">task_priority</span></span></span><a class="headerlink" href="#_CPPv4N21esp_event_loop_args_t13task_priorityE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>priority of the event loop task, ignored if task name is NULL </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_event_loop_args_t15task_stack_sizeE">
+<span id="_CPPv3N21esp_event_loop_args_t15task_stack_sizeE"></span><span id="_CPPv2N21esp_event_loop_args_t15task_stack_sizeE"></span><span id="esp_event_loop_args_t::task_stack_size__uint32_t"></span><span class="target" id="structesp__event__loop__args__t_1af89feaf0d34a918395f3cbec41292bdb"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">task_stack_size</span></span></span><a class="headerlink" href="#_CPPv4N21esp_event_loop_args_t15task_stack_sizeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>stack size of the event loop task, ignored if task name is NULL </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_event_loop_args_t12task_core_idE">
+<span id="_CPPv3N21esp_event_loop_args_t12task_core_idE"></span><span id="_CPPv2N21esp_event_loop_args_t12task_core_idE"></span><span id="esp_event_loop_args_t::task_core_id__BaseType_t"></span><span class="target" id="structesp__event__loop__args__t_1a8d6163a8d207608d340d49e1c99e25ba"></span><span class="n"><span class="pre">BaseType_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">task_core_id</span></span></span><a class="headerlink" href="#_CPPv4N21esp_event_loop_args_t12task_core_idE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>core to which the event loop task is pinned to, ignored if task name is NULL </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_event/include/esp_event_base.h">components/esp_event/include/esp_event_base.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_event_base.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_event</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_event</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_event
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_event
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_EVENT_DECLARE_BASE">
+<span class="target" id="esp__event__base_8h_1a3cc3b4ab5605e061e27c6ebf51dd21e0"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_EVENT_DECLARE_BASE</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">id</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ESP_EVENT_DECLARE_BASE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_EVENT_DEFINE_BASE">
+<span class="target" id="esp__event__base_8h_1a976a60f8c28c34c3e308ec98a9e3111b"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_EVENT_DEFINE_BASE</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">id</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ESP_EVENT_DEFINE_BASE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_EVENT_ANY_BASE">
+<span class="target" id="esp__event__base_8h_1a93b223577987eb92ba7e5e3e36e1d648"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_EVENT_ANY_BASE</span></span></span><a class="headerlink" href="#c.ESP_EVENT_ANY_BASE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>register handler for any event base </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_EVENT_ANY_ID">
+<span class="target" id="esp__event__base_8h_1a583ac03c4483940dced94ce86fc3b70a"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_EVENT_ANY_ID</span></span></span><a class="headerlink" href="#c.ESP_EVENT_ANY_ID" title="Permalink to this definition"></a><br /></dt>
+<dd><p>register handler for any event id </p>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv416esp_event_base_t">
+<span id="_CPPv316esp_event_base_t"></span><span id="_CPPv216esp_event_base_t"></span><span id="esp_event_base_t"></span><span class="target" id="esp__event__base_8h_1a4e776a2d890806fb130046f4fd03ba47"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_base_t</span></span></span><a class="headerlink" href="#_CPPv416esp_event_base_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>unique pointer to a subsystem that exposes events </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv423esp_event_loop_handle_t">
+<span id="_CPPv323esp_event_loop_handle_t"></span><span id="_CPPv223esp_event_loop_handle_t"></span><span id="esp_event_loop_handle_t"></span><span class="target" id="esp__event__base_8h_1a0af1d504604f9ad0b80014611ea3d14e"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_loop_handle_t</span></span></span><a class="headerlink" href="#_CPPv423esp_event_loop_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>a number that identifies an event with respect to a base </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv419esp_event_handler_t">
+<span id="_CPPv319esp_event_handler_t"></span><span id="_CPPv219esp_event_handler_t"></span><span id="esp_event_handler_t"></span><span class="target" id="esp__event__base_8h_1a2d47ebb500566ce43f9593ff0585c5c9"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_handler_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">event_handler_arg</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv416esp_event_base_t" title="esp_event_base_t"><span class="n"><span class="pre">esp_event_base_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">event_base</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n"><span class="pre">event_id</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">event_data</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv419esp_event_handler_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>function called when an event is posted to the queue </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv428esp_event_handler_instance_t">
+<span id="_CPPv328esp_event_handler_instance_t"></span><span id="_CPPv228esp_event_handler_instance_t"></span><span id="esp_event_handler_instance_t"></span><span class="target" id="esp__event__base_8h_1aa8138be122d9cc2d5b88debe29ca37a7"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_event_handler_instance_t</span></span></span><a class="headerlink" href="#_CPPv428esp_event_handler_instance_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>context identifying an instance of a registered event handler </p>
+</dd></dl>
+
+</section>
+</section>
+<section id="related-documents">
+<h2>Related Documents<a class="headerlink" href="#related-documents" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Event Loop Library (api-reference/system/esp_event)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Event Loop Library (api-reference/system/esp_event)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="esp_https_ota.html" class="btn btn-neutral float-left" title="ESP HTTPS OTA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="freertos.html" class="btn btn-neutral float-right" title="FreeRTOS Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

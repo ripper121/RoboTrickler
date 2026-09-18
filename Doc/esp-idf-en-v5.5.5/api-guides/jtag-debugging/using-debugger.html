@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using Debugger - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/jtag-debugging/using-debugger.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/jtag-debugging/using-debugger';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Debugging Examples" href="debugging-examples.html" />
+    <link rel="prev" title="Tips and Quirks" href="tips-and-quirks.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">JTAG Debugging</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#how-it-works">How it Works?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#selecting-jtag-adapter">Selecting JTAG Adapter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#setup-of-openocd">Setup of OpenOCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#configuring-esp32-target">Configuring ESP32 Target</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#launching-debugger">Launching Debugger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#debugging-examples">Debugging Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#building-openocd-from-sources">Building OpenOCD from Sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#semihosting">Semihosting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#tips-and-quirks">Tips and Quirks</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#related-documents">Related Documents</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Using Debugger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="debugging-examples.html">Debugging Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semihosting.html">Semihosting Feature</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tips-and-quirks.html">Tips and Quirks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../app_trace.html">Application Level Tracing Library</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">JTAG Debugging</a></li>
+      <li class="breadcrumb-item active">Using Debugger</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/jtag-debugging/using-debugger.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="using-debugger">
+<h1>Using Debugger<a class="headerlink" href="#using-debugger" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-guides/jtag-debugging/using-debugger.html">[中文]</a></p>
+<p>This section covers the steps to configure and run a debugger using various methods, including:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#jtag-debugging-using-debugger-eclipse"><span class="std std-ref">Eclipse</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-using-debugger-command-line"><span class="std std-ref">Command Line</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-with-idf-py"><span class="std std-ref">Idf.py Debug Targets</span></a></p></li>
+</ul>
+<p>For how to run a debugger from VS Code, see <a class="reference external" href="https://docs.espressif.com/projects/vscode-esp-idf-extension/en/latest/debugproject.html">Configuration for Visual Studio Code Debug</a>.</p>
+<section id="eclipse">
+<span id="jtag-debugging-using-debugger-eclipse"></span><h2>Eclipse<a class="headerlink" href="#eclipse" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is recommended to first check if debugger works using <a class="reference internal" href="#jtag-debugging-with-idf-py"><span class="std std-ref">Idf.py Debug Targets</span></a> or from <a class="reference internal" href="#jtag-debugging-using-debugger-command-line"><span class="std std-ref">Command Line</span></a> and then move to using Eclipse.</p>
+</div>
+<p>Eclipse is an integrated development environment (IDE) that provides a powerful set of tools for developing and debugging software applications. For ESP-IDF applications, <a class="reference external" href="https://github.com/espressif/idf-eclipse-plugin">IDF Eclipse plugin</a> provides two ways of debugging:</p>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://github.com/espressif/idf-eclipse-plugin/blob/master/docs/OpenOCD%20Debugging.md#esp-idf-gdb-openocd-debugging">ESP-IDF GDB OpenOCD Debugging</a></p></li>
+<li><p>GDB Hardware Debugging</p></li>
+</ol>
+<p>By default, Eclipse supports OpenOCD Debugging via the GDB Hardware Debugging plugin, which requires starting the OpenOCD server from the command line and configuring the GDB client from Eclipse to start with the debugging. This approach can be time-consuming and error-prone.</p>
+<p>To make the debugging process easier, the IDF Eclipse plugin has a customized ESP-IDF GDB OpenOCD Debugging functionality. This functionality supports configuring the OpenOCD server and GDB client from within Eclipse. All the required configuration parameters will be pre-filled by the plugin, and you can start debugging with just a click of a button.</p>
+<p>Therefore, it is recommended to use the <a class="reference external" href="https://github.com/espressif/idf-eclipse-plugin/blob/master/docs/OpenOCD%20Debugging.md#esp-idf-gdb-openocd-debugging">ESP-IDF GDB OpenOCD Debugging</a> via the IDF Eclipse plugin.</p>
+<p><strong>GDB Hardware Debugging</strong></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This approach is recommended only if you are unable to debug using <a class="reference external" href="https://github.com/espressif/idf-eclipse-plugin/blob/master/docs/OpenOCD%20Debugging.md#esp-idf-gdb-openocd-debugging">ESP-IDF GDB OpenOCD Debugging</a> for some reason.</p>
+</div>
+<p>To install the <code class="docutils literal notranslate"><span class="pre">GDB</span> <span class="pre">Hardware</span> <span class="pre">Debugging</span></code> plugin, open Eclipse and select <code class="docutils literal notranslate"><span class="pre">Help</span></code> &gt; <code class="docutils literal notranslate"><span class="pre">Install</span></code> New Software.</p>
+<p>After installation is complete, follow these steps to configure the debugging session. Please note that some configuration parameters are generic, while others are project-specific. This will be shown below by configuring debugging for &quot;blink&quot; example project. If not done already, add this project to Eclipse workspace following <a class="reference external" href="https://github.com/espressif/idf-eclipse-plugin/blob/master/README.md">Eclipse Plugin</a>.  The source of <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/get-started/blink">get-started/blink</a> application is available in <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples">examples</a> directory of ESP-IDF repository.</p>
+<ol class="arabic">
+<li><p>In Eclipse, go to <code class="docutils literal notranslate"><span class="pre">Run</span></code> &gt; <code class="docutils literal notranslate"><span class="pre">Debug</span> <span class="pre">Configuration</span></code>. A new window will open. In the left pane of the window, double-click <code class="docutils literal notranslate"><span class="pre">GDB</span> <span class="pre">Hardware</span> <span class="pre">Debugging</span></code> (or select <code class="docutils literal notranslate"><span class="pre">GDB</span> <span class="pre">Hardware</span> <span class="pre">Debugging</span></code> and press the <code class="docutils literal notranslate"><span class="pre">New</span></code> button) to create a new configuration.</p></li>
+<li><p>In a form that will show up on the right, enter the <code class="docutils literal notranslate"><span class="pre">Name:</span></code> of this configuration, e.g., &quot;Blink checking&quot;.</p></li>
+<li><p>On the <code class="docutils literal notranslate"><span class="pre">Main</span></code> tab below, under <code class="docutils literal notranslate"><span class="pre">Project:</span></code>, press the <code class="docutils literal notranslate"><span class="pre">Browse</span></code> button and select the <code class="docutils literal notranslate"><span class="pre">blink</span></code> project.</p></li>
+<li><p>In the next line under <code class="docutils literal notranslate"><span class="pre">C/C++</span> <span class="pre">Application:</span></code>, press the <code class="docutils literal notranslate"><span class="pre">Browse</span></code> button and select the <code class="docutils literal notranslate"><span class="pre">blink.elf</span></code> file. If <code class="docutils literal notranslate"><span class="pre">blink.elf</span></code> is not there, it is likely that this project has not been built yet. Refer to the <a class="reference external" href="https://github.com/espressif/idf-eclipse-plugin/blob/master/README.md">Eclipse Plugin</a> for instructions.</p></li>
+<li><p>Finally, under <code class="docutils literal notranslate"><span class="pre">Build</span> <span class="pre">(if</span> <span class="pre">required)</span> <span class="pre">before</span> <span class="pre">launching</span></code> click <code class="docutils literal notranslate"><span class="pre">Disable</span> <span class="pre">auto</span> <span class="pre">build</span></code>.</p>
+<p>A sample window with settings entered in points 1 - 5 is shown below.</p>
+<figure class="align-center" id="id5">
+<img alt="Configuration of GDB Hardware Debugging - Main tab" src="../../_images/hw-debugging-main-tab.jpg" />
+<figcaption>
+<p><span class="caption-text">Configuration of GDB Hardware Debugging - Main tab</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p>Click the <code class="docutils literal notranslate"><span class="pre">Debugger</span></code> tab. In field <code class="docutils literal notranslate"><span class="pre">GDB</span> <span class="pre">Command</span></code>, enter <code class="docutils literal notranslate"><span class="pre">xtensa-esp32-elf-gdb</span></code> to invoke the debugger.</p></li>
+<li><p>Change the default configuration of the <code class="docutils literal notranslate"><span class="pre">Remote</span> <span class="pre">host</span></code> by entering <code class="docutils literal notranslate"><span class="pre">3333</span></code> under the <code class="docutils literal notranslate"><span class="pre">Port</span> <span class="pre">number</span></code>.</p>
+<p>Configuration entered in points 6 and 7 is shown on the following picture.</p>
+<figure class="align-center" id="id6">
+<img alt="Configuration of GDB Hardware Debugging - Debugger tab" src="../../_images/hw-debugging-debugger-tab.jpg" />
+<figcaption>
+<p><span class="caption-text">Configuration of GDB Hardware Debugging - Debugger tab</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p>The last tab that requires changing the default configuration is <code class="docutils literal notranslate"><span class="pre">Startup</span></code>. Under <code class="docutils literal notranslate"><span class="pre">Initialization</span> <span class="pre">Commands</span></code> uncheck <code class="docutils literal notranslate"><span class="pre">Reset</span> <span class="pre">and</span> <span class="pre">Delay</span> <span class="pre">(seconds)</span></code> and <code class="docutils literal notranslate"><span class="pre">Halt</span></code>. Then, in the entry field below, enter the following lines:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mon reset halt
+maintenance flush register-cache
+set remote hardware-watchpoint-limit 2
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To automatically update the image in the flash before starting a new debug session, add the following command lines to the beginning of the <code class="docutils literal notranslate"><span class="pre">Initialization</span> <span class="pre">Commands</span></code> textbox:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mon reset halt
+mon program_esp ${workspace_loc:blink/build/blink.bin} 0x10000 verify
+</pre></div>
+</div>
+</div>
+<p>For description of <code class="docutils literal notranslate"><span class="pre">program_esp</span></code> command, see <a class="reference internal" href="index.html#jtag-upload-app-debug"><span class="std std-ref">Upload Application for Debugging</span></a>.</p>
+</li>
+<li><p>Uncheck the <code class="docutils literal notranslate"><span class="pre">Load</span> <span class="pre">image</span></code> option under <code class="docutils literal notranslate"><span class="pre">Load</span> <span class="pre">Image</span> <span class="pre">and</span> <span class="pre">Symbols</span></code>.</p></li>
+<li><p>Further down on the same tab, establish an initial breakpoint to halt CPUs after they are reset by debugger. The plugin will set this breakpoint at the beginning of the function entered under <code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">break</span> <span class="pre">point</span> <span class="pre">at:</span></code>. Checkout this option and enter <code class="docutils literal notranslate"><span class="pre">app_main</span></code> in provided field.</p></li>
+<li><p>Checkout <code class="docutils literal notranslate"><span class="pre">Resume</span></code> option. This will make the program to resume after <code class="docutils literal notranslate"><span class="pre">mon</span> <span class="pre">reset</span> <span class="pre">halt</span></code> is invoked per point 8. The program will then stop at breakpoint inserted at <code class="docutils literal notranslate"><span class="pre">app_main</span></code>.</p>
+<p>Configuration described in points 8 - 11 is shown below.</p>
+<figure class="align-center" id="id7">
+<img alt="Configuration of GDB Hardware Debugging - Startup tab" src="../../_images/hw-debugging-startup-tab.jpg" />
+<figcaption>
+<p><span class="caption-text">Configuration of GDB Hardware Debugging - Startup tab</span><a class="headerlink" href="#id7" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>If the <code class="docutils literal notranslate"><span class="pre">Startup</span></code> sequence looks convoluted and respective <code class="docutils literal notranslate"><span class="pre">Initialization</span> <span class="pre">Commands</span></code> are unclear, check <a class="reference internal" href="tips-and-quirks.html#jtag-debugging-tip-debugger-startup-commands"><span class="std std-ref">What Is the Meaning of Debugger's Startup Commands?</span></a> for additional explanation.</p>
+</li>
+<li><p>If you have completed the <a class="reference internal" href="index.html#jtag-debugging-configuring-target"><span class="std std-ref">Configuring ESP32 Target</span></a> steps described above, so the target is running and ready to talk to debugger, go right to debugging by pressing <code class="docutils literal notranslate"><span class="pre">Debug</span></code> button. Otherwise press <code class="docutils literal notranslate"><span class="pre">Apply</span></code> to save changes, go back to <a class="reference internal" href="index.html#jtag-debugging-configuring-target"><span class="std std-ref">Configuring ESP32 Target</span></a> and return here to start debugging.</p>
+<p>Once all configuration steps 1-12 are satisfied, the new Eclipse perspective called &quot;Debug&quot; will open, as shown in the example picture below.</p>
+<figure class="align-center" id="id8">
+<img alt="Debug Perspective in Eclipse" src="../../_images/debug-perspective.jpg" />
+<figcaption>
+<p><span class="caption-text">Debug Perspective in Eclipse</span><a class="headerlink" href="#id8" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>If you are not quite sure how to use GDB, check <a class="reference internal" href="debugging-examples.html#jtag-debugging-examples-eclipse"><span class="std std-ref">Eclipse</span></a> example debugging session in section <a class="reference internal" href="index.html#jtag-debugging-examples"><span class="std std-ref">Debugging Examples</span></a>.</p>
+</li>
+</ol>
+</section>
+<section id="command-line">
+<span id="jtag-debugging-using-debugger-command-line"></span><h2>Command Line<a class="headerlink" href="#command-line" title="Permalink to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Begin by completing the steps described under <a class="reference internal" href="index.html#jtag-debugging-configuring-target"><span class="std std-ref">Configuring ESP32 Target</span></a>. This is prerequisite to start a debugging session.</p></li>
+</ol>
+<ol class="arabic" start="2">
+<li><p>Open a new terminal session and go to the directory that contains the project for debugging, e.g.,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cd ~/esp/blink
+</pre></div>
+</div>
+</li>
+</ol>
+<ol class="arabic" start="3">
+<li><p>When launching a debugger, you will need to provide a couple of configuration parameters and commands. The build system generates several <code class="docutils literal notranslate"><span class="pre">.gdbinit</span></code> files to facilitate efficient debugging. Paths to these files can be found in the <code class="docutils literal notranslate"><span class="pre">build/project_description.json</span></code>, under the <code class="docutils literal notranslate"><span class="pre">gdbinit_files</span></code> section. The paths to these files are defined as follows:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;gdbinit_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;01_symbols&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application_path/build/gdbinit/symbols&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;02_prefix_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application_path/build/gdbinit/prefix_map&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;03_py_extensions&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application_path/build/gdbinit/py_extensions&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;04_connect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application_path/build/gdbinit/connect&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">XX_</span></code> prefix in the JSON keys is included to have ability to sort them. Sorted fields indicate the recommended order in which to provide the data to GDB.</p>
+<p>Descriptions of the generated <code class="docutils literal notranslate"><span class="pre">.gdbinit</span></code> files:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">symbols</span></code> - contains symbol sources for debugging.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prefix_map</span></code> - configures the prefix map to modify source paths in GDB. For more details, see <a class="reference internal" href="../reproducible-builds.html#reproducible-builds-and-debugging"><span class="std std-ref">Reproducible Builds and Debugging</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">py_extensions</span></code> - initializes Python extensions in GDB. This requires Python built with <code class="docutils literal notranslate"><span class="pre">libpython</span></code> and a version supported by GDB. To verify compatibility, run <code class="docutils literal notranslate"><span class="pre">xtensa-esp32-elf-gdb</span> <span class="pre">--batch-silent</span> <span class="pre">--ex</span> <span class="pre">&quot;python</span> <span class="pre">import</span> <span class="pre">os&quot;</span></code>, which should complete without errors.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">connect</span></code> - contains commands necessary for establishing a connection to the target device.</p></li>
+</ul>
+<p>To enhance your debugging experience, you can also create custom <code class="docutils literal notranslate"><span class="pre">.gdbinit</span></code> files, used either alongside or in place of the generated configurations.</p>
+</li>
+</ol>
+<ol class="arabic" start="4">
+<li><p>Now you are ready to launch GDB. Use the following example command to load symbols and connect to the target (<code class="docutils literal notranslate"><span class="pre">-q</span></code> option added to minimize startup output):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>xtensa-esp32-elf-gdb -q -x build/gdbinit/symbols -x build/gdbinit/prefix_map -x build/gdbinit/connect build/blink.elf
+</pre></div>
+</div>
+</li>
+</ol>
+<ol class="arabic" start="5">
+<li><p>If the previous steps have been done correctly, you will see a similar log concluded with the <code class="docutils literal notranslate"><span class="pre">(gdb)</span></code> prompt:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>xtensa-esp32-elf-gdb -q -x build/gdbinit/symbols -x build/gdbinit/prefix_map -x build/gdbinit/connect build/blink.elf
+
+user-name@computer-name:~/esp-idf/examples/get-started/blink$ xtensa-esp32-elf-gdb -q -x build/gdbinit/symbols -x build/gdbinit/connect build/blink.elf
+Reading symbols from build/blink.elf...
+add symbol table from file &quot;/home/user-name/esp-idf/examples/get-started/blink/build/bootloader/bootloader.elf&quot;
+[Switching to Thread 1070141764]
+app_main () at /home/user-name/esp-idf/examples/get-started/blink/main/blink_example_main.c:95
+95          configure_led();
+add symbol table from file &quot;/home/alex/.espressif/tools/esp-rom-elfs/20241011/esp32_rev0_rom.elf&quot;
+JTAG tap: esp32.tap0 tap/device found: 0x00005c25 (mfg: 0x612 (Espressif Systems), part: 0x0005, ver: 0x0)
+[esp32] Reset cause (3) - (Software core reset)
+Hardware assisted breakpoint 1 at 0x42009436: file /home/user-name/esp-idf/examples/get-started/blink/main/blink_example_main.c, line 92.
+[Switching to Thread 1070139884]
+
+Thread 2 &quot;main&quot; hit Temporary breakpoint 1, app_main () at /home/user-name/esp-idf/examples/get-started/blink/main/blink_example_main.c:92
+92      {
+(gdb)
+</pre></div>
+</div>
+<p>Note that the third-to-last line indicates the debugger has halted at a breakpoint established in <code class="docutils literal notranslate"><span class="pre">build/gdbinit/connect</span></code> file at function <code class="docutils literal notranslate"><span class="pre">app_main()</span></code>. Since the processor is halted, the LED should not be blinking. If this matches what you observe, you are ready to start debugging.</p>
+<p>If you are not sure how to use GDB, check <a class="reference internal" href="debugging-examples.html#jtag-debugging-examples-command-line"><span class="std std-ref">Command Line</span></a> example debugging session in section <a class="reference internal" href="index.html#jtag-debugging-examples"><span class="std std-ref">Debugging Examples</span></a>.</p>
+</li>
+</ol>
+</section>
+<section id="jtag-debugging-with-idf-py">
+<span id="idf-py-debug-targets"></span><h2>Idf.py Debug Targets<a class="headerlink" href="#jtag-debugging-with-idf-py" title="Permalink to this heading"></a></h2>
+<p>It is also possible to execute the described debugging tools conveniently from <code class="docutils literal notranslate"><span class="pre">idf.py</span></code>. These commands are supported:</p>
+<ol class="arabic">
+<li><p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">openocd</span></code></p>
+<p>Runs OpenOCD in a console with configuration defined in the environment or via command line. It uses default script directory defined as <code class="docutils literal notranslate"><span class="pre">OPENOCD_SCRIPTS</span></code> environmental variable, which is automatically added from an Export script (<code class="docutils literal notranslate"><span class="pre">export.sh</span></code> or <code class="docutils literal notranslate"><span class="pre">export.bat</span></code>).
+It is possible to override the script location using command line argument <code class="docutils literal notranslate"><span class="pre">--openocd-scripts</span></code>.</p>
+<p>To configure the JTAG configuration for the current board, please use the environmental variable <code class="docutils literal notranslate"><span class="pre">OPENOCD_COMMANDS</span></code> or <code class="docutils literal notranslate"><span class="pre">--openocd-commands</span></code> command line argument. If none of the above is defined, OpenOCD is started with <code class="docutils literal notranslate"><span class="pre">-f</span> <span class="pre">board/esp32-wrover-kit-3.3v.cfg</span></code> board definition.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">gdb</span></code></p>
+<p>Starts GDB in the same way as the <a class="reference internal" href="#jtag-debugging-using-debugger-command-line"><span class="std std-ref">Command Line</span></a>, using generated GDB scripts referring to the current project's ELF file. For more details, see <a class="reference internal" href="#jtag-debugging-using-debugger-command-line"><span class="std std-ref">Command Line</span></a>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">gdbtui</span></code></p>
+<blockquote>
+<div><p>The same as <cite>2</cite>, but starts the gdb with <code class="docutils literal notranslate"><span class="pre">tui</span></code> argument, allowing for a simple source code view.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">gdbgui</span></code></p>
+<p>Starts <a class="reference external" href="https://www.gdbgui.com">gdbgui</a> debugger frontend enabling out-of-the-box debugging in a browser window. To enable this option, run the install script with the &quot;--enable-gdbgui&quot; argument, e.g., <code class="docutils literal notranslate"><span class="pre">install.sh</span> <span class="pre">--enable-gdbgui</span></code>.</p>
+<p>You can combine these debugging actions on a single command line, allowing for convenient setup of blocking and non-blocking actions in one step. <code class="docutils literal notranslate"><span class="pre">idf.py</span></code> implements a simple logic to move the background actions (such as openocd) to the beginning and the interactive ones (such as gdb, monitor) to the end of the action list.</p>
+<p>An example of a very useful combination is:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>idf.py openocd gdbgui monitor
+</pre></div>
+</div>
+<p>The above command runs OpenOCD in the background, starts <a class="reference external" href="https://www.gdbgui.com">gdbgui</a> to open a browser window with active debugger frontend and opens a serial monitor in the active console.</p>
+</li>
+</ol>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Using Debugger (api-guides/jtag-debugging/using-debugger)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Using Debugger (api-guides/jtag-debugging/using-debugger)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tips-and-quirks.html" class="btn btn-neutral float-left" title="Tips and Quirks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="debugging-examples.html" class="btn btn-neutral float-right" title="Debugging Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

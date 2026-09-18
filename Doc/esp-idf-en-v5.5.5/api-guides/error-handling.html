@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Error Handling - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/error-handling.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/error-handling';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ESP-WIFI-MESH" href="esp-wifi-mesh.html" />
+    <link rel="prev" title="Deep-sleep Wake Stubs" href="deep-sleep-stub.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Error Handling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#error-codes">Error Codes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#converting-error-codes-to-error-messages">Converting Error Codes to Error Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#esp-error-check-macro"><code class="docutils literal notranslate"><span class="pre">ESP_ERROR_CHECK</span></code> Macro</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#esp-error-check-without-abort-macro"><code class="docutils literal notranslate"><span class="pre">ESP_ERROR_CHECK_WITHOUT_ABORT</span></code> Macro</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#esp-return-on-error-macro"><code class="docutils literal notranslate"><span class="pre">ESP_RETURN_ON_ERROR</span></code> Macro</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#esp-goto-on-error-macro"><code class="docutils literal notranslate"><span class="pre">ESP_GOTO_ON_ERROR</span></code> Macro</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#esp-return-on-false-macro"><code class="docutils literal notranslate"><span class="pre">ESP_RETURN_ON_FALSE</span></code> Macro</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#esp-goto-on-false-macro"><code class="docutils literal notranslate"><span class="pre">ESP_GOTO_ON_FALSE</span></code> Macro</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#check-macros-examples"><code class="docutils literal notranslate"><span class="pre">CHECK</span> <span class="pre">MACROS</span></code> Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#error-handling-patterns">Error Handling Patterns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#c-exceptions">C++ Exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Guides</a></li>
+      <li class="breadcrumb-item active">Error Handling</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/error-handling.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="error-handling">
+<h1>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/api-guides/error-handling.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>Identifying and handling run-time errors is important for developing robust applications. There can be multiple kinds of run-time errors:</p>
+<ul class="simple">
+<li><p>Recoverable errors:</p>
+<ul>
+<li><p>Errors indicated by functions through return values (error codes)</p></li>
+<li><p>C++ exceptions, thrown using <code class="docutils literal notranslate"><span class="pre">throw</span></code> keyword</p></li>
+</ul>
+</li>
+<li><p>Unrecoverable (fatal) errors:</p>
+<ul>
+<li><p>Failed assertions (using <code class="docutils literal notranslate"><span class="pre">assert</span></code> macro and equivalent methods, see <a class="reference internal" href="../contribute/style-guide.html#assertions"><span class="std std-ref">Assertions</span></a>) and <code class="docutils literal notranslate"><span class="pre">abort()</span></code> calls.</p></li>
+<li><p>CPU exceptions: access to protected regions of memory, illegal instruction, etc.</p></li>
+<li><p>System level checks: watchdog timeout, cache access error, stack overflow, stack smashing, heap corruption, etc.</p></li>
+</ul>
+</li>
+</ul>
+<p>This guide explains ESP-IDF error handling mechanisms related to recoverable errors, and provides some common error handling patterns.</p>
+<p>For instructions on diagnosing unrecoverable errors, see <a class="reference internal" href="fatal-errors.html"><span class="doc">Fatal Errors</span></a>.</p>
+</section>
+<section id="error-codes">
+<h2>Error Codes<a class="headerlink" href="#error-codes" title="Permalink to this heading"></a></h2>
+<p>The majority of ESP-IDF-specific functions use <a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_err_t</span></code></a> type to return error codes. <a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_err_t</span></code></a> is a signed integer type. Success (no error) is indicated with <code class="docutils literal notranslate"><span class="pre">ESP_OK</span></code> code, which is defined as zero.</p>
+<p>Various ESP-IDF header files define possible error codes using preprocessor defines. Usually these defines start with <code class="docutils literal notranslate"><span class="pre">ESP_ERR_</span></code> prefix. Common error codes for generic failures (out of memory, timeout, invalid argument, etc.) are defined in <code class="docutils literal notranslate"><span class="pre">esp_err.h</span></code> file. Various components in ESP-IDF may define additional error codes for specific situations.</p>
+<p>For the complete list of error codes, see <a class="reference internal" href="../api-reference/error-codes.html"><span class="doc">Error Code Reference</span></a>.</p>
+</section>
+<section id="converting-error-codes-to-error-messages">
+<h2>Converting Error Codes to Error Messages<a class="headerlink" href="#converting-error-codes-to-error-messages" title="Permalink to this heading"></a></h2>
+<p>For each error code defined in ESP-IDF components, <a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_err_t</span></code></a> value can be converted to an error code name using <a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv415esp_err_to_name9esp_err_t" title="esp_err_to_name"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_err_to_name()</span></code></a> or <a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv417esp_err_to_name_r9esp_err_tPc6size_t" title="esp_err_to_name_r"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_err_to_name_r()</span></code></a> functions. For example, passing <code class="docutils literal notranslate"><span class="pre">0x101</span></code> to <a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv415esp_err_to_name9esp_err_t" title="esp_err_to_name"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_err_to_name()</span></code></a> will return a <code class="docutils literal notranslate"><span class="pre">ESP_ERR_NO_MEM</span></code> string. Such strings can be used in log output to make it easier to understand which error has happened.</p>
+<p>Additionally, <a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv417esp_err_to_name_r9esp_err_tPc6size_t" title="esp_err_to_name_r"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_err_to_name_r()</span></code></a> function will attempt to interpret the error code as a <a class="reference external" href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/errno.h.html">standard POSIX error code</a>, if no matching <code class="docutils literal notranslate"><span class="pre">ESP_ERR_</span></code> value is found. This is done using <code class="docutils literal notranslate"><span class="pre">strerror_r</span></code> function. POSIX error codes (such as <code class="docutils literal notranslate"><span class="pre">ENOENT</span></code>, <code class="docutils literal notranslate"><span class="pre">ENOMEM</span></code>) are defined in <code class="docutils literal notranslate"><span class="pre">errno.h</span></code> and are typically obtained from <code class="docutils literal notranslate"><span class="pre">errno</span></code> variable. In ESP-IDF this variable is thread-local: multiple FreeRTOS tasks have their own copies of <code class="docutils literal notranslate"><span class="pre">errno</span></code>. Functions which set <code class="docutils literal notranslate"><span class="pre">errno</span></code> only modify its value for the task they run in.</p>
+<p>This feature is enabled by default, but can be disabled to reduce application binary size. See <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-err-to-name-lookup"><span class="std std-ref">CONFIG_ESP_ERR_TO_NAME_LOOKUP</span></a>. When this feature is disabled, <a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv415esp_err_to_name9esp_err_t" title="esp_err_to_name"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_err_to_name()</span></code></a> and <a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv417esp_err_to_name_r9esp_err_tPc6size_t" title="esp_err_to_name_r"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_err_to_name_r()</span></code></a> are still defined and can be called. In this case, <a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv415esp_err_to_name9esp_err_t" title="esp_err_to_name"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_err_to_name()</span></code></a> will return <code class="docutils literal notranslate"><span class="pre">UNKNOWN</span> <span class="pre">ERROR</span></code>, and <a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv417esp_err_to_name_r9esp_err_tPc6size_t" title="esp_err_to_name_r"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_err_to_name_r()</span></code></a> will return <code class="docutils literal notranslate"><span class="pre">Unknown</span> <span class="pre">error</span> <span class="pre">0xXXXX(YYYYY)</span></code>, where <code class="docutils literal notranslate"><span class="pre">0xXXXX</span></code> and <code class="docutils literal notranslate"><span class="pre">YYYYY</span></code> are the hexadecimal and decimal representations of the error code, respectively.</p>
+</section>
+<section id="esp-error-check-macro">
+<span id="id1"></span><h2><code class="docutils literal notranslate"><span class="pre">ESP_ERROR_CHECK</span></code> Macro<a class="headerlink" href="#esp-error-check-macro" title="Permalink to this heading"></a></h2>
+<p><a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_ERROR_CHECK" title="ESP_ERROR_CHECK"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERROR_CHECK</span></code></a> macro serves similar purpose as <code class="docutils literal notranslate"><span class="pre">assert</span></code>, except that it checks <a class="reference internal" href="../api-reference/system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_err_t</span></code></a> value rather than a <code class="docutils literal notranslate"><span class="pre">bool</span></code> condition. If the argument of <a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_ERROR_CHECK" title="ESP_ERROR_CHECK"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERROR_CHECK</span></code></a> is not equal <a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_OK" title="ESP_OK"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_OK</span></code></a>, then an error message is printed on the console, and <code class="docutils literal notranslate"><span class="pre">abort()</span></code> is called.</p>
+<p>Error message will typically look like this:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ESP_ERROR_CHECK failed: esp_err_t 0x107 (ESP_ERR_TIMEOUT) at 0x400d1fdf
+
+file: &quot;/Users/user/esp/example/main/main.c&quot; line 20
+func: app_main
+expression: sdmmc_card_init(host, &amp;card)
+
+Backtrace: 0x40086e7c:0x3ffb4ff0 0x40087328:0x3ffb5010 0x400d1fdf:0x3ffb5030 0x400d0816:0x3ffb5050
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If <a class="reference internal" href="tools/idf-monitor.html"><span class="doc">ESP-IDF monitor</span></a> is used, addresses in the backtrace will be converted to file names and line numbers.</p>
+</div>
+<ul class="simple">
+<li><p>The first line mentions the error code as a hexadecimal value, and the identifier used for this error in source code. The latter depends on <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp-err-to-name-lookup"><span class="std std-ref">CONFIG_ESP_ERR_TO_NAME_LOOKUP</span></a> option being set. Address in the program where error has occurred is printed as well.</p></li>
+<li><p>Subsequent lines show the location in the program where <a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_ERROR_CHECK" title="ESP_ERROR_CHECK"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERROR_CHECK</span></code></a> macro was called, and the expression which was passed to the macro as an argument.</p></li>
+<li><p>Finally, backtrace is printed. This is part of panic handler output common to all fatal errors. See <a class="reference internal" href="fatal-errors.html"><span class="doc">Fatal Errors</span></a> for more information about the backtrace.</p></li>
+</ul>
+</section>
+<section id="esp-error-check-without-abort-macro">
+<span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">ESP_ERROR_CHECK_WITHOUT_ABORT</span></code> Macro<a class="headerlink" href="#esp-error-check-without-abort-macro" title="Permalink to this heading"></a></h2>
+<p><a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_ERROR_CHECK_WITHOUT_ABORT" title="ESP_ERROR_CHECK_WITHOUT_ABORT"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERROR_CHECK_WITHOUT_ABORT</span></code></a> macro serves similar purpose as <code class="docutils literal notranslate"><span class="pre">ESP_ERROR_CHECK</span></code>, except that it will not call <code class="docutils literal notranslate"><span class="pre">abort()</span></code>.</p>
+</section>
+<section id="esp-return-on-error-macro">
+<span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">ESP_RETURN_ON_ERROR</span></code> Macro<a class="headerlink" href="#esp-return-on-error-macro" title="Permalink to this heading"></a></h2>
+<p><a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_RETURN_ON_ERROR" title="ESP_RETURN_ON_ERROR"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_RETURN_ON_ERROR</span></code></a> macro checks the error code, if the error code is not equal <a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_OK" title="ESP_OK"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_OK</span></code></a>, it prints the message and returns the error code.</p>
+</section>
+<section id="esp-goto-on-error-macro">
+<span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">ESP_GOTO_ON_ERROR</span></code> Macro<a class="headerlink" href="#esp-goto-on-error-macro" title="Permalink to this heading"></a></h2>
+<p><a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_GOTO_ON_ERROR" title="ESP_GOTO_ON_ERROR"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_GOTO_ON_ERROR</span></code></a> macro checks the error code, if the error code is not equal <a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_OK" title="ESP_OK"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_OK</span></code></a>, it prints the message, sets the local variable <code class="docutils literal notranslate"><span class="pre">ret</span></code> to the code, and then exits by jumping to <code class="docutils literal notranslate"><span class="pre">goto_tag</span></code>.</p>
+</section>
+<section id="esp-return-on-false-macro">
+<span id="id5"></span><h2><code class="docutils literal notranslate"><span class="pre">ESP_RETURN_ON_FALSE</span></code> Macro<a class="headerlink" href="#esp-return-on-false-macro" title="Permalink to this heading"></a></h2>
+<p><a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_RETURN_ON_FALSE" title="ESP_RETURN_ON_FALSE"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_RETURN_ON_FALSE</span></code></a> macro checks the condition, if the condition is not equal <code class="docutils literal notranslate"><span class="pre">true</span></code>, it prints the message and returns with the supplied <code class="docutils literal notranslate"><span class="pre">err_code</span></code>.</p>
+</section>
+<section id="esp-goto-on-false-macro">
+<span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">ESP_GOTO_ON_FALSE</span></code> Macro<a class="headerlink" href="#esp-goto-on-false-macro" title="Permalink to this heading"></a></h2>
+<p><a class="reference internal" href="../api-reference/system/esp_err.html#c.ESP_GOTO_ON_FALSE" title="ESP_GOTO_ON_FALSE"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_GOTO_ON_FALSE</span></code></a> macro checks the condition, if the condition is not equal <code class="docutils literal notranslate"><span class="pre">true</span></code>, it prints the message, sets the local variable <code class="docutils literal notranslate"><span class="pre">ret</span></code> to the supplied <code class="docutils literal notranslate"><span class="pre">err_code</span></code>, and then exits by jumping to <code class="docutils literal notranslate"><span class="pre">goto_tag</span></code>.</p>
+</section>
+<section id="check-macros-examples">
+<span id="id7"></span><h2><code class="docutils literal notranslate"><span class="pre">CHECK</span> <span class="pre">MACROS</span></code> Examples<a class="headerlink" href="#check-macros-examples" title="Permalink to this heading"></a></h2>
+<p>Some examples</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">TAG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Test&quot;</span><span class="p">;</span>
+
+<span class="n">esp_err_t</span><span class="w"> </span><span class="nf">test_func</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">esp_err_t</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ESP_OK</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">x</span><span class="p">);</span><span class="w">                                         </span><span class="c1">// err message printed if `x` is not `ESP_OK`, and then `abort()`.</span>
+<span class="w">    </span><span class="n">ESP_ERROR_CHECK_WITHOUT_ABORT</span><span class="p">(</span><span class="n">x</span><span class="p">);</span><span class="w">                           </span><span class="c1">// err message printed if `x` is not `ESP_OK`, without `abort()`.</span>
+<span class="w">    </span><span class="n">ESP_RETURN_ON_ERROR</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;fail reason 1&quot;</span><span class="p">);</span><span class="w">               </span><span class="c1">// err message printed if `x` is not `ESP_OK`, and then function returns with code `x`.</span>
+<span class="w">    </span><span class="n">ESP_GOTO_ON_ERROR</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;fail reason 2&quot;</span><span class="p">);</span><span class="w">            </span><span class="c1">// err message printed if `x` is not `ESP_OK`, `ret` is set to `x`, and then jumps to `err`.</span>
+<span class="w">    </span><span class="n">ESP_RETURN_ON_FALSE</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">err_code</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;fail reason 3&quot;</span><span class="p">);</span><span class="w">     </span><span class="c1">// err message printed if `a` is not `true`, and then function returns with code `err_code`.</span>
+<span class="w">    </span><span class="n">ESP_GOTO_ON_FALSE</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">err_code</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;fail reason 4&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// err message printed if `a` is not `true`, `ret` is set to `err_code`, and then jumps to `err`.</span>
+
+<span class="nl">err</span><span class="p">:</span>
+<span class="w">    </span><span class="c1">// clean up</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-compiler-optimization-checks-silent"><span class="std std-ref">CONFIG_COMPILER_OPTIMIZATION_CHECKS_SILENT</span></a> in Kconfig is enabled, the error message will be discarded, while the other action works as is.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ESP_RETURN_XX</span></code> and <code class="docutils literal notranslate"><span class="pre">ESP_GOTO_xx</span></code> macros cannot be called from ISR. While there are <code class="docutils literal notranslate"><span class="pre">xx_ISR</span></code> versions for each of them, e.g., <code class="docutils literal notranslate"><span class="pre">ESP_RETURN_ON_ERROR_ISR</span></code>, these macros could be used in ISR.</p>
+</div>
+</section>
+<section id="error-handling-patterns">
+<h2>Error Handling Patterns<a class="headerlink" href="#error-handling-patterns" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Attempt to recover. Depending on the situation, we may try the following methods:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>retry the call after some time;</p></li>
+<li><p>attempt to de-initialize the driver and re-initialize it again;</p></li>
+<li><p>fix the error condition using an out-of-band mechanism (e.g reset an external peripheral which is not responding).</p></li>
+</ul>
+<p>Example:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">esp_err_t</span><span class="w"> </span><span class="n">err</span><span class="p">;</span>
+<span class="k">do</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sdio_slave_send_queue</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="n">arg</span><span class="p">,</span><span class="w"> </span><span class="n">timeout</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// keep retrying while the sending queue is full</span>
+<span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">err</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ESP_ERR_TIMEOUT</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ESP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// handle other errors</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Propagate the error to the caller. In some middleware components this means that a function must exit with the same error code, making sure any resource allocations are rolled back.</p>
+<blockquote>
+<div><p>Example:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">sdmmc_card_t</span><span class="o">*</span><span class="w"> </span><span class="n">card</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calloc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">sdmmc_card_t</span><span class="p">));</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">card</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ESP_ERR_NO_MEM</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">esp_err_t</span><span class="w"> </span><span class="n">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sdmmc_card_init</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">card</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ESP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Clean up</span>
+<span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">card</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Propagate the error to the upper layer (e.g., to notify the user).</span>
+<span class="w">    </span><span class="c1">// Alternatively, application can define and return custom error code.</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">err</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Convert into unrecoverable error, for example using <code class="docutils literal notranslate"><span class="pre">ESP_ERROR_CHECK</span></code>. See <a class="reference internal" href="#id1">ESP_ERROR_CHECK macro</a> section for details.</p>
+<blockquote>
+<div><p>Terminating the application in case of an error is usually undesirable behavior for middleware components, but is sometimes acceptable at application level.</p>
+<p>Many ESP-IDF examples use <code class="docutils literal notranslate"><span class="pre">ESP_ERROR_CHECK</span></code> to handle errors from various APIs. This is not the best practice for applications, and is done to make example code more concise.</p>
+<p>Example:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">spi_bus_initialize</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">bus_config</span><span class="p">,</span><span class="w"> </span><span class="n">dma_chan</span><span class="p">));</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="c-exceptions">
+<h2>C++ Exceptions<a class="headerlink" href="#c-exceptions" title="Permalink to this heading"></a></h2>
+<p>See <a class="reference internal" href="cplusplus.html#cplusplus-exceptions"><span class="std std-ref">Exception Handling</span></a>.</p>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Error Handling (api-guides/error-handling)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Error Handling (api-guides/error-handling)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="deep-sleep-stub.html" class="btn btn-neutral float-left" title="Deep-sleep Wake Stubs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="esp-wifi-mesh.html" class="btn btn-neutral float-right" title="ESP-WIFI-MESH" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

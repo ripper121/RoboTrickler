@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Features Enablement Workflows - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/security/security-features-enablement-workflows.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'security/security-features-enablement-workflows';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Vulnerabilities" href="vulnerabilities.html" />
+    <link rel="prev" title="Secure Boot v2" href="secure-boot-v2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Security Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="security.html">Security Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flash-encryption.html">Flash Encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="secure-boot-v1.html">Secure Boot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="secure-boot-v2.html">Secure Boot v2</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Security Features Enablement Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#goals">Goals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scope">Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#security-features-enablement">Security Features Enablement</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#enable-flash-encryption-and-secure-boot-v2-externally">Enable Flash Encryption and Secure Boot v2 Externally</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#enable-flash-encryption-externally">Enable Flash Encryption Externally</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#enable-secure-boot-v2-externally">Enable Secure Boot v2 Externally</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#enable-nvs-encryption-externally">Enable NVS Encryption Externally</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="vulnerabilities.html">Vulnerabilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Security Guides</a></li>
+      <li class="breadcrumb-item active">Security Features Enablement Workflows</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/security/security-features-enablement-workflows.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="security-features-enablement-workflows">
+<h1>Security Features Enablement Workflows<a class="headerlink" href="#security-features-enablement-workflows" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/v5.5.5/esp32/security/security-features-enablement-workflows.html">[中文]</a></p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h2>
+<p>When enabling security features on ESP32 SoCs, it is recommended that power supply be uninterrupted. Power failures during this process could cause issues that are hard to debug and, in some cases, may cause permanent boot-up failures.</p>
+<p>This guide describes a set of workflows to enable security features on the device with the assistance of an external host machine. These workflows are broken down into various stages, with each stage generating signing/encryption keys on the host machine. This allows for greater chances of recovery in case of power or other failures. Furthermore, these workflows expedites the overall provisioning process via the use of the host machine (e.g., encrypting firmware on the host is quicker than on the device).</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>It is possible to try out the security features for ESP32 target SoC under <a class="reference internal" href="../api-guides/tools/qemu.html"><span class="doc">QEMU Emulator</span></a> virtually. Once the security workflow is established, you can then proceed to the real hardware.</p>
+</div>
+</section>
+<section id="goals">
+<h2>Goals<a class="headerlink" href="#goals" title="Permalink to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Simplify the traditional workflow for enabling security features with stepwise instructions.</p></li>
+<li><p>Design a more flexible workflow when compared to the traditional firmware-based workflow.</p></li>
+<li><p>Improve reliability by dividing the workflow into small operations.</p></li>
+<li><p>Eliminate dependency on <a class="reference internal" href="../api-guides/startup.html#second-stage-bootloader"><span class="std std-ref">Second Stage Bootloader</span></a>.</p></li>
+</ol>
+</section>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">esptool</span></code>: Please make sure the <code class="docutils literal notranslate"><span class="pre">esptool</span></code> has been installed. It can be installed by running:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>esptool
+</pre></div>
+</div>
+</section>
+<section id="scope">
+<h2>Scope<a class="headerlink" href="#scope" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#enable-flash-encryption-and-secure-boot-v2-externally"><span class="std std-ref">Enable Flash Encryption and Secure Boot v2 Externally</span></a></p></li>
+<li><p><a class="reference internal" href="#enable-flash-encryption-externally"><span class="std std-ref">Enable Flash Encryption Externally</span></a></p></li>
+<li><p><a class="reference internal" href="#enable-secure-boot-v2-externally"><span class="std std-ref">Enable Secure Boot v2 Externally</span></a></p></li>
+<li><p><a class="reference internal" href="#enable-nvs-encryption-externally"><span class="std std-ref">Enable NVS Encryption Externally</span></a></p></li>
+</ul>
+</section>
+<section id="security-features-enablement">
+<h2>Security Features Enablement<a class="headerlink" href="#security-features-enablement" title="Permalink to this heading"></a></h2>
+<section id="enable-flash-encryption-and-secure-boot-v2-externally">
+<span id="id1"></span><h3>Enable Flash Encryption and Secure Boot v2 Externally<a class="headerlink" href="#enable-flash-encryption-and-secure-boot-v2-externally" title="Permalink to this heading"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>It is recommended to enable both Flash Encryption and Secure Boot v2 for a production use case.</p>
+</div>
+<p>When enabling the Flash Encryption and Secure Boot v2 together, they need to enable them in the following order:</p>
+<ol class="arabic simple">
+<li><p>Enable the Flash Encryption feature by following the steps listed in <a class="reference internal" href="#enable-flash-encryption-externally"><span class="std std-ref">Enable Flash Encryption Externally</span></a>.</p></li>
+<li><p>Enable the Secure Boot v2 feature by following the steps listed in <a class="reference internal" href="#enable-secure-boot-v2-externally"><span class="std std-ref">Enable Secure Boot v2 Externally</span></a>.</p></li>
+</ol>
+<p>The reason this particular ordering is that when enabling Secure Boot (SB) v2, it is necessary to keep the SB v2 key readable. To protect the key's readability, the write protection for <code class="docutils literal notranslate"><span class="pre">RD_DIS</span></code> (<code class="docutils literal notranslate"><span class="pre">ESP_EFUSE_WR_DIS_RD_DIS</span></code>) is applied. However, this action poses a challenge when attempting to enable Flash Encryption, as the Flash Encryption (FE) key needs to remain unreadable. This conflict arises because the <code class="docutils literal notranslate"><span class="pre">RD_DIS</span></code> is already write-protected, making it impossible to read protect the FE key.</p>
+</section>
+<section id="enable-flash-encryption-externally">
+<span id="id2"></span><h3>Enable Flash Encryption Externally<a class="headerlink" href="#enable-flash-encryption-externally" title="Permalink to this heading"></a></h3>
+<p>In this case all the eFuses related to Flash Encryption are written with help of the espefuse tool. More details about Flash Encryption can process can be found in <a class="reference internal" href="flash-encryption.html"><span class="doc">Flash Encryption</span></a>.</p>
+<ol class="arabic">
+<li><p>Ensure that you have an ESP32 device with default Flash Encryption eFuse settings as shown in <a class="reference internal" href="flash-encryption.html#flash-encryption-efuse"><span class="std std-ref">Relevant eFuses</span></a></p>
+<blockquote>
+<div><p>See how to check <a class="reference internal" href="flash-encryption.html#flash-encryption-status"><span class="std std-ref">ESP32 Flash Encryption Status</span></a>.</p>
+<p>At this point, the Flash Encryption must not be already enabled on the chip. Additionally, the flash on the chip needs to be erased, which can be done by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>esptool.py<span class="w"> </span>--port<span class="w"> </span>PORT<span class="w"> </span>erase_flash
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Generate a Flash Encryption key</p>
+<blockquote>
+<div><p>A random Flash Encryption key can be generated by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espsecure.py<span class="w"> </span>generate_flash_encryption_key<span class="w"> </span>my_flash_encryption_key.bin
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Burn the Flash Encryption key into eFuse</p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This action <strong>cannot be reverted</strong>.</p>
+</div>
+<p>It can be done by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espefuse.py<span class="w"> </span>--port<span class="w"> </span>PORT<span class="w"> </span>burn_key<span class="w"> </span>flash_encryption<span class="w"> </span>my_flash_encryption_key.bin
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Burn the <code class="docutils literal notranslate"><span class="pre">FLASH_CRYPT_CNT</span></code> eFuse</p>
+<blockquote>
+<div><p>If you only want to enable Flash Encryption in <strong>Development</strong> mode and want to keep the ability to disable it in the future, Update the FLASH_CRYPT_CNT value in the below command from 127 to 0x1 (not recommended for production).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espefuse.py<span class="w"> </span>--port<span class="w"> </span>PORT<span class="w"> </span>--chip<span class="w"> </span>esp32<span class="w"> </span>burn_efuse<span class="w"> </span>FLASH_CRYPT_CNT<span class="w"> </span><span class="m">127</span>
+</pre></div>
+</div>
+<p>In the case of ESP32, you also need to burn the <code class="docutils literal notranslate"><span class="pre">FLASH_CRYPT_CONFIG</span></code>. It can be done by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espefuse.py<span class="w"> </span>--port<span class="w"> </span>PORT<span class="w"> </span>--chip<span class="w"> </span>esp32<span class="w"> </span>burn_efuse<span class="w"> </span>FLASH_CRYPT_CONFIG<span class="w"> </span>0xF
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Burn Flash Encryption-related security eFuses as listed below</p>
+<blockquote>
+<div><ol class="upperalpha simple">
+<li><p>Burn security eFuses</p></li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>For production use cases, it is highly recommended to burn all the eFuses listed below.</p>
+</div>
+<p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DISABLE_DL_ENCRYPT</span></code>: Disable the UART bootloader encryption access</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DISABLE_DL_DECRYPT</span></code>: Disable the UART bootloader decryption access</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DISABLE_DL_CACHE</span></code>: Disable the UART bootloader flash cache access</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">JTAG_DISABLE</span></code>: Disable the JTAG</p></li>
+</ul>
+</p>
+<p>The respective eFuses can be burned by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espefuse.py<span class="w"> </span>burn_efuse<span class="w"> </span>--port<span class="w"> </span>PORT<span class="w"> </span>EFUSE_NAME<span class="w"> </span>0x1
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please update the <code class="docutils literal notranslate"><span class="pre">EFUSE_NAME</span></code> with the eFuse that you need to burn. Multiple eFuses can be burned at the same time by appending them to the above command (e.g., <code class="docutils literal notranslate"><span class="pre">EFUSE_NAME</span> <span class="pre">VAL</span> <span class="pre">EFUSE_NAME2</span> <span class="pre">VAL2</span></code>). More documentation about <cite>espefuse.py</cite> can be found <a class="reference external" href="https://docs.espressif.com/projects/esptool/en/latest/esp32/espefuse/index.html">here</a>.</p>
+</div>
+<ol class="upperalpha simple" start="2">
+<li><p>Write protect security eFuses</p></li>
+</ol>
+<p>After burning the respective eFuses we need to write_protect the security configurations. It can be done by burning following eFuse:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espefuse.py<span class="w"> </span>--port<span class="w"> </span>PORT<span class="w"> </span>write_protect_efuse<span class="w"> </span>DIS_CACHE
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The write protection of above eFuse also write protects multiple other eFuses. Please refer to the ESP32 eFuse table for more details.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Configure the project</p>
+<blockquote>
+<div><p>The bootloader and the application binaries for the project must be built with Flash Encryption release mode with default configurations.</p>
+<p>Flash Encryption release mode can be set in the menuconfig as follows:</p>
+<p><ul class="simple">
+<li><p><a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-flash-enc-enabled"><span class="std std-ref">Enable Flash Encryption on boot</span></a>.</p></li>
+<li><p><a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-flash-encryption-mode"><span class="std std-ref">Select release mode</span></a> (Note that once release mode is selected, the <code class="docutils literal notranslate"><span class="pre">DISABLE_DL_ENCRYPT</span></code> and <code class="docutils literal notranslate"><span class="pre">DISABLE_DL_DECRYPT</span></code> eFuse bits will be burned to disable Flash Encryption hardware in ROM download mode).</p></li>
+<li><p><a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-uart-rom-dl-mode"><span class="std std-ref">Select UART ROM download mode (permanently disabled (recommended))</span></a> (Note that this option is only available when <a class="reference internal" href="../api-reference/kconfig-reference.html#config-esp32-rev-min"><span class="std std-ref">CONFIG_ESP32_REV_MIN</span></a> is set to 3 (ESP32 V3)). The default choice is to keep UART ROM download mode enabled, however it is recommended to permanently disable this mode to reduce the options available to an attacker.</p></li>
+<li><p><a class="reference internal" href="../api-reference/kconfig-reference.html#config-bootloader-log-level"><span class="std std-ref">Select the appropriate bootloader log verbosity</span></a>.</p></li>
+<li><p>Save the configuration and exit.</p></li>
+</ul>
+</p>
+</div></blockquote>
+</li>
+<li><p>Build, Encrypt and Flash the binaries</p>
+<blockquote>
+<div><p>The binaries can be encrypted on the host machine by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espsecure.py<span class="w"> </span>encrypt_flash_data<span class="w">  </span>--keyfile<span class="w"> </span>my_flash_encryption_key.bin<span class="w"> </span>--address<span class="w"> </span>0x1000<span class="w"> </span>--output<span class="w"> </span>bootloader-enc.bin<span class="w"> </span>build/bootloader/bootloader.bin
+
+espsecure.py<span class="w"> </span>encrypt_flash_data<span class="w">  </span>--keyfile<span class="w"> </span>my_flash_encryption_key.bin<span class="w"> </span>--address<span class="w"> </span>0x8000<span class="w"> </span>--output<span class="w"> </span>partition-table-enc.bin<span class="w"> </span>build/partition_table/partition-table.bin
+
+espsecure.py<span class="w"> </span>encrypt_flash_data<span class="w">  </span>--keyfile<span class="w"> </span>my_flash_encryption_key.bin<span class="w"> </span>--address<span class="w"> </span>0x10000<span class="w"> </span>--output<span class="w"> </span>my-app-enc.bin<span class="w"> </span>build/my-app.bin
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If secure boot is enabled, perform secure boot signing of the firmware before carrying out the above encryption operation.</p>
+</div>
+<p>In the above command, the offsets are used for a sample firmware, and the actual offset for your firmware can be obtained by checking the partition table entry or by running <cite>idf.py partition-table</cite>. Please note that not all the binaries need to be encrypted, the encryption applies only to those generated from the partitions which are marked as <code class="docutils literal notranslate"><span class="pre">encrypted</span></code> in the partition table definition file. Other binaries are flashed unencrypted, i.e., as a plain output of the build process.</p>
+<p>The above files can then be flashed to their respective offset using <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code>. To see all of the command line options recommended for <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code>, see the output printed when <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">build</span></code> succeeds.</p>
+<p>When the application contains the following partition: <code class="docutils literal notranslate"><span class="pre">otadata</span></code> and <code class="docutils literal notranslate"><span class="pre">nvs_encryption_keys</span></code>, they need to be encrypted as well. Please refer to <a class="reference internal" href="flash-encryption.html#encrypted-partitions"><span class="std std-ref">Encrypted Partitions</span></a> for more details about encrypted partitions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the flashed ciphertext file is not recognized by the ESP32 when it boots, check that the keys match and that the command line arguments match exactly, including the correct offset. It is important to provide the correct offset as the ciphertext changes when the offset changes.</p>
+<p>If your ESP32 uses non-default <a class="reference internal" href="flash-encryption.html#setting-flash-crypt-config"><span class="std std-ref">FLASH_CRYPT_CONFIG value in eFuse</span></a> then you will need to pass the <code class="docutils literal notranslate"><span class="pre">--flash_crypt_conf</span></code> argument to <code class="docutils literal notranslate"><span class="pre">espsecure.py</span></code> to set the matching value. This will not happen when the Flash Encryption is enabled by the second stage bootloader but may happen when burning eFuses manually to enable Flash Encryption.</p>
+</div>
+<p>The command <code class="docutils literal notranslate"><span class="pre">espsecure.py</span> <span class="pre">decrypt_flash_data</span></code> can be used with the same options (and different input or output files), to decrypt ciphertext flash contents or a previously encrypted file.</p>
+</div></blockquote>
+</li>
+<li><p>Secure the ROM download mode</p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Please perform the following step at the very end. After this eFuse is burned, the espefuse tool can no longer be used to burn additional eFuses.</p>
+</div>
+<p>Disable UART ROM DL mode:</p>
+<blockquote>
+<div><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">UART_DOWNLOAD_DIS</span></code> : Disable the UART ROM download mode</p></li>
+</ul>
+<p>The eFuse can be burned by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espefuse.py<span class="w"> </span>--port<span class="w"> </span>PORT<span class="w"> </span>burn_efuse<span class="w"> </span>UART_DOWNLOAD_DIS
+</pre></div>
+</div>
+</p>
+</div></blockquote>
+</div></blockquote>
+</li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ol class="arabic" start="9">
+<li><p>Delete Flash Encryption key on host</p>
+<blockquote>
+<div><p>Once the Flash Encryption has been enabled for the device, the key <strong>must be deleted immediately</strong>. This ensures that the host can't produce encrypted binaries for the same device going forward. This step is important to reduce the vulnerability of the Flash Encryption key.</p>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<section id="flash-encryption-guidelines">
+<h4>Flash Encryption Guidelines<a class="headerlink" href="#flash-encryption-guidelines" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><p>It is recommended to generate a unique Flash Encryption key for each device for production use-cases.</p></li>
+<li><p>It is recommended to ensure that the RNG used by host machine to generate the Flash Encryption key has good entropy.</p></li>
+<li><p>See <a class="reference internal" href="flash-encryption.html#flash-encryption-limitations"><span class="std std-ref">Limitations of Flash Encryption</span></a> for more details.</p></li>
+</ul>
+</section>
+</section>
+<section id="enable-secure-boot-v2-externally">
+<span id="id3"></span><h3>Enable Secure Boot v2 Externally<a class="headerlink" href="#enable-secure-boot-v2-externally" title="Permalink to this heading"></a></h3>
+<p>In this workflow we shall use <code class="docutils literal notranslate"><span class="pre">espsecure</span></code> tool to generate signing keys and use the <code class="docutils literal notranslate"><span class="pre">espefuse</span></code> tool to burn the relevant eFuses. The details about the Secure Boot v2 process can be found at <a class="reference internal" href="secure-boot-v2.html"><span class="doc">Secure Boot v2</span></a>.</p>
+<ol class="arabic">
+<li><p>Generate Secure Boot v2 Signing Private Key</p>
+<blockquote>
+<div><p>The Secure Boot v2 signing key for the RSA3072 scheme can be generated by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espsecure.py<span class="w"> </span>generate_signing_key<span class="w"> </span>--version<span class="w"> </span><span class="m">2</span><span class="w"> </span>--scheme<span class="w"> </span>rsa3072<span class="w"> </span>secure_boot_signing_key.pem
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Generate Public Key Digest</p>
+<blockquote>
+<div><p>The public key digest for the private key generated in the previous step can be generated by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espsecure.py<span class="w"> </span>digest_sbv2_public_key<span class="w"> </span>--keyfile<span class="w"> </span>secure_boot_signing_key.pem<span class="w"> </span>--output<span class="w"> </span>digest.bin
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Burn the key digest in eFuse</p>
+<blockquote>
+<div><p>The public key digest can be burned in the eFuse by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espefuse.py<span class="w"> </span>--port<span class="w"> </span>PORT<span class="w"> </span>--chip<span class="w"> </span>esp32<span class="w"> </span>burn_key<span class="w"> </span>secure_boot_v2<span class="w"> </span>digest.bin
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Enable Secure Boot v2</p>
+<blockquote>
+<div><p>Secure Boot v2 eFuse can be enabled by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espefuse.py<span class="w"> </span>--port<span class="w"> </span>PORT<span class="w"> </span>--chip<span class="w"> </span>esp32<span class="w"> </span>burn_efuse<span class="w"> </span>ABS_DONE_1
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<ol class="arabic" start="5">
+<li><p>Burn relevant eFuses</p>
+<blockquote>
+<div><ol class="upperalpha simple">
+<li><p>Burn security eFuses</p></li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>For production use cases, it is highly recommended to burn all the eFuses listed below.</p>
+</div>
+<p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">JTAG_DISABLE</span></code>: Disable the JTAG.</p></li>
+</ul>
+</p>
+<p>The respective eFuses can be burned by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espefuse.py<span class="w"> </span>burn_efuse<span class="w"> </span>--port<span class="w"> </span>PORT<span class="w"> </span>EFUSE_NAME<span class="w"> </span>0x1
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please update the EFUSE_NAME with the eFuse that you need to burn. Multiple eFuses can be burned at the same time by appending them to the above command (e.g., EFUSE_NAME VAL EFUSE_NAME2 VAL2). More documentation about <cite>espefuse.py</cite> can be found <a class="reference external" href="https://docs.espressif.com/projects/esptool/en/latest/esp32/espefuse/index.html">here</a></p>
+</div>
+<ol class="upperalpha simple" start="2">
+<li><p>Secure Boot v2-related eFuses</p></li>
+</ol>
+<ol class="lowerroman simple">
+<li><p>Disable the read-protection option:</p></li>
+</ol>
+<p>The Secure Boot digest burned in the eFuse must be kept readable otherwise the Secure Boot operation would result in a failure. To prevent the accidental enabling of read protection for this key block, the following eFuse needs to be burned:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espefuse.py<span class="w"> </span>-p<span class="w"> </span><span class="nv">$ESPPORT</span><span class="w"> </span>write_protect_efuse<span class="w"> </span>RD_DIS
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>After burning above-mentioned eFuse, the read protection can't be enabled for any key. For example, if Flash Encryption which requires read protection for its key is not enabled at this point, then it can't be enabled afterwards. Please ensure that no eFuse keys are going to need read protection after completing this step.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Configure the project</p>
+<blockquote>
+<div><p>By default, the first stage (ROM) bootloader would only verify the <a class="reference internal" href="../api-guides/startup.html#second-stage-bootloader"><span class="std std-ref">Second Stage Bootloader</span></a>. The second stage bootloader would verify the app partition only when the <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-boot"><span class="std std-ref">CONFIG_SECURE_BOOT</span></a> option is enabled (and <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-boot-version"><span class="std std-ref">CONFIG_SECURE_BOOT_VERSION</span></a> is set to <code class="docutils literal notranslate"><span class="pre">SECURE_BOOT_V2_ENABLED</span></code>) while building the bootloader.</p>
+<ol class="upperalpha simple">
+<li><p>Open the <a class="reference internal" href="../api-guides/kconfig/project-configuration-guide.html#project-configuration-menu"><span class="std std-ref">Editing the Configuration</span></a>, in <code class="docutils literal notranslate"><span class="pre">Security</span> <span class="pre">features</span></code> set <code class="docutils literal notranslate"><span class="pre">Enable</span> <span class="pre">hardware</span> <span class="pre">Secure</span> <span class="pre">Boot</span> <span class="pre">in</span> <span class="pre">bootloader</span></code> to enable Secure Boot.</p></li>
+</ol>
+<p>For ESP32, Secure Boot v2 is available only for ESP32 ECO3 onwards. To view the <code class="docutils literal notranslate"><span class="pre">Secure</span> <span class="pre">Boot</span> <span class="pre">v2</span></code> option the chip revision should be changed to revision v3.0 (ECO3). To change the chip revision, set <code class="docutils literal notranslate"><span class="pre">Minimum</span> <span class="pre">Supported</span> <span class="pre">ESP32</span> <span class="pre">Revision</span></code> to <code class="docutils literal notranslate"><span class="pre">Rev</span> <span class="pre">3.0</span> <span class="pre">(ECO3)</span></code> in <code class="docutils literal notranslate"><span class="pre">Component</span> <span class="pre">Config</span> <span class="pre">-&gt;</span> <span class="pre">Hardware</span> <span class="pre">Settings</span> <span class="pre">-&gt;</span> <span class="pre">Chip</span> <span class="pre">Revision</span></code>.</p>
+<ol class="upperalpha simple" start="2">
+<li><p>Disable the option <a class="reference internal" href="../api-reference/kconfig-reference.html#config-secure-boot-build-signed-binaries"><span class="std std-ref">CONFIG_SECURE_BOOT_BUILD_SIGNED_BINARIES</span></a> for the project in the <a class="reference internal" href="../api-guides/kconfig/project-configuration-guide.html#project-configuration-menu"><span class="std std-ref">Editing the Configuration</span></a>. This shall make sure that all the generated binaries are secure padded and unsigned. This step is done to avoid generating signed binaries as we are going to manually sign the binaries using <code class="docutils literal notranslate"><span class="pre">espsecure</span></code> tool.</p></li>
+</ol>
+</div></blockquote>
+</li>
+<li><p>Build, Sign and Flash the binaries</p>
+<blockquote>
+<div><p>After the above configurations, the bootloader and application binaries can be built with <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">build</span></code> command.</p>
+<p>The Secure Boot v2 workflow only verifies the <code class="docutils literal notranslate"><span class="pre">bootloader</span></code> and <code class="docutils literal notranslate"><span class="pre">application</span></code> binaries, hence only those binaries need to be signed. The other binaries (e.g., <code class="docutils literal notranslate"><span class="pre">partition-table.bin</span></code>) can be flashed as they are generated in the build stage.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">bootloader.bin</span></code> and <code class="docutils literal notranslate"><span class="pre">app.bin</span></code> binaries can be signed by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espsecure.py<span class="w"> </span>sign_data<span class="w"> </span>--version<span class="w"> </span><span class="m">2</span><span class="w"> </span>--keyfile<span class="w"> </span>secure_boot_signing_key.pem<span class="w"> </span>--output<span class="w"> </span>bootloader-signed.bin<span class="w"> </span>build/bootloader/bootloader.bin
+
+espsecure.py<span class="w"> </span>sign_data<span class="w"> </span>--version<span class="w"> </span><span class="m">2</span><span class="w"> </span>--keyfile<span class="w"> </span>secure_boot_signing_key.pem<span class="w"> </span>--output<span class="w"> </span>my-app-signed.bin<span class="w"> </span>build/my-app.bin
+</pre></div>
+</div>
+<p>The signatures attached to a binary can be checked by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espsecure.py<span class="w"> </span>signature_info_v2<span class="w"> </span>bootloader-signed.bin
+</pre></div>
+</div>
+<p>The above files along with other binaries (e.g., partition table) can then be flashed to their respective offset using <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code>. To see all of the command line options recommended for <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code>, see the output printed when <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">build</span></code> succeeds. The flash offset for your firmware can be obtained by checking the partition table entry or by running <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">partition-table</span></code>.</p>
+</div></blockquote>
+</li>
+<li><p>Secure the ROM download mode</p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Please perform the following step at the very end. After this eFuse is burned, the espefuse tool can no longer be used to burn additional eFuses.</p>
+</div>
+<p>Disable UART ROM DL mode:</p>
+<p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">UART_DOWNLOAD_DIS</span></code> : Disable the UART ROM download mode</p></li>
+</ul>
+<p>The eFuse can be burned by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>espefuse.py<span class="w"> </span>--port<span class="w"> </span>PORT<span class="w"> </span>burn_efuse<span class="w"> </span>UART_DOWNLOAD_DIS
+</pre></div>
+</div>
+</p>
+</div></blockquote>
+</li>
+</ol>
+<section id="secure-boot-v2-guidelines">
+<h4>Secure Boot v2 Guidelines<a class="headerlink" href="#secure-boot-v2-guidelines" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><p>It is recommended to store the Secure Boot key in a highly secure place. A physical or a cloud HSM may be used for secure storage of the Secure Boot private key. Please take a look at <a class="reference internal" href="secure-boot-v2.html#remote-sign-v2-image"><span class="std std-ref">Remote Signing of Images</span></a> for more details.</p></li>
+</ul>
+</section>
+</section>
+<section id="enable-nvs-encryption-externally">
+<span id="id5"></span><h3>Enable NVS Encryption Externally<a class="headerlink" href="#enable-nvs-encryption-externally" title="Permalink to this heading"></a></h3>
+<p>The details about NVS encryption and related schemes can be found at <a class="reference internal" href="../api-reference/storage/nvs_encryption.html"><span class="doc">NVS Encryption</span></a>.</p>
+<section id="enable-nvs-encryption-based-on-flash-encryption">
+<span id="enable-flash-enc-based-nvs-encryption"></span><h4>Enable NVS Encryption Based on Flash Encryption<a class="headerlink" href="#enable-nvs-encryption-based-on-flash-encryption" title="Permalink to this heading"></a></h4>
+<p>In this case we generate NVS Encryption keys on a host. This key is then flashed on the chip and protected with the help of <a class="reference internal" href="flash-encryption.html"><span class="doc">Flash Encryption</span></a> features.</p>
+<ol class="arabic">
+<li><p>Generate the NVS encryption key</p>
+<blockquote>
+<div><p>For generation of respective keys, we shall use <a class="reference internal" href="../api-reference/storage/nvs_partition_gen.html"><span class="doc">NVS partition generator utility</span></a>. We shall generate the encryption key on host and this key shall be stored on the flash of ESP32 in encrypted state.</p>
+<p>The key can be generated with the <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/nvs_flash/nvs_partition_generator/nvs_partition_gen.py">nvs_flash/nvs_partition_generator/nvs_partition_gen.py</a> script with the help of the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>nvs_partition_gen.py<span class="w"> </span>generate-key<span class="w"> </span>--keyfile<span class="w"> </span>nvs_encr_key.bin
+</pre></div>
+</div>
+<p>This shall generate the respective key in the <code class="docutils literal notranslate"><span class="pre">keys</span></code> folder.</p>
+</div></blockquote>
+</li>
+<li><p>Generate the encrypted NVS partition</p>
+<blockquote>
+<div><p>We shall generate the actual encrypted NVS partition on host. More details about generating the encrypted NVS partition can be found at <a class="reference internal" href="../api-reference/storage/nvs_partition_gen.html#generate-encrypted-nvs-partition"><span class="std std-ref">Generate Encrypted NVS Partition</span></a>.For this, the contents of the NVS file shall be available in a CSV file. Please refer to <a class="reference internal" href="../api-reference/storage/nvs_partition_gen.html#nvs-csv-file-format"><span class="std std-ref">CSV File Format</span></a> for more details.</p>
+<p>The encrypted NVS partition can be generated with following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>nvs_partition_gen.py<span class="w"> </span>encrypt<span class="w"> </span>sample_singlepage_blob.csv<span class="w"> </span>nvs_encr_partition.bin<span class="w"> </span>0x3000<span class="w"> </span>--inputkey<span class="w"> </span>keys/nvs_encr_key.bin
+</pre></div>
+</div>
+<p>Some command arguments are explained below:</p>
+<ul class="simple">
+<li><p>CSV file name - In this case <cite>sample_singlepage_blob.csv</cite> is the CSV file which contains the NVS data. Please replace it with the file you wish to choose.</p></li>
+<li><p>NVS partition size - This is the size of the NVS partition in bytes. Please update the sample value of <code class="docutils literal notranslate"><span class="pre">0x3000</span></code> in the above-provided command to the correct size of your NVS partition.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Configure the project</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Enable <cite>NVS Encryption</cite> by enabling <a class="reference internal" href="../api-reference/kconfig-reference.html#config-nvs-encryption"><span class="std std-ref">CONFIG_NVS_ENCRYPTION</span></a>.</p></li>
+<li><p>Set NVS to use Flash Encryption based scheme by setting <a class="reference internal" href="../api-reference/kconfig-reference.html#config-nvs-sec-key-protection-scheme"><span class="std std-ref">CONFIG_NVS_SEC_KEY_PROTECTION_SCHEME</span></a> to <code class="docutils literal notranslate"><span class="pre">CONFIG_NVS_SEC_KEY_PROTECT_USING_FLASH_ENC</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Flash NVS partition and NVS encryption keys</p>
+<blockquote>
+<div><p>The NVS partition (<code class="docutils literal notranslate"><span class="pre">nvs_encr_partition.bin</span></code>) and NVS encryption key (<code class="docutils literal notranslate"><span class="pre">nvs_encr_key.bin</span></code>) can then be flashed to their respective offset using <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code>. To see all of the command line options recommended for <code class="docutils literal notranslate"><span class="pre">esptool.py</span></code>, check the output print when <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">build</span></code> succeeds.</p>
+<p>If Flash Encryption is enabled for the chip, then please encrypt the NVS key partition first before flashing. You may refer the flashing related steps of <a class="reference internal" href="#enable-flash-encryption-externally">Flash Encryption workflow</a>.</p>
+</div></blockquote>
+</li>
+</ol>
+</section>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Security Features Enablement Workflows (security/security-features-enablement-workflows)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Security Features Enablement Workflows (security/security-features-enablement-workflows)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="secure-boot-v2.html" class="btn btn-neutral float-left" title="Secure Boot v2" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vulnerabilities.html" class="btn btn-neutral float-right" title="Vulnerabilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

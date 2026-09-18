@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minimizing Binary Size - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/performance/size.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/performance/size';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Minimizing RAM Usage" href="ram-usage.html" />
+    <link rel="prev" title="Speed Optimization" href="speed.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Performance</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#how-to-optimize-performance">How to Optimize Performance</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#guides">Guides</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="speed.html">Speed Optimization</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Minimizing Binary Size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ram-usage.html">Minimizing RAM Usage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Performance</a></li>
+      <li class="breadcrumb-item active">Minimizing Binary Size</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/performance/size.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="minimizing-binary-size">
+<h1>Minimizing Binary Size<a class="headerlink" href="#minimizing-binary-size" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-guides/performance/size.html">[中文]</a></p>
+<p>The ESP-IDF build system compiles all source files in the project and ESP-IDF, but only functions and variables that are actually referenced by the program are linked into the final binary. In some cases, it is necessary to reduce the total size of the firmware binary, e.g., in order to fit it into the available flash partition size.</p>
+<p>The first step to reducing the total firmware binary size is measuring what is causing the size to increase.</p>
+<section id="measuring-static-sizes">
+<span id="idf-py-size"></span><h2>Measuring Static Sizes<a class="headerlink" href="#measuring-static-sizes" title="Permalink to this heading"></a></h2>
+<p>To optimize both the firmware binary size and the memory usage, it is necessary to measure statically-allocated RAM (<code class="docutils literal notranslate"><span class="pre">data</span></code>, <code class="docutils literal notranslate"><span class="pre">bss</span></code>), code (<code class="docutils literal notranslate"><span class="pre">text</span></code>), and read-only data (<code class="docutils literal notranslate"><span class="pre">rodata</span></code>) in your project. The <a class="reference internal" href="../build-system.html#idf-py"><span class="std std-ref">idf.py</span></a> sub-commands <code class="docutils literal notranslate"><span class="pre">size</span></code>, <code class="docutils literal notranslate"><span class="pre">size-components</span></code>, and <code class="docutils literal notranslate"><span class="pre">size-files</span></code> can be used to examine statically-allocated RAM usage at different levels of detail. For more information, please see the <a class="reference internal" href="../tools/idf-size.html"><span class="doc">IDF Size</span></a> tool.</p>
+</section>
+<section id="linker-map-file">
+<span id="id1"></span><h2>Linker Map File<a class="headerlink" href="#linker-map-file" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is an advanced analysis method, but it can be very useful. Feel free to skip ahead to <a class="reference internal" href="#reducing-overall-size"><span class="std std-ref">Reducing Overall Size</span></a> and possibly come back to this later.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">size</span></code> analysis tools all work by parsing the GNU binutils <code class="docutils literal notranslate"><span class="pre">linker</span> <span class="pre">map</span> <span class="pre">file</span></code>, which is a summary of everything the linker did when it created (i.e., linked) the final firmware binary file.</p>
+<p>Linker map files themselves are plain text files, so it is possible to read them and find out exactly what the linker did. However, they are also very complex and long, often exceeding 100,000 lines.</p>
+<p>The map file itself is broken into parts and each part has a heading. The parts are:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Archive</span> <span class="pre">member</span> <span class="pre">included</span> <span class="pre">to</span> <span class="pre">satisfy</span> <span class="pre">reference</span> <span class="pre">by</span> <span class="pre">file</span> <span class="pre">(symbol)</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>This shows you: for each object file included in the link, what symbol (function or variable) was the linker searching for when it included that object file.</p></li>
+<li><p>If you are wondering why some object file in particular was included in the binary, this part may give a clue. This part can be used in conjunction with the <code class="docutils literal notranslate"><span class="pre">Cross</span> <span class="pre">Reference</span> <span class="pre">Table</span></code> at the end of the file.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Not every object file shown in this list ends up included in the final binary, some end up in the <code class="docutils literal notranslate"><span class="pre">Discarded</span> <span class="pre">input</span> <span class="pre">sections</span></code> list instead.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Allocating</span> <span class="pre">common</span> <span class="pre">symbols</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>This is a list of some global variables along with their sizes. Common symbols have a particular meaning in ELF binary files, but ESP-IDF does not make much use of them.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Discarded</span> <span class="pre">input</span> <span class="pre">sections</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>These sections were read by the linker as part of an object file to be linked into the final binary, but then nothing else referred to them, so they were discarded from the final binary.</p></li>
+<li><p>For ESP-IDF, this list can be very long, as we compile each function and static variable to a unique section in order to minimize the final binary size. Specifically, ESP-IDF uses compiler options <code class="docutils literal notranslate"><span class="pre">-ffunction-sections</span> <span class="pre">-fdata-sections</span></code> and linker option <code class="docutils literal notranslate"><span class="pre">--gc-sections</span></code>.</p></li>
+<li><p>Items mentioned in this list <strong>do not</strong> contribute to the final binary.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Memory</span> <span class="pre">Configuration</span></code>, <code class="docutils literal notranslate"><span class="pre">Linker</span> <span class="pre">script</span> <span class="pre">and</span> <span class="pre">memory</span> <span class="pre">map</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>These two parts go together. Some of the output comes directly from the linker command line and the Linker Script, both provided by <a class="reference internal" href="../build-system.html"><span class="doc">Build System</span></a>. The linker script is partially generated from the ESP-IDF project using the <a class="reference internal" href="../linker-script-generation.html"><span class="doc">Linker Script Generation</span></a> feature.</p></li>
+<li><p>As the output of the <code class="docutils literal notranslate"><span class="pre">Linker</span> <span class="pre">script</span> <span class="pre">and</span> <span class="pre">memory</span> <span class="pre">map</span></code> part of the map unfolds, you can see each symbol (function or static variable) linked into the final binary along with its address (as a 16 digit hex number), its length (also in hex), and the library and object file it was linked from (which can be used to determine the component and the source file).</p></li>
+<li><p>Following all of the output sections that take up space in the final <code class="docutils literal notranslate"><span class="pre">.bin</span></code> file, the <code class="docutils literal notranslate"><span class="pre">memory</span> <span class="pre">map</span></code> also includes some sections in the ELF file that are only used for debugging, e.g., ELF sections <code class="docutils literal notranslate"><span class="pre">.debug_*</span></code>, etc. These do not contribute to the final binary size. You can notice the address of these symbols is a very small number, starting from <code class="docutils literal notranslate"><span class="pre">0x0000000000000000</span></code> and counting up.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Cross</span> <span class="pre">Reference</span> <span class="pre">Table</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>This table shows the symbol (function or static variable) that the list of object file(s) refers to. If you are wondering why a particular thing is included in the binary, this will help determine what included it.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unfortunately, the <code class="docutils literal notranslate"><span class="pre">Cross</span> <span class="pre">Reference</span> <span class="pre">Table</span></code> does not only include symbols that made it into the final binary. It also includes symbols in discarded sections. Therefore, just because something is shown here does not mean that it was included in the final binary - this needs to be checked separately.</p>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Linker map files are generated by the GNU binutils linker <code class="docutils literal notranslate"><span class="pre">ld</span></code>, not ESP-IDF. You can find additional information online about the linker map file format. This quick summary is written from the perspective of ESP-IDF build system in particular.</p>
+</div>
+</section>
+<section id="reducing-overall-size">
+<span id="id2"></span><h2>Reducing Overall Size<a class="headerlink" href="#reducing-overall-size" title="Permalink to this heading"></a></h2>
+<p>The following configuration options reduces the final binary size of almost any ESP-IDF project:</p>
+<p><ul class="simple">
+<li><p>Set <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-compiler-optimization"><span class="std std-ref">CONFIG_COMPILER_OPTIMIZATION</span></a> to <code class="docutils literal notranslate"><span class="pre">Optimize</span> <span class="pre">for</span> <span class="pre">size</span> <span class="pre">(-Os)</span></code>. In some cases, <code class="docutils literal notranslate"><span class="pre">Optimize</span> <span class="pre">for</span> <span class="pre">performance</span> <span class="pre">(-O2)</span></code> will also reduce the binary size compared to the default. Note that if your code contains C or C++ Undefined Behavior then increasing the compiler optimization level may expose bugs that otherwise do not happen.</p></li>
+<li><p>Reduce the compiled-in log output by lowering the app <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-log-default-level"><span class="std std-ref">CONFIG_LOG_DEFAULT_LEVEL</span></a>. If the <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-log-maximum-level"><span class="std std-ref">CONFIG_LOG_MAXIMUM_LEVEL</span></a> is changed from the default then this setting controls the binary size instead. Reducing compiled-in logging reduces the number of strings in the binary, and also the code size of the calls to logging functions.</p></li>
+<li><p>If your application does not require dynamic log level changes and you do not need to control logs per module using tags, consider disabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-log-dynamic-level-control"><span class="std std-ref">CONFIG_LOG_DYNAMIC_LEVEL_CONTROL</span></a> and changing <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-log-tag-level-impl"><span class="std std-ref">CONFIG_LOG_TAG_LEVEL_IMPL</span></a>. It reduces IRAM usage by approximately 260 bytes, DRAM usage by approximately 264 bytes, and flash usage by approximately 1 KB compared to the default option, it also speeds up logging.</p></li>
+<li><p>Set the <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-compiler-optimization-assertion-level"><span class="std std-ref">CONFIG_COMPILER_OPTIMIZATION_ASSERTION_LEVEL</span></a> to <code class="docutils literal notranslate"><span class="pre">Silent</span></code>. This avoids compiling in a dedicated assertion string and source file name for each assert that may fail. It is still possible to find the failed assert in the code by looking at the memory address where the assertion failed.</p></li>
+<li><p>Besides the <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-compiler-optimization-assertion-level"><span class="std std-ref">CONFIG_COMPILER_OPTIMIZATION_ASSERTION_LEVEL</span></a>, you can disable or silent the assertion for the HAL component separately by setting <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-hal-default-assertion-level"><span class="std std-ref">CONFIG_HAL_DEFAULT_ASSERTION_LEVEL</span></a>. In the bootloader, ESP-IDF lowers the HAL assertion level to be silent even if <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-hal-default-assertion-level"><span class="std std-ref">CONFIG_HAL_DEFAULT_ASSERTION_LEVEL</span></a> is set to full-assertion level. This is to reduce the bootloader size.</p></li>
+<li><p>Setting <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-compiler-optimization-checks-silent"><span class="std std-ref">CONFIG_COMPILER_OPTIMIZATION_CHECKS_SILENT</span></a> removes specific error messages for particular internal ESP-IDF error check macros. This may make it harder to debug some error conditions by reading the log output.</p></li>
+<li><p>If the binary needs to run on only certain revision(s) of ESP32, increasing <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp32-rev-min"><span class="std std-ref">CONFIG_ESP32_REV_MIN</span></a> to match can result in a reduced binary size. This will make a large difference if setting ESP32 minimum revision 3, and PSRAM is enabled.</p></li>
+<li><p>Do not enable <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-compiler-cxx-exceptions"><span class="std std-ref">CONFIG_COMPILER_CXX_EXCEPTIONS</span></a>, <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-compiler-cxx-rtti"><span class="std std-ref">CONFIG_COMPILER_CXX_RTTI</span></a>, or set the <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-compiler-stack-check-mode"><span class="std std-ref">CONFIG_COMPILER_STACK_CHECK_MODE</span></a> to Overall. All of these options are already disabled by default, but they have a large impact on binary size.</p></li>
+<li><p>Disabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-err-to-name-lookup"><span class="std std-ref">CONFIG_ESP_ERR_TO_NAME_LOOKUP</span></a> removes the lookup table to translate user-friendly names for error values (see <a class="reference internal" href="../error-handling.html"><span class="doc">Error Handling</span></a>) in error logs, etc. This saves some binary size, but error values will be printed as integers only.</p></li>
+<li><p>Setting <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-system-panic"><span class="std std-ref">CONFIG_ESP_SYSTEM_PANIC</span></a> to <code class="docutils literal notranslate"><span class="pre">Silent</span> <span class="pre">reboot</span></code> saves a small amount of binary size, however this is <strong>only</strong> recommended if no one will use UART output to debug the device.</p></li>
+<li><p>If the application binary uses only one of the security versions of the protocomm component, then the support for others can be disabled to save some code size. The support can be disabled through <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-protocomm-support-security-version-0"><span class="std std-ref">CONFIG_ESP_PROTOCOMM_SUPPORT_SECURITY_VERSION_0</span></a>, <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-protocomm-support-security-version-1"><span class="std std-ref">CONFIG_ESP_PROTOCOMM_SUPPORT_SECURITY_VERSION_1</span></a> or <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-protocomm-support-security-version-2"><span class="std std-ref">CONFIG_ESP_PROTOCOMM_SUPPORT_SECURITY_VERSION_2</span></a> respectively.</p></li>
+</ul>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In addition to the many configuration items shown here, there are a number of configuration options where changing the option from the default increases binary size. These are not noted here. Where the increase is significant is usually noted in the configuration item help text.</p>
+</div>
+<section id="targeted-optimizations">
+<span id="size-targeted-optimizations"></span><h3>Targeted Optimizations<a class="headerlink" href="#targeted-optimizations" title="Permalink to this heading"></a></h3>
+<p>The following binary size optimizations apply to a particular component or a function:</p>
+<section id="wi-fi">
+<h4>Wi-Fi<a class="headerlink" href="#wi-fi" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><p>Disabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-wifi-enable-wpa3-sae"><span class="std std-ref">CONFIG_ESP_WIFI_ENABLE_WPA3_SAE</span></a> will save some Wi-Fi binary size if WPA3 support is not needed. Note that WPA3 is mandatory for new Wi-Fi device certifications.</p></li>
+<li><p>Disabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-wifi-softap-support"><span class="std std-ref">CONFIG_ESP_WIFI_SOFTAP_SUPPORT</span></a> will save some Wi-Fi binary size if soft-AP support is not needed.</p></li>
+<li><p>Disabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-wifi-enterprise-support"><span class="std std-ref">CONFIG_ESP_WIFI_ENTERPRISE_SUPPORT</span></a> will save some Wi-Fi binary size if enterprise support is not needed.</p></li>
+<li><p>Disabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-wifi-enable-sae-h2e"><span class="std std-ref">CONFIG_ESP_WIFI_ENABLE_SAE_H2E</span></a> will save some Wi-Fi binary size if hash-to-element authentication method of WPA3-SAE is not needed. Note that hash-to-element is faster, more secure and immune to side channel attacks than the default authentication method of hunting-and-pecking.</p></li>
+</ul>
+</section>
+<section id="adc">
+<h4>ADC<a class="headerlink" href="#adc" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><p>Disabling ADC calibration features <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-adc-cal-efuse-tp-enable"><span class="std std-ref">CONFIG_ADC_CAL_EFUSE_TP_ENABLE</span></a>, <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-adc-cal-efuse-vref-enable"><span class="std std-ref">CONFIG_ADC_CAL_EFUSE_VREF_ENABLE</span></a>, <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-adc-cal-lut-enable"><span class="std std-ref">CONFIG_ADC_CAL_LUT_ENABLE</span></a> will save a small amount of binary size if ADC driver is used, at expense of accuracy.</p></li>
+</ul>
+</section>
+<section id="bluetooth-nimble">
+<h4>Bluetooth NimBLE<a class="headerlink" href="#bluetooth-nimble" title="Permalink to this heading"></a></h4>
+<p>If using <a class="reference internal" href="../../api-reference/bluetooth/nimble/index.html"><span class="doc">NimBLE-based Host APIs</span></a> then the following modifications can reduce binary size:</p>
+<p><ul class="simple">
+<li><p>Set <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-btdm-ctrl-ble-max-conn"><span class="std std-ref">CONFIG_BTDM_CTRL_BLE_MAX_CONN</span></a> to 1 if only one Bluetooth LE connection is needed.</p></li>
+<li><p>Set <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bt-nimble-max-connections"><span class="std std-ref">CONFIG_BT_NIMBLE_MAX_CONNECTIONS</span></a> to 1 if only one Bluetooth LE connection is needed.</p></li>
+<li><p>Disable either <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bt-nimble-role-central"><span class="std std-ref">CONFIG_BT_NIMBLE_ROLE_CENTRAL</span></a> or <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bt-nimble-role-observer"><span class="std std-ref">CONFIG_BT_NIMBLE_ROLE_OBSERVER</span></a> if these roles are not needed.</p></li>
+<li><p>Reducing <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-bt-nimble-log-level"><span class="std std-ref">CONFIG_BT_NIMBLE_LOG_LEVEL</span></a> can reduce binary size. Note that if the overall log level has been reduced as described above in <a class="reference internal" href="#reducing-overall-size"><span class="std std-ref">Reducing Overall Size</span></a> then this also reduces the NimBLE log level.</p></li>
+</ul>
+</p>
+</section>
+<section id="lwip-ipv6">
+<h4>lwIP IPv6<a class="headerlink" href="#lwip-ipv6" title="Permalink to this heading"></a></h4>
+<ul>
+<li><p>Setting <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-lwip-ipv6"><span class="std std-ref">CONFIG_LWIP_IPV6</span></a> to <code class="docutils literal notranslate"><span class="pre">false</span></code> will reduce the size of the lwIP TCP/IP stack, at the cost of only supporting IPv4.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>IPv6 is required by some components such as <a class="reference internal" href="../../api-reference/protocols/asio.html"><span class="doc">ASIO Port</span></a>. These components will not be available if IPV6 is disabled.</p>
+</div>
+</li>
+</ul>
+</section>
+<section id="lwip-ipv4">
+<h4>lwIP IPv4<a class="headerlink" href="#lwip-ipv4" title="Permalink to this heading"></a></h4>
+<ul>
+<li><p>If IPv4 connectivity is not required, setting <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-lwip-ipv4"><span class="std std-ref">CONFIG_LWIP_IPV4</span></a> to <code class="docutils literal notranslate"><span class="pre">false</span></code> will reduce the size of the lwIP, supporting IPv6-only TCP/IP stack.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Before disabling IPv4 support, please note that IPv6 only network environments are not ubiquitous and must be supported in the local network, e.g., by your internet service provider or using constrained local network settings.</p>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="picolibc-instead-of-newlib">
+<span id="id3"></span><h4>Picolibc instead of Newlib<a class="headerlink" href="#picolibc-instead-of-newlib" title="Permalink to this heading"></a></h4>
+<p>By default, ESP-IDF uses the Newlib C library, and it also has experimental support for the Picolibc C library.</p>
+<p>Picolibc C library provides smaller <code class="docutils literal notranslate"><span class="pre">printf</span></code> family functions and can reduce the binary size by up to 30 KB, depending on your application.</p>
+<p>To switch to linking against the Picolibc C library, please enable the configuration options <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-idf-experimental-features"><span class="std std-ref">CONFIG_IDF_EXPERIMENTAL_FEATURES</span></a> and <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-libc-picolibc"><span class="std std-ref">CONFIG_LIBC_PICOLIBC</span></a>.</p>
+</section>
+<section id="newlib-nano-formatting">
+<span id="id4"></span><h4>Newlib Nano Formatting<a class="headerlink" href="#newlib-nano-formatting" title="Permalink to this heading"></a></h4>
+<p>By default, ESP-IDF uses Newlib &quot;full&quot; formatting for I/O functions (<code class="docutils literal notranslate"><span class="pre">printf()</span></code>, <code class="docutils literal notranslate"><span class="pre">scanf()</span></code>, etc.)</p>
+<p>Enabling the config option <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-libc-newlib-nano-format"><span class="std std-ref">CONFIG_LIBC_NEWLIB_NANO_FORMAT</span></a> will switch Newlib to the &quot;Nano&quot; formatting mode. This is smaller in code size, and a large part of the implementation is compiled into the ESP32 ROM, so it does not need to be included in the binary at all.</p>
+<p>The exact difference in binary size depends on which features the firmware uses, but 25 KB ~ 50 KB is typical.</p>
+<p>Enabling &quot;Nano&quot; formatting reduces the stack usage of each function that calls <code class="docutils literal notranslate"><span class="pre">printf()</span></code> or another string formatting function, see <a class="reference internal" href="ram-usage.html#optimize-stack-sizes"><span class="std std-ref">Determining Stack Size</span></a>.</p>
+<p>&quot;Nano&quot; formatting does not support 64-bit integers, or C99 formatting features. For a full list of restrictions, search for <code class="docutils literal notranslate"><span class="pre">--enable-newlib-nano-formatted-io</span></code> in the <a class="reference external" href="https://sourceware.org/newlib/docs.html">Newlib documentation</a>.</p>
+</section>
+<section id="mbedtls-features">
+<span id="minimizing-binary-mbedtls"></span><h4>MbedTLS Features<a class="headerlink" href="#mbedtls-features" title="Permalink to this heading"></a></h4>
+<p>Under <strong>Component Config</strong> &gt; <strong>mbedTLS</strong>, there are multiple mbedTLS features enabled default, some of which can be disabled if not needed to save code size.</p>
+<p>These include:</p>
+<p><ul class="simple">
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-have-time"><span class="std std-ref">CONFIG_MBEDTLS_HAVE_TIME</span></a></p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-ecdsa-deterministic"><span class="std std-ref">CONFIG_MBEDTLS_ECDSA_DETERMINISTIC</span></a></p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-sha512-c"><span class="std std-ref">CONFIG_MBEDTLS_SHA512_C</span></a></p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-sha3-c"><span class="std std-ref">CONFIG_MBEDTLS_SHA3_C</span></a></p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-client-ssl-session-tickets"><span class="std std-ref">CONFIG_MBEDTLS_CLIENT_SSL_SESSION_TICKETS</span></a></p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-server-ssl-session-tickets"><span class="std std-ref">CONFIG_MBEDTLS_SERVER_SSL_SESSION_TICKETS</span></a></p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-ssl-context-serialization"><span class="std std-ref">CONFIG_MBEDTLS_SSL_CONTEXT_SERIALIZATION</span></a></p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-ssl-alpn"><span class="std std-ref">CONFIG_MBEDTLS_SSL_ALPN</span></a></p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-ssl-renegotiation"><span class="std std-ref">CONFIG_MBEDTLS_SSL_RENEGOTIATION</span></a></p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-ccm-c"><span class="std std-ref">CONFIG_MBEDTLS_CCM_C</span></a></p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-gcm-c"><span class="std std-ref">CONFIG_MBEDTLS_GCM_C</span></a></p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-ecp-c"><span class="std std-ref">CONFIG_MBEDTLS_ECP_C</span></a> (Alternatively: Leave this option enabled but disable some of the elliptic curves listed in the sub-menu.)</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-ecp-nist-optim"><span class="std std-ref">CONFIG_MBEDTLS_ECP_NIST_OPTIM</span></a></p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-ecp-fixed-point-optim"><span class="std std-ref">CONFIG_MBEDTLS_ECP_FIXED_POINT_OPTIM</span></a></p></li>
+<li><p>Change <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-tls-mode"><span class="std std-ref">CONFIG_MBEDTLS_TLS_MODE</span></a> if both server &amp; client functionalities are not needed.</p></li>
+<li><p>Consider disabling some cipher suites listed in the <code class="docutils literal notranslate"><span class="pre">TLS</span> <span class="pre">Key</span> <span class="pre">Exchange</span> <span class="pre">Methods</span></code> sub-menu (i.e., <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-key-exchange-rsa"><span class="std std-ref">CONFIG_MBEDTLS_KEY_EXCHANGE_RSA</span></a>).</p></li>
+<li><p>Consider disabling <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-mbedtls-error-strings"><span class="std std-ref">CONFIG_MBEDTLS_ERROR_STRINGS</span></a> if the application is already pulling in mbedTLS error strings through using <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mbedtls_strerror()</span></code>.</p></li>
+</ul>
+</p>
+<p>The help text for each option has some more information for reference.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>It is <strong>strongly not recommended to disable all these mbedTLS options</strong>. Only disable options of which you understand the functionality and are certain that it is not needed in the application. In particular:</p>
+<ul class="simple">
+<li><p>Ensure that any TLS server(s) the device connects to can still be used. If the server is controlled by a third party or a cloud service, it is recommended to ensure that the firmware supports at least two of the supported cipher suites in case one is disabled in a future update.</p></li>
+<li><p>Ensure that any TLS client(s) that connect to the device can still connect with supported/recommended cipher suites. Note that future versions of client operating systems may remove support for some features, so it is recommended to enable multiple supported cipher suites, or algorithms for redundancy.</p></li>
+</ul>
+<p>If depending on third party clients or servers, always pay attention to announcements about future changes to supported TLS features. If not, the ESP32 device may become inaccessible if support changes.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Not every combination of mbedTLS compile-time config is tested in ESP-IDF. If you find a combination that fails to compile or function as expected, please report the details on <a class="reference external" href="https://github.com/espressif/esp-idf">GitHub</a>.</p>
+</div>
+</section>
+<section id="vfs">
+<h4>VFS<a class="headerlink" href="#vfs" title="Permalink to this heading"></a></h4>
+<p><a class="reference internal" href="../../api-reference/storage/vfs.html"><span class="doc">Virtual Filesystem Component</span></a> feature in ESP-IDF allows multiple filesystem drivers and file-like peripheral drivers to be accessed using standard I/O functions (<code class="docutils literal notranslate"><span class="pre">open</span></code>, <code class="docutils literal notranslate"><span class="pre">read</span></code>, <code class="docutils literal notranslate"><span class="pre">write</span></code>, etc.) and C library functions (<code class="docutils literal notranslate"><span class="pre">fopen</span></code>, <code class="docutils literal notranslate"><span class="pre">fread</span></code>, <code class="docutils literal notranslate"><span class="pre">fwrite</span></code>, etc.). When filesystem or file-like peripheral driver functionality is not used in the application, this feature can be fully or partially disabled. VFS component provides the following configuration options:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-vfs-support-termios"><span class="std std-ref">CONFIG_VFS_SUPPORT_TERMIOS</span></a> — can be disabled if the application does not use <code class="docutils literal notranslate"><span class="pre">termios</span></code> family of functions. Currently, these functions are implemented only for UART VFS driver. Most applications can disable this option. Disabling this option reduces the code size by about 1.8 KB.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-vfs-support-select"><span class="std std-ref">CONFIG_VFS_SUPPORT_SELECT</span></a> — can be disabled if the application does not use the <code class="docutils literal notranslate"><span class="pre">select</span></code> function with file descriptors. Currently, only the UART and eventfd VFS drivers implement <code class="docutils literal notranslate"><span class="pre">select</span></code> support. Note that when this option is disabled, <code class="docutils literal notranslate"><span class="pre">select</span></code> can still be used for socket file descriptors. Disabling this option reduces the code size by about 2.7 KB.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-vfs-support-dir"><span class="std std-ref">CONFIG_VFS_SUPPORT_DIR</span></a> — can be disabled if the application does not use directory-related functions, such as <code class="docutils literal notranslate"><span class="pre">readdir</span></code> (see the description of this option for the complete list). Applications that only open, read and write specific files and do not need to enumerate or create directories can disable this option, reducing the code size by 0.5 KB or more, depending on the filesystem drivers in use.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-vfs-support-io"><span class="std std-ref">CONFIG_VFS_SUPPORT_IO</span></a> — can be disabled if the application does not use filesystems or file-like peripheral drivers. This disables all VFS functionality, including the three options mentioned above. When this option is disabled, <a class="reference internal" href="../../api-reference/system/console.html"><span class="doc">Console</span></a> can not be used. Note that the application can still use standard I/O functions with socket file descriptors when this option is disabled. Compared to the default configuration, disabling this option reduces code size by about 9.4 KB.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="bootloader-size">
+<h2>Bootloader Size<a class="headerlink" href="#bootloader-size" title="Permalink to this heading"></a></h2>
+<p>This document deals with the size of an ESP-IDF app binary only, and not the ESP-IDF <a class="reference internal" href="../startup.html#second-stage-bootloader"><span class="std std-ref">Second Stage Bootloader</span></a>.</p>
+<p>For a discussion of ESP-IDF bootloader binary size, see <a class="reference internal" href="../bootloader.html#bootloader-size"><span class="std std-ref">Bootloader Size</span></a>.</p>
+</section>
+<section id="iram-binary-size">
+<h2>IRAM Binary Size<a class="headerlink" href="#iram-binary-size" title="Permalink to this heading"></a></h2>
+<p>If the IRAM section of a binary is too large, this issue can be resolved by reducing IRAM memory usage. See <a class="reference internal" href="ram-usage.html#optimize-iram-usage"><span class="std std-ref">Optimizing IRAM Usage</span></a>.</p>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Minimizing Binary Size (api-guides/performance/size)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Minimizing Binary Size (api-guides/performance/size)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="speed.html" class="btn btn-neutral float-left" title="Speed Optimization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ram-usage.html" class="btn btn-neutral float-right" title="Minimizing RAM Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

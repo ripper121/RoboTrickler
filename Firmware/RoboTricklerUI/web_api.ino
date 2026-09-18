@@ -58,6 +58,11 @@ void handleWifiScan()
 
 void handleWifiSave()
 {
+  if (isWebFileUploadActive())
+  {
+    server.send(409, "application/json", "{\"error\":\"filesystem busy\"}");
+    return;
+  }
   String ssid = server.arg("ssid");
   String password = server.arg("password");
   ssid.trim();
@@ -70,7 +75,11 @@ void handleWifiSave()
 
   strlcpy(config.wifiSsid, ssid.c_str(), sizeof(config.wifiSsid));
   strlcpy(config.wifiPsk, password.c_str(), sizeof(config.wifiPsk));
-  saveConfiguration("/config.txt", config);
+  if (!saveConfiguration("/config.txt", config))
+  {
+    server.send(500, "application/json", "{\"error\":\"configuration save failed\"}");
+    return;
+  }
 
   server.send(200, "application/json", "{\"saved\":true,\"rebooting\":true}");
   delay(500);
@@ -83,6 +92,10 @@ void handleWifiSave()
 // it never sits resident in heap. Use loadWebLang() once per page, then webFwText().
 bool loadWebLang(JsonDocument &doc)
 {
+  if (!activeFilesystemAvailable())
+  {
+    return false;
+  }
   String language = normalizedLanguageCode();
 
   // Firmware-generated pages only consume web.firmware. Filtering while the
@@ -180,11 +193,12 @@ void handleGetTricklerState()
   char response[64];
   char weightText[16];
   uint8_t trickle = 0;
-  if (tricklerState == TRICKLER_RUNNING)
+  TricklerState state = getTricklerState();
+  if (state == TRICKLER_RUNNING)
   {
     trickle = 1;
   }
-  else if (tricklerState == TRICKLER_FINISHED)
+  else if (state == TRICKLER_FINISHED)
   {
     trickle = 2;
   }
@@ -206,7 +220,7 @@ void handleSetTarget()
   // Rewriting the target weight (and its profile file) mid-run races the Core 1
   // state machine that is actively reading config.targetWeight, so refuse while
   // trickling, matching handleSetProfile()/handleStart().
-  if (isTricklerRunning())
+  if (isTricklerRunning() || isWebFileUploadActive())
   {
     server.send(409, "text/html", webStatusPage("running", "Running..."));
     return;
@@ -234,7 +248,7 @@ void handleSetTarget()
 
 void handleSetProfile()
 {
-  if (isTricklerRunning())
+  if (isTricklerRunning() || isWebFileUploadActive())
   {
     server.send(409, "text/html", webStatusPage("running", "Running..."));
     return;
@@ -280,6 +294,11 @@ void handleGetProfileList()
 
 void handleStart()
 {
+  if (isWebFileUploadActive())
+  {
+    server.send(409, "text/html", webStatusPage("invalidProfile", "Filesystem busy"));
+    return;
+  }
   startTrickler();
   bool running = isTricklerRunning();
   server.send(running ? 200 : 409, "text/html",

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tips and Quirks - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/jtag-debugging/tips-and-quirks.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/jtag-debugging/tips-and-quirks';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Using Debugger" href="using-debugger.html" />
+    <link rel="prev" title="Semihosting Feature" href="semihosting.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">JTAG Debugging</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#how-it-works">How it Works?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#selecting-jtag-adapter">Selecting JTAG Adapter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#setup-of-openocd">Setup of OpenOCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#configuring-esp32-target">Configuring ESP32 Target</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#launching-debugger">Launching Debugger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#debugging-examples">Debugging Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#building-openocd-from-sources">Building OpenOCD from Sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#semihosting">Semihosting</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#tips-and-quirks">Tips and Quirks</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Tips and Quirks</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#related-documents">Related Documents</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="using-debugger.html">Using Debugger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="debugging-examples.html">Debugging Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semihosting.html">Semihosting Feature</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Tips and Quirks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../app_trace.html">Application Level Tracing Library</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">JTAG Debugging</a></li>
+      <li class="breadcrumb-item active">Tips and Quirks</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/jtag-debugging/tips-and-quirks.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tips-and-quirks">
+<h1>Tips and Quirks<a class="headerlink" href="#tips-and-quirks" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-guides/jtag-debugging/tips-and-quirks.html">[中文]</a></p>
+<p>This section provides collection of all tips and quirks referred to from various parts of this guide.</p>
+<section id="breakpoints-and-watchpoints-available">
+<span id="jtag-debugging-tip-breakpoints"></span><h2>Breakpoints and Watchpoints Available<a class="headerlink" href="#breakpoints-and-watchpoints-available" title="Permalink to this heading"></a></h2>
+<p>ESP32 debugger supports 2 hardware implemented breakpoints and 64 software ones. Hardware breakpoints are implemented by ESP32 chip's logic and can be set anywhere in the code: either in flash or IRAM program's regions. Additionally there are 2 types of software breakpoints implemented by OpenOCD: flash (up to 32) and IRAM (up to 32) breakpoints. Currently GDB can not set software breakpoints in flash. So until this limitation is removed those breakpoints have to be emulated by OpenOCD as hardware ones (see <a class="reference internal" href="#jtag-debugging-tip-where-breakpoints"><span class="std std-ref">below</span></a> for details). ESP32 also supports 2 watchpoints, so 2 variables can be watched for change or read by the GDB command <code class="docutils literal notranslate"><span class="pre">watch</span> <span class="pre">myVariable</span></code>. Note that menuconfig option <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-watchpoint-end-of-stack"><span class="std std-ref">CONFIG_FREERTOS_WATCHPOINT_END_OF_STACK</span></a> uses the last watchpoint and will not provide expected results, if you also try to use it within OpenOCD/GDB. See menuconfig's help for detailed description.</p>
+</section>
+<section id="what-else-should-i-know-about-breakpoints">
+<span id="jtag-debugging-tip-where-breakpoints"></span><h2>What Else Should I Know About Breakpoints?<a class="headerlink" href="#what-else-should-i-know-about-breakpoints" title="Permalink to this heading"></a></h2>
+<p>Emulating part of hardware breakpoints using software flash ones means that the GDB command <code class="docutils literal notranslate"><span class="pre">hb</span> <span class="pre">myFunction</span></code> which is invoked for function in flash will use pure hardware breakpoint if it is available otherwise one of the 32 software flash breakpoints is used. The same rule applies to <code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">myFunction</span></code>-like commands. In this case GDB will decide what type of breakpoint to set itself. If <code class="docutils literal notranslate"><span class="pre">myFunction</span></code> is resided in writable region (IRAM) software IRAM breakpoint will be used otherwise hardware or software flash breakpoint is used as it is done for <code class="docutils literal notranslate"><span class="pre">hb</span></code> command.</p>
+</section>
+<section id="flash-mappings-vs-sw-flash-breakpoints">
+<span id="jtag-debugging-tip-flash-mappings"></span><h2>Flash Mappings vs SW Flash Breakpoints<a class="headerlink" href="#flash-mappings-vs-sw-flash-breakpoints" title="Permalink to this heading"></a></h2>
+<p>In order to set/clear software breakpoints in flash, OpenOCD needs to know their flash addresses. To accomplish conversion from the ESP32 address space to the flash one, OpenOCD uses mappings of program's code regions resided in flash. Those mappings are kept in the image header which is prepended to program binary data (code and data segments) and is specific to every application image written to the flash. So to support software flash breakpoints OpenOCD should know where application image under debugging is resided in the flash. By default OpenOCD reads partition table at 0x8000 and uses mappings from the first found application image, but there can be the cases when it will not work, e.g., partition table is not at standard flash location or even there can be multiple images: one factory and two OTA and you may want to debug any of them. To cover all possible debugging scenarios OpenOCD supports special command which can be used to set arbitrary location of application image to debug. The command has the following format:</p>
+<p><code class="docutils literal notranslate"><span class="pre">esp</span> <span class="pre">appimage_offset</span> <span class="pre">&lt;offset&gt;</span></code></p>
+<p>Offset should be in hex format. To reset to the default behaviour you can specify <code class="docutils literal notranslate"><span class="pre">-1</span></code> as offset.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since GDB requests memory map from OpenOCD only once when connecting to it, this command should be specified in one of the TCL configuration files, or passed to OpenOCD via its command line. In the latter case command line should look like below:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>openocd<span class="w"> </span>-f<span class="w"> </span>board/esp32-wrover-kit-3.3v.cfg<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;init; halt; esp appimage_offset 0x210000&quot;</span>
+</pre></div>
+</div>
+<p>Another option is to execute that command via OpenOCD telnet session and then connect GDB, but it seems to be less handy.</p>
+</div>
+</section>
+<section id="why-stepping-with-next-does-not-bypass-subroutine-calls">
+<span id="jtag-debugging-tip-why-next-works-as-step"></span><h2>Why Stepping with &quot;next&quot; Does Not Bypass Subroutine Calls?<a class="headerlink" href="#why-stepping-with-next-does-not-bypass-subroutine-calls" title="Permalink to this heading"></a></h2>
+<p>When stepping through the code with <code class="docutils literal notranslate"><span class="pre">next</span></code> command, GDB is internally setting a breakpoint ahead in the code to bypass the subroutine calls. If all 2 breakpoints are already set, this functionality will not work. If this is the case, delete breakpoints to have one &quot;spare&quot;. With all breakpoints already used, stepping through the code with <code class="docutils literal notranslate"><span class="pre">next</span></code> command will work as like with <code class="docutils literal notranslate"><span class="pre">step</span></code> command and debugger will step inside subroutine calls.</p>
+</section>
+<section id="support-options-for-openocd-at-compile-time">
+<span id="jtag-debugging-tip-code-options"></span><h2>Support Options for OpenOCD at Compile Time<a class="headerlink" href="#support-options-for-openocd-at-compile-time" title="Permalink to this heading"></a></h2>
+<p>ESP-IDF has some support options for OpenOCD debugging which can be set at compile time:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-debug-ocdaware"><span class="std std-ref">CONFIG_ESP_DEBUG_OCDAWARE</span></a> is enabled by default. If a panic or unhandled exception is thrown and a JTAG debugger is connected (ie  OpenOCD is running), ESP-IDF will break into the debugger.</p></li>
+<li><p><a class="reference internal" href="../../api-reference/kconfig-reference.html#config-freertos-watchpoint-end-of-stack"><span class="std std-ref">CONFIG_FREERTOS_WATCHPOINT_END_OF_STACK</span></a> (disabled by default) sets watchpoint index 1 (the second of two) at the end of any task stack. This is the most accurate way to debug task stack overflows. Click the link for more details.</p></li>
+</ul>
+<p>Please see the <a class="reference internal" href="../../get-started/linux-macos-setup.html#get-started-configure"><span class="std std-ref">project configuration menu</span></a> menu for more details on setting compile-time options.</p>
+</section>
+<section id="freertos-support">
+<span id="jtag-debugging-tip-freertos-support"></span><h2>FreeRTOS Support<a class="headerlink" href="#freertos-support" title="Permalink to this heading"></a></h2>
+<p>OpenOCD has explicit support for the ESP-IDF FreeRTOS. GDB can see FreeRTOS tasks as threads. Viewing them all can be done using the GDB <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">threads</span></code> command, changing to a certain task is done with <code class="docutils literal notranslate"><span class="pre">thread</span> <span class="pre">n</span></code>, with <code class="docutils literal notranslate"><span class="pre">n</span></code> being the number of the thread. FreeRTOS detection can be disabled in target's configuration. For more details see <a class="reference internal" href="#jtag-debugging-tip-openocd-configure-target"><span class="std std-ref">Configuration of OpenOCD for Specific Target</span></a>.</p>
+<p>GDB has a Python extension for FreeRTOS support. ESP-IDF automatically loads this module into GDB with the <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">gdb</span></code> command when the system requirements are met. See more details in <a class="reference internal" href="debugging-examples.html#jtag-debugging-examples-command-line-08"><span class="std std-ref">Debugging FreeRTOS Objects</span></a>.</p>
+</section>
+<section id="why-to-set-spi-flash-voltage-in-openocd-configuration">
+<span id="jtag-debugging-tip-code-flash-voltage"></span><h2>Why to Set SPI Flash Voltage in OpenOCD Configuration?<a class="headerlink" href="#why-to-set-spi-flash-voltage-in-openocd-configuration" title="Permalink to this heading"></a></h2>
+<p>The MTDI pin of ESP32, being among four pins used for JTAG communication, is also one of ESP32's bootstrapping pins. On power up ESP32 is sampling binary level on MTDI to set it's internal voltage regulator used to supply power to external SPI flash chip. If binary level on MDTI pin on power up is low, the voltage regulator is set to deliver 3.3 V, if it is high, then the voltage is set to 1.8 V. The MTDI pin should have a pull-up or may rely on internal weak pull down resistor (see <a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf">ESP32 Series Datasheet</a> for details), depending on the type of SPI chip used. Once JTAG is connected, it overrides the pull-up or pull-down resistor that is supposed to do the bootstrapping.</p>
+<p>To handle this issue OpenOCD's board configuration file (e.g. <code class="docutils literal notranslate"><span class="pre">board\esp32-wrover-kit-3.3v.cfg</span></code> for ESP-WROVER-KIT board) provides <code class="docutils literal notranslate"><span class="pre">ESP32_FLASH_VOLTAGE</span></code> parameter to set the idle state of the <code class="docutils literal notranslate"><span class="pre">TDO</span></code> line to a specified binary level, therefore reducing the chance of a bad boot-up of application due to incorrect flash voltage.</p>
+<p>Check specification of ESP32 module connected to JTAG, what is the power supply voltage of SPI flash chip. Then set <code class="docutils literal notranslate"><span class="pre">ESP32_FLASH_VOLTAGE</span></code> accordingly. Most WROOM modules use 3.3 V flash. WROVER earlier than ESP32-WROVER-B use 1.8 V flash, while ESP32-WROVER-B and -E modules use 3.3 V flash.</p>
+</section>
+<section id="optimize-jtag-speed">
+<span id="jtag-debugging-tip-optimize-jtag-speed"></span><h2>Optimize JTAG Speed<a class="headerlink" href="#optimize-jtag-speed" title="Permalink to this heading"></a></h2>
+<p>In order to achieve higher data rates and minimize number of dropped packets it is recommended to optimize setting of JTAG clock frequency, so it is at maximum and still provides stable operation of JTAG. To do so use the following tips.</p>
+<ol class="arabic simple">
+<li><p>The upper limit of JTAG clock frequency is 20 MHz if CPU runs at 80 MHz, or 26 MHz if CPU runs at 160 MHz or 240 MHz.</p></li>
+<li><p>Depending on particular JTAG adapter and the length of connecting cables, you may need to reduce JTAG frequency below 20 MHz or 26 MHz.</p></li>
+<li><p>In particular reduce frequency, if you get DSR/DIR errors (and they do not relate to OpenOCD trying to read from a memory range without physical memory being present there).</p></li>
+<li><p>ESP-WROVER-KIT operates stable at 20 MHz or 26 MHz.</p></li>
+</ol>
+</section>
+<section id="what-is-the-meaning-of-debugger-s-startup-commands">
+<span id="jtag-debugging-tip-debugger-startup-commands"></span><h2>What Is the Meaning of Debugger's Startup Commands?<a class="headerlink" href="#what-is-the-meaning-of-debugger-s-startup-commands" title="Permalink to this heading"></a></h2>
+<p>On startup, debugger is issuing sequence of commands to reset the chip and halt it at specific line of code. This sequence (shown below) is user defined to pick up at most convenient/appropriate line and start debugging.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">remote</span> <span class="pre">hardware-watchpoint-limit</span> <span class="pre">2</span></code> — Restrict GDB to using available hardware watchpoints supported by the chip, 2 for ESP32. For more information see <a class="reference external" href="https://sourceware.org/gdb/onlinedocs/gdb/Remote-Configuration.html">https://sourceware.org/gdb/onlinedocs/gdb/Remote-Configuration.html</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mon</span> <span class="pre">reset</span> <span class="pre">halt</span></code> — reset the chip and keep the CPUs halted. Target has to be reset to disable memory protection, which is required to enable flash support. If reset is not desirable, add an extra argument <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">'set</span> <span class="pre">ESP_FLASH_SIZE</span> <span class="pre">0'</span></code> to the start of the OpenOCD command line to disable flash support, see <a class="reference internal" href="#jtag-debugging-tip-openocd-config-vars"><span class="std std-ref">OpenOCD Configuration Variables</span></a>. Alternatively, disable memory protection using the config option <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-esp-system-memprot-feature"><span class="std std-ref">CONFIG_ESP_SYSTEM_MEMPROT_FEATURE</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">maintenance</span> <span class="pre">flush</span> <span class="pre">register-cache</span></code> — monitor (<code class="docutils literal notranslate"><span class="pre">mon</span></code>) command can not inform GDB that the target state has changed. GDB will assume that whatever stack the target had before <code class="docutils literal notranslate"><span class="pre">mon</span> <span class="pre">reset</span> <span class="pre">halt</span></code> will still be valid. In fact, after reset the target state will change, and executing <code class="docutils literal notranslate"><span class="pre">maintenance</span> <span class="pre">flush</span> <span class="pre">register-cache</span></code> is a way to force GDB to get new state from the target.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thb</span> <span class="pre">app_main</span></code> — insert a temporary hardware breakpoint at <code class="docutils literal notranslate"><span class="pre">app_main</span></code>, put here another function name if required</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">c</span></code> — resume the program. It will then stop at breakpoint inserted at <code class="docutils literal notranslate"><span class="pre">app_main</span></code>.</p></li>
+</ul>
+</section>
+<section id="configuration-of-openocd-for-specific-target">
+<span id="jtag-debugging-tip-openocd-configure-target"></span><h2>Configuration of OpenOCD for Specific Target<a class="headerlink" href="#configuration-of-openocd-for-specific-target" title="Permalink to this heading"></a></h2>
+<p>There are several kinds of OpenOCD configuration files (<code class="docutils literal notranslate"><span class="pre">*.cfg</span></code>). All configuration files are located in subdirectories of <code class="docutils literal notranslate"><span class="pre">share/openocd/scripts</span></code> directory of OpenOCD distribution (or <code class="docutils literal notranslate"><span class="pre">tcl/scripts</span></code> directory of the source repository). For the purposes of this guide, the most important ones are <code class="docutils literal notranslate"><span class="pre">board</span></code>, <code class="docutils literal notranslate"><span class="pre">interface</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">interface</span></code> configuration files describe the JTAG adapter. Examples of JTAG adapters are ESP-Prog and J-Link.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target</span></code> configuration files describe specific chips, or in some cases, modules.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">board</span></code> configuration files are provided for development boards with a built-in JTAG adapter. Such files include an <code class="docutils literal notranslate"><span class="pre">interface</span></code> configuration file to choose the adapter, and <code class="docutils literal notranslate"><span class="pre">target</span></code> configuration file to choose the chip/module.</p></li>
+</ul>
+<p>The following configuration files are available for ESP32:</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">OpenOCD configuration files for ESP32</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">board/esp32-wrover-kit-3.3v.cfg</span></code></p></td>
+<td><p>Board configuration file for ESP-WROVER-KIT with a 3.3 V ESP32-WROOM-32 module or ESP32-WROVER-B / ESP32-WROVER-E module.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">board/esp32-wrover-kit-1.8v.cfg</span></code></p></td>
+<td><p>Board configuration file for ESP-WROVER-KIT with an 1.8 V ESP32-WROVER module.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">board/esp32-ethernet-kit-3.3v.cfg</span></code></p></td>
+<td><p>Board configuration file for ESP-Ethernet-KIT with a 3.3 V ESP32-WROVER-B / ESP32-WROVER-E module.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">target/esp32.cfg</span></code></p></td>
+<td><p>ESP32 target configuration file. Can be used together with one of the <code class="docutils literal notranslate"><span class="pre">interface/</span></code> configuration files.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">target/esp32-solo-1.cfg</span></code></p></td>
+<td><p>Target configuration file for ESP32-SOLO-1 module. Different from <code class="docutils literal notranslate"><span class="pre">esp32.cfg</span></code> in that it only configures one CPU.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">interface/ftdi/esp_ftdi.cfg</span></code></p></td>
+<td><p>JTAG adapter configuration file for ESP-WROVER-KIT and ESP-Prog boards.</p></td>
+</tr>
+</tbody>
+</table>
+<p>If you are using one of the boards which have a pre-defined configuration file, you only need to pass one <code class="docutils literal notranslate"><span class="pre">-f</span></code> argument to OpenOCD, specifying that file.</p>
+<p>If you are using a board not listed here, you need to specify both the interface configuration file and target configuration file.</p>
+<section id="custom-configuration-files">
+<h3>Custom Configuration Files<a class="headerlink" href="#custom-configuration-files" title="Permalink to this heading"></a></h3>
+<p>OpenOCD configuration files are written in TCL, and include a variety of choices for customization and scripting. This can be useful for non-standard debugging situations. Please refer to <a class="reference external" href="https://openocd.org/doc/html/index.html">OpenOCD Manual</a> for the TCL scripting reference.</p>
+</section>
+<section id="openocd-configuration-variables">
+<span id="jtag-debugging-tip-openocd-config-vars"></span><h3>OpenOCD Configuration Variables<a class="headerlink" href="#openocd-configuration-variables" title="Permalink to this heading"></a></h3>
+<p>The following variables can be optionally set before including the ESP-specific target configuration file. This can be done either in a custom configuration file, or from the command line.</p>
+<p>The syntax for setting a variable in TCL is:</p>
+<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">set</span><span class="w"> </span>VARIABLE_NAME<span class="w"> </span>value
+</pre></div>
+</div>
+<p>To set a variable from the command line (replace the name of .cfg file with the correct file for your board):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>openocd<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;set VARIABLE_NAME value&#39;</span><span class="w"> </span>-f<span class="w"> </span>board/esp-xxxxx-kit.cfg
+</pre></div>
+</div>
+<p>It is important to set the variable before including the ESP-specific configuration file, otherwise the variable will not have effect. You can set multiple variables by repeating the <code class="docutils literal notranslate"><span class="pre">-c</span></code> option.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Common ESP-related OpenOCD variables</span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ESP_RTOS</span></code></p></td>
+<td><p>Set to <code class="docutils literal notranslate"><span class="pre">none</span></code> to disable RTOS support. In this case, thread list will not be available in GDB. Can be useful when debugging FreeRTOS itself, and stepping through the scheduler code.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ESP_FLASH_SIZE</span></code></p></td>
+<td><p>Set to <code class="docutils literal notranslate"><span class="pre">0</span></code> to disable flash breakpoints support. If set to <code class="docutils literal notranslate"><span class="pre">0</span></code>, target will not be reset when GDB connects.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ESP_SEMIHOST_BASEDIR</span></code></p></td>
+<td><p>Set to the path (on the host) which will be the default directory for semihosting functions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ESP_ONLYCPU</span></code></p></td>
+<td><p>For multi-core targets, can be set to <code class="docutils literal notranslate"><span class="pre">1</span></code> to only enable single core debugging.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">ESP32-specific OpenOCD variables</span><a class="headerlink" href="#id3" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ESP32_FLASH_VOLTAGE</span></code></p></td>
+<td><p>When using 1.8 V flash ESP32 based modules, set this variable to <code class="docutils literal notranslate"><span class="pre">1.8</span></code>. Refer to <a class="reference internal" href="#jtag-debugging-tip-code-flash-voltage"><span class="std std-ref">Why to Set SPI Flash Voltage in OpenOCD Configuration?</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ESP_ONLYCPU</span></code></p></td>
+<td><p>For multi-core targets, can be set to <code class="docutils literal notranslate"><span class="pre">1</span></code> to only enable single core debugging.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="how-debugger-resets-esp32">
+<span id="jtag-debugging-tip-reset-by-debugger"></span><h2>How Debugger Resets ESP32?<a class="headerlink" href="#how-debugger-resets-esp32" title="Permalink to this heading"></a></h2>
+<p>The board can be reset by entering <code class="docutils literal notranslate"><span class="pre">mon</span> <span class="pre">reset</span></code> or <code class="docutils literal notranslate"><span class="pre">mon</span> <span class="pre">reset</span> <span class="pre">halt</span></code> into GDB.</p>
+</section>
+<section id="can-jtag-pins-be-used-for-other-purposes">
+<span id="jtag-debugging-tip-jtag-pins-reconfigured"></span><h2>Can JTAG Pins Be Used for Other Purposes?<a class="headerlink" href="#can-jtag-pins-be-used-for-other-purposes" title="Permalink to this heading"></a></h2>
+<p>Operation of JTAG may be disturbed, if some other hardware is connected to JTAG pins besides ESP32 module and JTAG adapter. ESP32 JTAG is using the following pins:</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">ESP32 JTAG pins</span><a class="headerlink" href="#id4" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ESP32 Pin</p></th>
+<th class="head"><p>JTAG Signal</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>MTDO / GPIO15</p></td>
+<td><p>TDO</p></td>
+</tr>
+<tr class="row-odd"><td><p>MTDI / GPIO12</p></td>
+<td><p>TDI</p></td>
+</tr>
+<tr class="row-even"><td><p>MTCK / GPIO13</p></td>
+<td><p>TCK</p></td>
+</tr>
+<tr class="row-odd"><td><p>MTMS / GPIO14</p></td>
+<td><p>TMS</p></td>
+</tr>
+</tbody>
+</table>
+<p>JTAG communication will likely fail, if configuration of JTAG pins is changed by a user application. If OpenOCD initializes correctly (detects all the CPU cores in the SOC), but loses sync and spews out a lot of DTR/DIR errors when the program is running, it is likely that the application reconfigures the JTAG pins to something else, or the user forgot to connect Vtar to a JTAG adapter that requires it.</p>
+<p>Below is an excerpt from series of errors on the dual-core ESP32 reported by GDB after the application stepped into the code that reconfigured MTDO pin to be an input:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cpu0: xtensa_resume (line 431): DSR (FFFFFFFF) indicates target still busy!
+cpu0: xtensa_resume (line 431): DSR (FFFFFFFF) indicates DIR instruction generated an exception!
+cpu0: xtensa_resume (line 431): DSR (FFFFFFFF) indicates DIR instruction generated an overrun!
+cpu1: xtensa_resume (line 431): DSR (FFFFFFFF) indicates target still busy!
+cpu1: xtensa_resume (line 431): DSR (FFFFFFFF) indicates DIR instruction generated an exception!
+cpu1: xtensa_resume (line 431): DSR (FFFFFFFF) indicates DIR instruction generated an overrun!
+</pre></div>
+</div>
+</section>
+<section id="jtag-with-flash-encryption-or-secure-boot">
+<span id="jtag-debugging-security-features"></span><h2>JTAG with Flash Encryption or Secure Boot<a class="headerlink" href="#jtag-with-flash-encryption-or-secure-boot" title="Permalink to this heading"></a></h2>
+<p>By default, enabling Flash Encryption and/or Secure Boot will disable JTAG debugging. On first boot, the bootloader will burn an eFuse bit to permanently disable JTAG at the same time it enables the other features.</p>
+<p>The project configuration option <a class="reference internal" href="../../api-reference/kconfig-reference.html#config-secure-boot-allow-jtag"><span class="std std-ref">CONFIG_SECURE_BOOT_ALLOW_JTAG</span></a> will keep JTAG enabled at this time, removing all physical security but allowing debugging. (Although the name suggests Secure Boot, this option can be applied even when only Flash Encryption is enabled).</p>
+<p>However, OpenOCD may attempt to automatically read and write the flash in order to set <a class="reference internal" href="#jtag-debugging-tip-where-breakpoints"><span class="std std-ref">software breakpoints</span></a>. Setting a software breakpoint will change the digest of a signed app and make the signature invalid. This means if Secure Boot is enabled, a software breakpoint is set, and then a reset occurs, the signature verification will fail on boot.</p>
+<p>To disable software breakpoints while using JTAG, add an extra argument <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">'set</span> <span class="pre">ESP_FLASH_SIZE</span> <span class="pre">0'</span></code> to the start of the OpenOCD command line, see <a class="reference internal" href="#jtag-debugging-tip-openocd-config-vars"><span class="std std-ref">OpenOCD Configuration Variables</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For the same reason, the ESP-IDF app may fail bootloader verification of app signatures, when this option is enabled and a software breakpoint is set.</p>
+</div>
+</section>
+<section id="jtag-and-esp32-wroom-32-at-firmware-compatibility-issue">
+<span id="jtag-debugging-tip-reporting-issues"></span><h2>JTAG and ESP32-WROOM-32 AT Firmware Compatibility Issue<a class="headerlink" href="#jtag-and-esp32-wroom-32-at-firmware-compatibility-issue" title="Permalink to this heading"></a></h2>
+<p>The ESP32-WROOM series of modules come pre-flashed with AT firmware. This firmware configures the pins GPIO12 to GPIO15 as SPI slave interface, which makes using JTAG impossible.</p>
+<p>To make JTAG available, build new firmware that is not using pins GPIO12 to GPIO15 dedicated to JTAG communication. After that, flash the firmware onto your module. See also <a class="reference internal" href="#jtag-debugging-tip-jtag-pins-reconfigured"><span class="std std-ref">Can JTAG Pins Be Used for Other Purposes?</span></a>.</p>
+</section>
+<section id="reporting-issues-with-openocd-gdb">
+<h2>Reporting Issues with OpenOCD/GDB<a class="headerlink" href="#reporting-issues-with-openocd-gdb" title="Permalink to this heading"></a></h2>
+<p>In case you encounter a problem with OpenOCD or GDB programs itself and do not find a solution searching available resources on the web, open an issue in the OpenOCD issue tracker under <a class="reference external" href="https://github.com/espressif/openocd-esp32/issues">https://github.com/espressif/openocd-esp32/issues</a>.</p>
+<ol class="arabic simple">
+<li><p>In issue report provide details of your configuration:</p>
+<ol class="loweralpha simple">
+<li><p>JTAG adapter type, and the chip/module being debugged.</p></li>
+<li><p>Release of ESP-IDF used to compile and load application that is being debugged.</p></li>
+<li><p>Details of OS used for debugging.</p></li>
+<li><p>Is OS running natively on a PC or on a virtual machine?</p></li>
+</ol>
+</li>
+<li><p>Create a simple example that is representative to observed issue. Describe steps how to reproduce it. In such an example debugging should not be affected by non-deterministic behaviour introduced by the Wi-Fi stack, so problems will likely be easier to reproduce, if encountered once.</p></li>
+</ol>
+<ol class="arabic" start="3">
+<li><p>Prepare logs from debugging session by adding additional parameters to start up commands.</p>
+<p>OpenOCD:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>openocd<span class="w"> </span>-l<span class="w"> </span>openocd_log.txt<span class="w"> </span>-d3<span class="w"> </span>-f<span class="w"> </span>board/esp32-wrover-kit-3.3v.cfg
+</pre></div>
+</div>
+<p>Logging to a file this way will prevent information displayed on the terminal. This may be a good thing taken amount of information provided, when increased debug level <code class="docutils literal notranslate"><span class="pre">-d3</span></code> is set. If you still like to see the log on the screen, then use another command instead:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>openocd<span class="w"> </span>-d3<span class="w"> </span>-f<span class="w"> </span>board/esp32-wrover-kit-3.3v.cfg<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>openocd.log
+</pre></div>
+</div>
+<p>Debugger:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>xtensa-esp32-elf-gdb<span class="w"> </span>-ex<span class="w"> </span><span class="s2">&quot;set remotelogfile gdb_log.txt&quot;</span><span class="w"> </span>&lt;all<span class="w"> </span>other<span class="w"> </span>options&gt;
+</pre></div>
+</div>
+<p>Optionally add command <code class="docutils literal notranslate"><span class="pre">remotelogfile</span> <span class="pre">gdb_log.txt</span></code> to the <code class="docutils literal notranslate"><span class="pre">gdbinit</span></code> file.</p>
+</li>
+<li><p>Attach both <code class="docutils literal notranslate"><span class="pre">openocd_log.txt</span></code> and <code class="docutils literal notranslate"><span class="pre">gdb_log.txt</span></code> files to your issue report.</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Tips and Quirks (api-guides/jtag-debugging/tips-and-quirks)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Tips and Quirks (api-guides/jtag-debugging/tips-and-quirks)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="semihosting.html" class="btn btn-neutral float-left" title="Semihosting Feature" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="using-debugger.html" class="btn btn-neutral float-right" title="Using Debugger" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

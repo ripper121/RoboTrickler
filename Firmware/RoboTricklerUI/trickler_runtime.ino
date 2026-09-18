@@ -1,16 +1,17 @@
 bool isTricklerRunning()
 {
-  return (tricklerState == TRICKLER_RUNNING) || (tricklerState == TRICKLER_FINISHED);
+  TricklerState state = getTricklerState();
+  return (state == TRICKLER_RUNNING) || (state == TRICKLER_FINISHED);
 }
 
 bool isTricklerFinished()
 {
-  return tricklerState == TRICKLER_FINISHED;
+  return getTricklerState() == TRICKLER_FINISHED;
 }
 
 bool isCalibrationProfilePromptPending()
 {
-  return tricklerState == TRICKLER_CALIBRATION_PROMPT;
+  return getTricklerState() == TRICKLER_CALIBRATION_PROMPT;
 }
 
 // Weight comparisons run directly on floats. IEEE-754 ordering is already exact,
@@ -44,9 +45,32 @@ static bool weightBelow(float value, float threshold)
   return isless(value, threshold - WEIGHT_EPSILON);
 }
 
+TricklerState getTricklerState()
+{
+  portENTER_CRITICAL(&tricklerStateMux);
+  TricklerState state = tricklerState;
+  portEXIT_CRITICAL(&tricklerStateMux);
+  return state;
+}
+
 void setTricklerState(TricklerState state)
 {
+  portENTER_CRITICAL(&tricklerStateMux);
   tricklerState = state;
+  portEXIT_CRITICAL(&tricklerStateMux);
+}
+
+bool transitionTricklerState(TricklerState expected, TricklerState state)
+{
+  bool changed = false;
+  portENTER_CRITICAL(&tricklerStateMux);
+  if (tricklerState == expected)
+  {
+    tricklerState = state;
+    changed = true;
+  }
+  portEXIT_CRITICAL(&tricklerStateMux);
+  return changed;
 }
 
 static bool canStartFirstThrowAtCurrentWeight()
@@ -139,8 +163,10 @@ static bool runBulkStepperMove(String &infoText, uint32_t runId)
 
 void startCalibrationProfilePrompt()
 {
-  stopTrickler();
-  setTricklerState(TRICKLER_CALIBRATION_PROMPT);
+  if (!stopRunningTricklerInState(TRICKLER_CALIBRATION_PROMPT))
+  {
+    return;
+  }
   calibrationProfilePromptTime = millis();
   measurementCount = config.profileGeneralMeasurements;
   weightCounter = 0;
@@ -160,7 +186,6 @@ void handleCalibrationProfilePrompt()
 
   if (newWeightData && (lastScaleWeightReadTime > calibrationProfilePromptTime))
   {
-    setTricklerState(TRICKLER_IDLE);
     newWeightData = false;
     weightCounter = 0;
     if (confirmBox(String(langText("msg_create_profile_prompt")) + weightToString(weight) + " gn", UI_FONT_LARGE, lv_color_hex(0xFFFFFF)))
@@ -175,6 +200,7 @@ void handleCalibrationProfilePrompt()
         errorBox(langText("msg_create_profile_failed"), true);
       }
     }
+    setTricklerState(TRICKLER_IDLE);
   }
 }
 
@@ -185,6 +211,10 @@ bool isCalibrationProfile()
 
 static void handleOverTrickle()
 {
+  if (!stopRunningTricklerInState(TRICKLER_IDLE))
+  {
+    return;
+  }
   setLabelTextColor(ui_LabelTricklerWeight, 0xFF0000);
   beep("done");
   delay(250);
@@ -196,7 +226,6 @@ static void handleOverTrickle()
   {
     messageText += String(sessionCount);
   }
-  stopTrickler();
   messageBox(messageText, UI_FONT_LARGE, lv_color_hex(0xFF0000), true);
 }
 
@@ -204,7 +233,7 @@ static void handleTargetReached(bool weightWithinTolerance)
 {
   setLabelTextColor(ui_LabelTricklerWeight, weightWithinTolerance ? 0x00FF00 : 0xFFFF00);
 
-  if ((tricklerState == TRICKLER_RUNNING) &&
+  if ((getTricklerState() == TRICKLER_RUNNING) &&
       weightAtOrAbove(weight, config.targetWeight + config.profileAlarmThreshold) &&
       (config.profileAlarmThreshold > 0))
   {
@@ -213,9 +242,12 @@ static void handleTargetReached(bool weightWithinTolerance)
     return;
   }
 
-  if (!isTricklerFinished())
+  bool completedNow = false;
+  bool incrementedSession = false;
+  int completedSessionCount = 0;
+  portENTER_CRITICAL(&tricklerStateMux);
+  if (tricklerState == TRICKLER_RUNNING)
   {
-    beep("done");
     if (config.totalCounterEnable)
     {
       config.totalCount++;
@@ -223,15 +255,29 @@ static void handleTargetReached(bool weightWithinTolerance)
     if (config.profileSessionCounter && weightWithinTolerance)
     {
       sessionCount++;
-      updateDisplayLog(String(langText("status_done")) + langText("status_count") + String(sessionCount), true);
+      incrementedSession = true;
+      completedSessionCount = sessionCount;
     }
-    else
-    {
-      updateDisplayLog(langText("status_done"), true);
-    }
+    tricklerState = TRICKLER_FINISHED;
+    completedNow = true;
+  }
+  portEXIT_CRITICAL(&tricklerStateMux);
+
+  if (!completedNow)
+  {
+    return;
+  }
+
+  beep("done");
+  if (incrementedSession)
+  {
+    updateDisplayLog(String(langText("status_done")) + langText("status_count") + String(completedSessionCount), true);
+  }
+  else
+  {
+    updateDisplayLog(langText("status_done"), true);
   }
   measurementCount = 0;
-  setTricklerState(TRICKLER_FINISHED);
 }
 
 static int selectProfileStep()
@@ -252,7 +298,7 @@ void updateActiveProfileStepCounterDisplay(int actualWeightCounter)
 {
   if ((activeProfileStep < 0) ||
       (activeProfileStep >= config.profileEntryCount) ||
-      (tricklerState != TRICKLER_RUNNING) ||
+      (getTricklerState() != TRICKLER_RUNNING) ||
       (measurementCount != config.profileMeasurements[activeProfileStep]))
   {
     return;
@@ -398,7 +444,7 @@ static void handleNewWeight()
     handleTargetReached(weightAtOrBelow(weight, config.targetWeight + config.profileTolerance));
   }
 
-  if (tricklerState == TRICKLER_RUNNING)
+  if (getTricklerState() == TRICKLER_RUNNING)
   {
     handleProfileRunning(calibrationProfile, actualWeightCounter);
   }

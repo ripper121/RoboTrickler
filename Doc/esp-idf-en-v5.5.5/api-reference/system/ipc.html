@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inter-Processor Call (IPC) - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/ipc.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/system/ipc';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Interrupt Allocation" href="intr_alloc.html" />
+    <link rel="prev" title="Internal and Unstable APIs" href="internal-unstable.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">System API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app_image_format.html">App Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootloader_image_format.html">Bootloader Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app_trace.html">Application Level Tracing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_function_with_shared_stack.html">Call Function with External Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chip_revision.html">Chip Revision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console.html">Console</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efuse.html">eFuse Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_err.html">Error Code and Helper Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_ota.html">ESP HTTPS OTA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_event.html">Event Loop Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos.html">FreeRTOS Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_idf.html">FreeRTOS (IDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_additions.html">FreeRTOS (Supplemental Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mem_alloc.html">Heap Memory Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mm.html">Memory Management for MMU Supported Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="heap_debug.html">Heap Memory Debugging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_timer.html">ESP Timer (High Resolution Timer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="internal-unstable.html">Internal and Unstable APIs</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Inter-Processor Call (IPC)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ipc-in-task-context">IPC in Task Context</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ipc-in-interrupt-context">IPC in Interrupt Context</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="intr_alloc.html">Interrupt Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="log.html">Logging library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc_system_api.html">Miscellaneous System APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ota.html">Over The Air Updates (OTA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="perfmon.html">Performance Monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="power_management.html">Power Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pthread.html">POSIX Support (Including POSIX Threads Support)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sleep_modes.html">Sleep Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soc_caps.html">SoC Capabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_time.html">System Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="himem.html">Himem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ulp.html">Ultra Low Power (ULP) coprocessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wdts.html">Watchdogs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">System API</a></li>
+      <li class="breadcrumb-item active">Inter-Processor Call (IPC)</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/system/ipc.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="inter-processor-call-ipc">
+<h1>Inter-Processor Call (IPC)<a class="headerlink" href="#inter-processor-call-ipc" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/system/ipc.html">[中文]</a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>IPC stands for an <strong>&quot;Inter-Processor Call&quot;</strong> and <strong>NOT</strong> &quot;Inter-Process Communication&quot; as found on other operating systems.</p>
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>Due to the dual core nature of the ESP32, there are some scenarios where a certain callback must be executed from a particular core such as:</p>
+<ul class="simple">
+<li><p>When allocating an ISR to an interrupt source of a particular core (applies to freeing a particular core's interrupt source as well)</p></li>
+<li><p>On particular chips (such as the ESP32), accessing memory that is exclusive to a particular core (such as RTC Fast Memory)</p></li>
+<li><p>Reading the registers/state of another core</p></li>
+</ul>
+<p>The IPC (Inter-Processor Call) feature allows a particular core (the calling core) to trigger the execution of a callback function on another core (the target core). The IPC feature allows execution of a callback function on the target core in either a task context, or an interrupt context. Depending on the context that the callback function is executed in, different restrictions apply to the implementation of the callback function.</p>
+</section>
+<section id="ipc-in-task-context">
+<h2>IPC in Task Context<a class="headerlink" href="#ipc-in-task-context" title="Permalink to this heading"></a></h2>
+<p>The IPC feature implements callback execution in a task context by creating an IPC task for each core during application startup. When the calling core needs to execute a callback on the target core, the callback will execute in the context of the target core's IPC task.</p>
+<p>When using IPCs in a task context, users need to consider the following:</p>
+<ul>
+<li><p>IPC callbacks should ideally be simple and short. An IPC callback <strong>must never block or yield</strong>.</p></li>
+<li><p>The IPC tasks are created at the highest possible priority (i.e., <code class="docutils literal notranslate"><span class="pre">configMAX_PRIORITIES</span> <span class="pre">-</span> <span class="pre">1</span></code>).</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>If <a class="reference internal" href="../kconfig-reference.html#config-esp-ipc-uses-callers-priority"><span class="std std-ref">CONFIG_ESP_IPC_USES_CALLERS_PRIORITY</span></a> is enabled, the target core's IPC task will be lowered to the current priority of the target core before executing the callback.</p></li>
+<li><p>If <a class="reference internal" href="../kconfig-reference.html#config-esp-ipc-uses-callers-priority"><span class="std std-ref">CONFIG_ESP_IPC_USES_CALLERS_PRIORITY</span></a> is disabled, the target core will always execute the callback at the highest possible priority.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Depending on the complexity of the callback, users may need to configure the stack size of the IPC task via <a class="reference internal" href="../kconfig-reference.html#config-esp-ipc-task-stack-size"><span class="std std-ref">CONFIG_ESP_IPC_TASK_STACK_SIZE</span></a>.</p></li>
+<li><p>The IPC feature is internally protected by a mutex. Therefore, simultaneous IPC calls from two or more calling core's are serialized on a first come first serve basis.</p></li>
+</ul>
+<section id="api-usage">
+<h3>API Usage<a class="headerlink" href="#api-usage" title="Permalink to this heading"></a></h3>
+<p>Task Context IPC callbacks have the following restrictions:</p>
+<ul class="simple">
+<li><p>The callback must be of the <a class="reference internal" href="#_CPPv414esp_ipc_func_t" title="esp_ipc_func_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_ipc_func_t</span></code></a> type.</p></li>
+<li><p>The callback <strong>must never block or yield</strong> as this will result in the target core's IPC task blocking or yielding.</p></li>
+<li><p>The callback must avoid changing any aspect of the IPC task's state, e.g., by calling <code class="docutils literal notranslate"><span class="pre">vTaskPrioritySet(NULL,</span> <span class="pre">x)</span></code>.</p></li>
+</ul>
+<p>The IPC feature offers the API listed below to execute a callback in a task context on a target core. The API allows the calling core to block until the callback's execution has completed, or return immediately once the callback's execution has started.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv412esp_ipc_call8uint32_t14esp_ipc_func_tPv" title="esp_ipc_call"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ipc_call()</span></code></a> triggers an IPC call on the target core. This function will block until the target core's IPC task <strong>begins</strong> execution of the callback.</p></li>
+<li><p><a class="reference internal" href="#_CPPv421esp_ipc_call_blocking8uint32_t14esp_ipc_func_tPv" title="esp_ipc_call_blocking"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ipc_call_blocking()</span></code></a> triggers an IPC on the target core. This function will block until the target core's IPC task <strong>completes</strong> execution of the callback.</p></li>
+</ul>
+</section>
+</section>
+<section id="ipc-in-interrupt-context">
+<h2>IPC in Interrupt Context<a class="headerlink" href="#ipc-in-interrupt-context" title="Permalink to this heading"></a></h2>
+<p>In some cases, we need to quickly obtain the state of another core such as in a core dump, GDB stub, various unit tests, and hardware errata workarounds. The IPC ISR feature implements callback execution from a High Priority Interrupt context by reserving a High Priority Interrupt on each core for IPC usage. When a calling core needs to execute a callback on the target core, the callback will execute in the context of the High Priority Interrupt of the target core.</p>
+<p>For such scenarios, the IPC ISR feature supports execution of callbacks in a <a class="reference internal" href="../../api-guides/hlinterrupts.html"><span class="doc">High Priority Interrupt</span></a> context.</p>
+<p>When using IPCs in High Priority Interrupt context, users need to consider the following:</p>
+<p><ul class="simple">
+<li><p>Since the callback is executed in a High Priority Interrupt context, the callback must be written entirely in assembly. See the API Usage below for more details regarding writing assembly callbacks.</p></li>
+<li><p>The priority of the reserved High Priority Interrupt is dependent on the <a class="reference internal" href="../kconfig-reference.html#config-esp-system-check-int-level"><span class="std std-ref">CONFIG_ESP_SYSTEM_CHECK_INT_LEVEL</span></a> option.</p></li>
+</ul>
+</p>
+<p>When the callback executes, users need to consider the following:</p>
+<p><ul class="simple">
+<li><p>The calling core will disable interrupts of priority level 3 and lower.</p></li>
+<li><p>Although the priority of the reserved interrupt depends on <a class="reference internal" href="../kconfig-reference.html#config-esp-system-check-int-level"><span class="std std-ref">CONFIG_ESP_SYSTEM_CHECK_INT_LEVEL</span></a>, during the execution of IPC ISR callback, the target core will disable interrupts of priority level 5 and lower regardless of what <a class="reference internal" href="../kconfig-reference.html#config-esp-system-check-int-level"><span class="std std-ref">CONFIG_ESP_SYSTEM_CHECK_INT_LEVEL</span></a> is set to.</p></li>
+</ul>
+</p>
+<section id="id1">
+<h3>API Usage<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>High Priority Interrupt IPC callbacks have the following restrictions:</p>
+<ul class="simple">
+<li><p>The callback must be of type <a class="reference internal" href="#_CPPv418esp_ipc_isr_func_t" title="esp_ipc_isr_func_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_ipc_isr_func_t</span></code></a> but implemented entirely in assembly.</p></li>
+<li><dl class="simple">
+<dt>The callback is invoked via the <code class="docutils literal notranslate"><span class="pre">CALLX0</span></code> instruction with register windowing disabled, thus the callback:</dt><dd><ul>
+<li><p>must not call any register window related instructions, e.g., <code class="docutils literal notranslate"><span class="pre">entry</span></code> and <code class="docutils literal notranslate"><span class="pre">retw</span></code>.</p></li>
+<li><p>must not call other C functions as register windowing is disabled.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>The callback should be placed in IRAM at a 4-byte aligned address.</p></li>
+<li><dl class="simple">
+<dt>On invocation of, or after returning from the callback, the registers <code class="docutils literal notranslate"><span class="pre">a2,</span> <span class="pre">a3,</span> <span class="pre">a4</span></code> are saved/restored automatically, thus can be used in the callback. The callback should <strong>ONLY</strong> use those registers.</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">a2</span></code> contains the <code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*arg</span></code> of the callback.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">a3/a4</span></code> are free to use as scratch registers.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>The IPC feature offers the API listed below to execute a callback in a High Priority Interrupt context:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv416esp_ipc_isr_call18esp_ipc_isr_func_tPv" title="esp_ipc_isr_call"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ipc_isr_call()</span></code></a> triggers an IPC call on the target core. This function will busy-wait until the target core <strong>begins</strong> execution of the callback.</p></li>
+<li><p><a class="reference internal" href="#_CPPv425esp_ipc_isr_call_blocking18esp_ipc_isr_func_tPv" title="esp_ipc_isr_call_blocking"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ipc_isr_call_blocking()</span></code></a> triggers an IPC call on the target core. This function will busy-wait until the target core <strong>completes</strong> execution of the callback.</p></li>
+</ul>
+<p>The following code-blocks demonstrates a High Priority Interrupt IPC callback written in assembly that simply reads the target core's cycle count:</p>
+<div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="cm">/* esp_test_ipc_isr_get_cycle_count_other_cpu(void *arg) */</span>
+<span class="c1">// this function reads CCOUNT of the target core and stores it in arg.</span>
+<span class="c1">// use only a2, a3 and a4 regs here.</span>
+<span class="na">.section</span><span class="w">    </span><span class="no">.iram1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ax&quot;</span>
+<span class="na">.align</span><span class="w">      </span><span class="mi">4</span>
+<span class="na">.global</span><span class="w">     </span><span class="no">esp_test_ipc_isr_get_cycle_count_other_cpu</span>
+<span class="na">.type</span><span class="w">       </span><span class="no">esp_test_ipc_isr_get_cycle_count_other_cpu</span><span class="p">,</span><span class="w"> </span><span class="na">@function</span>
+<span class="c1">// Args:</span>
+<span class="c1">// a2 - void* arg</span>
+<span class="nl">esp_test_ipc_isr_get_cycle_count_other_cpu:</span>
+<span class="nf">rsr.ccount</span><span class="w"> </span><span class="no">a3</span>
+<span class="nf">s32i</span><span class="w">    </span><span class="no">a3</span><span class="p">,</span><span class="w"> </span><span class="no">a2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span>
+<span class="nf">ret</span>
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">unit32_t</span><span class="w"> </span><span class="n">cycle_count</span><span class="p">;</span>
+<span class="n">esp_ipc_isr_call_blocking</span><span class="p">(</span><span class="n">esp_test_ipc_isr_get_cycle_count_other_cpu</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">cycle_count</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The number of scratch registers available for use is sufficient for most simple use cases. But if your callback requires more scratch registers, <code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*arg</span></code> can point to a buffer that is used as a register save area. The callback can then save and restore more registers. See the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/ipc/ipc_isr">system/ipc/ipc_isr</a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For more examples of High Priority Interrupt IPC callbacks, you can refer to <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_system/port/arch/xtensa/esp_ipc_isr_routines.S">components/esp_system/port/arch/xtensa/esp_ipc_isr_routines.S</a> and <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_system/test_apps/esp_system_unity_tests/main/port/arch/xtensa/test_ipc_isr.S">components/esp_system/test_apps/esp_system_unity_tests/main/port/arch/xtensa/test_ipc_isr.S</a>.</p>
+</div>
+<p>See <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/examples/system/ipc/ipc_isr/xtensa/main/main.c">examples/system/ipc/ipc_isr/xtensa/main/main.c</a> for an example of its use.</p>
+<p>The High Priority Interrupt IPC API also provides the following convenience functions that can stall/resume the target core. These APIs utilize the High Priority Interrupt IPC, but supply their own internal callbacks:</p>
+<p><ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv427esp_ipc_isr_stall_other_cpuv" title="esp_ipc_isr_stall_other_cpu"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ipc_isr_stall_other_cpu()</span></code></a> stalls the target core. The calling core disables interrupts of level 3 and lower while the target core will busy-wait with interrupts of level 5 and lower disabled. The target core will busy-wait until <a class="reference internal" href="#_CPPv429esp_ipc_isr_release_other_cpuv" title="esp_ipc_isr_release_other_cpu"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ipc_isr_release_other_cpu()</span></code></a> is called.</p></li>
+<li><p><a class="reference internal" href="#_CPPv429esp_ipc_isr_release_other_cpuv" title="esp_ipc_isr_release_other_cpu"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ipc_isr_release_other_cpu()</span></code></a> resumes the target core.</p></li>
+</ul>
+</p>
+</section>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/ipc/ipc_isr/xtensa">system/ipc/ipc_isr/xtensa</a> demonstrates how to use the IPC ISR feature to run an IPC in the context of a High Priority Interrupt, allowing users to quickly get the state of the other CPU, with two assembly callbacks that return the PS register of the other core and save/restore registers while performing tasks based on input arguments.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_system/include/esp_ipc.h">components/esp_system/include/esp_ipc.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_ipc.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv412esp_ipc_call8uint32_t14esp_ipc_func_tPv">
+<span id="_CPPv312esp_ipc_call8uint32_t14esp_ipc_func_tPv"></span><span id="_CPPv212esp_ipc_call8uint32_t14esp_ipc_func_tPv"></span><span id="esp_ipc_call__uint32_t.esp_ipc_func_t.voidP"></span><span class="target" id="esp__ipc_8h_1a01d55eb5b88c3e5a62e26d44cd8237b6"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_call</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">cpu_id</span></span>, <a class="reference internal" href="#_CPPv414esp_ipc_func_t" title="esp_ipc_func_t"><span class="n"><span class="pre">esp_ipc_func_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">func</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412esp_ipc_call8uint32_t14esp_ipc_func_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Execute a callback on a given CPU. </p>
+<p>Execute a given callback on a particular CPU. The callback must be of type &quot;esp_ipc_func_t&quot; and will be invoked in the context of the target CPU's IPC task.</p>
+<p><ul class="simple">
+<li><p>This function will block the target CPU's IPC task has begun execution of the callback</p></li>
+<li><p>If another IPC call is ongoing, this function will block until the ongoing IPC call completes</p></li>
+<li><p>The stack size of the IPC task can be configured via the CONFIG_ESP_IPC_TASK_STACK_SIZE option</p></li>
+</ul>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In single-core mode, returns ESP_ERR_INVALID_ARG for cpu_id 1.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cpu_id</strong> -- <strong>[in]</strong> CPU where the given function should be executed (0 or 1) </p></li>
+<li><p><strong>func</strong> -- <strong>[in]</strong> Pointer to a function of type void func(void* arg) to be executed </p></li>
+<li><p><strong>arg</strong> -- <strong>[in]</strong> Arbitrary argument of type void* to be passed into the function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG if cpu_id is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE if the FreeRTOS scheduler is not running</p></li>
+<li><p>ESP_OK otherwise </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421esp_ipc_call_blocking8uint32_t14esp_ipc_func_tPv">
+<span id="_CPPv321esp_ipc_call_blocking8uint32_t14esp_ipc_func_tPv"></span><span id="_CPPv221esp_ipc_call_blocking8uint32_t14esp_ipc_func_tPv"></span><span id="esp_ipc_call_blocking__uint32_t.esp_ipc_func_t.voidP"></span><span class="target" id="esp__ipc_8h_1a45584b94dc433564514c6bbdb0fc4eb1"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_call_blocking</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">cpu_id</span></span>, <a class="reference internal" href="#_CPPv414esp_ipc_func_t" title="esp_ipc_func_t"><span class="n"><span class="pre">esp_ipc_func_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">func</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421esp_ipc_call_blocking8uint32_t14esp_ipc_func_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Execute a callback on a given CPU until and block until it completes. </p>
+<p>This function is identical to esp_ipc_call() except that this function will block until the execution of the callback completes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In single-core mode, returns ESP_ERR_INVALID_ARG for cpu_id 1.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cpu_id</strong> -- <strong>[in]</strong> CPU where the given function should be executed (0 or 1) </p></li>
+<li><p><strong>func</strong> -- <strong>[in]</strong> Pointer to a function of type void func(void* arg) to be executed </p></li>
+<li><p><strong>arg</strong> -- <strong>[in]</strong> Arbitrary argument of type void* to be passed into the function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG if cpu_id is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE if the FreeRTOS scheduler is not running</p></li>
+<li><p>ESP_OK otherwise </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv414esp_ipc_func_t">
+<span id="_CPPv314esp_ipc_func_t"></span><span id="_CPPv214esp_ipc_func_t"></span><span id="esp_ipc_func_t"></span><span class="target" id="esp__ipc_8h_1ae81cfe690fde4e8cf92b0fb3591ec77e"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_func_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">arg</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv414esp_ipc_func_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>IPC Callback. </p>
+<p>A callback of this type should be provided as an argument when calling esp_ipc_call() or esp_ipc_call_blocking(). </p>
+</dd></dl>
+
+</section>
+<section id="id2">
+<h3>Header File<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_system/include/esp_ipc_isr.h">components/esp_system/include/esp_ipc_isr.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_ipc_isr.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id3">
+<h3>Functions<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416esp_ipc_isr_call18esp_ipc_isr_func_tPv">
+<span id="_CPPv316esp_ipc_isr_call18esp_ipc_isr_func_tPv"></span><span id="_CPPv216esp_ipc_isr_call18esp_ipc_isr_func_tPv"></span><span id="esp_ipc_isr_call__esp_ipc_isr_func_t.voidP"></span><span class="target" id="esp__ipc__isr_8h_1ad84e0b846fe1d47244e772fbc37c8118"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_isr_call</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418esp_ipc_isr_func_t" title="esp_ipc_isr_func_t"><span class="n"><span class="pre">esp_ipc_isr_func_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">func</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416esp_ipc_isr_call18esp_ipc_isr_func_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Execute an ISR callback on the other CPU. </p>
+<p>Execute a given callback on the other CPU in the context of a High Priority Interrupt.</p>
+<p><ul class="simple">
+<li><p>This function will busy-wait in a critical section until the other CPU has started execution of the callback</p></li>
+<li><p>The callback must be written:<ul>
+<li><p>in assembly for XTENSA chips (such as ESP32, ESP32S3). The function is invoked using a CALLX0 instruction and can use only a2, a3, a4 registers. See :doc:<code class="docutils literal notranslate"><span class="pre">IPC</span> <span class="pre">in</span> <span class="pre">Interrupt</span> <span class="pre">Context</span> <span class="pre">&lt;/api-reference/system/ipc&gt;</span></code> doc for more details.</p></li>
+<li><p>in C or assembly for RISCV chips (such as ESP32P4).</p></li>
+</ul>
+</p></li>
+</ul>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not available in single-core mode.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> -- <strong>[in]</strong> Pointer to a function of type void func(void* arg) to be executed </p></li>
+<li><p><strong>arg</strong> -- <strong>[in]</strong> Arbitrary argument of type void* to be passed into the function </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_ipc_isr_call_blocking18esp_ipc_isr_func_tPv">
+<span id="_CPPv325esp_ipc_isr_call_blocking18esp_ipc_isr_func_tPv"></span><span id="_CPPv225esp_ipc_isr_call_blocking18esp_ipc_isr_func_tPv"></span><span id="esp_ipc_isr_call_blocking__esp_ipc_isr_func_t.voidP"></span><span class="target" id="esp__ipc__isr_8h_1a484f55c1ec0cfc2e1da0ac3445fcdcb5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_isr_call_blocking</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418esp_ipc_isr_func_t" title="esp_ipc_isr_func_t"><span class="n"><span class="pre">esp_ipc_isr_func_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">func</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_ipc_isr_call_blocking18esp_ipc_isr_func_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Execute an ISR callback on the other CPU and busy-wait until it completes. </p>
+<p>This function is identical to esp_ipc_isr_call() except that this function will busy-wait until the execution of the callback completes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not available in single-core mode.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> -- <strong>[in]</strong> Pointer to a function of type void func(void* arg) to be executed </p></li>
+<li><p><strong>arg</strong> -- <strong>[in]</strong> Arbitrary argument of type void* to be passed into the function </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_ipc_isr_stall_other_cpuv">
+<span id="_CPPv327esp_ipc_isr_stall_other_cpuv"></span><span id="_CPPv227esp_ipc_isr_stall_other_cpuv"></span><span id="esp_ipc_isr_stall_other_cpu__void"></span><span class="target" id="esp__ipc__isr_8h_1a94f8f4c237fdf7df3f5eee80621c2312"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_isr_stall_other_cpu</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_ipc_isr_stall_other_cpuv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stall the other CPU. </p>
+<p>This function will stall the other CPU. The other CPU is stalled by busy-waiting in the context of a High Priority Interrupt. The other CPU will not be resumed until esp_ipc_isr_release_other_cpu() is called.</p>
+<p><ul class="simple">
+<li><p>This function is internally implemented using IPC ISR</p></li>
+<li><p>This function is used for DPORT workaround.</p></li>
+<li><p>If the stall feature is paused using esp_ipc_isr_stall_pause(), this function will have no effect</p></li>
+</ul>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not available in single-core mode. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is the caller's responsibility to avoid deadlocking on spinlocks </p>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_ipc_isr_release_other_cpuv">
+<span id="_CPPv329esp_ipc_isr_release_other_cpuv"></span><span id="_CPPv229esp_ipc_isr_release_other_cpuv"></span><span id="esp_ipc_isr_release_other_cpu__void"></span><span class="target" id="esp__ipc__isr_8h_1a8df2961eaa36e0c2ea98e6c872cb8437"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_isr_release_other_cpu</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_ipc_isr_release_other_cpuv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Release the other CPU. </p>
+<p>This function will release the other CPU that was previously stalled from calling esp_ipc_isr_stall_other_cpu()</p>
+<p><ul class="simple">
+<li><p>This function is used for DPORT workaround.</p></li>
+<li><p>If the stall feature is paused using esp_ipc_isr_stall_pause(), this function will have no effect</p></li>
+</ul>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not available in single-core mode. </p>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423esp_ipc_isr_stall_pausev">
+<span id="_CPPv323esp_ipc_isr_stall_pausev"></span><span id="_CPPv223esp_ipc_isr_stall_pausev"></span><span id="esp_ipc_isr_stall_pause__void"></span><span class="target" id="esp__ipc__isr_8h_1a9d56ee9be59f9a12e6df1f225a6876af"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_isr_stall_pause</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423esp_ipc_isr_stall_pausev" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Puase the CPU stall feature. </p>
+<p>This function will pause the CPU stall feature. Once paused, calls to esp_ipc_isr_stall_other_cpu() and esp_ipc_isr_release_other_cpu() will have no effect. If a IPC ISR call is already in progress, this function will busy-wait until the call completes before pausing the CPU stall feature. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423esp_ipc_isr_stall_abortv">
+<span id="_CPPv323esp_ipc_isr_stall_abortv"></span><span id="_CPPv223esp_ipc_isr_stall_abortv"></span><span id="esp_ipc_isr_stall_abort__void"></span><span class="target" id="esp__ipc__isr_8h_1afeee87d3ae11bd203aa55709c49a3081"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_isr_stall_abort</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423esp_ipc_isr_stall_abortv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Abort a CPU stall. </p>
+<p>This function will abort any stalling routine of the other CPU due to a pervious call to esp_ipc_isr_stall_other_cpu(). This function aborts the stall in a non-recoverable manner, thus should only be called in case of a panic().</p>
+<p><ul class="simple">
+<li><p>This function is used in panic handling code </p></li>
+</ul>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424esp_ipc_isr_stall_resumev">
+<span id="_CPPv324esp_ipc_isr_stall_resumev"></span><span id="_CPPv224esp_ipc_isr_stall_resumev"></span><span id="esp_ipc_isr_stall_resume__void"></span><span class="target" id="esp__ipc__isr_8h_1a59ea0a5d76c52df51689f4a4f385f50c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_isr_stall_resume</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424esp_ipc_isr_stall_resumev" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Resume the CPU stall feature. </p>
+<p>This function will resume the CPU stall feature that was previously paused by calling esp_ipc_isr_stall_pause(). Once resumed, calls to esp_ipc_isr_stall_other_cpu() and esp_ipc_isr_release_other_cpu() will have effect again. </p>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.esp_ipc_isr_asm_call">
+<span class="target" id="esp__ipc__isr_8h_1a6b8d8d2f44c8798ffc237f358e14ec74"></span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_isr_asm_call</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">func</span></span>, <span class="n"><span class="pre">arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.esp_ipc_isr_asm_call" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Execute an ISR callback on the other CPU See esp_ipc_isr_call(). </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.esp_ipc_isr_asm_call_blocking">
+<span class="target" id="esp__ipc__isr_8h_1a3df3cc0517851e0384fb98e03ca36e74"></span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_isr_asm_call_blocking</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">func</span></span>, <span class="n"><span class="pre">arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.esp_ipc_isr_asm_call_blocking" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Execute an ISR callback on the other CPU and busy-wait until it completes See esp_ipc_isr_call_blocking(). </p>
+</dd></dl>
+
+</section>
+<section id="id4">
+<h3>Type Definitions<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv418esp_ipc_isr_func_t">
+<span id="_CPPv318esp_ipc_isr_func_t"></span><span id="_CPPv218esp_ipc_isr_func_t"></span><span id="esp_ipc_isr_func_t"></span><span class="target" id="esp__ipc__isr_8h_1ad03bc11e649e16317712b29086297c3e"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_ipc_isr_func_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">arg</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv418esp_ipc_isr_func_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>IPC ISR Callback. </p>
+<p>The callback must be written:<ul class="simple">
+<li><p>in assembly for XTENSA chips (such as ESP32, ESP32S3).</p></li>
+<li><p>in C or assembly for RISCV chips (such as ESP32P4).</p></li>
+</ul>
+</p>
+<p>A callback of this type should be provided as an argument when calling esp_ipc_isr_call() or esp_ipc_isr_call_blocking(). </p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Inter-Processor Call (IPC) (api-reference/system/ipc)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Inter-Processor Call (IPC) (api-reference/system/ipc)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="internal-unstable.html" class="btn btn-neutral float-left" title="Internal and Unstable APIs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="intr_alloc.html" class="btn btn-neutral float-right" title="Interrupt Allocation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

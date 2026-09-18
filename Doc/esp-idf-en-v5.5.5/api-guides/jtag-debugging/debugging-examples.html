@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Debugging Examples - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/jtag-debugging/debugging-examples.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/jtag-debugging/debugging-examples';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Project Configuration" href="../kconfig/index.html" />
+    <link rel="prev" title="Using Debugger" href="using-debugger.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../app_trace.html">Application Level Tracing Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bt-architecture/index.html">Bluetooth<sup>®</sup> Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic-bt/index.html">Bluetooth<sup>®</sup> Classic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ble/index.html">Bluetooth<sup>®</sup> Low Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coexist.html">RF Coexistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c.html">C Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cplusplus.html">C++ Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../code-quality/index.html">Code Quality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deep-sleep-stub.html">Deep-sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external-ram.html">Support for External RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file-system-considerations.html">File System Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hlinterrupts.html">High Priority Interrupts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">JTAG Debugging</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#how-it-works">How it Works?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#selecting-jtag-adapter">Selecting JTAG Adapter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#setup-of-openocd">Setup of OpenOCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#configuring-esp32-target">Configuring ESP32 Target</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#launching-debugger">Launching Debugger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#debugging-examples">Debugging Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#building-openocd-from-sources">Building OpenOCD from Sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#semihosting">Semihosting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#tips-and-quirks">Tips and Quirks</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#related-documents">Related Documents</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="using-debugger.html">Using Debugger</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Debugging Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semihosting.html">Semihosting Feature</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tips-and-quirks.html">Tips and Quirks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../app_trace.html">Application Level Tracing Library</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig/index.html">Project Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../low-power-mode/index.html">Low Power Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lwip.html">lwIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reproducible-builds.html">Reproducible Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stdio.html">Standard I/O and Console Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../unit-tests.html">Unit Testing in ESP32</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../host-apps.html">Running ESP-IDF Applications on Host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-security.html">Wi-Fi Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wifi-expansion.html">Wi-Fi Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phy.html">PHY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">JTAG Debugging</a></li>
+      <li class="breadcrumb-item active">Debugging Examples</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-guides/jtag-debugging/debugging-examples.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="debugging-examples">
+<h1>Debugging Examples<a class="headerlink" href="#debugging-examples" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-guides/jtag-debugging/debugging-examples.html">[中文]</a></p>
+<p>This section describes debugging with GDB from <a class="reference internal" href="#jtag-debugging-examples-eclipse"><span class="std std-ref">Eclipse</span></a> as well as from <a class="reference internal" href="#jtag-debugging-examples-command-line"><span class="std std-ref">Command Line</span></a>.</p>
+<section id="eclipse">
+<span id="jtag-debugging-examples-eclipse"></span><h2>Eclipse<a class="headerlink" href="#eclipse" title="Permalink to this heading"></a></h2>
+<p>Verify if your target is ready and loaded with <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/get-started/blink">get-started/blink</a> example. Configure and start debugger following steps in section <a class="reference internal" href="using-debugger.html#jtag-debugging-using-debugger-eclipse"><span class="std std-ref">Eclipse</span></a>. Pick up where target was left by debugger, i.e., having the application halted at breakpoint established at <code class="docutils literal notranslate"><span class="pre">app_main()</span></code>.</p>
+<figure class="align-center" id="id8">
+<img alt="Debug Perspective in Eclipse" src="../../_images/debug-perspective.jpg" />
+<figcaption>
+<p><span class="caption-text">Debug Perspective in Eclipse</span><a class="headerlink" href="#id8" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<section id="examples-in-this-section">
+<h3>Examples in This Section<a class="headerlink" href="#examples-in-this-section" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#jtag-debugging-examples-eclipse-01"><span class="std std-ref">Navigating Through the Code, Call Stack and Threads</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-eclipse-02"><span class="std std-ref">Setting and Clearing Breakpoints</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-eclipse-03"><span class="std std-ref">Halting the Target Manually</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-eclipse-04"><span class="std std-ref">Stepping Through the Code</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-eclipse-05"><span class="std std-ref">Checking and Setting Memory</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-eclipse-06"><span class="std std-ref">Watching and Setting Program Variables</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-eclipse-07"><span class="std std-ref">Setting Conditional Breakpoints</span></a></p></li>
+</ol>
+</section>
+<section id="navigating-through-the-code-call-stack-and-threads">
+<span id="jtag-debugging-examples-eclipse-01"></span><h3>Navigating Through the Code, Call Stack and Threads<a class="headerlink" href="#navigating-through-the-code-call-stack-and-threads" title="Permalink to this heading"></a></h3>
+<p>When the target is halted, debugger shows the list of threads in &quot;Debug&quot; window. The line of code where program halted is highlighted in another window below, as shown on the following picture. The LED stops blinking.</p>
+<figure class="align-center" id="id9">
+<img alt="Target halted during debugging" src="../../_images/debugging-target-halted.jpg" />
+<figcaption>
+<p><span class="caption-text">Target halted during debugging</span><a class="headerlink" href="#id9" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Specific thread where the program halted is expanded showing the call stack. It represents function calls that lead up to the highlighted line of code, where the target halted. The first line of call stack under Thread #1 contains the last called function <code class="docutils literal notranslate"><span class="pre">app_main()</span></code>, that in turn was called from function <code class="docutils literal notranslate"><span class="pre">main_task()</span></code> shown in a line below. Each line of the stack also contains the file name and line number where the function was called. By clicking/highlighting the stack entries, in window below, you will see contents of this file.</p>
+<p>By expanding threads you can navigate throughout the application. Expand Thread #5 that contains much longer call stack. You will see there, besides function calls, numbers like <code class="docutils literal notranslate"><span class="pre">0x4000000c</span></code>. They represent addresses of binary code not provided in source form.</p>
+<figure class="align-center" id="id10">
+<img alt="Navigate through the call stack" src="../../_images/debugging-navigate-through-the-stack.jpg" />
+<figcaption>
+<p><span class="caption-text">Navigate through the call stack</span><a class="headerlink" href="#id10" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>In another window on right, you can see the disassembled machine code no matter if your project provides it in source or only the binary form.</p>
+<p>Go back to the <code class="docutils literal notranslate"><span class="pre">app_main()</span></code> in Thread #1 to familiar code of <code class="docutils literal notranslate"><span class="pre">blink.c</span></code> file that will be examined in more details in the following examples. Debugger makes it easy to navigate through the code of entire application. This comes handy when stepping through the code and working with breakpoints and will be discussed below.</p>
+</section>
+<section id="setting-and-clearing-breakpoints">
+<span id="jtag-debugging-examples-eclipse-02"></span><h3>Setting and Clearing Breakpoints<a class="headerlink" href="#setting-and-clearing-breakpoints" title="Permalink to this heading"></a></h3>
+<p>When debugging, we would like to be able to stop the application at critical lines of code and then examine the state of specific variables, memory and registers/peripherals. To do so we are using breakpoints. They provide a convenient way to quickly get to and halt the application at specific line.</p>
+<p>Let's establish two breakpoints when the state of LED changes. Basing on code listing above, this happens at lines 33 and 36. To do so, hold the &quot;Control&quot; on the keyboard and double clink on number <code class="docutils literal notranslate"><span class="pre">33</span></code> in file <code class="docutils literal notranslate"><span class="pre">blink.c</span></code> file. A dialog will open where you can confirm your selection by pressing &quot;OK&quot; button. If you do not like to see the dialog just double click the line number. Set another breakpoint in line 36.</p>
+<figure class="align-center" id="id11">
+<img alt="Setting a breakpoint" src="../../_images/debugging-setting-breakpoint.jpg" />
+<figcaption>
+<p><span class="caption-text">Setting a breakpoint</span><a class="headerlink" href="#id11" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Information how many breakpoints are set and where is shown in window &quot;Breakpoints&quot; on top right. Click &quot;Show Breakpoints Supported by Selected Target&quot; to refresh this list. Besides the two just set breakpoints the list may contain temporary breakpoint at function <code class="docutils literal notranslate"><span class="pre">app_main()</span></code> established at debugger start. As maximum two breakpoints are allowed (see <a class="reference internal" href="tips-and-quirks.html#jtag-debugging-tip-breakpoints"><span class="std std-ref">Breakpoints and Watchpoints Available</span></a>), you need to delete it, or debugging will fail.</p>
+<figure class="align-center" id="id12">
+<img alt="Three breakpoints are set / maximum two are allowed" src="../../_images/debugging-three-breakpoints-set.jpg" />
+<figcaption>
+<p><span class="caption-text">Three breakpoints are set / maximum two are allowed</span><a class="headerlink" href="#id12" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>If you now click &quot;Resume&quot; (click <code class="docutils literal notranslate"><span class="pre">blink_task()</span></code> under &quot;Thread #8&quot;, if &quot;Resume&quot; button is grayed out), the processor will run and halt at a breakpoint. Clicking &quot;Resume&quot; another time will make it run again, halt on second breakpoint, and so on.</p>
+<p>You will be also able to see that LED is changing the state after each click to &quot;Resume&quot; program execution.</p>
+<p>Read more about breakpoints under <a class="reference internal" href="tips-and-quirks.html#jtag-debugging-tip-breakpoints"><span class="std std-ref">Breakpoints and Watchpoints Available</span></a> and <a class="reference internal" href="tips-and-quirks.html#jtag-debugging-tip-where-breakpoints"><span class="std std-ref">What Else Should I Know About Breakpoints?</span></a></p>
+</section>
+<section id="halting-the-target-manually">
+<span id="jtag-debugging-examples-eclipse-03"></span><h3>Halting the Target Manually<a class="headerlink" href="#halting-the-target-manually" title="Permalink to this heading"></a></h3>
+<p>When debugging, you may resume application and enter code waiting for some event or staying in infinite loop without any break points defined. In such case, to go back to debugging mode, you can break program execution manually by pressing &quot;Suspend&quot; button.</p>
+<p>To check it, delete all breakpoints and click &quot;Resume&quot;. Then click &quot;Suspend&quot;. Application will be halted at some random point and LED will stop blinking. Debugger will expand thread and highlight the line of code where application halted.</p>
+<figure class="align-center" id="id13">
+<img alt="Target halted manually" src="../../_images/debugging-target-halted-manually.jpg" />
+<figcaption>
+<p><span class="caption-text">Target halted manually</span><a class="headerlink" href="#id13" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>In particular case above, the application has been halted in line 52 of code in file <code class="docutils literal notranslate"><span class="pre">freertos_hooks.c</span></code> Now you can resume it again by pressing &quot;Resume&quot; button or do some debugging as discussed below.</p>
+</section>
+<section id="stepping-through-the-code">
+<span id="jtag-debugging-examples-eclipse-04"></span><h3>Stepping Through the Code<a class="headerlink" href="#stepping-through-the-code" title="Permalink to this heading"></a></h3>
+<p>It is also possible to step through the code using &quot;Step Into (F5)&quot; and &quot;Step Over (F6)&quot; commands. The difference is that &quot;Step Into (F5)&quot; is entering inside subroutines calls, while &quot;Step Over (F6)&quot; steps over the call, treating it as a single source line.</p>
+<p>Before being able to demonstrate this functionality, using information discussed in previous paragraph, make sure that you have only one breakpoint defined at line <code class="docutils literal notranslate"><span class="pre">36</span></code> of <code class="docutils literal notranslate"><span class="pre">blink.c</span></code>.</p>
+<p>Resume program by entering pressing F8 and let it halt. Now press &quot;Step Over (F6)&quot;, one by one couple of times, to see how debugger is stepping one program line at a time.</p>
+<figure class="align-center" id="id14">
+<img alt="Stepping through the code with &quot;Step Over (F6)&quot;" src="../../_images/debugging-step-over.jpg" />
+<figcaption>
+<p><span class="caption-text">Stepping through the code with &quot;Step Over (F6)&quot;</span><a class="headerlink" href="#id14" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>If you press &quot;Step Into (F5)&quot; instead, then debugger will step inside subroutine calls.</p>
+<figure class="align-center" id="id15">
+<img alt="Stepping through the code with &quot;Step Into (F5)&quot;" src="../../_images/debugging-step-into.jpg" />
+<figcaption>
+<p><span class="caption-text">Stepping through the code with &quot;Step Into (F5)&quot;</span><a class="headerlink" href="#id15" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>In this particular case debugger stepped inside <code class="docutils literal notranslate"><span class="pre">gpio_set_level(BLINK_GPIO,</span> <span class="pre">0)</span></code> and effectively moved to <code class="docutils literal notranslate"><span class="pre">gpio.c</span></code> driver code.</p>
+<p>See <a class="reference internal" href="tips-and-quirks.html#jtag-debugging-tip-why-next-works-as-step"><span class="std std-ref">Why Stepping with &quot;next&quot; Does Not Bypass Subroutine Calls?</span></a> for potential limitation of using <code class="docutils literal notranslate"><span class="pre">next</span></code> command.</p>
+</section>
+<section id="checking-and-setting-memory">
+<span id="jtag-debugging-examples-eclipse-05"></span><h3>Checking and Setting Memory<a class="headerlink" href="#checking-and-setting-memory" title="Permalink to this heading"></a></h3>
+<p>To display or set contents of memory use &quot;Memory&quot; tab at the bottom of &quot;Debug&quot; perspective.</p>
+<p>With the &quot;Memory&quot; tab, we will read from and write to the memory location <code class="docutils literal notranslate"><span class="pre">0x3FF44004</span></code> labeled as <code class="docutils literal notranslate"><span class="pre">GPIO_OUT_REG</span></code> used to set and clear individual GPIO's.</p>
+<p>For more information, see <em>ESP32 Technical Reference Manual</em> &gt; <em>IO MUX and GPIO Matrix (GPIO, IO_MUX)</em> [<a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf#iomuxgpio">PDF</a>].</p>
+<p>Being in the same <code class="docutils literal notranslate"><span class="pre">blink.c</span></code> project as before, set two breakpoints right after <code class="docutils literal notranslate"><span class="pre">gpio_set_level</span></code> instruction. Click &quot;Memory&quot; tab and then &quot;Add Memory Monitor&quot; button. Enter <code class="docutils literal notranslate"><span class="pre">0x3FF44004</span></code> in provided dialog.</p>
+<p>Now resume program by pressing F8 and observe &quot;Monitor&quot; tab.</p>
+<figure class="align-center" id="id16">
+<img alt="Observing memory location 0x3FF44004 changing one bit to ON&quot;" src="../../_images/debugging-memory-location-on.jpg" />
+<figcaption>
+<p><span class="caption-text">Observing memory location 0x3FF44004 changing one bit to &quot;ON&quot;</span><a class="headerlink" href="#id16" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>You should see one bit being flipped over at memory location <code class="docutils literal notranslate"><span class="pre">0x3FF44004</span></code> (and LED changing the state) each time F8 is pressed.</p>
+<figure class="align-center" id="id17">
+<img alt="Observing memory location 0x3FF44004 changing one bit to ON&quot;" src="../../_images/debugging-memory-location-off.jpg" />
+<figcaption>
+<p><span class="caption-text">Observing memory location 0x3FF44004 changing one bit to &quot;OFF&quot;</span><a class="headerlink" href="#id17" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>To set memory use the same &quot;Monitor&quot; tab and the same memory location. Type in alternate bit pattern as previously observed. Immediately after pressing enter you will see LED changing the state.</p>
+</section>
+<section id="watching-and-setting-program-variables">
+<span id="jtag-debugging-examples-eclipse-06"></span><h3>Watching and Setting Program Variables<a class="headerlink" href="#watching-and-setting-program-variables" title="Permalink to this heading"></a></h3>
+<p>A common debugging tasks is checking the value of a program variable as the program runs. To be able to demonstrate this functionality, update file <code class="docutils literal notranslate"><span class="pre">blink.c</span></code> by adding a declaration of a global variable <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">i</span></code> above definition of function <code class="docutils literal notranslate"><span class="pre">blink_task</span></code>. Then add <code class="docutils literal notranslate"><span class="pre">i++</span></code> inside <code class="docutils literal notranslate"><span class="pre">while(1)</span></code> of this function to get <code class="docutils literal notranslate"><span class="pre">i</span></code> incremented on each blink.</p>
+<p>Exit debugger, so it is not confused with new code, build and flash the code to the ESP and restart debugger. There is no need to restart OpenOCD.</p>
+<p>Once application is halted, enter a breakpoint in the line where you put <code class="docutils literal notranslate"><span class="pre">i++</span></code>.</p>
+<p>In next step, in the window with &quot;Breakpoints&quot;, click the &quot;Expressions&quot; tab. If this tab is not visible, then add it by going to the top menu Window &gt; Show View &gt; Expressions. Then click &quot;Add new expression&quot; and enter <code class="docutils literal notranslate"><span class="pre">i</span></code>.</p>
+<p>Resume program execution by pressing F8. Each time the program is halted you will see <code class="docutils literal notranslate"><span class="pre">i</span></code> value being incremented.</p>
+<figure class="align-center" id="id18">
+<img alt="Watching program variable &quot;i&quot;" src="../../_images/debugging-watch-variable.jpg" />
+<figcaption>
+<p><span class="caption-text">Watching program variable &quot;i&quot;</span><a class="headerlink" href="#id18" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>To modify <code class="docutils literal notranslate"><span class="pre">i</span></code> enter a new number in &quot;Value&quot; column. After pressing &quot;Resume (F8)&quot; the program will keep incrementing <code class="docutils literal notranslate"><span class="pre">i</span></code> starting from the new entered number.</p>
+</section>
+<section id="setting-conditional-breakpoints">
+<span id="jtag-debugging-examples-eclipse-07"></span><h3>Setting Conditional Breakpoints<a class="headerlink" href="#setting-conditional-breakpoints" title="Permalink to this heading"></a></h3>
+<p>Here comes more interesting part. You may set a breakpoint to halt the program execution, if certain condition is satisfied. Right click on the breakpoint to open a context menu and select &quot;Breakpoint Properties&quot;. Change the selection under &quot;Type:&quot; to &quot;Hardware&quot; and enter a &quot;Condition:&quot; like <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">==</span> <span class="pre">2</span></code>.</p>
+<figure class="align-center" id="id19">
+<img alt="Setting a conditional breakpoint" src="../../_images/debugging-setting-conditional-breakpoint.jpg" />
+<figcaption>
+<p><span class="caption-text">Setting a conditional breakpoint</span><a class="headerlink" href="#id19" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>If current value of <code class="docutils literal notranslate"><span class="pre">i</span></code> is less than <code class="docutils literal notranslate"><span class="pre">2</span></code> (change it if required) and program is resumed, it will blink LED in a loop until condition <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">==</span> <span class="pre">2</span></code> gets true and then finally halt.</p>
+</section>
+</section>
+<section id="command-line">
+<span id="jtag-debugging-examples-command-line"></span><h2>Command Line<a class="headerlink" href="#command-line" title="Permalink to this heading"></a></h2>
+<p>Verify if your target is ready and loaded with <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/get-started/blink">get-started/blink</a> example. Configure and start debugger following steps in section <a class="reference internal" href="using-debugger.html#jtag-debugging-using-debugger-command-line"><span class="std std-ref">Command Line</span></a>. Pick up where target was left by debugger, i.e. having the application halted at breakpoint established at <code class="docutils literal notranslate"><span class="pre">app_main()</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Temporary breakpoint 1, app_main () at /home/user-name/esp/blink/main/./blink.c:43
+43      xTaskCreate(&amp;blink_task, &quot;blink_task&quot;, configMINIMAL_STACK_SIZE, NULL, 5, NULL);
+(gdb)
+</pre></div>
+</div>
+<section id="id1">
+<h3>Examples in This Section<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#jtag-debugging-examples-command-line-01"><span class="std std-ref">Navigating Through the Code, Call Stack and Threads</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-command-line-02"><span class="std std-ref">Setting and Clearing Breakpoints</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-command-line-03"><span class="std std-ref">Halting and Resuming the Application</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-command-line-04"><span class="std std-ref">Stepping Through the Code</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-command-line-05"><span class="std std-ref">Checking and Setting Memory</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-command-line-06"><span class="std std-ref">Watching and Setting Program Variables</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-command-line-07"><span class="std std-ref">Setting Conditional Breakpoints</span></a></p></li>
+<li><p><a class="reference internal" href="#jtag-debugging-examples-command-line-08"><span class="std std-ref">Debugging FreeRTOS Objects</span></a></p></li>
+</ol>
+</section>
+<section id="jtag-debugging-examples-command-line-01">
+<span id="id2"></span><h3>Navigating Through the Code, Call Stack and Threads<a class="headerlink" href="#jtag-debugging-examples-command-line-01" title="Permalink to this heading"></a></h3>
+<p>When you see the <code class="docutils literal notranslate"><span class="pre">(gdb)</span></code> prompt, the application is halted. LED should not be blinking.</p>
+<p>To find out where exactly the code is halted, enter <code class="docutils literal notranslate"><span class="pre">l</span></code> or <code class="docutils literal notranslate"><span class="pre">list</span></code>, and debugger will show couple of lines of code around the halt point (line 43 of code in file <code class="docutils literal notranslate"><span class="pre">blink.c</span></code>)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) l
+38      }
+39  }
+40
+41  void app_main()
+42  {
+43      xTaskCreate(&amp;blink_task, &quot;blink_task&quot;, configMINIMAL_STACK_SIZE, NULL, 5, NULL);
+44  }
+(gdb)
+</pre></div>
+</div>
+<p>Check how code listing works by entering, e.g., <code class="docutils literal notranslate"><span class="pre">l</span> <span class="pre">30,</span> <span class="pre">40</span></code> to see particular range of lines of code.</p>
+<p>You can use <code class="docutils literal notranslate"><span class="pre">bt</span></code> or <code class="docutils literal notranslate"><span class="pre">backtrace</span></code> to see what function calls lead up to this code:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) bt
+#0  app_main () at /home/user-name/esp/blink/main/./blink.c:43
+#1  0x400d057e in main_task (args=0x0) at /home/user-name/esp/esp-idf/components/esp32/./cpu_start.c:339
+(gdb)
+</pre></div>
+</div>
+<p>Line #0 of output provides the last function call before the application halted, i.e., <code class="docutils literal notranslate"><span class="pre">app_main</span> <span class="pre">()</span></code> we have listed previously. The <code class="docutils literal notranslate"><span class="pre">app_main</span> <span class="pre">()</span></code> was in turn called by function <code class="docutils literal notranslate"><span class="pre">main_task</span></code> from line 339 of code located in file <code class="docutils literal notranslate"><span class="pre">cpu_start.c</span></code>.</p>
+<p>To get to the context of <code class="docutils literal notranslate"><span class="pre">main_task</span></code> in file <code class="docutils literal notranslate"><span class="pre">cpu_start.c</span></code>, enter <code class="docutils literal notranslate"><span class="pre">frame</span>&#160; <span class="pre">N</span></code>, where N = 1, because the <code class="docutils literal notranslate"><span class="pre">main_task</span></code> is listed under #1):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) frame 1
+#1  0x400d057e in main_task (args=0x0) at /home/user-name/esp/esp-idf/components/esp32/./cpu_start.c:339
+339     app_main();
+(gdb)
+</pre></div>
+</div>
+<p>Enter <code class="docutils literal notranslate"><span class="pre">l</span></code> and this will reveal the piece of code that called <code class="docutils literal notranslate"><span class="pre">app_main()</span></code> (in line 339):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) l
+334         ;
+335     }
+336 #endif
+337     //Enable allocation in region where the startup stacks were located.
+338     heap_caps_enable_nonos_stack_heaps();
+339     app_main();
+340     vTaskDelete(NULL);
+341 }
+342
+(gdb)
+</pre></div>
+</div>
+<p>By listing some lines before, you will see the function name <code class="docutils literal notranslate"><span class="pre">main_task</span></code> we have been looking for:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) l 326, 341
+326 static void main_task(void* args)
+327 {
+328     // Now that the application is about to start, disable boot watchdogs
+329     REG_CLR_BIT(TIMG_WDTCONFIG0_REG(0), TIMG_WDT_FLASHBOOT_MOD_EN_S);
+330     REG_CLR_BIT(RTC_CNTL_WDTCONFIG0_REG, RTC_CNTL_WDT_FLASHBOOT_MOD_EN);
+331 #if !CONFIG_FREERTOS_UNICORE
+332     // Wait for FreeRTOS initialization to finish on APP CPU, before replacing its startup stack
+333     while (port_xSchedulerRunning[1] == 0) {
+334         ;
+335     }
+336 #endif
+337     //Enable allocation in region where the startup stacks were located.
+338     heap_caps_enable_nonos_stack_heaps();
+339     app_main();
+340     vTaskDelete(NULL);
+341 }
+(gdb)
+</pre></div>
+</div>
+<p>To see the other code, enter <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">threads</span></code>. This will show the list of threads running on target:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) i threads
+  Id   Target Id         Frame
+  8    Thread 1073411336 (dport) 0x400d0848 in dport_access_init_core (arg=&lt;optimized out&gt;)
+    at /home/user-name/esp/esp-idf/components/esp32/./dport_access.c:170
+  7    Thread 1073408744 (ipc0) xQueueGenericReceive (xQueue=0x3ffae694, pvBuffer=0x0, xTicksToWait=1644638200,
+    xJustPeeking=0) at /home/user-name/esp/esp-idf/components/freertos/./queue.c:1452
+  6    Thread 1073431096 (Tmr Svc) prvTimerTask (pvParameters=0x0)
+    at /home/user-name/esp/esp-idf/components/freertos/./timers.c:445
+  5    Thread 1073410208 (ipc1 : Running) 0x4000bfea in ?? ()
+  4    Thread 1073432224 (dport) dport_access_init_core (arg=0x0)
+    at /home/user-name/esp/esp-idf/components/esp32/./dport_access.c:150
+  3    Thread 1073413156 (IDLE) prvIdleTask (pvParameters=0x0)
+    at /home/user-name/esp/esp-idf/components/freertos/./tasks.c:3282
+  2    Thread 1073413512 (IDLE) prvIdleTask (pvParameters=0x0)
+    at /home/user-name/esp/esp-idf/components/freertos/./tasks.c:3282
+* 1    Thread 1073411772 (main : Running) app_main () at /home/user-name/esp/blink/main/./blink.c:43
+(gdb)
+</pre></div>
+</div>
+<p>The thread list shows the last function calls per each thread together with the name of C source file if available.</p>
+<p>You can navigate to specific thread by entering  <code class="docutils literal notranslate"><span class="pre">thread</span> <span class="pre">N</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the thread Id. To see how it works go to thread thread 5:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) thread 5
+[Switching to thread 5 (Thread 1073410208)]
+#0  0x4000bfea in ?? ()
+(gdb)
+</pre></div>
+</div>
+<p>Then check the backtrace:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) bt
+#0  0x4000bfea in ?? ()
+#1  0x40083a85 in vPortCPUReleaseMutex (mux=&lt;optimized out&gt;) at /home/user-name/esp/esp-idf/components/freertos/./port.c:415
+#2  0x40083fc8 in vTaskSwitchContext () at /home/user-name/esp/esp-idf/components/freertos/./tasks.c:2846
+#3  0x4008532b in _frxt_dispatch ()
+#4  0x4008395c in xPortStartScheduler () at /home/user-name/esp/esp-idf/components/freertos/./port.c:222
+#5  0x4000000c in ?? ()
+#6  0x4000000c in ?? ()
+#7  0x4000000c in ?? ()
+#8  0x4000000c in ?? ()
+(gdb)
+</pre></div>
+</div>
+<p>As you see, the backtrace  may contain several entries. This will let you check what exact sequence of function calls lead to the code where the target halted. Question marks <code class="docutils literal notranslate"><span class="pre">??</span></code> instead of a function name indicate that application is available only in binary format, without any source file in C language. The value like <code class="docutils literal notranslate"><span class="pre">0x4000bfea</span></code> is the memory address of the function call.</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">bt</span></code>, <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">threads</span></code>, <code class="docutils literal notranslate"><span class="pre">thread</span> <span class="pre">N</span></code> and <code class="docutils literal notranslate"><span class="pre">list</span></code> commands we are now able to navigate through the code of entire application. This comes handy when stepping through the code and working with breakpoints and will be discussed below.</p>
+</section>
+<section id="jtag-debugging-examples-command-line-02">
+<span id="id3"></span><h3>Setting and Clearing Breakpoints<a class="headerlink" href="#jtag-debugging-examples-command-line-02" title="Permalink to this heading"></a></h3>
+<p>When debugging, we would like to be able to stop the application at critical lines of code and then examine the state of specific variables, memory and registers/peripherals. To do so we are using breakpoints. They provide a convenient way to quickly get to and halt the application at specific line.</p>
+<p>Let's establish two breakpoints when the state of LED changes. Basing on code listing above this happens at lines 33 and 36. Breakpoints may be established using command <code class="docutils literal notranslate"><span class="pre">break</span> <span class="pre">M</span></code> where M is the code line number:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) break 33
+Breakpoint 2 at 0x400db6f6: file /home/user-name/esp/blink/main/./blink.c, line 33.
+(gdb) break 36
+Breakpoint 3 at 0x400db704: file /home/user-name/esp/blink/main/./blink.c, line 36.
+</pre></div>
+</div>
+<p>If you new enter <code class="docutils literal notranslate"><span class="pre">c</span></code>, the processor will run and halt at a breakpoint. Entering <code class="docutils literal notranslate"><span class="pre">c</span></code> another time will make it run again, halt on second breakpoint, and so on:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) c
+Continuing.
+Target halted. PRO_CPU: PC=0x400DB6F6 (active)    APP_CPU: PC=0x400D10D8
+
+Breakpoint 2, blink_task (pvParameter=0x0) at /home/user-name/esp/blink/main/./blink.c:33
+33          gpio_set_level(BLINK_GPIO, 0);
+(gdb) c
+Continuing.
+Target halted. PRO_CPU: PC=0x400DB6F8 (active)    APP_CPU: PC=0x400D10D8
+Target halted. PRO_CPU: PC=0x400DB704 (active)    APP_CPU: PC=0x400D10D8
+
+Breakpoint 3, blink_task (pvParameter=0x0) at /home/user-name/esp/blink/main/./blink.c:36
+36          gpio_set_level(BLINK_GPIO, 1);
+(gdb)
+</pre></div>
+</div>
+<p>You will be also able to see that LED is changing the state only if you resume program execution by entering <code class="docutils literal notranslate"><span class="pre">c</span></code>.</p>
+<p>To examine how many breakpoints are set and where, use command <code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">break</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) info break
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x400db6f6 in blink_task at /home/user-name/esp/blink/main/./blink.c:33
+    breakpoint already hit 1 time
+3       breakpoint     keep y   0x400db704 in blink_task at /home/user-name/esp/blink/main/./blink.c:36
+    breakpoint already hit 1 time
+(gdb)
+</pre></div>
+</div>
+<p>Please note that breakpoint numbers (listed under <code class="docutils literal notranslate"><span class="pre">Num</span></code>) start with <code class="docutils literal notranslate"><span class="pre">2</span></code>. This is because first breakpoint has been already established at function <code class="docutils literal notranslate"><span class="pre">app_main()</span></code> by running command <code class="docutils literal notranslate"><span class="pre">thb</span> <span class="pre">app_main</span></code> on debugger launch. As it was a temporary breakpoint, it has been automatically deleted and now is not listed anymore.</p>
+<p>To remove breakpoints enter <code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">N</span></code> command (in short <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">N</span></code>), where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the breakpoint number:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) delete 1
+No breakpoint number 1.
+(gdb) delete 2
+(gdb)
+</pre></div>
+</div>
+<p>Read more about breakpoints under <a class="reference internal" href="tips-and-quirks.html#jtag-debugging-tip-breakpoints"><span class="std std-ref">Breakpoints and Watchpoints Available</span></a> and <a class="reference internal" href="tips-and-quirks.html#jtag-debugging-tip-where-breakpoints"><span class="std std-ref">What Else Should I Know About Breakpoints?</span></a></p>
+</section>
+<section id="halting-and-resuming-the-application">
+<span id="jtag-debugging-examples-command-line-03"></span><h3>Halting and Resuming the Application<a class="headerlink" href="#halting-and-resuming-the-application" title="Permalink to this heading"></a></h3>
+<p>When debugging, you may resume application and enter code waiting for some event or staying in infinite loop without any break points defined. In such case, to go back to debugging mode, you can break program execution manually by entering Ctrl+C.</p>
+<p>To check it delete all breakpoints and enter <code class="docutils literal notranslate"><span class="pre">c</span></code> to resume application. Then enter Ctrl+C. Application will be halted at some random point and LED will stop blinking. Debugger will print the following:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) c
+Continuing.
+^CTarget halted. PRO_CPU: PC=0x400D0C00             APP_CPU: PC=0x400D0C00 (active)
+[New Thread 1073433352]
+
+Program received signal SIGINT, Interrupt.
+[Switching to Thread 1073413512]
+0x400d0c00 in esp_vApplicationIdleHook () at /home/user-name/esp/esp-idf/components/esp32/./freertos_hooks.c:52
+52          asm(&quot;waiti 0&quot;);
+(gdb)
+</pre></div>
+</div>
+<p>In particular case above, the application has been halted in line 52 of code in file <code class="docutils literal notranslate"><span class="pre">freertos_hooks.c</span></code>. Now you can resume it again by enter <code class="docutils literal notranslate"><span class="pre">c</span></code> or do some debugging as discussed below.</p>
+</section>
+<section id="jtag-debugging-examples-command-line-04">
+<span id="id4"></span><h3>Stepping Through the Code<a class="headerlink" href="#jtag-debugging-examples-command-line-04" title="Permalink to this heading"></a></h3>
+<p>It is also possible to step through the code using <code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">next</span></code> commands (in short <code class="docutils literal notranslate"><span class="pre">s</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code>). The difference is that <code class="docutils literal notranslate"><span class="pre">step</span></code> is entering inside subroutines calls, while <code class="docutils literal notranslate"><span class="pre">next</span></code> steps over the call, treating it as a single source line.</p>
+<p>To demonstrate this functionality, using command <code class="docutils literal notranslate"><span class="pre">break</span></code> and <code class="docutils literal notranslate"><span class="pre">delete</span></code> discussed in previous paragraph, make sure that you have only one breakpoint defined at line <code class="docutils literal notranslate"><span class="pre">36</span></code> of <code class="docutils literal notranslate"><span class="pre">blink.c</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) info break
+Num     Type           Disp Enb Address    What
+3       breakpoint     keep y   0x400db704 in blink_task at /home/user-name/esp/blink/main/./blink.c:36
+    breakpoint already hit 1 time
+(gdb)
+</pre></div>
+</div>
+<p>Resume program by entering <code class="docutils literal notranslate"><span class="pre">c</span></code> and let it halt:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) c
+Continuing.
+Target halted. PRO_CPU: PC=0x400DB754 (active)    APP_CPU: PC=0x400D1128
+
+Breakpoint 3, blink_task (pvParameter=0x0) at /home/user-name/esp/blink/main/./blink.c:36
+36          gpio_set_level(BLINK_GPIO, 1);
+(gdb)
+</pre></div>
+</div>
+<p>Then enter <code class="docutils literal notranslate"><span class="pre">n</span></code> couple of times to see how debugger is stepping one program line at a time:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) n
+Target halted. PRO_CPU: PC=0x400DB756 (active)    APP_CPU: PC=0x400D1128
+Target halted. PRO_CPU: PC=0x400DB758 (active)    APP_CPU: PC=0x400D1128
+Target halted. PRO_CPU: PC=0x400DC04C (active)    APP_CPU: PC=0x400D1128
+Target halted. PRO_CPU: PC=0x400DB75B (active)    APP_CPU: PC=0x400D1128
+37          vTaskDelay(1000 / portTICK_PERIOD_MS);
+(gdb) n
+Target halted. PRO_CPU: PC=0x400DB75E (active)    APP_CPU: PC=0x400D1128
+Target halted. PRO_CPU: PC=0x400846FC (active)    APP_CPU: PC=0x400D1128
+Target halted. PRO_CPU: PC=0x400DB761 (active)    APP_CPU: PC=0x400D1128
+Target halted. PRO_CPU: PC=0x400DB746 (active)    APP_CPU: PC=0x400D1128
+33          gpio_set_level(BLINK_GPIO, 0);
+(gdb)
+</pre></div>
+</div>
+<p>If you enter <code class="docutils literal notranslate"><span class="pre">s</span></code> instead, then debugger will step inside subroutine calls:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) s
+Target halted. PRO_CPU: PC=0x400DB748 (active)    APP_CPU: PC=0x400D1128
+Target halted. PRO_CPU: PC=0x400DB74B (active)    APP_CPU: PC=0x400D1128
+Target halted. PRO_CPU: PC=0x400DC04C (active)    APP_CPU: PC=0x400D1128
+Target halted. PRO_CPU: PC=0x400DC04F (active)    APP_CPU: PC=0x400D1128
+gpio_set_level (gpio_num=GPIO_NUM_4, level=0) at /home/user-name/esp/esp-idf/components/esp_driver_gpio/src/gpio.c:183
+183     GPIO_CHECK(GPIO_IS_VALID_OUTPUT_GPIO(gpio_num), &quot;GPIO output gpio_num error&quot;, ESP_ERR_INVALID_ARG);
+(gdb)
+</pre></div>
+</div>
+<p>In this particular case debugger stepped inside <code class="docutils literal notranslate"><span class="pre">gpio_set_level(BLINK_GPIO,</span> <span class="pre">0)</span></code> and effectively moved to <code class="docutils literal notranslate"><span class="pre">gpio.c</span></code> driver code.</p>
+<p>See <a class="reference internal" href="tips-and-quirks.html#jtag-debugging-tip-why-next-works-as-step"><span class="std std-ref">Why Stepping with &quot;next&quot; Does Not Bypass Subroutine Calls?</span></a> for potential limitation of using <code class="docutils literal notranslate"><span class="pre">next</span></code> command.</p>
+</section>
+<section id="jtag-debugging-examples-command-line-05">
+<span id="id5"></span><h3>Checking and Setting Memory<a class="headerlink" href="#jtag-debugging-examples-command-line-05" title="Permalink to this heading"></a></h3>
+<p>Displaying the contents of memory is done with command <code class="docutils literal notranslate"><span class="pre">x</span></code>. With additional parameters you may vary the format and count of memory locations displayed. Run <code class="docutils literal notranslate"><span class="pre">help</span> <span class="pre">x</span></code> to see more details. Companion command to <code class="docutils literal notranslate"><span class="pre">x</span></code> is <code class="docutils literal notranslate"><span class="pre">set</span></code> that let you write values to the memory.</p>
+<p>We will demonstrate how <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">set</span></code> work by reading from and writing to the memory location <code class="docutils literal notranslate"><span class="pre">0x3FF44004</span></code> labeled as <code class="docutils literal notranslate"><span class="pre">GPIO_OUT_REG</span></code> used to set and clear individual GPIO's.</p>
+<p>For more information, see <em>ESP32 Technical Reference Manual</em> &gt; <em>IO MUX and GPIO Matrix (GPIO, IO_MUX)</em> [<a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf#iomuxgpio">PDF</a>].</p>
+<p>Being in the same <code class="docutils literal notranslate"><span class="pre">blink.c</span></code> project as before, set two breakpoints right after <code class="docutils literal notranslate"><span class="pre">gpio_set_level</span></code> instruction. Enter two times <code class="docutils literal notranslate"><span class="pre">c</span></code> to get to the break point followed by <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">/1wx</span> <span class="pre">0x3FF44004</span></code> to display contents of <code class="docutils literal notranslate"><span class="pre">GPIO_OUT_REG</span></code> memory location:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) c
+Continuing.
+Target halted. PRO_CPU: PC=0x400DB75E (active)    APP_CPU: PC=0x400D1128
+Target halted. PRO_CPU: PC=0x400DB74E (active)    APP_CPU: PC=0x400D1128
+
+Breakpoint 2, blink_task (pvParameter=0x0) at /home/user-name/esp/blink/main/./blink.c:34
+34          vTaskDelay(1000 / portTICK_PERIOD_MS);
+(gdb) x /1wx 0x3FF44004
+0x3ff44004: 0x00000000
+(gdb) c
+Continuing.
+Target halted. PRO_CPU: PC=0x400DB751 (active)    APP_CPU: PC=0x400D1128
+Target halted. PRO_CPU: PC=0x400DB75B (active)    APP_CPU: PC=0x400D1128
+
+Breakpoint 3, blink_task (pvParameter=0x0) at /home/user-name/esp/blink/main/./blink.c:37
+37          vTaskDelay(1000 / portTICK_PERIOD_MS);
+(gdb) x /1wx 0x3FF44004
+0x3ff44004: 0x00000010
+(gdb)
+</pre></div>
+</div>
+<p>If your are blinking LED connected to GPIO4, then you should see fourth bit being flipped each time the LED changes the state:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>0x3ff44004: 0x00000000
+...
+0x3ff44004: 0x00000010
+</pre></div>
+</div>
+<p>Now, when the LED is off, that corresponds to <code class="docutils literal notranslate"><span class="pre">0x3ff44004:</span> <span class="pre">0x00000000</span></code> being displayed, try using <code class="docutils literal notranslate"><span class="pre">set</span></code> command to set this bit by writing <code class="docutils literal notranslate"><span class="pre">0x00000010</span></code> to the same memory location:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) x /1wx 0x3FF44004
+0x3ff44004: 0x00000000
+(gdb) set {unsigned int}0x3FF44004=0x000010
+</pre></div>
+</div>
+<p>You should see the LED to turn on immediately after entering <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">{unsigned</span> <span class="pre">int}0x3FF44004=0x000010</span></code> command.</p>
+</section>
+<section id="jtag-debugging-examples-command-line-06">
+<span id="id6"></span><h3>Watching and Setting Program Variables<a class="headerlink" href="#jtag-debugging-examples-command-line-06" title="Permalink to this heading"></a></h3>
+<p>A common debugging tasks is checking the value of a program variable as the program runs. To be able to demonstrate this functionality, update file <code class="docutils literal notranslate"><span class="pre">blink.c</span></code> by adding a declaration of a global variable <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">i</span></code> above definition of function <code class="docutils literal notranslate"><span class="pre">blink_task</span></code>. Then add <code class="docutils literal notranslate"><span class="pre">i++</span></code> inside <code class="docutils literal notranslate"><span class="pre">while(1)</span></code> of this function to get <code class="docutils literal notranslate"><span class="pre">i</span></code> incremented on each blink.</p>
+<p>Exit debugger, so it is not confused with new code, build and flash the code to the ESP and restart debugger. There is no need to restart OpenOCD.</p>
+<p>Once application is halted, enter the command <code class="docutils literal notranslate"><span class="pre">watch</span> <span class="pre">i</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) watch i
+Hardware watchpoint 2: i
+(gdb)
+</pre></div>
+</div>
+<p>This will insert so called &quot;watchpoint&quot; in each place of code where variable <code class="docutils literal notranslate"><span class="pre">i</span></code> is being modified. Now enter <code class="docutils literal notranslate"><span class="pre">continue</span></code> to resume the application and observe it being halted:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) c
+Continuing.
+Target halted. PRO_CPU: PC=0x400DB751 (active)    APP_CPU: PC=0x400D0811
+[New Thread 1073432196]
+
+Program received signal SIGTRAP, Trace/breakpoint trap.
+[Switching to Thread 1073432196]
+0x400db751 in blink_task (pvParameter=0x0) at /home/user-name/esp/blink/main/./blink.c:33
+33          i++;
+(gdb)
+</pre></div>
+</div>
+<p>Resume application couple more times so <code class="docutils literal notranslate"><span class="pre">i</span></code> gets incremented. Now you can enter <code class="docutils literal notranslate"><span class="pre">print</span> <span class="pre">i</span></code> (in short <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">i</span></code>) to check the current value of <code class="docutils literal notranslate"><span class="pre">i</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) p i
+$1 = 3
+(gdb)
+</pre></div>
+</div>
+<p>To modify the value of <code class="docutils literal notranslate"><span class="pre">i</span></code> use <code class="docutils literal notranslate"><span class="pre">set</span></code> command as below (you can then print it out to check if it has been indeed changed):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) set var i = 0
+(gdb) p i
+$3 = 0
+(gdb)
+</pre></div>
+</div>
+<p>You may have up to two watchpoints, see <a class="reference internal" href="tips-and-quirks.html#jtag-debugging-tip-breakpoints"><span class="std std-ref">Breakpoints and Watchpoints Available</span></a>.</p>
+</section>
+<section id="jtag-debugging-examples-command-line-07">
+<span id="id7"></span><h3>Setting Conditional Breakpoints<a class="headerlink" href="#jtag-debugging-examples-command-line-07" title="Permalink to this heading"></a></h3>
+<p>Here comes more interesting part. You may set a breakpoint to halt the program execution, if certain condition is satisfied. Delete existing breakpoints and try this:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) break blink.c:34 if (i == 2)
+Breakpoint 3 at 0x400db753: file /home/user-name/esp/blink/main/./blink.c, line 34.
+(gdb)
+</pre></div>
+</div>
+<p>Above command sets conditional breakpoint to halt program execution in line <code class="docutils literal notranslate"><span class="pre">34</span></code> of <code class="docutils literal notranslate"><span class="pre">blink.c</span></code> if <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">==</span> <span class="pre">2</span></code>.</p>
+<p>If current value of <code class="docutils literal notranslate"><span class="pre">i</span></code> is less than <code class="docutils literal notranslate"><span class="pre">2</span></code> and program is resumed, it will blink LED in a loop until condition <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">==</span> <span class="pre">2</span></code> gets true and then finally halt:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) set var i = 0
+(gdb) c
+Continuing.
+Target halted. PRO_CPU: PC=0x400DB755 (active)    APP_CPU: PC=0x400D112C
+Target halted. PRO_CPU: PC=0x400DB753 (active)    APP_CPU: PC=0x400D112C
+Target halted. PRO_CPU: PC=0x400DB755 (active)    APP_CPU: PC=0x400D112C
+Target halted. PRO_CPU: PC=0x400DB753 (active)    APP_CPU: PC=0x400D112C
+
+Breakpoint 3, blink_task (pvParameter=0x0) at /home/user-name/esp/blink/main/./blink.c:34
+34          gpio_set_level(BLINK_GPIO, 0);
+(gdb)
+</pre></div>
+</div>
+</section>
+<section id="debugging-freertos-objects">
+<span id="jtag-debugging-examples-command-line-08"></span><h3>Debugging FreeRTOS Objects<a class="headerlink" href="#debugging-freertos-objects" title="Permalink to this heading"></a></h3>
+<p>This part might be interesting when you are debugging FreeRTOS tasks interactions.</p>
+<p>Users that need to use the FreeRTOS task interactions can use the GDB <code class="docutils literal notranslate"><span class="pre">freertos</span></code> command. The <code class="docutils literal notranslate"><span class="pre">freertos</span></code> command is not native to GDB and comes from the <a class="reference external" href="https://pypi.org/project/freertos-gdb">freertos-gdb</a> Python extension module. The <code class="docutils literal notranslate"><span class="pre">freertos</span></code> command contains a series of sub-commands as demonstrated in the code snippet:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) freertos
+&quot;freertos&quot; must be followed by the name of a subcommand.
+List of freertos subcommands:
+
+freertos queue --  Generate a print out of the current queues info.
+freertos semaphore --  Generate a print out of the current semaphores info.
+freertos task --  Generate a print out of the current tasks and their states.
+freertos timer --  Generate a print out of the current timers info.
+</pre></div>
+</div>
+<p>For a more detailed description of this extension, please refer to <a class="reference external" href="https://pypi.org/project/freertos-gdb">https://pypi.org/project/freertos-gdb</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The freertos-gdb Python module is included as a Python package requirement by ESP-IDF, thus should be automatically installed (see <a class="reference internal" href="../../get-started/linux-macos-setup.html#get-started-set-up-tools"><span class="std std-ref">Step 3. Set up the Tools</span></a> for more details).</p>
+<p>The FreeRTOS extension automatically loads in case GDB is executed with command via <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">gdb</span></code>. Otherwise, the module could be enabled via the <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">import</span> <span class="pre">freertos_gdb</span></code> command inside GDB.</p>
+<p>Users only need to have Python 3.6 (or above) that contains a Python shared library.</p>
+</div>
+</section>
+<section id="obtaining-help-on-commands">
+<h3>Obtaining Help on Commands<a class="headerlink" href="#obtaining-help-on-commands" title="Permalink to this heading"></a></h3>
+<p>Commands presented so for should provide are very basis and intended to let you quickly get started with JTAG debugging. Check help what are the other commands at you disposal. To obtain help on syntax and functionality of particular command, being at <code class="docutils literal notranslate"><span class="pre">(gdb)</span></code> prompt type <code class="docutils literal notranslate"><span class="pre">help</span></code> and command name:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) help next
+Step program, proceeding through subroutine calls.
+Usage: next [N]
+Unlike &quot;step&quot;, if the current source line calls a subroutine,
+this command does not enter the subroutine, but instead steps over
+the call, in effect treating it as a single source line.
+(gdb)
+</pre></div>
+</div>
+<p>By typing just <code class="docutils literal notranslate"><span class="pre">help</span></code>, you will get top level list of command classes, to aid you drilling down to more details. Optionally refer to available GDB cheat sheets, for instance <a class="reference external" href="https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf">https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf</a>. Good to have as a reference (even if not all commands are applicable in an embedded environment).</p>
+</section>
+<section id="ending-debugger-session">
+<h3>Ending Debugger Session<a class="headerlink" href="#ending-debugger-session" title="Permalink to this heading"></a></h3>
+<p>To quit debugger enter <code class="docutils literal notranslate"><span class="pre">q</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(gdb) q
+A debugging session is active.
+
+    Inferior 1 [Remote target] will be detached.
+
+Quit anyway? (y or n) y
+Detaching from program: /home/user-name/esp/blink/build/blink.elf, Remote target
+Ending remote debugging.
+user-name@computer-name:~/esp/blink$
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Debugging Examples (api-guides/jtag-debugging/debugging-examples)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Debugging Examples (api-guides/jtag-debugging/debugging-examples)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="using-debugger.html" class="btn btn-neutral float-left" title="Using Debugger" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../kconfig/index.html" class="btn btn-neutral float-right" title="Project Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

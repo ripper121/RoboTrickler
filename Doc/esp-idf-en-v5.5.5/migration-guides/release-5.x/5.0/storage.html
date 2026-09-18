@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Storage - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/migration-guides/release-5.x/5.0/storage.html" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'migration-guides/release-5.x/5.0/storage';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="System" href="system.html" />
+    <link rel="prev" title="Removed or Deprecated Components" href="removed-components.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Migration Guides</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html#esp-idf-5-x-migration-guide">ESP-IDF 5.x Migration Guide</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Migration from 4.4 to 5.0</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="bluetooth-classic.html">Bluetooth Classic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bluetooth-low-energy.html">Bluetooth Low Energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gcc.html">GCC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="networking.html">Networking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="peripherals.html">Peripherals</a></li>
+<li class="toctree-l4"><a class="reference internal" href="protocols.html">Protocols</a></li>
+<li class="toctree-l4"><a class="reference internal" href="provisioning.html">Provisioning</a></li>
+<li class="toctree-l4"><a class="reference internal" href="removed-components.html">Removed or Deprecated Components</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="system.html">System</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tools.html">Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../5.1/index.html">Migration from 5.0 to 5.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.2/index.html">Migration from 5.1 to 5.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.3/index.html">Migration from 5.2 to 5.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.4/index.html">Migration from 5.3 to 5.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.5/index.html">Migration from 5.4 to 5.5</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Migration Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Migration from 4.4 to 5.0</a></li>
+      <li class="breadcrumb-item active">Storage</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/migration-guides/release-5.x/5.0/storage.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="storage">
+<h1>Storage<a class="headerlink" href="#storage" title="Permalink to this heading"></a></h1>
+<section id="new-component-for-the-partition-apis">
+<h2>New Component for the Partition APIs<a class="headerlink" href="#new-component-for-the-partition-apis" title="Permalink to this heading"></a></h2>
+<p>Breaking change: all the Partition API code has been moved to a new component <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/components/esp_partition">esp_partition</a>. For the complete list of affected functions and data-types, see header file <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_partition/include/esp_partition.h">esp_partition.h </a>.</p>
+<p>These API functions and data-types were previously a part of the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/components/spi_flash">spi_flash</a> component, and thus possible dependencies on the <code class="docutils literal notranslate"><span class="pre">spi_flash</span></code> in existing applications may cause the build failure, in case of direct esp_partition_* APIs/data-types use (for instance, <code class="docutils literal notranslate"><span class="pre">fatal</span> <span class="pre">error:</span> <span class="pre">esp_partition.h:</span> <span class="pre">No</span> <span class="pre">such</span> <span class="pre">file</span> <span class="pre">or</span> <span class="pre">directory</span></code> at lines with <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;esp_partition.h&quot;</span></code>). If you encounter such an issue, please update your project's CMakeLists.txt file as follows:</p>
+<p>Original dependency setup:</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">idf_component_register</span><span class="p">(</span><span class="s">...</span>
+<span class="w">                       </span><span class="s">REQUIRES</span><span class="w"> </span><span class="s">spi_flash</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Updated dependency setup:</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">idf_component_register</span><span class="p">(</span><span class="s">...</span>
+<span class="w">                       </span><span class="s">REQUIRES</span><span class="w"> </span><span class="s">spi_flash</span><span class="w"> </span><span class="s">esp_partition</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please update relevant <code class="docutils literal notranslate"><span class="pre">REQUIRES</span></code> or <code class="docutils literal notranslate"><span class="pre">PRIV_REQUIRES</span></code> section according to your project. The above-presented code snippet is just an example.</p>
+</div>
+<p>If the issue persists, please let us know and we will assist you with your code migration.</p>
+</section>
+<section id="sdmmc-sdspi">
+<h2>SDMMC/SDSPI<a class="headerlink" href="#sdmmc-sdspi" title="Permalink to this heading"></a></h2>
+<p>SD card frequency on SDMMC/SDSPI interface can be now configured through <code class="docutils literal notranslate"><span class="pre">sdmmc_host_t.max_freq_khz</span></code> to a specific value, not only <code class="docutils literal notranslate"><span class="pre">SDMMC_FREQ_PROBING</span></code> (400 kHz), <code class="docutils literal notranslate"><span class="pre">SDMMC_FREQ_DEFAULT</span></code> (20 MHz), or <code class="docutils literal notranslate"><span class="pre">SDMMC_FREQ_HIGHSPEED</span></code> (40 MHz). Previously, in case you have specified a custom frequency other than any of the above-mentioned values, the closest lower-or-equal one was selected anyway.</p>
+<p>Now, the underlying drivers calculate the nearest fitting value, given by available frequency dividers instead of an enumeration item selection. This could cause troubles in communication with your SD card without a change of the existing application code.If you encounter such an issue, please, keep trying different frequencies around your desired value unless you find the one working well. To check the frequency value calculated and actually applied, use <code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">sdmmc_card_print_info(FILE*</span> <span class="pre">stream,</span> <span class="pre">const</span> <span class="pre">sdmmc_card_t*</span> <span class="pre">card)</span></code> function.</p>
+</section>
+<section id="fatfs">
+<h2>FatFs<a class="headerlink" href="#fatfs" title="Permalink to this heading"></a></h2>
+<p>FatFs is now updated to v0.14. As a result, the function signature of <code class="docutils literal notranslate"><span class="pre">f_mkfs()</span></code> has changed. The new signature is <code class="docutils literal notranslate"><span class="pre">FRESULT</span> <span class="pre">f_mkfs</span> <span class="pre">(const</span> <span class="pre">TCHAR*</span> <span class="pre">path,</span> <span class="pre">const</span> <span class="pre">MKFS_PARM*</span> <span class="pre">opt,</span> <span class="pre">void*</span> <span class="pre">work,</span> <span class="pre">UINT</span> <span class="pre">len);</span></code> which uses <code class="docutils literal notranslate"><span class="pre">MKFS_PARM</span></code> struct as a second argument.</p>
+</section>
+<section id="partition-table">
+<h2>Partition Table<a class="headerlink" href="#partition-table" title="Permalink to this heading"></a></h2>
+<p>The partition table generator no longer supports misaligned partitions. When generating a partition table, <code class="docutils literal notranslate"><span class="pre">ESP-IDF</span></code> only accepts partitions with offsets that align to 4 KB. This change only affects generating new partition tables. Reading and writing to already existing partitions remains unchanged.</p>
+</section>
+<section id="vfs">
+<h2>VFS<a class="headerlink" href="#vfs" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">esp_vfs_semihost_register()</span></code> function signature is changed as follows:</p>
+<ul class="simple">
+<li><p>The new signature is <code class="docutils literal notranslate"><span class="pre">esp_err_t</span> <span class="pre">esp_vfs_semihost_register(const</span> <span class="pre">char*</span> <span class="pre">base_path);</span></code></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">host_path</span></code> parameter of the old signature no longer exists. Instead, the OpenOCD command <code class="docutils literal notranslate"><span class="pre">ESP_SEMIHOST_BASEDIR</span></code> should be used to set the full path on the host.</p></li>
+</ul>
+<section id="function-signature-changes">
+<h3>Function Signature Changes<a class="headerlink" href="#function-signature-changes" title="Permalink to this heading"></a></h3>
+<p>The following functions now return <code class="docutils literal notranslate"><span class="pre">esp_err_t</span></code> instead of <code class="docutils literal notranslate"><span class="pre">void</span></code> or <code class="docutils literal notranslate"><span class="pre">nvs_iterator_t</span></code>. Previously, when parameters were invalid or when something goes wrong internally, these functions would <code class="docutils literal notranslate"><span class="pre">assert()</span></code> or return a <code class="docutils literal notranslate"><span class="pre">nullptr</span></code>. With an <code class="docutils literal notranslate"><span class="pre">esp_err_t</span></code> returned, you can get better error reporting.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../../api-reference/storage/nvs_flash.html#_CPPv414nvs_entry_findPKcPKc10nvs_type_tP14nvs_iterator_t" title="nvs_entry_find"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_entry_find()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../../api-reference/storage/nvs_flash.html#_CPPv414nvs_entry_nextP14nvs_iterator_t" title="nvs_entry_next"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_entry_next()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../../api-reference/storage/nvs_flash.html#_CPPv414nvs_entry_infoK14nvs_iterator_tP16nvs_entry_info_t" title="nvs_entry_info"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nvs_entry_info()</span></code></a></p></li>
+</ul>
+<p>Because the <code class="docutils literal notranslate"><span class="pre">esp_err_t</span></code> return type changes, the usage patterns of <code class="docutils literal notranslate"><span class="pre">nvs_entry_find()</span></code> and <code class="docutils literal notranslate"><span class="pre">nvs_entry_next()</span></code> become different. Both functions now modify iterators via parameters instead of returning an iterator.</p>
+<p>The old programming pattern to iterate over an NVS partition was as follows:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">nvs_iterator_t</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nvs_entry_find</span><span class="p">(</span><span class="o">&lt;</span><span class="n">nvs_partition_name</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="o">&lt;</span><span class="n">namespace</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">NVS_TYPE_ANY</span><span class="p">);</span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">it</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">nvs_entry_info_t</span><span class="w"> </span><span class="n">info</span><span class="p">;</span>
+<span class="w">        </span><span class="n">nvs_entry_info</span><span class="p">(</span><span class="n">it</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">info</span><span class="p">);</span>
+<span class="w">        </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nvs_entry_next</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;key &#39;%s&#39;, type &#39;%d&#39;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="n">type</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>The new programming pattern to iterate over an NVS partition is now:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">nvs_iterator_t</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span>
+<span class="n">esp_err_t</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nvs_entry_find</span><span class="p">(</span><span class="o">&lt;</span><span class="n">nvs_partition_name</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="o">&lt;</span><span class="n">namespace</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">NVS_TYPE_ANY</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">it</span><span class="p">);</span>
+<span class="k">while</span><span class="p">(</span><span class="n">res</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ESP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">nvs_entry_info_t</span><span class="w"> </span><span class="n">info</span><span class="p">;</span>
+<span class="w">    </span><span class="n">nvs_entry_info</span><span class="p">(</span><span class="n">it</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">info</span><span class="p">);</span><span class="w"> </span><span class="c1">// Can omit error check if parameters are guaranteed to be non-NULL</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;key &#39;%s&#39;, type &#39;%d&#39;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="n">type</span><span class="p">);</span>
+<span class="w">    </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nvs_entry_next</span><span class="p">(</span><span class="o">&amp;</span><span class="n">it</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">nvs_release_iterator</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="iterator-validity">
+<h3>Iterator Validity<a class="headerlink" href="#iterator-validity" title="Permalink to this heading"></a></h3>
+<p>Note that because the function signature changes, if there is a parameter error, you may get an invalid iterator from <code class="docutils literal notranslate"><span class="pre">nvs_entry_find()</span></code>. Hence, it is important to initialize the iterator to <code class="docutils literal notranslate"><span class="pre">NULL</span></code> before using <code class="docutils literal notranslate"><span class="pre">nvs_entry_find()</span></code>, so that you can avoid complex error checking before calling <code class="docutils literal notranslate"><span class="pre">nvs_release_iterator()</span></code>. A good example is the programming pattern above.</p>
+</section>
+</section>
+<section id="removed-sdspi-deprecated-api">
+<h2>Removed SDSPI Deprecated API<a class="headerlink" href="#removed-sdspi-deprecated-api" title="Permalink to this heading"></a></h2>
+<p>Structure <code class="docutils literal notranslate"><span class="pre">sdspi_slot_config_t</span></code> and function <code class="docutils literal notranslate"><span class="pre">sdspi_host_init_slot()</span></code> are removed, and replaced by structure <code class="docutils literal notranslate"><span class="pre">sdspi_device_config_t</span></code> and function <code class="docutils literal notranslate"><span class="pre">sdspi_host_init_device()</span></code> respectively.</p>
+<section id="rom-spi-flash">
+<h3>ROM SPI Flash<a class="headerlink" href="#rom-spi-flash" title="Permalink to this heading"></a></h3>
+<p>In versions before v5.0, ROM SPI flash functions were included via <code class="docutils literal notranslate"><span class="pre">esp32**/rom/spi_flash.h</span></code>. Thus, code written to support different ESP chips might be filled with ROM headers of different targets. Furthermore, not all of the APIs could be used on all ESP chips.</p>
+<p>Now, the common APIs are extracted to <code class="docutils literal notranslate"><span class="pre">esp_rom_spiflash.h</span></code>. Although it is not a breaking change, you are strongly recommended to only use the functions from this header (i.e., prefixed with <code class="docutils literal notranslate"><span class="pre">esp_rom_spiflash</span></code> and included by <code class="docutils literal notranslate"><span class="pre">esp_rom_spiflash.h</span></code>) for better cross-compatibility between ESP chips.</p>
+<p>To make ROM SPI flash APIs clearer, the following functions are also renamed:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">esp_rom_spiflash_lock()</span></code> to <code class="docutils literal notranslate"><span class="pre">esp_rom_spiflash_set_bp()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">esp_rom_spiflash_unlock()</span></code> to <code class="docutils literal notranslate"><span class="pre">esp_rom_spiflash_clear_bp()</span></code></p></li>
+</ul>
+</section>
+<section id="spi-flash-driver">
+<h3>SPI Flash Driver<a class="headerlink" href="#spi-flash-driver" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">esp_flash_speed_t</span></code> <code class="docutils literal notranslate"><span class="pre">enum</span></code> type is now deprecated. Instead, you may now directly pass the real clock frequency value to the flash configuration structure. The following example demonstrates how to configure a flash frequency of 80MHz:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">esp_flash_spi_device_config_t</span><span class="w"> </span><span class="n">dev_cfg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Other members</span>
+<span class="w">    </span><span class="p">.</span><span class="n">freq_mhz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">80</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// Other members</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="legacy-spi-flash-driver">
+<h3>Legacy SPI Flash Driver<a class="headerlink" href="#legacy-spi-flash-driver" title="Permalink to this heading"></a></h3>
+<p>To make SPI flash drivers more stable, the legacy SPI flash driver is removed from v5.0. The legacy SPI flash driver refers to default spi_flash driver since v3.0, and the SPI flash driver with configuration option <code class="docutils literal notranslate"><span class="pre">CONFIG_SPI_FLASH_USE_LEGACY_IMPL</span></code> enabled since v4.0. The major breaking change here is that the legacy spi_flash driver is no longer supported from v5.0. Therefore, the legacy driver APIs and the <code class="docutils literal notranslate"><span class="pre">CONFIG_SPI_FLASH_USE_LEGACY_IMPL</span></code> configuration option are both removed. Please use the new spi_flash driver's APIs instead.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Removed items</p></th>
+<th class="head"><p>Replacement</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spi_flash_erase_sector()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">esp_flash_erase_region()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">spi_flash_erase_range()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">esp_flash_erase_region()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spi_flash_write()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">esp_flash_write()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">spi_flash_read()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">esp_flash_read()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spi_flash_write_encrypted()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">esp_flash_write_encrypted()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">spi_flash_read_encrypted()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">esp_flash_read_encrypted()</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>New functions with prefix <code class="docutils literal notranslate"><span class="pre">esp_flash</span></code> accept an additional <code class="docutils literal notranslate"><span class="pre">esp_flash_t*</span></code> parameter. You can simply set it to NULL. This will make the function to run the main flash (<code class="docutils literal notranslate"><span class="pre">esp_flash_default_chip</span></code>).</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">esp_spi_flash.h</span></code> header is deprecated as system functions are no longer public. To use flash memory mapping APIs, you may include <code class="docutils literal notranslate"><span class="pre">spi_flash_mmap.h</span></code> instead.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Storage (migration-guides/release-5.x/5.0/storage)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Storage (migration-guides/release-5.x/5.0/storage)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="removed-components.html" class="btn btn-neutral float-left" title="Removed or Deprecated Components" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="system.html" class="btn btn-neutral float-right" title="System" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

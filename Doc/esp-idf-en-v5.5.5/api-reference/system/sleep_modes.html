@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sleep Modes - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/sleep_modes.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/system/sleep_modes';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="SoC Capabilities" href="soc_caps.html" />
+    <link rel="prev" title="Random Number Generation" href="random.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">System API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app_image_format.html">App Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootloader_image_format.html">Bootloader Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app_trace.html">Application Level Tracing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_function_with_shared_stack.html">Call Function with External Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chip_revision.html">Chip Revision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console.html">Console</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efuse.html">eFuse Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_err.html">Error Code and Helper Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_ota.html">ESP HTTPS OTA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_event.html">Event Loop Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos.html">FreeRTOS Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_idf.html">FreeRTOS (IDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_additions.html">FreeRTOS (Supplemental Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mem_alloc.html">Heap Memory Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mm.html">Memory Management for MMU Supported Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="heap_debug.html">Heap Memory Debugging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_timer.html">ESP Timer (High Resolution Timer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="internal-unstable.html">Internal and Unstable APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipc.html">Inter-Processor Call (IPC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intr_alloc.html">Interrupt Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="log.html">Logging library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc_system_api.html">Miscellaneous System APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ota.html">Over The Air Updates (OTA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="perfmon.html">Performance Monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="power_management.html">Power Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pthread.html">POSIX Support (Including POSIX Threads Support)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Sleep Modes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Sleep Modes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#wakeup-sources">Wakeup Sources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#power-down-options">Power-down Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#entering-sleep">Entering Sleep</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#checking-sleep-wakeup-cause">Checking Sleep Wakeup Cause</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="soc_caps.html">SoC Capabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_time.html">System Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="himem.html">Himem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ulp.html">Ultra Low Power (ULP) coprocessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wdts.html">Watchdogs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">System API</a></li>
+      <li class="breadcrumb-item active">Sleep Modes</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/system/sleep_modes.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sleep-modes">
+<h1>Sleep Modes<a class="headerlink" href="#sleep-modes" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/system/sleep_modes.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>ESP32 supports two major power saving modes: Light-sleep and Deep-sleep. According to the features used by an application, there are some sub sleep modes. See <a class="reference internal" href="#id1"><span class="std std-ref">Sleep Modes</span></a> for these sleep modes and sub sleep modes. Additionally, there are some power-down options that can be configured to further reduce the power consumption. See <a class="reference internal" href="#power-down-options"><span class="std std-ref">Power-down Options</span></a> for more details.</p>
+<p>There are several wakeup sources in the sleep modes. These sources can also be combined so that the chip will wake up when any of the sources are triggered. <a class="reference internal" href="#api-reference-wakeup-source"><span class="std std-ref">Wakeup Sources</span></a> describes these wakeup sources and configuration APIs in detail.</p>
+<p>The configuration of power-down options and wakeup sources are optional. They can be configured at any moment before entering the sleep modes.</p>
+<p>Then the application can call sleep start APIs to enter one of the sleep modes. See <a class="reference internal" href="#enter-sleep"><span class="std std-ref">Entering Sleep</span></a> for more details. When the wakeup condition is met, the application is awoken from sleep. See <a class="reference internal" href="#wakeup-cause"><span class="std std-ref">Checking Sleep Wakeup Cause</span></a> on how to get the wakeup cause, and <a class="reference internal" href="#disable-sleep-wakeup-source"><span class="std std-ref">Disable Sleep Wakeup Source</span></a> on how to handle the wakeup sources after wakeup.</p>
+</section>
+<section id="id1">
+<span id="id2"></span><h2>Sleep Modes<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>In Light-sleep mode, the digital peripherals, most of the RAM, and CPUs are clock-gated and their supply voltage is reduced. Upon exit from Light-sleep, the digital peripherals, RAM, and CPUs resume operation and their internal states are preserved.</p>
+<p>In Deep-sleep mode, the CPUs, most of the RAM, and all digital peripherals that are clocked from APB_CLK are powered off. The only parts of the chip that remain powered on are:</p>
+<blockquote>
+<div><p><ul class="simple">
+<li><p>RTC controller</p></li>
+<li><p>ULP coprocessor</p></li>
+<li><p>RTC FAST memory</p></li>
+<li><p>RTC SLOW memory</p></li>
+</ul>
+</p>
+</div></blockquote>
+<section id="wi-fi-bluetooth-and-sleep-modes">
+<h3>Wi-Fi/Bluetooth and Sleep Modes<a class="headerlink" href="#wi-fi-bluetooth-and-sleep-modes" title="Permalink to this heading"></a></h3>
+<p>In Deep-sleep and Light-sleep modes, the wireless peripherals are powered down. Before entering Deep-sleep or Light-sleep modes, the application must disable Wi-Fi and Bluetooth using the appropriate calls (i.e., <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nimble_port_stop()</span></code>, <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nimble_port_deinit()</span></code>, <a class="reference internal" href="../bluetooth/esp_bt_main.html#_CPPv421esp_bluedroid_disablev" title="esp_bluedroid_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_bluedroid_disable()</span></code></a>, <a class="reference internal" href="../bluetooth/esp_bt_main.html#_CPPv420esp_bluedroid_deinitv" title="esp_bluedroid_deinit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_bluedroid_deinit()</span></code></a>, <a class="reference internal" href="../bluetooth/controller_vhci.html#_CPPv425esp_bt_controller_disablev" title="esp_bt_controller_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_bt_controller_disable()</span></code></a>, <a class="reference internal" href="../bluetooth/controller_vhci.html#_CPPv424esp_bt_controller_deinitv" title="esp_bt_controller_deinit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_bt_controller_deinit()</span></code></a>, <a class="reference internal" href="../network/esp_wifi.html#_CPPv413esp_wifi_stopv" title="esp_wifi_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_wifi_stop()</span></code></a>). Wi-Fi and Bluetooth connections are not maintained in Deep-sleep or Light-sleep mode, even if these functions are not called.</p>
+<p>If Wi-Fi/Bluetooth connections need to be maintained, enable Wi-Fi/Bluetooth Modem-sleep mode and automatic Light-sleep feature (see <a class="reference internal" href="power_management.html"><span class="doc">Power Management APIs</span></a>). This allows the system to wake up from sleep automatically when required by the Wi-Fi/Bluetooth driver, thereby maintaining the connection.</p>
+</section>
+</section>
+<section id="wakeup-sources">
+<span id="api-reference-wakeup-source"></span><h2>Wakeup Sources<a class="headerlink" href="#wakeup-sources" title="Permalink to this heading"></a></h2>
+<p>Wakeup sources can be enabled using <code class="docutils literal notranslate"><span class="pre">esp_sleep_enable_X_wakeup</span></code> APIs. Wakeup sources are not disabled after wakeup, you can disable them using <a class="reference internal" href="#_CPPv431esp_sleep_disable_wakeup_source18esp_sleep_source_t" title="esp_sleep_disable_wakeup_source"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_disable_wakeup_source()</span></code></a> API if you do not need them any more. See <a class="reference internal" href="#disable-sleep-wakeup-source"><span class="std std-ref">Disable Sleep Wakeup Source</span></a>.</p>
+<p>Following are the wakeup sources supported on ESP32.</p>
+<section id="timer">
+<h3>Timer<a class="headerlink" href="#timer" title="Permalink to this heading"></a></h3>
+<p>The RTC controller has a built-in timer which can be used to wake up the chip after a predefined amount of time. Time is specified at microsecond precision, but the actual resolution depends on the clock source selected for RTC_SLOW_CLK.</p>
+<p>For details on RTC clock options, see <strong>ESP32 Technical Reference Manual</strong> &gt; <strong>ULP Coprocessor</strong> [<a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf#ulp">PDF</a>].</p>
+<p>RTC peripherals or RTC memories do not need to be powered on during sleep in this wakeup mode.</p>
+<p><a class="reference internal" href="#_CPPv429esp_sleep_enable_timer_wakeup8uint64_t" title="esp_sleep_enable_timer_wakeup"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_enable_timer_wakeup()</span></code></a> function can be used to enable sleep wakeup using a timer.</p>
+</section>
+<section id="touchpad">
+<h3>Touchpad<a class="headerlink" href="#touchpad" title="Permalink to this heading"></a></h3>
+<p>The RTC IO module contains the logic to trigger wakeup when a touch sensor interrupt occurs. To wakeup from a touch sensor interrupt, users need to configure the touch pad interrupt before the chip enters Deep-sleep or Light-sleep modes.</p>
+<p>Revisions 0 and 1 of ESP32 only support this wakeup mode when RTC peripherals are not forced to be powered on (i.e., ESP_PD_DOMAIN_RTC_PERIPH should be set to ESP_PD_OPTION_AUTO).</p>
+<p><a class="reference internal" href="#_CPPv432esp_sleep_enable_touchpad_wakeupv" title="esp_sleep_enable_touchpad_wakeup"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_enable_touchpad_wakeup()</span></code></a> function can be used to enable this wakeup source.</p>
+</section>
+<section id="external-wakeup-ext0">
+<h3>External Wakeup (<code class="docutils literal notranslate"><span class="pre">ext0</span></code>)<a class="headerlink" href="#external-wakeup-ext0" title="Permalink to this heading"></a></h3>
+<p>The RTC IO module contains the logic to trigger wakeup when one of RTC GPIOs is set to a predefined logic level. RTC IO is part of the RTC peripherals power domain, so RTC peripherals will be kept powered on during Deep-sleep if this wakeup source is requested.</p>
+<p>The RTC IO module is enabled in this mode, so internal pullup or pulldown resistors can also be used. They need to be configured by the application using <a class="reference internal" href="../peripherals/gpio.html#_CPPv418rtc_gpio_pullup_en10gpio_num_t" title="rtc_gpio_pullup_en"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rtc_gpio_pullup_en()</span></code></a> and <a class="reference internal" href="../peripherals/gpio.html#_CPPv420rtc_gpio_pulldown_en10gpio_num_t" title="rtc_gpio_pulldown_en"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rtc_gpio_pulldown_en()</span></code></a> functions before calling <a class="reference internal" href="#_CPPv420esp_deep_sleep_startv" title="esp_deep_sleep_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_deep_sleep_start()</span></code></a>.</p>
+<p>In revisions 0 and 1 of ESP32, this wakeup source is incompatible with ULP and touch wakeup sources.</p>
+<p><a class="reference internal" href="#_CPPv428esp_sleep_enable_ext0_wakeup10gpio_num_ti" title="esp_sleep_enable_ext0_wakeup"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_enable_ext0_wakeup()</span></code></a> function can be used to enable this wakeup source.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>After waking up from sleep, the IO pad used for wakeup will be configured as RTC IO. Therefore, before using this pad as digital GPIO, users need to reconfigure it using <a class="reference internal" href="../peripherals/gpio.html#_CPPv415rtc_gpio_deinit10gpio_num_t" title="rtc_gpio_deinit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rtc_gpio_deinit()</span></code></a> function.</p>
+</div>
+</section>
+<section id="external-wakeup-ext1">
+<span id="sleep-ext1-wakeup"></span><h3>External Wakeup (<code class="docutils literal notranslate"><span class="pre">ext1</span></code>)<a class="headerlink" href="#external-wakeup-ext1" title="Permalink to this heading"></a></h3>
+<p>The RTC controller contains the logic to trigger wakeup using multiple RTC GPIOs. One of the following two logic functions can be used to trigger ext1 wakeup:</p>
+<ul class="simple">
+<li><p>wake up if any of the selected pins is high (<code class="docutils literal notranslate"><span class="pre">ESP_EXT1_WAKEUP_ANY_HIGH</span></code>)</p></li>
+<li><p>wake up if all the selected pins are low (<code class="docutils literal notranslate"><span class="pre">ESP_EXT1_WAKEUP_ALL_LOW</span></code>)</p></li>
+</ul>
+<p>This wakeup source is controlled by the RTC controller. It supports wakeup even when the RTC peripheral is powered down. Although the power domain of the RTC peripheral, where RTC IOs are located, is powered down during sleep modes, ESP-IDF will automatically lock the state of the wakeup pin before the system enters sleep modes and unlock upon exiting sleep modes. Therefore, the internal pull-up or pull-down resistors can still be configured for the wakeup pin:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">esp_sleep_pd_config</span><span class="p">(</span><span class="n">ESP_PD_DOMAIN_RTC_PERIPH</span><span class="p">,</span> <span class="n">ESP_PD_OPTION_ON</span><span class="p">);</span>
+<span class="n">rtc_gpio_pullup_dis</span><span class="p">(</span><span class="n">gpio_num</span><span class="p">);</span>
+<span class="n">rtc_gpio_pulldown_en</span><span class="p">(</span><span class="n">gpio_num</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If we turn off the <code class="docutils literal notranslate"><span class="pre">RTC_PERIPH</span></code> domain, we will use the HOLD feature to maintain the pull-up and pull-down on the pins during sleep. HOLD feature will be acted on the pin internally before the system enters sleep modes, and this can further reduce power consumption:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rtc_gpio_pullup_dis</span><span class="p">(</span><span class="n">gpio_num</span><span class="p">);</span>
+<span class="n">rtc_gpio_pulldown_en</span><span class="p">(</span><span class="n">gpio_num</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If certain chips lack the <code class="docutils literal notranslate"><span class="pre">RTC_PERIPH</span></code> domain, we can only use the HOLD feature to maintain the pull-up and pull-down on the pins during sleep modes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_pullup_dis</span><span class="p">(</span><span class="n">gpio_num</span><span class="p">);</span>
+<span class="n">gpio_pulldown_en</span><span class="p">(</span><span class="n">gpio_num</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="#_CPPv431esp_sleep_enable_ext1_wakeup_io8uint64_t28esp_sleep_ext1_wakeup_mode_t" title="esp_sleep_enable_ext1_wakeup_io"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_enable_ext1_wakeup_io()</span></code></a> function can be used to append ext1 wakeup IO and set corresponding wakeup level.</p>
+<p><a class="reference internal" href="#_CPPv432esp_sleep_disable_ext1_wakeup_io8uint64_t" title="esp_sleep_disable_ext1_wakeup_io"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_disable_ext1_wakeup_io()</span></code></a> function can be used to remove ext1 wakeup IO.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Due to hardware limitation, when we use more than one IO for EXT1 wakeup, it is not allowed to configure different wakeup levels for the IOs, and there is corresponding inspection mechanism in <a class="reference internal" href="#_CPPv431esp_sleep_enable_ext1_wakeup_io8uint64_t28esp_sleep_ext1_wakeup_mode_t" title="esp_sleep_enable_ext1_wakeup_io"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_enable_ext1_wakeup_io()</span></code></a>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<ul class="simple">
+<li><p>To use the EXT1 wakeup, the IO pad(s) are configured as RTC IO. Therefore, before using these pads as digital GPIOs, users need to reconfigure them by calling the <a class="reference internal" href="../peripherals/gpio.html#_CPPv415rtc_gpio_deinit10gpio_num_t" title="rtc_gpio_deinit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rtc_gpio_deinit()</span></code></a> function.</p></li>
+<li><p>If the RTC peripherals are configured to be powered down (which is by default), the wakeup IOs will be set to the holding state before entering sleep. Therefore, after the chip wakes up from Light-sleep, please call <code class="docutils literal notranslate"><span class="pre">rtc_gpio_hold_dis</span></code> to disable the hold function to perform any pin re-configuration. For Deep-sleep wakeup, this is already being handled at the application startup stage.</p></li>
+</ul>
+</div>
+</section>
+<section id="ulp-coprocessor-wakeup">
+<h3>ULP Coprocessor Wakeup<a class="headerlink" href="#ulp-coprocessor-wakeup" title="Permalink to this heading"></a></h3>
+<p>ULP coprocessor can run while the chip is in sleep mode, and may be used to poll sensors, monitor ADC or GPIO states, and wake up the chip when a specific event is detected. ULP coprocessor is part of the RTC peripherals power domain, and it runs the program stored in RTC SLOW memory. RTC SLOW memory will be powered on during sleep if this wakeup mode is requested. RTC peripherals will be automatically powered on before ULP coprocessor starts running the program; once the program stops running, RTC peripherals are automatically powered down again.</p>
+<p>Revisions 0 and 1 of ESP32 only support this wakeup mode when RTC peripherals are not forced to be powered on (i.e., ESP_PD_DOMAIN_RTC_PERIPH should be set to ESP_PD_OPTION_AUTO).</p>
+<p><a class="reference internal" href="#_CPPv427esp_sleep_enable_ulp_wakeupv" title="esp_sleep_enable_ulp_wakeup"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_enable_ulp_wakeup()</span></code></a> function can be used to enable this wakeup source.</p>
+</section>
+<section id="gpio-wakeup-light-sleep-only">
+<h3>GPIO Wakeup (Light-sleep Only)<a class="headerlink" href="#gpio-wakeup-light-sleep-only" title="Permalink to this heading"></a></h3>
+<p>In addition to EXT0 and EXT1 wakeup sources described above, one more method of wakeup from external inputs is available in Light-sleep mode. With this wakeup source, each pin can be individually configured to trigger wakeup on high or low level using <a class="reference internal" href="../peripherals/gpio.html#_CPPv418gpio_wakeup_enable10gpio_num_t15gpio_int_type_t" title="gpio_wakeup_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">gpio_wakeup_enable()</span></code></a> function. Unlike EXT0 and EXT1 wakeup sources, which can only be used with RTC IOs, this wakeup source can be used with any IO (RTC or digital).</p>
+<p><a class="reference internal" href="#_CPPv428esp_sleep_enable_gpio_wakeupv" title="esp_sleep_enable_gpio_wakeup"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_enable_gpio_wakeup()</span></code></a> function can be used to enable this wakeup source.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Before entering Light-sleep mode, check if any GPIO pin to be driven is part of the VDD_SDIO power domain. If so, this power domain must be configured to remain ON during sleep.</p>
+<p>For example, on ESP32-WROOM-32 board, GPIO16 and GPIO17 are linked to VDD_SDIO power domain. If they are configured to remain high during Light-sleep, the power domain should be configured to remain powered ON. This can be done with <a class="reference internal" href="#_CPPv419esp_sleep_pd_config21esp_sleep_pd_domain_t21esp_sleep_pd_option_t" title="esp_sleep_pd_config"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_pd_config()</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">esp_sleep_pd_config</span><span class="p">(</span><span class="n">ESP_PD_DOMAIN_VDDSDIO</span><span class="p">,</span> <span class="n">ESP_PD_OPTION_ON</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="uart-wakeup-light-sleep-only">
+<h3>UART Wakeup (Light-sleep Only)<a class="headerlink" href="#uart-wakeup-light-sleep-only" title="Permalink to this heading"></a></h3>
+<p>When ESP32 receives UART input from external devices, it is often necessary to wake up the chip when input data is available. The UART peripheral contains a feature which allows waking up the chip from Light-sleep when a certain number of positive edges on RX pin are seen. This number of positive edges can be set using <a class="reference internal" href="../peripherals/uart.html#_CPPv425uart_set_wakeup_threshold11uart_port_ti" title="uart_set_wakeup_threshold"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">uart_set_wakeup_threshold()</span></code></a> function. Note that the character which triggers wakeup (and any characters before it) will not be received by the UART after wakeup. This means that the external device typically needs to send an extra character to the ESP32 to trigger wakeup before sending the data.</p>
+<p><a class="reference internal" href="#_CPPv428esp_sleep_enable_uart_wakeupi" title="esp_sleep_enable_uart_wakeup"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_enable_uart_wakeup()</span></code></a> function can be used to enable this wakeup source.</p>
+<p>After waking-up from UART, you should send some extra data through the UART port in Active mode, so that the internal wakeup indication signal can be cleared. Otherwises, the next UART wake-up would trigger with two less rising edges than the configured threshold value.</p>
+</section>
+<section id="disable-sleep-wakeup-source">
+<span id="id3"></span><h3>Disable Sleep Wakeup Source<a class="headerlink" href="#disable-sleep-wakeup-source" title="Permalink to this heading"></a></h3>
+<p>Previously configured wakeup sources can be disabled later using <a class="reference internal" href="#_CPPv431esp_sleep_disable_wakeup_source18esp_sleep_source_t" title="esp_sleep_disable_wakeup_source"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_disable_wakeup_source()</span></code></a> API. This function deactivates trigger for the given wakeup source. Additionally, it can disable all triggers if the argument is <code class="docutils literal notranslate"><span class="pre">ESP_SLEEP_WAKEUP_ALL</span></code>.</p>
+</section>
+</section>
+<section id="power-down-options">
+<span id="id4"></span><h2>Power-down Options<a class="headerlink" href="#power-down-options" title="Permalink to this heading"></a></h2>
+<p>The application can force specific powerdown modes for RTC peripherals and RTC memories. In Deep-sleep mode, we can also isolate some IOs to further reduce current consumption.</p>
+<section id="power-down-of-rtc-peripherals-and-memories">
+<h3>Power-down of RTC Peripherals and Memories<a class="headerlink" href="#power-down-of-rtc-peripherals-and-memories" title="Permalink to this heading"></a></h3>
+<p>By default, <a class="reference internal" href="#_CPPv420esp_deep_sleep_startv" title="esp_deep_sleep_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_deep_sleep_start()</span></code></a> and <a class="reference internal" href="#_CPPv421esp_light_sleep_startv" title="esp_light_sleep_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_light_sleep_start()</span></code></a> functions power down all RTC power domains which are not needed by the enabled wakeup sources. To override this behaviour, <a class="reference internal" href="#_CPPv419esp_sleep_pd_config21esp_sleep_pd_domain_t21esp_sleep_pd_option_t" title="esp_sleep_pd_config"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_pd_config()</span></code></a> function is provided.</p>
+<p>Note: in revision 0 of ESP32, RTC FAST memory is always kept enabled in Deep-sleep, so that the Deep-sleep stub can run after reset. This can be overridden, if the application does not need clean reset behaviour after Deep-sleep.</p>
+<p>If some variables in the program are placed into RTC SLOW memory (for example, using <code class="docutils literal notranslate"><span class="pre">RTC_DATA_ATTR</span></code> attribute), RTC SLOW memory will be kept powered on by default. This can be overridden using <a class="reference internal" href="#_CPPv419esp_sleep_pd_config21esp_sleep_pd_domain_t21esp_sleep_pd_option_t" title="esp_sleep_pd_config"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_pd_config()</span></code></a> function, if desired.</p>
+</section>
+<section id="power-down-of-flash">
+<h3>Power-down of Flash<a class="headerlink" href="#power-down-of-flash" title="Permalink to this heading"></a></h3>
+<p>By default, to avoid potential issues, <a class="reference internal" href="#_CPPv421esp_light_sleep_startv" title="esp_light_sleep_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_light_sleep_start()</span></code></a> function does <strong>not</strong> power down flash. To be more specific, it takes time to power down the flash and during this period the system may be woken up, which then actually powers up the flash before this flash could be powered down completely. As a result, there is a chance that the flash may not work properly.</p>
+<p>So, in theory, it is ok if you only wake up the system after the flash is completely powered down. However, in reality, the flash power-down period can be hard to predict (for example, this period can be much longer when you add filter capacitors to the flash's power supply circuit) and uncontrollable (for example, the asynchronous wake-up signals make the actual sleep time uncontrollable).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If a filter capacitor is added to your flash power supply circuit, please do everything possible to avoid powering down flash.</p>
+</div>
+<p>Therefore, it is recommended not to power down flash when using ESP-IDF. For power-sensitive applications, it is recommended to use Kconfig option <a class="reference internal" href="../kconfig-reference.html#config-esp-sleep-flash-leakage-workaround"><span class="std std-ref">CONFIG_ESP_SLEEP_FLASH_LEAKAGE_WORKAROUND</span></a> to reduce the power consumption of the flash during Light-sleep, instead of powering down the flash.</p>
+<p>It is worth mentioning that PSRAM has a similar Kconfig option <a class="reference internal" href="../kconfig-reference.html#config-esp-sleep-psram-leakage-workaround"><span class="std std-ref">CONFIG_ESP_SLEEP_PSRAM_LEAKAGE_WORKAROUND</span></a>.</p>
+<p>However, for those who have fully understood the risk and are still willing to power down the flash to further reduce the power consumption, please check the following mechanisms:</p>
+<blockquote>
+<div><p><ul class="simple">
+<li><p>Setting Kconfig option <a class="reference internal" href="../kconfig-reference.html#config-esp-sleep-power-down-flash"><span class="std std-ref">CONFIG_ESP_SLEEP_POWER_DOWN_FLASH</span></a> only powers down the flash when the RTC timer is the only wake-up source <strong>and</strong> the sleep time is longer than the flash power-down period.</p></li>
+<li><p>Calling <code class="docutils literal notranslate"><span class="pre">esp_sleep_pd_config(ESP_PD_DOMAIN_VDDSDIO,</span> <span class="pre">ESP_PD_OPTION_OFF)</span></code> powers down flash when the RTC timer is not enabled as a wakeup source <strong>or</strong> the sleep time is longer than the flash power-down period.</p></li>
+</ul>
+</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><ul class="simple">
+<li><p>ESP-IDF does not provide any mechanism that can power down the flash in all conditions when Light-sleep.</p></li>
+<li><p><a class="reference internal" href="#_CPPv420esp_deep_sleep_startv" title="esp_deep_sleep_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_deep_sleep_start()</span></code></a> function forces power down flash regardless of user configuration.</p></li>
+</ul>
+</p>
+</div>
+</section>
+<section id="configuring-ios-deep-sleep-only">
+<h3>Configuring IOs (Deep-sleep Only)<a class="headerlink" href="#configuring-ios-deep-sleep-only" title="Permalink to this heading"></a></h3>
+<p>Some ESP32 IOs have internal pullups or pulldowns, which are enabled by default. If an external circuit drives this pin in Deep-sleep mode, current consumption may increase due to current flowing through these pullups and pulldowns.</p>
+<p>To isolate a pin to prevent extra current draw, call <a class="reference internal" href="../peripherals/gpio.html#_CPPv416rtc_gpio_isolate10gpio_num_t" title="rtc_gpio_isolate"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rtc_gpio_isolate()</span></code></a> function.</p>
+<p>For example, on ESP32-WROVER module, GPIO12 is pulled up externally, and it also has an internal pulldown in the ESP32 chip. This means that in Deep-sleep, some current flows through these external and internal resistors, increasing Deep-sleep current above the minimal possible value.</p>
+<p>Add the following code before <a class="reference internal" href="#_CPPv420esp_deep_sleep_startv" title="esp_deep_sleep_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_deep_sleep_start()</span></code></a> to remove such extra current:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rtc_gpio_isolate</span><span class="p">(</span><span class="n">GPIO_NUM_12</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="entering-sleep">
+<span id="enter-sleep"></span><h2>Entering Sleep<a class="headerlink" href="#entering-sleep" title="Permalink to this heading"></a></h2>
+<p><a class="reference internal" href="#_CPPv421esp_light_sleep_startv" title="esp_light_sleep_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_light_sleep_start()</span></code></a> or <a class="reference internal" href="#_CPPv420esp_deep_sleep_startv" title="esp_deep_sleep_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_deep_sleep_start()</span></code></a> functions can be used to enter Light-sleep or Deep-sleep modes correspondingly. After that, the system configures the parameters of RTC controller according to the requested wakeup sources and power-down options.</p>
+<p>It is also possible to enter sleep modes with no wakeup sources configured. In this case, the chip will be in sleep modes indefinitely until external reset is applied.</p>
+<section id="uart-output-handling">
+<h3>UART Output Handling<a class="headerlink" href="#uart-output-handling" title="Permalink to this heading"></a></h3>
+<p>Before entering sleep mode, <a class="reference internal" href="#_CPPv420esp_deep_sleep_startv" title="esp_deep_sleep_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_deep_sleep_start()</span></code></a> will flush the contents of UART FIFOs.</p>
+<p>When entering Light-sleep mode using <a class="reference internal" href="#_CPPv421esp_light_sleep_startv" title="esp_light_sleep_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_light_sleep_start()</span></code></a>, UART FIFOs will not be flushed. Instead, UART output will be suspended, and remaining characters in the FIFO will be sent out after wakeup from Light-sleep.</p>
+</section>
+</section>
+<section id="checking-sleep-wakeup-cause">
+<span id="wakeup-cause"></span><h2>Checking Sleep Wakeup Cause<a class="headerlink" href="#checking-sleep-wakeup-cause" title="Permalink to this heading"></a></h2>
+<p><a class="reference internal" href="#_CPPv426esp_sleep_get_wakeup_causev" title="esp_sleep_get_wakeup_cause"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_get_wakeup_cause()</span></code></a> function can be used to check which wakeup source has triggered wakeup from sleep mode.</p>
+<p>For touchpad, it is possible to identify which touch pin has caused wakeup using <a class="reference internal" href="#_CPPv436esp_sleep_get_touchpad_wakeup_statusv" title="esp_sleep_get_touchpad_wakeup_status"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_get_touchpad_wakeup_status()</span></code></a> functions.</p>
+<p>For ext1 wakeup sources, it is possible to identify which GPIO has caused wakeup using <a class="reference internal" href="#_CPPv432esp_sleep_get_ext1_wakeup_statusv" title="esp_sleep_get_ext1_wakeup_status"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_sleep_get_ext1_wakeup_status()</span></code></a> functions.</p>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<p><ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/protocols/sntp">protocols/sntp</a> demonstrates the implementation of basic functionality of Deep-sleep, where ESP module is periodically waken up to retrieve time from NTP server.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/wifi/power_save">wifi/power_save</a> demonstrates the usage of Wi-Fi Modem-sleep mode and automatic Light-sleep feature to maintain Wi-Fi connections.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/bluetooth/nimble/power_save">bluetooth/nimble/power_save</a> demonstrates the usage of Bluetooth Modem-sleep mode and automatic Light-sleep feature to maintain Bluetooth connections.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/deep_sleep">system/deep_sleep</a> demonstrates the usage of various Deep-sleep wakeup triggers and ULP coprocessor programming.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/light_sleep">system/light_sleep</a> demonstrates the usage of Light-sleep wakeup triggered by various sources, such as the timer, GPIOs, supported by ESP32.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/peripherals/touch_sensor/touch_sens_sleep">peripherals/touch_sensor/touch_sens_sleep</a> demonstrates the usage of Light-sleep and Deep-sleep wakeup triggered by the touch sensor.</p></li>
+</ul>
+</p>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_hw_support/include/esp_sleep.h">components/esp_hw_support/include/esp_sleep.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_sleep.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv431esp_sleep_disable_wakeup_source18esp_sleep_source_t">
+<span id="_CPPv331esp_sleep_disable_wakeup_source18esp_sleep_source_t"></span><span id="_CPPv231esp_sleep_disable_wakeup_source18esp_sleep_source_t"></span><span id="esp_sleep_disable_wakeup_source__esp_sleep_source_t"></span><span class="target" id="esp__sleep_8h_1a6d47ae16727df68b286e7fa97833db1b"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_disable_wakeup_source</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418esp_sleep_source_t" title="esp_sleep_source_t"><span class="n"><span class="pre">esp_sleep_source_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">source</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv431esp_sleep_disable_wakeup_source18esp_sleep_source_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable wakeup source. </p>
+<p>This function is used to deactivate wake up trigger for source defined as parameter of the function.</p>
+<p>
+See docs/sleep-modes.rst for details.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function does not modify wake up configuration in RTC. It will be performed in esp_deep_sleep_start/esp_light_sleep_start function.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source</strong> -- - number of source to disable of type esp_sleep_source_t </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_STATE if trigger was not active </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_sleep_enable_ulp_wakeupv">
+<span id="_CPPv327esp_sleep_enable_ulp_wakeupv"></span><span id="_CPPv227esp_sleep_enable_ulp_wakeupv"></span><span id="esp_sleep_enable_ulp_wakeup__void"></span><span class="target" id="esp__sleep_8h_1a0503fee9ec3674232d1f54d671d32b54"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_ulp_wakeup</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_sleep_enable_ulp_wakeupv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable wakeup by ULP coprocessor. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On ESP32, ULP wakeup source cannot be used when RTC_PERIPH power domain is forced, to be powered on (ESP_PD_OPTION_ON) or when ext0 wakeup source is used. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED if additional current by touch (CONFIG_RTC_EXT_CRYST_ADDIT_CURRENT) is enabled.</p></li>
+<li><p>ESP_ERR_INVALID_STATE if ULP co-processor is not enabled or if wakeup triggers conflict </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_sleep_enable_timer_wakeup8uint64_t">
+<span id="_CPPv329esp_sleep_enable_timer_wakeup8uint64_t"></span><span id="_CPPv229esp_sleep_enable_timer_wakeup8uint64_t"></span><span id="esp_sleep_enable_timer_wakeup__uint64_t"></span><span class="target" id="esp__sleep_8h_1ac95bf1825c25ef5265baab867c36f513"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_timer_wakeup</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time_in_us</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_sleep_enable_timer_wakeup8uint64_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable wakeup by timer. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The valid <code class="docutils literal notranslate"><span class="pre">time_in_us</span></code> value depends on the bit width of the lp_timer/rtc_timer counter and the current slow clock source selection (Refer RTC clock source configuration in menuconfig). Valid values should be positive values less than RTC slow clock period * (2 ^ RTC timer bitwidth).</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>time_in_us</strong> -- time before wakeup, in microseconds </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if value is out of range. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv432esp_sleep_enable_touchpad_wakeupv">
+<span id="_CPPv332esp_sleep_enable_touchpad_wakeupv"></span><span id="_CPPv232esp_sleep_enable_touchpad_wakeupv"></span><span id="esp_sleep_enable_touchpad_wakeup__void"></span><span class="target" id="esp__sleep_8h_1afb310a12fb149a3dc52a22fa209e00df"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_touchpad_wakeup</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv432esp_sleep_enable_touchpad_wakeupv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable wakeup by touch sensor. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On ESP32, touch wakeup source can not be used when RTC_PERIPH power domain is forced to be powered on (ESP_PD_OPTION_ON) or when ext0 wakeup source is used.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The FSM mode of the touch button should be configured as the timer trigger mode.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED if additional current by touch (CONFIG_RTC_EXT_CRYST_ADDIT_CURRENT) is enabled.</p></li>
+<li><p>ESP_ERR_INVALID_STATE if wakeup triggers conflict </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv436esp_sleep_get_touchpad_wakeup_statusv">
+<span id="_CPPv336esp_sleep_get_touchpad_wakeup_statusv"></span><span id="_CPPv236esp_sleep_get_touchpad_wakeup_statusv"></span><span id="esp_sleep_get_touchpad_wakeup_status__void"></span><span class="target" id="esp__sleep_8h_1a03721f54b3a8bf56cffc8ceff739e7bd"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_get_touchpad_wakeup_status</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv436esp_sleep_get_touchpad_wakeup_statusv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the touch pad which caused wakeup. </p>
+<p>If wakeup was caused by another source, this function will return TOUCH_PAD_MAX;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>touch pad which caused wakeup </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430esp_sleep_is_valid_wakeup_gpio10gpio_num_t">
+<span id="_CPPv330esp_sleep_is_valid_wakeup_gpio10gpio_num_t"></span><span id="_CPPv230esp_sleep_is_valid_wakeup_gpio10gpio_num_t"></span><span id="esp_sleep_is_valid_wakeup_gpio__gpio_num_t"></span><span class="target" id="esp__sleep_8h_1ae3f43b1d89083ae29627fbffd98871fc"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_is_valid_wakeup_gpio</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">gpio_num</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430esp_sleep_is_valid_wakeup_gpio10gpio_num_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns true if a GPIO number is valid for use as wakeup source. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For SoCs with RTC IO capability, this can be any valid RTC IO input pin.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>gpio_num</strong> -- Number of the GPIO to test for wakeup source capability</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if this GPIO number will be accepted as a sleep wakeup source. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_sleep_enable_ext0_wakeup10gpio_num_ti">
+<span id="_CPPv328esp_sleep_enable_ext0_wakeup10gpio_num_ti"></span><span id="_CPPv228esp_sleep_enable_ext0_wakeup10gpio_num_ti"></span><span id="esp_sleep_enable_ext0_wakeup__gpio_num_t.i"></span><span class="target" id="esp__sleep_8h_1a776f51f2a1411927b5f21e09ed4653fb"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_ext0_wakeup</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">gpio_num_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">gpio_num</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">level</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_sleep_enable_ext0_wakeup10gpio_num_ti" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable wakeup using a pin. </p>
+<p>This function uses external wakeup feature of RTC_IO peripheral. It will work only if RTC peripherals are kept on during sleep.</p>
+<p>This feature can monitor any pin which is an RTC IO. Once the pin transitions into the state given by level argument, the chip will be woken up.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function does not modify pin configuration. The pin is configured in esp_deep_sleep_start/esp_light_sleep_start, immediately before entering sleep mode.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>ESP32: ext0 wakeup source can not be used together with touch or ULP wakeup sources.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gpio_num</strong> -- GPIO number used as wakeup source. Only GPIOs with the RTC functionality can be used. For different SoCs, the related GPIOs are:<ul>
+<li><p>ESP32: 0, 2, 4, 12-15, 25-27, 32-39;</p></li>
+<li><p>ESP32-S2: 0-21;</p></li>
+<li><p>ESP32-S3: 0-21. </p></li>
+</ul>
+</p></li>
+<li><p><strong>level</strong> -- input level which will trigger wakeup (0=low, 1=high) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if the selected GPIO is not an RTC GPIO, or the mode is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE if wakeup triggers conflict </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_sleep_enable_ext1_wakeup8uint64_t28esp_sleep_ext1_wakeup_mode_t">
+<span id="_CPPv328esp_sleep_enable_ext1_wakeup8uint64_t28esp_sleep_ext1_wakeup_mode_t"></span><span id="_CPPv228esp_sleep_enable_ext1_wakeup8uint64_t28esp_sleep_ext1_wakeup_mode_t"></span><span id="esp_sleep_enable_ext1_wakeup__uint64_t.esp_sleep_ext1_wakeup_mode_t"></span><span class="target" id="esp__sleep_8h_1a49966cc3f2773e564cada31eb18e6331"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_ext1_wakeup</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">io_mask</span></span>, <a class="reference internal" href="#_CPPv428esp_sleep_ext1_wakeup_mode_t" title="esp_sleep_ext1_wakeup_mode_t"><span class="n"><span class="pre">esp_sleep_ext1_wakeup_mode_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">level_mode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_sleep_enable_ext1_wakeup8uint64_t28esp_sleep_ext1_wakeup_mode_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable wakeup using multiple pins. </p>
+<p>This function uses external wakeup feature of RTC controller. It will work even if RTC peripherals are shut down during sleep.</p>
+<p>This feature can monitor any number of pins which are in RTC IOs. Once selected pins go into the state given by level_mode argument, the chip will be woken up.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function does not modify pin configuration. The pins are configured in esp_deep_sleep_start/esp_light_sleep_start, immediately before entering sleep mode.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Internal pullups and pulldowns don't work when RTC peripherals are shut down. In this case, external resistors need to be added. Alternatively, RTC peripherals (and pullups/pulldowns) may be kept enabled using esp_sleep_pd_config function. If we turn off the <code class="docutils literal notranslate"><span class="pre">RTC_PERIPH</span></code> domain or certain chips lack the <code class="docutils literal notranslate"><span class="pre">RTC_PERIPH</span></code> domain, we will use the HOLD feature to maintain the pull-up and pull-down on the pins during sleep. HOLD feature will be acted on the pin internally before the system entering sleep, and this can further reduce power consumption.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Call this func will reset the previous ext1 configuration.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will be deprecated in release/v6.0. Please switch to use <code class="docutils literal notranslate"><span class="pre">esp_sleep_enable_ext1_wakeup_io</span></code> and <code class="docutils literal notranslate"><span class="pre">esp_sleep_disable_ext1_wakeup_io</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On ESP32-H2, although GPIO7 is an RTC GPIO, it is not led out for external wakeup. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>io_mask</strong> -- Bit mask of GPIO numbers which will cause wakeup. Only GPIOs which have RTC functionality can be used in this bit map. For different SoCs, the related GPIOs are:<ul>
+<li><p>ESP32: 0, 2, 4, 12-15, 25-27, 32-39</p></li>
+<li><p>ESP32-S2: 0-21</p></li>
+<li><p>ESP32-S3: 0-21</p></li>
+<li><p>ESP32-C6: 0-7</p></li>
+<li><p>ESP32-H2: 7-14 </p></li>
+</ul>
+</p></li>
+<li><p><strong>level_mode</strong> -- Select logic function used to determine wakeup condition:<ul>
+<li><p>When target chip is ESP32:<ul>
+<li><p>ESP_EXT1_WAKEUP_ALL_LOW: wake up when all selected GPIOs are low</p></li>
+<li><p>ESP_EXT1_WAKEUP_ANY_HIGH: wake up when any of the selected GPIOs is high</p></li>
+</ul>
+</p></li>
+<li><p>When target chip is ESP32-S2, ESP32-S3, ESP32-C6 or ESP32-H2:<ul>
+<li><p>ESP_EXT1_WAKEUP_ANY_LOW: wake up when any of the selected GPIOs is low</p></li>
+<li><p>ESP_EXT1_WAKEUP_ANY_HIGH: wake up when any of the selected GPIOs is high </p></li>
+</ul>
+</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if io_mask is zero, or mode is invalid </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv431esp_sleep_enable_ext1_wakeup_io8uint64_t28esp_sleep_ext1_wakeup_mode_t">
+<span id="_CPPv331esp_sleep_enable_ext1_wakeup_io8uint64_t28esp_sleep_ext1_wakeup_mode_t"></span><span id="_CPPv231esp_sleep_enable_ext1_wakeup_io8uint64_t28esp_sleep_ext1_wakeup_mode_t"></span><span id="esp_sleep_enable_ext1_wakeup_io__uint64_t.esp_sleep_ext1_wakeup_mode_t"></span><span class="target" id="esp__sleep_8h_1add79b75c079caafc9d09c573fa65a3f6"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_ext1_wakeup_io</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">io_mask</span></span>, <a class="reference internal" href="#_CPPv428esp_sleep_ext1_wakeup_mode_t" title="esp_sleep_ext1_wakeup_mode_t"><span class="n"><span class="pre">esp_sleep_ext1_wakeup_mode_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">level_mode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv431esp_sleep_enable_ext1_wakeup_io8uint64_t28esp_sleep_ext1_wakeup_mode_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable ext1 wakeup pins with IO masks. </p>
+<p>This will append selected IOs to the wakeup IOs, it will not reset previously enabled IOs. To reset specific previously enabled IOs, call esp_sleep_disable_ext1_wakeup_io with the io_mask. To reset all the enabled IOs, call esp_sleep_disable_ext1_wakeup_io(0).</p>
+<p>This function uses external wakeup feature of RTC controller. It will work even if RTC peripherals are shut down during sleep.</p>
+<p>This feature can monitor any number of pins which are in RTC IOs. Once selected pins go into the state given by level_mode argument, the chip will be woken up.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function does not modify pin configuration. The pins are configured in esp_deep_sleep_start/esp_light_sleep_start, immediately before entering sleep mode.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Internal pullups and pulldowns don't work when RTC peripherals are shut down. In this case, external resistors need to be added. Alternatively, RTC peripherals (and pullups/pulldowns) may be kept enabled using esp_sleep_pd_config function. If we turn off the <code class="docutils literal notranslate"><span class="pre">RTC_PERIPH</span></code> domain or certain chips lack the <code class="docutils literal notranslate"><span class="pre">RTC_PERIPH</span></code> domain, we will use the HOLD feature to maintain the pull-up and pull-down on the pins during sleep. HOLD feature will be acted on the pin internally before the system entering sleep, and this can further reduce power consumption. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On ESP32-H2, although GPIO7 is an RTC GPIO, it is not led out for external wakeup. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>io_mask</strong> -- Bit mask of GPIO numbers which will cause wakeup. Only GPIOs which have RTC functionality can be used in this bit map. For different SoCs, the related GPIOs are:<ul>
+<li><p>ESP32: 0, 2, 4, 12-15, 25-27, 32-39</p></li>
+<li><p>ESP32-S2: 0-21</p></li>
+<li><p>ESP32-S3: 0-21</p></li>
+<li><p>ESP32-C6: 0-7</p></li>
+<li><p>ESP32-H2: 7-14 </p></li>
+</ul>
+</p></li>
+<li><p><strong>level_mode</strong> -- Select logic function used to determine wakeup condition:<ul>
+<li><p>When target chip is ESP32:<ul>
+<li><p>ESP_EXT1_WAKEUP_ALL_LOW: wake up when all selected GPIOs are low</p></li>
+<li><p>ESP_EXT1_WAKEUP_ANY_HIGH: wake up when any of the selected GPIOs is high</p></li>
+</ul>
+</p></li>
+<li><p>When target chip is ESP32-S2, ESP32-S3, ESP32-C6 or ESP32-H2:<ul>
+<li><p>ESP_EXT1_WAKEUP_ANY_LOW: wake up when any of the selected GPIOs is low</p></li>
+<li><p>ESP_EXT1_WAKEUP_ANY_HIGH: wake up when any of the selected GPIOs is high </p></li>
+</ul>
+</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if any of the selected GPIOs is not an RTC GPIO, or mode is invalid</p></li>
+<li><p>ESP_ERR_NOT_ALLOWED when wakeup level will become different between ext1 IOs if !SOC_PM_SUPPORT_EXT1_WAKEUP_MODE_PER_PIN </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv432esp_sleep_disable_ext1_wakeup_io8uint64_t">
+<span id="_CPPv332esp_sleep_disable_ext1_wakeup_io8uint64_t"></span><span id="_CPPv232esp_sleep_disable_ext1_wakeup_io8uint64_t"></span><span id="esp_sleep_disable_ext1_wakeup_io__uint64_t"></span><span class="target" id="esp__sleep_8h_1a328ce900476a0f3a0227e974fbe3ee80"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_disable_ext1_wakeup_io</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">io_mask</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv432esp_sleep_disable_ext1_wakeup_io8uint64_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable ext1 wakeup pins with IO masks. This will remove selected IOs from the wakeup IOs. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On ESP32-H2, although GPIO7 is an RTC GPIO, it is not led out for external wakeup. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>io_mask</strong> -- Bit mask of GPIO numbers which will cause wakeup. Only GPIOs which have RTC functionality can be used in this bit map. If value is zero, this func will remove all previous ext1 configuration. For different SoCs, the related GPIOs are:<ul class="simple">
+<li><p>ESP32: 0, 2, 4, 12-15, 25-27, 32-39</p></li>
+<li><p>ESP32-S2: 0-21</p></li>
+<li><p>ESP32-S3: 0-21</p></li>
+<li><p>ESP32-C6: 0-7</p></li>
+<li><p>ESP32-H2: 7-14</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if any of the selected GPIOs is not an RTC GPIO. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_sleep_enable_gpio_wakeupv">
+<span id="_CPPv328esp_sleep_enable_gpio_wakeupv"></span><span id="_CPPv228esp_sleep_enable_gpio_wakeupv"></span><span id="esp_sleep_enable_gpio_wakeup__void"></span><span class="target" id="esp__sleep_8h_1aa54aa7764ed851b205671f65bd7248e6"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_gpio_wakeup</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_sleep_enable_gpio_wakeupv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable wakeup from light sleep using GPIOs. </p>
+<p>Each GPIO supports wakeup function, which can be triggered on either low level or high level. This method can be used with any IO (RTC or digital), whereas external RTC wakeup is limited to RTC GPIOs. It can only be used to wakeup from light sleep though.</p>
+<p>To enable wakeup, first call gpio_wakeup_enable, specifying gpio number and wakeup level, for each GPIO which is used for wakeup. Then call this function to enable wakeup feature.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>1. On ESP32, GPIO wakeup source can not be used together with touch or ULP wakeup sources.<ol class="loweralpha simple">
+<li><p>If PM_POWER_DOWN_PERIPHERAL_IN_LIGHT_SLEEP is enabled (if target supported), this API is unavailable since the GPIO module is powered down during sleep. You can use <code class="docutils literal notranslate"><span class="pre">esp_deep_sleep_enable_gpio_wakeup</span></code> instead, or use EXT1 wakeup source by <code class="docutils literal notranslate"><span class="pre">esp_sleep_enable_ext1_wakeup_io</span></code> to achieve the same function. (Only GPIOs which have RTC functionality can be used)</p></li>
+</ol>
+</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_STATE if wakeup triggers conflict </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_sleep_enable_uart_wakeupi">
+<span id="_CPPv328esp_sleep_enable_uart_wakeupi"></span><span id="_CPPv228esp_sleep_enable_uart_wakeupi"></span><span id="esp_sleep_enable_uart_wakeup__i"></span><span class="target" id="esp__sleep_8h_1aba663fd929cb2006a4e3b8a666cd63ec"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_uart_wakeup</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">uart_num</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_sleep_enable_uart_wakeupi" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable wakeup from light sleep using UART. </p>
+<p>Use uart_set_wakeup_threshold function to configure UART wakeup threshold.</p>
+<p>Wakeup from light sleep takes some time, so not every character sent to the UART can be received by the application.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>1. ESP32 does not support wakeup from UART2.<ol class="loweralpha simple">
+<li><p>If PM_POWER_DOWN_PERIPHERAL_IN_LIGHT_SLEEP is enabled (if target supported), this API is unavailable since the UART module is powered down during sleep.</p></li>
+</ol>
+</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uart_num</strong> -- UART port to wake up from </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if wakeup from given UART is not supported </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426esp_sleep_enable_bt_wakeupv">
+<span id="_CPPv326esp_sleep_enable_bt_wakeupv"></span><span id="_CPPv226esp_sleep_enable_bt_wakeupv"></span><span id="esp_sleep_enable_bt_wakeup__void"></span><span class="target" id="esp__sleep_8h_1a5ba454b242c7f6c2f53a56d739a4e722"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_bt_wakeup</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426esp_sleep_enable_bt_wakeupv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable wakeup by bluetooth. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED if wakeup from bluetooth is not supported </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_sleep_disable_bt_wakeupv">
+<span id="_CPPv327esp_sleep_disable_bt_wakeupv"></span><span id="_CPPv227esp_sleep_disable_bt_wakeupv"></span><span id="esp_sleep_disable_bt_wakeup__void"></span><span class="target" id="esp__sleep_8h_1a12c6c5fe7007f5574c57743b81c12e04"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_disable_bt_wakeup</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_sleep_disable_bt_wakeupv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable wakeup by bluetooth. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED if wakeup from bluetooth is not supported </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_sleep_enable_usb_wakeupv">
+<span id="_CPPv327esp_sleep_enable_usb_wakeupv"></span><span id="_CPPv227esp_sleep_enable_usb_wakeupv"></span><span id="esp_sleep_enable_usb_wakeup__void"></span><span class="target" id="esp__sleep_8h_1a6b7a47c02c017fea7fa2ae83af677f13"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_usb_wakeup</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_sleep_enable_usb_wakeupv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable wakeup by High-Speed USB-OTG. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED if wakeup from USB is not supported </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_sleep_disable_usb_wakeupv">
+<span id="_CPPv328esp_sleep_disable_usb_wakeupv"></span><span id="_CPPv228esp_sleep_disable_usb_wakeupv"></span><span id="esp_sleep_disable_usb_wakeup__void"></span><span class="target" id="esp__sleep_8h_1ae6821647aab00dd0d19acd0b3c9a6034"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_disable_usb_wakeup</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_sleep_disable_usb_wakeupv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable wakeup by High-Speed USB-OTG. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED if wakeup from USB is not supported </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_sleep_enable_wifi_wakeupv">
+<span id="_CPPv328esp_sleep_enable_wifi_wakeupv"></span><span id="_CPPv228esp_sleep_enable_wifi_wakeupv"></span><span id="esp_sleep_enable_wifi_wakeup__void"></span><span class="target" id="esp__sleep_8h_1af01ae0a1bdd332acc218a2737a2c0389"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_wifi_wakeup</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_sleep_enable_wifi_wakeupv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable wakeup by WiFi MAC. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_sleep_disable_wifi_wakeupv">
+<span id="_CPPv329esp_sleep_disable_wifi_wakeupv"></span><span id="_CPPv229esp_sleep_disable_wifi_wakeupv"></span><span id="esp_sleep_disable_wifi_wakeup__void"></span><span class="target" id="esp__sleep_8h_1a060d496db48517290b852fd6dc9362ad"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_disable_wifi_wakeup</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_sleep_disable_wifi_wakeupv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable wakeup by WiFi MAC. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv435esp_sleep_enable_wifi_beacon_wakeupv">
+<span id="_CPPv335esp_sleep_enable_wifi_beacon_wakeupv"></span><span id="_CPPv235esp_sleep_enable_wifi_beacon_wakeupv"></span><span id="esp_sleep_enable_wifi_beacon_wakeup__void"></span><span class="target" id="esp__sleep_8h_1a5c0e988b0d9a0c5f85ccb15f83a56122"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_wifi_beacon_wakeup</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv435esp_sleep_enable_wifi_beacon_wakeupv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable beacon wakeup by WiFi MAC, it will wake up the system into modem state. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv436esp_sleep_disable_wifi_beacon_wakeupv">
+<span id="_CPPv336esp_sleep_disable_wifi_beacon_wakeupv"></span><span id="_CPPv236esp_sleep_disable_wifi_beacon_wakeupv"></span><span id="esp_sleep_disable_wifi_beacon_wakeup__void"></span><span class="target" id="esp__sleep_8h_1a4ec56f44a4793e53963681ec234a2c56"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_disable_wifi_beacon_wakeup</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv436esp_sleep_disable_wifi_beacon_wakeupv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable beacon wakeup by WiFi MAC. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv432esp_sleep_get_ext1_wakeup_statusv">
+<span id="_CPPv332esp_sleep_get_ext1_wakeup_statusv"></span><span id="_CPPv232esp_sleep_get_ext1_wakeup_statusv"></span><span id="esp_sleep_get_ext1_wakeup_status__void"></span><span class="target" id="esp__sleep_8h_1aa4a24a3ae25910689d743e4b0bf1f7b8"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_get_ext1_wakeup_status</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv432esp_sleep_get_ext1_wakeup_statusv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the bit mask of GPIOs which caused wakeup (ext1) </p>
+<p>If wakeup was caused by another source, this function will return 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bit mask, if GPIOn caused wakeup, BIT(n) will be set </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419esp_sleep_pd_config21esp_sleep_pd_domain_t21esp_sleep_pd_option_t">
+<span id="_CPPv319esp_sleep_pd_config21esp_sleep_pd_domain_t21esp_sleep_pd_option_t"></span><span id="_CPPv219esp_sleep_pd_config21esp_sleep_pd_domain_t21esp_sleep_pd_option_t"></span><span id="esp_sleep_pd_config__esp_sleep_pd_domain_t.esp_sleep_pd_option_t"></span><span class="target" id="esp__sleep_8h_1a0b9e62edc70f5811acf9ed71323a769a"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_pd_config</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421esp_sleep_pd_domain_t" title="esp_sleep_pd_domain_t"><span class="n"><span class="pre">esp_sleep_pd_domain_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">domain</span></span>, <a class="reference internal" href="#_CPPv421esp_sleep_pd_option_t" title="esp_sleep_pd_option_t"><span class="n"><span class="pre">esp_sleep_pd_option_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">option</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419esp_sleep_pd_config21esp_sleep_pd_domain_t21esp_sleep_pd_option_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set power down mode for an RTC power domain in sleep mode. </p>
+<p>If not set set using this API, all power domains default to ESP_PD_OPTION_AUTO.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>domain</strong> -- power domain to configure </p></li>
+<li><p><strong>option</strong> -- power down option (ESP_PD_OPTION_OFF, ESP_PD_OPTION_ON, or ESP_PD_OPTION_AUTO) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if either of the arguments is out of range </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_deep_sleep_try_to_startv">
+<span id="_CPPv327esp_deep_sleep_try_to_startv"></span><span id="_CPPv227esp_deep_sleep_try_to_startv"></span><span id="esp_deep_sleep_try_to_start__void"></span><span class="target" id="esp__sleep_8h_1a6c208dc3841be520608dcb7dad9ad469"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_deep_sleep_try_to_start</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_deep_sleep_try_to_startv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enter deep sleep with the configured wakeup options. </p>
+<p>
+The reason for the rejection can be such as a short sleep time.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In general, the function does not return, but if the sleep is rejected, then it returns from it.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>No return - If the sleep is not rejected.</p></li>
+<li><p>ESP_ERR_INVALID_STATE VBAT power does not meet the requirements for entering deepsleep</p></li>
+<li><p>ESP_ERR_SLEEP_REJECT sleep request is rejected(wakeup source set before the sleep request) </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420esp_deep_sleep_startv">
+<span id="_CPPv320esp_deep_sleep_startv"></span><span id="_CPPv220esp_deep_sleep_startv"></span><span id="esp_deep_sleep_start__void"></span><span class="target" id="esp__sleep_8h_1aaab646dc5c929e79401be3074a194dab"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_deep_sleep_start</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420esp_deep_sleep_startv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enter deep sleep with the configured wakeup options. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The function does not do a return (no rejection). Even if wakeup source set before the sleep request it goes to deep sleep anyway. </p>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421esp_light_sleep_startv">
+<span id="_CPPv321esp_light_sleep_startv"></span><span id="_CPPv221esp_light_sleep_startv"></span><span id="esp_light_sleep_start__void"></span><span class="target" id="esp__sleep_8h_1af809e1a635680bdb6953e056fe37088c"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_light_sleep_start</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421esp_light_sleep_startv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enter light sleep with the configured wakeup options. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK on success (returned after wakeup)</p></li>
+<li><p>ESP_ERR_SLEEP_REJECT sleep request is rejected(wakeup source set before the sleep request)</p></li>
+<li><p>ESP_ERR_SLEEP_TOO_SHORT_SLEEP_DURATION after deducting the sleep flow overhead, the final sleep duration is too short to cover the minimum sleep duration of the chip, when rtc timer wakeup source enabled </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_deep_sleep_try8uint64_t">
+<span id="_CPPv318esp_deep_sleep_try8uint64_t"></span><span id="_CPPv218esp_deep_sleep_try8uint64_t"></span><span id="esp_deep_sleep_try__uint64_t"></span><span class="target" id="esp__sleep_8h_1a977733654a538f242941e6c8c4d6f8e3"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_deep_sleep_try</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time_in_us</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_deep_sleep_try8uint64_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enter deep-sleep mode. </p>
+<p>The device will automatically wake up after the deep-sleep time Upon waking up, the device calls deep sleep wake stub, and then proceeds to load application.</p>
+<p>Call to this function is equivalent to a call to esp_deep_sleep_enable_timer_wakeup followed by a call to esp_deep_sleep_start.</p>
+<p>
+The reason for the rejection can be such as a short sleep time.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In general, the function does not return, but if the sleep is rejected, then it returns from it.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>time_in_us</strong> -- deep-sleep time, unit: microsecond</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>No return - If the sleep is not rejected.</p></li>
+<li><p>ESP_ERR_SLEEP_REJECT sleep request is rejected(wakeup source set before the sleep request) </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414esp_deep_sleep8uint64_t">
+<span id="_CPPv314esp_deep_sleep8uint64_t"></span><span id="_CPPv214esp_deep_sleep8uint64_t"></span><span id="esp_deep_sleep__uint64_t"></span><span class="target" id="esp__sleep_8h_1a1aef330235c8be02f5c0cd779a333912"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_deep_sleep</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time_in_us</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414esp_deep_sleep8uint64_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enter deep-sleep mode. </p>
+<p>The device will automatically wake up after the deep-sleep time Upon waking up, the device calls deep sleep wake stub, and then proceeds to load application.</p>
+<p>Call to this function is equivalent to a call to esp_deep_sleep_enable_timer_wakeup followed by a call to esp_deep_sleep_start.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The function does not do a return (no rejection).. Even if wakeup source set before the sleep request it goes to deep sleep anyway.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>time_in_us</strong> -- deep-sleep time, unit: microsecond </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_deep_sleep_register_hook19esp_deep_sleep_cb_t">
+<span id="_CPPv328esp_deep_sleep_register_hook19esp_deep_sleep_cb_t"></span><span id="_CPPv228esp_deep_sleep_register_hook19esp_deep_sleep_cb_t"></span><span id="esp_deep_sleep_register_hook__esp_deep_sleep_cb_t"></span><span class="target" id="esp__sleep_8h_1a83cbcbf7301d5c2d8424f5f5d45aebf8"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_deep_sleep_register_hook</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_deep_sleep_cb_t" title="esp_deep_sleep_cb_t"><span class="n"><span class="pre">esp_deep_sleep_cb_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">new_dslp_cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_deep_sleep_register_hook19esp_deep_sleep_cb_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Register a callback to be called from the deep sleep prepare. </p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>deepsleep callbacks should without parameters, and MUST NOT, UNDER ANY CIRCUMSTANCES, CALL A FUNCTION THAT MIGHT BLOCK.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>new_dslp_cb</strong> -- Callback to be called</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Callback registered to the deepsleep misc_modules_sleep_prepare</p></li>
+<li><p>ESP_ERR_NO_MEM: No more hook space for register the callback </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430esp_deep_sleep_deregister_hook19esp_deep_sleep_cb_t">
+<span id="_CPPv330esp_deep_sleep_deregister_hook19esp_deep_sleep_cb_t"></span><span id="_CPPv230esp_deep_sleep_deregister_hook19esp_deep_sleep_cb_t"></span><span id="esp_deep_sleep_deregister_hook__esp_deep_sleep_cb_t"></span><span class="target" id="esp__sleep_8h_1abd696dfc7ee84bcb72c45dc8f3079553"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_deep_sleep_deregister_hook</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419esp_deep_sleep_cb_t" title="esp_deep_sleep_cb_t"><span class="n"><span class="pre">esp_deep_sleep_cb_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">old_dslp_cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430esp_deep_sleep_deregister_hook19esp_deep_sleep_cb_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Unregister an deepsleep callback. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>old_dslp_cb</strong> -- Callback to be unregistered </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426esp_sleep_get_wakeup_causev">
+<span id="_CPPv326esp_sleep_get_wakeup_causev"></span><span id="_CPPv226esp_sleep_get_wakeup_causev"></span><span id="esp_sleep_get_wakeup_cause__void"></span><span class="target" id="esp__sleep_8h_1ab052ea488a7f3319a46c5db5a31fb59c"></span><a class="reference internal" href="#_CPPv424esp_sleep_wakeup_cause_t" title="esp_sleep_wakeup_cause_t"><span class="n"><span class="pre">esp_sleep_wakeup_cause_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_get_wakeup_cause</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426esp_sleep_get_wakeup_causev" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the wakeup source which caused wakeup from sleep. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>!!! This API will only return one wakeup source. If multiple wakeup sources wake up at the same time, the wakeup source information may be lost.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>cause of wake up from last sleep (deep sleep or light sleep) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_sleep_get_wakeup_causesv">
+<span id="_CPPv327esp_sleep_get_wakeup_causesv"></span><span id="_CPPv227esp_sleep_get_wakeup_causesv"></span><span id="esp_sleep_get_wakeup_causes__void"></span><span class="target" id="esp__sleep_8h_1a7e94116831b61ad65ab81afd3c54fefd"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_get_wakeup_causes</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_sleep_get_wakeup_causesv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get all wakeup sources bitmap which caused wakeup from sleep. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The bitmap of the wakeup sources of the last wakeup from sleep. (deep sleep or light sleep) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419esp_wake_deep_sleepv">
+<span id="_CPPv319esp_wake_deep_sleepv"></span><span id="_CPPv219esp_wake_deep_sleepv"></span><span id="esp_wake_deep_sleep__void"></span><span class="target" id="esp__sleep_8h_1a0b71eb3acc3a86dad1813a6a20529a53"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wake_deep_sleep</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419esp_wake_deep_sleepv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Default stub to run on wake from deep sleep. </p>
+<p>Allows for executing code immediately on wake from sleep, before the software bootloader or ESP-IDF app has started up.</p>
+<p>This function is weak-linked, so you can implement your own version to run code immediately when the chip wakes from sleep.</p>
+<p>See docs/deep-sleep-stub.rst for details. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_set_deep_sleep_wake_stub29esp_deep_sleep_wake_stub_fn_t">
+<span id="_CPPv328esp_set_deep_sleep_wake_stub29esp_deep_sleep_wake_stub_fn_t"></span><span id="_CPPv228esp_set_deep_sleep_wake_stub29esp_deep_sleep_wake_stub_fn_t"></span><span id="esp_set_deep_sleep_wake_stub__esp_deep_sleep_wake_stub_fn_t"></span><span class="target" id="esp__sleep_8h_1a28e9e608be308c5d7035fa22cfc7d660"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_set_deep_sleep_wake_stub</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv429esp_deep_sleep_wake_stub_fn_t" title="esp_deep_sleep_wake_stub_fn_t"><span class="n"><span class="pre">esp_deep_sleep_wake_stub_fn_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">new_stub</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_set_deep_sleep_wake_stub29esp_deep_sleep_wake_stub_fn_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Install a new stub at runtime to run on wake from deep sleep. </p>
+<p>If implementing esp_wake_deep_sleep() then it is not necessary to call this function.</p>
+<p>However, it is possible to call this function to substitute a different deep sleep stub. Any function used as a deep sleep stub must be marked RTC_IRAM_ATTR, and must obey the same rules given for esp_wake_deep_sleep(). </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv442esp_set_deep_sleep_wake_stub_default_entryv">
+<span id="_CPPv342esp_set_deep_sleep_wake_stub_default_entryv"></span><span id="_CPPv242esp_set_deep_sleep_wake_stub_default_entryv"></span><span id="esp_set_deep_sleep_wake_stub_default_entry__void"></span><span class="target" id="esp__sleep_8h_1ae92e53a65ee0c62d1803f237dca5118a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_set_deep_sleep_wake_stub_default_entry</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv442esp_set_deep_sleep_wake_stub_default_entryv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set wake stub entry to default <code class="docutils literal notranslate"><span class="pre">esp_wake_stub_entry</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_get_deep_sleep_wake_stubv">
+<span id="_CPPv328esp_get_deep_sleep_wake_stubv"></span><span id="_CPPv228esp_get_deep_sleep_wake_stubv"></span><span id="esp_get_deep_sleep_wake_stub__void"></span><span class="target" id="esp__sleep_8h_1ad3fa90e99f46b2380f088e6ec95355ba"></span><a class="reference internal" href="#_CPPv429esp_deep_sleep_wake_stub_fn_t" title="esp_deep_sleep_wake_stub_fn_t"><span class="n"><span class="pre">esp_deep_sleep_wake_stub_fn_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_get_deep_sleep_wake_stub</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_get_deep_sleep_wake_stubv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get current wake from deep sleep stub. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Return current wake from deep sleep stub, or NULL if no stub is installed. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_default_wake_deep_sleepv">
+<span id="_CPPv327esp_default_wake_deep_sleepv"></span><span id="_CPPv227esp_default_wake_deep_sleepv"></span><span id="esp_default_wake_deep_sleep__void"></span><span class="target" id="esp__sleep_8h_1a1373d7493d398449918abaeadffb351a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_default_wake_deep_sleep</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_default_wake_deep_sleepv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The default esp-idf-provided esp_wake_deep_sleep() stub. </p>
+<p>See docs/deep-sleep-stub.rst for details. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv434esp_deep_sleep_disable_rom_loggingv">
+<span id="_CPPv334esp_deep_sleep_disable_rom_loggingv"></span><span id="_CPPv234esp_deep_sleep_disable_rom_loggingv"></span><span id="esp_deep_sleep_disable_rom_logging__void"></span><span class="target" id="esp__sleep_8h_1ab611cb52689e4cb6d80ac0d1b58ee09c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_deep_sleep_disable_rom_logging</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv434esp_deep_sleep_disable_rom_loggingv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable logging from the ROM code after deep sleep. </p>
+<p>Using LSB of RTC_STORE4. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_sleep_config_gpio_isolatev">
+<span id="_CPPv329esp_sleep_config_gpio_isolatev"></span><span id="_CPPv229esp_sleep_config_gpio_isolatev"></span><span id="esp_sleep_config_gpio_isolate__void"></span><span class="target" id="esp__sleep_8h_1a9907650a4125937db79a3ac9c340c420"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_config_gpio_isolate</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_sleep_config_gpio_isolatev" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Configure to isolate all GPIO pins in sleep state. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_sleep_enable_gpio_switchb">
+<span id="_CPPv328esp_sleep_enable_gpio_switchb"></span><span id="_CPPv228esp_sleep_enable_gpio_switchb"></span><span id="esp_sleep_enable_gpio_switch__b"></span><span class="target" id="esp__sleep_8h_1a5fdeae1f296cd5f79d1b15b95f670549"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_enable_gpio_switch</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">enable</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_sleep_enable_gpio_switchb" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable or disable GPIO pins status switching between slept status and waked status. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enable</strong> -- decide whether to switch status or not </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_PD_DOMAIN_RTC8M">
+<span class="target" id="esp__sleep_8h_1a13a13f22ffd23bb7050e018be7d5868a"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PD_DOMAIN_RTC8M</span></span></span><a class="headerlink" href="#c.ESP_PD_DOMAIN_RTC8M" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_SLEEP_POWER_DOWN_CPU">
+<span class="target" id="esp__sleep_8h_1a3334e5a34a3c0ac87ee7c9e8870baf14"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_POWER_DOWN_CPU</span></span></span><a class="headerlink" href="#c.ESP_SLEEP_POWER_DOWN_CPU" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv419esp_deep_sleep_cb_t">
+<span id="_CPPv319esp_deep_sleep_cb_t"></span><span id="_CPPv219esp_deep_sleep_cb_t"></span><span id="esp_deep_sleep_cb_t"></span><span class="target" id="esp__sleep_8h_1a8086bb1e5b1af681eb02568e75c37090"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_deep_sleep_cb_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv419esp_deep_sleep_cb_t" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv424esp_sleep_wakeup_cause_t">
+<span id="_CPPv324esp_sleep_wakeup_cause_t"></span><span id="_CPPv224esp_sleep_wakeup_cause_t"></span><span id="esp_sleep_wakeup_cause_t"></span><span class="target" id="esp__sleep_8h_1a49bc0850fb4f1b360639d6d9fddabe1c"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418esp_sleep_source_t" title="esp_sleep_source_t"><span class="n"><span class="pre">esp_sleep_source_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_wakeup_cause_t</span></span></span><a class="headerlink" href="#_CPPv424esp_sleep_wakeup_cause_t" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv429esp_deep_sleep_wake_stub_fn_t">
+<span id="_CPPv329esp_deep_sleep_wake_stub_fn_t"></span><span id="_CPPv229esp_deep_sleep_wake_stub_fn_t"></span><span id="esp_deep_sleep_wake_stub_fn_t"></span><span class="target" id="esp__sleep_8h_1a259d82fc0eeea248abc84e054fb83ed1"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_deep_sleep_wake_stub_fn_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv429esp_deep_sleep_wake_stub_fn_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Function type for stub to run on wake from sleep. </p>
+</dd></dl>
+
+</section>
+<section id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv428esp_sleep_ext1_wakeup_mode_t">
+<span id="_CPPv328esp_sleep_ext1_wakeup_mode_t"></span><span id="_CPPv228esp_sleep_ext1_wakeup_mode_t"></span><span class="target" id="esp__sleep_8h_1a59e4ee8b694634410244984273634a27"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_ext1_wakeup_mode_t</span></span></span><a class="headerlink" href="#_CPPv428esp_sleep_ext1_wakeup_mode_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Logic function used for EXT1 wakeup mode. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N28esp_sleep_ext1_wakeup_mode_t23ESP_EXT1_WAKEUP_ALL_LOWE">
+<span id="_CPPv3N28esp_sleep_ext1_wakeup_mode_t23ESP_EXT1_WAKEUP_ALL_LOWE"></span><span id="_CPPv2N28esp_sleep_ext1_wakeup_mode_t23ESP_EXT1_WAKEUP_ALL_LOWE"></span><span class="target" id="esp__sleep_8h_1a59e4ee8b694634410244984273634a27a015b0e3182e78ef7bea49c63e2917442"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_EXT1_WAKEUP_ALL_LOW</span></span></span><a class="headerlink" href="#_CPPv4N28esp_sleep_ext1_wakeup_mode_t23ESP_EXT1_WAKEUP_ALL_LOWE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wake the chip when all selected GPIOs go low. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N28esp_sleep_ext1_wakeup_mode_t24ESP_EXT1_WAKEUP_ANY_HIGHE">
+<span id="_CPPv3N28esp_sleep_ext1_wakeup_mode_t24ESP_EXT1_WAKEUP_ANY_HIGHE"></span><span id="_CPPv2N28esp_sleep_ext1_wakeup_mode_t24ESP_EXT1_WAKEUP_ANY_HIGHE"></span><span class="target" id="esp__sleep_8h_1a59e4ee8b694634410244984273634a27a0e5205e8ae9e4b0aa0c4fc07afc45d20"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_EXT1_WAKEUP_ANY_HIGH</span></span></span><a class="headerlink" href="#_CPPv4N28esp_sleep_ext1_wakeup_mode_t24ESP_EXT1_WAKEUP_ANY_HIGHE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wake the chip when any of the selected GPIOs go high. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv421esp_sleep_pd_domain_t">
+<span id="_CPPv321esp_sleep_pd_domain_t"></span><span id="_CPPv221esp_sleep_pd_domain_t"></span><span class="target" id="esp__sleep_8h_1a537e34af6cbc6ea60328c231f25a5d3b"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_pd_domain_t</span></span></span><a class="headerlink" href="#_CPPv421esp_sleep_pd_domain_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Power domains which can be powered down in sleep mode. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_sleep_pd_domain_t24ESP_PD_DOMAIN_RTC_PERIPHE">
+<span id="_CPPv3N21esp_sleep_pd_domain_t24ESP_PD_DOMAIN_RTC_PERIPHE"></span><span id="_CPPv2N21esp_sleep_pd_domain_t24ESP_PD_DOMAIN_RTC_PERIPHE"></span><span class="target" id="esp__sleep_8h_1a537e34af6cbc6ea60328c231f25a5d3ba9bfb741d7788ffcf3234adf7322c733e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PD_DOMAIN_RTC_PERIPH</span></span></span><a class="headerlink" href="#_CPPv4N21esp_sleep_pd_domain_t24ESP_PD_DOMAIN_RTC_PERIPHE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RTC IO, sensors and ULP co-processor. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_sleep_pd_domain_t26ESP_PD_DOMAIN_RTC_SLOW_MEME">
+<span id="_CPPv3N21esp_sleep_pd_domain_t26ESP_PD_DOMAIN_RTC_SLOW_MEME"></span><span id="_CPPv2N21esp_sleep_pd_domain_t26ESP_PD_DOMAIN_RTC_SLOW_MEME"></span><span class="target" id="esp__sleep_8h_1a537e34af6cbc6ea60328c231f25a5d3ba00413d024925ca3d136aaf4cfa187ccc"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PD_DOMAIN_RTC_SLOW_MEM</span></span></span><a class="headerlink" href="#_CPPv4N21esp_sleep_pd_domain_t26ESP_PD_DOMAIN_RTC_SLOW_MEME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RTC slow memory. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_sleep_pd_domain_t26ESP_PD_DOMAIN_RTC_FAST_MEME">
+<span id="_CPPv3N21esp_sleep_pd_domain_t26ESP_PD_DOMAIN_RTC_FAST_MEME"></span><span id="_CPPv2N21esp_sleep_pd_domain_t26ESP_PD_DOMAIN_RTC_FAST_MEME"></span><span class="target" id="esp__sleep_8h_1a537e34af6cbc6ea60328c231f25a5d3ba5f5a6de6c8226092c638632f5e6e7803"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PD_DOMAIN_RTC_FAST_MEM</span></span></span><a class="headerlink" href="#_CPPv4N21esp_sleep_pd_domain_t26ESP_PD_DOMAIN_RTC_FAST_MEME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>RTC fast memory. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_sleep_pd_domain_t18ESP_PD_DOMAIN_XTALE">
+<span id="_CPPv3N21esp_sleep_pd_domain_t18ESP_PD_DOMAIN_XTALE"></span><span id="_CPPv2N21esp_sleep_pd_domain_t18ESP_PD_DOMAIN_XTALE"></span><span class="target" id="esp__sleep_8h_1a537e34af6cbc6ea60328c231f25a5d3bab8214d4331241173972711280ba5db24"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PD_DOMAIN_XTAL</span></span></span><a class="headerlink" href="#_CPPv4N21esp_sleep_pd_domain_t18ESP_PD_DOMAIN_XTALE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>XTAL oscillator. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_sleep_pd_domain_t21ESP_PD_DOMAIN_RC_FASTE">
+<span id="_CPPv3N21esp_sleep_pd_domain_t21ESP_PD_DOMAIN_RC_FASTE"></span><span id="_CPPv2N21esp_sleep_pd_domain_t21ESP_PD_DOMAIN_RC_FASTE"></span><span class="target" id="esp__sleep_8h_1a537e34af6cbc6ea60328c231f25a5d3baac822bb0a599bc8e45b605956c2b1588"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PD_DOMAIN_RC_FAST</span></span></span><a class="headerlink" href="#_CPPv4N21esp_sleep_pd_domain_t21ESP_PD_DOMAIN_RC_FASTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Internal Fast oscillator. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_sleep_pd_domain_t21ESP_PD_DOMAIN_VDDSDIOE">
+<span id="_CPPv3N21esp_sleep_pd_domain_t21ESP_PD_DOMAIN_VDDSDIOE"></span><span id="_CPPv2N21esp_sleep_pd_domain_t21ESP_PD_DOMAIN_VDDSDIOE"></span><span class="target" id="esp__sleep_8h_1a537e34af6cbc6ea60328c231f25a5d3ba65467245abe345a04ec9df5ccae7a84c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PD_DOMAIN_VDDSDIO</span></span></span><a class="headerlink" href="#_CPPv4N21esp_sleep_pd_domain_t21ESP_PD_DOMAIN_VDDSDIOE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>VDD_SDIO. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_sleep_pd_domain_t19ESP_PD_DOMAIN_MODEME">
+<span id="_CPPv3N21esp_sleep_pd_domain_t19ESP_PD_DOMAIN_MODEME"></span><span id="_CPPv2N21esp_sleep_pd_domain_t19ESP_PD_DOMAIN_MODEME"></span><span class="target" id="esp__sleep_8h_1a537e34af6cbc6ea60328c231f25a5d3ba87ee78b95518f92cb3d7b446c39aaefb"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PD_DOMAIN_MODEM</span></span></span><a class="headerlink" href="#_CPPv4N21esp_sleep_pd_domain_t19ESP_PD_DOMAIN_MODEME" title="Permalink to this definition"></a><br /></dt>
+<dd><p>MODEM, includes WiFi, Bluetooth and IEEE802.15.4. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_sleep_pd_domain_t17ESP_PD_DOMAIN_MAXE">
+<span id="_CPPv3N21esp_sleep_pd_domain_t17ESP_PD_DOMAIN_MAXE"></span><span id="_CPPv2N21esp_sleep_pd_domain_t17ESP_PD_DOMAIN_MAXE"></span><span class="target" id="esp__sleep_8h_1a537e34af6cbc6ea60328c231f25a5d3bac6e03b0c8323dc9eb574b7f99c58fcfc"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PD_DOMAIN_MAX</span></span></span><a class="headerlink" href="#_CPPv4N21esp_sleep_pd_domain_t17ESP_PD_DOMAIN_MAXE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Number of domains. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv421esp_sleep_pd_option_t">
+<span id="_CPPv321esp_sleep_pd_option_t"></span><span id="_CPPv221esp_sleep_pd_option_t"></span><span class="target" id="esp__sleep_8h_1a4d6bcbb6b09439fb877e6a94e4099552"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_pd_option_t</span></span></span><a class="headerlink" href="#_CPPv421esp_sleep_pd_option_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Power down options. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_sleep_pd_option_t17ESP_PD_OPTION_OFFE">
+<span id="_CPPv3N21esp_sleep_pd_option_t17ESP_PD_OPTION_OFFE"></span><span id="_CPPv2N21esp_sleep_pd_option_t17ESP_PD_OPTION_OFFE"></span><span class="target" id="esp__sleep_8h_1a4d6bcbb6b09439fb877e6a94e4099552aa6d39d13b6bcbd4768e64f2e82bd39f4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PD_OPTION_OFF</span></span></span><a class="headerlink" href="#_CPPv4N21esp_sleep_pd_option_t17ESP_PD_OPTION_OFFE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Power down the power domain in sleep mode. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_sleep_pd_option_t16ESP_PD_OPTION_ONE">
+<span id="_CPPv3N21esp_sleep_pd_option_t16ESP_PD_OPTION_ONE"></span><span id="_CPPv2N21esp_sleep_pd_option_t16ESP_PD_OPTION_ONE"></span><span class="target" id="esp__sleep_8h_1a4d6bcbb6b09439fb877e6a94e4099552ac107569619e115f5dc9ba37234205cda"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PD_OPTION_ON</span></span></span><a class="headerlink" href="#_CPPv4N21esp_sleep_pd_option_t16ESP_PD_OPTION_ONE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Keep power domain enabled during sleep mode. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21esp_sleep_pd_option_t18ESP_PD_OPTION_AUTOE">
+<span id="_CPPv3N21esp_sleep_pd_option_t18ESP_PD_OPTION_AUTOE"></span><span id="_CPPv2N21esp_sleep_pd_option_t18ESP_PD_OPTION_AUTOE"></span><span class="target" id="esp__sleep_8h_1a4d6bcbb6b09439fb877e6a94e4099552a33fc2d1890e28d2cfa3c9887a2dc8938"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_PD_OPTION_AUTO</span></span></span><a class="headerlink" href="#_CPPv4N21esp_sleep_pd_option_t18ESP_PD_OPTION_AUTOE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Keep power domain enabled in sleep mode, if it is needed by one of the wakeup options. Otherwise power it down. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv418esp_sleep_source_t">
+<span id="_CPPv318esp_sleep_source_t"></span><span id="_CPPv218esp_sleep_source_t"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77e"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_source_t</span></span></span><a class="headerlink" href="#_CPPv418esp_sleep_source_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sleep wakeup cause. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t26ESP_SLEEP_WAKEUP_UNDEFINEDE">
+<span id="_CPPv3N18esp_sleep_source_t26ESP_SLEEP_WAKEUP_UNDEFINEDE"></span><span id="_CPPv2N18esp_sleep_source_t26ESP_SLEEP_WAKEUP_UNDEFINEDE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77eadf7d386748701c5c253c7986d42b71f5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_UNDEFINED</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t26ESP_SLEEP_WAKEUP_UNDEFINEDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>In case of deep sleep, reset was not caused by exit from deep sleep. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_ALLE">
+<span id="_CPPv3N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_ALLE"></span><span id="_CPPv2N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_ALLE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77ea23fbc1965d79466f6332816941548a83"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_ALL</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_ALLE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Not a wakeup cause, used to disable all wakeup sources with esp_sleep_disable_wakeup_source. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_EXT0E">
+<span id="_CPPv3N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_EXT0E"></span><span id="_CPPv2N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_EXT0E"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77eabaff3e5b3c50a0dc9a56822b9bed3a9e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_EXT0</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_EXT0E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by external signal using RTC_IO. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_EXT1E">
+<span id="_CPPv3N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_EXT1E"></span><span id="_CPPv2N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_EXT1E"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77ea5bdb7df8d4e8dca78c3985538deb2848"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_EXT1</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_EXT1E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by external signal using RTC_CNTL. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_TIMERE">
+<span id="_CPPv3N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_TIMERE"></span><span id="_CPPv2N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_TIMERE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77ead40d5379c43a56dd4b40497213ced9a4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_TIMER</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_TIMERE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by timer. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t25ESP_SLEEP_WAKEUP_TOUCHPADE">
+<span id="_CPPv3N18esp_sleep_source_t25ESP_SLEEP_WAKEUP_TOUCHPADE"></span><span id="_CPPv2N18esp_sleep_source_t25ESP_SLEEP_WAKEUP_TOUCHPADE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77eae0ac52e5176c91bee7334634885e3d00"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_TOUCHPAD</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t25ESP_SLEEP_WAKEUP_TOUCHPADE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by touchpad. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_ULPE">
+<span id="_CPPv3N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_ULPE"></span><span id="_CPPv2N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_ULPE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77ea5669c91f44a45a6836a82a93a713d9d0"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_ULP</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_ULPE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by ULP program. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_GPIOE">
+<span id="_CPPv3N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_GPIOE"></span><span id="_CPPv2N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_GPIOE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77ead1a9d59e39eebe93d9c217fadd6fbefa"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_GPIO</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_GPIOE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by GPIO (light sleep only on ESP32, S2 and S3) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_UARTE">
+<span id="_CPPv3N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_UARTE"></span><span id="_CPPv2N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_UARTE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77ea536d9f7e5b88ebb404202072c433bc26"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_UART</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_UARTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by UART0 (light sleep only) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_UART1E">
+<span id="_CPPv3N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_UART1E"></span><span id="_CPPv2N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_UART1E"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77eae2c311d55ca0398f842aea6b674dc81e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_UART1</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_UART1E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by UART1 (light sleep only) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_UART2E">
+<span id="_CPPv3N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_UART2E"></span><span id="_CPPv2N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_UART2E"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77ea9a4ab4bbf347ccfdb0ee8d0c2e811a57"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_UART2</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_UART2E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by UART2 (light sleep only) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_WIFIE">
+<span id="_CPPv3N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_WIFIE"></span><span id="_CPPv2N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_WIFIE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77eaf468179b96f9fa50e018d05688c17665"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_WIFI</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t21ESP_SLEEP_WAKEUP_WIFIE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by WIFI (light sleep only) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_COCPUE">
+<span id="_CPPv3N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_COCPUE"></span><span id="_CPPv2N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_COCPUE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77eabc9c61ad1cd65824ad18cc35e3485786"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_COCPU</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t22ESP_SLEEP_WAKEUP_COCPUE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by COCPU int. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t32ESP_SLEEP_WAKEUP_COCPU_TRAP_TRIGE">
+<span id="_CPPv3N18esp_sleep_source_t32ESP_SLEEP_WAKEUP_COCPU_TRAP_TRIGE"></span><span id="_CPPv2N18esp_sleep_source_t32ESP_SLEEP_WAKEUP_COCPU_TRAP_TRIGE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77ea261723b7c60cbe10ffcd05327081d9b5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_COCPU_TRAP_TRIG</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t32ESP_SLEEP_WAKEUP_COCPU_TRAP_TRIGE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by COCPU crash. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t19ESP_SLEEP_WAKEUP_BTE">
+<span id="_CPPv3N18esp_sleep_source_t19ESP_SLEEP_WAKEUP_BTE"></span><span id="_CPPv2N18esp_sleep_source_t19ESP_SLEEP_WAKEUP_BTE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77ea0f603ec4f8d7ceb5465a4cbab4be8b4d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_BT</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t19ESP_SLEEP_WAKEUP_BTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by BT (light sleep only) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_VADE">
+<span id="_CPPv3N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_VADE"></span><span id="_CPPv2N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_VADE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77ea7bee9ece9b54d640f653edad61a23f4e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_VAD</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_VADE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by VAD. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t32ESP_SLEEP_WAKEUP_VBAT_UNDER_VOLTE">
+<span id="_CPPv3N18esp_sleep_source_t32ESP_SLEEP_WAKEUP_VBAT_UNDER_VOLTE"></span><span id="_CPPv2N18esp_sleep_source_t32ESP_SLEEP_WAKEUP_VBAT_UNDER_VOLTE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77ead9024713f937b5fe335bc6df18817cd0"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_VBAT_UNDER_VOLT</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t32ESP_SLEEP_WAKEUP_VBAT_UNDER_VOLTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by VDD_BAT under voltage. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_USBE">
+<span id="_CPPv3N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_USBE"></span><span id="_CPPv2N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_USBE"></span><span class="target" id="esp__sleep_8h_1ab0c5a40853767ff62c91ed79f5e8f77ea135c215cf1f9078a6a229fc0e7bd460c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_WAKEUP_USB</span></span></span><a class="headerlink" href="#_CPPv4N18esp_sleep_source_t20ESP_SLEEP_WAKEUP_USBE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Wakeup caused by USB HS (light sleep only) </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv416esp_sleep_mode_t">
+<span id="_CPPv316esp_sleep_mode_t"></span><span id="_CPPv216esp_sleep_mode_t"></span><span class="target" id="esp__sleep_8h_1aafdecb38beaeeb0c1e3eddf6818a0cf8"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_sleep_mode_t</span></span></span><a class="headerlink" href="#_CPPv416esp_sleep_mode_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sleep mode. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16esp_sleep_mode_t26ESP_SLEEP_MODE_LIGHT_SLEEPE">
+<span id="_CPPv3N16esp_sleep_mode_t26ESP_SLEEP_MODE_LIGHT_SLEEPE"></span><span id="_CPPv2N16esp_sleep_mode_t26ESP_SLEEP_MODE_LIGHT_SLEEPE"></span><span class="target" id="esp__sleep_8h_1aafdecb38beaeeb0c1e3eddf6818a0cf8a996ab453274133e4eb4f9b3193f19956"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_MODE_LIGHT_SLEEP</span></span></span><a class="headerlink" href="#_CPPv4N16esp_sleep_mode_t26ESP_SLEEP_MODE_LIGHT_SLEEPE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>light sleep mode </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16esp_sleep_mode_t25ESP_SLEEP_MODE_DEEP_SLEEPE">
+<span id="_CPPv3N16esp_sleep_mode_t25ESP_SLEEP_MODE_DEEP_SLEEPE"></span><span id="_CPPv2N16esp_sleep_mode_t25ESP_SLEEP_MODE_DEEP_SLEEPE"></span><span class="target" id="esp__sleep_8h_1aafdecb38beaeeb0c1e3eddf6818a0cf8a2ddbbee2622a2964600bad5bb1bd1473"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESP_SLEEP_MODE_DEEP_SLEEP</span></span></span><a class="headerlink" href="#_CPPv4N16esp_sleep_mode_t25ESP_SLEEP_MODE_DEEP_SLEEPE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>deep sleep mode </p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Sleep Modes (api-reference/system/sleep_modes)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Sleep Modes (api-reference/system/sleep_modes)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="random.html" class="btn btn-neutral float-left" title="Random Number Generation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="soc_caps.html" class="btn btn-neutral float-right" title="SoC Capabilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

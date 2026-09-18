@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/migration-guides/release-5.x/5.0/system.html" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'migration-guides/release-5.x/5.0/system';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Tools" href="tools.html" />
+    <link rel="prev" title="Storage" href="storage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Migration Guides</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html#esp-idf-5-x-migration-guide">ESP-IDF 5.x Migration Guide</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Migration from 4.4 to 5.0</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="bluetooth-classic.html">Bluetooth Classic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bluetooth-low-energy.html">Bluetooth Low Energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gcc.html">GCC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="networking.html">Networking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="peripherals.html">Peripherals</a></li>
+<li class="toctree-l4"><a class="reference internal" href="protocols.html">Protocols</a></li>
+<li class="toctree-l4"><a class="reference internal" href="provisioning.html">Provisioning</a></li>
+<li class="toctree-l4"><a class="reference internal" href="removed-components.html">Removed or Deprecated Components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="storage.html">Storage</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">System</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tools.html">Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../5.1/index.html">Migration from 5.0 to 5.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.2/index.html">Migration from 5.1 to 5.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.3/index.html">Migration from 5.2 to 5.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.4/index.html">Migration from 5.3 to 5.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.5/index.html">Migration from 5.4 to 5.5</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Migration Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Migration from 4.4 to 5.0</a></li>
+      <li class="breadcrumb-item active">System</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/migration-guides/release-5.x/5.0/system.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="system">
+<h1>System<a class="headerlink" href="#system" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../../zh_CN/v5.5.5/esp32/migration-guides/release-5.x/5.0/system.html">[中文]</a></p>
+<section id="inter-processor-call">
+<h2>Inter-Processor Call<a class="headerlink" href="#inter-processor-call" title="Permalink to this heading"></a></h2>
+<p>IPC (Inter-Processor Call) feature is no longer a stand-alone component and has been integrated into the <code class="docutils literal notranslate"><span class="pre">esp_system</span></code> component.</p>
+<p>Thus, any project presenting a <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file with the parameters <code class="docutils literal notranslate"><span class="pre">PRIV_REQUIRES</span> <span class="pre">esp_ipc</span></code> or <code class="docutils literal notranslate"><span class="pre">REQUIRES</span> <span class="pre">esp_ipc</span></code> should be modified to simply remove these options as the <code class="docutils literal notranslate"><span class="pre">esp_system</span></code> component is included by default.</p>
+</section>
+<section id="esp-clock">
+<h2>ESP Clock<a class="headerlink" href="#esp-clock" title="Permalink to this heading"></a></h2>
+<p>The ESP Clock API (functions/types/macros prefixed with <code class="docutils literal notranslate"><span class="pre">esp_clk</span></code>) has been made into a private API. Thus, the previous include paths <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;ESP32/clk.h&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;esp_clk.h&quot;</span></code> have been removed. If users still require usage of the ESP Clock API (though this is not recommended), it can be included via  <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;esp_private/esp_clk.h&quot;</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Private APIs are not stable and no are longer subject to the ESP-IDF versioning scheme's breaking change rules. Thus, it is not recommended for users to continue calling private APIs in their applications.</p>
+</div>
+</section>
+<section id="cache-error-interrupt">
+<h2>Cache Error Interrupt<a class="headerlink" href="#cache-error-interrupt" title="Permalink to this heading"></a></h2>
+<p>The Cache Error Interrupt API (functions/types/macros prefixed with <code class="docutils literal notranslate"><span class="pre">esp_cache_err</span></code>) has been made into a private API. Thus, the previous include path <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;ESP32/cache_err_int.h&quot;</span></code> has been removed. If users still require usage of the Cache Error Interrupt API (though this is not recommended), it can be included via  <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;esp_private/cache_err_int.h&quot;</span></code>.</p>
+</section>
+<section id="bootloader-support">
+<h2><code class="docutils literal notranslate"><span class="pre">bootloader_support</span></code><a class="headerlink" href="#bootloader-support" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>The function <code class="docutils literal notranslate"><span class="pre">bootloader_common_get_reset_reason()</span></code> has been removed. Please use the function <code class="docutils literal notranslate"><span class="pre">esp_rom_get_reset_reason()</span></code> in the ROM component.</p></li>
+<li><p>The functions <code class="docutils literal notranslate"><span class="pre">esp_secure_boot_verify_sbv2_signature_block()</span></code> and <code class="docutils literal notranslate"><span class="pre">esp_secure_boot_verify_rsa_signature_block()</span></code> have been removed without replacement. We do not expect users to use these directly. If they are indeed still necessary, please open a feature request on <a class="reference external" href="https://github.com/espressif/esp-idf/issues/new/choose">GitHub</a> explaining why these functions are necessary to you.</p></li>
+</ul>
+</section>
+<section id="brownout">
+<h2>Brownout<a class="headerlink" href="#brownout" title="Permalink to this heading"></a></h2>
+<p>The Brownout API (functions/types/macros prefixed with <code class="docutils literal notranslate"><span class="pre">esp_brownout</span></code>) has been made into a private API. Thus, the previous include path <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;brownout.h&quot;</span></code> has been removed. If users still require usage of the Brownout API (though this is not recommended), it can be included via  <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;esp_private/brownout.h&quot;</span></code>.</p>
+</section>
+<section id="trax">
+<h2>Trax<a class="headerlink" href="#trax" title="Permalink to this heading"></a></h2>
+<p>The Trax API (functions/types/macros prefixed with <code class="docutils literal notranslate"><span class="pre">trax_</span></code>) has been made into a private API. Thus, the previous include path <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;trax.h&quot;</span></code> has been removed. If users still require usage of the Trax API (though this is not recommended), it can be included via  <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;esp_private/trax.h&quot;</span></code>.</p>
+</section>
+<section id="rom">
+<h2>ROM<a class="headerlink" href="#rom" title="Permalink to this heading"></a></h2>
+<p>The previously deprecated ROM-related header files located in <code class="docutils literal notranslate"><span class="pre">components/esp32/rom/</span></code> (old include path: <code class="docutils literal notranslate"><span class="pre">rom/*.h</span></code>) have been moved. Please use the new target-specific path from <code class="docutils literal notranslate"><span class="pre">components/esp_rom/include/ESP32/</span></code> (new include path: <code class="docutils literal notranslate"><span class="pre">ESP32/rom/*.h</span></code>).</p>
+</section>
+<section id="esp-hw-support">
+<h2><code class="docutils literal notranslate"><span class="pre">esp_hw_support</span></code><a class="headerlink" href="#esp-hw-support" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>The header files <code class="docutils literal notranslate"><span class="pre">soc/cpu.h</span></code> have been deleted and deprecated CPU util functions have been removed. ESP-IDF developers should include <code class="docutils literal notranslate"><span class="pre">esp_cpu.h</span></code> instead for equivalent functions.</p></li>
+<li><p>The header files <code class="docutils literal notranslate"><span class="pre">hal/cpu_ll.h</span></code>, <code class="docutils literal notranslate"><span class="pre">hal/cpu_hal.h</span></code>, <code class="docutils literal notranslate"><span class="pre">hal/soc_ll.h</span></code>, <code class="docutils literal notranslate"><span class="pre">hal/soc_hal.h</span></code> and <code class="docutils literal notranslate"><span class="pre">interrupt_controller_hal.h</span></code> CPU API functions have been deprecated. ESP-IDF developers should include <code class="docutils literal notranslate"><span class="pre">esp_cpu.h</span></code> instead for equivalent functions.</p></li>
+<li><p>The header file <code class="docutils literal notranslate"><span class="pre">compare_set.h</span></code> have been deleted. ESP-IDF developers should use <code class="docutils literal notranslate"><span class="pre">esp_cpu_compare_and_set()</span></code> function provided in <code class="docutils literal notranslate"><span class="pre">esp_cpu.h</span></code> instead.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">esp_cpu_get_ccount()</span></code>, <code class="docutils literal notranslate"><span class="pre">esp_cpu_set_ccount()</span></code> and <code class="docutils literal notranslate"><span class="pre">esp_cpu_in_ocd_debug_mode()</span></code> were removed from <code class="docutils literal notranslate"><span class="pre">esp_cpu.h</span></code>. ESP-IDF developers should use respectively <code class="docutils literal notranslate"><span class="pre">esp_cpu_get_cycle_count()</span></code>, <code class="docutils literal notranslate"><span class="pre">esp_cpu_set_cycle_count()</span></code> and <code class="docutils literal notranslate"><span class="pre">esp_cpu_dbgr_is_attached()</span></code> instead.</p></li>
+<li><p>The header file <code class="docutils literal notranslate"><span class="pre">esp_intr.h</span></code> has been deleted. Please include <code class="docutils literal notranslate"><span class="pre">esp_intr_alloc.h</span></code> to allocate and manipulate interrupts.</p></li>
+<li><p>The Panic API (functions/types/macros prefixed with <code class="docutils literal notranslate"><span class="pre">esp_panic</span></code>) has been made into a private API. Thus, the previous include path <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;esp_panic.h&quot;</span></code> has been removed. If users still require usage of the Trax API (though this is not recommended), it can be included via  <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;esp_private/panic_reason.h&quot;</span></code>. Besides, developers should include <code class="docutils literal notranslate"><span class="pre">esp_debug_helpers.h</span></code> instead to use any debug-related helper functions, e.g., print backtrace.</p></li>
+<li><p>The header file <code class="docutils literal notranslate"><span class="pre">soc_log.h</span></code> is now renamed to <code class="docutils literal notranslate"><span class="pre">esp_hw_log.h</span></code> and has been made private. Users are encouraged to use logging APIs provided under <code class="docutils literal notranslate"><span class="pre">esp_log.h</span></code> instead.</p></li>
+<li><p>The header files <code class="docutils literal notranslate"><span class="pre">spinlock.h</span></code>, <code class="docutils literal notranslate"><span class="pre">clk_ctrl_os.h</span></code>, and <code class="docutils literal notranslate"><span class="pre">rtc_wdt.h</span></code> must now be included without the <code class="docutils literal notranslate"><span class="pre">soc</span></code> prefix. For example, <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;spinlock.h&quot;</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">esp_chip_info()</span></code> returns the chip version in the format  = 100 * <code class="docutils literal notranslate"><span class="pre">major</span> <span class="pre">eFuse</span> <span class="pre">version</span></code> + <code class="docutils literal notranslate"><span class="pre">minor</span> <span class="pre">eFuse</span> <span class="pre">version</span></code>. Thus, the <code class="docutils literal notranslate"><span class="pre">revision</span></code> in the <code class="docutils literal notranslate"><span class="pre">esp_chip_info_t</span></code> structure is expanded to <code class="docutils literal notranslate"><span class="pre">uint16_t</span></code> to fit the new format.</p></li>
+</ul>
+<section id="psram">
+<h3>PSRAM<a class="headerlink" href="#psram" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>The target-specific header file <code class="docutils literal notranslate"><span class="pre">spiram.h</span></code> and the header file <code class="docutils literal notranslate"><span class="pre">esp_spiram.h</span></code> have been removed. A new component <code class="docutils literal notranslate"><span class="pre">esp_psram</span></code> is created instead. For PSRAM/SPIRAM-related functions, users now include <code class="docutils literal notranslate"><span class="pre">esp_psram.h</span></code> and set the <code class="docutils literal notranslate"><span class="pre">esp_psram</span></code> component as a component requirement in their <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> project files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">esp_spiram_get_chip_size</span></code> and <code class="docutils literal notranslate"><span class="pre">esp_spiram_get_size</span></code> have been deleted. You should use <code class="docutils literal notranslate"><span class="pre">esp_psram_get_size</span></code> instead.</p></li>
+</ul>
+</section>
+</section>
+<section id="efuse">
+<h2>eFuse<a class="headerlink" href="#efuse" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>The parameter type of function <code class="docutils literal notranslate"><span class="pre">esp_secure_boot_read_key_digests()</span></code> changed from <code class="docutils literal notranslate"><span class="pre">ets_secure_boot_key_digests_t*</span></code> to <code class="docutils literal notranslate"><span class="pre">esp_secure_boot_key_digests_t*</span></code>. The new type is the same as the old one, except that the <code class="docutils literal notranslate"><span class="pre">allow_key_revoke</span></code> flag has been removed. The latter was always set to <code class="docutils literal notranslate"><span class="pre">true</span></code> in current code, not providing additional information.</p></li>
+<li><p>Added eFuse wafer revisions: major and minor. The <code class="docutils literal notranslate"><span class="pre">esp_efuse_get_chip_ver()</span></code> API is not compatible with these changes, so it was removed. Instead, please use the following APIs: <code class="docutils literal notranslate"><span class="pre">efuse_hal_get_major_chip_version()</span></code>, <code class="docutils literal notranslate"><span class="pre">efuse_hal_get_minor_chip_version()</span></code> or <code class="docutils literal notranslate"><span class="pre">efuse_hal_chip_revision()</span></code>.</p></li>
+</ul>
+</section>
+<section id="esp-common">
+<h2><code class="docutils literal notranslate"><span class="pre">esp_common</span></code><a class="headerlink" href="#esp-common" title="Permalink to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">EXT_RAM_ATTR</span></code> is deprecated. Use the new macro <code class="docutils literal notranslate"><span class="pre">EXT_RAM_BSS_ATTR</span></code> to put <code class="docutils literal notranslate"><span class="pre">.bss</span></code> on PSRAM.</p>
+</section>
+<section id="esp-system">
+<h2><code class="docutils literal notranslate"><span class="pre">esp_system</span></code><a class="headerlink" href="#esp-system" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>The header files <code class="docutils literal notranslate"><span class="pre">esp_random.h</span></code>, <code class="docutils literal notranslate"><span class="pre">esp_mac.h</span></code>, and <code class="docutils literal notranslate"><span class="pre">esp_chip_info.h</span></code>, which were all previously indirectly included via the header file <code class="docutils literal notranslate"><span class="pre">esp_system.h</span></code>, must now be included directly. These indirect inclusions from <code class="docutils literal notranslate"><span class="pre">esp_system.h</span></code> have been removed.</p></li>
+<li><p>The Backtrace Parser API (functions/types/macros prefixed with <code class="docutils literal notranslate"><span class="pre">esp_eh_frame_</span></code>) has been made into a private API. Thus, the previous include path <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;eh_frame_parser.h&quot;</span></code> has been removed. If users still require usage of the Backtrace Parser API (though this is not recommended), it can be included via <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;esp_private/eh_frame_parser.h&quot;</span></code>.</p></li>
+<li><p>The Interrupt Watchdog API (functions/types/macros prefixed with <code class="docutils literal notranslate"><span class="pre">esp_int_wdt_</span></code>) has been made into a private API. Thus, the previous include path <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;esp_int_wdt.h&quot;</span></code> has been removed. If users still require usage of the Interrupt Watchdog API (though this is not recommended), it can be included via  <code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;esp_private/esp_int_wdt.h&quot;</span></code>.</p></li>
+</ul>
+</section>
+<section id="soc-dependency">
+<h2>SoC Dependency<a class="headerlink" href="#soc-dependency" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Public API headers listed in the Doxyfiles will not expose unstable and unnecessary SoC header files, such as <code class="docutils literal notranslate"><span class="pre">soc/soc.h</span></code> and <code class="docutils literal notranslate"><span class="pre">soc/rtc.h</span></code>. That means the user has to explicitly include them in their code if these &quot;missing&quot; header files are still wanted.</p></li>
+<li><p>Kconfig option <code class="docutils literal notranslate"><span class="pre">LEGACY_INCLUDE_COMMON_HEADERS</span></code> is also removed.</p></li>
+<li><p>The header file <code class="docutils literal notranslate"><span class="pre">soc/soc_memory_types.h</span></code> has been deprecated. Users should use the <code class="docutils literal notranslate"><span class="pre">esp_memory_utils.h</span></code> instead. Including <code class="docutils literal notranslate"><span class="pre">soc/soc_memory_types.h</span></code> will bring a build warning like <code class="docutils literal notranslate"><span class="pre">soc_memory_types.h</span> <span class="pre">is</span> <span class="pre">deprecated,</span> <span class="pre">please</span> <span class="pre">migrate</span> <span class="pre">to</span> <span class="pre">esp_memory_utils.h</span></code></p></li>
+</ul>
+</section>
+<section id="app-trace">
+<h2>APP Trace<a class="headerlink" href="#app-trace" title="Permalink to this heading"></a></h2>
+<p>One of the timestamp sources has changed from the legacy timer group driver to the new <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html"><span class="doc">GPTimer</span></a>. Kconfig choices like <code class="docutils literal notranslate"><span class="pre">APPTRACE_SV_TS_SOURCE_TIMER00</span></code> has been changed to <code class="docutils literal notranslate"><span class="pre">APPTRACE_SV_TS_SOURCE_GPTIMER</span></code>. User no longer need to choose the group and timer ID.</p>
+</section>
+<section id="esp-timer">
+<h2><code class="docutils literal notranslate"><span class="pre">esp_timer</span></code><a class="headerlink" href="#esp-timer" title="Permalink to this heading"></a></h2>
+<p>The FRC2-based legacy implementation of <code class="docutils literal notranslate"><span class="pre">esp_timer</span></code> available on ESP32 has been removed. The simpler and more efficient implementation based on the LAC timer is now the only option.</p>
+</section>
+<section id="esp-image">
+<h2>ESP Image<a class="headerlink" href="#esp-image" title="Permalink to this heading"></a></h2>
+<p>The image SPI speed enum definitions have been renamed.</p>
+<ul class="simple">
+<li><p>Enum <code class="docutils literal notranslate"><span class="pre">ESP_IMAGE_SPI_SPEED_80M</span></code> has been renamed to <code class="docutils literal notranslate"><span class="pre">ESP_IMAGE_SPI_SPEED_DIV_1</span></code>.</p></li>
+<li><p>Enum <code class="docutils literal notranslate"><span class="pre">ESP_IMAGE_SPI_SPEED_40M</span></code> has been renamed to <code class="docutils literal notranslate"><span class="pre">ESP_IMAGE_SPI_SPEED_DIV_2</span></code>.</p></li>
+<li><p>Enum <code class="docutils literal notranslate"><span class="pre">ESP_IMAGE_SPI_SPEED_26M</span></code> has been renamed to <code class="docutils literal notranslate"><span class="pre">ESP_IMAGE_SPI_SPEED_DIV_3</span></code>.</p></li>
+<li><p>Enum <code class="docutils literal notranslate"><span class="pre">ESP_IMAGE_SPI_SPEED_20M</span></code> has been renamed to <code class="docutils literal notranslate"><span class="pre">ESP_IMAGE_SPI_SPEED_DIV_4</span></code>.</p></li>
+</ul>
+</section>
+<section id="task-watchdog-timers">
+<h2>Task Watchdog Timers<a class="headerlink" href="#task-watchdog-timers" title="Permalink to this heading"></a></h2>
+<ul>
+<li><p>The API for <code class="docutils literal notranslate"><span class="pre">esp_task_wdt_init()</span></code> has changed as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Configuration is now passed as a configuration structure.</p></li>
+<li><p>The function will now handle subscribing of the idle tasks if configured to do so.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The former <code class="docutils literal notranslate"><span class="pre">CONFIG_ESP_TASK_WDT</span></code> configuration option has been renamed to <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-esp-task-wdt-init"><span class="std std-ref">CONFIG_ESP_TASK_WDT_INIT</span></a> and a new <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-esp-task-wdt-en"><span class="std std-ref">CONFIG_ESP_TASK_WDT_EN</span></a> option has been introduced.</p></li>
+</ul>
+</section>
+<section id="freertos">
+<h2>FreeRTOS<a class="headerlink" href="#freertos" title="Permalink to this heading"></a></h2>
+<section id="legacy-api-and-data-types">
+<h3>Legacy API and Data Types<a class="headerlink" href="#legacy-api-and-data-types" title="Permalink to this heading"></a></h3>
+<p>Previously, the <code class="docutils literal notranslate"><span class="pre">configENABLE_BACKWARD_COMPATIBILITY</span></code> option was set by default, thus allowing pre FreeRTOS v8.0.0 function names and data types to be used. The <code class="docutils literal notranslate"><span class="pre">configENABLE_BACKWARD_COMPATIBILITY</span></code> is now disabled by default, thus legacy FreeRTOS names/types are no longer supported by default. Users should do one of the following:</p>
+<ul class="simple">
+<li><p>Update their code to remove usage of legacy FreeRTOS names/types.</p></li>
+<li><p>Enable the <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-freertos-enable-backward-compatibility"><span class="std std-ref">CONFIG_FREERTOS_ENABLE_BACKWARD_COMPATIBILITY</span></a> to explicitly allow the usage of legacy names/types.</p></li>
+</ul>
+</section>
+<section id="tasks-snapshot">
+<h3>Tasks Snapshot<a class="headerlink" href="#tasks-snapshot" title="Permalink to this heading"></a></h3>
+<p>The header <code class="docutils literal notranslate"><span class="pre">task_snapshot.h</span></code> has been removed from <code class="docutils literal notranslate"><span class="pre">freertos/task.h</span></code>. ESP-IDF developers should include <code class="docutils literal notranslate"><span class="pre">freertos/task_snapshot.h</span></code> if they need tasks snapshot API.</p>
+<p>The function <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskGetSnapshot()</span></code> now returns <code class="docutils literal notranslate"><span class="pre">BaseType_t</span></code>. Return value shall be <code class="docutils literal notranslate"><span class="pre">pdTRUE</span></code> on success and <code class="docutils literal notranslate"><span class="pre">pdFALSE</span></code> otherwise.</p>
+</section>
+<section id="freertos-asserts">
+<h3>FreeRTOS Asserts<a class="headerlink" href="#freertos-asserts" title="Permalink to this heading"></a></h3>
+<p>Previously, FreeRTOS asserts were configured separately from the rest of the system using the <code class="docutils literal notranslate"><span class="pre">FREERTOS_ASSERT</span></code> kconfig option. This option has now been removed and the configuration is now done through <code class="docutils literal notranslate"><span class="pre">COMPILER_OPTIMIZATION_ASSERTION_LEVEL</span></code>.</p>
+</section>
+<section id="port-macro-api">
+<h3>Port Macro API<a class="headerlink" href="#port-macro-api" title="Permalink to this heading"></a></h3>
+<p>The file <code class="docutils literal notranslate"><span class="pre">portmacro_deprecated.h</span></code> which was added to maintain backward compatibility for deprecated APIs is removed. Users are advised to use the alternate functions for the deprecated APIs as listed below:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">portENTER_CRITICAL_NESTED()</span></code> is removed. Users should use the <code class="docutils literal notranslate"><span class="pre">portSET_INTERRUPT_MASK_FROM_ISR()</span></code> macro instead.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">portEXIT_CRITICAL_NESTED()</span></code> is removed. Users should use the <code class="docutils literal notranslate"><span class="pre">portCLEAR_INTERRUPT_MASK_FROM_ISR()</span></code> macro instead.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vPortCPUInitializeMutex()</span></code> is removed. Users should use the <code class="docutils literal notranslate"><span class="pre">spinlock_initialize()</span></code> function instead.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vPortCPUAcquireMutex()</span></code> is removed. Users should use the <code class="docutils literal notranslate"><span class="pre">spinlock_acquire()</span></code> function instead.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vPortCPUAcquireMutexTimeout()</span></code> is removed. Users should use the <code class="docutils literal notranslate"><span class="pre">spinlock_acquire()</span></code> function instead.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vPortCPUReleaseMutex()</span></code> is removed. Users should use the <code class="docutils literal notranslate"><span class="pre">spinlock_release()</span></code> function instead.</p></li>
+</ul>
+</section>
+</section>
+<section id="app-update">
+<h2>App Update<a class="headerlink" href="#app-update" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>The functions <a class="reference internal" href="../../../api-reference/system/ota.html#_CPPv427esp_ota_get_app_descriptionv" title="esp_ota_get_app_description"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_get_app_description()</span></code></a> and <a class="reference internal" href="../../../api-reference/system/ota.html#_CPPv426esp_ota_get_app_elf_sha256Pc6size_t" title="esp_ota_get_app_elf_sha256"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_get_app_elf_sha256()</span></code></a> have been termed as deprecated. Please use the alternative functions <a class="reference internal" href="../../../api-reference/system/misc_system_api.html#_CPPv423esp_app_get_descriptionv" title="esp_app_get_description"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_app_get_description()</span></code></a> and <a class="reference internal" href="../../../api-reference/system/misc_system_api.html#_CPPv422esp_app_get_elf_sha256Pc6size_t" title="esp_app_get_elf_sha256"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_app_get_elf_sha256()</span></code></a> respectively. These functions have now been moved to a new component <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/components/esp_app_format">esp_app_format</a>. Please refer to the header file <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_app_format/include/esp_app_desc.h">esp_app_desc.h </a>.</p></li>
+</ul>
+</section>
+<section id="id1">
+<h2>Bootloader Support<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>The <a class="reference internal" href="../../../api-reference/system/misc_system_api.html#_CPPv414esp_app_desc_t" title="esp_app_desc_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_app_desc_t</span></code></a> structure, which used to be declared in <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/bootloader_support/include/esp_app_format.h">esp_app_format.h </a>, is now declared in <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_app_format/include/esp_app_desc.h">esp_app_desc.h </a>.</p></li>
+<li><p>The function <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">bootloader_common_get_partition_description()</span></code> has now been made private. Please use the alternative function <a class="reference internal" href="../../../api-reference/system/ota.html#_CPPv433esp_ota_get_partition_descriptionPK15esp_partition_tP14esp_app_desc_t" title="esp_ota_get_partition_description"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_ota_get_partition_description()</span></code></a>. Note that this function takes <a class="reference internal" href="../../../api-reference/storage/partition.html#_CPPv415esp_partition_t" title="esp_partition_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_partition_t</span></code></a> as its first argument instead of <code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_partition_pos_t</span></code>.</p></li>
+</ul>
+<section id="chip-revision">
+<h3>Chip Revision<a class="headerlink" href="#chip-revision" title="Permalink to this heading"></a></h3>
+<p>The bootloader checks the chip revision at the beginning of the application loading. The application can only be loaded if the version is <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code> <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-esp32-rev-min"><span class="std std-ref">CONFIG_ESP32_REV_MIN</span></a> and <code class="docutils literal notranslate"><span class="pre">&lt;</span></code> <code class="docutils literal notranslate"><span class="pre">CONFIG_ESP32_REV_MAX_FULL</span></code>.</p>
+<p>During the OTA upgrade, the version requirements and chip revision in the application header are checked for compatibility. The application can only be updated if the version is <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code> <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-esp32-rev-min"><span class="std std-ref">CONFIG_ESP32_REV_MIN</span></a> and <code class="docutils literal notranslate"><span class="pre">&lt;</span></code> <code class="docutils literal notranslate"><span class="pre">CONFIG_ESP32_REV_MAX_FULL</span></code>.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=System (migration-guides/release-5.x/5.0/system)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=System (migration-guides/release-5.x/5.0/system)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="storage.html" class="btn btn-neutral float-left" title="Storage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tools.html" class="btn btn-neutral float-right" title="Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peripherals - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/migration-guides/release-5.x/5.0/peripherals.html" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'migration-guides/release-5.x/5.0/peripherals';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Protocols" href="protocols.html" />
+    <link rel="prev" title="Networking" href="networking.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Migration Guides</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html#esp-idf-5-x-migration-guide">ESP-IDF 5.x Migration Guide</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Migration from 4.4 to 5.0</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="bluetooth-classic.html">Bluetooth Classic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bluetooth-low-energy.html">Bluetooth Low Energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gcc.html">GCC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="networking.html">Networking</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Peripherals</a></li>
+<li class="toctree-l4"><a class="reference internal" href="protocols.html">Protocols</a></li>
+<li class="toctree-l4"><a class="reference internal" href="provisioning.html">Provisioning</a></li>
+<li class="toctree-l4"><a class="reference internal" href="removed-components.html">Removed or Deprecated Components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="storage.html">Storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="system.html">System</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tools.html">Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../5.1/index.html">Migration from 5.0 to 5.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.2/index.html">Migration from 5.1 to 5.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.3/index.html">Migration from 5.2 to 5.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.4/index.html">Migration from 5.3 to 5.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../5.5/index.html">Migration from 5.4 to 5.5</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Migration Guides</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Migration from 4.4 to 5.0</a></li>
+      <li class="breadcrumb-item active">Peripherals</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/migration-guides/release-5.x/5.0/peripherals.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="peripherals">
+<h1>Peripherals<a class="headerlink" href="#peripherals" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../../zh_CN/v5.5.5/esp32/migration-guides/release-5.x/5.0/peripherals.html">[中文]</a></p>
+<section id="peripheral-clock-gating">
+<h2>Peripheral Clock Gating<a class="headerlink" href="#peripheral-clock-gating" title="Permalink to this heading"></a></h2>
+<p>As usual, peripheral clock gating is still handled by driver itself, users do not need to take care of the peripheral module clock gating.</p>
+<p>However, for advanced users who implement their own drivers based on <code class="docutils literal notranslate"><span class="pre">hal</span></code> and <code class="docutils literal notranslate"><span class="pre">soc</span></code> components, the previous clock gating include path has been changed from <code class="docutils literal notranslate"><span class="pre">driver/periph_ctrl.h</span></code> to <code class="docutils literal notranslate"><span class="pre">esp_private/periph_ctrl.h</span></code>.</p>
+</section>
+<section id="rtc-subsystem-control">
+<h2>RTC Subsystem Control<a class="headerlink" href="#rtc-subsystem-control" title="Permalink to this heading"></a></h2>
+<p>RTC control APIs have been moved from <code class="docutils literal notranslate"><span class="pre">driver/rtc_cntl.h</span></code> to <code class="docutils literal notranslate"><span class="pre">esp_private/rtc_ctrl.h</span></code>.</p>
+</section>
+<section id="adc">
+<h2>ADC<a class="headerlink" href="#adc" title="Permalink to this heading"></a></h2>
+<section id="adc-oneshot-continuous-mode-drivers">
+<h3>ADC Oneshot &amp; Continuous Mode Drivers<a class="headerlink" href="#adc-oneshot-continuous-mode-drivers" title="Permalink to this heading"></a></h3>
+<p>The ADC oneshot mode driver has been redesigned.</p>
+<ul class="simple">
+<li><p>The new driver is in <code class="docutils literal notranslate"><span class="pre">esp_adc</span></code> component and the include path is <code class="docutils literal notranslate"><span class="pre">esp_adc/adc_oneshot.h</span></code>.</p></li>
+<li><p>The legacy driver is still available in the previous include path <code class="docutils literal notranslate"><span class="pre">driver/adc.h</span></code>.</p></li>
+</ul>
+<p>The ADC continuous mode driver has been moved from <code class="docutils literal notranslate"><span class="pre">driver</span></code> component to <code class="docutils literal notranslate"><span class="pre">esp_adc</span></code> component.</p>
+<ul class="simple">
+<li><p>The include path has been changed from <code class="docutils literal notranslate"><span class="pre">driver/adc.h</span></code> to <code class="docutils literal notranslate"><span class="pre">esp_adc/adc_continuous.h</span></code>.</p></li>
+</ul>
+<p>Attempting to use the legacy include path <code class="docutils literal notranslate"><span class="pre">driver/adc.h</span></code> of either driver triggers the build warning below by default. However, the warning can be suppressed by enabling the <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-adc-suppress-deprecate-warn"><span class="std std-ref">CONFIG_ADC_SUPPRESS_DEPRECATE_WARN</span></a> Kconfig option.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>legacy adc driver is deprecated, please migrate to use esp_adc/adc_oneshot.h and esp_adc/adc_continuous.h for oneshot mode and continuous mode drivers respectively
+</pre></div>
+</div>
+</section>
+<section id="adc-calibration-driver">
+<h3>ADC Calibration Driver<a class="headerlink" href="#adc-calibration-driver" title="Permalink to this heading"></a></h3>
+<p>The ADC calibration driver has been redesigned.</p>
+<ul class="simple">
+<li><p>The new driver is in <code class="docutils literal notranslate"><span class="pre">esp_adc</span></code> component and the include path is <code class="docutils literal notranslate"><span class="pre">esp_adc/adc_cali.h</span></code> and <code class="docutils literal notranslate"><span class="pre">esp_adc/adc_cali_scheme.h</span></code>.</p></li>
+</ul>
+<p>Legacy driver is still available by including <code class="docutils literal notranslate"><span class="pre">esp_adc_cal.h</span></code>. However, if users still would like to use the include path of the legacy driver, users should add <code class="docutils literal notranslate"><span class="pre">esp_adc</span></code> component to the list of component requirements in CMakeLists.txt.</p>
+<p>Attempting to use the legacy include path <code class="docutils literal notranslate"><span class="pre">esp_adc_cal.h</span></code> triggers the build warning below by default. However, the warning can be suppressed by enabling the <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-adc-cali-suppress-deprecate-warn"><span class="std std-ref">CONFIG_ADC_CALI_SUPPRESS_DEPRECATE_WARN</span></a> Kconfig option.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>legacy adc calibration driver is deprecated, please migrate to use esp_adc/adc_cali.h and esp_adc/adc_cali_scheme.h
+</pre></div>
+</div>
+</section>
+<section id="api-changes">
+<h3>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p>The ADC power management APIs <code class="docutils literal notranslate"><span class="pre">adc_power_acquire</span></code> and <code class="docutils literal notranslate"><span class="pre">adc_power_release</span></code> have made private and moved to <code class="docutils literal notranslate"><span class="pre">esp_private/adc_share_hw_ctrl.h</span></code>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The two APIs were previously made public due to a HW errata workaround.</p></li>
+<li><p>Now, ADC power management is completely handled internally by drivers.</p></li>
+<li><p>Users who still require this API can include <code class="docutils literal notranslate"><span class="pre">esp_private/adc_share_hw_ctrl.h</span></code> to continue using these functions.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">driver/adc2_wifi_private.h</span></code> has been moved to <code class="docutils literal notranslate"><span class="pre">esp_private/adc_share_hw_ctrl.h</span></code>.</p></li>
+<li><p>Enums <code class="docutils literal notranslate"><span class="pre">ADC_UNIT_BOTH</span></code>, <code class="docutils literal notranslate"><span class="pre">ADC_UNIT_ALTER</span></code>, and <code class="docutils literal notranslate"><span class="pre">ADC_UNIT_MAX</span></code> in <code class="docutils literal notranslate"><span class="pre">adc_unit_t</span></code> have been removed.</p></li>
+<li><p>The following enumerations have been removed as some of their enumeration values are not supported on all chips. This would lead to the driver triggering a runtime error if an unsupported value is used.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Enum <code class="docutils literal notranslate"><span class="pre">ADC_CHANNEL_MAX</span></code></p></li>
+<li><p>Enum <code class="docutils literal notranslate"><span class="pre">ADC_ATTEN_MAX</span></code></p></li>
+<li><p>Enum <code class="docutils literal notranslate"><span class="pre">ADC_CONV_UNIT_MAX</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>API <code class="docutils literal notranslate"><span class="pre">hall_sensor_read</span></code> on ESP32 has been removed. Hall sensor is no longer supported on ESP32.</p></li>
+<li><p>API <code class="docutils literal notranslate"><span class="pre">adc_set_i2s_data_source</span></code> and <code class="docutils literal notranslate"><span class="pre">adc_i2s_mode_init</span></code> have been deprecated. Related enum <code class="docutils literal notranslate"><span class="pre">adc_i2s_source_t</span></code> has been deprecated. Please migrate to use <code class="docutils literal notranslate"><span class="pre">esp_adc/adc_continuous.h</span></code>.</p></li>
+<li><p>API <code class="docutils literal notranslate"><span class="pre">adc_digi_filter_reset</span></code>, <code class="docutils literal notranslate"><span class="pre">adc_digi_filter_set_config</span></code>, <code class="docutils literal notranslate"><span class="pre">adc_digi_filter_get_config</span></code> and <code class="docutils literal notranslate"><span class="pre">adc_digi_filter_enable</span></code> have been removed. These APIs behaviours are not guaranteed. Enum <code class="docutils literal notranslate"><span class="pre">adc_digi_filter_idx_t</span></code>, <code class="docutils literal notranslate"><span class="pre">adc_digi_filter_mode_t</span></code> and structure <code class="docutils literal notranslate"><span class="pre">adc_digi_iir_filter_t</span></code> have been removed as well.</p></li>
+<li><p>API <code class="docutils literal notranslate"><span class="pre">esp_adc_cal_characterize</span></code> has been deprecated, please migrate to <code class="docutils literal notranslate"><span class="pre">adc_cali_create_scheme_curve_fitting</span></code> or <code class="docutils literal notranslate"><span class="pre">adc_cali_create_scheme_line_fitting</span></code> instead.</p></li>
+<li><p>API <code class="docutils literal notranslate"><span class="pre">esp_adc_cal_raw_to_voltage</span></code> has been deprecated, please migrate to <code class="docutils literal notranslate"><span class="pre">adc_cali_raw_to_voltage</span></code> instead.</p></li>
+<li><p>API <code class="docutils literal notranslate"><span class="pre">esp_adc_cal_get_voltage</span></code> has been deprecated, please migrate to <code class="docutils literal notranslate"><span class="pre">adc_oneshot_get_calibrated_result</span></code> instead.</p></li>
+</ul>
+</section>
+</section>
+<section id="gpio">
+<h2>GPIO<a class="headerlink" href="#gpio" title="Permalink to this heading"></a></h2>
+<ul>
+<li><p>The previous Kconfig option <cite>RTCIO_SUPPORT_RTC_GPIO_DESC</cite> has been removed, thus the <code class="docutils literal notranslate"><span class="pre">rtc_gpio_desc</span></code> array is unavailable. Please use <code class="docutils literal notranslate"><span class="pre">rtc_io_desc</span></code> array instead.</p></li>
+<li><p>The user callback of a GPIO interrupt should no longer read the GPIO interrupt status register to get the GPIO's pin number of triggering the interrupt. You should use the callback argument to determine the GPIO's pin number instead.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Previously, when a GPIO interrupt occurs, the GPIO's interrupt status register is cleared after calling the user callbacks. Thus, it was possible for users to read the GPIO's interrupt status register inside the callback to determine which GPIO was used to trigger the interrupt.</p></li>
+<li><p>However, clearing the interrupt status register after calling the user callbacks can potentially cause edge-triggered interrupts to be lost. For example, if an edge-triggered interrupt is triggered/retriggered while the user callbacks are being called, that interrupt will be cleared without its registered user callback being handled.</p></li>
+<li><p>Now, the GPIO's interrupt status register is cleared <strong>before</strong> invoking the user callbacks. Thus, users can no longer read the GPIO interrupt status register to determine which pin has triggered the interrupt. Instead, users should use the callback argument to pass the pin number.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="sigma-delta-modulator">
+<h2>Sigma-Delta Modulator<a class="headerlink" href="#sigma-delta-modulator" title="Permalink to this heading"></a></h2>
+<p>The Sigma-Delta Modulator driver has been redesigned into <a class="reference internal" href="../../../api-reference/peripherals/sdm.html"><span class="doc">SDM</span></a>.</p>
+<ul class="simple">
+<li><p>The new driver implements a factory pattern, where the SDM channels are managed in a pool internally, thus users do not have to fix a SDM channel to a GPIO manually.</p></li>
+<li><p>All SDM channels can be allocated dynamically.</p></li>
+</ul>
+<p>Although it is recommended to use the new driver APIs, the legacy driver is still available in the previous include path <code class="docutils literal notranslate"><span class="pre">driver/sigmadelta.h</span></code>. However, by default, including <code class="docutils literal notranslate"><span class="pre">driver/sigmadelta.h</span></code> triggers the build warning below. The warning can be suppressed by Kconfig option <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-sdm-suppress-deprecate-warn"><span class="std std-ref">CONFIG_SDM_SUPPRESS_DEPRECATE_WARN</span></a>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>The legacy sigma-delta driver is deprecated, please use driver/sdm.h
+</pre></div>
+</div>
+<p>The major breaking changes in concept and usage are listed as follows:</p>
+<section id="breaking-changes-in-concepts">
+<h3>Breaking Changes in Concepts<a class="headerlink" href="#breaking-changes-in-concepts" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>SDM channel representation has changed from <code class="docutils literal notranslate"><span class="pre">sigmadelta_channel_t</span></code> to <a class="reference internal" href="../../../api-reference/peripherals/sdm.html#_CPPv420sdm_channel_handle_t" title="sdm_channel_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">sdm_channel_handle_t</span></code></a>, which is an opaque pointer.</p></li>
+<li><p>SDM channel configurations are stored in <a class="reference internal" href="../../../api-reference/peripherals/sdm.html#_CPPv412sdm_config_t" title="sdm_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">sdm_config_t</span></code></a> now, instead the previous <code class="docutils literal notranslate"><span class="pre">sigmadelta_config_t</span></code>.</p></li>
+<li><p>In the legacy driver, users do not have to set the clock source for SDM channel. But in the new driver, users need to set a proper one in the <a class="reference internal" href="../../../api-reference/peripherals/sdm.html#_CPPv4N12sdm_config_t7clk_srcE" title="sdm_config_t::clk_src"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">sdm_config_t::clk_src</span></code></a>. The available clock sources are listed in the <a class="reference internal" href="../../../api-reference/peripherals/clk_tree.html#_CPPv424soc_periph_sdm_clk_src_t" title="soc_periph_sdm_clk_src_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">soc_periph_sdm_clk_src_t</span></code></a>.</p></li>
+<li><p>In the legacy driver, users need to set a <code class="docutils literal notranslate"><span class="pre">prescale</span></code> for the channel, which reflects the frequency in which the modulator outputs a pulse. In the new driver, users should use <a class="reference internal" href="../../../api-reference/peripherals/sdm.html#_CPPv4N12sdm_config_t14sample_rate_hzE" title="sdm_config_t::sample_rate_hz"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">sdm_config_t::sample_rate_hz</span></code></a> to set the over sample rate.</p></li>
+<li><p>In the legacy driver, users set <code class="docutils literal notranslate"><span class="pre">duty</span></code> to decide the output analog value, it is now renamed to a more appropriate name <code class="docutils literal notranslate"><span class="pre">density</span></code>.</p></li>
+</ul>
+</section>
+<section id="breaking-changes-in-usage">
+<h3>Breaking Changes in Usage<a class="headerlink" href="#breaking-changes-in-usage" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Channel configuration was done by channel allocation, in <a class="reference internal" href="../../../api-reference/peripherals/sdm.html#_CPPv415sdm_new_channelPK12sdm_config_tP20sdm_channel_handle_t" title="sdm_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_new_channel()</span></code></a>. In the new driver, only the <code class="docutils literal notranslate"><span class="pre">density</span></code> can be changed at runtime, by <a class="reference internal" href="../../../api-reference/peripherals/sdm.html#_CPPv429sdm_channel_set_pulse_density20sdm_channel_handle_t6int8_t" title="sdm_channel_set_pulse_density"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_channel_set_pulse_density()</span></code></a>. Other parameters like <code class="docutils literal notranslate"><span class="pre">gpio</span> <span class="pre">number</span></code> and <code class="docutils literal notranslate"><span class="pre">prescale</span></code> are only allowed to set during channel allocation.</p></li>
+<li><p>Before further channel operations, users should <strong>enable</strong> the channel in advance, by calling <a class="reference internal" href="../../../api-reference/peripherals/sdm.html#_CPPv418sdm_channel_enable20sdm_channel_handle_t" title="sdm_channel_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdm_channel_enable()</span></code></a>. This function helps to manage some system level services, like <strong>Power Management</strong>.</p></li>
+</ul>
+</section>
+</section>
+<section id="timer-group-driver">
+<h2>Timer Group Driver<a class="headerlink" href="#timer-group-driver" title="Permalink to this heading"></a></h2>
+<p>Timer Group driver has been redesigned into <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html"><span class="doc">GPTimer</span></a>, which aims to unify and simplify the usage of general purpose timer.</p>
+<p>Although it is recommended to use the new driver APIs, the legacy driver is still available in the previous include path <code class="docutils literal notranslate"><span class="pre">driver/timer.h</span></code>. However, by default, including <code class="docutils literal notranslate"><span class="pre">driver/timer.h</span></code> triggers the build warning below. The warning can be suppressed by the Kconfig option <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-gptimer-suppress-deprecate-warn"><span class="std std-ref">CONFIG_GPTIMER_SUPPRESS_DEPRECATE_WARN</span></a>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>legacy timer group driver is deprecated, please migrate to driver/gptimer.h
+</pre></div>
+</div>
+<p>The major breaking changes in concept and usage are listed as follows:</p>
+<section id="id1">
+<h3>Breaking Changes in Concepts<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">timer_group_t</span></code> and <code class="docutils literal notranslate"><span class="pre">timer_idx_t</span></code> which used to identify the hardware timer are removed from user's code. In the new driver, a timer is represented by <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv416gptimer_handle_t" title="gptimer_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">gptimer_handle_t</span></code></a>.</p></li>
+<li><p>Definition of timer clock source is moved to <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv422gptimer_clock_source_t" title="gptimer_clock_source_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">gptimer_clock_source_t</span></code></a>, the previous <code class="docutils literal notranslate"><span class="pre">timer_src_clk_t</span></code> is not used.</p></li>
+<li><p>Definition of timer count direction is moved to <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv425gptimer_count_direction_t" title="gptimer_count_direction_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">gptimer_count_direction_t</span></code></a>, the previous <code class="docutils literal notranslate"><span class="pre">timer_count_dir_t</span></code> is not used.</p></li>
+<li><p>Only level interrupt is supported, <code class="docutils literal notranslate"><span class="pre">timer_intr_t</span></code> and <code class="docutils literal notranslate"><span class="pre">timer_intr_mode_t</span></code> are not used.</p></li>
+<li><p>Auto-reload is enabled by set the <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv4N22gptimer_alarm_config_t20auto_reload_on_alarmE" title="gptimer_alarm_config_t::auto_reload_on_alarm"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">gptimer_alarm_config_t::auto_reload_on_alarm</span></code></a> flag. <code class="docutils literal notranslate"><span class="pre">timer_autoreload_t</span></code> is not used.</p></li>
+</ul>
+</section>
+<section id="id2">
+<h3>Breaking Changes in Usage<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Timer initialization is done by creating a timer instance from <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv417gptimer_new_timerPK16gptimer_config_tP16gptimer_handle_t" title="gptimer_new_timer"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">gptimer_new_timer()</span></code></a>. Basic configurations like clock source, resolution and direction should be set in <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv416gptimer_config_t" title="gptimer_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">gptimer_config_t</span></code></a>. Note that, specific configurations of alarm events are not needed during the installation stage of the driver.</p></li>
+<li><p>Alarm event is configured by <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv424gptimer_set_alarm_action16gptimer_handle_tPK22gptimer_alarm_config_t" title="gptimer_set_alarm_action"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">gptimer_set_alarm_action()</span></code></a>, with parameters set in the <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv422gptimer_alarm_config_t" title="gptimer_alarm_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">gptimer_alarm_config_t</span></code></a>.</p></li>
+<li><p>Setting and getting count value are done by <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv421gptimer_set_raw_count16gptimer_handle_t8uint64_t" title="gptimer_set_raw_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">gptimer_set_raw_count()</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv421gptimer_get_raw_count16gptimer_handle_tP8uint64_t" title="gptimer_get_raw_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">gptimer_get_raw_count()</span></code></a>. The driver does not help convert the raw value into UTC time-stamp. Instead, the conversion should be done from user's side as the timer resolution is also known to the user.</p></li>
+<li><p>The driver will install the interrupt service as well if <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv4N25gptimer_event_callbacks_t8on_alarmE" title="gptimer_event_callbacks_t::on_alarm"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">gptimer_event_callbacks_t::on_alarm</span></code></a> is set to a valid callback function. In the callback, users do not have to deal with the low level registers (like &quot;clear interrupt status&quot;, &quot;re-enable alarm event&quot; and so on). So functions like <code class="docutils literal notranslate"><span class="pre">timer_group_get_intr_status_in_isr</span></code> and <code class="docutils literal notranslate"><span class="pre">timer_group_get_auto_reload_in_isr</span></code> are not used anymore.</p></li>
+<li><p>To update the alarm configurations when alarm event happens, one can call <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv424gptimer_set_alarm_action16gptimer_handle_tPK22gptimer_alarm_config_t" title="gptimer_set_alarm_action"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">gptimer_set_alarm_action()</span></code></a> in the interrupt callback, then the alarm will be re-enabled again.</p></li>
+<li><p>Alarm will always be re-enabled by the driver if <a class="reference internal" href="../../../api-reference/peripherals/gptimer.html#_CPPv4N22gptimer_alarm_config_t20auto_reload_on_alarmE" title="gptimer_alarm_config_t::auto_reload_on_alarm"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">gptimer_alarm_config_t::auto_reload_on_alarm</span></code></a> is set to true.</p></li>
+</ul>
+</section>
+</section>
+<section id="uart">
+<h2>UART<a class="headerlink" href="#uart" title="Permalink to this heading"></a></h2>
+<table class="docutils align-default" style="width: 700px">
+<thead>
+<tr class="row-odd"><th class="head"><p>Removed/Deprecated items</p></th>
+<th class="head"><p>Replacement</p></th>
+<th class="head"><p>Remarks</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">uart_isr_register()</span></code></p></td>
+<td><p>None</p></td>
+<td><p>UART interrupt handling is implemented by driver itself.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">uart_isr_free()</span></code></p></td>
+<td><p>None</p></td>
+<td><p>UART interrupt handling is implemented by driver itself.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">use_ref_tick</span></code> in <a class="reference internal" href="../../../api-reference/peripherals/uart.html#_CPPv413uart_config_t" title="uart_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">uart_config_t</span></code></a></p></td>
+<td><p><a class="reference internal" href="../../../api-reference/peripherals/uart.html#_CPPv4N13uart_config_t10source_clkE" title="uart_config_t::source_clk"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">uart_config_t::source_clk</span></code></a></p></td>
+<td><p>Select the clock source.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">uart_enable_pattern_det_intr()</span></code></p></td>
+<td><p><a class="reference internal" href="../../../api-reference/peripherals/uart.html#_CPPv433uart_enable_pattern_det_baud_intr11uart_port_tc7uint8_tiii" title="uart_enable_pattern_det_baud_intr"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">uart_enable_pattern_det_baud_intr()</span></code></a></p></td>
+<td><p>Enable pattern detection interrupt.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="i2c">
+<h2>I2C<a class="headerlink" href="#i2c" title="Permalink to this heading"></a></h2>
+<table class="docutils align-default" style="width: 700px">
+<thead>
+<tr class="row-odd"><th class="head"><p>Removed/Deprecated items</p></th>
+<th class="head"><p>Replacement</p></th>
+<th class="head"><p>Remarks</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i2c_isr_register()</span></code></p></td>
+<td><p>None</p></td>
+<td><p>I2C interrupt handling is implemented by driver itself.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">i2c_isr_register()</span></code></p></td>
+<td><p>None</p></td>
+<td><p>I2C interrupt handling is implemented by driver itself.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i2c_opmode_t</span></code></p></td>
+<td><p>None</p></td>
+<td><p>It is not used anywhere in ESP-IDF.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="spi">
+<h2>SPI<a class="headerlink" href="#spi" title="Permalink to this heading"></a></h2>
+<table class="docutils align-default" style="width: 700px">
+<thead>
+<tr class="row-odd"><th class="head"><p>Removed/Deprecated items</p></th>
+<th class="head"><p>Replacement</p></th>
+<th class="head"><p>Remarks</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spi_cal_clock()</span></code></p></td>
+<td><p><a class="reference internal" href="../../../api-reference/peripherals/spi_master.html#_CPPv420spi_get_actual_clockiii" title="spi_get_actual_clock"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">spi_get_actual_clock()</span></code></a></p></td>
+<td><p>Get SPI real working frequency.</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>The internal header file <code class="docutils literal notranslate"><span class="pre">spi_common_internal.h</span></code> has been moved to <code class="docutils literal notranslate"><span class="pre">esp_private/spi_common_internal.h</span></code>.</p></li>
+</ul>
+</section>
+<section id="sdmmc">
+<h2>SDMMC<a class="headerlink" href="#sdmmc" title="Permalink to this heading"></a></h2>
+<table class="docutils align-default" style="width: 700px">
+<thead>
+<tr class="row-odd"><th class="head"><p>Removed/Deprecated items</p></th>
+<th class="head"><p>Replacement</p></th>
+<th class="head"><p>Remarks</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sdmmc_host_pullup_en()</span></code></p></td>
+<td><p>set <code class="docutils literal notranslate"><span class="pre">SDMMC_SLOT_FLAG_INTERNAL_PULLUP</span></code> flag in <a class="reference internal" href="../../../api-reference/peripherals/sdmmc_host.html#_CPPv4N19sdmmc_slot_config_t5flagsE" title="sdmmc_slot_config_t::flags"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">sdmmc_slot_config_t::flags</span></code></a></p></td>
+<td><p>Enable internal pull up.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ledc">
+<h2>LEDC<a class="headerlink" href="#ledc" title="Permalink to this heading"></a></h2>
+<table class="docutils align-default" style="width: 700px">
+<thead>
+<tr class="row-odd"><th class="head"><p>Removed/Deprecated items</p></th>
+<th class="head"><p>Replacement</p></th>
+<th class="head"><p>Remarks</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bit_num</span></code> in <a class="reference internal" href="../../../api-reference/peripherals/ledc.html#_CPPv419ledc_timer_config_t" title="ledc_timer_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">ledc_timer_config_t</span></code></a></p></td>
+<td><p><a class="reference internal" href="../../../api-reference/peripherals/ledc.html#_CPPv4N19ledc_timer_config_t15duty_resolutionE" title="ledc_timer_config_t::duty_resolution"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">ledc_timer_config_t::duty_resolution</span></code></a></p></td>
+<td><p>Set resolution of the duty cycle.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="pulse-counter-driver">
+<h2>Pulse Counter Driver<a class="headerlink" href="#pulse-counter-driver" title="Permalink to this heading"></a></h2>
+<p>Pulse counter driver has been redesigned (see <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html"><span class="doc">PCNT</span></a>), which aims to unify and simplify the usage of PCNT peripheral.</p>
+<p>Although it is recommended to use the new driver APIs, the legacy driver is still available in the previous include path <code class="docutils literal notranslate"><span class="pre">driver/pcnt.h</span></code>. However, including <code class="docutils literal notranslate"><span class="pre">driver/pcnt.h</span></code> triggers the build warning below by default. The warning can be suppressed by the Kconfig option <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-pcnt-suppress-deprecate-warn"><span class="std std-ref">CONFIG_PCNT_SUPPRESS_DEPRECATE_WARN</span></a>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>legacy pcnt driver is deprecated, please migrate to use driver/pulse_cnt.h
+</pre></div>
+</div>
+<p>The major breaking changes in concept and usage are listed as follows:</p>
+<section id="id3">
+<h3>Breaking Changes in Concepts<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_port_t</span></code>, <code class="docutils literal notranslate"><span class="pre">pcnt_unit_t</span></code> and <code class="docutils literal notranslate"><span class="pre">pcnt_channel_t</span></code> which used to identify the hardware unit and channel are removed from user's code. In the new driver, PCNT unit is represented by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_unit_handle_t</span></code></a>, likewise, PCNT channel is represented by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv421pcnt_channel_handle_t" title="pcnt_channel_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_channel_handle_t</span></code></a>. Both of them are opaque pointers.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_evt_type_t</span></code> is not used any more, they have been replaced by a universal <strong>Watch Point Event</strong>. In the event callback <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv415pcnt_watch_cb_t" title="pcnt_watch_cb_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_watch_cb_t</span></code></a>, it is still possible to distinguish different watch points from <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv423pcnt_watch_event_data_t" title="pcnt_watch_event_data_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_watch_event_data_t</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_count_mode_t</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv426pcnt_channel_edge_action_t" title="pcnt_channel_edge_action_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_channel_edge_action_t</span></code></a>, and <code class="docutils literal notranslate"><span class="pre">pcnt_ctrl_mode_t</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv427pcnt_channel_level_action_t" title="pcnt_channel_level_action_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_channel_level_action_t</span></code></a>.</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>Breaking Changes in Usage<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p>Previously, the PCNT unit configuration and channel configuration were combined into a single function: <code class="docutils literal notranslate"><span class="pre">pcnt_unit_config</span></code>. They are now split into the two factory APIs: <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv413pcnt_new_unitPK18pcnt_unit_config_tP18pcnt_unit_handle_t" title="pcnt_new_unit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv416pcnt_new_channel18pcnt_unit_handle_tPK18pcnt_chan_config_tP21pcnt_channel_handle_t" title="pcnt_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_new_channel()</span></code></a> respectively.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Only the count range is necessary for initializing a PCNT unit. GPIO number assignment has been moved to <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv416pcnt_new_channel18pcnt_unit_handle_tPK18pcnt_chan_config_tP21pcnt_channel_handle_t" title="pcnt_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_new_channel()</span></code></a>.</p></li>
+<li><p>High/Low control mode and positive/negative edge count mode are set by stand-alone functions: <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv428pcnt_channel_set_edge_action21pcnt_channel_handle_t26pcnt_channel_edge_action_t26pcnt_channel_edge_action_t" title="pcnt_channel_set_edge_action"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_channel_set_edge_action()</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv429pcnt_channel_set_level_action21pcnt_channel_handle_t27pcnt_channel_level_action_t27pcnt_channel_level_action_t" title="pcnt_channel_set_level_action"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_channel_set_level_action()</span></code></a>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_get_counter_value</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv419pcnt_unit_get_count18pcnt_unit_handle_tPi" title="pcnt_unit_get_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_get_count()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_counter_pause</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv414pcnt_unit_stop18pcnt_unit_handle_t" title="pcnt_unit_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_stop()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_counter_resume</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv415pcnt_unit_start18pcnt_unit_handle_t" title="pcnt_unit_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_start()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_counter_clear</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv421pcnt_unit_clear_count18pcnt_unit_handle_t" title="pcnt_unit_clear_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_clear_count()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_intr_enable</span></code> and <code class="docutils literal notranslate"><span class="pre">pcnt_intr_disable</span></code> are removed. In the new driver, the interrupt is enabled by registering event callbacks <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv434pcnt_unit_register_event_callbacks18pcnt_unit_handle_tPK22pcnt_event_callbacks_tPv" title="pcnt_unit_register_event_callbacks"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_register_event_callbacks()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_event_enable</span></code> and <code class="docutils literal notranslate"><span class="pre">pcnt_event_disable</span></code> are removed. In the new driver, the PCNT events are enabled/disabled by adding/removing watch points <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv425pcnt_unit_add_watch_point18pcnt_unit_handle_ti" title="pcnt_unit_add_watch_point"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_add_watch_point()</span></code></a>, <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv428pcnt_unit_remove_watch_point18pcnt_unit_handle_ti" title="pcnt_unit_remove_watch_point"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_remove_watch_point()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_set_event_value</span></code> is removed. In the new driver, event value is also set when adding watch point by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv425pcnt_unit_add_watch_point18pcnt_unit_handle_ti" title="pcnt_unit_add_watch_point"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_add_watch_point()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_get_event_value</span></code> and <code class="docutils literal notranslate"><span class="pre">pcnt_get_event_status</span></code> are removed. In the new driver, these information are provided by event callback <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv415pcnt_watch_cb_t" title="pcnt_watch_cb_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_watch_cb_t</span></code></a> in the <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv423pcnt_watch_event_data_t" title="pcnt_watch_event_data_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_watch_event_data_t</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_isr_register</span></code> and <code class="docutils literal notranslate"><span class="pre">pcnt_isr_unregister</span></code> are removed. Register of the ISR handler from user's code is no longer permitted. Users should register event callbacks instead by calling <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv434pcnt_unit_register_event_callbacks18pcnt_unit_handle_tPK22pcnt_event_callbacks_tPv" title="pcnt_unit_register_event_callbacks"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_register_event_callbacks()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_set_pin</span></code> is removed and the new driver no longer allows the switching of the GPIO at runtime. If users want to change to other GPIOs, please delete the existing PCNT channel by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv416pcnt_del_channel21pcnt_channel_handle_t" title="pcnt_del_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_del_channel()</span></code></a> and reinstall with the new GPIO number by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv416pcnt_new_channel18pcnt_unit_handle_tPK18pcnt_chan_config_tP21pcnt_channel_handle_t" title="pcnt_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_new_channel()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_filter_enable</span></code>, <code class="docutils literal notranslate"><span class="pre">pcnt_filter_disable</span></code> and <code class="docutils literal notranslate"><span class="pre">pcnt_set_filter_value</span></code> are replaced by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv427pcnt_unit_set_glitch_filter18pcnt_unit_handle_tPK27pcnt_glitch_filter_config_t" title="pcnt_unit_set_glitch_filter"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_set_glitch_filter()</span></code></a>. Meanwhile, <code class="docutils literal notranslate"><span class="pre">pcnt_get_filter_value</span></code> has been removed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_set_mode</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv428pcnt_channel_set_edge_action21pcnt_channel_handle_t26pcnt_channel_edge_action_t26pcnt_channel_edge_action_t" title="pcnt_channel_set_edge_action"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_channel_set_edge_action()</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv429pcnt_channel_set_level_action21pcnt_channel_handle_t27pcnt_channel_level_action_t27pcnt_channel_level_action_t" title="pcnt_channel_set_level_action"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_channel_set_level_action()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcnt_isr_service_install</span></code>, <code class="docutils literal notranslate"><span class="pre">pcnt_isr_service_uninstall</span></code>, <code class="docutils literal notranslate"><span class="pre">pcnt_isr_handler_add</span></code> and <code class="docutils literal notranslate"><span class="pre">pcnt_isr_handler_remove</span></code> are replaced by <a class="reference internal" href="../../../api-reference/peripherals/pcnt.html#_CPPv434pcnt_unit_register_event_callbacks18pcnt_unit_handle_tPK22pcnt_event_callbacks_tPv" title="pcnt_unit_register_event_callbacks"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_register_event_callbacks()</span></code></a>. The default ISR handler is lazy installed in the new driver.</p></li>
+</ul>
+</section>
+</section>
+<section id="rmt-driver">
+<h2>RMT Driver<a class="headerlink" href="#rmt-driver" title="Permalink to this heading"></a></h2>
+<p>RMT driver has been redesigned (see <a class="reference internal" href="../../../api-reference/peripherals/rmt.html"><span class="doc">RMT transceiver</span></a>), which aims to unify and extend the usage of RMT peripheral.</p>
+<p>Although it is recommended to use the new driver APIs, the legacy driver is still available in the previous include path <code class="docutils literal notranslate"><span class="pre">driver/rmt.h</span></code>. However, including <code class="docutils literal notranslate"><span class="pre">driver/rmt.h</span></code> triggers the build warning below by default. The warning can be suppressed by the Kconfig option <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-rmt-suppress-deprecate-warn"><span class="std std-ref">CONFIG_RMT_SUPPRESS_DEPRECATE_WARN</span></a>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>The legacy RMT driver is deprecated, please use driver/rmt_tx.h and/or driver/rmt_rx.h
+</pre></div>
+</div>
+<p>The major breaking changes in concept and usage are listed as follows:</p>
+<section id="id5">
+<h3>Breaking Changes in Concepts<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_channel_t</span></code> which used to identify the hardware channel are removed from user space. In the new driver, RMT channel is represented by <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv420rmt_channel_handle_t" title="rmt_channel_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_channel_handle_t</span></code></a>. The channel is dynamically allocated by the driver, instead of designated by user.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_item32_t</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv417rmt_symbol_word_t" title="rmt_symbol_word_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_symbol_word_t</span></code></a>, which avoids a nested union inside a struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_mem_t</span></code> is removed, as we do not allow users to access RMT memory block (a.k.an RMTMEM) directly. Direct access to RMTMEM does not make sense but make mistakes, especially when the RMT channel also connected with a DMA channel.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_mem_owner_t</span></code> is removed, as the ownership is controlled by driver, not by user anymore.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_source_clk_t</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv418rmt_clock_source_t" title="rmt_clock_source_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_clock_source_t</span></code></a>, and note they are not binary compatible.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_data_mode_t</span></code> is removed, the RMT memory access mode is configured to always use Non-FIFO and DMA mode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_mode_t</span></code> is removed, as the driver has stand alone install functions for TX and RX channels.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_idle_level_t</span></code> is removed, setting IDLE level for TX channel is available in <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N21rmt_transmit_config_t9eot_levelE" title="rmt_transmit_config_t::eot_level"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_transmit_config_t::eot_level</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_carrier_level_t</span></code> is removed, setting carrier polarity is available in <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N20rmt_carrier_config_t19polarity_active_lowE" title="rmt_carrier_config_t::polarity_active_low"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_carrier_config_t::polarity_active_low</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_channel_status_t</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_channel_status_result_t</span></code> are removed, they are not used anywhere.</p></li>
+<li><p>Transmitting by RMT channel does not expect user to prepare the RMT symbols, instead, user needs to provide an RMT Encoder to tell the driver how to convert user data into RMT symbols.</p></li>
+</ul>
+</section>
+<section id="id6">
+<h3>Breaking Changes in Usage<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Channel installation has been separated for TX and RX channels into <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv418rmt_new_tx_channelPK23rmt_tx_channel_config_tP20rmt_channel_handle_t" title="rmt_new_tx_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_new_tx_channel()</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv418rmt_new_rx_channelPK23rmt_rx_channel_config_tP20rmt_channel_handle_t" title="rmt_new_rx_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_new_rx_channel()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_clk_div</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_get_clk_div</span></code> are removed. Channel clock configuration can only be done during channel installation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_rx_idle_thresh</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_get_rx_idle_thresh</span></code> are removed. In the new driver, the RX channel IDLE threshold is redesigned into a new concept <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N20rmt_receive_config_t19signal_range_max_nsE" title="rmt_receive_config_t::signal_range_max_ns"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_receive_config_t::signal_range_max_ns</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_mem_block_num</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_get_mem_block_num</span></code> are removed. In the new driver, the memory block number is determined by <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N23rmt_tx_channel_config_t17mem_block_symbolsE" title="rmt_tx_channel_config_t::mem_block_symbols"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_tx_channel_config_t::mem_block_symbols</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N23rmt_rx_channel_config_t17mem_block_symbolsE" title="rmt_rx_channel_config_t::mem_block_symbols"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_rx_channel_config_t::mem_block_symbols</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_tx_carrier</span></code> is removed, the new driver uses <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv417rmt_apply_carrier20rmt_channel_handle_tPK20rmt_carrier_config_t" title="rmt_apply_carrier"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_apply_carrier()</span></code></a> to set carrier behavior.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_mem_pd</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_get_mem_pd</span></code> are removed. The memory power is managed by the driver automatically.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_memory_rw_rst</span></code>, <code class="docutils literal notranslate"><span class="pre">rmt_tx_memory_reset</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_rx_memory_reset</span></code> are removed. Memory reset is managed by the driver automatically.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_tx_start</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_rx_start</span></code> are merged into a single function <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv410rmt_enable20rmt_channel_handle_t" title="rmt_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_enable()</span></code></a>, for both TX and RX channels.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_tx_stop</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_rx_stop</span></code> are merged into a single function <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv411rmt_disable20rmt_channel_handle_t" title="rmt_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_disable()</span></code></a>, for both TX and RX channels.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_memory_owner</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_get_memory_owner</span></code> are removed. RMT memory owner guard is added automatically by the driver.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_tx_loop_mode</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_get_tx_loop_mode</span></code> are removed. In the new driver, the loop mode is configured in <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N21rmt_transmit_config_t10loop_countE" title="rmt_transmit_config_t::loop_count"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_transmit_config_t::loop_count</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_source_clk</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_get_source_clk</span></code> are removed. Configuring clock source is only possible during channel installation by <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N23rmt_tx_channel_config_t7clk_srcE" title="rmt_tx_channel_config_t::clk_src"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_tx_channel_config_t::clk_src</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N23rmt_rx_channel_config_t7clk_srcE" title="rmt_rx_channel_config_t::clk_src"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_rx_channel_config_t::clk_src</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_rx_filter</span></code> is removed. In the new driver, the filter threshold is redesigned into a new concept <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N20rmt_receive_config_t19signal_range_min_nsE" title="rmt_receive_config_t::signal_range_min_ns"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_receive_config_t::signal_range_min_ns</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_idle_level</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_get_idle_level</span></code> are removed. Setting IDLE level for TX channel is available in <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N21rmt_transmit_config_t9eot_levelE" title="rmt_transmit_config_t::eot_level"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_transmit_config_t::eot_level</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_rx_intr_en</span></code>, <code class="docutils literal notranslate"><span class="pre">rmt_set_err_intr_en</span></code>, <code class="docutils literal notranslate"><span class="pre">rmt_set_tx_intr_en</span></code>, <code class="docutils literal notranslate"><span class="pre">rmt_set_tx_thr_intr_en</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_set_rx_thr_intr_en</span></code> are removed. The new driver does not allow user to turn on/off interrupt from user space. Instead, it provides callback functions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_gpio</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_set_pin</span></code> are removed. The new driver does not support to switch GPIO dynamically at runtime.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_config</span></code> is removed. In the new driver, basic configuration is done during the channel installation stage.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_isr_register</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_isr_deregister</span></code> are removed, the interrupt is allocated by the driver itself.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_driver_install</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv418rmt_new_tx_channelPK23rmt_tx_channel_config_tP20rmt_channel_handle_t" title="rmt_new_tx_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_new_tx_channel()</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv418rmt_new_rx_channelPK23rmt_rx_channel_config_tP20rmt_channel_handle_t" title="rmt_new_rx_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_new_rx_channel()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_driver_uninstall</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv415rmt_del_channel20rmt_channel_handle_t" title="rmt_del_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_del_channel()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_fill_tx_items</span></code>, <code class="docutils literal notranslate"><span class="pre">rmt_write_items</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_write_sample</span></code> are removed. In the new driver, user needs to provide an encoder to &quot;translate&quot; the user data into RMT symbols.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_get_counter_clock</span></code> is removed, as the channel clock resolution is configured by user from <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N23rmt_tx_channel_config_t13resolution_hzE" title="rmt_tx_channel_config_t::resolution_hz"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_tx_channel_config_t::resolution_hz</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_wait_tx_done</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv420rmt_tx_wait_all_done20rmt_channel_handle_ti" title="rmt_tx_wait_all_done"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_tx_wait_all_done()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_translator_init</span></code>, <code class="docutils literal notranslate"><span class="pre">rmt_translator_set_context</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_translator_get_context</span></code> are removed. In the new driver, the translator has been replaced by the RMT encoder.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_get_ringbuf_handle</span></code> is removed. The new driver does not use Ringbuffer to save RMT symbols. Instead, the incoming data are saved to the user provided buffer directly. The user buffer can even be mounted to DMA link internally.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_register_tx_end_callback</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv431rmt_tx_register_event_callbacks20rmt_channel_handle_tPK24rmt_tx_event_callbacks_tPv" title="rmt_tx_register_event_callbacks"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_tx_register_event_callbacks()</span></code></a>, where user can register <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N24rmt_tx_event_callbacks_t13on_trans_doneE" title="rmt_tx_event_callbacks_t::on_trans_done"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_tx_event_callbacks_t::on_trans_done</span></code></a> event callback.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_intr_enable_mask</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_clr_intr_enable_mask</span></code> are removed, as the interrupt is handled by the driver, user does not need to take care of it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_add_channel_to_group</span></code> and <code class="docutils literal notranslate"><span class="pre">rmt_remove_channel_from_group</span></code> are replaced by RMT sync manager. Please refer to <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv420rmt_new_sync_managerPK25rmt_sync_manager_config_tP25rmt_sync_manager_handle_t" title="rmt_new_sync_manager"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_new_sync_manager()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_set_tx_loop_count</span></code> is removed. The loop count in the new driver is configured in <a class="reference internal" href="../../../api-reference/peripherals/rmt.html#_CPPv4N21rmt_transmit_config_t10loop_countE" title="rmt_transmit_config_t::loop_count"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">rmt_transmit_config_t::loop_count</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_enable_tx_loop_autostop</span></code> is removed. In the new driver, TX loop auto stop is always enabled if available, it is not configurable anymore.</p></li>
+</ul>
+</section>
+</section>
+<section id="lcd">
+<h2>LCD<a class="headerlink" href="#lcd" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>The LCD panel initialization flow is slightly changed. Now the <a class="reference internal" href="../../../api-reference/peripherals/lcd/index.html#_CPPv418esp_lcd_panel_init22esp_lcd_panel_handle_t" title="esp_lcd_panel_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_lcd_panel_init()</span></code></a> will not turn on the display automatically. User needs to call <a class="reference internal" href="../../../api-reference/peripherals/lcd/index.html#_CPPv425esp_lcd_panel_disp_on_off22esp_lcd_panel_handle_tb" title="esp_lcd_panel_disp_on_off"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_lcd_panel_disp_on_off()</span></code></a> to manually turn on the display. Note, this is different from turning on backlight. With this breaking change, user can flash a predefined pattern to the screen before turning on the screen. This can help avoid random noise on the screen after a power on reset.</p></li>
+<li><p><a class="reference internal" href="../../../api-reference/peripherals/lcd/index.html#_CPPv422esp_lcd_panel_disp_off22esp_lcd_panel_handle_tb" title="esp_lcd_panel_disp_off"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_lcd_panel_disp_off()</span></code></a> is deprecated, please use <a class="reference internal" href="../../../api-reference/peripherals/lcd/index.html#_CPPv425esp_lcd_panel_disp_on_off22esp_lcd_panel_handle_tb" title="esp_lcd_panel_disp_on_off"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_lcd_panel_disp_on_off()</span></code></a> instead.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dc_as_cmd_phase</span></code> is removed. The SPI LCD driver currently does not support a 9-bit SPI LCD. Please always use a dedicated GPIO to control the LCD D/C line.</p></li>
+<li><p>The way to register RGB panel event callbacks has been moved from the <code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_lcd_rgb_panel_config_t</span></code> into a separate API <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_lcd_rgb_panel_register_event_callbacks()</span></code>. However, the event callback signature is not changed.</p></li>
+<li><p>Previous <code class="docutils literal notranslate"><span class="pre">relax_on_idle</span></code> flag in <code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_lcd_rgb_panel_config_t</span></code> has been renamed into <code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_rgb_panel_config_t::refresh_on_demand</span></code>, which expresses the same meaning but with a clear name.</p></li>
+<li><p>If the RGB LCD is created with the <code class="docutils literal notranslate"><span class="pre">refresh_on_demand</span></code> flag enabled, the driver will not start a refresh in the <a class="reference internal" href="../../../api-reference/peripherals/lcd/index.html#_CPPv425esp_lcd_panel_draw_bitmap22esp_lcd_panel_handle_tiiiiPKv" title="esp_lcd_panel_draw_bitmap"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_lcd_panel_draw_bitmap()</span></code></a>. Now users have to call <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_lcd_rgb_panel_refresh()</span></code> to refresh the screen by themselves.</p></li>
+<li><p><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">esp_lcd_color_space_t</span></code> is deprecated, please use <a class="reference internal" href="../../../api-reference/peripherals/lcd/index.html#_CPPv417lcd_color_space_t" title="lcd_color_space_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">lcd_color_space_t</span></code></a> to describe the color space, and use <a class="reference internal" href="../../../api-reference/peripherals/lcd/index.html#_CPPv423lcd_rgb_element_order_t" title="lcd_rgb_element_order_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">lcd_rgb_element_order_t</span></code></a> to describe the data order of RGB color.</p></li>
+</ul>
+</section>
+<section id="mcpwm">
+<h2>MCPWM<a class="headerlink" href="#mcpwm" title="Permalink to this heading"></a></h2>
+<p>MCPWM driver was redesigned (see <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html"><span class="doc">MCPWM</span></a>), meanwhile, the legacy driver is deprecated.</p>
+<p>The new driver's aim is to make each MCPWM submodule independent to each other, and give the freedom of resource connection back to users.</p>
+<p>Although it is recommended to use the new driver APIs, the legacy driver is still available in the previous include path <code class="docutils literal notranslate"><span class="pre">driver/mcpwm.h</span></code>. However, using legacy driver triggers the build warning below by default. This warning can be suppressed by the Kconfig option <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-mcpwm-suppress-deprecate-warn"><span class="std std-ref">CONFIG_MCPWM_SUPPRESS_DEPRECATE_WARN</span></a>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>legacy MCPWM driver is deprecated, please migrate to the new driver (include driver/mcpwm_prelude.h)
+</pre></div>
+</div>
+<p>The major breaking changes in concept and usage are listed as follows:</p>
+<section id="id7">
+<h3>Breaking Changes in Concepts<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>The new MCPWM driver is object-oriented, where most of the MCPWM submodule has a driver object associated with it. The driver object is created by factory function like <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv415mcpwm_new_timerPK20mcpwm_timer_config_tP20mcpwm_timer_handle_t" title="mcpwm_new_timer"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_new_timer()</span></code></a>. IO control function always needs an object handle, in the first place.</p>
+<p>The legacy driver has an inappropriate assumption, that is the MCPWM operator should be connected to different MCPWM timer. In fact, the hardware does not have such limitation. In the new driver, a MCPWM timer can be connected to multiple operators, so that the operators can achieve the best synchronization performance.</p>
+<p>The legacy driver presets the way to generate a PWM waveform into a so called <code class="docutils literal notranslate"><span class="pre">mcpwm_duty_type_t</span></code>. However, the duty cycle modes listed there are far from sufficient. Likewise, legacy driver has several preset <code class="docutils literal notranslate"><span class="pre">mcpwm_deadtime_type_t</span></code>, which also does not cover all the use cases. What is more, user usually gets confused by the name of the duty cycle mode and dead-time mode. In the new driver, there are no such limitation, but user has to construct the generator behavior from scratch.</p>
+<p>In the legacy driver, the ways to synchronize the MCPWM timer by GPIO, software and other timer module are not unified. It increased learning costs for users. In the new driver, the synchronization APIs are unified.</p>
+<p>The legacy driver has mixed the concepts of &quot;Fault detector&quot; and &quot;Fault handler&quot;. Which make the APIs very confusing to users. In the new driver, the fault object just represents a failure source, and we introduced a new concept -- <strong>brake</strong> to express the concept of &quot;Fault handler&quot;. What is more, the new driver supports software fault.</p>
+<p>The legacy drive only provides callback functions for the capture submodule. The new driver provides more useful callbacks for various MCPWM submodules, like timer stop, compare match, fault enter, brake, etc.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_io_signals_t</span></code> and <code class="docutils literal notranslate"><span class="pre">mcpwm_pin_config_t</span></code> are not used. GPIO configuration has been moved into submodule's configuration structure.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_timer_t</span></code>, <code class="docutils literal notranslate"><span class="pre">mcpwm_generator_t</span></code> are not used. Timer and generator are represented by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv420mcpwm_timer_handle_t" title="mcpwm_timer_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">mcpwm_timer_handle_t</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv418mcpwm_gen_handle_t" title="mcpwm_gen_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">mcpwm_gen_handle_t</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_fault_signal_t</span></code> and <code class="docutils literal notranslate"><span class="pre">mcpwm_sync_signal_t</span></code> are not used. Fault and sync source are represented by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv420mcpwm_fault_handle_t" title="mcpwm_fault_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">mcpwm_fault_handle_t</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv419mcpwm_sync_handle_t" title="mcpwm_sync_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">mcpwm_sync_handle_t</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_capture_signal_t</span></code> is not used. A capture channel is represented by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv426mcpwm_cap_channel_handle_t" title="mcpwm_cap_channel_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">mcpwm_cap_channel_handle_t</span></code></a>.</p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>Breaking Changes in Usage<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_gpio_init</span></code> and <code class="docutils literal notranslate"><span class="pre">mcpwm_set_pin</span></code>: GPIO configurations are moved to submodule's own configuration. e.g., set the PWM GPIO in <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv4N24mcpwm_generator_config_t12gen_gpio_numE" title="mcpwm_generator_config_t::gen_gpio_num"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">mcpwm_generator_config_t::gen_gpio_num</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_init</span></code>: To get an expected PWM waveform, users need to allocated at least one MCPWM timer and MCPWM operator, then connect them by calling <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv428mcpwm_operator_connect_timer19mcpwm_oper_handle_t20mcpwm_timer_handle_t" title="mcpwm_operator_connect_timer"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_operator_connect_timer()</span></code></a>. After that, users should set the generator's actions on various events by calling e.g., <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv442mcpwm_generator_set_actions_on_timer_event18mcpwm_gen_handle_t30mcpwm_gen_timer_event_action_tz" title="mcpwm_generator_set_actions_on_timer_event"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_generator_set_actions_on_timer_event()</span></code></a>, <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv444mcpwm_generator_set_actions_on_compare_event18mcpwm_gen_handle_t32mcpwm_gen_compare_event_action_tz" title="mcpwm_generator_set_actions_on_compare_event"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_generator_set_actions_on_compare_event()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_group_set_resolution</span></code>: in the new driver, the group resolution is fixed to the maximum, usually it is 80 MHz.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_timer_set_resolution</span></code>: MCPWM Timer resolution is set in <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv4N20mcpwm_timer_config_t13resolution_hzE" title="mcpwm_timer_config_t::resolution_hz"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">mcpwm_timer_config_t::resolution_hz</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_set_frequency</span></code>: PWM frequency is determined by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv4N20mcpwm_timer_config_t13resolution_hzE" title="mcpwm_timer_config_t::resolution_hz"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">mcpwm_timer_config_t::resolution_hz</span></code></a>, <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv4N20mcpwm_timer_config_t10count_modeE" title="mcpwm_timer_config_t::count_mode"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">mcpwm_timer_config_t::count_mode</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv4N20mcpwm_timer_config_t12period_ticksE" title="mcpwm_timer_config_t::period_ticks"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">mcpwm_timer_config_t::period_ticks</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_set_duty</span></code>: To set the PWM duty cycle, users should call <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv434mcpwm_comparator_set_compare_value19mcpwm_cmpr_handle_t8uint32_t" title="mcpwm_comparator_set_compare_value"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_comparator_set_compare_value()</span></code></a> to change comparator's threshold.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_set_duty_type</span></code>: There is no preset duty cycle types. The duty cycle type is configured by setting different generator actions. e.g., <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv442mcpwm_generator_set_actions_on_timer_event18mcpwm_gen_handle_t30mcpwm_gen_timer_event_action_tz" title="mcpwm_generator_set_actions_on_timer_event"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_generator_set_actions_on_timer_event()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_set_signal_high</span></code> and <code class="docutils literal notranslate"><span class="pre">mcpwm_set_signal_low</span></code> are replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv431mcpwm_generator_set_force_level18mcpwm_gen_handle_tib" title="mcpwm_generator_set_force_level"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_generator_set_force_level()</span></code></a>. In the new driver, it is implemented by setting force action for the generator, instead of changing the duty cycle to 0% or 100% at the background.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_start</span></code> and <code class="docutils literal notranslate"><span class="pre">mcpwm_stop</span></code> are replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv422mcpwm_timer_start_stop20mcpwm_timer_handle_t28mcpwm_timer_start_stop_cmd_t" title="mcpwm_timer_start_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_timer_start_stop()</span></code></a>. You have more modes to start and stop the MCPWM timer, see <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv428mcpwm_timer_start_stop_cmd_t" title="mcpwm_timer_start_stop_cmd_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">mcpwm_timer_start_stop_cmd_t</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_carrier_init</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv428mcpwm_operator_apply_carrier19mcpwm_oper_handle_tPK22mcpwm_carrier_config_t" title="mcpwm_operator_apply_carrier"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_operator_apply_carrier()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_carrier_enable</span></code> and <code class="docutils literal notranslate"><span class="pre">mcpwm_carrier_disable</span></code>: Enabling and disabling carrier submodule is done automatically by checking whether the carrier configuration structure <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv422mcpwm_carrier_config_t" title="mcpwm_carrier_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">mcpwm_carrier_config_t</span></code></a> is NULL.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_carrier_set_period</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv4N22mcpwm_carrier_config_t12frequency_hzE" title="mcpwm_carrier_config_t::frequency_hz"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">mcpwm_carrier_config_t::frequency_hz</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_carrier_set_duty_cycle</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv4N22mcpwm_carrier_config_t10duty_cycleE" title="mcpwm_carrier_config_t::duty_cycle"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">mcpwm_carrier_config_t::duty_cycle</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_carrier_oneshot_mode_enable</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv4N22mcpwm_carrier_config_t23first_pulse_duration_usE" title="mcpwm_carrier_config_t::first_pulse_duration_us"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">mcpwm_carrier_config_t::first_pulse_duration_us</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_carrier_oneshot_mode_disable</span></code> is removed. Disabling the first pulse (a.k.a the one-shot pulse) in the carrier is never supported by the hardware.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_carrier_output_invert</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv4N22mcpwm_carrier_config_t22invert_before_modulateE" title="mcpwm_carrier_config_t::invert_before_modulate"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">mcpwm_carrier_config_t::invert_before_modulate</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv4N22mcpwm_carrier_config_t21invert_after_modulateE" title="mcpwm_carrier_config_t::invert_after_modulate"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">mcpwm_carrier_config_t::invert_after_modulate</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_deadtime_enable</span></code> and <code class="docutils literal notranslate"><span class="pre">mcpwm_deadtime_disable</span></code> are replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv429mcpwm_generator_set_dead_time18mcpwm_gen_handle_t18mcpwm_gen_handle_tPK24mcpwm_dead_time_config_t" title="mcpwm_generator_set_dead_time"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_generator_set_dead_time()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_fault_init</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv420mcpwm_new_gpio_faultPK25mcpwm_gpio_fault_config_tP20mcpwm_fault_handle_t" title="mcpwm_new_gpio_fault"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_new_gpio_fault()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_fault_set_oneshot_mode</span></code>, <code class="docutils literal notranslate"><span class="pre">mcpwm_fault_set_cyc_mode</span></code> are replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv433mcpwm_operator_set_brake_on_fault19mcpwm_oper_handle_tPK20mcpwm_brake_config_t" title="mcpwm_operator_set_brake_on_fault"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_operator_set_brake_on_fault()</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv442mcpwm_generator_set_actions_on_brake_event18mcpwm_gen_handle_t30mcpwm_gen_brake_event_action_tz" title="mcpwm_generator_set_actions_on_brake_event"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_generator_set_actions_on_brake_event()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_capture_enable</span></code> is removed. It is duplicated to <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_capture_enable_channel()</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_capture_disable</span></code> is removed. It is duplicated to <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_capture_capture_disable_channel()</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_capture_enable_channel</span></code> and <code class="docutils literal notranslate"><span class="pre">mcpwm_capture_disable_channel</span></code> are replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv428mcpwm_capture_channel_enable26mcpwm_cap_channel_handle_t" title="mcpwm_capture_channel_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_capture_channel_enable()</span></code></a> and <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv429mcpwm_capture_channel_disable26mcpwm_cap_channel_handle_t" title="mcpwm_capture_channel_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_capture_channel_disable()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_capture_signal_get_value</span></code> and <code class="docutils literal notranslate"><span class="pre">mcpwm_capture_signal_get_edge</span></code>: Capture timer count value and capture edge are provided in the capture event callback, via <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv426mcpwm_capture_event_data_t" title="mcpwm_capture_event_data_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">mcpwm_capture_event_data_t</span></code></a>. Capture data are only valuable when capture event happens. Providing single API to fetch capture data is meaningless.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_sync_enable</span></code> is removed. It is duplicated to <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_sync_configure()</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_sync_configure</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv429mcpwm_timer_set_phase_on_sync20mcpwm_timer_handle_tPK31mcpwm_timer_sync_phase_config_t" title="mcpwm_timer_set_phase_on_sync"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_timer_set_phase_on_sync()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_sync_disable</span></code> is equivalent to setting <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv4N31mcpwm_timer_sync_phase_config_t8sync_srcE" title="mcpwm_timer_sync_phase_config_t::sync_src"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">mcpwm_timer_sync_phase_config_t::sync_src</span></code></a> to <code class="docutils literal notranslate"><span class="pre">NULL</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_set_timer_sync_output</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv424mcpwm_new_timer_sync_src20mcpwm_timer_handle_tPK29mcpwm_timer_sync_src_config_tP19mcpwm_sync_handle_t" title="mcpwm_new_timer_sync_src"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_new_timer_sync_src()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_timer_trigger_soft_sync</span></code> is replaced by <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv424mcpwm_soft_sync_activate19mcpwm_sync_handle_t" title="mcpwm_soft_sync_activate"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_soft_sync_activate()</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_sync_invert_gpio_synchro</span></code> is equivalent to setting <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv4N28mcpwm_gpio_sync_src_config_t10active_negE" title="mcpwm_gpio_sync_src_config_t::active_neg"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">mcpwm_gpio_sync_src_config_t::active_neg</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mcpwm_isr_register</span></code> is removed. You can register various event callbacks instead. For example, to register capture event callback, users can use <a class="reference internal" href="../../../api-reference/peripherals/mcpwm.html#_CPPv446mcpwm_capture_channel_register_event_callbacks26mcpwm_cap_channel_handle_tPK31mcpwm_capture_event_callbacks_tPv" title="mcpwm_capture_channel_register_event_callbacks"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mcpwm_capture_channel_register_event_callbacks()</span></code></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="i2s-driver">
+<h2>I2S Driver<a class="headerlink" href="#i2s-driver" title="Permalink to this heading"></a></h2>
+<p>The I2S driver has been redesigned (see <a class="reference internal" href="../../../api-reference/peripherals/i2s.html"><span class="doc">I2S Driver</span></a>), which aims to rectify the shortcomings of the driver that were exposed when supporting all the new features of ESP32-C3 &amp; ESP32-S3. The new driver's APIs are available by including corresponding I2S mode's header files <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_i2s/include/driver/i2s_std.h">esp_driver_i2s/include/driver/i2s_std.h</a>, <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_i2s/include/driver/i2s_pdm.h">esp_driver_i2s/include/driver/i2s_pdm.h</a>, or <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_i2s/include/driver/i2s_tdm.h">esp_driver_i2s/include/driver/i2s_tdm.h</a>.</p>
+<p>Meanwhile, the old driver's APIs in <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/driver/deprecated/driver/i2s.h">driver/deprecated/driver/i2s.h</a> are still supported for backward compatibility. But there will be warnings if users keep using the old APIs in their projects, these warnings can be suppressed by the Kconfig option <a class="reference internal" href="../../../api-reference/kconfig-reference.html#config-i2s-suppress-deprecate-warn"><span class="std std-ref">CONFIG_I2S_SUPPRESS_DEPRECATE_WARN</span></a>.</p>
+<p>Here is the general overview of the current I2S files:</p>
+<figure class="align-center">
+<img alt="I2S File Structure" src="../../../_images/i2s_file_structure.png" />
+</figure>
+<section id="id9">
+<h3>Breaking changes in Concepts<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<section id="independent-tx-rx-channels">
+<h4>Independent TX/RX channels<a class="headerlink" href="#independent-tx-rx-channels" title="Permalink to this heading"></a></h4>
+<p>The minimum control unit in new I2S driver are now individual TX/RX channels instead of an entire I2S controller (that consists of multiple channels).</p>
+<ul class="simple">
+<li><p>The TX and RX channels of the same I2S controller can be controlled separately, meaning that they are configured such that they can be started or stopped separately.</p></li>
+<li><p>The <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv417i2s_chan_handle_t" title="i2s_chan_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">i2s_chan_handle_t</span></code></a> handle type is used to uniquely identify I2S channels. All the APIs require the channel handle and users need to maintain the channel handles by themselves.</p></li>
+<li><p>On the ESP32-C3 and ESP32-S3, TX and RX channels in the same controller can be configured to different clocks or modes.</p></li>
+<li><p>However, on the ESP32 and ESP32-S2, the TX and RX channels of the same controller still share some hardware resources. Thus, configurations may cause one channel to affect another channel in the same controller.</p></li>
+<li><p>The channels can be registered to an available I2S controller automatically by setting <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv4N10i2s_port_t12I2S_NUM_AUTOE" title="i2s_port_t::I2S_NUM_AUTO"><code class="xref cpp cpp-enumerator docutils literal notranslate"><span class="pre">i2s_port_t::I2S_NUM_AUTO</span></code></a> as I2S port ID which causes the driver to search for the available TX/RX channels. However, the driver also supports registering channels to a specific port.</p></li>
+<li><p>In order to distinguish between TX/RX channels and sound channels, the term &quot;channel&quot; in the context of the I2S driver only refers to TX/RX channels. Meanwhile, sound channels are referred to as &quot;slots&quot;.</p></li>
+</ul>
+</section>
+<section id="i2s-mode-categorization">
+<h4>I2S Mode Categorization<a class="headerlink" href="#i2s-mode-categorization" title="Permalink to this heading"></a></h4>
+<p>I2S communication modes are categorized into the following three modes. Note that:</p>
+<ul class="simple">
+<li><p><strong>Standard mode</strong>: Standard mode always has two slots, it can support Philips, MSB, and PCM (short frame sync) formats. Please refer to <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_i2s/include/driver/i2s_std.h">esp_driver_i2s/include/driver/i2s_std.h</a> for more details.</p></li>
+<li><p><strong>PDM mode</strong>: PDM mode only supports two slots with 16-bit data width, but the configurations of PDM TX and PDM RX are slightly different. For PDM TX, the sample rate can be set by <code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">i2s_pdm_tx_clk_config_t::sample_rate</span></code>, and its clock frequency depends on the up-sampling configuration. For PDM RX, the sample rate can be set by <code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">i2s_pdm_rx_clk_config_t::sample_rate</span></code>, and its clock frequency depends on the down-sampling configuration. Please refer to <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_i2s/include/driver/i2s_pdm.h">esp_driver_i2s/include/driver/i2s_pdm.h</a> for details.</p></li>
+<li><p><strong>TDM mode</strong>: TDM mode can support up to 16 slots. It can work in Philips, MSB, PCM (short frame sync), and PCM (long frame sync) formats. Please refer to <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_i2s/include/driver/i2s_tdm.h">esp_driver_i2s/include/driver/i2s_tdm.h</a> for details.</p></li>
+</ul>
+<p>When allocating a new channel in a specific mode, users should initialize that channel by its corresponding function. It is strongly recommended to use the helper macros to generate the default configurations in case the default values are changed in the future.</p>
+</section>
+<section id="independent-slot-and-clock-configuration">
+<h4>Independent Slot and Clock Configuration<a class="headerlink" href="#independent-slot-and-clock-configuration" title="Permalink to this heading"></a></h4>
+<p>The slot configurations and clock configurations can be configured separately.</p>
+<ul class="simple">
+<li><p>Call <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv425i2s_channel_init_std_mode17i2s_chan_handle_tPK16i2s_std_config_t" title="i2s_channel_init_std_mode"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_init_std_mode()</span></code></a>, <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv428i2s_channel_init_pdm_rx_mode17i2s_chan_handle_tPK19i2s_pdm_rx_config_t" title="i2s_channel_init_pdm_rx_mode"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_init_pdm_rx_mode()</span></code></a>, <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv428i2s_channel_init_pdm_tx_mode17i2s_chan_handle_tPK19i2s_pdm_tx_config_t" title="i2s_channel_init_pdm_tx_mode"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_init_pdm_tx_mode()</span></code></a>, or <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_init_tdm_mode()</span></code> to initialize the slot/clock/gpio_pin configurations.</p></li>
+<li><p>Calling <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv429i2s_channel_reconfig_std_slot17i2s_chan_handle_tPK21i2s_std_slot_config_t" title="i2s_channel_reconfig_std_slot"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_reconfig_std_slot()</span></code></a>, <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv432i2s_channel_reconfig_pdm_rx_slot17i2s_chan_handle_tPK24i2s_pdm_rx_slot_config_t" title="i2s_channel_reconfig_pdm_rx_slot"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_reconfig_pdm_rx_slot()</span></code></a>, <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv432i2s_channel_reconfig_pdm_tx_slot17i2s_chan_handle_tPK24i2s_pdm_tx_slot_config_t" title="i2s_channel_reconfig_pdm_tx_slot"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_reconfig_pdm_tx_slot()</span></code></a>, or <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_reconfig_tdm_slot()</span></code> can change the slot configurations after initialization.</p></li>
+<li><p>Calling <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv430i2s_channel_reconfig_std_clock17i2s_chan_handle_tPK20i2s_std_clk_config_t" title="i2s_channel_reconfig_std_clock"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_reconfig_std_clock()</span></code></a>, <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv433i2s_channel_reconfig_pdm_rx_clock17i2s_chan_handle_tPK23i2s_pdm_rx_clk_config_t" title="i2s_channel_reconfig_pdm_rx_clock"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_reconfig_pdm_rx_clock()</span></code></a>, <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv433i2s_channel_reconfig_pdm_tx_clock17i2s_chan_handle_tPK23i2s_pdm_tx_clk_config_t" title="i2s_channel_reconfig_pdm_tx_clock"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_reconfig_pdm_tx_clock()</span></code></a>, or <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_reconfig_tdm_clock()</span></code> can change the clock configurations after initialization.</p></li>
+<li><p>Calling <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv429i2s_channel_reconfig_std_gpio17i2s_chan_handle_tPK21i2s_std_gpio_config_t" title="i2s_channel_reconfig_std_gpio"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_reconfig_std_gpio()</span></code></a>, <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv432i2s_channel_reconfig_pdm_rx_gpio17i2s_chan_handle_tPK24i2s_pdm_rx_gpio_config_t" title="i2s_channel_reconfig_pdm_rx_gpio"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_reconfig_pdm_rx_gpio()</span></code></a>, <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv432i2s_channel_reconfig_pdm_tx_gpio17i2s_chan_handle_tPK24i2s_pdm_tx_gpio_config_t" title="i2s_channel_reconfig_pdm_tx_gpio"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_reconfig_pdm_tx_gpio()</span></code></a>, or <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_reconfig_tdm_gpio()</span></code> can change the GPIO configurations after initialization.</p></li>
+</ul>
+</section>
+<section id="misc">
+<h4>Misc<a class="headerlink" href="#misc" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><p>States and state-machine are adopted in the new I2S driver to avoid APIs called in wrong state.</p></li>
+<li><p>ADC and DAC modes are removed. They are only supported in their own drivers and the legacy I2S driver.</p></li>
+</ul>
+</section>
+</section>
+<section id="id10">
+<h3>Breaking Changes in Usage<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<p>To use the new I2S driver, please follow these steps:</p>
+<ol class="arabic simple">
+<li><p>Call <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv415i2s_new_channelPK17i2s_chan_config_tP17i2s_chan_handle_tP17i2s_chan_handle_t" title="i2s_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_new_channel()</span></code></a> to acquire channel handles. We should specify the work role and I2S port in this step. Besides, the TX or RX channel handle will be generated by the driver. Inputting both two TX and RX channel handles is not necessary but at least one handle is needed. In the case of inputting both two handles, the driver will work at the duplex mode. Both TX and RX channels will be available on a same port, and they will share the MCLK, BCLK and WS signal. But if only one of the TX or RX channel handle is inputted, this channel will only work in the simplex mode.</p></li>
+<li><p>Call <code class="xref py py-func docutils literal notranslate"><span class="pre">i2s_channel_init_std_mode()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">i2s_channel_init_pdm_rx_mode()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">i2s_channel_init_pdm_tx_mode()</span></code> or <code class="xref py py-func docutils literal notranslate"><span class="pre">i2s_channel_init_tdm_mode()</span></code> to initialize the channel to the specified mode. Corresponding slot, clock and GPIO configurations are needed in this step.</p></li>
+<li><p>(Optional) Call <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv435i2s_channel_register_event_callback17i2s_chan_handle_tPK21i2s_event_callbacks_tPv" title="i2s_channel_register_event_callback"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_register_event_callback()</span></code></a> to register the ISR event callback functions. I2S events now can be received by the callback function synchronously, instead of from the event queue asynchronously.</p></li>
+<li><p>Call <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv418i2s_channel_enable17i2s_chan_handle_t" title="i2s_channel_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_enable()</span></code></a> to start the hardware of I2S channel. In the new driver, I2S does not start automatically after installed, and users are supposed to know clearly whether the channel has started or not.</p></li>
+<li><p>Read or write data by <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv416i2s_channel_read17i2s_chan_handle_tPv6size_tP6size_t8uint32_t" title="i2s_channel_read"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_read()</span></code></a> or <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv417i2s_channel_write17i2s_chan_handle_tPKv6size_tP6size_t8uint32_t" title="i2s_channel_write"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_write()</span></code></a>. Certainly, only the RX channel handle is supposed to be inputted in <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv416i2s_channel_read17i2s_chan_handle_tPv6size_tP6size_t8uint32_t" title="i2s_channel_read"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_read()</span></code></a> and the TX channel handle in <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv417i2s_channel_write17i2s_chan_handle_tPKv6size_tP6size_t8uint32_t" title="i2s_channel_write"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_write()</span></code></a>.</p></li>
+<li><p>(Optional) The slot, clock and GPIO configurations can be changed by corresponding 'reconfig' functions, but <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv419i2s_channel_disable17i2s_chan_handle_t" title="i2s_channel_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_disable()</span></code></a> must be called before updating the configurations.</p></li>
+<li><p>Call <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv419i2s_channel_disable17i2s_chan_handle_t" title="i2s_channel_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_channel_disable()</span></code></a> to stop the hardware of I2S channel.</p></li>
+<li><p>Call <a class="reference internal" href="../../../api-reference/peripherals/i2s.html#_CPPv415i2s_del_channel17i2s_chan_handle_t" title="i2s_del_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">i2s_del_channel()</span></code></a> to delete and release the resources of the channel if it is not needed any more, but the channel must be disabled before deleting it.</p></li>
+</ol>
+</section>
+</section>
+<section id="twai-driver">
+<h2>TWAI Driver<a class="headerlink" href="#twai-driver" title="Permalink to this heading"></a></h2>
+<p>The deprecated <code class="docutils literal notranslate"><span class="pre">CAN</span></code> peripheral driver is removed. Please use <code class="docutils literal notranslate"><span class="pre">TWAI</span></code> driver instead (i.e., include <code class="docutils literal notranslate"><span class="pre">driver/twai.h</span></code> in your application).</p>
+</section>
+<section id="register-access-macros">
+<h2>Register Access Macros<a class="headerlink" href="#register-access-macros" title="Permalink to this heading"></a></h2>
+<p>Previously, all register access macros could be used as expressions, so the following was allowed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uint32_t</span> <span class="n">val</span> <span class="o">=</span> <span class="n">REG_SET_BITS</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">bits</span><span class="p">,</span> <span class="n">mask</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In ESP-IDF v5.0, register access macros which write or read-modify-write the register can no longer be used as expressions, and can only be used as statements. This applies to the following macros: <code class="docutils literal notranslate"><span class="pre">REG_WRITE</span></code>, <code class="docutils literal notranslate"><span class="pre">REG_SET_BIT</span></code>, <code class="docutils literal notranslate"><span class="pre">REG_CLR_BIT</span></code>, <code class="docutils literal notranslate"><span class="pre">REG_SET_BITS</span></code>, <code class="docutils literal notranslate"><span class="pre">REG_SET_FIELD</span></code>, <code class="docutils literal notranslate"><span class="pre">WRITE_PERI_REG</span></code>, <code class="docutils literal notranslate"><span class="pre">CLEAR_PERI_REG_MASK</span></code>, <code class="docutils literal notranslate"><span class="pre">SET_PERI_REG_MASK</span></code>, <code class="docutils literal notranslate"><span class="pre">SET_PERI_REG_BITS</span></code>.</p>
+<p>To store the value which would have been written into the register, split the operation as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uint32_t</span> <span class="n">new_val</span> <span class="o">=</span> <span class="n">REG_READ</span><span class="p">(</span><span class="n">reg</span><span class="p">)</span> <span class="o">|</span> <span class="n">mask</span><span class="p">;</span>
+<span class="n">REG_WRITE</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">new_val</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>To get the value of the register after modification (which may be different from the value written), add an explicit read:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">REG_SET_BITS</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">bits</span><span class="p">,</span> <span class="n">mask</span><span class="p">);</span>
+<span class="n">uint32_t</span> <span class="n">new_val</span> <span class="o">=</span> <span class="n">REG_READ</span><span class="p">(</span><span class="n">reg</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Peripherals (migration-guides/release-5.x/5.0/peripherals)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Peripherals (migration-guides/release-5.x/5.0/peripherals)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="networking.html" class="btn btn-neutral float-left" title="Networking" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="protocols.html" class="btn btn-neutral float-right" title="Protocols" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

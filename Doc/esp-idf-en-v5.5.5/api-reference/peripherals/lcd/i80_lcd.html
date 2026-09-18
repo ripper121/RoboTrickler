@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I80 Interfaced LCD - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/lcd/i80_lcd.html" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/peripherals/lcd/i80_lcd';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="LED Control (LEDC)" href="../ledc.html" />
+    <link rel="prev" title="I2C Interfaced LCD" href="i2c_lcd.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Peripherals API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../adc_oneshot.html">Analog to Digital Converter (ADC) Oneshot Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../adc_continuous.html">Analog to Digital Converter (ADC) Continuous Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../adc_calibration.html">Analog to Digital Converter (ADC) Calibration Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../clk_tree.html">Clock Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dac.html">Digital To Analog Converter (DAC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../gpio.html">GPIO &amp; RTC GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../gptimer.html">General Purpose Timer (GPTimer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../i2c.html">Inter-Integrated Circuit (I2C)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../i2s.html">Inter-IC Sound (I2S)</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">LCD</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#introduction">Introduction</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#functional-overview">Functional Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#lcd-control-panel-operations">LCD Control Panel Operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#lcd-data-panel-operations">LCD Data Panel Operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#steps-to-add-manufacturer-specific-initialization">Steps to Add Manufacturer Specific Initialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#application-example">Application Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ledc.html">LED Control (LEDC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mcpwm.html">Motor Control Pulse Width Modulator (MCPWM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pcnt.html">Pulse Counter (PCNT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rmt.html">Remote Control Transceiver (RMT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sd_pullup_requirements.html">SD Pull-up Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sdmmc_host.html">SDMMC Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sdspi_host.html">SD SPI Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sdio_slave.html">SDIO Card Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sdm.html">Sigma-Delta Modulation (SDM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spi_flash/index.html">SPI Flash API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spi_master.html">SPI Master Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spi_slave.html">SPI Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cap_touch_sens.html">Capacitive Touch Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../twai.html">Two-Wire Automotive Interface (TWAI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../uart.html">Universal Asynchronous Receiver/Transmitter (UART)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Peripherals API</a></li>
+          <li class="breadcrumb-item"><a href="index.html">LCD</a></li>
+      <li class="breadcrumb-item active">I80 Interfaced LCD</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/peripherals/lcd/i80_lcd.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="i80-interfaced-lcd">
+<h1>I80 Interfaced LCD<a class="headerlink" href="#i80-interfaced-lcd" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../../zh_CN/v5.5.5/esp32/api-reference/peripherals/lcd/i80_lcd.html">[中文]</a></p>
+<ol class="arabic">
+<li><p>Create I80 bus by <a class="reference internal" href="#_CPPv419esp_lcd_new_i80_busPK24esp_lcd_i80_bus_config_tP24esp_lcd_i80_bus_handle_t" title="esp_lcd_new_i80_bus"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">esp_lcd_new_i80_bus()</span></code></a>. You need to set up the following parameters for an Intel 8080 parallel bus:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv4N24esp_lcd_i80_bus_config_t7clk_srcE" title="esp_lcd_i80_bus_config_t::clk_src"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_i80_bus_config_t::clk_src</span></code></a> sets the clock source of the I80 bus. Note, the default clock source may be different between ESP targets.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N24esp_lcd_i80_bus_config_t11wr_gpio_numE" title="esp_lcd_i80_bus_config_t::wr_gpio_num"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_i80_bus_config_t::wr_gpio_num</span></code></a> sets the GPIO number of the pixel clock (also referred as <code class="docutils literal notranslate"><span class="pre">WR</span></code> in some LCD spec)</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N24esp_lcd_i80_bus_config_t11dc_gpio_numE" title="esp_lcd_i80_bus_config_t::dc_gpio_num"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_i80_bus_config_t::dc_gpio_num</span></code></a> sets the GPIO number of the data or command select pin (also referred as <code class="docutils literal notranslate"><span class="pre">RS</span></code> in some LCD spec)</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N24esp_lcd_i80_bus_config_t9bus_widthE" title="esp_lcd_i80_bus_config_t::bus_width"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_i80_bus_config_t::bus_width</span></code></a> sets the bit width of the data bus (only support <code class="docutils literal notranslate"><span class="pre">8</span></code> or <code class="docutils literal notranslate"><span class="pre">16</span></code>)</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N24esp_lcd_i80_bus_config_t14data_gpio_numsE" title="esp_lcd_i80_bus_config_t::data_gpio_nums"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_i80_bus_config_t::data_gpio_nums</span></code></a> is the array of the GPIO number of the data bus. The number of GPIOs should be equal to the <a class="reference internal" href="#_CPPv4N24esp_lcd_i80_bus_config_t9bus_widthE" title="esp_lcd_i80_bus_config_t::bus_width"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_i80_bus_config_t::bus_width</span></code></a> value.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N24esp_lcd_i80_bus_config_t18max_transfer_bytesE" title="esp_lcd_i80_bus_config_t::max_transfer_bytes"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_i80_bus_config_t::max_transfer_bytes</span></code></a> sets the maximum number of bytes that can be transferred in one transaction.</p></li>
+</ul>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">esp_lcd_i80_bus_handle_t</span><span class="w"> </span><span class="n">i80_bus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="n">esp_lcd_i80_bus_config_t</span><span class="w"> </span><span class="n">bus_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">clk_src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LCD_CLK_SRC_DEFAULT</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">dc_gpio_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_PIN_NUM_DC</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">wr_gpio_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_PIN_NUM_PCLK</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">data_gpio_nums</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">EXAMPLE_PIN_NUM_DATA0</span><span class="p">,</span>
+<span class="w">        </span><span class="n">EXAMPLE_PIN_NUM_DATA1</span><span class="p">,</span>
+<span class="w">        </span><span class="n">EXAMPLE_PIN_NUM_DATA2</span><span class="p">,</span>
+<span class="w">        </span><span class="n">EXAMPLE_PIN_NUM_DATA3</span><span class="p">,</span>
+<span class="w">        </span><span class="n">EXAMPLE_PIN_NUM_DATA4</span><span class="p">,</span>
+<span class="w">        </span><span class="n">EXAMPLE_PIN_NUM_DATA5</span><span class="p">,</span>
+<span class="w">        </span><span class="n">EXAMPLE_PIN_NUM_DATA6</span><span class="p">,</span>
+<span class="w">        </span><span class="n">EXAMPLE_PIN_NUM_DATA7</span><span class="p">,</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">.</span><span class="n">bus_width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">max_transfer_bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_LCD_H_RES</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">uint16_t</span><span class="p">),</span><span class="w"> </span><span class="c1">// transfer 100 lines of pixels (assume pixel is RGB565) at most in one transaction</span>
+<span class="w">    </span><span class="p">.</span><span class="n">dma_burst_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_DMA_BURST_SIZE</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">esp_lcd_new_i80_bus</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bus_config</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">i80_bus</span><span class="p">));</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Allocate an LCD IO device handle from the I80 bus. In this step, you need to provide the following information:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t11cs_gpio_numE" title="esp_lcd_panel_io_i80_config_t::cs_gpio_num"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_panel_io_i80_config_t::cs_gpio_num</span></code></a> sets the GPIO number of the chip select pin.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t7pclk_hzE" title="esp_lcd_panel_io_i80_config_t::pclk_hz"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_panel_io_i80_config_t::pclk_hz</span></code></a> sets the pixel clock frequency in Hz. Higher pixel clock frequency results in higher refresh rate, but may cause flickering if the DMA bandwidth is not sufficient or the LCD controller chip does not support high pixel clock frequency.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t12lcd_cmd_bitsE" title="esp_lcd_panel_io_i80_config_t::lcd_cmd_bits"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_panel_io_i80_config_t::lcd_cmd_bits</span></code></a> and <a class="reference internal" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t14lcd_param_bitsE" title="esp_lcd_panel_io_i80_config_t::lcd_param_bits"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_panel_io_i80_config_t::lcd_param_bits</span></code></a> set the bit width of the command and parameter that recognized by the LCD controller chip. This is chip specific, you should refer to your LCD spec in advance.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t17trans_queue_depthE" title="esp_lcd_panel_io_i80_config_t::trans_queue_depth"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_panel_io_i80_config_t::trans_queue_depth</span></code></a> sets the maximum number of transactions that can be queued in the LCD IO device. A bigger value means more transactions can be queued up, but it also consumes more memory.</p></li>
+</ul>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">esp_lcd_panel_io_handle_t</span><span class="w"> </span><span class="n">io_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="n">esp_lcd_panel_io_i80_config_t</span><span class="w"> </span><span class="n">io_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">cs_gpio_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_PIN_NUM_CS</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">pclk_hz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_LCD_PIXEL_CLOCK_HZ</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">trans_queue_depth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">dc_levels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="p">.</span><span class="n">dc_idle_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">dc_cmd_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">dc_dummy_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">dc_data_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">.</span><span class="n">lcd_cmd_bits</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_LCD_CMD_BITS</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">lcd_param_bits</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_LCD_PARAM_BITS</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">esp_lcd_new_panel_io_i80</span><span class="p">(</span><span class="n">i80_bus</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">io_config</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">io_handle</span><span class="p">));</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Install the LCD controller driver. The LCD controller driver is responsible for sending the commands and parameters to the LCD controller chip. In this step, you need to specify the I80 IO device handle that allocated in the last step, and some panel specific configurations:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_panel_dev_config_t::bits_per_pixel</span></code> sets the bit width of the pixel color data. The LCD driver uses this value to calculate the number of bytes to send to the LCD controller chip.</p></li>
+<li><p><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_panel_dev_config_t::reset_gpio_num</span></code> sets the GPIO number of the reset pin. If the LCD controller chip does not have a reset pin, you can set this value to <code class="docutils literal notranslate"><span class="pre">-1</span></code>.</p></li>
+<li><p><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">esp_lcd_panel_dev_config_t::rgb_ele_order</span></code> sets the color order the pixel color data.</p></li>
+</ul>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">esp_lcd_panel_dev_config_t</span><span class="w"> </span><span class="n">panel_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">reset_gpio_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_PIN_NUM_RST</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">rgb_ele_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LCD_RGB_ELEMENT_ORDER_RGB</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">bits_per_pixel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">esp_lcd_new_panel_st7789</span><span class="p">(</span><span class="n">io_handle</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">panel_config</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">panel_handle</span><span class="p">));</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h1>
+<section id="header-file">
+<h2>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h2>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_lcd/include/esp_lcd_io_i80.h">components/esp_lcd/include/esp_lcd_io_i80.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_lcd_io_i80.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_lcd</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_lcd</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_lcd
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_lcd
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419esp_lcd_new_i80_busPK24esp_lcd_i80_bus_config_tP24esp_lcd_i80_bus_handle_t">
+<span id="_CPPv319esp_lcd_new_i80_busPK24esp_lcd_i80_bus_config_tP24esp_lcd_i80_bus_handle_t"></span><span id="_CPPv219esp_lcd_new_i80_busPK24esp_lcd_i80_bus_config_tP24esp_lcd_i80_bus_handle_t"></span><span id="esp_lcd_new_i80_bus__esp_lcd_i80_bus_config_tCP.esp_lcd_i80_bus_handle_tP"></span><span class="target" id="esp__lcd__io__i80_8h_1a4d6933b32dbd539fb685647435716f92"></span><a class="reference internal" href="../../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_lcd_new_i80_bus</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv424esp_lcd_i80_bus_config_t" title="esp_lcd_i80_bus_config_t"><span class="n"><span class="pre">esp_lcd_i80_bus_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">bus_config</span></span>, <a class="reference internal" href="#_CPPv424esp_lcd_i80_bus_handle_t" title="esp_lcd_i80_bus_handle_t"><span class="n"><span class="pre">esp_lcd_i80_bus_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ret_bus</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419esp_lcd_new_i80_busPK24esp_lcd_i80_bus_config_tP24esp_lcd_i80_bus_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Create Intel 8080 bus handle. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bus_config</strong> -- <strong>[in]</strong> Bus configuration </p></li>
+<li><p><strong>ret_bus</strong> -- <strong>[out]</strong> Returned bus handle </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG if parameter is invalid</p></li>
+<li><p>ESP_ERR_NO_MEM if out of memory</p></li>
+<li><p>ESP_ERR_NOT_FOUND if no free bus is available</p></li>
+<li><p>ESP_OK on success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419esp_lcd_del_i80_bus24esp_lcd_i80_bus_handle_t">
+<span id="_CPPv319esp_lcd_del_i80_bus24esp_lcd_i80_bus_handle_t"></span><span id="_CPPv219esp_lcd_del_i80_bus24esp_lcd_i80_bus_handle_t"></span><span id="esp_lcd_del_i80_bus__esp_lcd_i80_bus_handle_t"></span><span class="target" id="esp__lcd__io__i80_8h_1ace046c57eaba7d7408fdfcf3c2f3a629"></span><a class="reference internal" href="../../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_lcd_del_i80_bus</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv424esp_lcd_i80_bus_handle_t" title="esp_lcd_i80_bus_handle_t"><span class="n"><span class="pre">esp_lcd_i80_bus_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">bus</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419esp_lcd_del_i80_bus24esp_lcd_i80_bus_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Destroy Intel 8080 bus handle. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bus</strong> -- <strong>[in]</strong> Intel 8080 bus handle, created by <code class="docutils literal notranslate"><span class="pre">esp_lcd_new_i80_bus()</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG if parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE if there still be some device attached to the bus</p></li>
+<li><p>ESP_OK on success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424esp_lcd_new_panel_io_i8024esp_lcd_i80_bus_handle_tPK29esp_lcd_panel_io_i80_config_tP25esp_lcd_panel_io_handle_t">
+<span id="_CPPv324esp_lcd_new_panel_io_i8024esp_lcd_i80_bus_handle_tPK29esp_lcd_panel_io_i80_config_tP25esp_lcd_panel_io_handle_t"></span><span id="_CPPv224esp_lcd_new_panel_io_i8024esp_lcd_i80_bus_handle_tPK29esp_lcd_panel_io_i80_config_tP25esp_lcd_panel_io_handle_t"></span><span id="esp_lcd_new_panel_io_i80__esp_lcd_i80_bus_handle_t.esp_lcd_panel_io_i80_config_tCP.esp_lcd_panel_io_handle_tP"></span><span class="target" id="esp__lcd__io__i80_8h_1ad25b8da84fc370139ed70adbf44b50a2"></span><a class="reference internal" href="../../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_lcd_new_panel_io_i80</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv424esp_lcd_i80_bus_handle_t" title="esp_lcd_i80_bus_handle_t"><span class="n"><span class="pre">esp_lcd_i80_bus_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">bus</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv429esp_lcd_panel_io_i80_config_t" title="esp_lcd_panel_io_i80_config_t"><span class="n"><span class="pre">esp_lcd_panel_io_i80_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">io_config</span></span>, <a class="reference internal" href="index.html#_CPPv425esp_lcd_panel_io_handle_t" title="esp_lcd_panel_io_handle_t"><span class="n"><span class="pre">esp_lcd_panel_io_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ret_io</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424esp_lcd_new_panel_io_i8024esp_lcd_i80_bus_handle_tPK29esp_lcd_panel_io_i80_config_tP25esp_lcd_panel_io_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Create LCD panel IO, for Intel 8080 interface. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bus</strong> -- <strong>[in]</strong> Intel 8080 bus handle, created by <code class="docutils literal notranslate"><span class="pre">esp_lcd_new_i80_bus()</span></code></p></li>
+<li><p><strong>io_config</strong> -- <strong>[in]</strong> IO configuration, for i80 interface </p></li>
+<li><p><strong>ret_io</strong> -- <strong>[out]</strong> Returned panel IO handle </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG if parameter is invalid</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED if some configuration can't be satisfied, e.g. pixel clock out of the range</p></li>
+<li><p>ESP_ERR_NO_MEM if out of memory</p></li>
+<li><p>ESP_OK on success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_lcd_i80_alloc_draw_buffer25esp_lcd_panel_io_handle_t6size_t8uint32_t">
+<span id="_CPPv329esp_lcd_i80_alloc_draw_buffer25esp_lcd_panel_io_handle_t6size_t8uint32_t"></span><span id="_CPPv229esp_lcd_i80_alloc_draw_buffer25esp_lcd_panel_io_handle_t6size_t8uint32_t"></span><span id="esp_lcd_i80_alloc_draw_buffer__esp_lcd_panel_io_handle_t.s.uint32_t"></span><span class="target" id="esp__lcd__io__i80_8h_1a46b756c7cfe9bf6638e209ff01086171"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_lcd_i80_alloc_draw_buffer</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="index.html#_CPPv425esp_lcd_panel_io_handle_t" title="esp_lcd_panel_io_handle_t"><span class="n"><span class="pre">esp_lcd_panel_io_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">io</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">caps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_lcd_i80_alloc_draw_buffer25esp_lcd_panel_io_handle_t6size_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Allocate a draw buffer that can be used by I80 interfaced LCD panel. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function differs from the normal 'heap_caps_*' functions in that it can also automatically handle the alignment required by DMA burst, cache line size, etc.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>io</strong> -- <strong>[in]</strong> Panel IO handle, created by <code class="docutils literal notranslate"><span class="pre">esp_lcd_new_panel_io_i80()</span></code></p></li>
+<li><p><strong>size</strong> -- <strong>[in]</strong> Size of memory to be allocated </p></li>
+<li><p><strong>caps</strong> -- <strong>[in]</strong> Bitwise OR of MALLOC_CAP_* flags indicating the type of memory desired for the allocation </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pointer to a new buffer of size 'size' with capabilities 'caps', or NULL if allocation failed </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h2>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h2>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv424esp_lcd_i80_bus_config_t">
+<span id="_CPPv324esp_lcd_i80_bus_config_t"></span><span id="_CPPv224esp_lcd_i80_bus_config_t"></span><span id="esp_lcd_i80_bus_config_t"></span><span class="target" id="structesp__lcd__i80__bus__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_lcd_i80_bus_config_t</span></span></span><a class="headerlink" href="#_CPPv424esp_lcd_i80_bus_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>LCD Intel 8080 bus configuration structure. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24esp_lcd_i80_bus_config_t11dc_gpio_numE">
+<span id="_CPPv3N24esp_lcd_i80_bus_config_t11dc_gpio_numE"></span><span id="_CPPv2N24esp_lcd_i80_bus_config_t11dc_gpio_numE"></span><span id="esp_lcd_i80_bus_config_t::dc_gpio_num__i"></span><span class="target" id="structesp__lcd__i80__bus__config__t_1aadf66398ca9037cdb7c7f2ec3fe27080"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dc_gpio_num</span></span></span><a class="headerlink" href="#_CPPv4N24esp_lcd_i80_bus_config_t11dc_gpio_numE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO used for D/C line </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24esp_lcd_i80_bus_config_t11wr_gpio_numE">
+<span id="_CPPv3N24esp_lcd_i80_bus_config_t11wr_gpio_numE"></span><span id="_CPPv2N24esp_lcd_i80_bus_config_t11wr_gpio_numE"></span><span id="esp_lcd_i80_bus_config_t::wr_gpio_num__i"></span><span class="target" id="structesp__lcd__i80__bus__config__t_1a1f5eb7d2800021ea8bf5b31796f204c7"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wr_gpio_num</span></span></span><a class="headerlink" href="#_CPPv4N24esp_lcd_i80_bus_config_t11wr_gpio_numE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO used for WR line </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24esp_lcd_i80_bus_config_t7clk_srcE">
+<span id="_CPPv3N24esp_lcd_i80_bus_config_t7clk_srcE"></span><span id="_CPPv2N24esp_lcd_i80_bus_config_t7clk_srcE"></span><span id="esp_lcd_i80_bus_config_t::clk_src__lcd_clock_source_t"></span><span class="target" id="structesp__lcd__i80__bus__config__t_1a3c5f55f5d091a4226679a7a1bfe3c91f"></span><a class="reference internal" href="index.html#_CPPv418lcd_clock_source_t" title="lcd_clock_source_t"><span class="n"><span class="pre">lcd_clock_source_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clk_src</span></span></span><a class="headerlink" href="#_CPPv4N24esp_lcd_i80_bus_config_t7clk_srcE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Clock source for the I80 LCD peripheral </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24esp_lcd_i80_bus_config_t14data_gpio_numsE">
+<span id="_CPPv3N24esp_lcd_i80_bus_config_t14data_gpio_numsE"></span><span id="_CPPv2N24esp_lcd_i80_bus_config_t14data_gpio_numsE"></span><span id="esp_lcd_i80_bus_config_t::data_gpio_nums__iA"></span><span class="target" id="structesp__lcd__i80__bus__config__t_1a6af20a1bb02dcde757e72a213bd42769"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">data_gpio_nums</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ESP_LCD_I80_BUS_WIDTH_MAX</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N24esp_lcd_i80_bus_config_t14data_gpio_numsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIOs used for data lines </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24esp_lcd_i80_bus_config_t9bus_widthE">
+<span id="_CPPv3N24esp_lcd_i80_bus_config_t9bus_widthE"></span><span id="_CPPv2N24esp_lcd_i80_bus_config_t9bus_widthE"></span><span id="esp_lcd_i80_bus_config_t::bus_width__s"></span><span class="target" id="structesp__lcd__i80__bus__config__t_1a6c763888253deb3ffe37a0062b8ac950"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bus_width</span></span></span><a class="headerlink" href="#_CPPv4N24esp_lcd_i80_bus_config_t9bus_widthE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Number of data lines, 8 or 16 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24esp_lcd_i80_bus_config_t18max_transfer_bytesE">
+<span id="_CPPv3N24esp_lcd_i80_bus_config_t18max_transfer_bytesE"></span><span id="_CPPv2N24esp_lcd_i80_bus_config_t18max_transfer_bytesE"></span><span id="esp_lcd_i80_bus_config_t::max_transfer_bytes__s"></span><span class="target" id="structesp__lcd__i80__bus__config__t_1a5b445d332e212fea7ab7211ad82169dc"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">max_transfer_bytes</span></span></span><a class="headerlink" href="#_CPPv4N24esp_lcd_i80_bus_config_t18max_transfer_bytesE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Maximum transfer size, this determines the length of internal DMA link </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24esp_lcd_i80_bus_config_t17psram_trans_alignE">
+<span id="_CPPv3N24esp_lcd_i80_bus_config_t17psram_trans_alignE"></span><span id="_CPPv2N24esp_lcd_i80_bus_config_t17psram_trans_alignE"></span><span id="esp_lcd_i80_bus_config_t::psram_trans_align__s"></span><span class="target" id="structesp__lcd__i80__bus__config__t_1af7f15d099d764191f5e1ca197340a045"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">psram_trans_align</span></span></span><a class="headerlink" href="#_CPPv4N24esp_lcd_i80_bus_config_t17psram_trans_alignE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DMA transfer alignment for data allocated from PSRAM </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24esp_lcd_i80_bus_config_t14dma_burst_sizeE">
+<span id="_CPPv3N24esp_lcd_i80_bus_config_t14dma_burst_sizeE"></span><span id="_CPPv2N24esp_lcd_i80_bus_config_t14dma_burst_sizeE"></span><span id="esp_lcd_i80_bus_config_t::dma_burst_size__s"></span><span class="target" id="structesp__lcd__i80__bus__config__t_1af891d9013dd1730281c2372ddaeede4d"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dma_burst_size</span></span></span><a class="headerlink" href="#_CPPv4N24esp_lcd_i80_bus_config_t14dma_burst_sizeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DMA burst size, in bytes </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24esp_lcd_i80_bus_config_t16sram_trans_alignE">
+<span id="_CPPv3N24esp_lcd_i80_bus_config_t16sram_trans_alignE"></span><span id="_CPPv2N24esp_lcd_i80_bus_config_t16sram_trans_alignE"></span><span id="esp_lcd_i80_bus_config_t::sram_trans_align__s"></span><span class="target" id="structesp__lcd__i80__bus__config__t_1ace63ab8581db607cf01964f901c1faa7"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sram_trans_align</span></span></span><a class="headerlink" href="#_CPPv4N24esp_lcd_i80_bus_config_t16sram_trans_alignE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DMA transfer alignment for data allocated from SRAM </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24esp_lcd_i80_bus_config_t5flagsE">
+<span id="_CPPv3N24esp_lcd_i80_bus_config_t5flagsE"></span><span id="_CPPv2N24esp_lcd_i80_bus_config_t5flagsE"></span><span id="esp_lcd_i80_bus_config_t::flags__esp_lcd_i80_bus_config_t::extra_i80_bus_flags"></span><span class="target" id="structesp__lcd__i80__bus__config__t_1afc6c4099b8b9f5c8f45059d380e2d132"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv424esp_lcd_i80_bus_config_t" title="esp_lcd_i80_bus_config_t"><span class="n"><span class="pre">esp_lcd_i80_bus_config_t</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N24esp_lcd_i80_bus_config_t19extra_i80_bus_flagsE" title="esp_lcd_i80_bus_config_t::extra_i80_bus_flags"><span class="n"><span class="pre">extra_i80_bus_flags</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">flags</span></span></span><a class="headerlink" href="#_CPPv4N24esp_lcd_i80_bus_config_t5flagsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Extra bus config flags </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N24esp_lcd_i80_bus_config_t19extra_i80_bus_flagsE">
+<span id="_CPPv3N24esp_lcd_i80_bus_config_t19extra_i80_bus_flagsE"></span><span id="_CPPv2N24esp_lcd_i80_bus_config_t19extra_i80_bus_flagsE"></span><span id="esp_lcd_i80_bus_config_t::extra_i80_bus_flags"></span><span class="target" id="structesp__lcd__i80__bus__config__t_1_1extra__i80__bus__flags"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">extra_i80_bus_flags</span></span></span><a class="headerlink" href="#_CPPv4N24esp_lcd_i80_bus_config_t19extra_i80_bus_flagsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Extra configuration flags for I80 bus. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24esp_lcd_i80_bus_config_t19extra_i80_bus_flags8allow_pdE">
+<span id="_CPPv3N24esp_lcd_i80_bus_config_t19extra_i80_bus_flags8allow_pdE"></span><span id="_CPPv2N24esp_lcd_i80_bus_config_t19extra_i80_bus_flags8allow_pdE"></span><span id="esp_lcd_i80_bus_config_t::extra_i80_bus_flags::allow_pd__uint32_t"></span><span class="target" id="structesp__lcd__i80__bus__config__t_1_1extra__i80__bus__flags_1a68931075cae88c8000475f5cf0591b25"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">allow_pd</span></span></span><a class="headerlink" href="#_CPPv4N24esp_lcd_i80_bus_config_t19extra_i80_bus_flags8allow_pdE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>If set, driver allows the power domain to be powered off when system enters sleep mode. This can save power, but at the expense of more RAM being consumed to save register context. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv429esp_lcd_panel_io_i80_config_t">
+<span id="_CPPv329esp_lcd_panel_io_i80_config_t"></span><span id="_CPPv229esp_lcd_panel_io_i80_config_t"></span><span id="esp_lcd_panel_io_i80_config_t"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_lcd_panel_io_i80_config_t</span></span></span><a class="headerlink" href="#_CPPv429esp_lcd_panel_io_i80_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Panel IO configuration structure, for intel 8080 interface. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t11cs_gpio_numE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t11cs_gpio_numE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t11cs_gpio_numE"></span><span id="esp_lcd_panel_io_i80_config_t::cs_gpio_num__i"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1a8e7201107d49cc4aaa3cf3497b242135"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cs_gpio_num</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t11cs_gpio_numE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO used for CS line, set to -1 will declaim exclusively use of I80 bus </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t7pclk_hzE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t7pclk_hzE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t7pclk_hzE"></span><span id="esp_lcd_panel_io_i80_config_t::pclk_hz__uint32_t"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1a2681ac600fb8aba8748d68081e86f7fc"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pclk_hz</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t7pclk_hzE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Frequency of pixel clock </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t17trans_queue_depthE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t17trans_queue_depthE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t17trans_queue_depthE"></span><span id="esp_lcd_panel_io_i80_config_t::trans_queue_depth__s"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1a987d005721901eda8da8a650e76b23d3"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">trans_queue_depth</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t17trans_queue_depthE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Transaction queue size, larger queue, higher throughput </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t19on_color_trans_doneE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t19on_color_trans_doneE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t19on_color_trans_doneE"></span><span id="esp_lcd_panel_io_i80_config_t::on_color_trans_done__esp_lcd_panel_io_color_trans_done_cb_t"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1af8d20e287ea7c748bdd5309eda01b65e"></span><a class="reference internal" href="index.html#_CPPv438esp_lcd_panel_io_color_trans_done_cb_t" title="esp_lcd_panel_io_color_trans_done_cb_t"><span class="n"><span class="pre">esp_lcd_panel_io_color_trans_done_cb_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">on_color_trans_done</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t19on_color_trans_doneE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Callback invoked when color data was transferred done </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t8user_ctxE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t8user_ctxE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t8user_ctxE"></span><span id="esp_lcd_panel_io_i80_config_t::user_ctx__voidP"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1aeab1dfc6c841c547a6b818a87e388ff9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">user_ctx</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t8user_ctxE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User private data, passed directly to on_color_trans_done's user_ctx </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t12lcd_cmd_bitsE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t12lcd_cmd_bitsE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t12lcd_cmd_bitsE"></span><span id="esp_lcd_panel_io_i80_config_t::lcd_cmd_bits__i"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1a1033f525ee8ec2d46e007f085190af67"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lcd_cmd_bits</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t12lcd_cmd_bitsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Bit-width of LCD command </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t14lcd_param_bitsE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t14lcd_param_bitsE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t14lcd_param_bitsE"></span><span id="esp_lcd_panel_io_i80_config_t::lcd_param_bits__i"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1a3d73f02bf29f3fd5c51ffcdda4e93af6"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lcd_param_bits</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t14lcd_param_bitsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Bit-width of LCD parameter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t9dc_levelsE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t9dc_levelsE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t9dc_levelsE"></span><span id="esp_lcd_panel_io_i80_config_t::dc_levels__esp_lcd_panel_io_i80_config_t::i80_panel_io_dc_levels"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1a0422a6e56c8d63410b3fef0b959b18c8"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv429esp_lcd_panel_io_i80_config_t" title="esp_lcd_panel_io_i80_config_t"><span class="n"><span class="pre">esp_lcd_panel_io_i80_config_t</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levelsE" title="esp_lcd_panel_io_i80_config_t::i80_panel_io_dc_levels"><span class="n"><span class="pre">i80_panel_io_dc_levels</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dc_levels</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t9dc_levelsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Each i80 device might have its own D/C control logic </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t5flagsE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t5flagsE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t5flagsE"></span><span id="esp_lcd_panel_io_i80_config_t::flags__esp_lcd_panel_io_i80_config_t::extra_i80_panel_io_flags"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1a1faaf766784976f5c2a0265cc6acba3c"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv429esp_lcd_panel_io_i80_config_t" title="esp_lcd_panel_io_i80_config_t"><span class="n"><span class="pre">esp_lcd_panel_io_i80_config_t</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flagsE" title="esp_lcd_panel_io_i80_config_t::extra_i80_panel_io_flags"><span class="n"><span class="pre">extra_i80_panel_io_flags</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">flags</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t5flagsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Extra panel IO config flags </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flagsE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flagsE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flagsE"></span><span id="esp_lcd_panel_io_i80_config_t::extra_i80_panel_io_flags"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1_1extra__i80__panel__io__flags"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">extra_i80_panel_io_flags</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flagsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Extra configuration flags for I80 panel IO. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags14cs_active_highE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags14cs_active_highE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags14cs_active_highE"></span><span id="esp_lcd_panel_io_i80_config_t::extra_i80_panel_io_flags::cs_active_high__unsigned-i"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1_1extra__i80__panel__io__flags_1acf92e529d498de6a37b52b2dcccf2431"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cs_active_high</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags14cs_active_highE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>If set, a high level of CS line will select the device, otherwise, CS line is low level active </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags18reverse_color_bitsE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags18reverse_color_bitsE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags18reverse_color_bitsE"></span><span id="esp_lcd_panel_io_i80_config_t::extra_i80_panel_io_flags::reverse_color_bits__unsigned-i"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1_1extra__i80__panel__io__flags_1a8ae242d37843d77aca0db4ed66c92f66"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reverse_color_bits</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags18reverse_color_bitsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Reverse the data bits, D[N:0] -&gt; D[0:N] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags16swap_color_bytesE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags16swap_color_bytesE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags16swap_color_bytesE"></span><span id="esp_lcd_panel_io_i80_config_t::extra_i80_panel_io_flags::swap_color_bytes__unsigned-i"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1_1extra__i80__panel__io__flags_1af56f871014dd9a0c8d334282621df58f"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">swap_color_bytes</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags16swap_color_bytesE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Swap adjacent two color bytes </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags15pclk_active_negE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags15pclk_active_negE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags15pclk_active_negE"></span><span id="esp_lcd_panel_io_i80_config_t::extra_i80_panel_io_flags::pclk_active_neg__unsigned-i"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1_1extra__i80__panel__io__flags_1aa9e026d59406d2e18b8b555223cd3186"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pclk_active_neg</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags15pclk_active_negE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The display will write data lines when there's a falling edge on WR signal (a.k.a the PCLK) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags13pclk_idle_lowE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags13pclk_idle_lowE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags13pclk_idle_lowE"></span><span id="esp_lcd_panel_io_i80_config_t::extra_i80_panel_io_flags::pclk_idle_low__unsigned-i"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1_1extra__i80__panel__io__flags_1a0c1282dfeea96212ad09b707c5c382a1"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pclk_idle_low</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t24extra_i80_panel_io_flags13pclk_idle_lowE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The WR signal (a.k.a the PCLK) stays at low level in IDLE phase </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levelsE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levelsE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levelsE"></span><span id="esp_lcd_panel_io_i80_config_t::i80_panel_io_dc_levels"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1_1i80__panel__io__dc__levels"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i80_panel_io_dc_levels</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levelsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>D/C line levels configuration. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels13dc_idle_levelE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels13dc_idle_levelE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels13dc_idle_levelE"></span><span id="esp_lcd_panel_io_i80_config_t::i80_panel_io_dc_levels::dc_idle_level__unsigned-i"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1_1i80__panel__io__dc__levels_1ade37524854714f69cc29681cbeb35cae"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dc_idle_level</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels13dc_idle_levelE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Level of DC line in IDLE phase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels12dc_cmd_levelE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels12dc_cmd_levelE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels12dc_cmd_levelE"></span><span id="esp_lcd_panel_io_i80_config_t::i80_panel_io_dc_levels::dc_cmd_level__unsigned-i"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1_1i80__panel__io__dc__levels_1a05b0d6c035878d2ea80036fd4170d938"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dc_cmd_level</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels12dc_cmd_levelE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Level of DC line in CMD phase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels14dc_dummy_levelE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels14dc_dummy_levelE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels14dc_dummy_levelE"></span><span id="esp_lcd_panel_io_i80_config_t::i80_panel_io_dc_levels::dc_dummy_level__unsigned-i"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1_1i80__panel__io__dc__levels_1a1735f23b82b720381e8c904222c2f9f7"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dc_dummy_level</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels14dc_dummy_levelE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Level of DC line in DUMMY phase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels13dc_data_levelE">
+<span id="_CPPv3N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels13dc_data_levelE"></span><span id="_CPPv2N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels13dc_data_levelE"></span><span id="esp_lcd_panel_io_i80_config_t::i80_panel_io_dc_levels::dc_data_level__unsigned-i"></span><span class="target" id="structesp__lcd__panel__io__i80__config__t_1_1i80__panel__io__dc__levels_1a2175f58a89b7ade670f4c34b822041ed"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dc_data_level</span></span></span><a class="headerlink" href="#_CPPv4N29esp_lcd_panel_io_i80_config_t22i80_panel_io_dc_levels13dc_data_levelE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Level of DC line in DATA phase </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="macros">
+<h2>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h2>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_LCD_I80_BUS_WIDTH_MAX">
+<span class="target" id="esp__lcd__io__i80_8h_1a3421446ade45075b90d09030e911a1a9"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_LCD_I80_BUS_WIDTH_MAX</span></span></span><a class="headerlink" href="#c.ESP_LCD_I80_BUS_WIDTH_MAX" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Maximum width of I80 bus </p>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h2>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h2>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv424esp_lcd_i80_bus_handle_t">
+<span id="_CPPv324esp_lcd_i80_bus_handle_t"></span><span id="_CPPv224esp_lcd_i80_bus_handle_t"></span><span id="esp_lcd_i80_bus_handle_t"></span><span class="target" id="esp__lcd__io__i80_8h_1a8d41efab99433b5a86a18b0ea922b669"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">esp_lcd_i80_bus_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">esp_lcd_i80_bus_handle_t</span></span></span><a class="headerlink" href="#_CPPv424esp_lcd_i80_bus_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of LCD intel 8080 bus handle </p>
+</dd></dl>
+
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=I80 Interfaced LCD (api-reference/peripherals/lcd/i80_lcd)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=I80 Interfaced LCD (api-reference/peripherals/lcd/i80_lcd)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="i2c_lcd.html" class="btn btn-neutral float-left" title="I2C Interfaced LCD" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../ledc.html" class="btn btn-neutral float-right" title="LED Control (LEDC)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

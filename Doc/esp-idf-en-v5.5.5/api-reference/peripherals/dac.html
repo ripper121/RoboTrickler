@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital To Analog Converter (DAC) - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/dac.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/peripherals/dac';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="GPIO &amp; RTC GPIO" href="gpio.html" />
+    <link rel="prev" title="Clock Tree" href="clk_tree.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Peripherals API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adc_oneshot.html">Analog to Digital Converter (ADC) Oneshot Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_continuous.html">Analog to Digital Converter (ADC) Continuous Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_calibration.html">Analog to Digital Converter (ADC) Calibration Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clk_tree.html">Clock Tree</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Digital To Analog Converter (DAC)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dac-file-structure">DAC File Structure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functional-overview">Functional Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-example">Application Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gpio.html">GPIO &amp; RTC GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gptimer.html">General Purpose Timer (GPTimer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2c.html">Inter-Integrated Circuit (I2C)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2s.html">Inter-IC Sound (I2S)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lcd/index.html">LCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ledc.html">LED Control (LEDC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mcpwm.html">Motor Control Pulse Width Modulator (MCPWM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pcnt.html">Pulse Counter (PCNT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rmt.html">Remote Control Transceiver (RMT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sd_pullup_requirements.html">SD Pull-up Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdmmc_host.html">SDMMC Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdspi_host.html">SD SPI Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdio_slave.html">SDIO Card Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdm.html">Sigma-Delta Modulation (SDM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_flash/index.html">SPI Flash API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_master.html">SPI Master Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_slave.html">SPI Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cap_touch_sens.html">Capacitive Touch Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="twai.html">Two-Wire Automotive Interface (TWAI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uart.html">Universal Asynchronous Receiver/Transmitter (UART)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Peripherals API</a></li>
+      <li class="breadcrumb-item active">Digital To Analog Converter (DAC)</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/peripherals/dac.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="digital-to-analog-converter-dac">
+<h1>Digital To Analog Converter (DAC)<a class="headerlink" href="#digital-to-analog-converter-dac" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/peripherals/dac.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>ESP32 has two 8-bit DAC (digital to analog converter) channels respectively connected to GPIO25 (Channel 1) and GPIO26 (Channel 2). Each DAC channel can convert the digital value 0~255 to the analog voltage 0~Vref (The reference voltage 'Vref' here is input from the pin VDD3P3_RTC, which ideally equals to the power supply VDD). The output voltage can be calculated as the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">out_voltage</span> <span class="o">=</span> <span class="n">Vref</span> <span class="o">*</span> <span class="n">digi_val</span> <span class="o">/</span> <span class="mi">255</span>
+</pre></div>
+</div>
+<p>The DAC peripheral supports outputting analog signal in the following ways:</p>
+<ol class="arabic simple">
+<li><p>Outputting a voltage directly. The DAC channel keeps outputting a specified voltage.</p></li>
+<li><p>Outputting continuous analog signal by DMA. The DAC converts the data in a buffer at a specified frequency.</p></li>
+<li><p>Outputting a cosine wave by the cosine wave generator. The DAC channel can output a cosine wave with specified frequency and amplitude.</p></li>
+</ol>
+<p>For other analog output options, see <a class="reference internal" href="sdm.html"><span class="doc">Sigma-Delta Modulation</span></a> and <a class="reference internal" href="ledc.html"><span class="doc">LED Control</span></a>. Both modules produce high-frequency PWM/PDM output, which can be hardware low-pass filtered in order to generate a lower frequency analog output.</p>
+</section>
+<section id="dac-file-structure">
+<h2>DAC File Structure<a class="headerlink" href="#dac-file-structure" title="Permalink to this heading"></a></h2>
+<figure class="align-center" id="id14">
+<img alt="DAC file structure" src="../../_images/dac_file_structure.png" />
+<figcaption>
+<p><span class="caption-text">DAC File Structure</span><a class="headerlink" href="#id14" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p><strong>Public headers that need to be included in the DAC application are listed as follows:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dac.h</span></code>: The top header file of the legacy DAC driver, which should be only included in the apps which use the legacy driver API.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dac_oneshot.h</span></code>: The top header file of the new DAC driver, which should be included in the apps which use the new driver API with one-shot mode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dac_cosine.h</span></code>: The top header file of the new DAC driver, which should be included in the apps which use the new driver API with cosine mode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dac_continuous.h</span></code>: The top header file of the new DAC driver, which should be included in the apps which use the new driver API with continuous mode.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The legacy driver cannot coexist with the new driver. Include <code class="docutils literal notranslate"><span class="pre">dac.h</span></code> to use the legacy driver or <code class="docutils literal notranslate"><span class="pre">dac_oneshot.h</span></code>, <code class="docutils literal notranslate"><span class="pre">dac_cosine.h</span></code>, and <code class="docutils literal notranslate"><span class="pre">dac_continuous.h</span></code> to use the new driver. The legacy driver might be removed in the future.</p>
+</div>
+</section>
+<section id="functional-overview">
+<h2>Functional Overview<a class="headerlink" href="#functional-overview" title="Permalink to this heading"></a></h2>
+<section id="resources-management">
+<h3>Resources Management<a class="headerlink" href="#resources-management" title="Permalink to this heading"></a></h3>
+<p>The DAC on ESP32 has two channels. The channels have separate software resources and can be managed by <a class="reference internal" href="#_CPPv420dac_oneshot_handle_t" title="dac_oneshot_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">dac_oneshot_handle_t</span></code></a>, <a class="reference internal" href="#_CPPv419dac_cosine_handle_t" title="dac_cosine_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">dac_cosine_handle_t</span></code></a>, or <a class="reference internal" href="#_CPPv423dac_continuous_handle_t" title="dac_continuous_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">dac_continuous_handle_t</span></code></a> according to the usage. Registering different modes on a same DAC channel is not allowed.</p>
+</section>
+<section id="direct-voltage-output-one-shot-direct-mode">
+<h3>Direct Voltage Output (One-shot/Direct Mode)<a class="headerlink" href="#direct-voltage-output-one-shot-direct-mode" title="Permalink to this heading"></a></h3>
+<p>The DAC channels in the group can convert an 8-bit digital value into the analog when <a class="reference internal" href="#_CPPv426dac_oneshot_output_voltage20dac_oneshot_handle_t7uint8_t" title="dac_oneshot_output_voltage"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_oneshot_output_voltage()</span></code></a> is called (it can be called in ISR). The analog voltage is kept on the DAC channel until the next conversion starts. To start the voltage conversion, the DAC channels need to be enabled first through registering by <a class="reference internal" href="#_CPPv423dac_oneshot_new_channelPK20dac_oneshot_config_tP20dac_oneshot_handle_t" title="dac_oneshot_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_oneshot_new_channel()</span></code></a>.</p>
+</section>
+<section id="continuous-wave-output-continuous-dma-mode">
+<h3>Continuous Wave Output (Continuous/DMA Mode)<a class="headerlink" href="#continuous-wave-output-continuous-dma-mode" title="Permalink to this heading"></a></h3>
+<p>DAC channels can convert digital data continuously via the DMA. There are three ways to write the DAC data:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Normal writing (synchronous): Data can be transmitted at one time and kept blocked until all the data has been loaded into the DMA buffer, and the voltage is kept as the last conversion value while no more data is inputted. It is usually used to transport a long signal like an audio. To convert data continuously, the continuous channel handle need to be allocated by calling <a class="reference internal" href="#_CPPv427dac_continuous_new_channelsPK23dac_continuous_config_tP23dac_continuous_handle_t" title="dac_continuous_new_channels"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_continuous_new_channels()</span></code></a> and the DMA conversion should be enabled by calling <a class="reference internal" href="#_CPPv421dac_continuous_enable23dac_continuous_handle_t" title="dac_continuous_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_continuous_enable()</span></code></a>. Then data can be written by <a class="reference internal" href="#_CPPv420dac_continuous_write23dac_continuous_handle_tP7uint8_t6size_tP6size_ti" title="dac_continuous_write"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_continuous_write()</span></code></a> synchronously. Refer to <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/peripherals/dac/dac_continuous/dac_audio">peripherals/dac/dac_continuous/dac_audio</a> for examples.</p></li>
+<li><p>Cyclical writing: A piece of data can be converted cyclically without blocking, and no more operation is needed after the data are loaded into the DMA buffer. But note that the inputted buffer size is limited by the number of descriptors and the DMA buffer size. It is usually used to transport short signals that need to be repeated, e.g., a sine wave. To achieve cyclical writing, call <a class="reference internal" href="#_CPPv431dac_continuous_write_cyclically23dac_continuous_handle_tP7uint8_t6size_tP6size_t" title="dac_continuous_write_cyclically"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_continuous_write_cyclically()</span></code></a> after the DAC continuous mode is enabled. Refer to <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/peripherals/dac/dac_continuous/signal_generator">peripherals/dac/dac_continuous/signal_generator</a> for examples.</p></li>
+<li><p>Asynchronous writing: Data can be transmitted asynchronously based on the event callback. <a class="reference internal" href="#_CPPv4N21dac_event_callbacks_t15on_convert_doneE" title="dac_event_callbacks_t::on_convert_done"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">dac_event_callbacks_t::on_convert_done</span></code></a> must be registered to use asynchronous mode. Users can get the <a class="reference internal" href="#_CPPv416dac_event_data_t" title="dac_event_data_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">dac_event_data_t</span></code></a> in the callback which contains the DMA buffer address and length, allowing them to load the data into the buffer directly. To use the asynchronous writing, call <a class="reference internal" href="#_CPPv438dac_continuous_register_event_callback23dac_continuous_handle_tPK21dac_event_callbacks_tPv" title="dac_continuous_register_event_callback"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_continuous_register_event_callback()</span></code></a> to register the <a class="reference internal" href="#_CPPv4N21dac_event_callbacks_t15on_convert_doneE" title="dac_event_callbacks_t::on_convert_done"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">dac_event_callbacks_t::on_convert_done</span></code></a> before enabling, and then <a class="reference internal" href="#_CPPv434dac_continuous_start_async_writing23dac_continuous_handle_t" title="dac_continuous_start_async_writing"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_continuous_start_async_writing()</span></code></a> to start the asynchronous writing. Note that once the asynchronous writing is started, the callback function will be triggered continuously. Call <a class="reference internal" href="#_CPPv435dac_continuous_write_asynchronously23dac_continuous_handle_tP7uint8_t6size_tPK7uint8_t6size_tP6size_t" title="dac_continuous_write_asynchronously"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_continuous_write_asynchronously()</span></code></a> to load the data either in a separate task or in the callback directly. Refer to <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/peripherals/dac/dac_continuous/dac_audio">peripherals/dac/dac_continuous/dac_audio</a> for examples.</p></li>
+</ol>
+</div></blockquote>
+<p>On ESP32, the DAC digital controller can be connected internally to the I2S0 and use its DMA for continuous conversion. Although the DAC only needs 8-bit data for conversion, it has to be the left-shifted 8 bits (i.e., the high 8 bits in a 16-bit slot) to satisfy the I2S communication format. By default, the driver helps to expand the data to 16-bit wide automatically. To expand manually, please disable <a class="reference internal" href="../kconfig-reference.html#config-dac-dma-auto-16bit-align"><span class="std std-ref">CONFIG_DAC_DMA_AUTO_16BIT_ALIGN</span></a> in the menuconfig.</p>
+<p>The clock of the DAC digital controller comes from I2S0 as well, so there are two clock sources for selection:</p>
+<ul class="simple">
+<li><p><code class="xref cpp cpp-enumerator docutils literal notranslate"><span class="pre">dac_continuous_digi_clk_src_t::DAC_DIGI_CLK_SRC_PLL_D2</span></code> supports frequency between 19.6 KHz to several MHz. It is the default clock which can also be selected by <code class="xref cpp cpp-enumerator docutils literal notranslate"><span class="pre">dac_continuous_digi_clk_src_t::DAC_DIGI_CLK_SRC_DEFAULT</span></code>.</p></li>
+<li><p><code class="xref cpp cpp-enumerator docutils literal notranslate"><span class="pre">dac_continuous_digi_clk_src_t::DAC_DIGI_CLK_SRC_APLL</span></code> supports frequency between 648 Hz to several MHz. However, it might be occupied by other peripherals, thus not providing the required frequency. In such case, this clock source is available only if APLL still can be correctly divided into the target DAC DMA frequency.</p></li>
+</ul>
+</section>
+<section id="cosine-wave-output-cosine-mode">
+<h3>Cosine Wave Output (Cosine Mode)<a class="headerlink" href="#cosine-wave-output-cosine-mode" title="Permalink to this heading"></a></h3>
+<p>The DAC peripheral has a cosine wave generator, which can generate cosine wave on the channels. Users can specify the frequency, amplitude, and phase of the cosine wave. To output the cosine wave, please acquire the DAC to cosine mode using <a class="reference internal" href="#_CPPv422dac_cosine_new_channelPK19dac_cosine_config_tP19dac_cosine_handle_t" title="dac_cosine_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_cosine_new_channel()</span></code></a>, and then start the cosine wave generator by <a class="reference internal" href="#_CPPv416dac_cosine_start19dac_cosine_handle_t" title="dac_cosine_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_cosine_start()</span></code></a>.</p>
+<p>Currently, the clock source of the cosine wave generator only comes from <code class="docutils literal notranslate"><span class="pre">RTC_FAST</span></code> which can be selected by <code class="xref cpp cpp-enumerator docutils literal notranslate"><span class="pre">dac_cosine_clk_src_t::DAC_COSINE_CLK_SRC_RTC_FAST</span></code>. It is also the default clock source which is the same as <code class="xref cpp cpp-enumerator docutils literal notranslate"><span class="pre">dac_cosine_clk_src_t::DAC_COSINE_CLK_SRC_RTC_DEFAULT</span></code>.</p>
+</section>
+<section id="power-management">
+<h3>Power Management<a class="headerlink" href="#power-management" title="Permalink to this heading"></a></h3>
+<p>When the power management is enabled (i.e., <a class="reference internal" href="../kconfig-reference.html#config-pm-enable"><span class="std std-ref">CONFIG_PM_ENABLE</span></a> is on), the system will adjust or stop the clock source of DAC before entering Light-sleep mode, thus potential influence to the DAC signals may lead to false data conversion.</p>
+<p>When using DAC driver in continuous mode, it can prevent the system from changing or stopping the clock source in DMA or cosine mode by acquiring a power management lock. When the clock source is generated from APB, the lock type will be set to <a class="reference internal" href="../system/power_management.html#_CPPv4N18esp_pm_lock_type_t19ESP_PM_APB_FREQ_MAXE" title="esp_pm_lock_type_t::ESP_PM_APB_FREQ_MAX"><code class="xref cpp cpp-enumerator docutils literal notranslate"><span class="pre">esp_pm_lock_type_t::ESP_PM_APB_FREQ_MAX</span></code></a>. When the clock source is APLL (only in DMA mode), it will be set to <a class="reference internal" href="../system/power_management.html#_CPPv4N18esp_pm_lock_type_t21ESP_PM_NO_LIGHT_SLEEPE" title="esp_pm_lock_type_t::ESP_PM_NO_LIGHT_SLEEP"><code class="xref cpp cpp-enumerator docutils literal notranslate"><span class="pre">esp_pm_lock_type_t::ESP_PM_NO_LIGHT_SLEEP</span></code></a>. Whenever the DAC is converting (i.e., DMA or cosine wave generator is working), the driver guarantees that the power management lock is acquired after calling <a class="reference internal" href="#_CPPv421dac_continuous_enable23dac_continuous_handle_t" title="dac_continuous_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_continuous_enable()</span></code></a>. Likewise, the driver will release the lock when <a class="reference internal" href="#_CPPv422dac_continuous_disable23dac_continuous_handle_t" title="dac_continuous_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_continuous_disable()</span></code></a> is called.</p>
+</section>
+<section id="iram-safe">
+<h3>IRAM Safe<a class="headerlink" href="#iram-safe" title="Permalink to this heading"></a></h3>
+<p>By default, the DAC DMA interrupt will be deferred when the cache is disabled for reasons like writing/erasing Flash. Thus the DMA EOF interrupt will not get executed in time.</p>
+<p>To avoid such case in real-time applications, you can enable the Kconfig option <a class="reference internal" href="../kconfig-reference.html#config-dac-isr-iram-safe"><span class="std std-ref">CONFIG_DAC_ISR_IRAM_SAFE</span></a> which:</p>
+<ol class="arabic simple">
+<li><p>Enables the interrupt being serviced even when cache is disabled;</p></li>
+<li><p>Places driver object into DRAM (in case it is linked to PSRAM by accident).</p></li>
+</ol>
+<p>This allows the interrupt to run while the cache is disabled but comes at the cost of increased IRAM consumption.</p>
+</section>
+<section id="thread-safety">
+<h3>Thread Safety<a class="headerlink" href="#thread-safety" title="Permalink to this heading"></a></h3>
+<p>All the public DAC APIs are guaranteed to be thread safe by the driver, which means users can call them from different RTOS tasks without protection by extra locks. Notice that the DAC driver uses mutex lock to ensure the thread safety, thus the APIs except <a class="reference internal" href="#_CPPv426dac_oneshot_output_voltage20dac_oneshot_handle_t7uint8_t" title="dac_oneshot_output_voltage"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">dac_oneshot_output_voltage()</span></code></a> are not allowed to be used in ISR.</p>
+</section>
+<section id="kconfig-options">
+<h3>Kconfig Options<a class="headerlink" href="#kconfig-options" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="../kconfig-reference.html#config-dac-isr-iram-safe"><span class="std std-ref">CONFIG_DAC_ISR_IRAM_SAFE</span></a> controls whether the default ISR handler can work when cache is disabled. See <a class="reference external" href="#iram-safe">IRAM Safe</a> for more information.</p></li>
+<li><p><a class="reference internal" href="../kconfig-reference.html#config-dac-suppress-deprecate-warn"><span class="std std-ref">CONFIG_DAC_SUPPRESS_DEPRECATE_WARN</span></a> controls whether to suppress the warning message compilation while using the legacy DAC driver.</p></li>
+<li><p><a class="reference internal" href="../kconfig-reference.html#config-dac-enable-debug-log"><span class="std std-ref">CONFIG_DAC_ENABLE_DEBUG_LOG</span></a> is used to enable the debug log output. Enable this option increases the firmware binary size.</p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference internal" href="../kconfig-reference.html#config-dac-dma-auto-16bit-align"><span class="std std-ref">CONFIG_DAC_DMA_AUTO_16BIT_ALIGN</span></a> auto expands the 8-bit data to 16-bit data in the driver to satisfy the I2S DMA format.</p></li>
+</ul>
+</section>
+</section>
+<section id="application-example">
+<h2>Application Example<a class="headerlink" href="#application-example" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/peripherals/dac/dac_continuous/signal_generator">peripherals/dac/dac_continuous/signal_generator</a> demonstrates how to use the DAC driver on ESP32 to output continuous voltage in two ways: by DMA transmission and by timer interrupt, generating different waveforms such as sine, triangle, saw tooth and square wave.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/peripherals/dac/dac_continuous/dac_audio">peripherals/dac/dac_continuous/dac_audio</a> demonstrates how to use the DAC driver on ESP32 to play a piece of audio stored in a buffer, with the audio being played every one second from a speaker or earphone.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/peripherals/dac/dac_cosine_wave">peripherals/dac/dac_cosine_wave</a> demonstrates how to use the DAC driver on an ESP32 board to output a cosine wave on both channels, which can be monitored using an oscilloscope or the ADC channels internally.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/peripherals/dac/dac_oneshot">peripherals/dac/dac_oneshot</a> demonstrates how to use the DAC driver on ESP32 to output a voltage that increases stepwise every 500 ms and resets to 0 periodically, with the output monitored via ADC or an optional oscilloscope.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_dac/include/driver/dac_oneshot.h">components/esp_driver_dac/include/driver/dac_oneshot.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;driver/dac_oneshot.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_driver_dac</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_driver_dac</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_driver_dac
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_driver_dac
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423dac_oneshot_new_channelPK20dac_oneshot_config_tP20dac_oneshot_handle_t">
+<span id="_CPPv323dac_oneshot_new_channelPK20dac_oneshot_config_tP20dac_oneshot_handle_t"></span><span id="_CPPv223dac_oneshot_new_channelPK20dac_oneshot_config_tP20dac_oneshot_handle_t"></span><span id="dac_oneshot_new_channel__dac_oneshot_config_tCP.dac_oneshot_handle_tP"></span><span class="target" id="dac__oneshot_8h_1a2fafdf2ef968e76e3661015f843e69cf"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_oneshot_new_channel</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv420dac_oneshot_config_t" title="dac_oneshot_config_t"><span class="n"><span class="pre">dac_oneshot_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">oneshot_cfg</span></span>, <a class="reference internal" href="#_CPPv420dac_oneshot_handle_t" title="dac_oneshot_handle_t"><span class="n"><span class="pre">dac_oneshot_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ret_handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423dac_oneshot_new_channelPK20dac_oneshot_config_tP20dac_oneshot_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Allocate a new DAC oneshot channel. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The channel will be enabled as well when the channel allocated</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>oneshot_cfg</strong> -- <strong>[in]</strong> The configuration for the oneshot channel </p></li>
+<li><p><strong>ret_handle</strong> -- <strong>[out]</strong> The returned oneshot channel handle </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE The DAC channel has been registered already</p></li>
+<li><p>ESP_ERR_NO_MEM No memory for the DAC oneshot channel resources</p></li>
+<li><p>ESP_OK Allocate the new DAC oneshot channel success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423dac_oneshot_del_channel20dac_oneshot_handle_t">
+<span id="_CPPv323dac_oneshot_del_channel20dac_oneshot_handle_t"></span><span id="_CPPv223dac_oneshot_del_channel20dac_oneshot_handle_t"></span><span id="dac_oneshot_del_channel__dac_oneshot_handle_t"></span><span class="target" id="dac__oneshot_8h_1a05bc3e2f8e03aef67f7cffffdccf3606"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_oneshot_del_channel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv420dac_oneshot_handle_t" title="dac_oneshot_handle_t"><span class="n"><span class="pre">dac_oneshot_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423dac_oneshot_del_channel20dac_oneshot_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Delete the DAC oneshot channel. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The channel will be disabled as well when the channel deleted</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- <strong>[in]</strong> The DAC oneshot channel handle </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE The channel has already been de-registered</p></li>
+<li><p>ESP_OK Delete the oneshot channel success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426dac_oneshot_output_voltage20dac_oneshot_handle_t7uint8_t">
+<span id="_CPPv326dac_oneshot_output_voltage20dac_oneshot_handle_t7uint8_t"></span><span id="_CPPv226dac_oneshot_output_voltage20dac_oneshot_handle_t7uint8_t"></span><span id="dac_oneshot_output_voltage__dac_oneshot_handle_t.uint8_t"></span><span class="target" id="dac__oneshot_8h_1ae5dbec104c778c434eb302945fefe7c3"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_oneshot_output_voltage</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv420dac_oneshot_handle_t" title="dac_oneshot_handle_t"><span class="n"><span class="pre">dac_oneshot_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">digi_value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426dac_oneshot_output_voltage20dac_oneshot_handle_t7uint8_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Output the voltage. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Generally it'll take 7~11 us on ESP32 and 10~21 us on ESP32-S2</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- <strong>[in]</strong> The DAC oneshot channel handle </p></li>
+<li><p><strong>digi_value</strong> -- <strong>[in]</strong> The digital value that need to be converted </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_OK Convert the digital value success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv420dac_oneshot_config_t">
+<span id="_CPPv320dac_oneshot_config_t"></span><span id="_CPPv220dac_oneshot_config_t"></span><span id="dac_oneshot_config_t"></span><span class="target" id="structdac__oneshot__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_oneshot_config_t</span></span></span><a class="headerlink" href="#_CPPv420dac_oneshot_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC oneshot channel configuration. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20dac_oneshot_config_t7chan_idE">
+<span id="_CPPv3N20dac_oneshot_config_t7chan_idE"></span><span id="_CPPv2N20dac_oneshot_config_t7chan_idE"></span><span id="dac_oneshot_config_t::chan_id__dac_channel_t"></span><span class="target" id="structdac__oneshot__config__t_1a660a4e348a5ec3d9e855c0d38ae7626c"></span><a class="reference internal" href="#_CPPv413dac_channel_t" title="dac_channel_t"><span class="n"><span class="pre">dac_channel_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">chan_id</span></span></span><a class="headerlink" href="#_CPPv4N20dac_oneshot_config_t7chan_idE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC channel id </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv420dac_oneshot_handle_t">
+<span id="_CPPv320dac_oneshot_handle_t"></span><span id="_CPPv220dac_oneshot_handle_t"></span><span id="dac_oneshot_handle_t"></span><span class="target" id="dac__oneshot_8h_1a73079eeb6108d2d92fcc41667530fcc6"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">dac_oneshot_s</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">dac_oneshot_handle_t</span></span></span><a class="headerlink" href="#_CPPv420dac_oneshot_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC oneshot channel handle </p>
+</dd></dl>
+
+</section>
+<section id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_dac/include/driver/dac_cosine.h">components/esp_driver_dac/include/driver/dac_cosine.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;driver/dac_cosine.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_driver_dac</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_driver_dac</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_driver_dac
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_driver_dac
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id2">
+<h3>Functions<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422dac_cosine_new_channelPK19dac_cosine_config_tP19dac_cosine_handle_t">
+<span id="_CPPv322dac_cosine_new_channelPK19dac_cosine_config_tP19dac_cosine_handle_t"></span><span id="_CPPv222dac_cosine_new_channelPK19dac_cosine_config_tP19dac_cosine_handle_t"></span><span id="dac_cosine_new_channel__dac_cosine_config_tCP.dac_cosine_handle_tP"></span><span class="target" id="dac__cosine_8h_1a2d0f869e2026f13c22a9bf9a6cd93a26"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_cosine_new_channel</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419dac_cosine_config_t" title="dac_cosine_config_t"><span class="n"><span class="pre">dac_cosine_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">cos_cfg</span></span>, <a class="reference internal" href="#_CPPv419dac_cosine_handle_t" title="dac_cosine_handle_t"><span class="n"><span class="pre">dac_cosine_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ret_handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422dac_cosine_new_channelPK19dac_cosine_config_tP19dac_cosine_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Allocate a new DAC cosine wave channel. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since there is only one cosine wave generator, only the first channel can set the frequency of the cosine wave. Normally, the latter one is not allowed to set a different frequency, but the it can be forced to set by setting the bit <code class="docutils literal notranslate"><span class="pre">force_set_freq</span></code> in the configuration, notice that another channel will be affected as well when the frequency is updated.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cos_cfg</strong> -- <strong>[in]</strong> The configuration of cosine wave channel </p></li>
+<li><p><strong>ret_handle</strong> -- <strong>[out]</strong> The returned cosine wave channel handle </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE The DAC channel has been registered already</p></li>
+<li><p>ESP_ERR_NO_MEM No memory for the DAC cosine wave channel resources</p></li>
+<li><p>ESP_OK Allocate the new DAC cosine wave channel success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422dac_cosine_del_channel19dac_cosine_handle_t">
+<span id="_CPPv322dac_cosine_del_channel19dac_cosine_handle_t"></span><span id="_CPPv222dac_cosine_del_channel19dac_cosine_handle_t"></span><span id="dac_cosine_del_channel__dac_cosine_handle_t"></span><span class="target" id="dac__cosine_8h_1a5e2ca62dbb593c9d129309182bb5001a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_cosine_del_channel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419dac_cosine_handle_t" title="dac_cosine_handle_t"><span class="n"><span class="pre">dac_cosine_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422dac_cosine_del_channel19dac_cosine_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Delete the DAC cosine wave channel. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- <strong>[in]</strong> The DAC cosine wave channel handle </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE The channel has already been deregistered</p></li>
+<li><p>ESP_OK Delete the cosine wave channel success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416dac_cosine_start19dac_cosine_handle_t">
+<span id="_CPPv316dac_cosine_start19dac_cosine_handle_t"></span><span id="_CPPv216dac_cosine_start19dac_cosine_handle_t"></span><span id="dac_cosine_start__dac_cosine_handle_t"></span><span class="target" id="dac__cosine_8h_1af8191191546ced81f248ea399f6bfa54"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_cosine_start</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419dac_cosine_handle_t" title="dac_cosine_handle_t"><span class="n"><span class="pre">dac_cosine_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416dac_cosine_start19dac_cosine_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Start outputting the cosine wave on the channel. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- <strong>[in]</strong> The DAC cosine wave channel handle </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE The channel has been started already</p></li>
+<li><p>ESP_OK Start the cosine wave success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415dac_cosine_stop19dac_cosine_handle_t">
+<span id="_CPPv315dac_cosine_stop19dac_cosine_handle_t"></span><span id="_CPPv215dac_cosine_stop19dac_cosine_handle_t"></span><span id="dac_cosine_stop__dac_cosine_handle_t"></span><span class="target" id="dac__cosine_8h_1a5de08818a0d610ae5cb549ff00956dd5"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_cosine_stop</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419dac_cosine_handle_t" title="dac_cosine_handle_t"><span class="n"><span class="pre">dac_cosine_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415dac_cosine_stop19dac_cosine_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stop outputting the cosine wave on the channel. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- <strong>[in]</strong> The DAC cosine wave channel handle </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE The channel has been stopped already</p></li>
+<li><p>ESP_OK Stop the cosine wave success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="id3">
+<h3>Structures<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419dac_cosine_config_t">
+<span id="_CPPv319dac_cosine_config_t"></span><span id="_CPPv219dac_cosine_config_t"></span><span id="dac_cosine_config_t"></span><span class="target" id="structdac__cosine__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_cosine_config_t</span></span></span><a class="headerlink" href="#_CPPv419dac_cosine_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC cosine channel configurations. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19dac_cosine_config_t7chan_idE">
+<span id="_CPPv3N19dac_cosine_config_t7chan_idE"></span><span id="_CPPv2N19dac_cosine_config_t7chan_idE"></span><span id="dac_cosine_config_t::chan_id__dac_channel_t"></span><span class="target" id="structdac__cosine__config__t_1a6efd4ba56c977ad45c5729aeb2c47e7e"></span><a class="reference internal" href="#_CPPv413dac_channel_t" title="dac_channel_t"><span class="n"><span class="pre">dac_channel_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">chan_id</span></span></span><a class="headerlink" href="#_CPPv4N19dac_cosine_config_t7chan_idE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The cosine wave channel id </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19dac_cosine_config_t7freq_hzE">
+<span id="_CPPv3N19dac_cosine_config_t7freq_hzE"></span><span id="_CPPv2N19dac_cosine_config_t7freq_hzE"></span><span id="dac_cosine_config_t::freq_hz__uint32_t"></span><span class="target" id="structdac__cosine__config__t_1a58fcfc2b6b096455685a0c6c2313a380"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">freq_hz</span></span></span><a class="headerlink" href="#_CPPv4N19dac_cosine_config_t7freq_hzE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The frequency of cosine wave, unit: Hz. The cosine wave generator is driven by RTC_FAST clock which is divide from RC_FAST, With the default RTC clock, the minimum frequency of cosine wave is about 130 Hz, Although it can support up to several MHz frequency theoretically, the waveform will distort at high frequency due to the hardware limitation. Typically not suggest to set the frequency higher than 200 KHz </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19dac_cosine_config_t7clk_srcE">
+<span id="_CPPv3N19dac_cosine_config_t7clk_srcE"></span><span id="_CPPv2N19dac_cosine_config_t7clk_srcE"></span><span id="dac_cosine_config_t::clk_src__dac_cosine_clk_src_t"></span><span class="target" id="structdac__cosine__config__t_1a6f5e72ee836635424510fb7004006a1f"></span><a class="reference internal" href="#_CPPv420dac_cosine_clk_src_t" title="dac_cosine_clk_src_t"><span class="n"><span class="pre">dac_cosine_clk_src_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clk_src</span></span></span><a class="headerlink" href="#_CPPv4N19dac_cosine_config_t7clk_srcE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The clock source of the cosine wave generator, currently only support <code class="docutils literal notranslate"><span class="pre">DAC_COSINE_CLK_SRC_DEFAULT</span></code></p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19dac_cosine_config_t5attenE">
+<span id="_CPPv3N19dac_cosine_config_t5attenE"></span><span id="_CPPv2N19dac_cosine_config_t5attenE"></span><span id="dac_cosine_config_t::atten__dac_cosine_atten_t"></span><span class="target" id="structdac__cosine__config__t_1aa88f8cab12bf20ab38c701001bc86ac2"></span><a class="reference internal" href="#_CPPv418dac_cosine_atten_t" title="dac_cosine_atten_t"><span class="n"><span class="pre">dac_cosine_atten_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">atten</span></span></span><a class="headerlink" href="#_CPPv4N19dac_cosine_config_t5attenE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The attenuation of cosine wave amplitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19dac_cosine_config_t5phaseE">
+<span id="_CPPv3N19dac_cosine_config_t5phaseE"></span><span id="_CPPv2N19dac_cosine_config_t5phaseE"></span><span id="dac_cosine_config_t::phase__dac_cosine_phase_t"></span><span class="target" id="structdac__cosine__config__t_1a8e882b9ab95e75ff026699c76479cb67"></span><a class="reference internal" href="#_CPPv418dac_cosine_phase_t" title="dac_cosine_phase_t"><span class="n"><span class="pre">dac_cosine_phase_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">phase</span></span></span><a class="headerlink" href="#_CPPv4N19dac_cosine_config_t5phaseE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The phase of cosine wave, can only support DAC_COSINE_PHASE_0 or DAC_COSINE_PHASE_180, default as 0 while setting an unsupported phase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19dac_cosine_config_t6offsetE">
+<span id="_CPPv3N19dac_cosine_config_t6offsetE"></span><span id="_CPPv2N19dac_cosine_config_t6offsetE"></span><span id="dac_cosine_config_t::offset__int8_t"></span><span class="target" id="structdac__cosine__config__t_1aa745532c6e91f12ee8f70657129310fc"></span><span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">offset</span></span></span><a class="headerlink" href="#_CPPv4N19dac_cosine_config_t6offsetE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The DC offset of cosine wave </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19dac_cosine_config_t14force_set_freqE">
+<span id="_CPPv3N19dac_cosine_config_t14force_set_freqE"></span><span id="_CPPv2N19dac_cosine_config_t14force_set_freqE"></span><span id="dac_cosine_config_t::force_set_freq__b"></span><span class="target" id="structdac__cosine__config__t_1a9e717e0ce2b9ed566ed5411a643ddffe"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">force_set_freq</span></span></span><a class="headerlink" href="#_CPPv4N19dac_cosine_config_t14force_set_freqE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Force to set the cosine wave frequency </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19dac_cosine_config_t5flagsE">
+<span id="_CPPv3N19dac_cosine_config_t5flagsE"></span><span id="_CPPv2N19dac_cosine_config_t5flagsE"></span><span id="dac_cosine_config_t::flags__dac_cosine_config_t"></span><span class="target" id="structdac__cosine__config__t_1acd43ed224fe117d2e23b148d7030cf5e"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419dac_cosine_config_t" title="dac_cosine_config_t"><span class="n"><span class="pre">dac_cosine_config_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">flags</span></span></span><a class="headerlink" href="#_CPPv4N19dac_cosine_config_t5flagsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Flags of cosine mode </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="id4">
+<h3>Type Definitions<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv419dac_cosine_handle_t">
+<span id="_CPPv319dac_cosine_handle_t"></span><span id="_CPPv219dac_cosine_handle_t"></span><span id="dac_cosine_handle_t"></span><span class="target" id="dac__cosine_8h_1aec24ccc37326d1767b34de7660218c62"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">dac_cosine_s</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">dac_cosine_handle_t</span></span></span><a class="headerlink" href="#_CPPv419dac_cosine_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC cosine wave channel handle </p>
+</dd></dl>
+
+</section>
+<section id="id5">
+<h3>Header File<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_dac/include/driver/dac_continuous.h">components/esp_driver_dac/include/driver/dac_continuous.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;driver/dac_continuous.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_driver_dac</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_driver_dac</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_driver_dac
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_driver_dac
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id6">
+<h3>Functions<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427dac_continuous_new_channelsPK23dac_continuous_config_tP23dac_continuous_handle_t">
+<span id="_CPPv327dac_continuous_new_channelsPK23dac_continuous_config_tP23dac_continuous_handle_t"></span><span id="_CPPv227dac_continuous_new_channelsPK23dac_continuous_config_tP23dac_continuous_handle_t"></span><span id="dac_continuous_new_channels__dac_continuous_config_tCP.dac_continuous_handle_tP"></span><span class="target" id="dac__continuous_8h_1ac9a0e7139c6e28bfafd1f0ea76fff454"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_new_channels</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423dac_continuous_config_t" title="dac_continuous_config_t"><span class="n"><span class="pre">dac_continuous_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">cont_cfg</span></span>, <a class="reference internal" href="#_CPPv423dac_continuous_handle_t" title="dac_continuous_handle_t"><span class="n"><span class="pre">dac_continuous_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ret_handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427dac_continuous_new_channelsPK23dac_continuous_config_tP23dac_continuous_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Allocate new DAC channels in continuous mode. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The DAC channels can't be registered to continuous mode separately</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cont_cfg</strong> -- <strong>[in]</strong> Continuous mode configuration </p></li>
+<li><p><strong>ret_handle</strong> -- <strong>[out]</strong> The returned continuous mode handle </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE The DAC channel has been registered already</p></li>
+<li><p>ESP_ERR_NOT_FOUND Not found the available dma peripheral, might be occupied</p></li>
+<li><p>ESP_ERR_NO_MEM No memory for the DAC continuous mode resources</p></li>
+<li><p>ESP_OK Allocate the new DAC continuous mode success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427dac_continuous_del_channels23dac_continuous_handle_t">
+<span id="_CPPv327dac_continuous_del_channels23dac_continuous_handle_t"></span><span id="_CPPv227dac_continuous_del_channels23dac_continuous_handle_t"></span><span id="dac_continuous_del_channels__dac_continuous_handle_t"></span><span class="target" id="dac__continuous_8h_1a18f7f6a73e0954f684649afe3ab4f6f6"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_del_channels</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423dac_continuous_handle_t" title="dac_continuous_handle_t"><span class="n"><span class="pre">dac_continuous_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427dac_continuous_del_channels23dac_continuous_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Delete the DAC continuous handle. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- <strong>[in]</strong> The DAC continuous channel handle that obtained from 'dac_continuous_new_channels' </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE The channels have already been deregistered or not disabled</p></li>
+<li><p>ESP_OK Delete the continuous channels success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421dac_continuous_enable23dac_continuous_handle_t">
+<span id="_CPPv321dac_continuous_enable23dac_continuous_handle_t"></span><span id="_CPPv221dac_continuous_enable23dac_continuous_handle_t"></span><span id="dac_continuous_enable__dac_continuous_handle_t"></span><span class="target" id="dac__continuous_8h_1a097f9afda43efd10f1905303582fb20b"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_enable</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423dac_continuous_handle_t" title="dac_continuous_handle_t"><span class="n"><span class="pre">dac_continuous_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421dac_continuous_enable23dac_continuous_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enabled the DAC continuous mode. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Must enable the channels before</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- <strong>[in]</strong> The DAC continuous channel handle that obtained from 'dac_continuous_new_channels' </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE The channels have been enabled already</p></li>
+<li><p>ESP_OK Enable the continuous output success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422dac_continuous_disable23dac_continuous_handle_t">
+<span id="_CPPv322dac_continuous_disable23dac_continuous_handle_t"></span><span id="_CPPv222dac_continuous_disable23dac_continuous_handle_t"></span><span id="dac_continuous_disable__dac_continuous_handle_t"></span><span class="target" id="dac__continuous_8h_1a3bccf8eafdfb76f8142caf07b23527bb"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_disable</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423dac_continuous_handle_t" title="dac_continuous_handle_t"><span class="n"><span class="pre">dac_continuous_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422dac_continuous_disable23dac_continuous_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable the DAC continuous mode. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- <strong>[in]</strong> The DAC continuous channel handle that obtained from 'dac_continuous_new_channels' </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE The channels have been enabled already</p></li>
+<li><p>ESP_OK Disable the continuous output success </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420dac_continuous_write23dac_continuous_handle_tP7uint8_t6size_tP6size_ti">
+<span id="_CPPv320dac_continuous_write23dac_continuous_handle_tP7uint8_t6size_tP6size_ti"></span><span id="_CPPv220dac_continuous_write23dac_continuous_handle_tP7uint8_t6size_tP6size_ti"></span><span id="dac_continuous_write__dac_continuous_handle_t.uint8_tP.s.sP.i"></span><span class="target" id="dac__continuous_8h_1a5b6f9e1389911964cc99735ff13c8fb9"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_write</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423dac_continuous_handle_t" title="dac_continuous_handle_t"><span class="n"><span class="pre">dac_continuous_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">buf</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">buf_size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">bytes_loaded</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeout_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420dac_continuous_write23dac_continuous_handle_tP7uint8_t6size_tP6size_ti" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write DAC data continuously. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The data in buffer will only be converted one time, This function will be blocked until all data loaded or timeout then the DAC output will keep outputting the voltage of the last data in the buffer </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Specially, on ESP32, the data bit width of DAC continuous data is fixed to 16 bits while only the high 8 bits are available, The driver will help to expand the inputted buffer automatically by default, you can also align the data to 16 bits manually by clearing <code class="docutils literal notranslate"><span class="pre">CONFIG_DAC_DMA_AUTO_16BIT_ALIGN</span></code> in menuconfig.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- <strong>[in]</strong> The DAC continuous channel handle that obtained from 'dac_continuous_new_channels' </p></li>
+<li><p><strong>buf</strong> -- <strong>[in]</strong> The digital data buffer to convert </p></li>
+<li><p><strong>buf_size</strong> -- <strong>[in]</strong> The buffer size of digital data buffer </p></li>
+<li><p><strong>bytes_loaded</strong> -- <strong>[out]</strong> The bytes that has been loaded into DMA buffer, can be NULL if don't need it </p></li>
+<li><p><strong>timeout_ms</strong> -- <strong>[in]</strong> The timeout time in millisecond, set a minus value means will block forever </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE The DAC continuous mode has not been enabled yet</p></li>
+<li><p>ESP_ERR_TIMEOUT Waiting for semaphore or message queue timeout</p></li>
+<li><p>ESP_OK Success to output the acyclic DAC data </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv431dac_continuous_write_cyclically23dac_continuous_handle_tP7uint8_t6size_tP6size_t">
+<span id="_CPPv331dac_continuous_write_cyclically23dac_continuous_handle_tP7uint8_t6size_tP6size_t"></span><span id="_CPPv231dac_continuous_write_cyclically23dac_continuous_handle_tP7uint8_t6size_tP6size_t"></span><span id="dac_continuous_write_cyclically__dac_continuous_handle_t.uint8_tP.s.sP"></span><span class="target" id="dac__continuous_8h_1ab3bfa323602a65408614c644887e23c0"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_write_cyclically</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423dac_continuous_handle_t" title="dac_continuous_handle_t"><span class="n"><span class="pre">dac_continuous_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">buf</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">buf_size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">bytes_loaded</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv431dac_continuous_write_cyclically23dac_continuous_handle_tP7uint8_t6size_tP6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write DAC continuous data cyclically. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The data in buffer will be converted cyclically using DMA once this function is called, This function will return once the data loaded into DMA buffers. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The buffer size of cyclically output is limited by the descriptor number and dma buffer size while initializing the continuous mode. Concretely, in order to load all the data into descriptors, the cyclic buffer size is not supposed to be greater than <code class="docutils literal notranslate"><span class="pre">desc_num</span> <span class="pre">*</span> <span class="pre">buf_size</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Specially, on ESP32, the data bit width of DAC continuous data is fixed to 16 bits while only the high 8 bits are available, The driver will help to expand the inputted buffer automatically by default, you can also align the data to 16 bits manually by clearing <code class="docutils literal notranslate"><span class="pre">CONFIG_DAC_DMA_AUTO_16BIT_ALIGN</span></code> in menuconfig.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- <strong>[in]</strong> The DAC continuous channel handle that obtained from 'dac_continuous_new_channels' </p></li>
+<li><p><strong>buf</strong> -- <strong>[in]</strong> The digital data buffer to convert </p></li>
+<li><p><strong>buf_size</strong> -- <strong>[in]</strong> The buffer size of digital data buffer </p></li>
+<li><p><strong>bytes_loaded</strong> -- <strong>[out]</strong> The bytes that has been loaded into DMA buffer, can be NULL if don't need it </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG The input parameter is invalid</p></li>
+<li><p>ESP_ERR_INVALID_STATE The DAC continuous mode has not been enabled yet</p></li>
+<li><p>ESP_OK Success to output the acyclic DAC data </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv438dac_continuous_register_event_callback23dac_continuous_handle_tPK21dac_event_callbacks_tPv">
+<span id="_CPPv338dac_continuous_register_event_callback23dac_continuous_handle_tPK21dac_event_callbacks_tPv"></span><span id="_CPPv238dac_continuous_register_event_callback23dac_continuous_handle_tPK21dac_event_callbacks_tPv"></span><span id="dac_continuous_register_event_callback__dac_continuous_handle_t.dac_event_callbacks_tCP.voidP"></span><span class="target" id="dac__continuous_8h_1a92666c763943cc6798e045c53dcc5caf"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_register_event_callback</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423dac_continuous_handle_t" title="dac_continuous_handle_t"><span class="n"><span class="pre">dac_continuous_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv421dac_event_callbacks_t" title="dac_event_callbacks_t"><span class="n"><span class="pre">dac_event_callbacks_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">callbacks</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">user_data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv438dac_continuous_register_event_callback23dac_continuous_handle_tPK21dac_event_callbacks_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set event callbacks for DAC continuous mode. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>User can deregister a previously registered callback by calling this function and setting the callback member in the <code class="docutils literal notranslate"><span class="pre">callbacks</span></code> structure to NULL. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When CONFIG_DAC_ISR_IRAM_SAFE is enabled, the callback itself and functions called by it should be placed in IRAM. The variables used in this function, including the <code class="docutils literal notranslate"><span class="pre">user_data</span></code>, should be in the internal RAM as well.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- <strong>[in]</strong> The DAC continuous channel handle that obtained from 'dac_continuous_new_channels' </p></li>
+<li><p><strong>callbacks</strong> -- <strong>[in]</strong> Group of callback functions, input NULL to clear the former callbacks </p></li>
+<li><p><strong>user_data</strong> -- <strong>[in]</strong> User data, which will be passed to callback functions directly </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Set event callbacks successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG Set event callbacks failed because of invalid argument </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv434dac_continuous_start_async_writing23dac_continuous_handle_t">
+<span id="_CPPv334dac_continuous_start_async_writing23dac_continuous_handle_t"></span><span id="_CPPv234dac_continuous_start_async_writing23dac_continuous_handle_t"></span><span id="dac_continuous_start_async_writing__dac_continuous_handle_t"></span><span class="target" id="dac__continuous_8h_1a2a8435759aef95cabc0d83ba6dc9cd17"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_start_async_writing</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423dac_continuous_handle_t" title="dac_continuous_handle_t"><span class="n"><span class="pre">dac_continuous_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv434dac_continuous_start_async_writing23dac_continuous_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Start the async writing. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When the asynchronous writing start, the DAC will keep outputting '0' until the data are loaded into the DMA buffer. To loaded the data into DMA buffer, 'on_convert_done' callback is required, which can be registered by 'dac_continuous_register_event_callback' before enabling</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- <strong>[in]</strong> The DAC continuous channel handle that obtained from 'dac_continuous_new_channels' </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Start asynchronous writing successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG The handle is NULL</p></li>
+<li><p>ESP_ERR_INVALID_STATE The channel is not enabled or the 'on_convert_done' callback is not registered </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv433dac_continuous_stop_async_writing23dac_continuous_handle_t">
+<span id="_CPPv333dac_continuous_stop_async_writing23dac_continuous_handle_t"></span><span id="_CPPv233dac_continuous_stop_async_writing23dac_continuous_handle_t"></span><span id="dac_continuous_stop_async_writing__dac_continuous_handle_t"></span><span class="target" id="dac__continuous_8h_1a70f9ad948c08a42115557b36dfbf6f51"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_stop_async_writing</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423dac_continuous_handle_t" title="dac_continuous_handle_t"><span class="n"><span class="pre">dac_continuous_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv433dac_continuous_stop_async_writing23dac_continuous_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stop the sync writing. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> -- <strong>[in]</strong> The DAC continuous channel handle that obtained from 'dac_continuous_new_channels' </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Stop asynchronous writing successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG The handle is NULL</p></li>
+<li><p>ESP_ERR_INVALID_STATE Asynchronous writing has not started </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv435dac_continuous_write_asynchronously23dac_continuous_handle_tP7uint8_t6size_tPK7uint8_t6size_tP6size_t">
+<span id="_CPPv335dac_continuous_write_asynchronously23dac_continuous_handle_tP7uint8_t6size_tPK7uint8_t6size_tP6size_t"></span><span id="_CPPv235dac_continuous_write_asynchronously23dac_continuous_handle_tP7uint8_t6size_tPK7uint8_t6size_tP6size_t"></span><span id="dac_continuous_write_asynchronously__dac_continuous_handle_t.uint8_tP.s.uint8_tCP.s.sP"></span><span class="target" id="dac__continuous_8h_1a40f876040d88977f747f72141c73ec6d"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_write_asynchronously</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv423dac_continuous_handle_t" title="dac_continuous_handle_t"><span class="n"><span class="pre">dac_continuous_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dma_buf</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dma_buf_len</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">data_len</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">bytes_loaded</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv435dac_continuous_write_asynchronously23dac_continuous_handle_tP7uint8_t6size_tPK7uint8_t6size_tP6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write DAC data asynchronously. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function can be called when the asynchronous writing started, and it can be called in the callback directly but recommend to writing data in a task, referring to :example:<code class="docutils literal notranslate"><span class="pre">peripherals/dac/dac_continuous/dac_audio</span></code></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> -- <strong>[in]</strong> The DAC continuous channel handle that obtained from 'dac_continuous_new_channels' </p></li>
+<li><p><strong>dma_buf</strong> -- <strong>[in]</strong> The DMA buffer address, it can be acquired from '<a class="reference internal" href="#structdac__event__data__t"><span class="std std-ref">dac_event_data_t</span></a>' in the 'on_convert_done' callback </p></li>
+<li><p><strong>dma_buf_len</strong> -- <strong>[in]</strong> The DMA buffer length, it can be acquired from '<a class="reference internal" href="#structdac__event__data__t"><span class="std std-ref">dac_event_data_t</span></a>' in the 'on_convert_done' callback </p></li>
+<li><p><strong>data</strong> -- <strong>[in]</strong> The data that need to be written </p></li>
+<li><p><strong>data_len</strong> -- <strong>[in]</strong> The data length the need to be written </p></li>
+<li><p><strong>bytes_loaded</strong> -- <strong>[out]</strong> The bytes number that has been loaded/written into the DMA buffer </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK Write the data into DMA buffer successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG NULL pointer</p></li>
+<li><p>ESP_ERR_INVALID_STATE The channels haven't start the asynchronous writing</p></li>
+<li><p>ESP_ERR_NOT_FOUND The param 'dam_buf' not match any existed DMA buffer </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="id7">
+<h3>Structures<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv423dac_continuous_config_t">
+<span id="_CPPv323dac_continuous_config_t"></span><span id="_CPPv223dac_continuous_config_t"></span><span id="dac_continuous_config_t"></span><span class="target" id="structdac__continuous__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_config_t</span></span></span><a class="headerlink" href="#_CPPv423dac_continuous_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC continuous channels' configurations. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23dac_continuous_config_t9chan_maskE">
+<span id="_CPPv3N23dac_continuous_config_t9chan_maskE"></span><span id="_CPPv2N23dac_continuous_config_t9chan_maskE"></span><span id="dac_continuous_config_t::chan_mask__dac_channel_mask_t"></span><span class="target" id="structdac__continuous__config__t_1a7a064b678723bc66b7d7c85e214df152"></span><a class="reference internal" href="#_CPPv418dac_channel_mask_t" title="dac_channel_mask_t"><span class="n"><span class="pre">dac_channel_mask_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">chan_mask</span></span></span><a class="headerlink" href="#_CPPv4N23dac_continuous_config_t9chan_maskE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC channels' mask for selecting which channels are used </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23dac_continuous_config_t8desc_numE">
+<span id="_CPPv3N23dac_continuous_config_t8desc_numE"></span><span id="_CPPv2N23dac_continuous_config_t8desc_numE"></span><span id="dac_continuous_config_t::desc_num__uint32_t"></span><span class="target" id="structdac__continuous__config__t_1ad295e5977e792e5110e8fa72a5935756"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">desc_num</span></span></span><a class="headerlink" href="#_CPPv4N23dac_continuous_config_t8desc_numE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The number of DMA descriptor, at least 2 descriptors are required The number of descriptors is directly proportional to the max data buffer size while converting in cyclic output but only need to ensure it is greater than '1' in acyclic output Typically, suggest to set the number bigger than 5, in case the DMA stopped while sending a short buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23dac_continuous_config_t8buf_sizeE">
+<span id="_CPPv3N23dac_continuous_config_t8buf_sizeE"></span><span id="_CPPv2N23dac_continuous_config_t8buf_sizeE"></span><span id="dac_continuous_config_t::buf_size__s"></span><span class="target" id="structdac__continuous__config__t_1a1dc2d0898a6c519553002d4af2b181aa"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">buf_size</span></span></span><a class="headerlink" href="#_CPPv4N23dac_continuous_config_t8buf_sizeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The DMA buffer size, should be within 32~4092 bytes. Each DMA buffer will be attached to a DMA descriptor, i.e. the number of DMA buffer will be equal to the DMA descriptor number The DMA buffer size is not allowed to be greater than 4092 bytes The total DMA buffer size equal to <code class="docutils literal notranslate"><span class="pre">desc_num</span> <span class="pre">*</span> <span class="pre">buf_size</span></code> Typically, suggest to set the size to the multiple of 4 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23dac_continuous_config_t7freq_hzE">
+<span id="_CPPv3N23dac_continuous_config_t7freq_hzE"></span><span id="_CPPv2N23dac_continuous_config_t7freq_hzE"></span><span id="dac_continuous_config_t::freq_hz__uint32_t"></span><span class="target" id="structdac__continuous__config__t_1addfd9fdcc399ae5d683c392471090aa0"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">freq_hz</span></span></span><a class="headerlink" href="#_CPPv4N23dac_continuous_config_t7freq_hzE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The frequency of DAC conversion in continuous mode, unit: Hz The supported range is related to the target and the clock source. For the clock <code class="docutils literal notranslate"><span class="pre">DAC_DIGI_CLK_SRC_DEFAULT</span></code>: the range is 19.6 KHz to several MHz on ESP32 and 77 Hz to several MHz on ESP32-S2. For the clock <code class="docutils literal notranslate"><span class="pre">DAC_DIGI_CLK_SRC_APLL</span></code>: the range is 648 Hz to several MHz on ESP32 and 6 Hz to several MHz on ESP32-S2. Typically not suggest to set the frequency higher than 2 MHz, otherwise the severe distortion will appear </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23dac_continuous_config_t6offsetE">
+<span id="_CPPv3N23dac_continuous_config_t6offsetE"></span><span id="_CPPv2N23dac_continuous_config_t6offsetE"></span><span id="dac_continuous_config_t::offset__int8_t"></span><span class="target" id="structdac__continuous__config__t_1a091930aaf08ed51f96ae8d8387cc8d39"></span><span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">offset</span></span></span><a class="headerlink" href="#_CPPv4N23dac_continuous_config_t6offsetE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The offset of the DAC digital data. Range -128~127 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23dac_continuous_config_t7clk_srcE">
+<span id="_CPPv3N23dac_continuous_config_t7clk_srcE"></span><span id="_CPPv2N23dac_continuous_config_t7clk_srcE"></span><span id="dac_continuous_config_t::clk_src__dac_continuous_digi_clk_src_t"></span><span class="target" id="structdac__continuous__config__t_1a349cb264688475e83ba816614b1ec9a0"></span><a class="reference internal" href="#_CPPv429dac_continuous_digi_clk_src_t" title="dac_continuous_digi_clk_src_t"><span class="n"><span class="pre">dac_continuous_digi_clk_src_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clk_src</span></span></span><a class="headerlink" href="#_CPPv4N23dac_continuous_config_t7clk_srcE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The clock source of digital controller, which can affect the range of supported frequency Currently <code class="docutils literal notranslate"><span class="pre">DAC_DIGI_CLK_SRC_DEFAULT</span></code> and <code class="docutils literal notranslate"><span class="pre">DAC_DIGI_CLK_SRC_APLL</span></code> are available </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23dac_continuous_config_t9chan_modeE">
+<span id="_CPPv3N23dac_continuous_config_t9chan_modeE"></span><span id="_CPPv2N23dac_continuous_config_t9chan_modeE"></span><span id="dac_continuous_config_t::chan_mode__dac_continuous_channel_mode_t"></span><span class="target" id="structdac__continuous__config__t_1ac6ec2af40e7e9621df44d445e0a42108"></span><a class="reference internal" href="#_CPPv429dac_continuous_channel_mode_t" title="dac_continuous_channel_mode_t"><span class="n"><span class="pre">dac_continuous_channel_mode_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">chan_mode</span></span></span><a class="headerlink" href="#_CPPv4N23dac_continuous_config_t9chan_modeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The channel mode of continuous mode, only take effect when multiple channels enabled, depends converting the buffer alternately or simultaneously </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv416dac_event_data_t">
+<span id="_CPPv316dac_event_data_t"></span><span id="_CPPv216dac_event_data_t"></span><span id="dac_event_data_t"></span><span class="target" id="structdac__event__data__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_event_data_t</span></span></span><a class="headerlink" href="#_CPPv416dac_event_data_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Event structure used in DAC event queue. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16dac_event_data_t3bufE">
+<span id="_CPPv3N16dac_event_data_t3bufE"></span><span id="_CPPv2N16dac_event_data_t3bufE"></span><span id="dac_event_data_t::buf__voidP"></span><span class="target" id="structdac__event__data__t_1a8062558db3f99137fd16676d8075cf36"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">buf</span></span></span><a class="headerlink" href="#_CPPv4N16dac_event_data_t3bufE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The pointer of DMA buffer that just finished sending </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16dac_event_data_t8buf_sizeE">
+<span id="_CPPv3N16dac_event_data_t8buf_sizeE"></span><span id="_CPPv2N16dac_event_data_t8buf_sizeE"></span><span id="dac_event_data_t::buf_size__s"></span><span class="target" id="structdac__event__data__t_1a0f6bedb3b8e142b1f0be65819174b62d"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">buf_size</span></span></span><a class="headerlink" href="#_CPPv4N16dac_event_data_t8buf_sizeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The writable buffer size of the DMA buffer, equal to '<a class="reference internal" href="#structdac__continuous__config__t_1a1dc2d0898a6c519553002d4af2b181aa"><span class="std std-ref">dac_continuous_config_t::buf_size</span></a>' </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16dac_event_data_t11write_bytesE">
+<span id="_CPPv3N16dac_event_data_t11write_bytesE"></span><span id="_CPPv2N16dac_event_data_t11write_bytesE"></span><span id="dac_event_data_t::write_bytes__s"></span><span class="target" id="structdac__event__data__t_1aef3a7da668d8c3ba8323dd3905fac3b4"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">write_bytes</span></span></span><a class="headerlink" href="#_CPPv4N16dac_event_data_t11write_bytesE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The number of bytes that be written successfully </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv421dac_event_callbacks_t">
+<span id="_CPPv321dac_event_callbacks_t"></span><span id="_CPPv221dac_event_callbacks_t"></span><span id="dac_event_callbacks_t"></span><span class="target" id="structdac__event__callbacks__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_event_callbacks_t</span></span></span><a class="headerlink" href="#_CPPv421dac_event_callbacks_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Group of DAC callbacks. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The callbacks are all running under ISR environment </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When CONFIG_DAC_ISR_IRAM_SAFE is enabled, the callback itself and functions called by it should be placed in IRAM. The variables used in the function should be in the SRAM as well. </p>
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21dac_event_callbacks_t15on_convert_doneE">
+<span id="_CPPv3N21dac_event_callbacks_t15on_convert_doneE"></span><span id="_CPPv2N21dac_event_callbacks_t15on_convert_doneE"></span><span id="dac_event_callbacks_t::on_convert_done__dac_isr_callback_t"></span><span class="target" id="structdac__event__callbacks__t_1a1c59382aa287aedc10ce45a51f6c9712"></span><a class="reference internal" href="#_CPPv418dac_isr_callback_t" title="dac_isr_callback_t"><span class="n"><span class="pre">dac_isr_callback_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">on_convert_done</span></span></span><a class="headerlink" href="#_CPPv4N21dac_event_callbacks_t15on_convert_doneE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Callback of data conversion done event An event data buffer previously loaded to the driver has been output and converted. The event data includes DMA buffer address and size that just finished converting. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21dac_event_callbacks_t7on_stopE">
+<span id="_CPPv3N21dac_event_callbacks_t7on_stopE"></span><span id="_CPPv2N21dac_event_callbacks_t7on_stopE"></span><span id="dac_event_callbacks_t::on_stop__dac_isr_callback_t"></span><span class="target" id="structdac__event__callbacks__t_1a6046ad3fe0af1a5fe344836363becd8b"></span><a class="reference internal" href="#_CPPv418dac_isr_callback_t" title="dac_isr_callback_t"><span class="n"><span class="pre">dac_isr_callback_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">on_stop</span></span></span><a class="headerlink" href="#_CPPv4N21dac_event_callbacks_t7on_stopE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Callback of finished sending all the data. All loaded event data buffers are converted. Driver is pending for new data buffers to be loaded. The event data will be NULL in this callback. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="id8">
+<h3>Type Definitions<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv423dac_continuous_handle_t">
+<span id="_CPPv323dac_continuous_handle_t"></span><span id="_CPPv223dac_continuous_handle_t"></span><span id="dac_continuous_handle_t"></span><span class="target" id="dac__continuous_8h_1a76c60c1f4f22dbb6392f6eb7a3f6571e"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">dac_continuous_s</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_handle_t</span></span></span><a class="headerlink" href="#_CPPv423dac_continuous_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC continuous channel handle </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv418dac_isr_callback_t">
+<span id="_CPPv318dac_isr_callback_t"></span><span id="_CPPv218dac_isr_callback_t"></span><span id="dac_isr_callback_t"></span><span class="target" id="dac__continuous_8h_1a0b71bc474f76081e3734780479ee4da0"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">dac_isr_callback_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv423dac_continuous_handle_t" title="dac_continuous_handle_t"><span class="n"><span class="pre">dac_continuous_handle_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">handle</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv416dac_event_data_t" title="dac_event_data_t"><span class="n"><span class="pre">dac_event_data_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">user_data</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv418dac_isr_callback_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC event callback. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Param handle<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>[in]</strong> DAC channel handle, created from <code class="docutils literal notranslate"><span class="pre">dac_continuous_new_channels()</span></code></p>
+</dd>
+<dt class="field-even">Param event<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>[in]</strong> DAC event data </p>
+</dd>
+<dt class="field-odd">Param user_data<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>[in]</strong> User registered context, passed from <code class="docutils literal notranslate"><span class="pre">dac_continuous_register_event_callback()</span></code></p>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p>Whether a high priority task has been waken up by this callback function </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv418dac_channel_mask_t">
+<span id="_CPPv318dac_channel_mask_t"></span><span id="_CPPv218dac_channel_mask_t"></span><span class="target" id="dac__continuous_8h_1af4354af06971d78b3b6e0d6412462da5"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_channel_mask_t</span></span></span><a class="headerlink" href="#_CPPv418dac_channel_mask_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC channel mask. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18dac_channel_mask_t20DAC_CHANNEL_MASK_CH0E">
+<span id="_CPPv3N18dac_channel_mask_t20DAC_CHANNEL_MASK_CH0E"></span><span id="_CPPv2N18dac_channel_mask_t20DAC_CHANNEL_MASK_CH0E"></span><span class="target" id="dac__continuous_8h_1af4354af06971d78b3b6e0d6412462da5a89f1780bdab1bde719ad3e918788354e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_CHANNEL_MASK_CH0</span></span></span><a class="headerlink" href="#_CPPv4N18dac_channel_mask_t20DAC_CHANNEL_MASK_CH0E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC channel 0 is GPIO25(ESP32) / GPIO17(ESP32S2) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18dac_channel_mask_t20DAC_CHANNEL_MASK_CH1E">
+<span id="_CPPv3N18dac_channel_mask_t20DAC_CHANNEL_MASK_CH1E"></span><span id="_CPPv2N18dac_channel_mask_t20DAC_CHANNEL_MASK_CH1E"></span><span class="target" id="dac__continuous_8h_1af4354af06971d78b3b6e0d6412462da5aa16729c15028e59b1bb31168ce85a628"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_CHANNEL_MASK_CH1</span></span></span><a class="headerlink" href="#_CPPv4N18dac_channel_mask_t20DAC_CHANNEL_MASK_CH1E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC channel 1 is GPIO26(ESP32) / GPIO18(ESP32S2) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18dac_channel_mask_t20DAC_CHANNEL_MASK_ALLE">
+<span id="_CPPv3N18dac_channel_mask_t20DAC_CHANNEL_MASK_ALLE"></span><span id="_CPPv2N18dac_channel_mask_t20DAC_CHANNEL_MASK_ALLE"></span><span class="target" id="dac__continuous_8h_1af4354af06971d78b3b6e0d6412462da5a9d2c7908fc7617594b66ae2efbdeb2ec"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_CHANNEL_MASK_ALL</span></span></span><a class="headerlink" href="#_CPPv4N18dac_channel_mask_t20DAC_CHANNEL_MASK_ALLE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Both DAC channel 0 and channel 1 </p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id9">
+<h3>Header File<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_dac/include/driver/dac_types.h">components/esp_driver_dac/include/driver/dac_types.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;driver/dac_types.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_driver_dac</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_driver_dac</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_driver_dac
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_driver_dac
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id10">
+<h3>Type Definitions<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv429dac_continuous_digi_clk_src_t">
+<span id="_CPPv329dac_continuous_digi_clk_src_t"></span><span id="_CPPv229dac_continuous_digi_clk_src_t"></span><span id="dac_continuous_digi_clk_src_t"></span><span class="target" id="esp__driver__dac_2include_2driver_2dac__types_8h_1aec0358b843f50c3b87a4ed9fa01fff28"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><a class="reference internal" href="clk_tree.html#_CPPv429soc_periph_dac_digi_clk_src_t" title="soc_periph_dac_digi_clk_src_t"><span class="n"><span class="pre">soc_periph_dac_digi_clk_src_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_digi_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv429dac_continuous_digi_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC DMA (digital controller) clock source. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv420dac_cosine_clk_src_t">
+<span id="_CPPv320dac_cosine_clk_src_t"></span><span id="_CPPv220dac_cosine_clk_src_t"></span><span id="dac_cosine_clk_src_t"></span><span class="target" id="esp__driver__dac_2include_2driver_2dac__types_8h_1ac6cebe3afd3918318f82ec3814d40a80"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><a class="reference internal" href="clk_tree.html#_CPPv431soc_periph_dac_cosine_clk_src_t" title="soc_periph_dac_cosine_clk_src_t"><span class="n"><span class="pre">soc_periph_dac_cosine_clk_src_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_cosine_clk_src_t</span></span></span><a class="headerlink" href="#_CPPv420dac_cosine_clk_src_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC cosine wave generator clock source. </p>
+</dd></dl>
+
+</section>
+<section id="id11">
+<h3>Enumerations<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv429dac_continuous_channel_mode_t">
+<span id="_CPPv329dac_continuous_channel_mode_t"></span><span id="_CPPv229dac_continuous_channel_mode_t"></span><span class="target" id="esp__driver__dac_2include_2driver_2dac__types_8h_1a49059742992a6bc2f3a3baa13b1c8dae"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_continuous_channel_mode_t</span></span></span><a class="headerlink" href="#_CPPv429dac_continuous_channel_mode_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC channel work mode in dma mode. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Only take effect when multiple channels enabled. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Assume the data in buffer is 'A B C D E F' DAC_CHANNEL_MODE_SIMUL:<ul class="simple">
+<li><p>channel 0: A B C D E F</p></li>
+<li><p>channel 1: A B C D E F DAC_CHANNEL_MODE_ALTER:</p></li>
+<li><p>channel 0: A C E</p></li>
+<li><p>channel 1: B D F </p></li>
+</ul>
+</p>
+</div>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N29dac_continuous_channel_mode_t22DAC_CHANNEL_MODE_SIMULE">
+<span id="_CPPv3N29dac_continuous_channel_mode_t22DAC_CHANNEL_MODE_SIMULE"></span><span id="_CPPv2N29dac_continuous_channel_mode_t22DAC_CHANNEL_MODE_SIMULE"></span><span class="target" id="esp__driver__dac_2include_2driver_2dac__types_8h_1a49059742992a6bc2f3a3baa13b1c8daeaba1d72a9f356e56e2790efe5caeefbfb"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_CHANNEL_MODE_SIMUL</span></span></span><a class="headerlink" href="#_CPPv4N29dac_continuous_channel_mode_t22DAC_CHANNEL_MODE_SIMULE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The data in the DMA buffer is simultaneously output to the enable channel of the DAC. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N29dac_continuous_channel_mode_t22DAC_CHANNEL_MODE_ALTERE">
+<span id="_CPPv3N29dac_continuous_channel_mode_t22DAC_CHANNEL_MODE_ALTERE"></span><span id="_CPPv2N29dac_continuous_channel_mode_t22DAC_CHANNEL_MODE_ALTERE"></span><span class="target" id="esp__driver__dac_2include_2driver_2dac__types_8h_1a49059742992a6bc2f3a3baa13b1c8daea042b5434bb333f3e2da5a0f57bb87694"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_CHANNEL_MODE_ALTER</span></span></span><a class="headerlink" href="#_CPPv4N29dac_continuous_channel_mode_t22DAC_CHANNEL_MODE_ALTERE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The data in the DMA buffer is alternately output to the enable channel of the DAC. </p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id12">
+<h3>Header File<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/hal/include/hal/dac_types.h">components/hal/include/hal/dac_types.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hal/dac_types.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id13">
+<h3>Enumerations<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv413dac_channel_t">
+<span id="_CPPv313dac_channel_t"></span><span id="_CPPv213dac_channel_t"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1a91a20d9c9c4ee6eb84e6d5bd1438a38a"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_channel_t</span></span></span><a class="headerlink" href="#_CPPv413dac_channel_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N13dac_channel_t10DAC_CHAN_0E">
+<span id="_CPPv3N13dac_channel_t10DAC_CHAN_0E"></span><span id="_CPPv2N13dac_channel_t10DAC_CHAN_0E"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1a91a20d9c9c4ee6eb84e6d5bd1438a38aa6b52fcc0d040c5f321c19768f601247f"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_CHAN_0</span></span></span><a class="headerlink" href="#_CPPv4N13dac_channel_t10DAC_CHAN_0E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC channel 0 is GPIO25(ESP32) / GPIO17(ESP32S2) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N13dac_channel_t10DAC_CHAN_1E">
+<span id="_CPPv3N13dac_channel_t10DAC_CHAN_1E"></span><span id="_CPPv2N13dac_channel_t10DAC_CHAN_1E"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1a91a20d9c9c4ee6eb84e6d5bd1438a38aa7d3ab21e727dd30c935c104d839fa128"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_CHAN_1</span></span></span><a class="headerlink" href="#_CPPv4N13dac_channel_t10DAC_CHAN_1E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>DAC channel 1 is GPIO26(ESP32) / GPIO18(ESP32S2) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N13dac_channel_t13DAC_CHANNEL_1E">
+<span id="_CPPv3N13dac_channel_t13DAC_CHANNEL_1E"></span><span id="_CPPv2N13dac_channel_t13DAC_CHANNEL_1E"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1a91a20d9c9c4ee6eb84e6d5bd1438a38aa7f34ce1b6acb76defa0b60bfc02486ef"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_CHANNEL_1</span></span></span><a class="headerlink" href="#_CPPv4N13dac_channel_t13DAC_CHANNEL_1E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Alias of 'DAC_CHAN_0', now the channel index start from '0' </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N13dac_channel_t13DAC_CHANNEL_2E">
+<span id="_CPPv3N13dac_channel_t13DAC_CHANNEL_2E"></span><span id="_CPPv2N13dac_channel_t13DAC_CHANNEL_2E"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1a91a20d9c9c4ee6eb84e6d5bd1438a38aa18279a8fa053fe3168d1e55ed76dea4e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_CHANNEL_2</span></span></span><a class="headerlink" href="#_CPPv4N13dac_channel_t13DAC_CHANNEL_2E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Alias of 'DAC_CHAN_1', now the channel index start from '0' </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv418dac_cosine_atten_t">
+<span id="_CPPv318dac_cosine_atten_t"></span><span id="_CPPv218dac_cosine_atten_t"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1af1412f0fbc298b1d6021ef2a67e75665"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_cosine_atten_t</span></span></span><a class="headerlink" href="#_CPPv418dac_cosine_atten_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>The attenuation of the amplitude of the cosine wave generator. The max amplitude is VDD3P3_RTC. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18dac_cosine_atten_t24DAC_COSINE_ATTEN_DEFAULTE">
+<span id="_CPPv3N18dac_cosine_atten_t24DAC_COSINE_ATTEN_DEFAULTE"></span><span id="_CPPv2N18dac_cosine_atten_t24DAC_COSINE_ATTEN_DEFAULTE"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1af1412f0fbc298b1d6021ef2a67e75665a2238a37e4fba8fcf0652a11bd37bb39d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_COSINE_ATTEN_DEFAULT</span></span></span><a class="headerlink" href="#_CPPv4N18dac_cosine_atten_t24DAC_COSINE_ATTEN_DEFAULTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>No attenuation to the DAC cosine wave amplitude. Default. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18dac_cosine_atten_t21DAC_COSINE_ATTEN_DB_0E">
+<span id="_CPPv3N18dac_cosine_atten_t21DAC_COSINE_ATTEN_DB_0E"></span><span id="_CPPv2N18dac_cosine_atten_t21DAC_COSINE_ATTEN_DB_0E"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1af1412f0fbc298b1d6021ef2a67e75665a46b5d6cefbdc1f1cfd7d45a91bfd3739"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_COSINE_ATTEN_DB_0</span></span></span><a class="headerlink" href="#_CPPv4N18dac_cosine_atten_t21DAC_COSINE_ATTEN_DB_0E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Original amplitude of the DAC cosine wave, equals to DAC_COSINE_ATTEN_DEFAULT </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18dac_cosine_atten_t21DAC_COSINE_ATTEN_DB_6E">
+<span id="_CPPv3N18dac_cosine_atten_t21DAC_COSINE_ATTEN_DB_6E"></span><span id="_CPPv2N18dac_cosine_atten_t21DAC_COSINE_ATTEN_DB_6E"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1af1412f0fbc298b1d6021ef2a67e75665aa70994ef99919b266403aedb1b72d972"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_COSINE_ATTEN_DB_6</span></span></span><a class="headerlink" href="#_CPPv4N18dac_cosine_atten_t21DAC_COSINE_ATTEN_DB_6E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>1/2 amplitude of the DAC cosine wave </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18dac_cosine_atten_t22DAC_COSINE_ATTEN_DB_12E">
+<span id="_CPPv3N18dac_cosine_atten_t22DAC_COSINE_ATTEN_DB_12E"></span><span id="_CPPv2N18dac_cosine_atten_t22DAC_COSINE_ATTEN_DB_12E"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1af1412f0fbc298b1d6021ef2a67e75665a5e114b919a847c21c0ebfa8fa602546a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_COSINE_ATTEN_DB_12</span></span></span><a class="headerlink" href="#_CPPv4N18dac_cosine_atten_t22DAC_COSINE_ATTEN_DB_12E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>1/4 amplitude of the DAC cosine wave </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18dac_cosine_atten_t22DAC_COSINE_ATTEN_DB_18E">
+<span id="_CPPv3N18dac_cosine_atten_t22DAC_COSINE_ATTEN_DB_18E"></span><span id="_CPPv2N18dac_cosine_atten_t22DAC_COSINE_ATTEN_DB_18E"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1af1412f0fbc298b1d6021ef2a67e75665a24046e8a568f742b5ebe0289f7c71b87"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_COSINE_ATTEN_DB_18</span></span></span><a class="headerlink" href="#_CPPv4N18dac_cosine_atten_t22DAC_COSINE_ATTEN_DB_18E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>1/8 amplitude of the DAC cosine wave </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv418dac_cosine_phase_t">
+<span id="_CPPv318dac_cosine_phase_t"></span><span id="_CPPv218dac_cosine_phase_t"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1afceb4017d7c89c07ac4fc244dacd8790"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dac_cosine_phase_t</span></span></span><a class="headerlink" href="#_CPPv418dac_cosine_phase_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set the phase of the cosine wave generator output. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Only 0 or 180 are supported, it will be set to 0 as default if configured to an unsupported phase. </p>
+</div>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18dac_cosine_phase_t18DAC_COSINE_PHASE_0E">
+<span id="_CPPv3N18dac_cosine_phase_t18DAC_COSINE_PHASE_0E"></span><span id="_CPPv2N18dac_cosine_phase_t18DAC_COSINE_PHASE_0E"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1afceb4017d7c89c07ac4fc244dacd8790a52eea660bb07ea9e5ecdaeac179d08dc"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_COSINE_PHASE_0</span></span></span><a class="headerlink" href="#_CPPv4N18dac_cosine_phase_t18DAC_COSINE_PHASE_0E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Phase shift +0° </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18dac_cosine_phase_t20DAC_COSINE_PHASE_180E">
+<span id="_CPPv3N18dac_cosine_phase_t20DAC_COSINE_PHASE_180E"></span><span id="_CPPv2N18dac_cosine_phase_t20DAC_COSINE_PHASE_180E"></span><span class="target" id="hal_2include_2hal_2dac__types_8h_1afceb4017d7c89c07ac4fc244dacd8790a78b7bf65dabce732aabf75b61175fd26"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DAC_COSINE_PHASE_180</span></span></span><a class="headerlink" href="#_CPPv4N18dac_cosine_phase_t20DAC_COSINE_PHASE_180E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Phase shift +180° </p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Digital To Analog Converter (DAC) (api-reference/peripherals/dac)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Digital To Analog Converter (DAC) (api-reference/peripherals/dac)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="clk_tree.html" class="btn btn-neutral float-left" title="Clock Tree" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gpio.html" class="btn btn-neutral float-right" title="GPIO &amp; RTC GPIO" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

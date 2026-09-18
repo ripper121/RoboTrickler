@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generating and Parsing FATFS on Host - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/storage/fatfsgen.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/storage/fatfsgen';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Manufacturing Utility" href="mass_mfg.html" />
+    <link rel="prev" title="FAT Filesystem Support" href="fatfs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Storage API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="fatfs.html">FAT Filesystem Support</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Generating and Parsing FATFS on Host</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fat-file-system-generator-and-parser-design">FAT File System Generator and Parser Design</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fatfsgen-py"><code class="docutils literal notranslate"><span class="pre">fatfsgen.py</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fatfsparse-py"><code class="docutils literal notranslate"><span class="pre">fatfsparse.py</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#features">Features</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mass_mfg.html">Manufacturing Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_flash.html">Non-Volatile Storage Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_bootloader.html">NVS Bootloader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_encryption.html">NVS Encryption</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_partition_gen.html">NVS Partition Generator Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_partition_parse.html">NVS Partition Parser Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdmmc.html">SD/SDIO/MMC Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="partition.html">Partitions API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spiffs.html">SPIFFS Filesystem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vfs.html">Virtual Filesystem Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wear-levelling.html">Wear Levelling API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="storage-security.html">Storage Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Storage API</a></li>
+      <li class="breadcrumb-item active">Generating and Parsing FATFS on Host</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/storage/fatfsgen.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="generating-and-parsing-fatfs-on-host">
+<h1>Generating and Parsing FATFS on Host<a class="headerlink" href="#generating-and-parsing-fatfs-on-host" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/storage/fatfsgen.html">[中文]</a></p>
+<p>This document is intended mainly for developers of Python tools <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/fatfs/fatfsgen.py">fatfsgen.py </a> and <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/fatfs/fatfsparse.py">fatfsparse.py </a>, and people with special interest in these tools and implementation of the FAT file system in ESP-IDF. If you are interested in using these tools, please refer to the user guide at <a class="reference internal" href="fatfs.html#fatfs-partition-generator"><span class="std std-ref">FatFs Partition Generator</span></a>.</p>
+<p>The FAT file system is composed of various logical units. The units are used to store general information about the file system, allocations, content of files and directories, and file's metadata. The tools <code class="docutils literal notranslate"><span class="pre">fatfsgen.py</span></code> and <code class="docutils literal notranslate"><span class="pre">fatfsparse.py</span></code> are used to implement the FAT file system while considering all these logical units, and they also provide support for wear levelling.</p>
+<section id="fat-file-system-generator-and-parser-design">
+<h2>FAT File System Generator and Parser Design<a class="headerlink" href="#fat-file-system-generator-and-parser-design" title="Permalink to this heading"></a></h2>
+<p>This section describes particular units of the FAT file system generator and parser design. The implementation aims to create a valid model of the FAT structure with a focus on macro operations, generating and parsing the whole partition without modifying it in the run (mounting).</p>
+<figure class="align-center" id="id1">
+<img alt="Class diagram" src="../../_images/classes_fatfsgen.svg" /><figcaption>
+<p><span class="caption-text">FAT File System Generator and Parser Design Architecture</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<section id="class-fatfs">
+<h3>Class FATFS<a class="headerlink" href="#class-fatfs" title="Permalink to this heading"></a></h3>
+<p>This is the most general entity responsible for modeling the FAT file system. It is composed of <strong>FATFSState</strong> (holding metadata and boot sector), <strong>FAT</strong> (holding file allocation table), and <strong>Directory</strong> (representing the root directory required by FAT12 and FAT16). The class processes all the requirements for the partition, analyses the local folder dedicated to transforming it into a binary image, and generates an internal representation of the local folder. Then, the class can generate a binary image from the internal FAT file system model.</p>
+</section>
+<section id="class-wlfatfs">
+<h3>Class WLFATFS<a class="headerlink" href="#class-wlfatfs" title="Permalink to this heading"></a></h3>
+<p>The class extends the functionality of the class <strong>FATFS</strong>. It implements an encapsulation of the file system into the wear levelling, by adding the &quot;dummy&quot; sector for balancing the load (a redundant sector, see the section <a class="reference internal" href="#fafsgen-wear-levelling"><span class="std std-ref">Wear Levelling</span></a>), configuration sector and state sector. This class generates a binary FATFS partition with initialized wear levelling layer. For further analysis, it also provides an option to remove the wear levelling completely. The class is instantiated and invoked by the <code class="docutils literal notranslate"><span class="pre">wl_fatfsgen.py</span></code> script.</p>
+</section>
+<section id="class-bootsectorstate">
+<h3>Class BootSectorState<a class="headerlink" href="#class-bootsectorstate" title="Permalink to this heading"></a></h3>
+<p>The instance of this class contains the metadata required for building a boot sector and BPB (BIOS Parameter Block). Boot sector is basically implemented for the cross-platform compatibility, i.e., when ESP chipsets are connected with other platforms, it will always follow all the FAT file system standards. However, during partition generation, chip does not consume the data in this boot sector and all the other data needed, as the data is constant. In other words, changing the fields with the prefix &quot;BS&quot; is usually unnecessary and often does not work. If you want to add new features, please focus on fields with the prefix &quot;BPB&quot;. Another critical role of this class is to share access to the metadata and binary image over the whole class system. Because of this, every class in the system can access this singleton.</p>
+</section>
+<section id="class-fatfsstate">
+<h3>Class FATFSState<a class="headerlink" href="#class-fatfsstate" title="Permalink to this heading"></a></h3>
+<p>The class <strong>FATFSState</strong> might be obsolete in the future, so developers could transfer its functionality into the <strong>BootSectorState</strong>. The class contains a reference to the <strong>BootSectorState</strong> and extends the data with some unknown information when creating a boot sector or unnecessary for the boot sector, such as the information generated when the file system supports long file names.</p>
+</section>
+<section id="class-fat">
+<h3>Class FAT<a class="headerlink" href="#class-fat" title="Permalink to this heading"></a></h3>
+<p>FAT represents the File Allocation Table. FAT is a sequence of bytes spread over one or more sectors. The number of sectors is determined by the number of clusters and is calculated by the function <code class="docutils literal notranslate"><span class="pre">get_fat_sectors_count</span></code> in <code class="docutils literal notranslate"><span class="pre">utils.py</span></code>. The aim is to have as few sectors for one FAT as possible when you refer to every physical cluster in the file system. The FAT works as follows: For every physical cluster at <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">*</span> <span class="pre">some_constant</span></code> address, FAT contains an entry at the <code class="docutils literal notranslate"><span class="pre">i</span></code>-th location which represents next address of the clusters in the file chain. Each version of the FAT file system uses a different size for FAT entries. FAT12 uses 12 bits per entry, thus 2 entries span 3 bytes. FAT16 uses 16 bits per entry, thus 1 entry spans 2 bytes. FAT32 uses 32 bits per FAT entry, thus one entry spans 4 bytes. All entries are in little-endian byte order.</p>
+<p>All zeros at the <code class="docutils literal notranslate"><span class="pre">i</span></code>-th entry indicates that corresponding cluster is free, while all ones at the <code class="docutils literal notranslate"><span class="pre">i</span></code>-th entry indicates that corresponding cluster is occupied and is the last cluster in the file chain. The other number at <code class="docutils literal notranslate"><span class="pre">ith</span></code>-th entry determines the next cluster's address in the file chain. These clusters are not necessarily stored adjacent to one another in the memory but instead are often fragmented throughout the data region.</p>
+<p>For partition generation, the file is divided into several parts to fit the cluster. Notice that the structure allocation of the files is a linked list. Every cluster in the file allocation chain has entry in the FAT which refers to the next cluster or the information about the last cluster in the file chain. As mentioned, FAT12 uses 12 bits per FAT entry, thus it can sets a maximum number of 4096 clusters, as with 12 bits (one and a half bytes), it can enumerate 4096 clusters at most. However, because of other overhead, FAT12 can have 4085 clusters at most. Similarly, FAT16 can have 65525 clusters at most and for FAT32 can have 268435445 clusters at most (as practically only 28 bits out of 32 bits are used to denote each FAT entry). The current implementation doesn't allow forcibly redefining the FAT file system with less than 4085 clusters to FAT16, even though the documentation claims it is possible. Notice that it would be meaningless to define it vice versa, i.e., to FAT12 with more than 4085 clusters (which implies clusters on higher addresses being inaccessible).</p>
+</section>
+<section id="class-cluster">
+<h3>Class Cluster<a class="headerlink" href="#class-cluster" title="Permalink to this heading"></a></h3>
+<p>The <strong>Cluster</strong> class is responsible for accessing the FAT entries and the corresponding physical cluster. The class <strong>FAT</strong> is an aggregation of a particular number of <strong>Cluster</strong> instances. Every cluster is uniquely defined by the ID, which also determines its position in FAT and corresponding sectors in the data region. When the cluster is allocated, it includes a reference to a file or directory. It happens only if the cluster is the first in the allocation chain. The cluster contains information about whether it is empty and the last in the file allocation linked list. If not, it includes a reference to the next cluster in the linked list. In practical usage, the cluster doesn't need to access its file, but the other way around. The <strong>File</strong> or <strong>Directory</strong> accesses its cluster, to retrieve the entire content that might be chained.</p>
+<figure class="align-center">
+<img alt="Table diagram" src="../../_images/fat_table.svg" /></figure>
+</section>
+<section id="class-directory">
+<h3>Class Directory<a class="headerlink" href="#class-directory" title="Permalink to this heading"></a></h3>
+<p>This class represents the file system directory. An instance of <strong>Directory</strong> contains the reference to the corresponding instance of <strong>Cluster</strong>, which has the first cluster in the allocation chain for the directory given. The root directory is a special case with a different count of sectors and a slightly different instantiation process. However, the root directory is still an instance of this class and is the only <strong>Directory</strong> instance associated with the class <strong>FATFS</strong> and <strong>WLFATFS</strong> respectively. The class <strong>Directory</strong> (except for the root directory) has one-to-one association with the class <strong>Entry</strong> that defines its entry in the parent directory. It also has an aggregation associated with the class <strong>Entry</strong>, because every directory contains multiple entries that consist of the actual directory's content (for example, aliases, files, and directories).</p>
+</section>
+<section id="class-file">
+<h3>Class File<a class="headerlink" href="#class-file" title="Permalink to this heading"></a></h3>
+<p>Similar to the class <strong>Directory</strong>, <strong>File</strong> represents single file in the file system. This class has one-to-one association with its first cluster in the allocation chain. Through this cluster, the <strong>File</strong> class may access the corresponding physical address and thus modifying its content. Every file also has one-to-one association with <strong>Entry</strong> instance belonging to its parent directory.</p>
+</section>
+<section id="class-entry">
+<h3>Class Entry<a class="headerlink" href="#class-entry" title="Permalink to this heading"></a></h3>
+<p><strong>Entry</strong> encapsulates information about the file/directory name in the data region of corresponding parent directory. Every file system entity (File/Directory) has an entry. In case of the symlink, the entity can have multiple entries. The directory uses entries to access its descendant files and sub-directories, and enables traversing the tree structure. Except for that, <strong>Entry</strong> holds the name, extension, size, and information regarding the used file name size (long file names or file names 8.3), etc.</p>
+<figure class="align-center">
+<img alt="Tree diagram" src="../../_images/tree_fatfs.svg" /></figure>
+</section>
+</section>
+<section id="fatfsgen-py">
+<h2><code class="docutils literal notranslate"><span class="pre">fatfsgen.py</span></code><a class="headerlink" href="#fatfsgen-py" title="Permalink to this heading"></a></h2>
+<p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/fatfs/fatfsgen.py">fatfsgen.py </a> generates FAT file systems on the host.</p>
+<p><code class="docutils literal notranslate"><span class="pre">fatfsgen.py</span></code> recursively traverses the given folder's directory structure and adds files and/or directories inside the binary partition. Users can set if the script generates the partition with wear levelling support, long file names support, and support for preserving the modification date and time from the original folder on the host.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">./fatfsgen.py</span> <span class="pre">Espressif</span></code> command generates a simple binary partition with the default settings. Here <code class="docutils literal notranslate"><span class="pre">Espressif</span></code> is the local folder (containing files and/or sub-directories) from which binary image is generated.</p>
+<p>There exist two scripts for that purpose, <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/fatfs/fatfsgen.py">fatfsgen.py </a> and <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/fatfs/wl_fatfsgen.py">wl_fatfsgen.py </a>. The difference is that <code class="docutils literal notranslate"><span class="pre">wl_fatfsgen.py</span></code> firstly uses <code class="docutils literal notranslate"><span class="pre">fatfsgen.py</span></code> for generating the partition and then initializes wear leveling.</p>
+<p>The script command line arguments are as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fatfsgen</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">output_file</span> <span class="n">OUTPUT_FILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">partition_size</span> <span class="n">PARTITION_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">sector_size</span> <span class="p">{</span><span class="mi">4096</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">long_name_support</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">use_default_datetime</span><span class="p">]</span> <span class="n">input_directory</span>
+
+<span class="o">--</span><span class="n">output_file</span><span class="p">:</span> <span class="n">path</span> <span class="n">to</span> <span class="n">the</span> <span class="n">generated</span> <span class="n">binary</span> <span class="n">partition</span>
+<span class="o">--</span><span class="n">partition_size</span><span class="p">:</span> <span class="n">defines</span> <span class="n">the</span> <span class="n">size</span> <span class="n">of</span> <span class="n">the</span> <span class="n">binary</span> <span class="n">partition</span> <span class="p">(</span><span class="n">decimal</span><span class="p">,</span> <span class="n">hexa</span> <span class="ow">or</span> <span class="n">binary</span> <span class="n">number</span><span class="p">)</span>
+<span class="o">--</span><span class="n">sector_size</span><span class="p">:</span> <span class="n">the</span> <span class="n">size</span> <span class="n">of</span> <span class="n">the</span> <span class="n">sector</span>
+<span class="o">--</span><span class="n">long_name_support</span><span class="p">:</span> <span class="n">flag</span> <span class="k">for</span> <span class="n">supporting</span> <span class="n">long</span> <span class="n">file</span> <span class="n">names</span>
+<span class="o">--</span><span class="n">use_default_datetime</span><span class="p">:</span> <span class="n">this</span> <span class="n">flag</span> <span class="n">forces</span> <span class="n">using</span> <span class="n">default</span> <span class="n">dates</span> <span class="ow">and</span> <span class="n">times</span> <span class="p">(</span><span class="n">date</span> <span class="o">==</span> <span class="mh">0x2100</span><span class="p">,</span> <span class="n">time</span> <span class="o">==</span> <span class="mh">0x0000</span><span class="p">),</span> <span class="ow">not</span> <span class="n">using</span> <span class="n">argument</span> <span class="n">to</span> <span class="n">preserve</span> <span class="n">the</span> <span class="n">original</span> <span class="n">file</span> <span class="n">system</span> <span class="n">metadata</span>
+<span class="n">input_directory</span><span class="p">:</span> <span class="n">required</span> <span class="n">argument</span><span class="p">,</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">directory</span> <span class="n">being</span> <span class="n">encoded</span> <span class="n">to</span> <span class="n">the</span> <span class="n">binary</span> <span class="n">fat</span><span class="o">-</span><span class="n">compatibile</span> <span class="n">partition</span>
+</pre></div>
+</div>
+</section>
+<section id="fatfsparse-py">
+<h2><code class="docutils literal notranslate"><span class="pre">fatfsparse.py</span></code><a class="headerlink" href="#fatfsparse-py" title="Permalink to this heading"></a></h2>
+<p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/fatfs/fatfsparse.py">fatfsparse.py </a> translates the binary image into the internal representation and generates the folder with equivalent content on the host. If user requires a parsing partition with initialized wear levelling, the <code class="docutils literal notranslate"><span class="pre">fatfsparse.py</span></code> will remove the wear levelling sectors using the function <code class="docutils literal notranslate"><span class="pre">remove_wl</span></code> provided by <code class="docutils literal notranslate"><span class="pre">wl_fatfsgen.py</span></code>. After the sectors are removed, parsing of the partition is the same as with no initial wear levelling.</p>
+<p><code class="docutils literal notranslate"><span class="pre">./fatfsparse.py</span> <span class="pre">fatfs_image.img</span></code> command yields the directory with the equivalent content as the binary data image <code class="docutils literal notranslate"><span class="pre">fatfs_image.img</span></code>.</p>
+<p>The script command line arguments are as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fatfsparse</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">wl</span><span class="o">-</span><span class="n">layer</span> <span class="p">{</span><span class="n">detect</span><span class="p">,</span><span class="n">enabled</span><span class="p">,</span><span class="n">disabled</span><span class="p">}]</span> <span class="n">input_image</span>
+
+<span class="o">--</span><span class="n">wl</span><span class="o">-</span><span class="n">layer</span><span class="p">:</span> <span class="n">indicates</span> <span class="k">if</span> <span class="n">wear</span> <span class="n">leveling</span> <span class="ow">is</span> <span class="n">enabled</span><span class="p">,</span> <span class="n">disabled</span> <span class="ow">or</span> <span class="n">should</span> <span class="n">be</span> <span class="n">detected</span> <span class="p">(</span><span class="n">detection</span> <span class="ow">is</span> <span class="n">ambiguous</span><span class="p">)</span>
+<span class="n">input_image</span><span class="p">:</span> <span class="n">path</span> <span class="n">to</span> <span class="n">binary</span> <span class="n">image</span>
+</pre></div>
+</div>
+<p>The long file names can be detected automatically. However, the wear leveling cannot be 100% detected, because one partition can be valid either with or without wear leveling, according to the user's context. When the script finds wear leveling sectors (cfg and state), it assumes wear leveling is enabled, however it might be a false positive.</p>
+</section>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this heading"></a></h2>
+<section id="fat12-fat16">
+<h3>FAT12/FAT16<a class="headerlink" href="#fat12-fat16" title="Permalink to this heading"></a></h3>
+<p>The supported FAT types are FAT12 and FAT16. For smaller partitions, FAT12 is sufficient. The type is detected according to the count of clusters, and cannot be changed by the user. If there are less than 4085 clusters, the selected type is FAT12 (FAT's entries have 12 bits). For partitions with 4085 to 65526 clusters (with 4085 and 65526 excluded), the type is FAT16. Currently <code class="docutils literal notranslate"><span class="pre">fatfsgen.py</span></code> or <code class="docutils literal notranslate"><span class="pre">fatfsparse.py</span></code> cannot process file systems with more than 65525 clusters.</p>
+</section>
+<section id="wear-levelling">
+<span id="fafsgen-wear-levelling"></span><h3>Wear Levelling<a class="headerlink" href="#wear-levelling" title="Permalink to this heading"></a></h3>
+<p>There are two types of operations related to the wear levelling layer, initializing wear leveling records and removing wear leveling records during generation and parsing of the FAT file system image.</p>
+<ol class="arabic simple">
+<li><p>Initializing Wear Levelling</p></li>
+</ol>
+<p>When a new image with wear leveling support is generated, the script initializes few extra sectors necessary for the wear leveling function.</p>
+<blockquote>
+<div><ul>
+<li><p>The dummy sector: This is an empty sector placed at the beginning of the partition and it will be ignored when file system is being mounted. The dummy sector copies the content of the next sector and then swaps its position with the next sector (or the first sector in case dummy sector was the last) after particular number of erase cycles. In this way, each FAT file system sector traverses across the whole range of flash partition, and thus the erase cycles corresponding to this sector gets distributed across the entire flash.</p></li>
+<li><dl class="simple">
+<dt>The state sector: State sector has 64 byte data stored.</dt><dd><ul class="simple">
+<li><p>pos: position of the dummy sector</p></li>
+<li><p>max_pos: number of sectors in the partition (excluding config and state sectors)</p></li>
+<li><p>move_count: indicates how many times dummy sector traversed through the entire flash</p></li>
+<li><p>access_count: count of sector erase cycles after which dummy sector will swap its position</p></li>
+<li><p>max_count: equal to wl_config_t::updaterate</p></li>
+<li><p>block_size: equal to wl_config_t::page_size</p></li>
+<li><p>version: equal to wl_config_t::version</p></li>
+<li><p>device_id: generated randomly when the state is first initialized</p></li>
+<li><p>reserved: 7 x 32-bit words, set to 0</p></li>
+<li><p>crc32: crc32 of all the previous fields, including reserved</p></li>
+</ul>
+</dd>
+</dl>
+<p>Also, the state sector will be appended by 16-byte <code class="docutils literal notranslate"><span class="pre">pos</span> <span class="pre">update</span> <span class="pre">record</span></code> for every value of <code class="docutils literal notranslate"><span class="pre">pos</span></code>. Thus, this record will help us to determine the position of the dummy sector.</p>
+<p>Since <code class="docutils literal notranslate"><span class="pre">erase</span> <span class="pre">+</span> <span class="pre">write</span></code> operation of the state sector is not atomic, we may lose the data if the power is cut off between &quot;erase&quot; and &quot;write&quot;. However, two copies of the state are maintained to recover the state after the power outage. On each update, both copies are updated. Thus, after power outage, we can revert the original valid state.</p>
+</li>
+<li><dl class="simple">
+<dt>The config sector: This sector contains the information about the partition used by the wear leveling layer.</dt><dd><ul class="simple">
+<li><p>start_addr: start address of partition (always 0)</p></li>
+<li><p>full_mem_size: size of the partition, including data, dummy, state x 2, config sectors. Value is in bytes</p></li>
+<li><p>page_size: equal to sector size (generally 4096)</p></li>
+<li><p>sector_size: always 4096 for the types of NOR flash supported by ESP-IDF</p></li>
+<li><p>updaterate: ESP-IDF always sets this to 16. Could be made a config option at some point</p></li>
+<li><p>wr_size: always set to 16</p></li>
+<li><p>version: current version is 2</p></li>
+<li><p>temp_buff_size: always set to 32 (This shouldn't actually have been stored in flash)</p></li>
+<li><p>crc: crc32 of all the previous values</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>2. Removing Wear Levelling
+While removing wear leveling records, we have to find the position of the dummy sector, and the original and valid orders of the partition (because traversing the dummy sector shuffles the partition). The script can remove other wear leveling sectors from the partition. Steps to remove wear leveling records are given below:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Find the <code class="docutils literal notranslate"><span class="pre">pos</span></code>, position of the dummy sector, which will be determined by the number of <code class="docutils literal notranslate"><span class="pre">pos</span> <span class="pre">update</span> <span class="pre">records</span></code> in the state sector.</p></li>
+<li><p>Create the new image by removing dummy sector and merging remaining sectors before and after dummy sector.</p></li>
+<li><p>Then remove the wear leveling state sectors and config sector which are placed at the end of the partition.</p></li>
+<li><p>Reorder the new image to get its original order. <code class="docutils literal notranslate"><span class="pre">move_count</span></code> helps us to find the beginning of the partition. The partition will start at the position <code class="docutils literal notranslate"><span class="pre">end_of_partition</span> <span class="pre">-</span> <span class="pre">move_count</span></code>. Thus the beginning of the partition after removing wear leveling sectors will be <code class="docutils literal notranslate"><span class="pre">partition[end_of_partition</span> <span class="pre">-</span> <span class="pre">(move_count*page_size)]</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="file-names-encoding">
+<h3>File Names Encoding<a class="headerlink" href="#file-names-encoding" title="Permalink to this heading"></a></h3>
+<p>The protocol FAT supports two types of file names.</p>
+</section>
+<section id="short-file-names-sfn">
+<h3>Short File Names (SFN)<a class="headerlink" href="#short-file-names-sfn" title="Permalink to this heading"></a></h3>
+<p>The SFN is mandatory for the implementation of file names. SFN refer to the 8.3 file name convention, with 8 characters for the file name and 3 characters for the extension. This pattern is case-insensitive, however, all file names are changed to uppercase in the inner representation of the generator. The entry describing the short file names is 32 bytes long and its structure is as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Offset:   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+0x000000: 46 49 4C 45 4E 41 4D 45 45 58 54 20 18 00 00 00    FILENAMEEXT.....
+0x000010: 21 00 21 00 00 00 00 00 21 00 02 00 1E 00 00 00    !.!.....!.......
+</pre></div>
+</div>
+<p>The entry denotes the file with 8.3 file name (&quot;FILENAME.EXT&quot;) __(0x00/00-0A)__ of size 0x1E = 30 bytes __(0x10/0x0C)__, with default times of modification and creation (0x0021) __(0x10/00,02 and 08)__. The relevant cluster for the file is located at __0x02 (0x10/0A)__. Please notice that a character is encoded using one byte (e.g., __0x46 == 'F'__)</p>
+</section>
+<section id="long-file-names-lfn">
+<h3>Long File Names (LFN)<a class="headerlink" href="#long-file-names-lfn" title="Permalink to this heading"></a></h3>
+<p>The LFN supports 255 characters excluding the trailing <code class="docutils literal notranslate"><span class="pre">NULL</span></code>. The LFN supports any character as short file names with an additional period <code class="docutils literal notranslate"><span class="pre">.</span></code> and the following special characters: <code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">,</span> <span class="pre">;</span> <span class="pre">=</span> <span class="pre">[</span> <span class="pre">]</span></code>. LFN uses UNICODE, so the character is encoded using 2 bytes.</p>
+<p>The structure of one name encoded using LFN is as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">00003000</span><span class="p">:</span> <span class="mi">42</span> <span class="mi">65</span> <span class="mi">00</span> <span class="mi">2</span><span class="n">E</span> <span class="mi">00</span> <span class="mi">74</span> <span class="mi">00</span> <span class="mi">78</span> <span class="mi">00</span> <span class="mi">74</span> <span class="mi">00</span> <span class="mi">0</span><span class="n">F</span> <span class="mi">00</span> <span class="mi">43</span> <span class="n">FF</span> <span class="n">FF</span>    <span class="n">Be</span><span class="o">...</span><span class="n">t</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">t</span><span class="o">...</span><span class="n">C</span><span class="o">..</span>
+<span class="mi">00003010</span><span class="p">:</span> <span class="n">FF</span> <span class="n">FF</span> <span class="n">FF</span> <span class="n">FF</span> <span class="n">FF</span> <span class="n">FF</span> <span class="n">FF</span> <span class="n">FF</span> <span class="n">FF</span> <span class="n">FF</span> <span class="mi">00</span> <span class="mi">00</span> <span class="n">FF</span> <span class="n">FF</span> <span class="n">FF</span> <span class="n">FF</span>    <span class="o">................</span>
+<span class="mi">00003020</span><span class="p">:</span> <span class="mi">01</span> <span class="mi">74</span> <span class="mi">00</span> <span class="mi">68</span> <span class="mi">00</span> <span class="mi">69</span> <span class="mi">00</span> <span class="mi">73</span> <span class="mi">00</span> <span class="mi">69</span> <span class="mi">00</span> <span class="mi">0</span><span class="n">F</span> <span class="mi">00</span> <span class="mi">43</span> <span class="mi">73</span> <span class="mi">00</span>    <span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">i</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">i</span><span class="o">...</span><span class="n">Cs</span><span class="o">.</span>
+<span class="mi">00003030</span><span class="p">:</span> <span class="mi">6</span><span class="n">C</span> <span class="mi">00</span> <span class="mi">6</span><span class="n">F</span> <span class="mi">00</span> <span class="mi">6</span><span class="n">E</span> <span class="mi">00</span> <span class="mi">67</span> <span class="mi">00</span> <span class="mi">66</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">69</span> <span class="mi">00</span> <span class="mi">6</span><span class="n">C</span> <span class="mi">00</span>    <span class="n">l</span><span class="o">.</span><span class="n">o</span><span class="o">.</span><span class="n">n</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="n">f</span><span class="o">...</span><span class="n">i</span><span class="o">.</span><span class="n">l</span><span class="o">.</span>
+<span class="mi">00003040</span><span class="p">:</span> <span class="mi">54</span> <span class="mi">48</span> <span class="mi">49</span> <span class="mi">53</span> <span class="mi">49</span> <span class="mi">53</span> <span class="mi">7</span><span class="n">E</span> <span class="mi">31</span> <span class="mi">54</span> <span class="mi">58</span> <span class="mi">54</span> <span class="mi">20</span> <span class="mi">00</span> <span class="mi">00</span> <span class="n">D6</span> <span class="mi">45</span>    <span class="n">THISIS</span><span class="o">~</span><span class="mi">1</span><span class="n">TXT</span><span class="o">...</span><span class="n">VE</span>
+<span class="mi">00003050</span><span class="p">:</span> <span class="mi">26</span> <span class="mi">55</span> <span class="mi">26</span> <span class="mi">55</span> <span class="mi">00</span> <span class="mi">00</span> <span class="n">D6</span> <span class="mi">45</span> <span class="mi">26</span> <span class="mi">55</span> <span class="mi">02</span> <span class="mi">00</span> <span class="mi">1</span><span class="n">C</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>    <span class="o">&amp;</span><span class="n">U</span><span class="o">&amp;</span><span class="n">U</span><span class="o">..</span><span class="n">VE</span><span class="o">&amp;</span><span class="n">U</span><span class="o">......</span>
+</pre></div>
+</div>
+<p>The above example encodes a file name <code class="docutils literal notranslate"><span class="pre">thisislongfile.txt</span></code>. The record is composed of multiple entries. The first entry contains metadata and is equivalent to the SFN entry. This entry might be final if the file name conforms to the 8.3 file name convention. In such scenarios, the SFN pattern is used. Otherwise, the generator adds various entries with the LFN structure above the SFN entry. These entries hold information about the file name and its checksum for consistency. Every LFN record can hold 13 characters (26 bytes). The file name is firstly cut into some amount of 13-character substrings and these are added above the SFN entry.</p>
+<p>We add LFN entries in reversed order, so the first entry in the directory is the last part of the file name and the last is SFN entry. In the above example, we can see that the first entry contains text <code class="docutils literal notranslate"><span class="pre">e.txt</span></code>, while the others contain the beginning of the name <code class="docutils literal notranslate"><span class="pre">thisislongfil</span></code>. The first byte in LFN entries denotes an order or the sequence number (numbered from 1). To determine the first entry of the LFN, the first byte is masked with 0x40 (<code class="docutils literal notranslate"><span class="pre">first_byte</span> <span class="pre">=|</span> <span class="pre">0x40</span></code>). The specification says that the last entry value will be ORed with 0x40 and it is the mark for the last entry. For example, when the record is the second and also the last in the LFN entry, its first byte is <code class="docutils literal notranslate"><span class="pre">0x42</span></code>.</p>
+<p>The LFN entry is signed at field <strong>DIR_Attr</strong> with value <code class="docutils literal notranslate"><span class="pre">ATTR_READ_ONLY</span> <span class="pre">|</span> <span class="pre">ATTR_HIDDEN</span> <span class="pre">|</span> <span class="pre">ATTR_SYSTEM</span> <span class="pre">|</span> <span class="pre">ATTR_VOLUME_ID</span></code> (see the file <code class="docutils literal notranslate"><span class="pre">long_filename_utils.py</span></code>). The SFN entry (possibly also within LFN) contains either <code class="docutils literal notranslate"><span class="pre">ATTR_DIRECTORY</span></code> or <code class="docutils literal notranslate"><span class="pre">ATTR_ARCHIVE</span></code> in this field for directory or file respectively.</p>
+<p>The LFN entry is tagged at the field <strong>DIR_NTRes</strong> with the value <code class="docutils literal notranslate"><span class="pre">0x00</span></code>. This is a sign of the SFN entry in the LFN record, if the entry is a whole SFN record, the value is <code class="docutils literal notranslate"><span class="pre">0x18</span></code>. As you can see in the first example, the value at this field is <code class="docutils literal notranslate"><span class="pre">0x18</span></code>, because the name <strong>&quot;FILENAME.EXT&quot;</strong> fits the SFN. However, the recent example showing <strong>&quot;thisislongfile.txt&quot;</strong> has value <code class="docutils literal notranslate"><span class="pre">0x00</span></code> at field <strong>DIR_NTRes</strong> in the last entry, since it is a LFN. The SFN needs to be unique. For that purpose, the <code class="docutils literal notranslate"><span class="pre">fatfsgen.py</span></code> uses the first 6 characters from the file name, concatenating with <code class="docutils literal notranslate"><span class="pre">~</span></code> and with ID denoting the order of the name with the same prefix. The ID is between 0 to 127, which is the maximal amount of files with the same prefix.</p>
+<p>Calculation of the checksum is described and implemented in the <code class="docutils literal notranslate"><span class="pre">utils.py</span></code> by function <code class="docutils literal notranslate"><span class="pre">lfn_checksum</span></code>. The <code class="docutils literal notranslate"><span class="pre">fatfsparse.py</span></code> assumes that the LFN entries might not be right next to each other, but it assumes the relative order is preserved. The approach is first to find the SFN belonging to some LFN record (using <strong>DIR_NTRes</strong> field). From then, the script starts to search by moving upwards to the beginning of the respective sector, until it finds the last entry in the LFN record (the one with the first half byte equal to 4). The entries are distinguished by their checksums. When finished, the file name can be composed.</p>
+</section>
+<section id="date-and-time-in-fat-file-system">
+<h3>Date and Time in FAT File System<a class="headerlink" href="#date-and-time-in-fat-file-system" title="Permalink to this heading"></a></h3>
+<p>The FAT file system protocol used by ESP-IDF does not preserve the date or time on the chips' media, so all the images extracted from the device have the same default timestamp for all the FAT-specified date-time fields (creation and the last modification timestamp as well as creation, last modification and last access dates).</p>
+<p>There are a couple of fields in the SFN entry describing time, such as <strong>DIR_CrtTime</strong> and <strong>DIR_WrtTime</strong>. Some fields are ignored by the FAT implementation used by ESP-IDF (see the file <code class="docutils literal notranslate"><span class="pre">entry.py</span></code>). However, changes in the fields <strong>DIR_WrtTime</strong> and <strong>DIR_WrtDate</strong> are preserved in the chip. Both time and data entry are 16-bit, where the granularity of the time is 2 seconds.</p>
+</section>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/storage/fatfs/fatfsgen">storage/fatfs/fatfsgen</a> demonstrates how to use the FatFS partition generation tool to automatically create a FatFS image from a host folder during the building process.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Generating and Parsing FATFS on Host (api-reference/storage/fatfsgen)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Generating and Parsing FATFS on Host (api-reference/storage/fatfsgen)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fatfs.html" class="btn btn-neutral float-left" title="FAT Filesystem Support" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mass_mfg.html" class="btn btn-neutral float-right" title="Manufacturing Utility" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

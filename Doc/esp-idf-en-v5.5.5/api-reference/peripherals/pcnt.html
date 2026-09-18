@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pulse Counter (PCNT) - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/pcnt.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/peripherals/pcnt';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Remote Control Transceiver (RMT)" href="rmt.html" />
+    <link rel="prev" title="Motor Control Pulse Width Modulator (MCPWM)" href="mcpwm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Peripherals API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adc_oneshot.html">Analog to Digital Converter (ADC) Oneshot Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_continuous.html">Analog to Digital Converter (ADC) Continuous Mode Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adc_calibration.html">Analog to Digital Converter (ADC) Calibration Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clk_tree.html">Clock Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dac.html">Digital To Analog Converter (DAC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gpio.html">GPIO &amp; RTC GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gptimer.html">General Purpose Timer (GPTimer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2c.html">Inter-Integrated Circuit (I2C)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2s.html">Inter-IC Sound (I2S)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lcd/index.html">LCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ledc.html">LED Control (LEDC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mcpwm.html">Motor Control Pulse Width Modulator (MCPWM)</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Pulse Counter (PCNT)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functional-overview">Functional Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rmt.html">Remote Control Transceiver (RMT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sd_pullup_requirements.html">SD Pull-up Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdmmc_host.html">SDMMC Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdspi_host.html">SD SPI Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdio_slave.html">SDIO Card Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdm.html">Sigma-Delta Modulation (SDM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_flash/index.html">SPI Flash API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_master.html">SPI Master Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_slave.html">SPI Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cap_touch_sens.html">Capacitive Touch Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="twai.html">Two-Wire Automotive Interface (TWAI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uart.html">Universal Asynchronous Receiver/Transmitter (UART)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Peripherals API</a></li>
+      <li class="breadcrumb-item active">Pulse Counter (PCNT)</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/peripherals/pcnt.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pulse-counter-pcnt">
+<h1>Pulse Counter (PCNT)<a class="headerlink" href="#pulse-counter-pcnt" title="Permalink to this heading"></a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h2>
+<p>The PCNT (Pulse Counter) module is designed to count the number of rising and/or falling edges of input signals. The ESP32 contains multiple pulse counter units in the module. <a class="footnote-reference brackets" href="#id4" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> Each unit is in effect an independent counter with multiple channels, where each channel can increment/decrement the counter on a rising/falling edge. Furthermore, each channel can be configured separately.</p>
+<p>PCNT channels can react to signals of <strong>edge</strong> type and <strong>level</strong> type, however for simple applications, detecting the edge signal is usually sufficient. PCNT channels can be configured react to both pulse edges (i.e., rising and falling edge), and can be configured to increase, decrease or do nothing to the unit's counter on each edge. The level signal is the so-called <strong>control signal</strong>, which is used to control the counting mode of the edge signals that are attached to the same channel. By combining the usage of both edge and level signals, a PCNT unit can act as a <strong>quadrature decoder</strong>.</p>
+<p>Besides that, PCNT unit is equipped with a separate glitch filter, which is helpful to remove noise from the signal.</p>
+<p>Typically, a PCNT module can be used in scenarios like:</p>
+<ul class="simple">
+<li><p>Calculate periodic signal's frequency by counting the pulse numbers within a time slice</p></li>
+<li><p>Decode quadrature signals into speed and direction</p></li>
+</ul>
+</section>
+<section id="functional-overview">
+<h2>Functional Overview<a class="headerlink" href="#functional-overview" title="Permalink to this heading"></a></h2>
+<p>Description of the PCNT functionality is divided into the following sections:</p>
+<p><ul class="simple">
+<li><p><a class="reference internal" href="#pcnt-resource-allocation"><span class="std std-ref">Resource Allocation</span></a> - covers how to allocate PCNT units and channels with properly set of configurations. It also covers how to recycle the resources when they finished working.</p></li>
+<li><p><a class="reference internal" href="#pcnt-setup-channel-actions"><span class="std std-ref">Set Up Channel Actions</span></a> - covers how to configure the PCNT channel to behave on different signal edges and levels.</p></li>
+<li><p><a class="reference internal" href="#pcnt-watch-points"><span class="std std-ref">Watch Points</span></a> - describes how to configure PCNT watch points (i.e., tell PCNT unit to trigger an event when the count reaches a certain value).</p></li>
+<li><p><a class="reference internal" href="#pcnt-register-event-callbacks"><span class="std std-ref">Register Event Callbacks</span></a> - describes how to hook your specific code to the watch point event callback function.</p></li>
+<li><p><a class="reference internal" href="#pcnt-set-glitch-filter"><span class="std std-ref">Set Glitch Filter</span></a> - describes how to enable and set the timing parameters for the internal glitch filter.</p></li>
+<li><p><a class="reference internal" href="#pcnt-enable-disable-unit"><span class="std std-ref">Enable and Disable Unit</span></a> - describes how to enable and disable the PCNT unit.</p></li>
+<li><p><a class="reference internal" href="#pcnt-unit-io-control"><span class="std std-ref">Unit IO Control</span></a> - describes IO control functions of PCNT unit, like enable glitch filter, start and stop unit, get and clear count value.</p></li>
+<li><p><a class="reference internal" href="#pcnt-power-management"><span class="std std-ref">Power Management</span></a> - describes what functionality will prevent the chip from going into low power mode.</p></li>
+<li><p><a class="reference internal" href="#pcnt-iram-safe"><span class="std std-ref">IRAM Safe</span></a> - describes tips on how to make the PCNT interrupt and IO control functions work better along with a disabled cache.</p></li>
+<li><p><a class="reference internal" href="#pcnt-thread-safe"><span class="std std-ref">Thread Safety</span></a> - lists which APIs are guaranteed to be thread safe by the driver.</p></li>
+<li><p><a class="reference internal" href="#pcnt-kconfig-options"><span class="std std-ref">Kconfig Options</span></a> - lists the supported Kconfig options that can be used to make a different effect on driver behavior.</p></li>
+</ul>
+</p>
+<section id="resource-allocation">
+<span id="pcnt-resource-allocation"></span><h3>Resource Allocation<a class="headerlink" href="#resource-allocation" title="Permalink to this heading"></a></h3>
+<p>The PCNT unit and channel are represented by <a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_unit_handle_t</span></code></a> and <a class="reference internal" href="#_CPPv421pcnt_channel_handle_t" title="pcnt_channel_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_channel_handle_t</span></code></a> respectively. All available units and channels are maintained by the driver in a resource pool, so you do not need to know the exact underlying instance ID.</p>
+<section id="install-pcnt-unit">
+<h4>Install PCNT Unit<a class="headerlink" href="#install-pcnt-unit" title="Permalink to this heading"></a></h4>
+<p>To install a PCNT unit, there is a configuration structure that needs to be given in advance: <a class="reference internal" href="#_CPPv418pcnt_unit_config_t" title="pcnt_unit_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_unit_config_t</span></code></a>:</p>
+<p><ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv4N18pcnt_unit_config_t9low_limitE" title="pcnt_unit_config_t::low_limit"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_unit_config_t::low_limit</span></code></a> and <a class="reference internal" href="#_CPPv4N18pcnt_unit_config_t10high_limitE" title="pcnt_unit_config_t::high_limit"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_unit_config_t::high_limit</span></code></a> specify the range for the internal hardware counter. The counter will reset to zero automatically when it crosses either the high or low limit.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N18pcnt_unit_config_t11accum_countE" title="pcnt_unit_config_t::accum_count"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_unit_config_t::accum_count</span></code></a> sets whether to create an internal accumulator for the counter. This is helpful when you want to extend the counter's width, which by default is 16 bit at most, defined in the hardware. See also <a class="reference internal" href="#pcnt-compensate-overflow-loss"><span class="std std-ref">Compensate Overflow Loss</span></a> for how to use this feature to compensate the overflow loss.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N18pcnt_unit_config_t13intr_priorityE" title="pcnt_unit_config_t::intr_priority"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_unit_config_t::intr_priority</span></code></a> sets the priority of the interrupt. If it is set to <code class="docutils literal notranslate"><span class="pre">0</span></code>, the driver will allocate an interrupt with a default priority. Otherwise, the driver will use the given priority.</p></li>
+</ul>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since all PCNT units share the same interrupt source, when installing multiple PCNT units make sure that the interrupt priority <a class="reference internal" href="#_CPPv4N18pcnt_unit_config_t13intr_priorityE" title="pcnt_unit_config_t::intr_priority"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_unit_config_t::intr_priority</span></code></a> is the same for each unit.</p>
+</div>
+<p>Unit allocation and initialization is done by calling a function <a class="reference internal" href="#_CPPv413pcnt_new_unitPK18pcnt_unit_config_tP18pcnt_unit_handle_t" title="pcnt_new_unit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></a> with <a class="reference internal" href="#_CPPv418pcnt_unit_config_t" title="pcnt_unit_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_unit_config_t</span></code></a> as an input parameter. The function will return a PCNT unit handle only when it runs correctly. Specifically, when there are no more free PCNT units in the pool (i.e., unit resources have been used up), then this function will return <a class="reference internal" href="../system/esp_err.html#c.ESP_ERR_NOT_FOUND" title="ESP_ERR_NOT_FOUND"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_NOT_FOUND</span></code></a> error. The total number of available PCNT units is recorded by <a class="reference internal" href="../system/soc_caps.html#c.SOC_PCNT_UNITS_PER_GROUP" title="SOC_PCNT_UNITS_PER_GROUP"><code class="xref c c-macro docutils literal notranslate"><span class="pre">SOC_PCNT_UNITS_PER_GROUP</span></code></a> for reference.</p>
+<p>If a previously created PCNT unit is no longer needed, it is recommended to recycle the resource by calling <a class="reference internal" href="#_CPPv413pcnt_del_unit18pcnt_unit_handle_t" title="pcnt_del_unit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_del_unit()</span></code></a>. Which in return allows the underlying unit hardware to be used for other purposes. Before deleting a PCNT unit, one should ensure the following prerequisites:</p>
+<ul class="simple">
+<li><p>The unit is in the init state, in other words, the unit is either disabled by <a class="reference internal" href="#_CPPv417pcnt_unit_disable18pcnt_unit_handle_t" title="pcnt_unit_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_disable()</span></code></a> or not enabled yet.</p></li>
+<li><p>The attached PCNT channels are all removed by <a class="reference internal" href="#_CPPv416pcnt_del_channel21pcnt_channel_handle_t" title="pcnt_del_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_del_channel()</span></code></a>.</p></li>
+</ul>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define EXAMPLE_PCNT_HIGH_LIMIT 100</span>
+<span class="cp">#define EXAMPLE_PCNT_LOW_LIMIT  -100</span>
+
+<span class="n">pcnt_unit_config_t</span><span class="w"> </span><span class="n">unit_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">high_limit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_PCNT_HIGH_LIMIT</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">low_limit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_PCNT_LOW_LIMIT</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">pcnt_unit_handle_t</span><span class="w"> </span><span class="n">pcnt_unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">pcnt_new_unit</span><span class="p">(</span><span class="o">&amp;</span><span class="n">unit_config</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pcnt_unit</span><span class="p">));</span>
+</pre></div>
+</div>
+</section>
+<section id="install-pcnt-channel">
+<h4>Install PCNT Channel<a class="headerlink" href="#install-pcnt-channel" title="Permalink to this heading"></a></h4>
+<p>To install a PCNT channel, you must initialize a <a class="reference internal" href="#_CPPv418pcnt_chan_config_t" title="pcnt_chan_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_chan_config_t</span></code></a> structure in advance, and then call <a class="reference internal" href="#_CPPv416pcnt_new_channel18pcnt_unit_handle_tPK18pcnt_chan_config_tP21pcnt_channel_handle_t" title="pcnt_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_new_channel()</span></code></a>. The configuration fields of the <a class="reference internal" href="#_CPPv418pcnt_chan_config_t" title="pcnt_chan_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_chan_config_t</span></code></a> structure are described below:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv4N18pcnt_chan_config_t13edge_gpio_numE" title="pcnt_chan_config_t::edge_gpio_num"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_chan_config_t::edge_gpio_num</span></code></a> and <a class="reference internal" href="#_CPPv4N18pcnt_chan_config_t14level_gpio_numE" title="pcnt_chan_config_t::level_gpio_num"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_chan_config_t::level_gpio_num</span></code></a> specify the GPIO numbers used by <strong>edge</strong> type signal and <strong>level</strong> type signal. Please note, either of them can be assigned to <code class="docutils literal notranslate"><span class="pre">-1</span></code> if it is not actually used, and thus it will become a <strong>virtual IO</strong>. For some simple pulse counting applications where one of the level/edge signals is fixed (i.e., never changes), you can reclaim a GPIO by setting the signal as a virtual IO on channel allocation. Setting the level/edge signal as a virtual IO causes that signal to be internally routed to a fixed High/Low logic level, thus allowing you to save a GPIO for other purposes.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N18pcnt_chan_config_t18virt_edge_io_levelE" title="pcnt_chan_config_t::virt_edge_io_level"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_chan_config_t::virt_edge_io_level</span></code></a> and <a class="reference internal" href="#_CPPv4N18pcnt_chan_config_t19virt_level_io_levelE" title="pcnt_chan_config_t::virt_level_io_level"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_chan_config_t::virt_level_io_level</span></code></a> specify the virtual IO level for <strong>edge</strong> and <strong>level</strong> input signal, to ensure a deterministic state for such control signal. Please note, they are only valid when either <a class="reference internal" href="#_CPPv4N18pcnt_chan_config_t13edge_gpio_numE" title="pcnt_chan_config_t::edge_gpio_num"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_chan_config_t::edge_gpio_num</span></code></a> or <a class="reference internal" href="#_CPPv4N18pcnt_chan_config_t14level_gpio_numE" title="pcnt_chan_config_t::level_gpio_num"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_chan_config_t::level_gpio_num</span></code></a> is assigned to <code class="docutils literal notranslate"><span class="pre">-1</span></code>.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N18pcnt_chan_config_t17invert_edge_inputE" title="pcnt_chan_config_t::invert_edge_input"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_chan_config_t::invert_edge_input</span></code></a> and <a class="reference internal" href="#_CPPv4N18pcnt_chan_config_t18invert_level_inputE" title="pcnt_chan_config_t::invert_level_input"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_chan_config_t::invert_level_input</span></code></a> are used to decide whether to invert the input signals before they going into PCNT hardware. The invert is done by GPIO matrix instead of PCNT hardware.</p></li>
+</ul>
+<p>Channel allocating and initialization is done by calling a function <a class="reference internal" href="#_CPPv416pcnt_new_channel18pcnt_unit_handle_tPK18pcnt_chan_config_tP21pcnt_channel_handle_t" title="pcnt_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_new_channel()</span></code></a> with the above <a class="reference internal" href="#_CPPv418pcnt_chan_config_t" title="pcnt_chan_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_chan_config_t</span></code></a> as an input parameter plus a PCNT unit handle returned from <a class="reference internal" href="#_CPPv413pcnt_new_unitPK18pcnt_unit_config_tP18pcnt_unit_handle_t" title="pcnt_new_unit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></a>. This function will return a PCNT channel handle if it runs correctly. Specifically, when there are no more free PCNT channel within the unit (i.e., channel resources have been used up), then this function will return <a class="reference internal" href="../system/esp_err.html#c.ESP_ERR_NOT_FOUND" title="ESP_ERR_NOT_FOUND"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_NOT_FOUND</span></code></a> error. The total number of available PCNT channels within the unit is recorded by <a class="reference internal" href="../system/soc_caps.html#c.SOC_PCNT_CHANNELS_PER_UNIT" title="SOC_PCNT_CHANNELS_PER_UNIT"><code class="xref c c-macro docutils literal notranslate"><span class="pre">SOC_PCNT_CHANNELS_PER_UNIT</span></code></a> for reference. Note that, when install a PCNT channel for a specific unit, one should ensure the unit is in the init state, otherwise this function will return <a class="reference internal" href="../system/esp_err.html#c.ESP_ERR_INVALID_STATE" title="ESP_ERR_INVALID_STATE"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_INVALID_STATE</span></code></a> error.</p>
+<p>If a previously created PCNT channel is no longer needed, it is recommended to recycle the resources by calling <a class="reference internal" href="#_CPPv416pcnt_del_channel21pcnt_channel_handle_t" title="pcnt_del_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_del_channel()</span></code></a>. Which in return allows the underlying channel hardware to be used for other purposes.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define EXAMPLE_CHAN_GPIO_A 0</span>
+<span class="cp">#define EXAMPLE_CHAN_GPIO_B 2</span>
+
+<span class="n">pcnt_chan_config_t</span><span class="w"> </span><span class="n">chan_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">edge_gpio_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_CHAN_GPIO_A</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">level_gpio_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXAMPLE_CHAN_GPIO_B</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">pcnt_channel_handle_t</span><span class="w"> </span><span class="n">pcnt_chan</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">pcnt_new_channel</span><span class="p">(</span><span class="n">pcnt_unit</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">chan_config</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pcnt_chan</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In PCNT, the GPIOs involved can be reconfigured for pull-up or pull-down after initializing PCNT using functions such as <a class="reference internal" href="gpio.html#_CPPv414gpio_pullup_en10gpio_num_t" title="gpio_pullup_en"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">gpio_pullup_en()</span></code></a> and <a class="reference internal" href="gpio.html#_CPPv415gpio_pullup_dis10gpio_num_t" title="gpio_pullup_dis"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">gpio_pullup_dis()</span></code></a>.</p>
+</div>
+</section>
+</section>
+<section id="set-up-channel-actions">
+<span id="pcnt-setup-channel-actions"></span><h3>Set Up Channel Actions<a class="headerlink" href="#set-up-channel-actions" title="Permalink to this heading"></a></h3>
+<p>The PCNT will increase/decrease/hold its internal count value when the input pulse signal toggles. You can set different actions for edge signal and/or level signal.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv428pcnt_channel_set_edge_action21pcnt_channel_handle_t26pcnt_channel_edge_action_t26pcnt_channel_edge_action_t" title="pcnt_channel_set_edge_action"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_channel_set_edge_action()</span></code></a> function is to set specific actions for rising and falling edge of the signal attached to the <a class="reference internal" href="#_CPPv4N18pcnt_chan_config_t13edge_gpio_numE" title="pcnt_chan_config_t::edge_gpio_num"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_chan_config_t::edge_gpio_num</span></code></a>. Supported actions are listed in <a class="reference internal" href="#_CPPv426pcnt_channel_edge_action_t" title="pcnt_channel_edge_action_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_channel_edge_action_t</span></code></a>.</p></li>
+<li><p><a class="reference internal" href="#_CPPv429pcnt_channel_set_level_action21pcnt_channel_handle_t27pcnt_channel_level_action_t27pcnt_channel_level_action_t" title="pcnt_channel_set_level_action"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_channel_set_level_action()</span></code></a> function is to set specific actions for high and low level of the signal attached to the <a class="reference internal" href="#_CPPv4N18pcnt_chan_config_t14level_gpio_numE" title="pcnt_chan_config_t::level_gpio_num"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_chan_config_t::level_gpio_num</span></code></a>. Supported actions are listed in <a class="reference internal" href="#_CPPv427pcnt_channel_level_action_t" title="pcnt_channel_level_action_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_channel_level_action_t</span></code></a>. This function is not mandatory if the <a class="reference internal" href="#_CPPv4N18pcnt_chan_config_t14level_gpio_numE" title="pcnt_chan_config_t::level_gpio_num"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_chan_config_t::level_gpio_num</span></code></a> is set to <code class="docutils literal notranslate"><span class="pre">-1</span></code> when allocating PCNT channel by <a class="reference internal" href="#_CPPv416pcnt_new_channel18pcnt_unit_handle_tPK18pcnt_chan_config_tP21pcnt_channel_handle_t" title="pcnt_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_new_channel()</span></code></a>.</p></li>
+</ul>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// decrease the counter on rising edge, increase the counter on falling edge</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">pcnt_channel_set_edge_action</span><span class="p">(</span><span class="n">pcnt_chan</span><span class="p">,</span><span class="w"> </span><span class="n">PCNT_CHANNEL_EDGE_ACTION_DECREASE</span><span class="p">,</span><span class="w"> </span><span class="n">PCNT_CHANNEL_EDGE_ACTION_INCREASE</span><span class="p">));</span>
+<span class="c1">// keep the counting mode when the control signal is high level, and reverse the counting mode when the control signal is low level</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">pcnt_channel_set_level_action</span><span class="p">(</span><span class="n">pcnt_chan</span><span class="p">,</span><span class="w"> </span><span class="n">PCNT_CHANNEL_LEVEL_ACTION_KEEP</span><span class="p">,</span><span class="w"> </span><span class="n">PCNT_CHANNEL_LEVEL_ACTION_INVERSE</span><span class="p">));</span>
+</pre></div>
+</div>
+</section>
+<section id="watch-points">
+<span id="pcnt-watch-points"></span><h3>Watch Points<a class="headerlink" href="#watch-points" title="Permalink to this heading"></a></h3>
+<p>Each PCNT unit can be configured to watch several different values that you are interested in. The value to be watched is also called <strong>Watch Point</strong>. The watch point itself can not exceed the range set in <a class="reference internal" href="#_CPPv418pcnt_unit_config_t" title="pcnt_unit_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_unit_config_t</span></code></a> by <a class="reference internal" href="#_CPPv4N18pcnt_unit_config_t9low_limitE" title="pcnt_unit_config_t::low_limit"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_unit_config_t::low_limit</span></code></a> and <a class="reference internal" href="#_CPPv4N18pcnt_unit_config_t10high_limitE" title="pcnt_unit_config_t::high_limit"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_unit_config_t::high_limit</span></code></a>. When the counter reaches either watch point, a watch event will be triggered and notify you by interrupt if any watch event callback has ever registered in <a class="reference internal" href="#_CPPv434pcnt_unit_register_event_callbacks18pcnt_unit_handle_tPK22pcnt_event_callbacks_tPv" title="pcnt_unit_register_event_callbacks"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_register_event_callbacks()</span></code></a>. See <a class="reference internal" href="#pcnt-register-event-callbacks"><span class="std std-ref">Register Event Callbacks</span></a> for how to register event callbacks.</p>
+<p>The watch point can be added and removed by <a class="reference internal" href="#_CPPv425pcnt_unit_add_watch_point18pcnt_unit_handle_ti" title="pcnt_unit_add_watch_point"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_add_watch_point()</span></code></a> and <a class="reference internal" href="#_CPPv428pcnt_unit_remove_watch_point18pcnt_unit_handle_ti" title="pcnt_unit_remove_watch_point"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_remove_watch_point()</span></code></a>. The commonly-used watch points are: <strong>zero cross</strong>, <strong>maximum/minimum count</strong> and other threshold values. The number of available watch point is limited, <a class="reference internal" href="#_CPPv425pcnt_unit_add_watch_point18pcnt_unit_handle_ti" title="pcnt_unit_add_watch_point"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_add_watch_point()</span></code></a> will return error <a class="reference internal" href="../system/esp_err.html#c.ESP_ERR_NOT_FOUND" title="ESP_ERR_NOT_FOUND"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_NOT_FOUND</span></code></a> if it can not find any free hardware resource to save the watch point. You can not add the same watch point for multiple times, otherwise it will return error <a class="reference internal" href="../system/esp_err.html#c.ESP_ERR_INVALID_STATE" title="ESP_ERR_INVALID_STATE"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_INVALID_STATE</span></code></a>.</p>
+<p>It is recommended to remove the unused watch point by <a class="reference internal" href="#_CPPv428pcnt_unit_remove_watch_point18pcnt_unit_handle_ti" title="pcnt_unit_remove_watch_point"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_remove_watch_point()</span></code></a> to recycle the watch point resources.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// add zero across watch point</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">pcnt_unit_add_watch_point</span><span class="p">(</span><span class="n">pcnt_unit</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+<span class="c1">// add high limit watch point</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">pcnt_unit_add_watch_point</span><span class="p">(</span><span class="n">pcnt_unit</span><span class="p">,</span><span class="w"> </span><span class="n">EXAMPLE_PCNT_HIGH_LIMIT</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Due to the hardware limitation, after adding a watch point, you should call <a class="reference internal" href="#_CPPv421pcnt_unit_clear_count18pcnt_unit_handle_t" title="pcnt_unit_clear_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_clear_count()</span></code></a> to make it take effect.</p>
+</div>
+</section>
+<section id="register-event-callbacks">
+<span id="pcnt-register-event-callbacks"></span><h3>Register Event Callbacks<a class="headerlink" href="#register-event-callbacks" title="Permalink to this heading"></a></h3>
+<p>When PCNT unit reaches any enabled watch point, specific event will be generated and notify the CPU by interrupt. If you have some function that want to get executed when event happens, you should hook your function to the interrupt service routine by calling <a class="reference internal" href="#_CPPv434pcnt_unit_register_event_callbacks18pcnt_unit_handle_tPK22pcnt_event_callbacks_tPv" title="pcnt_unit_register_event_callbacks"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_register_event_callbacks()</span></code></a>. All supported event callbacks are listed in the <a class="reference internal" href="#_CPPv422pcnt_event_callbacks_t" title="pcnt_event_callbacks_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_event_callbacks_t</span></code></a>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv4N22pcnt_event_callbacks_t8on_reachE" title="pcnt_event_callbacks_t::on_reach"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_event_callbacks_t::on_reach</span></code></a> sets a callback function for watch point event. As this function is called within the ISR context, you must ensure that the function does not attempt to block (e.g., by making sure that only FreeRTOS APIs with <code class="docutils literal notranslate"><span class="pre">ISR</span></code> suffix are called from within the function). The function prototype is declared in <a class="reference internal" href="#_CPPv415pcnt_watch_cb_t" title="pcnt_watch_cb_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_watch_cb_t</span></code></a>.</p></li>
+</ul>
+<p>You can save their own context to <a class="reference internal" href="#_CPPv434pcnt_unit_register_event_callbacks18pcnt_unit_handle_tPK22pcnt_event_callbacks_tPv" title="pcnt_unit_register_event_callbacks"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_register_event_callbacks()</span></code></a> as well, via the parameter <code class="docutils literal notranslate"><span class="pre">user_ctx</span></code>. This user data will be directly passed to the callback functions.</p>
+<p>In the callback function, the driver will fill in the event data of specific event. For example, the watch point event or watch step event data is declared as <a class="reference internal" href="#_CPPv423pcnt_watch_event_data_t" title="pcnt_watch_event_data_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_watch_event_data_t</span></code></a>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv4N23pcnt_watch_event_data_t17watch_point_valueE" title="pcnt_watch_event_data_t::watch_point_value"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_watch_event_data_t::watch_point_value</span></code></a> saves the count value when the event triggered.</p></li>
+<li><p><a class="reference internal" href="#_CPPv4N23pcnt_watch_event_data_t15zero_cross_modeE" title="pcnt_watch_event_data_t::zero_cross_mode"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_watch_event_data_t::zero_cross_mode</span></code></a> saves how the PCNT unit crosses the zero point in the latest time. The possible zero cross modes are listed in the <a class="reference internal" href="#_CPPv427pcnt_unit_zero_cross_mode_t" title="pcnt_unit_zero_cross_mode_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_unit_zero_cross_mode_t</span></code></a>. Usually different zero cross mode means different <strong>counting direction</strong> and <strong>counting step size</strong>.</p></li>
+</ul>
+<p>Registering callback function results in lazy installation of interrupt service, thus this function should only be called before the unit is enabled by <a class="reference internal" href="#_CPPv416pcnt_unit_enable18pcnt_unit_handle_t" title="pcnt_unit_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_enable()</span></code></a>. Otherwise, it can return <a class="reference internal" href="../system/esp_err.html#c.ESP_ERR_INVALID_STATE" title="ESP_ERR_INVALID_STATE"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_INVALID_STATE</span></code></a> error.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">example_pcnt_on_reach</span><span class="p">(</span><span class="n">pcnt_unit_handle_t</span><span class="w"> </span><span class="n">unit</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">pcnt_watch_event_data_t</span><span class="w"> </span><span class="o">*</span><span class="n">edata</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">user_ctx</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">BaseType_t</span><span class="w"> </span><span class="n">high_task_wakeup</span><span class="p">;</span>
+<span class="w">    </span><span class="n">QueueHandle_t</span><span class="w"> </span><span class="n">queue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">QueueHandle_t</span><span class="p">)</span><span class="n">user_ctx</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// send watch point to queue, from this interrupt callback</span>
+<span class="w">    </span><span class="n">xQueueSendFromISR</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">(</span><span class="n">edata</span><span class="o">-&gt;</span><span class="n">watch_point_value</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">high_task_wakeup</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// return whether a high priority task has been waken up by this function</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">high_task_wakeup</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pdTRUE</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">pcnt_event_callbacks_t</span><span class="w"> </span><span class="n">cbs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">on_reach</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">example_pcnt_on_reach</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">QueueHandle_t</span><span class="w"> </span><span class="n">queue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xQueueCreate</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">pcnt_unit_register_event_callbacks</span><span class="p">(</span><span class="n">pcnt_unit</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cbs</span><span class="p">,</span><span class="w"> </span><span class="n">queue</span><span class="p">));</span>
+</pre></div>
+</div>
+</section>
+<section id="set-glitch-filter">
+<span id="pcnt-set-glitch-filter"></span><h3>Set Glitch Filter<a class="headerlink" href="#set-glitch-filter" title="Permalink to this heading"></a></h3>
+<p>The PCNT unit features filters to ignore possible short glitches in the signals. The parameters that can be configured for the glitch filter are listed in <a class="reference internal" href="#_CPPv427pcnt_glitch_filter_config_t" title="pcnt_glitch_filter_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_glitch_filter_config_t</span></code></a>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv4N27pcnt_glitch_filter_config_t13max_glitch_nsE" title="pcnt_glitch_filter_config_t::max_glitch_ns"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_glitch_filter_config_t::max_glitch_ns</span></code></a> sets the maximum glitch width, in nano seconds. If a signal pulse's width is smaller than this value, then it will be treated as noise and will not increase/decrease the internal counter.</p></li>
+</ul>
+<p>You can enable the glitch filter for PCNT unit by calling <a class="reference internal" href="#_CPPv427pcnt_unit_set_glitch_filter18pcnt_unit_handle_tPK27pcnt_glitch_filter_config_t" title="pcnt_unit_set_glitch_filter"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_set_glitch_filter()</span></code></a> with the filter configuration provided above. Particularly, you can disable the glitch filter later by calling <a class="reference internal" href="#_CPPv427pcnt_unit_set_glitch_filter18pcnt_unit_handle_tPK27pcnt_glitch_filter_config_t" title="pcnt_unit_set_glitch_filter"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_set_glitch_filter()</span></code></a> with a <code class="docutils literal notranslate"><span class="pre">NULL</span></code> filter configuration.</p>
+<p>This function should be called when the unit is in the init state. Otherwise, it will return <a class="reference internal" href="../system/esp_err.html#c.ESP_ERR_INVALID_STATE" title="ESP_ERR_INVALID_STATE"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_INVALID_STATE</span></code></a> error.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The glitch filter operates using the APB clock. To ensure the counter does not miss any pulses, the maximum glitch width should be longer than one APB_CLK cycle (typically 12.5 ns if APB is 80 MHz). Since the APB frequency can change with Dynamic Frequency Scaling (DFS), the filter may not function as expected in such cases. Therefore, the driver installs a power management lock for each PCNT unit. For more details on the power management strategy used in the PCNT driver, please refer to <a class="reference internal" href="#pcnt-power-management"><span class="std std-ref">Power Management</span></a>.</p>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">pcnt_glitch_filter_config_t</span><span class="w"> </span><span class="n">filter_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">max_glitch_ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">pcnt_unit_set_glitch_filter</span><span class="p">(</span><span class="n">pcnt_unit</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">filter_config</span><span class="p">));</span>
+</pre></div>
+</div>
+</section>
+<section id="enable-and-disable-unit">
+<span id="pcnt-enable-disable-unit"></span><h3>Enable and Disable Unit<a class="headerlink" href="#enable-and-disable-unit" title="Permalink to this heading"></a></h3>
+<p>Before doing IO control to the PCNT unit, you need to enable it first, by calling <a class="reference internal" href="#_CPPv416pcnt_unit_enable18pcnt_unit_handle_t" title="pcnt_unit_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_enable()</span></code></a>. Internally, this function:</p>
+<ul class="simple">
+<li><p>switches the PCNT driver state from <strong>init</strong> to <strong>enable</strong>.</p></li>
+<li><p>enables the interrupt service if it has been lazy installed in <a class="reference internal" href="#_CPPv434pcnt_unit_register_event_callbacks18pcnt_unit_handle_tPK22pcnt_event_callbacks_tPv" title="pcnt_unit_register_event_callbacks"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_register_event_callbacks()</span></code></a>.</p></li>
+<li><p>acquires a proper power management lock if it has been installed. See also <a class="reference internal" href="#pcnt-power-management"><span class="std std-ref">Power Management</span></a> for more information.</p></li>
+</ul>
+<p>On the contrary, calling <a class="reference internal" href="#_CPPv417pcnt_unit_disable18pcnt_unit_handle_t" title="pcnt_unit_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_disable()</span></code></a> will do the opposite, that is, put the PCNT driver back to the <strong>init</strong> state, disable the interrupts service and release the power management lock.</p>
+</section>
+<section id="unit-io-control">
+<span id="pcnt-unit-io-control"></span><h3>Unit IO Control<a class="headerlink" href="#unit-io-control" title="Permalink to this heading"></a></h3>
+<section id="start-stop-and-clear">
+<h4>Start/Stop and Clear<a class="headerlink" href="#start-stop-and-clear" title="Permalink to this heading"></a></h4>
+<p>Calling <a class="reference internal" href="#_CPPv415pcnt_unit_start18pcnt_unit_handle_t" title="pcnt_unit_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_start()</span></code></a> makes the PCNT unit start to work, increase or decrease counter according to pulse signals. On the contrary, calling <a class="reference internal" href="#_CPPv414pcnt_unit_stop18pcnt_unit_handle_t" title="pcnt_unit_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_stop()</span></code></a> will stop the PCNT unit but retain current count value. Instead, clearing counter can only be done by calling <a class="reference internal" href="#_CPPv421pcnt_unit_clear_count18pcnt_unit_handle_t" title="pcnt_unit_clear_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_clear_count()</span></code></a>.</p>
+<p>Note, <a class="reference internal" href="#_CPPv415pcnt_unit_start18pcnt_unit_handle_t" title="pcnt_unit_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_start()</span></code></a> and <a class="reference internal" href="#_CPPv414pcnt_unit_stop18pcnt_unit_handle_t" title="pcnt_unit_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_stop()</span></code></a> should be called when the unit has been enabled by <a class="reference internal" href="#_CPPv416pcnt_unit_enable18pcnt_unit_handle_t" title="pcnt_unit_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_enable()</span></code></a>. Otherwise, it will return <a class="reference internal" href="../system/esp_err.html#c.ESP_ERR_INVALID_STATE" title="ESP_ERR_INVALID_STATE"><code class="xref c c-macro docutils literal notranslate"><span class="pre">ESP_ERR_INVALID_STATE</span></code></a> error.</p>
+</section>
+<section id="get-count-value">
+<h4>Get Count Value<a class="headerlink" href="#get-count-value" title="Permalink to this heading"></a></h4>
+<p>You can read current count value at any time by calling <a class="reference internal" href="#_CPPv419pcnt_unit_get_count18pcnt_unit_handle_tPi" title="pcnt_unit_get_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_get_count()</span></code></a>. The returned count value is a <strong>signed</strong> integer, where the sign can be used to reflect the direction.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">pulse_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">ESP_ERROR_CHECK</span><span class="p">(</span><span class="n">pcnt_unit_get_count</span><span class="p">(</span><span class="n">pcnt_unit</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pulse_count</span><span class="p">));</span>
+</pre></div>
+</div>
+</section>
+<section id="compensate-overflow-loss">
+<span id="pcnt-compensate-overflow-loss"></span><h4>Compensate Overflow Loss<a class="headerlink" href="#compensate-overflow-loss" title="Permalink to this heading"></a></h4>
+<p>The internal hardware counter will be cleared to zero automatically when it reaches high or low limit. If you want to compensate for that count loss and extend the counter's bit-width, you can:</p>
+<p><ol class="arabic simple">
+<li><p>Enable <a class="reference internal" href="#_CPPv4N18pcnt_unit_config_t11accum_countE" title="pcnt_unit_config_t::accum_count"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_unit_config_t::accum_count</span></code></a> when installing the PCNT unit.</p></li>
+<li><p>Add the high/low limit as the <a class="reference internal" href="#pcnt-watch-points"><span class="std std-ref">Watch Points</span></a>.</p></li>
+<li><p>Now, the returned count value from the <a class="reference internal" href="#_CPPv419pcnt_unit_get_count18pcnt_unit_handle_tPi" title="pcnt_unit_get_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_get_count()</span></code></a> function not only reflects the hardware's count value, but also accumulates the high/low overflow loss to it.</p></li>
+</ol>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#_CPPv421pcnt_unit_clear_count18pcnt_unit_handle_t" title="pcnt_unit_clear_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_clear_count()</span></code></a> resets the accumulated count value as well.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When enabling the count overflow compensation, it is recommended to use as large a high/low count limit as possible, as it can avoid frequent interrupt triggering, improve system performance, and avoid compensation failure due to multiple overflows.</p>
+</div>
+</section>
+</section>
+<section id="power-management">
+<span id="pcnt-power-management"></span><h3>Power Management<a class="headerlink" href="#power-management" title="Permalink to this heading"></a></h3>
+<p>When power management is enabled (i.e., <a class="reference internal" href="../kconfig-reference.html#config-pm-enable"><span class="std std-ref">CONFIG_PM_ENABLE</span></a> is on), the system adjusts the APB frequency before entering light sleep, which can cause the PCNT glitch filter to misinterpret valid signals as noise.</p>
+<p>To prevent this, the driver can acquire a power management lock of type <a class="reference internal" href="../system/power_management.html#_CPPv4N18esp_pm_lock_type_t19ESP_PM_APB_FREQ_MAXE" title="ESP_PM_APB_FREQ_MAX"><code class="xref cpp cpp-enumerator docutils literal notranslate"><span class="pre">ESP_PM_APB_FREQ_MAX</span></code></a>, ensuring the APB frequency remains constant. This lock is acquired when the PCNT unit is enabled via <a class="reference internal" href="#_CPPv416pcnt_unit_enable18pcnt_unit_handle_t" title="pcnt_unit_enable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_enable()</span></code></a> and released when the unit is disabled via <a class="reference internal" href="#_CPPv417pcnt_unit_disable18pcnt_unit_handle_t" title="pcnt_unit_disable"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_disable()</span></code></a>.</p>
+</section>
+<section id="iram-safe">
+<span id="pcnt-iram-safe"></span><h3>IRAM Safe<a class="headerlink" href="#iram-safe" title="Permalink to this heading"></a></h3>
+<p>By default, the PCNT interrupt will be deferred when the Cache is disabled for reasons like writing/erasing Flash. Thus the alarm interrupt will not get executed in time, which is not expected in a real-time application.</p>
+<p>There is a Kconfig option <a class="reference internal" href="../kconfig-reference.html#config-pcnt-isr-iram-safe"><span class="std std-ref">CONFIG_PCNT_ISR_IRAM_SAFE</span></a> that:</p>
+<ol class="arabic simple">
+<li><p>Enables the interrupt being serviced even when cache is disabled</p></li>
+<li><p>Places all functions that used by the ISR into IRAM <a class="footnote-reference brackets" href="#id5" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
+<li><p>Places driver object into DRAM (in case it is mapped to PSRAM by accident)</p></li>
+</ol>
+<p>This allows the interrupt to run while the cache is disabled but comes at the cost of increased IRAM consumption.</p>
+<p>There is another Kconfig option <a class="reference internal" href="../kconfig-reference.html#config-pcnt-ctrl-func-in-iram"><span class="std std-ref">CONFIG_PCNT_CTRL_FUNC_IN_IRAM</span></a> that can put commonly used IO control functions into IRAM as well. So that these functions can also be executable when the cache is disabled. These IO control functions are as follows:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv415pcnt_unit_start18pcnt_unit_handle_t" title="pcnt_unit_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_start()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv414pcnt_unit_stop18pcnt_unit_handle_t" title="pcnt_unit_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_stop()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv421pcnt_unit_clear_count18pcnt_unit_handle_t" title="pcnt_unit_clear_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_clear_count()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv419pcnt_unit_get_count18pcnt_unit_handle_tPi" title="pcnt_unit_get_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_get_count()</span></code></a></p></li>
+</ul>
+</section>
+<section id="thread-safety">
+<span id="pcnt-thread-safe"></span><h3>Thread Safety<a class="headerlink" href="#thread-safety" title="Permalink to this heading"></a></h3>
+<p>The factory functions <a class="reference internal" href="#_CPPv413pcnt_new_unitPK18pcnt_unit_config_tP18pcnt_unit_handle_t" title="pcnt_new_unit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></a>  and <a class="reference internal" href="#_CPPv416pcnt_new_channel18pcnt_unit_handle_tPK18pcnt_chan_config_tP21pcnt_channel_handle_t" title="pcnt_new_channel"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_new_channel()</span></code></a> are guaranteed to be thread safe by the driver, which means, you can call them from different RTOS tasks without protection by extra locks.</p>
+<p>The following functions are allowed to run under ISR context, the driver uses a critical section to prevent them being called concurrently in both task and ISR.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv415pcnt_unit_start18pcnt_unit_handle_t" title="pcnt_unit_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_start()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv414pcnt_unit_stop18pcnt_unit_handle_t" title="pcnt_unit_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_stop()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv421pcnt_unit_clear_count18pcnt_unit_handle_t" title="pcnt_unit_clear_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_clear_count()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv419pcnt_unit_get_count18pcnt_unit_handle_tPi" title="pcnt_unit_get_count"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_unit_get_count()</span></code></a></p></li>
+</ul>
+<p>Other functions that take the <a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_unit_handle_t</span></code></a> and <a class="reference internal" href="#_CPPv421pcnt_channel_handle_t" title="pcnt_channel_handle_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">pcnt_channel_handle_t</span></code></a> as the first positional parameter, are not treated as thread safe. This means you should avoid calling them from multiple tasks.</p>
+</section>
+<section id="kconfig-options">
+<span id="pcnt-kconfig-options"></span><h3>Kconfig Options<a class="headerlink" href="#kconfig-options" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="../kconfig-reference.html#config-pcnt-ctrl-func-in-iram"><span class="std std-ref">CONFIG_PCNT_CTRL_FUNC_IN_IRAM</span></a> controls where to place the PCNT control functions (IRAM or Flash), see <a class="reference internal" href="#pcnt-iram-safe"><span class="std std-ref">IRAM Safe</span></a> for more information.</p></li>
+<li><p><a class="reference internal" href="../kconfig-reference.html#config-pcnt-isr-iram-safe"><span class="std std-ref">CONFIG_PCNT_ISR_IRAM_SAFE</span></a> controls whether the default ISR handler can work when cache is disabled, see <a class="reference internal" href="#pcnt-iram-safe"><span class="std std-ref">IRAM Safe</span></a> for more information.</p></li>
+<li><p><a class="reference internal" href="../kconfig-reference.html#config-pcnt-enable-debug-log"><span class="std std-ref">CONFIG_PCNT_ENABLE_DEBUG_LOG</span></a> is used to enabled the debug log output. Enabling this option increases the firmware binary size.</p></li>
+</ul>
+</section>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/peripherals/pcnt/rotary_encoder">peripherals/pcnt/rotary_encoder</a> demonstrates how to use the PCNT peripheral to decode the differential signals generated from a common rotary encoder, EC11, and how to configure the rotary encoder to wake the system from light-sleep.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_driver_pcnt/include/driver/pulse_cnt.h">components/esp_driver_pcnt/include/driver/pulse_cnt.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;driver/pulse_cnt.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_driver_pcnt</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_driver_pcnt</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_driver_pcnt
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_driver_pcnt
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413pcnt_new_unitPK18pcnt_unit_config_tP18pcnt_unit_handle_t">
+<span id="_CPPv313pcnt_new_unitPK18pcnt_unit_config_tP18pcnt_unit_handle_t"></span><span id="_CPPv213pcnt_new_unitPK18pcnt_unit_config_tP18pcnt_unit_handle_t"></span><span id="pcnt_new_unit__pcnt_unit_config_tCP.pcnt_unit_handle_tP"></span><span class="target" id="pulse__cnt_8h_1a6957dbd641eac48b918093c30c873447"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_new_unit</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418pcnt_unit_config_t" title="pcnt_unit_config_t"><span class="n"><span class="pre">pcnt_unit_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">config</span></span>, <a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ret_unit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413pcnt_new_unitPK18pcnt_unit_config_tP18pcnt_unit_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Create a new PCNT unit, and return the handle. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The newly created PCNT unit is put in the init state.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> -- <strong>[in]</strong> PCNT unit configuration </p></li>
+<li><p><strong>ret_unit</strong> -- <strong>[out]</strong> Returned PCNT unit handle </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Create PCNT unit successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Create PCNT unit failed because of invalid argument (e.g. high/low limit value out of the range)</p></li>
+<li><p>ESP_ERR_NO_MEM: Create PCNT unit failed because out of memory</p></li>
+<li><p>ESP_ERR_NOT_FOUND: Create PCNT unit failed because all PCNT units are used up and no more free one</p></li>
+<li><p>ESP_FAIL: Create PCNT unit failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413pcnt_del_unit18pcnt_unit_handle_t">
+<span id="_CPPv313pcnt_del_unit18pcnt_unit_handle_t"></span><span id="_CPPv213pcnt_del_unit18pcnt_unit_handle_t"></span><span id="pcnt_del_unit__pcnt_unit_handle_t"></span><span class="target" id="pulse__cnt_8h_1ad572a103481ee60355ed0cb87463ab31"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_del_unit</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413pcnt_del_unit18pcnt_unit_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Delete the PCNT unit handle. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A PCNT unit can't be in the enable state when this function is invoked. See also <code class="docutils literal notranslate"><span class="pre">pcnt_unit_disable()</span></code> for how to disable a unit.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Delete the PCNT unit successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Delete the PCNT unit failed because of invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Delete the PCNT unit failed because the unit is not in init state or some PCNT channel is still in working</p></li>
+<li><p>ESP_FAIL: Delete the PCNT unit failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427pcnt_unit_set_glitch_filter18pcnt_unit_handle_tPK27pcnt_glitch_filter_config_t">
+<span id="_CPPv327pcnt_unit_set_glitch_filter18pcnt_unit_handle_tPK27pcnt_glitch_filter_config_t"></span><span id="_CPPv227pcnt_unit_set_glitch_filter18pcnt_unit_handle_tPK27pcnt_glitch_filter_config_t"></span><span id="pcnt_unit_set_glitch_filter__pcnt_unit_handle_t.pcnt_glitch_filter_config_tCP"></span><span class="target" id="pulse__cnt_8h_1afab1339661997d1e58b4f80bd22afb1f"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_set_glitch_filter</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv427pcnt_glitch_filter_config_t" title="pcnt_glitch_filter_config_t"><span class="n"><span class="pre">pcnt_glitch_filter_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">config</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427pcnt_unit_set_glitch_filter18pcnt_unit_handle_tPK27pcnt_glitch_filter_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set glitch filter for PCNT unit. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function should be called when the PCNT unit is in the init state (i.e. before calling <code class="docutils literal notranslate"><span class="pre">pcnt_unit_enable()</span></code>)</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p></li>
+<li><p><strong>config</strong> -- <strong>[in]</strong> PCNT filter configuration, set config to NULL means disabling the filter function </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Set glitch filter successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Set glitch filter failed because of invalid argument (e.g. glitch width is too big)</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Set glitch filter failed because the unit is not in the init state</p></li>
+<li><p>ESP_FAIL: Set glitch filter failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416pcnt_unit_enable18pcnt_unit_handle_t">
+<span id="_CPPv316pcnt_unit_enable18pcnt_unit_handle_t"></span><span id="_CPPv216pcnt_unit_enable18pcnt_unit_handle_t"></span><span id="pcnt_unit_enable__pcnt_unit_handle_t"></span><span class="target" id="pulse__cnt_8h_1a8dce4efae92770e805fafccf2e47d8b3"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_enable</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416pcnt_unit_enable18pcnt_unit_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable the PCNT unit. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will transit the unit state from init to enable. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will enable the interrupt service, if it's lazy installed in <code class="docutils literal notranslate"><span class="pre">pcnt_unit_register_event_callbacks()</span></code>. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will acquire the PM lock if it's lazy installed in <code class="docutils literal notranslate"><span class="pre">pcnt_unit_set_glitch_filter()</span></code>. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Enable a PCNT unit doesn't mean to start it. See also <code class="docutils literal notranslate"><span class="pre">pcnt_unit_start()</span></code> for how to start the PCNT counter.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Enable PCNT unit successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Enable PCNT unit failed because of invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Enable PCNT unit failed because the unit is already enabled</p></li>
+<li><p>ESP_FAIL: Enable PCNT unit failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417pcnt_unit_disable18pcnt_unit_handle_t">
+<span id="_CPPv317pcnt_unit_disable18pcnt_unit_handle_t"></span><span id="_CPPv217pcnt_unit_disable18pcnt_unit_handle_t"></span><span id="pcnt_unit_disable__pcnt_unit_handle_t"></span><span class="target" id="pulse__cnt_8h_1a0631fae39c111735070777ca5bb12880"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_disable</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417pcnt_unit_disable18pcnt_unit_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Disable the PCNT unit. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will do the opposite work to the <code class="docutils literal notranslate"><span class="pre">pcnt_unit_enable()</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Disable a PCNT unit doesn't mean to stop it. See also <code class="docutils literal notranslate"><span class="pre">pcnt_unit_stop()</span></code> for how to stop the PCNT counter.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Disable PCNT unit successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Disable PCNT unit failed because of invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Disable PCNT unit failed because the unit is not enabled yet</p></li>
+<li><p>ESP_FAIL: Disable PCNT unit failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415pcnt_unit_start18pcnt_unit_handle_t">
+<span id="_CPPv315pcnt_unit_start18pcnt_unit_handle_t"></span><span id="_CPPv215pcnt_unit_start18pcnt_unit_handle_t"></span><span id="pcnt_unit_start__pcnt_unit_handle_t"></span><span class="target" id="pulse__cnt_8h_1ae89a7b41cb85a05144a889034231d52a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_start</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415pcnt_unit_start18pcnt_unit_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Start the PCNT unit, the counter will start to count according to the edge and/or level input signals. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function should be called when the unit is in the enable state (i.e. after calling <code class="docutils literal notranslate"><span class="pre">pcnt_unit_enable()</span></code>) </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is allowed to run within ISR context </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will be placed into IRAM if <code class="docutils literal notranslate"><span class="pre">CONFIG_PCNT_CTRL_FUNC_IN_IRAM</span></code> is on, so that it's allowed to be executed when Cache is disabled</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Start PCNT unit successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Start PCNT unit failed because of invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Start PCNT unit failed because the unit is not enabled yet</p></li>
+<li><p>ESP_FAIL: Start PCNT unit failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414pcnt_unit_stop18pcnt_unit_handle_t">
+<span id="_CPPv314pcnt_unit_stop18pcnt_unit_handle_t"></span><span id="_CPPv214pcnt_unit_stop18pcnt_unit_handle_t"></span><span id="pcnt_unit_stop__pcnt_unit_handle_t"></span><span class="target" id="pulse__cnt_8h_1a641719b9e7a50de762e358192276c860"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_stop</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414pcnt_unit_stop18pcnt_unit_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stop PCNT from counting. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function should be called when the unit is in the enable state (i.e. after calling <code class="docutils literal notranslate"><span class="pre">pcnt_unit_enable()</span></code>) </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The stop operation won't clear the counter. Also see <code class="docutils literal notranslate"><span class="pre">pcnt_unit_clear_count()</span></code> for how to clear pulse count value. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is allowed to run within ISR context </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will be placed into IRAM if <code class="docutils literal notranslate"><span class="pre">CONFIG_PCNT_CTRL_FUNC_IN_IRAM</span></code>, so that it is allowed to be executed when Cache is disabled</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Stop PCNT unit successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Stop PCNT unit failed because of invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Stop PCNT unit failed because the unit is not enabled yet</p></li>
+<li><p>ESP_FAIL: Stop PCNT unit failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421pcnt_unit_clear_count18pcnt_unit_handle_t">
+<span id="_CPPv321pcnt_unit_clear_count18pcnt_unit_handle_t"></span><span id="_CPPv221pcnt_unit_clear_count18pcnt_unit_handle_t"></span><span id="pcnt_unit_clear_count__pcnt_unit_handle_t"></span><span class="target" id="pulse__cnt_8h_1a0def2c54e4b284d10edfbf371a15f291"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_clear_count</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421pcnt_unit_clear_count18pcnt_unit_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Clear PCNT pulse count value to zero. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It's recommended to call this function after adding a watch point by <code class="docutils literal notranslate"><span class="pre">pcnt_unit_add_watch_point()</span></code>, so that the newly added watch point is effective immediately. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is allowed to run within ISR context </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will be placed into IRAM if <code class="docutils literal notranslate"><span class="pre">CONFIG_PCNT_CTRL_FUNC_IN_IRAM</span></code>, so that it's allowed to be executed when Cache is disabled</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Clear PCNT pulse count successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Clear PCNT pulse count failed because of invalid argument</p></li>
+<li><p>ESP_FAIL: Clear PCNT pulse count failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419pcnt_unit_get_count18pcnt_unit_handle_tPi">
+<span id="_CPPv319pcnt_unit_get_count18pcnt_unit_handle_tPi"></span><span id="_CPPv219pcnt_unit_get_count18pcnt_unit_handle_tPi"></span><span id="pcnt_unit_get_count__pcnt_unit_handle_t.iP"></span><span class="target" id="pulse__cnt_8h_1af99041b68d8175f63acf1ab47cc1e98d"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_get_count</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419pcnt_unit_get_count18pcnt_unit_handle_tPi" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get PCNT count value. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is allowed to run within ISR context </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will be placed into IRAM if <code class="docutils literal notranslate"><span class="pre">CONFIG_PCNT_CTRL_FUNC_IN_IRAM</span></code>, so that it's allowed to be executed when Cache is disabled</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p></li>
+<li><p><strong>value</strong> -- <strong>[out]</strong> Returned count value </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Get PCNT pulse count successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Get PCNT pulse count failed because of invalid argument</p></li>
+<li><p>ESP_FAIL: Get PCNT pulse count failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv434pcnt_unit_register_event_callbacks18pcnt_unit_handle_tPK22pcnt_event_callbacks_tPv">
+<span id="_CPPv334pcnt_unit_register_event_callbacks18pcnt_unit_handle_tPK22pcnt_event_callbacks_tPv"></span><span id="_CPPv234pcnt_unit_register_event_callbacks18pcnt_unit_handle_tPK22pcnt_event_callbacks_tPv"></span><span id="pcnt_unit_register_event_callbacks__pcnt_unit_handle_t.pcnt_event_callbacks_tCP.voidP"></span><span class="target" id="pulse__cnt_8h_1a4f764781dd6f22dd85dc265478112803"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_register_event_callbacks</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv422pcnt_event_callbacks_t" title="pcnt_event_callbacks_t"><span class="n"><span class="pre">pcnt_event_callbacks_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">cbs</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">user_data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv434pcnt_unit_register_event_callbacks18pcnt_unit_handle_tPK22pcnt_event_callbacks_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set event callbacks for PCNT unit. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>User registered callbacks are expected to be runnable within ISR context </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The first call to this function needs to be before the call to <code class="docutils literal notranslate"><span class="pre">pcnt_unit_enable</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>User can deregister a previously registered callback by calling this function and setting the callback member in the <code class="docutils literal notranslate"><span class="pre">cbs</span></code> structure to NULL.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p></li>
+<li><p><strong>cbs</strong> -- <strong>[in]</strong> Group of callback functions </p></li>
+<li><p><strong>user_data</strong> -- <strong>[in]</strong> User data, which will be passed to callback functions directly </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Set event callbacks successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Set event callbacks failed because of invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Set event callbacks failed because the unit is not in init state</p></li>
+<li><p>ESP_FAIL: Set event callbacks failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425pcnt_unit_add_watch_point18pcnt_unit_handle_ti">
+<span id="_CPPv325pcnt_unit_add_watch_point18pcnt_unit_handle_ti"></span><span id="_CPPv225pcnt_unit_add_watch_point18pcnt_unit_handle_ti"></span><span id="pcnt_unit_add_watch_point__pcnt_unit_handle_t.i"></span><span class="target" id="pulse__cnt_8h_1a2dedf5f138e6b46385ead31fdc53c57b"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_add_watch_point</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">watch_point</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425pcnt_unit_add_watch_point18pcnt_unit_handle_ti" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Add a watch point for PCNT unit, PCNT will generate an event when the counter value reaches the watch point value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p></li>
+<li><p><strong>watch_point</strong> -- <strong>[in]</strong> Value to be watched </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Add watch point successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Add watch point failed because of invalid argument (e.g. the value to be watched is out of the limitation set in <code class="docutils literal notranslate"><a class="reference internal" href="#structpcnt__unit__config__t"><span class="std std-ref"><span class="pre">pcnt_unit_config_t</span></span></a></code>)</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Add watch point failed because the same watch point has already been added</p></li>
+<li><p>ESP_ERR_NOT_FOUND: Add watch point failed because no more hardware watch point can be configured</p></li>
+<li><p>ESP_FAIL: Add watch point failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428pcnt_unit_remove_watch_point18pcnt_unit_handle_ti">
+<span id="_CPPv328pcnt_unit_remove_watch_point18pcnt_unit_handle_ti"></span><span id="_CPPv228pcnt_unit_remove_watch_point18pcnt_unit_handle_ti"></span><span id="pcnt_unit_remove_watch_point__pcnt_unit_handle_t.i"></span><span class="target" id="pulse__cnt_8h_1aa58de8d7528cb856774ba1aef284977f"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_remove_watch_point</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">watch_point</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428pcnt_unit_remove_watch_point18pcnt_unit_handle_ti" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Remove a watch point for PCNT unit. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p></li>
+<li><p><strong>watch_point</strong> -- <strong>[in]</strong> Watch point value </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Remove watch point successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Remove watch point failed because of invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Remove watch point failed because the watch point was not added by <code class="docutils literal notranslate"><span class="pre">pcnt_unit_add_watch_point()</span></code> yet</p></li>
+<li><p>ESP_FAIL: Remove watch point failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424pcnt_unit_add_watch_step18pcnt_unit_handle_ti">
+<span id="_CPPv324pcnt_unit_add_watch_step18pcnt_unit_handle_ti"></span><span id="_CPPv224pcnt_unit_add_watch_step18pcnt_unit_handle_ti"></span><span id="pcnt_unit_add_watch_step__pcnt_unit_handle_t.i"></span><span class="target" id="pulse__cnt_8h_1a98bef5028f8d32acb34db22a22982fcb"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_add_watch_step</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">step_interval</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424pcnt_unit_add_watch_step18pcnt_unit_handle_ti" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Add a step notify for PCNT unit, PCNT will generate an event when the incremental(can be positive or negative) of counter value reaches the step interval. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p></li>
+<li><p><strong>step_interval</strong> -- <strong>[in]</strong> PCNT step notify interval value. Positive value means step forward, negative value means step backward. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Add step notify successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Add step notify failed because of invalid argument (e.g. the value incremental to be watched is out of the limitation set in <code class="docutils literal notranslate"><a class="reference internal" href="#structpcnt__unit__config__t"><span class="std std-ref"><span class="pre">pcnt_unit_config_t</span></span></a></code>)</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Add step notify failed because the step notify has already been added</p></li>
+<li><p>ESP_FAIL: Add step notify failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv431pcnt_unit_remove_all_watch_step18pcnt_unit_handle_t">
+<span id="_CPPv331pcnt_unit_remove_all_watch_step18pcnt_unit_handle_t"></span><span id="_CPPv231pcnt_unit_remove_all_watch_step18pcnt_unit_handle_t"></span><span id="pcnt_unit_remove_all_watch_step__pcnt_unit_handle_t"></span><span class="target" id="pulse__cnt_8h_1a56a26ce6c8819fd10c65c91e922e8a5a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_remove_all_watch_step</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv431pcnt_unit_remove_all_watch_step18pcnt_unit_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Remove all step notify for PCNT unit. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Remove step notify successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Remove step notify failed because of invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Remove step notify failed because the step notify was not added by <code class="docutils literal notranslate"><span class="pre">pcnt_unit_add_watch_step()</span></code> yet</p></li>
+<li><p>ESP_FAIL: Remove step notify failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv434pcnt_unit_remove_single_watch_step18pcnt_unit_handle_ti">
+<span id="_CPPv334pcnt_unit_remove_single_watch_step18pcnt_unit_handle_ti"></span><span id="_CPPv234pcnt_unit_remove_single_watch_step18pcnt_unit_handle_ti"></span><span id="pcnt_unit_remove_single_watch_step__pcnt_unit_handle_t.i"></span><span class="target" id="pulse__cnt_8h_1a0fea2f7362cac8294ec3e606c10630d5"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_remove_single_watch_step</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">step_interval</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv434pcnt_unit_remove_single_watch_step18pcnt_unit_handle_ti" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Remove a step notify for PCNT unit. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p></li>
+<li><p><strong>step_interval</strong> -- <strong>[in]</strong> Step notify interval value </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Remove step notify successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Remove step notify failed because of invalid argument</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Remove step notify failed because the step notify was not added by <code class="docutils literal notranslate"><span class="pre">pcnt_unit_add_watch_step()</span></code> yet</p></li>
+<li><p>ESP_FAIL: Remove step notify failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416pcnt_new_channel18pcnt_unit_handle_tPK18pcnt_chan_config_tP21pcnt_channel_handle_t">
+<span id="_CPPv316pcnt_new_channel18pcnt_unit_handle_tPK18pcnt_chan_config_tP21pcnt_channel_handle_t"></span><span id="_CPPv216pcnt_new_channel18pcnt_unit_handle_tPK18pcnt_chan_config_tP21pcnt_channel_handle_t"></span><span id="pcnt_new_channel__pcnt_unit_handle_t.pcnt_chan_config_tCP.pcnt_channel_handle_tP"></span><span class="target" id="pulse__cnt_8h_1a691bba3b2efc9d066bc299553ef0bfa0"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_new_channel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">unit</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418pcnt_chan_config_t" title="pcnt_chan_config_t"><span class="n"><span class="pre">pcnt_chan_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">config</span></span>, <a class="reference internal" href="#_CPPv421pcnt_channel_handle_t" title="pcnt_channel_handle_t"><span class="n"><span class="pre">pcnt_channel_handle_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ret_chan</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416pcnt_new_channel18pcnt_unit_handle_tPK18pcnt_chan_config_tP21pcnt_channel_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Create PCNT channel for specific unit, each PCNT has several channels associated with it. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function should be called when the unit is in init state (i.e. before calling <code class="docutils literal notranslate"><span class="pre">pcnt_unit_enable()</span></code>)</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>unit</strong> -- <strong>[in]</strong> PCNT unit handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></p></li>
+<li><p><strong>config</strong> -- <strong>[in]</strong> PCNT channel configuration </p></li>
+<li><p><strong>ret_chan</strong> -- <strong>[out]</strong> Returned channel handle </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Create PCNT channel successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Create PCNT channel failed because of invalid argument</p></li>
+<li><p>ESP_ERR_NO_MEM: Create PCNT channel failed because of insufficient memory</p></li>
+<li><p>ESP_ERR_NOT_FOUND: Create PCNT channel failed because all PCNT channels are used up and no more free one</p></li>
+<li><p>ESP_ERR_INVALID_STATE: Create PCNT channel failed because the unit is not in the init state</p></li>
+<li><p>ESP_FAIL: Create PCNT channel failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416pcnt_del_channel21pcnt_channel_handle_t">
+<span id="_CPPv316pcnt_del_channel21pcnt_channel_handle_t"></span><span id="_CPPv216pcnt_del_channel21pcnt_channel_handle_t"></span><span id="pcnt_del_channel__pcnt_channel_handle_t"></span><span class="target" id="pulse__cnt_8h_1aac95b1d4f1cb4da37767eabf7c1cb3e5"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_del_channel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421pcnt_channel_handle_t" title="pcnt_channel_handle_t"><span class="n"><span class="pre">pcnt_channel_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416pcnt_del_channel21pcnt_channel_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Delete the PCNT channel. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>chan</strong> -- <strong>[in]</strong> PCNT channel handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_channel()</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Delete the PCNT channel successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Delete the PCNT channel failed because of invalid argument</p></li>
+<li><p>ESP_FAIL: Delete the PCNT channel failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428pcnt_channel_set_edge_action21pcnt_channel_handle_t26pcnt_channel_edge_action_t26pcnt_channel_edge_action_t">
+<span id="_CPPv328pcnt_channel_set_edge_action21pcnt_channel_handle_t26pcnt_channel_edge_action_t26pcnt_channel_edge_action_t"></span><span id="_CPPv228pcnt_channel_set_edge_action21pcnt_channel_handle_t26pcnt_channel_edge_action_t26pcnt_channel_edge_action_t"></span><span id="pcnt_channel_set_edge_action__pcnt_channel_handle_t.pcnt_channel_edge_action_t.pcnt_channel_edge_action_t"></span><span class="target" id="pulse__cnt_8h_1ad38dd643cbee7915d8b0b20f93d73958"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_channel_set_edge_action</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421pcnt_channel_handle_t" title="pcnt_channel_handle_t"><span class="n"><span class="pre">pcnt_channel_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span>, <a class="reference internal" href="#_CPPv426pcnt_channel_edge_action_t" title="pcnt_channel_edge_action_t"><span class="n"><span class="pre">pcnt_channel_edge_action_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">pos_act</span></span>, <a class="reference internal" href="#_CPPv426pcnt_channel_edge_action_t" title="pcnt_channel_edge_action_t"><span class="n"><span class="pre">pcnt_channel_edge_action_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">neg_act</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428pcnt_channel_set_edge_action21pcnt_channel_handle_t26pcnt_channel_edge_action_t26pcnt_channel_edge_action_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set channel actions when edge signal changes (e.g. falling or rising edge occurred). The edge signal is input from the <code class="docutils literal notranslate"><span class="pre">edge_gpio_num</span></code> configured in <code class="docutils literal notranslate"><a class="reference internal" href="#structpcnt__chan__config__t"><span class="std std-ref"><span class="pre">pcnt_chan_config_t</span></span></a></code>. We use these actions to control when and how to change the counter value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chan</strong> -- <strong>[in]</strong> PCNT channel handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_channel()</span></code></p></li>
+<li><p><strong>pos_act</strong> -- <strong>[in]</strong> Action on posedge signal </p></li>
+<li><p><strong>neg_act</strong> -- <strong>[in]</strong> Action on negedge signal </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Set edge action for PCNT channel successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Set edge action for PCNT channel failed because of invalid argument</p></li>
+<li><p>ESP_FAIL: Set edge action for PCNT channel failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429pcnt_channel_set_level_action21pcnt_channel_handle_t27pcnt_channel_level_action_t27pcnt_channel_level_action_t">
+<span id="_CPPv329pcnt_channel_set_level_action21pcnt_channel_handle_t27pcnt_channel_level_action_t27pcnt_channel_level_action_t"></span><span id="_CPPv229pcnt_channel_set_level_action21pcnt_channel_handle_t27pcnt_channel_level_action_t27pcnt_channel_level_action_t"></span><span id="pcnt_channel_set_level_action__pcnt_channel_handle_t.pcnt_channel_level_action_t.pcnt_channel_level_action_t"></span><span class="target" id="pulse__cnt_8h_1a3367ab2c2dfb583810bf07eaf6f27928"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_channel_set_level_action</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421pcnt_channel_handle_t" title="pcnt_channel_handle_t"><span class="n"><span class="pre">pcnt_channel_handle_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">chan</span></span>, <a class="reference internal" href="#_CPPv427pcnt_channel_level_action_t" title="pcnt_channel_level_action_t"><span class="n"><span class="pre">pcnt_channel_level_action_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">high_act</span></span>, <a class="reference internal" href="#_CPPv427pcnt_channel_level_action_t" title="pcnt_channel_level_action_t"><span class="n"><span class="pre">pcnt_channel_level_action_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">low_act</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429pcnt_channel_set_level_action21pcnt_channel_handle_t27pcnt_channel_level_action_t27pcnt_channel_level_action_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set channel actions when level signal changes (e.g. signal level goes from high to low). The level signal is input from the <code class="docutils literal notranslate"><span class="pre">level_gpio_num</span></code> configured in <code class="docutils literal notranslate"><a class="reference internal" href="#structpcnt__chan__config__t"><span class="std std-ref"><span class="pre">pcnt_chan_config_t</span></span></a></code>. We use these actions to control when and how to change the counting mode. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chan</strong> -- <strong>[in]</strong> PCNT channel handle created by <code class="docutils literal notranslate"><span class="pre">pcnt_new_channel()</span></code></p></li>
+<li><p><strong>high_act</strong> -- <strong>[in]</strong> Action on high level signal </p></li>
+<li><p><strong>low_act</strong> -- <strong>[in]</strong> Action on low level signal </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: Set level action for PCNT channel successfully</p></li>
+<li><p>ESP_ERR_INVALID_ARG: Set level action for PCNT channel failed because of invalid argument</p></li>
+<li><p>ESP_FAIL: Set level action for PCNT channel failed because of other error </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv423pcnt_watch_event_data_t">
+<span id="_CPPv323pcnt_watch_event_data_t"></span><span id="_CPPv223pcnt_watch_event_data_t"></span><span id="pcnt_watch_event_data_t"></span><span class="target" id="structpcnt__watch__event__data__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_watch_event_data_t</span></span></span><a class="headerlink" href="#_CPPv423pcnt_watch_event_data_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PCNT watch event data. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23pcnt_watch_event_data_t17watch_point_valueE">
+<span id="_CPPv3N23pcnt_watch_event_data_t17watch_point_valueE"></span><span id="_CPPv2N23pcnt_watch_event_data_t17watch_point_valueE"></span><span id="pcnt_watch_event_data_t::watch_point_value__i"></span><span class="target" id="structpcnt__watch__event__data__t_1a42ee0c3d6e89f1e110d0249836cc673e"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">watch_point_value</span></span></span><a class="headerlink" href="#_CPPv4N23pcnt_watch_event_data_t17watch_point_valueE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Watch point value that triggered the event </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23pcnt_watch_event_data_t15zero_cross_modeE">
+<span id="_CPPv3N23pcnt_watch_event_data_t15zero_cross_modeE"></span><span id="_CPPv2N23pcnt_watch_event_data_t15zero_cross_modeE"></span><span id="pcnt_watch_event_data_t::zero_cross_mode__pcnt_unit_zero_cross_mode_t"></span><span class="target" id="structpcnt__watch__event__data__t_1a1fde7a6cd96e715217893e2faa820f94"></span><a class="reference internal" href="#_CPPv427pcnt_unit_zero_cross_mode_t" title="pcnt_unit_zero_cross_mode_t"><span class="n"><span class="pre">pcnt_unit_zero_cross_mode_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">zero_cross_mode</span></span></span><a class="headerlink" href="#_CPPv4N23pcnt_watch_event_data_t15zero_cross_modeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Zero cross mode </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv422pcnt_event_callbacks_t">
+<span id="_CPPv322pcnt_event_callbacks_t"></span><span id="_CPPv222pcnt_event_callbacks_t"></span><span id="pcnt_event_callbacks_t"></span><span class="target" id="structpcnt__event__callbacks__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_event_callbacks_t</span></span></span><a class="headerlink" href="#_CPPv422pcnt_event_callbacks_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Group of supported PCNT callbacks. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The callbacks are all running under ISR environment </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When CONFIG_PCNT_ISR_IRAM_SAFE is enabled, the callback itself and functions callbed by it should be placed in IRAM. </p>
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22pcnt_event_callbacks_t8on_reachE">
+<span id="_CPPv3N22pcnt_event_callbacks_t8on_reachE"></span><span id="_CPPv2N22pcnt_event_callbacks_t8on_reachE"></span><span id="pcnt_event_callbacks_t::on_reach__pcnt_watch_cb_t"></span><span class="target" id="structpcnt__event__callbacks__t_1af3d76533bd9ef184dc484e516e2dea7e"></span><a class="reference internal" href="#_CPPv415pcnt_watch_cb_t" title="pcnt_watch_cb_t"><span class="n"><span class="pre">pcnt_watch_cb_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">on_reach</span></span></span><a class="headerlink" href="#_CPPv4N22pcnt_event_callbacks_t8on_reachE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Called when PCNT unit counter reaches any watch point or step notify </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv418pcnt_unit_config_t">
+<span id="_CPPv318pcnt_unit_config_t"></span><span id="_CPPv218pcnt_unit_config_t"></span><span id="pcnt_unit_config_t"></span><span class="target" id="structpcnt__unit__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_config_t</span></span></span><a class="headerlink" href="#_CPPv418pcnt_unit_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PCNT unit configuration. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_unit_config_t9low_limitE">
+<span id="_CPPv3N18pcnt_unit_config_t9low_limitE"></span><span id="_CPPv2N18pcnt_unit_config_t9low_limitE"></span><span id="pcnt_unit_config_t::low_limit__i"></span><span class="target" id="structpcnt__unit__config__t_1aa3e885b8ebba46a6b6f8e2857d6a9a7e"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">low_limit</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_unit_config_t9low_limitE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Low limitation of the count unit, should be lower than 0 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_unit_config_t10high_limitE">
+<span id="_CPPv3N18pcnt_unit_config_t10high_limitE"></span><span id="_CPPv2N18pcnt_unit_config_t10high_limitE"></span><span id="pcnt_unit_config_t::high_limit__i"></span><span class="target" id="structpcnt__unit__config__t_1af7b5118e130d428543204c1c9326493b"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">high_limit</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_unit_config_t10high_limitE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>High limitation of the count unit, should be higher than 0 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_unit_config_t13intr_priorityE">
+<span id="_CPPv3N18pcnt_unit_config_t13intr_priorityE"></span><span id="_CPPv2N18pcnt_unit_config_t13intr_priorityE"></span><span id="pcnt_unit_config_t::intr_priority__i"></span><span class="target" id="structpcnt__unit__config__t_1a1d4ec74112dcf3496fcb206bca68889f"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">intr_priority</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_unit_config_t13intr_priorityE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PCNT interrupt priority, if set to 0, the driver will try to allocate an interrupt with a relative low priority (1,2,3) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_unit_config_t11accum_countE">
+<span id="_CPPv3N18pcnt_unit_config_t11accum_countE"></span><span id="_CPPv2N18pcnt_unit_config_t11accum_countE"></span><span id="pcnt_unit_config_t::accum_count__uint32_t"></span><span class="target" id="structpcnt__unit__config__t_1aab51ae99e0b9e5a923369b7a4cb3ac4e"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">accum_count</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_unit_config_t11accum_countE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Whether to accumulate the count value when overflows at the high/low limit </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_unit_config_t5flagsE">
+<span id="_CPPv3N18pcnt_unit_config_t5flagsE"></span><span id="_CPPv2N18pcnt_unit_config_t5flagsE"></span><span id="pcnt_unit_config_t::flags__pcnt_unit_config_t"></span><span class="target" id="structpcnt__unit__config__t_1a5c451f8f2df081c8e643660dd76321c9"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418pcnt_unit_config_t" title="pcnt_unit_config_t"><span class="n"><span class="pre">pcnt_unit_config_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">flags</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_unit_config_t5flagsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Extra flags </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv418pcnt_chan_config_t">
+<span id="_CPPv318pcnt_chan_config_t"></span><span id="_CPPv218pcnt_chan_config_t"></span><span id="pcnt_chan_config_t"></span><span class="target" id="structpcnt__chan__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_chan_config_t</span></span></span><a class="headerlink" href="#_CPPv418pcnt_chan_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PCNT channel configuration. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_chan_config_t13edge_gpio_numE">
+<span id="_CPPv3N18pcnt_chan_config_t13edge_gpio_numE"></span><span id="_CPPv2N18pcnt_chan_config_t13edge_gpio_numE"></span><span id="pcnt_chan_config_t::edge_gpio_num__i"></span><span class="target" id="structpcnt__chan__config__t_1abe5171e9bd806d46446182fa723ebefb"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">edge_gpio_num</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_chan_config_t13edge_gpio_numE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number used by the edge signal, input mode with pull up enabled. Set to -1 if unused </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_chan_config_t14level_gpio_numE">
+<span id="_CPPv3N18pcnt_chan_config_t14level_gpio_numE"></span><span id="_CPPv2N18pcnt_chan_config_t14level_gpio_numE"></span><span id="pcnt_chan_config_t::level_gpio_num__i"></span><span class="target" id="structpcnt__chan__config__t_1aad70c880c7a16c8cd3a6db51f707e0c8"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">level_gpio_num</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_chan_config_t14level_gpio_numE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>GPIO number used by the level signal, input mode with pull up enabled. Set to -1 if unused </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_chan_config_t17invert_edge_inputE">
+<span id="_CPPv3N18pcnt_chan_config_t17invert_edge_inputE"></span><span id="_CPPv2N18pcnt_chan_config_t17invert_edge_inputE"></span><span id="pcnt_chan_config_t::invert_edge_input__uint32_t"></span><span class="target" id="structpcnt__chan__config__t_1ac15214707ab61bbe00babd4929a077c6"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">invert_edge_input</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_chan_config_t17invert_edge_inputE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Invert the input edge signal </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_chan_config_t18invert_level_inputE">
+<span id="_CPPv3N18pcnt_chan_config_t18invert_level_inputE"></span><span id="_CPPv2N18pcnt_chan_config_t18invert_level_inputE"></span><span id="pcnt_chan_config_t::invert_level_input__uint32_t"></span><span class="target" id="structpcnt__chan__config__t_1a5a744082cad4630b6fdde995f9f9b2ea"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">invert_level_input</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_chan_config_t18invert_level_inputE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Invert the input level signal </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_chan_config_t18virt_edge_io_levelE">
+<span id="_CPPv3N18pcnt_chan_config_t18virt_edge_io_levelE"></span><span id="_CPPv2N18pcnt_chan_config_t18virt_edge_io_levelE"></span><span id="pcnt_chan_config_t::virt_edge_io_level__uint32_t"></span><span class="target" id="structpcnt__chan__config__t_1afdb098e5415cdf71d89f475d0059c55e"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">virt_edge_io_level</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_chan_config_t18virt_edge_io_levelE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Virtual edge IO level, 0: low, 1: high. Only valid when edge_gpio_num is set to -1 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_chan_config_t19virt_level_io_levelE">
+<span id="_CPPv3N18pcnt_chan_config_t19virt_level_io_levelE"></span><span id="_CPPv2N18pcnt_chan_config_t19virt_level_io_levelE"></span><span id="pcnt_chan_config_t::virt_level_io_level__uint32_t"></span><span class="target" id="structpcnt__chan__config__t_1a0d188af7441607e90b6c021c4a2c1459"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">virt_level_io_level</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_chan_config_t19virt_level_io_levelE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Virtual level IO level, 0: low, 1: high. Only valid when level_gpio_num is set to -1 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_chan_config_t12io_loop_backE">
+<span id="_CPPv3N18pcnt_chan_config_t12io_loop_backE"></span><span id="_CPPv2N18pcnt_chan_config_t12io_loop_backE"></span><span id="pcnt_chan_config_t::io_loop_back__uint32_t"></span><span class="target" id="structpcnt__chan__config__t_1af3acf93b576e780213099ec04fa225f0"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">io_loop_back</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_chan_config_t12io_loop_backE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>For debug/test, the signal output from the GPIO will be fed to the input path as well. Note that this flag is deprecated, will be removed in IDF v6.0. Instead, you can configure the output mode by calling gpio_config() first, and then do PCNT channel configuration. Necessary configurations for the IO to be used as the PCNT input will be appended. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18pcnt_chan_config_t5flagsE">
+<span id="_CPPv3N18pcnt_chan_config_t5flagsE"></span><span id="_CPPv2N18pcnt_chan_config_t5flagsE"></span><span id="pcnt_chan_config_t::flags__pcnt_chan_config_t"></span><span class="target" id="structpcnt__chan__config__t_1aa085ebd34e764ff8db001c4c165d8114"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418pcnt_chan_config_t" title="pcnt_chan_config_t"><span class="n"><span class="pre">pcnt_chan_config_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">flags</span></span></span><a class="headerlink" href="#_CPPv4N18pcnt_chan_config_t5flagsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Channel config flags </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv427pcnt_glitch_filter_config_t">
+<span id="_CPPv327pcnt_glitch_filter_config_t"></span><span id="_CPPv227pcnt_glitch_filter_config_t"></span><span id="pcnt_glitch_filter_config_t"></span><span class="target" id="structpcnt__glitch__filter__config__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_glitch_filter_config_t</span></span></span><a class="headerlink" href="#_CPPv427pcnt_glitch_filter_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PCNT glitch filter configuration. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27pcnt_glitch_filter_config_t13max_glitch_nsE">
+<span id="_CPPv3N27pcnt_glitch_filter_config_t13max_glitch_nsE"></span><span id="_CPPv2N27pcnt_glitch_filter_config_t13max_glitch_nsE"></span><span id="pcnt_glitch_filter_config_t::max_glitch_ns__uint32_t"></span><span class="target" id="structpcnt__glitch__filter__config__t_1a1a227878dd1901d5466c6b700f1e799e"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">max_glitch_ns</span></span></span><a class="headerlink" href="#_CPPv4N27pcnt_glitch_filter_config_t13max_glitch_nsE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Pulse width smaller than this threshold will be treated as glitch and ignored, in the unit of ns </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c._pcnt_unit_remove_all_watch_step">
+<span class="target" id="pulse__cnt_8h_1a9ff20b97e00e8637456bfccff4f937a4"></span><span class="sig-name descname"><span class="n"><span class="pre">_pcnt_unit_remove_all_watch_step</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">unit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c._pcnt_unit_remove_all_watch_step" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c._pcnt_unit_remove_single_watch_step">
+<span class="target" id="pulse__cnt_8h_1a09add4c31ba2ebd60fbac799dca7e8b3"></span><span class="sig-name descname"><span class="n"><span class="pre">_pcnt_unit_remove_single_watch_step</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">unit</span></span>, <span class="n"><span class="pre">step_interval</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c._pcnt_unit_remove_single_watch_step" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c._pcnt_get_remove_func">
+<span class="target" id="pulse__cnt_8h_1a9d69351197344de88029ee5d53cd6ee3"></span><span class="sig-name descname"><span class="n"><span class="pre">_pcnt_get_remove_func</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">_1</span></span>, <span class="n"><span class="pre">_2</span></span>, <span class="n"><span class="pre">FUNC</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c._pcnt_get_remove_func" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.pcnt_unit_remove_watch_step">
+<span class="target" id="pulse__cnt_8h_1a11d1336ebb80dc8752acd5644f02847d"></span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_remove_watch_step</span></span></span><span class="sig-paren">(</span><span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.pcnt_unit_remove_watch_step" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv418pcnt_unit_handle_t">
+<span id="_CPPv318pcnt_unit_handle_t"></span><span id="_CPPv218pcnt_unit_handle_t"></span><span id="pcnt_unit_handle_t"></span><span class="target" id="pulse__cnt_8h_1a527851ef965ce8e357340692e6ab3130"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">pcnt_unit_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></span><a class="headerlink" href="#_CPPv418pcnt_unit_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of PCNT unit handle. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv421pcnt_channel_handle_t">
+<span id="_CPPv321pcnt_channel_handle_t"></span><span id="_CPPv221pcnt_channel_handle_t"></span><span id="pcnt_channel_handle_t"></span><span class="target" id="pulse__cnt_8h_1a10b0ba756959dd76fdb067d42365c96c"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">pcnt_chan_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_channel_handle_t</span></span></span><a class="headerlink" href="#_CPPv421pcnt_channel_handle_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type of PCNT channel handle. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv415pcnt_watch_cb_t">
+<span id="_CPPv315pcnt_watch_cb_t"></span><span id="_CPPv215pcnt_watch_cb_t"></span><span id="pcnt_watch_cb_t"></span><span class="target" id="pulse__cnt_8h_1aa58b45001d49dcf5eda5c9944de39a78"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_watch_cb_t</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv418pcnt_unit_handle_t" title="pcnt_unit_handle_t"><span class="n"><span class="pre">pcnt_unit_handle_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv423pcnt_watch_event_data_t" title="pcnt_watch_event_data_t"><span class="n"><span class="pre">pcnt_watch_event_data_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">edata</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">user_ctx</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv415pcnt_watch_cb_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PCNT watch event callback prototype. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The callback function is invoked from an ISR context, so it should meet the restrictions of not calling any blocking APIs when implementing the callback. e.g. must use ISR version of FreeRTOS APIs.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Param unit<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>[in]</strong> PCNT unit handle </p>
+</dd>
+<dt class="field-even">Param edata<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>[in]</strong> PCNT event data, fed by the driver </p>
+</dd>
+<dt class="field-odd">Param user_ctx<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>[in]</strong> User data, passed from <code class="docutils literal notranslate"><span class="pre">pcnt_unit_register_event_callbacks()</span></code></p>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p>Whether a high priority task has been woken up by this function </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="id3">
+<h3>Header File<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/hal/include/hal/pcnt_types.h">components/hal/include/hal/pcnt_types.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hal/pcnt_types.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this heading"></a></h3>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv427pcnt_channel_level_action_t">
+<span id="_CPPv327pcnt_channel_level_action_t"></span><span id="_CPPv227pcnt_channel_level_action_t"></span><span class="target" id="pcnt__types_8h_1ae1fe7a3f8b385471c20dfd7e651dc62a"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_channel_level_action_t</span></span></span><a class="headerlink" href="#_CPPv427pcnt_channel_level_action_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PCNT channel action on control level. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27pcnt_channel_level_action_t30PCNT_CHANNEL_LEVEL_ACTION_KEEPE">
+<span id="_CPPv3N27pcnt_channel_level_action_t30PCNT_CHANNEL_LEVEL_ACTION_KEEPE"></span><span id="_CPPv2N27pcnt_channel_level_action_t30PCNT_CHANNEL_LEVEL_ACTION_KEEPE"></span><span class="target" id="pcnt__types_8h_1ae1fe7a3f8b385471c20dfd7e651dc62aa18c8e9c380cee70454fc6c475d7c2fd8"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_CHANNEL_LEVEL_ACTION_KEEP</span></span></span><a class="headerlink" href="#_CPPv4N27pcnt_channel_level_action_t30PCNT_CHANNEL_LEVEL_ACTION_KEEPE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Keep current count mode </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27pcnt_channel_level_action_t33PCNT_CHANNEL_LEVEL_ACTION_INVERSEE">
+<span id="_CPPv3N27pcnt_channel_level_action_t33PCNT_CHANNEL_LEVEL_ACTION_INVERSEE"></span><span id="_CPPv2N27pcnt_channel_level_action_t33PCNT_CHANNEL_LEVEL_ACTION_INVERSEE"></span><span class="target" id="pcnt__types_8h_1ae1fe7a3f8b385471c20dfd7e651dc62aa94f3017ded52f574936038f6293868e5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_CHANNEL_LEVEL_ACTION_INVERSE</span></span></span><a class="headerlink" href="#_CPPv4N27pcnt_channel_level_action_t33PCNT_CHANNEL_LEVEL_ACTION_INVERSEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Invert current count mode (increase -&gt; decrease, decrease -&gt; increase) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27pcnt_channel_level_action_t30PCNT_CHANNEL_LEVEL_ACTION_HOLDE">
+<span id="_CPPv3N27pcnt_channel_level_action_t30PCNT_CHANNEL_LEVEL_ACTION_HOLDE"></span><span id="_CPPv2N27pcnt_channel_level_action_t30PCNT_CHANNEL_LEVEL_ACTION_HOLDE"></span><span class="target" id="pcnt__types_8h_1ae1fe7a3f8b385471c20dfd7e651dc62aae6daa8cc42ada4c257c73641b0114bdf"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_CHANNEL_LEVEL_ACTION_HOLD</span></span></span><a class="headerlink" href="#_CPPv4N27pcnt_channel_level_action_t30PCNT_CHANNEL_LEVEL_ACTION_HOLDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Hold current count value </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv426pcnt_channel_edge_action_t">
+<span id="_CPPv326pcnt_channel_edge_action_t"></span><span id="_CPPv226pcnt_channel_edge_action_t"></span><span class="target" id="pcnt__types_8h_1a2ce47fc28962f07652f921c9b5d098ee"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_channel_edge_action_t</span></span></span><a class="headerlink" href="#_CPPv426pcnt_channel_edge_action_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PCNT channel action on signal edge. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26pcnt_channel_edge_action_t29PCNT_CHANNEL_EDGE_ACTION_HOLDE">
+<span id="_CPPv3N26pcnt_channel_edge_action_t29PCNT_CHANNEL_EDGE_ACTION_HOLDE"></span><span id="_CPPv2N26pcnt_channel_edge_action_t29PCNT_CHANNEL_EDGE_ACTION_HOLDE"></span><span class="target" id="pcnt__types_8h_1a2ce47fc28962f07652f921c9b5d098eea2c35c3967480503d195f3f3970ef2a02"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_CHANNEL_EDGE_ACTION_HOLD</span></span></span><a class="headerlink" href="#_CPPv4N26pcnt_channel_edge_action_t29PCNT_CHANNEL_EDGE_ACTION_HOLDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Hold current count value </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26pcnt_channel_edge_action_t33PCNT_CHANNEL_EDGE_ACTION_INCREASEE">
+<span id="_CPPv3N26pcnt_channel_edge_action_t33PCNT_CHANNEL_EDGE_ACTION_INCREASEE"></span><span id="_CPPv2N26pcnt_channel_edge_action_t33PCNT_CHANNEL_EDGE_ACTION_INCREASEE"></span><span class="target" id="pcnt__types_8h_1a2ce47fc28962f07652f921c9b5d098eea600c7934e7a5b8d686332f9786700a08"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_CHANNEL_EDGE_ACTION_INCREASE</span></span></span><a class="headerlink" href="#_CPPv4N26pcnt_channel_edge_action_t33PCNT_CHANNEL_EDGE_ACTION_INCREASEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Increase count value </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26pcnt_channel_edge_action_t33PCNT_CHANNEL_EDGE_ACTION_DECREASEE">
+<span id="_CPPv3N26pcnt_channel_edge_action_t33PCNT_CHANNEL_EDGE_ACTION_DECREASEE"></span><span id="_CPPv2N26pcnt_channel_edge_action_t33PCNT_CHANNEL_EDGE_ACTION_DECREASEE"></span><span class="target" id="pcnt__types_8h_1a2ce47fc28962f07652f921c9b5d098eead8c8d7dd511b7bae4daffe9a0c7c1868"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_CHANNEL_EDGE_ACTION_DECREASE</span></span></span><a class="headerlink" href="#_CPPv4N26pcnt_channel_edge_action_t33PCNT_CHANNEL_EDGE_ACTION_DECREASEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Decrease count value </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv427pcnt_unit_zero_cross_mode_t">
+<span id="_CPPv327pcnt_unit_zero_cross_mode_t"></span><span id="_CPPv227pcnt_unit_zero_cross_mode_t"></span><span class="target" id="pcnt__types_8h_1a4d51a8626aa099f32ec7135f84169c57"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_unit_zero_cross_mode_t</span></span></span><a class="headerlink" href="#_CPPv427pcnt_unit_zero_cross_mode_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PCNT unit zero cross mode. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27pcnt_unit_zero_cross_mode_t29PCNT_UNIT_ZERO_CROSS_POS_ZEROE">
+<span id="_CPPv3N27pcnt_unit_zero_cross_mode_t29PCNT_UNIT_ZERO_CROSS_POS_ZEROE"></span><span id="_CPPv2N27pcnt_unit_zero_cross_mode_t29PCNT_UNIT_ZERO_CROSS_POS_ZEROE"></span><span class="target" id="pcnt__types_8h_1a4d51a8626aa099f32ec7135f84169c57ae55593102605ff2151604e1f94b57129"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_UNIT_ZERO_CROSS_POS_ZERO</span></span></span><a class="headerlink" href="#_CPPv4N27pcnt_unit_zero_cross_mode_t29PCNT_UNIT_ZERO_CROSS_POS_ZEROE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>start from positive value, end to zero, i.e. +N-&gt;0 </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27pcnt_unit_zero_cross_mode_t29PCNT_UNIT_ZERO_CROSS_NEG_ZEROE">
+<span id="_CPPv3N27pcnt_unit_zero_cross_mode_t29PCNT_UNIT_ZERO_CROSS_NEG_ZEROE"></span><span id="_CPPv2N27pcnt_unit_zero_cross_mode_t29PCNT_UNIT_ZERO_CROSS_NEG_ZEROE"></span><span class="target" id="pcnt__types_8h_1a4d51a8626aa099f32ec7135f84169c57a85c8a4a84ef5b410a63e1834d7bef057"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_UNIT_ZERO_CROSS_NEG_ZERO</span></span></span><a class="headerlink" href="#_CPPv4N27pcnt_unit_zero_cross_mode_t29PCNT_UNIT_ZERO_CROSS_NEG_ZEROE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>start from negative value, end to zero, i.e. -N-&gt;0 </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27pcnt_unit_zero_cross_mode_t28PCNT_UNIT_ZERO_CROSS_NEG_POSE">
+<span id="_CPPv3N27pcnt_unit_zero_cross_mode_t28PCNT_UNIT_ZERO_CROSS_NEG_POSE"></span><span id="_CPPv2N27pcnt_unit_zero_cross_mode_t28PCNT_UNIT_ZERO_CROSS_NEG_POSE"></span><span class="target" id="pcnt__types_8h_1a4d51a8626aa099f32ec7135f84169c57ab2447402047bd63b73333bb7fd16ee4c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_UNIT_ZERO_CROSS_NEG_POS</span></span></span><a class="headerlink" href="#_CPPv4N27pcnt_unit_zero_cross_mode_t28PCNT_UNIT_ZERO_CROSS_NEG_POSE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>start from negative value, end to positive value, i.e. -N-&gt;+M </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27pcnt_unit_zero_cross_mode_t28PCNT_UNIT_ZERO_CROSS_POS_NEGE">
+<span id="_CPPv3N27pcnt_unit_zero_cross_mode_t28PCNT_UNIT_ZERO_CROSS_POS_NEGE"></span><span id="_CPPv2N27pcnt_unit_zero_cross_mode_t28PCNT_UNIT_ZERO_CROSS_POS_NEGE"></span><span class="target" id="pcnt__types_8h_1a4d51a8626aa099f32ec7135f84169c57af462615f7980016bd82cb9cdad1008ae"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_UNIT_ZERO_CROSS_POS_NEG</span></span></span><a class="headerlink" href="#_CPPv4N27pcnt_unit_zero_cross_mode_t28PCNT_UNIT_ZERO_CROSS_POS_NEGE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>start from positive value, end to negative value, i.e. +N-&gt;-M </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N27pcnt_unit_zero_cross_mode_t28PCNT_UNIT_ZERO_CROSS_INVALIDE">
+<span id="_CPPv3N27pcnt_unit_zero_cross_mode_t28PCNT_UNIT_ZERO_CROSS_INVALIDE"></span><span id="_CPPv2N27pcnt_unit_zero_cross_mode_t28PCNT_UNIT_ZERO_CROSS_INVALIDE"></span><span class="target" id="pcnt__types_8h_1a4d51a8626aa099f32ec7135f84169c57a4843dd7414804277843aa52b97057634"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_UNIT_ZERO_CROSS_INVALID</span></span></span><a class="headerlink" href="#_CPPv4N27pcnt_unit_zero_cross_mode_t28PCNT_UNIT_ZERO_CROSS_INVALIDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>invalid zero cross mode </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv421pcnt_step_direction_t">
+<span id="_CPPv321pcnt_step_direction_t"></span><span id="_CPPv221pcnt_step_direction_t"></span><span class="target" id="pcnt__types_8h_1ab96240b6888ac077ff26934c9d3d51c7"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pcnt_step_direction_t</span></span></span><a class="headerlink" href="#_CPPv421pcnt_step_direction_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>PCNT step direction. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21pcnt_step_direction_t17PCNT_STEP_FORWARDE">
+<span id="_CPPv3N21pcnt_step_direction_t17PCNT_STEP_FORWARDE"></span><span id="_CPPv2N21pcnt_step_direction_t17PCNT_STEP_FORWARDE"></span><span class="target" id="pcnt__types_8h_1ab96240b6888ac077ff26934c9d3d51c7a6aa0762bcc37d7768494508cc7070493"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_STEP_FORWARD</span></span></span><a class="headerlink" href="#_CPPv4N21pcnt_step_direction_t17PCNT_STEP_FORWARDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>step forward, e.g., [N]-&gt;[N+1]-&gt;[N+2]-&gt;... </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21pcnt_step_direction_t18PCNT_STEP_BACKWARDE">
+<span id="_CPPv3N21pcnt_step_direction_t18PCNT_STEP_BACKWARDE"></span><span id="_CPPv2N21pcnt_step_direction_t18PCNT_STEP_BACKWARDE"></span><span class="target" id="pcnt__types_8h_1ab96240b6888ac077ff26934c9d3d51c7a592a12146010a1eb5d8738f40cd7573d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PCNT_STEP_BACKWARD</span></span></span><a class="headerlink" href="#_CPPv4N21pcnt_step_direction_t18PCNT_STEP_BACKWARDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>step backward, e.g., [N]-&gt;[N-1]-&gt;[N-2]-&gt;... </p>
+</dd></dl>
+
+</dd></dl>
+
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id4" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Different ESP chip series might have different number of PCNT units and channels. Please refer to the [<a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf#pcnt">TRM</a>] for details. The driver does not forbid you from applying for more PCNT units and channels, but it returns error when all available hardware resources are used up. Please always check the return value when doing resource allocation (e.g., <a class="reference internal" href="#_CPPv413pcnt_new_unitPK18pcnt_unit_config_tP18pcnt_unit_handle_t" title="pcnt_new_unit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">pcnt_new_unit()</span></code></a>).</p>
+</aside>
+<aside class="footnote brackets" id="id5" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="#_CPPv4N22pcnt_event_callbacks_t8on_reachE" title="pcnt_event_callbacks_t::on_reach"><code class="xref cpp cpp-member docutils literal notranslate"><span class="pre">pcnt_event_callbacks_t::on_reach</span></code></a> callback and the functions invoked by itself should also be placed in IRAM, you need to take care of them by themselves.</p>
+</aside>
+</aside>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Pulse Counter (PCNT) (api-reference/peripherals/pcnt)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Pulse Counter (PCNT) (api-reference/peripherals/pcnt)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mcpwm.html" class="btn btn-neutral float-left" title="Motor Control Pulse Width Modulator (MCPWM)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rmt.html" class="btn btn-neutral float-right" title="Remote Control Transceiver (RMT)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

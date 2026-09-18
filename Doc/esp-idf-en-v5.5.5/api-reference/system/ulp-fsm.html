@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ULP FSM Coprocessor Programming - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/ulp-fsm.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/system/ulp-fsm';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ESP32 ULP Coprocessor Instruction Set" href="ulp_instruction_set.html" />
+    <link rel="prev" title="Ultra Low Power (ULP) coprocessor" href="ulp.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">System API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app_image_format.html">App Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootloader_image_format.html">Bootloader Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app_trace.html">Application Level Tracing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_function_with_shared_stack.html">Call Function with External Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chip_revision.html">Chip Revision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console.html">Console</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efuse.html">eFuse Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_err.html">Error Code and Helper Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_https_ota.html">ESP HTTPS OTA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_event.html">Event Loop Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos.html">FreeRTOS Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_idf.html">FreeRTOS (IDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freertos_additions.html">FreeRTOS (Supplemental Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mem_alloc.html">Heap Memory Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mm.html">Memory Management for MMU Supported Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="heap_debug.html">Heap Memory Debugging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="esp_timer.html">ESP Timer (High Resolution Timer)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="internal-unstable.html">Internal and Unstable APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ipc.html">Inter-Processor Call (IPC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intr_alloc.html">Interrupt Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="log.html">Logging library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc_system_api.html">Miscellaneous System APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ota.html">Over The Air Updates (OTA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="perfmon.html">Performance Monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="power_management.html">Power Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pthread.html">POSIX Support (Including POSIX Threads Support)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sleep_modes.html">Sleep Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soc_caps.html">SoC Capabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_time.html">System Time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="himem.html">Himem</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="ulp.html">Ultra Low Power (ULP) coprocessor</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ULP FSM Coprocessor Programming</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="wdts.html">Watchdogs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">System API</a></li>
+          <li class="breadcrumb-item"><a href="ulp.html">Ultra Low Power (ULP) coprocessor</a></li>
+      <li class="breadcrumb-item active">ULP FSM Coprocessor Programming</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/system/ulp-fsm.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ulp-fsm-coprocessor-programming">
+<h1>ULP FSM Coprocessor Programming<a class="headerlink" href="#ulp-fsm-coprocessor-programming" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/system/ulp-fsm.html">[中文]</a></p>
+<p>The Ultra Low Power (ULP) coprocessor is a simple finite state machine (FSM) which is designed to perform measurements using the ADC, temperature sensor, and external I2C sensors, while the main processors are in Deep-sleep mode. The ULP coprocessor can access the <code class="docutils literal notranslate"><span class="pre">RTC_SLOW_MEM</span></code> memory region, and registers in the <code class="docutils literal notranslate"><span class="pre">RTC_CNTL</span></code>, <code class="docutils literal notranslate"><span class="pre">RTC_IO</span></code>, and <code class="docutils literal notranslate"><span class="pre">SARADC</span></code> peripherals. The ULP coprocessor uses fixed-width 32-bit instructions, 32-bit memory addressing, and has 4 general-purpose 16-bit registers. This coprocessor is referred to as <code class="docutils literal notranslate"><span class="pre">ULP</span> <span class="pre">FSM</span></code> in ESP-IDF.</p>
+<section id="installing-the-toolchain">
+<h2>Installing the Toolchain<a class="headerlink" href="#installing-the-toolchain" title="Permalink to this heading"></a></h2>
+<p>The ULP FSM coprocessor code is written in assembly and compiled using the <a class="reference external" href="https://github.com/espressif/binutils-gdb">binutils-esp32ulp toolchain</a>.</p>
+<p>If you have already set up ESP-IDF with CMake build system according to the <a class="reference internal" href="../../get-started/index.html"><span class="doc">Getting Started Guide</span></a>, then the ULP FSM toolchain will already be installed.</p>
+</section>
+<section id="programming-ulp-fsm">
+<h2>Programming ULP FSM<a class="headerlink" href="#programming-ulp-fsm" title="Permalink to this heading"></a></h2>
+<p>The ULP FSM can be programmed using the supported instruction set. Alternatively, the ULP FSM coprocessor can also be programmed using C Macros on the main CPU. These two methods are described in the following section:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ulp_instruction_set.html">Instruction set reference for ESP32 ULP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ulp_macros.html">Programming using macros (legacy)</a></li>
+</ul>
+</div>
+</section>
+<section id="compiling-the-ulp-code">
+<h2>Compiling the ULP Code<a class="headerlink" href="#compiling-the-ulp-code" title="Permalink to this heading"></a></h2>
+<p>To compile the ULP FSM code as part of the component, the following steps must be taken:</p>
+<ol class="arabic simple">
+<li><p>The ULP FSM code, written in assembly, must be added to one or more files with <code class="docutils literal notranslate"><span class="pre">.S</span></code> extension. These files must be placed into a separate directory inside the component directory, for instance, <code class="docutils literal notranslate"><span class="pre">ulp/</span></code>.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When registering the component (via <code class="docutils literal notranslate"><span class="pre">idf_component_register</span></code>), this directory should not be added to the <code class="docutils literal notranslate"><span class="pre">SRC_DIRS</span></code> argument. The logic behind this is that the ESP-IDF build system will compile files found in <code class="docutils literal notranslate"><span class="pre">SRC_DIRS</span></code> based on their extensions. For <code class="docutils literal notranslate"><span class="pre">.S</span></code> files, <code class="docutils literal notranslate"><span class="pre">xtensa-esp32-elf-as</span></code> assembler is used. This is not desirable for ULP FSM assembly files, so the easiest way to achieve the distinction is by placing ULP FSM assembly files into a separate directory. The ULP FSM assembly source files should also <strong>not</strong> be added to <code class="docutils literal notranslate"><span class="pre">SRCS</span></code> for the same reason. See the steps below for how to properly add ULP FSM assembly source files.</p>
+</div>
+<ol class="arabic" start="2">
+<li><p>Call <code class="docutils literal notranslate"><span class="pre">ulp_embed_binary</span></code> from the component CMakeLists.txt after registration. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>...
+idf_component_register()
+
+set(ulp_app_name ulp_${COMPONENT_NAME})
+set(ulp_s_sources ulp/ulp_assembly_source_file.S)
+set(ulp_exp_dep_srcs &quot;ulp_c_source_file.c&quot;)
+
+ulp_embed_binary(${ulp_app_name} &quot;${ulp_s_sources}&quot; &quot;${ulp_exp_dep_srcs}&quot;)
+</pre></div>
+</div>
+</li>
+</ol>
+<p>The first argument to <code class="docutils literal notranslate"><span class="pre">ulp_embed_binary</span></code> specifies the ULP FSM binary name. The name specified here will also be used by other generated artifacts such as the ELF file, map file, header file and linker export file. The second argument specifies the ULP FSM assembly source files. Finally, the third argument specifies the list of component source files which include the header file to be generated. This list is needed to build the dependencies correctly and ensure that the generated header file will be created before any of these files are compiled. See the section below for the concept of generated header files for ULP applications.</p>
+<p>Variables in the ULP code will be prefixed with <code class="docutils literal notranslate"><span class="pre">ulp_</span></code> (default value) in this generated header file.</p>
+<p>If you need to embed multiple ULP programs, you may add a custom prefix in order to avoid conflicting variable names like this:</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">idf_component_register</span><span class="p">()</span>
+
+<span class="nb">set</span><span class="p">(</span><span class="s">ulp_app_name</span><span class="w"> </span><span class="s">ulp_</span><span class="o">${</span><span class="nv">COMPONENT_NAME</span><span class="o">}</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">ulp_sources</span><span class="w"> </span><span class="s2">&quot;ulp/ulp_c_source_file.c&quot;</span><span class="w"> </span><span class="s2">&quot;ulp/ulp_assembly_source_file.S&quot;</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">ulp_exp_dep_srcs</span><span class="w"> </span><span class="s2">&quot;ulp_c_source_file.c&quot;</span><span class="p">)</span>
+
+<span class="nb">ulp_embed_binary</span><span class="p">(</span><span class="o">${</span><span class="nv">ulp_app_name</span><span class="o">}</span><span class="w"> </span><span class="s2">&quot;${ulp_sources}&quot;</span><span class="w"> </span><span class="s2">&quot;${ulp_exp_dep_srcs}&quot;</span><span class="w"> </span><span class="s">PREFIX</span><span class="w"> </span><span class="s2">&quot;ULP::&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The additional PREFIX argument can be a C style prefix (like <code class="docutils literal notranslate"><span class="pre">ulp2_</span></code>) or a C++ style prefix (like <code class="docutils literal notranslate"><span class="pre">ULP::</span></code>).</p>
+<ol class="arabic" start="3">
+<li><p>Build the application as usual (e.g., <code class="docutils literal notranslate"><span class="pre">idf.py</span> <span class="pre">app</span></code>).</p>
+<blockquote>
+<div><p>Inside, the build system takes the following steps to build an ULP FSM program:</p>
+<ol class="arabic simple">
+<li><p><strong>Run each assembly file (foo.S) through the C preprocessor.</strong> This step generates the preprocessed assembly files (foo.ulp.S) in the component build directory. This step also generates dependency files (foo.ulp.d).</p></li>
+<li><p><strong>Run preprocessed assembly sources through the assembler.</strong> This produces object (foo.ulp.o) and listing (foo.ulp.lst) files. Listing files are generated for debugging purposes and are not used at later stages of the build process.</p></li>
+<li><p><strong>Run the linker script template through the C preprocessor.</strong> The template is located in <code class="docutils literal notranslate"><span class="pre">components/ulp/ld</span></code> directory.</p></li>
+<li><p><strong>Link the object files into an output ELF file</strong> (<code class="docutils literal notranslate"><span class="pre">ulp_app_name.elf</span></code>). The Map file (<code class="docutils literal notranslate"><span class="pre">ulp_app_name.map</span></code>) generated at this stage may be useful for debugging purposes.</p></li>
+<li><p><strong>Dump the contents of the ELF file into a binary</strong> (<code class="docutils literal notranslate"><span class="pre">ulp_app_name.bin</span></code>) which can then be embedded into the application.</p></li>
+<li><p><strong>Generate a list of global symbols</strong> (<code class="docutils literal notranslate"><span class="pre">ulp_app_name.sym</span></code>) in the ELF file using <code class="docutils literal notranslate"><span class="pre">esp32ulp-elf-nm</span></code>.</p></li>
+<li><p><strong>Create an LD export script and a header file</strong> (<code class="docutils literal notranslate"><span class="pre">ulp_app_name.ld</span></code> and <code class="docutils literal notranslate"><span class="pre">ulp_app_name.h</span></code>) containing the symbols from <code class="docutils literal notranslate"><span class="pre">ulp_app_name.sym</span></code>. This is done using the <code class="docutils literal notranslate"><span class="pre">esp32ulp_mapgen.py</span></code> utility.</p></li>
+<li><p><strong>Add the generated binary to the list of binary files</strong> to be embedded into the application.</p></li>
+</ol>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="accessing-the-ulp-fsm-program-variables">
+<h2>Accessing the ULP FSM Program Variables<a class="headerlink" href="#accessing-the-ulp-fsm-program-variables" title="Permalink to this heading"></a></h2>
+<p>Global symbols defined in the ULP FSM program may be used inside the main program.</p>
+<p>For example, the ULP FSM program may define a variable <code class="docutils literal notranslate"><span class="pre">measurement_count</span></code> which will define the number of ADC measurements the program needs to make before waking up the chip from Deep-sleep:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                        <span class="o">.</span><span class="k">global</span> <span class="n">measurement_count</span>
+<span class="n">measurement_count</span><span class="p">:</span>      <span class="o">.</span><span class="n">long</span> <span class="mi">0</span>
+
+                        <span class="o">//</span> <span class="n">later</span><span class="p">,</span> <span class="n">use</span> <span class="n">measurement_count</span>
+                        <span class="n">move</span> <span class="n">r3</span><span class="p">,</span> <span class="n">measurement_count</span>
+                        <span class="n">ld</span> <span class="n">r3</span><span class="p">,</span> <span class="n">r3</span><span class="p">,</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>The main program needs to initialize this variable before the ULP program is started. The build system makes this possible by generating the <code class="docutils literal notranslate"><span class="pre">${ULP_APP_NAME}.h</span></code> and <code class="docutils literal notranslate"><span class="pre">${ULP_APP_NAME}.ld</span></code> files which define the global symbols present in the ULP program. Each global symbol defined in the ULP program is included in these files and are prefixed with <code class="docutils literal notranslate"><span class="pre">ulp_</span></code>.</p>
+<p>The header file contains the declaration of the symbol:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">extern</span> <span class="n">uint32_t</span> <span class="n">ulp_measurement_count</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Note that all symbols (variables, arrays, functions) are declared as <code class="docutils literal notranslate"><span class="pre">uint32_t</span></code>. For functions and arrays, take the address of the symbol and cast it to the appropriate type.</p>
+<p>The generated linker script file defines the locations of symbols in RTC_SLOW_MEM:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PROVIDE</span> <span class="p">(</span> <span class="n">ulp_measurement_count</span> <span class="o">=</span> <span class="mh">0x50000060</span> <span class="p">);</span>
+</pre></div>
+</div>
+<p>To access the ULP program variables from the main program, the generated header file should be included using an <code class="docutils literal notranslate"><span class="pre">include</span></code> statement. This will allow the ULP program variables to be accessed as regular variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#include &quot;ulp_app_name.h&quot;</span>
+
+<span class="o">//</span> <span class="n">later</span>
+<span class="n">void</span> <span class="n">init_ulp_vars</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">ulp_measurement_count</span> <span class="o">=</span> <span class="mi">64</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that the ULP FSM program can only use the lower 16 bits of each 32-bit word in RTC memory, because the registers are 16-bit, and there is no instruction to load from the high part of the word. Likewise, the ULP store instruction writes register values into the lower 16 bits of the 32-bit word in RTC memory. The upper 16 bits are written with a value which depends on the address of the store instruction, thus when reading variables written by the ULP coprocessor, the main application needs to mask the upper 16 bits, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">printf</span><span class="p">(</span><span class="s2">&quot;Last measurement value: </span><span class="si">%d</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ulp_last_measurement</span> <span class="o">&amp;</span> <span class="n">UINT16_MAX</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="starting-the-ulp-fsm-program">
+<h2>Starting the ULP FSM Program<a class="headerlink" href="#starting-the-ulp-fsm-program" title="Permalink to this heading"></a></h2>
+<p>To run a ULP FSM program, the main application needs to load the ULP program into RTC memory using the <a class="reference internal" href="#_CPPv415ulp_load_binary8uint32_tPK7uint8_t6size_t" title="ulp_load_binary"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ulp_load_binary()</span></code></a> function, and then start it using the <a class="reference internal" href="#_CPPv47ulp_run8uint32_t" title="ulp_run"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ulp_run()</span></code></a> function.</p>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">Enable</span> <span class="pre">Ultra</span> <span class="pre">Low</span> <span class="pre">Power</span> <span class="pre">(ULP)</span> <span class="pre">Coprocessor</span></code> option must be enabled in menuconfig to work with ULP. To select the type of ULP to be used, the <code class="docutils literal notranslate"><span class="pre">ULP</span> <span class="pre">Co-processor</span> <span class="pre">type</span></code> option must be set. To reserve memory for the ULP, the <code class="docutils literal notranslate"><span class="pre">RTC</span> <span class="pre">slow</span> <span class="pre">memory</span> <span class="pre">reserved</span> <span class="pre">for</span> <span class="pre">coprocessor</span></code> option must be set to a value big enough to store ULP code and data. If the application components contain multiple ULP programs, then the size of the RTC memory must be sufficient to hold the largest one.</p>
+<p>Each ULP program is embedded into the ESP-IDF application as a binary blob. The application can reference this blob and load it in the following way (suppose ULP_APP_NAME was defined to <code class="docutils literal notranslate"><span class="pre">ulp_app_name</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">extern</span> <span class="n">const</span> <span class="n">uint8_t</span> <span class="n">bin_start</span><span class="p">[]</span> <span class="n">asm</span><span class="p">(</span><span class="s2">&quot;_binary_ulp_app_name_bin_start&quot;</span><span class="p">);</span>
+<span class="n">extern</span> <span class="n">const</span> <span class="n">uint8_t</span> <span class="n">bin_end</span><span class="p">[]</span>   <span class="n">asm</span><span class="p">(</span><span class="s2">&quot;_binary_ulp_app_name_bin_end&quot;</span><span class="p">);</span>
+
+<span class="n">void</span> <span class="n">start_ulp_program</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">ESP_ERROR_CHECK</span><span class="p">(</span> <span class="n">ulp_load_binary</span><span class="p">(</span>
+        <span class="mi">0</span> <span class="o">//</span> <span class="n">load</span> <span class="n">address</span><span class="p">,</span> <span class="nb">set</span> <span class="n">to</span> <span class="mi">0</span> <span class="n">when</span> <span class="n">using</span> <span class="n">default</span> <span class="n">linker</span> <span class="n">scripts</span>
+        <span class="n">bin_start</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">bin_end</span> <span class="o">-</span> <span class="n">bin_start</span><span class="p">)</span> <span class="o">/</span> <span class="n">sizeof</span><span class="p">(</span><span class="n">uint32_t</span><span class="p">))</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Once the program is loaded into RTC memory, the application can start it by passing the address of the entry point to the <code class="docutils literal notranslate"><span class="pre">ulp_run</span></code> function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ESP_ERROR_CHECK</span><span class="p">(</span> <span class="n">ulp_run</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ulp_entry</span> <span class="o">-</span> <span class="n">RTC_SLOW_MEM</span><span class="p">)</span> <span class="p">);</span>
+</pre></div>
+</div>
+<p>Declaration of the entry point symbol comes from the generated header file mentioned above, <code class="docutils literal notranslate"><span class="pre">${ULP_APP_NAME}.h</span></code>. In the assembly source of the ULP FSM application, this symbol must be marked as <code class="docutils literal notranslate"><span class="pre">.global</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>        <span class="o">.</span><span class="k">global</span> <span class="n">entry</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">//</span> <span class="n">code</span> <span class="n">starts</span> <span class="n">here</span>
+</pre></div>
+</div>
+</section>
+<section id="esp32-ulp-program-flow">
+<h2>ESP32 ULP Program Flow<a class="headerlink" href="#esp32-ulp-program-flow" title="Permalink to this heading"></a></h2>
+<p>ESP32 ULP coprocessor is started by a timer. The timer is started once <a class="reference internal" href="#_CPPv47ulp_run8uint32_t" title="ulp_run"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ulp_run()</span></code></a> is called. The timer counts the number of RTC_SLOW_CLK ticks (by default, produced by an internal 150 kHz RC oscillator). The number of ticks is set using <code class="docutils literal notranslate"><span class="pre">SENS_ULP_CP_SLEEP_CYCx_REG</span></code> registers (x = 0..4). When starting the ULP for the first time, <code class="docutils literal notranslate"><span class="pre">SENS_ULP_CP_SLEEP_CYC0_REG</span></code> will be used to set the number of timer ticks. Later the ULP program can select another <code class="docutils literal notranslate"><span class="pre">SENS_ULP_CP_SLEEP_CYCx_REG</span></code> register using <code class="docutils literal notranslate"><span class="pre">sleep</span></code> instruction.</p>
+<p>The application can set ULP timer period values (SENS_ULP_CP_SLEEP_CYCx_REG, x = 0..4) using <code class="docutils literal notranslate"><span class="pre">ulp_set_wakeup_period</span></code> function.</p>
+<p>Once the timer counts the number of ticks set in the selected <code class="docutils literal notranslate"><span class="pre">SENS_ULP_CP_SLEEP_CYCx_REG</span></code> register, ULP coprocessor powers up and starts running the program from the entry point set in the call to <a class="reference internal" href="#_CPPv47ulp_run8uint32_t" title="ulp_run"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ulp_run()</span></code></a>.</p>
+<p>The program runs until it encounters a <code class="docutils literal notranslate"><span class="pre">halt</span></code> instruction or an illegal instruction. Once the program halts the ULP coprocessor powers down and the timer is started again.</p>
+<p>To disable the timer (effectively preventing the ULP program from running again), clear the <code class="docutils literal notranslate"><span class="pre">RTC_CNTL_ULP_CP_SLP_TIMER_EN</span></code> bit in the <code class="docutils literal notranslate"><span class="pre">RTC_CNTL_STATE0_REG</span></code> register. This can be done both from ULP code and from the main program.</p>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/ulp/ulp_fsm/ulp">system/ulp/ulp_fsm/ulp</a> demonstrates how to program the ULP FSM coprocessor to count pulses on an IO while the main CPUs are running other code or are in deep sleep, with the pulse count saved into NVS upon wakeup.</p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/system/ulp/ulp_fsm/ulp_adc">system/ulp/ulp_fsm/ulp_adc</a> demonstrates how to use the ULP FSM coprocessor to periodically measure input voltage on a specific ADC channel during deep sleep, compare it to the set threshold, and wake up the system if the voltage is outside the threshold.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/ulp/ulp_fsm/include/ulp_fsm_common.h">components/ulp/ulp_fsm/include/ulp_fsm_common.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ulp_fsm_common.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">ulp</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">ulp</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES ulp
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES ulp
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416ulp_isr_register14intr_handler_tPv">
+<span id="_CPPv316ulp_isr_register14intr_handler_tPv"></span><span id="_CPPv216ulp_isr_register14intr_handler_tPv"></span><span id="ulp_isr_register__intr_handler_t.voidP"></span><span class="target" id="ulp__fsm__common_8h_1a56bc1ccba8770880d8851e2b08a8f06d"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ulp_isr_register</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="intr_alloc.html#_CPPv414intr_handler_t" title="intr_handler_t"><span class="n"><span class="pre">intr_handler_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">fn</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416ulp_isr_register14intr_handler_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Register ULP wakeup signal ISR. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The ISR routine will only be active if the main CPU is not in deepsleep</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fn</strong> -- ISR callback function </p></li>
+<li><p><strong>arg</strong> -- ISR callback function arguments </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if callback function is NULL</p></li>
+<li><p>ESP_ERR_NO_MEM if heap memory cannot be allocated for the interrupt </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418ulp_isr_deregister14intr_handler_tPv">
+<span id="_CPPv318ulp_isr_deregister14intr_handler_tPv"></span><span id="_CPPv218ulp_isr_deregister14intr_handler_tPv"></span><span id="ulp_isr_deregister__intr_handler_t.voidP"></span><span class="target" id="ulp__fsm__common_8h_1af44df5e6a7170726a3388255a7067a92"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ulp_isr_deregister</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="intr_alloc.html#_CPPv414intr_handler_t" title="intr_handler_t"><span class="n"><span class="pre">intr_handler_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">fn</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418ulp_isr_deregister14intr_handler_tPv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Deregister ULP wakeup signal ISR. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fn</strong> -- ISR callback function </p></li>
+<li><p><strong>arg</strong> -- ISR callback function arguments </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if callback function is NULL</p></li>
+<li><p>ESP_ERR_INVALID_STATE if a handler matching both callback function and its arguments isn't registered </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427ulp_process_macros_and_load8uint32_tPK10ulp_insn_tP6size_t">
+<span id="_CPPv327ulp_process_macros_and_load8uint32_tPK10ulp_insn_tP6size_t"></span><span id="_CPPv227ulp_process_macros_and_load8uint32_tPK10ulp_insn_tP6size_t"></span><span id="ulp_process_macros_and_load__uint32_t.ulp_insn_tCP.sP"></span><span class="target" id="ulp__fsm__common_8h_1a1172eb27ef36c3ea5cb9553126ed5feb"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ulp_process_macros_and_load</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">load_addr</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410ulp_insn_t" title="ulp_insn_t"><span class="n"><span class="pre">ulp_insn_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">program</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">psize</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427ulp_process_macros_and_load8uint32_tPK10ulp_insn_tP6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Resolve all macro references in a program and load it into RTC memory. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_addr</strong> -- address where the program should be loaded, expressed in 32-bit words </p></li>
+<li><p><strong>program</strong> -- ulp_insn_t array with the program </p></li>
+<li><p><strong>psize</strong> -- size of the program, expressed in 32-bit words </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_NO_MEM if auxiliary temporary structure can not be allocated</p></li>
+<li><p>one of ESP_ERR_ULP_xxx if program is not valid or can not be loaded </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415ulp_load_binary8uint32_tPK7uint8_t6size_t">
+<span id="_CPPv315ulp_load_binary8uint32_tPK7uint8_t6size_t"></span><span id="_CPPv215ulp_load_binary8uint32_tPK7uint8_t6size_t"></span><span id="ulp_load_binary__uint32_t.uint8_tCP.s"></span><span class="target" id="ulp__fsm__common_8h_1a1ace28e6f59b6e073f7b5d7885bbfe3b"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ulp_load_binary</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">load_addr</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">program_binary</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">program_size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415ulp_load_binary8uint32_tPK7uint8_t6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Load ULP program binary into RTC memory. </p>
+<p>ULP program binary should have the following format (all values little-endian):</p>
+<p><ol class="loweralpha simple">
+<li><p>MAGIC, (value 0x00706c75, 4 bytes)</p></li>
+<li><p>TEXT_OFFSET, offset of .text section from binary start (2 bytes)</p></li>
+<li><p>TEXT_SIZE, size of .text section (2 bytes)</p></li>
+<li><p>DATA_SIZE, size of .data section (2 bytes)</p></li>
+<li><p>BSS_SIZE, size of .bss section (2 bytes)</p></li>
+<li><p>(TEXT_OFFSET - 12) bytes of arbitrary data (will not be loaded into RTC memory)</p></li>
+<li><p>.text section</p></li>
+<li><p>.data section</p></li>
+</ol>
+</p>
+<p>Linker script in components/ulp/ld/esp32.ulp.ld produces ELF files which correspond to this format. This linker script produces binaries with load_addr == 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_addr</strong> -- address where the program should be loaded, expressed in 32-bit words </p></li>
+<li><p><strong>program_binary</strong> -- pointer to program binary </p></li>
+<li><p><strong>program_size</strong> -- size of the program binary </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if load_addr is out of range</p></li>
+<li><p>ESP_ERR_INVALID_SIZE if program_size doesn't match (TEXT_OFFSET + TEXT_SIZE + DATA_SIZE)</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED if the magic number is incorrect </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv47ulp_run8uint32_t">
+<span id="_CPPv37ulp_run8uint32_t"></span><span id="_CPPv27ulp_run8uint32_t"></span><span id="ulp_run__uint32_t"></span><span class="target" id="ulp__fsm__common_8h_1a586dfe0767743d066bccd30a1ed517d5"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ulp_run</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">entry_point</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv47ulp_run8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Run the program loaded into RTC memory. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry_point</strong> -- entry point, expressed in 32-bit words </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ESP_OK on success </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_ULP_BASE">
+<span class="target" id="ulp__fsm__common_8h_1a9fd342707859b511e21201874bcf9fc7"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_ULP_BASE</span></span></span><a class="headerlink" href="#c.ESP_ERR_ULP_BASE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Offset for ULP-related error codes </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_ULP_SIZE_TOO_BIG">
+<span class="target" id="ulp__fsm__common_8h_1ad6b47fb36fbddf27964436f965d20391"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_ULP_SIZE_TOO_BIG</span></span></span><a class="headerlink" href="#c.ESP_ERR_ULP_SIZE_TOO_BIG" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Program doesn't fit into RTC memory reserved for the ULP </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_ULP_INVALID_LOAD_ADDR">
+<span class="target" id="ulp__fsm__common_8h_1a8c605d5c9fd40d9a7a68824a3a707b93"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_ULP_INVALID_LOAD_ADDR</span></span></span><a class="headerlink" href="#c.ESP_ERR_ULP_INVALID_LOAD_ADDR" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Load address is outside of RTC memory reserved for the ULP </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_ULP_DUPLICATE_LABEL">
+<span class="target" id="ulp__fsm__common_8h_1a9fdfca0fa7a107d5f8a0750c7e017bee"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_ULP_DUPLICATE_LABEL</span></span></span><a class="headerlink" href="#c.ESP_ERR_ULP_DUPLICATE_LABEL" title="Permalink to this definition"></a><br /></dt>
+<dd><p>More than one label with the same number was defined </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_ULP_UNDEFINED_LABEL">
+<span class="target" id="ulp__fsm__common_8h_1a85b2a62956b07b3021129c60fb5a507a"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_ULP_UNDEFINED_LABEL</span></span></span><a class="headerlink" href="#c.ESP_ERR_ULP_UNDEFINED_LABEL" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Branch instructions references an undefined label </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_ERR_ULP_BRANCH_OUT_OF_RANGE">
+<span class="target" id="ulp__fsm__common_8h_1a58661d53437e40d4f8319505dfbf23b7"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_ERR_ULP_BRANCH_OUT_OF_RANGE</span></span></span><a class="headerlink" href="#c.ESP_ERR_ULP_BRANCH_OUT_OF_RANGE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Branch target is out of range of B instruction (try replacing with BX) </p>
+</dd></dl>
+
+</section>
+<section id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this heading"></a></h3>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv410ulp_insn_t">
+<span id="_CPPv310ulp_insn_t"></span><span id="_CPPv210ulp_insn_t"></span><span id="ulp_insn_t"></span><span class="target" id="ulp__fsm__common_8h_1a1fc70ead3e839d1b32ad2d7f18d190b1"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">union</span></span><span class="w"> </span><a class="reference internal" href="ulp_macros.html#_CPPv48ulp_insn" title="ulp_insn"><span class="n"><span class="pre">ulp_insn</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ulp_insn_t</span></span></span><a class="headerlink" href="#_CPPv410ulp_insn_t" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</section>
+<section id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/ulp/ulp_common/include/ulp_common.h">components/ulp/ulp_common/include/ulp_common.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ulp_common.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">ulp</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">ulp</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES ulp
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES ulp
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id2">
+<h3>Functions<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421ulp_set_wakeup_period6size_t8uint32_t">
+<span id="_CPPv321ulp_set_wakeup_period6size_t8uint32_t"></span><span id="_CPPv221ulp_set_wakeup_period6size_t8uint32_t"></span><span id="ulp_set_wakeup_period__s.uint32_t"></span><span class="target" id="ulp__common_8h_1a3024599c23b343bb5042da3758317703"></span><a class="reference internal" href="esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ulp_set_wakeup_period</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">period_index</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">period_us</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421ulp_set_wakeup_period6size_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Set one of ULP wakeup period values. </p>
+<p>ULP coprocessor starts running the program when the wakeup timer counts up to a given value (called period). There are 5 period values which can be programmed into SENS_ULP_CP_SLEEP_CYCx_REG registers, x = 0..4 for ESP32, and one period value which can be programmed into RTC_CNTL_ULP_CP_TIMER_1_REG register for ESP32-S2/S3. By default, for ESP32, wakeup timer will use the period set into SENS_ULP_CP_SLEEP_CYC0_REG, i.e. period number 0. ULP program code can use SLEEP instruction to select which of the SENS_ULP_CP_SLEEP_CYCx_REG should be used for subsequent wakeups.</p>
+<p>However, please note that SLEEP instruction issued (from ULP program) while the system is in deep sleep mode does not have effect, and sleep cycle count 0 is used.</p>
+<p>For ESP32-S2/S3 the SLEEP instruction not exist. Instead a WAKE instruction will be used.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The ULP FSM requires two clock cycles to wakeup before being able to run the program. Then additional 16 cycles are reserved after wakeup waiting until the 8M clock is stable. The FSM also requires two more clock cycles to go to sleep after the program execution is halted. The minimum wakeup period that may be set up for the ULP is equal to the total number of cycles spent on the above internal tasks. For a default configuration of the ULP running at 150kHz it makes about 133us. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>period_index</strong> -- wakeup period setting number (0 - 4) </p></li>
+<li><p><strong>period_us</strong> -- wakeup period, us </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_ARG if period_index is out of range </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414ulp_timer_stopv">
+<span id="_CPPv314ulp_timer_stopv"></span><span id="_CPPv214ulp_timer_stopv"></span><span id="ulp_timer_stop__void"></span><span class="target" id="ulp__common_8h_1a24494cce2f7c5549f7c12b3dcc59790e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ulp_timer_stop</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414ulp_timer_stopv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stop the ULP timer. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This will stop the ULP from waking up if halted, but will not abort any program currently executing on the ULP. </p>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416ulp_timer_resumev">
+<span id="_CPPv316ulp_timer_resumev"></span><span id="_CPPv216ulp_timer_resumev"></span><span id="ulp_timer_resume__void"></span><span class="target" id="ulp__common_8h_1a2149118d0531d233ba77a5724054286d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ulp_timer_resume</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416ulp_timer_resumev" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Resume the ULP timer. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This will resume an already configured timer, but does no other configuration </p>
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=ULP FSM Coprocessor Programming (api-reference/system/ulp-fsm)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=ULP FSM Coprocessor Programming (api-reference/system/ulp-fsm)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ulp.html" class="btn btn-neutral float-left" title="Ultra Low Power (ULP) coprocessor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ulp_instruction_set.html" class="btn btn-neutral float-right" title="ESP32 ULP Coprocessor Instruction Set" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

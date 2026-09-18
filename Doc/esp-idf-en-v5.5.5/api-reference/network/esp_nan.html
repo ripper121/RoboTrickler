@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wi-Fi AwareTM (NAN) - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_nan.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=781d613b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/network/esp_nan';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.5';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Ethernet" href="esp_eth.html" />
+    <link rel="prev" title="Wi-Fi Easy ConnectTM (DPP)" href="esp_dpp.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Networking APIs</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#wi-fi">Wi-Fi</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="esp_now.html">ESP-NOW</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH Programming Guide</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp_smartconfig.html">SmartConfig</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp_wifi.html">Wi-Fi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="esp_dpp.html">Wi-Fi Easy Connect<sup>TM</sup> (DPP)</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Wi-Fi Aware<sup>TM</sup> (NAN)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#ethernet">Ethernet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#thread">Thread</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#esp-netif">ESP-NETIF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#ip-network-layer">IP Network Layer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#application-layer">Application Layer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Networking APIs</a></li>
+      <li class="breadcrumb-item active">Wi-Fi Aware<sup>TM</sup> (NAN)</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.5/docs/en/api-reference/network/esp_nan.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="wi-fi-awaretm-nan">
+<h1>Wi-Fi Aware<sup>TM</sup> (NAN)<a class="headerlink" href="#wi-fi-awaretm-nan" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.5/esp32/api-reference/network/esp_nan.html">[中文]</a></p>
+<p>Wi-Fi Aware<sup>TM</sup> or NAN (Neighbor Awareness Networking) is a protocol that allows Wi-Fi devices to discover services in their proximity. Typically, location-based services are based on querying servers for information about the environment and the location knowledge is based on GPS or other location reckoning techniques. However, NAN does not require real-time connection to servers, GPS or other geo-location, but instead uses direct device-to-device Wi-Fi to discover and exchange information. NAN scales effectively in dense Wi-Fi environments and complements the connectivity of Wi-Fi by providing information about people and services in the proximity.</p>
+<p>Multiple NAN devices which are in the vicinity form a NAN cluster which allows them to communicate with each other. Devices within a NAN cluster can advertise (Publish method) or look for (Subscribe method) services using NAN Service Discovery protocols. Matching of services is done by service name, once a match is found, a device can either send a message or establish an IPv6 Datapath with the peer.</p>
+<p>ESP32 supports Wi-Fi Aware in standalone mode with support for both Service Discovery and Datapath. Wi-Fi Aware is still an evolving protocol. Please refer to Wi-Fi Alliance's official page on <a class="reference external" href="https://www.wi-fi.org/discover-wi-fi/wi-fi-aware">Wi-Fi Aware</a> for more information. Many Android smartphones with Android 8 or higher support Wi-Fi Aware. Refer to Android's developer guide on Wi-Fi Aware <a class="reference external" href="https://www.wi-fi.org/discover-wi-fi/wi-fi-aware">Wi-Fi Aware</a> for more information.</p>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/wifi/wifi_aware/nan_console">wifi/wifi_aware/nan_console</a> demonstrates how to use the NAN protocol to discover services in proximity, establish a datapath, and communicate between devices without requiring an Internet or AP connection. It provides console commands for configuring NAN services, publishing or subscribing to a service, sending messages, and initiating or terminating a datapath.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/wifi/wifi_aware/nan_publisher">wifi/wifi_aware/nan_publisher</a> demonstrates how to use the NAN protocol to publish a service for advertising a service to other devices in the vicinity, and how to respond to the devices that subscribes to the service.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.5/examples/wifi/wifi_aware/nan_subscriber">wifi/wifi_aware/nan_subscriber</a> demonstrates how to use the NAN protocol to discover other devices that publishes the required service in the proximity, and communicate with them either by sending a message or initiating a datapath.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.5/components/esp_wifi/wifi_apps/nan_app/include/esp_nan.h">components/esp_wifi/wifi_apps/nan_app/include/esp_nan.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;esp_nan.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_wifi</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_wifi</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_wifi
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_wifi
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418esp_wifi_nan_startPK17wifi_nan_config_t">
+<span id="_CPPv318esp_wifi_nan_startPK17wifi_nan_config_t"></span><span id="_CPPv218esp_wifi_nan_startPK17wifi_nan_config_t"></span><span id="esp_wifi_nan_start__wifi_nan_config_tCP"></span><span class="target" id="esp__nan_8h_1a0b9b0ffffbe3f1c631078bf5b2d55b96"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_start</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="esp_wifi.html#_CPPv417wifi_nan_config_t" title="wifi_nan_config_t"><span class="n"><span class="pre">wifi_nan_config_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">nan_cfg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418esp_wifi_nan_startPK17wifi_nan_config_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Start NAN Discovery with provided configuration. </p>
+<p><dl class="simple">
+<dt><strong>Attention</strong></dt><dd><p>This API should be called after esp_wifi_init().</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nan_cfg</strong> -- NAN related parameters to be configured.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: succeed</p></li>
+<li><p>others: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417esp_wifi_nan_stopv">
+<span id="_CPPv317esp_wifi_nan_stopv"></span><span id="_CPPv217esp_wifi_nan_stopv"></span><span id="esp_wifi_nan_stop__void"></span><span class="target" id="esp__nan_8h_1a22aae39a96336fdc01818f4995cc182a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_stop</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417esp_wifi_nan_stopv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stop NAN Discovery, end NAN Services and Datapaths. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>ESP_OK: succeed</p></li>
+<li><p>others: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428esp_wifi_nan_publish_servicePK22wifi_nan_publish_cfg_tb">
+<span id="_CPPv328esp_wifi_nan_publish_servicePK22wifi_nan_publish_cfg_tb"></span><span id="_CPPv228esp_wifi_nan_publish_servicePK22wifi_nan_publish_cfg_tb"></span><span id="esp_wifi_nan_publish_service__wifi_nan_publish_cfg_tCP.b"></span><span class="target" id="esp__nan_8h_1a5ab8f4adcedff6492a9abe5c398d0be0"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_publish_service</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="esp_wifi.html#_CPPv422wifi_nan_publish_cfg_t" title="wifi_nan_publish_cfg_t"><span class="n"><span class="pre">wifi_nan_publish_cfg_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">publish_cfg</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ndp_resp_needed</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428esp_wifi_nan_publish_servicePK22wifi_nan_publish_cfg_tb" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Start Publishing a service to the NAN Peers in vicinity. </p>
+<p><dl class="simple">
+<dt><strong>Attention</strong></dt><dd><p>This API should be called after esp_wifi_nan_start().</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>publish_cfg</strong> -- Configuration parameters for publishing a service. </p></li>
+<li><p><strong>ndp_resp_needed</strong> -- Setting this true will require user response for every NDP Req using esp_wifi_nan_datapath_resp API.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>non-zero: Publish service identifier</p></li>
+<li><p>zero: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv430esp_wifi_nan_subscribe_servicePK24wifi_nan_subscribe_cfg_t">
+<span id="_CPPv330esp_wifi_nan_subscribe_servicePK24wifi_nan_subscribe_cfg_t"></span><span id="_CPPv230esp_wifi_nan_subscribe_servicePK24wifi_nan_subscribe_cfg_t"></span><span id="esp_wifi_nan_subscribe_service__wifi_nan_subscribe_cfg_tCP"></span><span class="target" id="esp__nan_8h_1aba2ca901331a77104ca905c79cfe3008"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_subscribe_service</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="esp_wifi.html#_CPPv424wifi_nan_subscribe_cfg_t" title="wifi_nan_subscribe_cfg_t"><span class="n"><span class="pre">wifi_nan_subscribe_cfg_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">subscribe_cfg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv430esp_wifi_nan_subscribe_servicePK24wifi_nan_subscribe_cfg_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Subscribe for a service within the NAN cluster. </p>
+<p><dl class="simple">
+<dt><strong>Attention</strong></dt><dd><p>This API should be called after esp_wifi_nan_start().</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subscribe_cfg</strong> -- Configuration parameters for subscribing for a service.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>non-zero: Subscribe service identifier</p></li>
+<li><p>zero: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_wifi_nan_send_messageP26wifi_nan_followup_params_t">
+<span id="_CPPv325esp_wifi_nan_send_messageP26wifi_nan_followup_params_t"></span><span id="_CPPv225esp_wifi_nan_send_messageP26wifi_nan_followup_params_t"></span><span id="esp_wifi_nan_send_message__wifi_nan_followup_params_tP"></span><span class="target" id="esp__nan_8h_1abfa510d97743d955fbcb58309b84ba70"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_send_message</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="esp_wifi.html#_CPPv426wifi_nan_followup_params_t" title="wifi_nan_followup_params_t"><span class="n"><span class="pre">wifi_nan_followup_params_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">fup_params</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_wifi_nan_send_messageP26wifi_nan_followup_params_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Send a follow-up message to the NAN Peer with matched service. </p>
+<p><dl class="simple">
+<dt><strong>Attention</strong></dt><dd><p>This API should be called after a NAN service is discovered due to a match.</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fup_params</strong> -- Configuration parameters for sending a Follow-up message.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: succeed</p></li>
+<li><p>others: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427esp_wifi_nan_cancel_service7uint8_t">
+<span id="_CPPv327esp_wifi_nan_cancel_service7uint8_t"></span><span id="_CPPv227esp_wifi_nan_cancel_service7uint8_t"></span><span id="esp_wifi_nan_cancel_service__uint8_t"></span><span class="target" id="esp__nan_8h_1a000ecf128567a96d330c057c516a083c"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_cancel_service</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">service_id</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427esp_wifi_nan_cancel_service7uint8_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Cancel a NAN service. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>service_id</strong> -- Publish/Subscribe service id to be cancelled.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: succeed</p></li>
+<li><p>others: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_wifi_nan_datapath_reqP23wifi_nan_datapath_req_t">
+<span id="_CPPv325esp_wifi_nan_datapath_reqP23wifi_nan_datapath_req_t"></span><span id="_CPPv225esp_wifi_nan_datapath_reqP23wifi_nan_datapath_req_t"></span><span id="esp_wifi_nan_datapath_req__wifi_nan_datapath_req_tP"></span><span class="target" id="esp__nan_8h_1ac0228079efff3c78ebd8131c4f369202"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_datapath_req</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="esp_wifi.html#_CPPv423wifi_nan_datapath_req_t" title="wifi_nan_datapath_req_t"><span class="n"><span class="pre">wifi_nan_datapath_req_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">req</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_wifi_nan_datapath_reqP23wifi_nan_datapath_req_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Send NAN Datapath Request to a NAN Publisher with matched service. </p>
+<p><dl class="simple">
+<dt><strong>Attention</strong></dt><dd><p>This API should be called by the Subscriber after a match occurs with a Publisher.</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>req</strong> -- NAN Datapath Request parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>non-zero NAN Datapath identifier: If NAN datapath req was accepted by publisher</p></li>
+<li><p>zero: If NAN datapath req was rejected by publisher or a timeout occurs </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426esp_wifi_nan_datapath_respP24wifi_nan_datapath_resp_t">
+<span id="_CPPv326esp_wifi_nan_datapath_respP24wifi_nan_datapath_resp_t"></span><span id="_CPPv226esp_wifi_nan_datapath_respP24wifi_nan_datapath_resp_t"></span><span id="esp_wifi_nan_datapath_resp__wifi_nan_datapath_resp_tP"></span><span class="target" id="esp__nan_8h_1a77d979fd796503d9c9498f941e2392a4"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_datapath_resp</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="esp_wifi.html#_CPPv424wifi_nan_datapath_resp_t" title="wifi_nan_datapath_resp_t"><span class="n"><span class="pre">wifi_nan_datapath_resp_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">resp</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426esp_wifi_nan_datapath_respP24wifi_nan_datapath_resp_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Respond to a NAN Datapath request with Accept or Reject. </p>
+<p><dl class="simple">
+<dt><strong>Attention</strong></dt><dd><p>This API should be called if ndp_resp_needed is set True by the Publisher and a WIFI_EVENT_NDP_INDICATION event is received due to an incoming NDP request.</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>resp</strong> -- NAN Datapath Response parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: succeed</p></li>
+<li><p>others: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425esp_wifi_nan_datapath_endP27wifi_nan_datapath_end_req_t">
+<span id="_CPPv325esp_wifi_nan_datapath_endP27wifi_nan_datapath_end_req_t"></span><span id="_CPPv225esp_wifi_nan_datapath_endP27wifi_nan_datapath_end_req_t"></span><span id="esp_wifi_nan_datapath_end__wifi_nan_datapath_end_req_tP"></span><span class="target" id="esp__nan_8h_1a2414f7a5526e62124f2e3ffef360ca56"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_datapath_end</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="esp_wifi.html#_CPPv427wifi_nan_datapath_end_req_t" title="wifi_nan_datapath_end_req_t"><span class="n"><span class="pre">wifi_nan_datapath_end_req_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">req</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425esp_wifi_nan_datapath_endP27wifi_nan_datapath_end_req_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Terminate a NAN Datapath. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>req</strong> -- NAN Datapath end request parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: succeed</p></li>
+<li><p>others: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv440esp_wifi_nan_get_ipv6_linklocal_from_macP10ip6_addr_tP7uint8_t">
+<span id="_CPPv340esp_wifi_nan_get_ipv6_linklocal_from_macP10ip6_addr_tP7uint8_t"></span><span id="_CPPv240esp_wifi_nan_get_ipv6_linklocal_from_macP10ip6_addr_tP7uint8_t"></span><span id="esp_wifi_nan_get_ipv6_linklocal_from_mac__ip6_addr_tP.uint8_tP"></span><span class="target" id="esp__nan_8h_1a5e1c3ff7e779cb96921c311a3514b0a1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_get_ipv6_linklocal_from_mac</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">ip6_addr_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ip6</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">mac_addr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv440esp_wifi_nan_get_ipv6_linklocal_from_macP10ip6_addr_tP7uint8_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get IPv6 Link Local address using MAC address. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ip6</strong> -- <strong>[out]</strong> Derived IPv6 Link Local address. </p></li>
+<li><p><strong>mac_addr</strong> -- <strong>[in]</strong> Input MAC Address. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_wifi_nan_get_own_svc_infoP7uint8_tPcPi">
+<span id="_CPPv329esp_wifi_nan_get_own_svc_infoP7uint8_tPcPi"></span><span id="_CPPv229esp_wifi_nan_get_own_svc_infoP7uint8_tPcPi"></span><span id="esp_wifi_nan_get_own_svc_info__uint8_tP.cP.iP"></span><span class="target" id="esp__nan_8h_1a32a4e02a20112e8e592345f58c5c1e8f"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_get_own_svc_info</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">own_svc_id</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">svc_name</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">num_peer_records</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_wifi_nan_get_own_svc_infoP7uint8_tPcPi" title="Permalink to this definition"></a><br /></dt>
+<dd><p>brief Get own Service information from Service ID OR Name.</p>
+<p><dl class="simple">
+<dt><strong>Attention</strong></dt><dd><p>If service information is to be fetched from service name, set own_svc_id as zero.</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>own_svc_id</strong> -- <strong>[inout]</strong> As input, it indicates Service ID to search for. As output, it indicates Service ID of the service found using Service Name. </p></li>
+<li><p><strong>svc_name</strong> -- <strong>[inout]</strong> As input, it indicates Service Name to search for. As output, it indicates Service Name of the service found using Service ID. </p></li>
+<li><p><strong>num_peer_records</strong> -- <strong>[out]</strong> Number of peers discovered by corresponding service. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: succeed</p></li>
+<li><p>ESP_FAIL: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429esp_wifi_nan_get_peer_recordsPi7uint8_tP15nan_peer_record">
+<span id="_CPPv329esp_wifi_nan_get_peer_recordsPi7uint8_tP15nan_peer_record"></span><span id="_CPPv229esp_wifi_nan_get_peer_recordsPi7uint8_tP15nan_peer_record"></span><span id="esp_wifi_nan_get_peer_records__iP.uint8_t.nan_peer_recordP"></span><span class="target" id="esp__nan_8h_1a3a10c192b4a7787ec3c978e69cab17f5"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_get_peer_records</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">num_peer_records</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">own_svc_id</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415nan_peer_record" title="nan_peer_record"><span class="n"><span class="pre">nan_peer_record</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">peer_record</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429esp_wifi_nan_get_peer_recordsPi7uint8_tP15nan_peer_record" title="Permalink to this definition"></a><br /></dt>
+<dd><p>brief Get a list of Peers discovered by the given Service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_peer_records</strong> -- <strong>[inout]</strong> As input param, it stores max peers peer_record can hold. As output param, it specifies the actual number of peers this API returns. </p></li>
+<li><p><strong>own_svc_id</strong> -- Service ID of own service. </p></li>
+<li><p><strong>peer_record</strong> -- <strong>[out]</strong> Pointer to first peer record. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: succeed</p></li>
+<li><p>ESP_FAIL: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426esp_wifi_nan_get_peer_infoPcP7uint8_tP15nan_peer_record">
+<span id="_CPPv326esp_wifi_nan_get_peer_infoPcP7uint8_tP15nan_peer_record"></span><span id="_CPPv226esp_wifi_nan_get_peer_infoPcP7uint8_tP15nan_peer_record"></span><span id="esp_wifi_nan_get_peer_info__cP.uint8_tP.nan_peer_recordP"></span><span class="target" id="esp__nan_8h_1a1e8258e73b565d149abfe799494b6fd5"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">esp_wifi_nan_get_peer_info</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">svc_name</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">peer_mac</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415nan_peer_record" title="nan_peer_record"><span class="n"><span class="pre">nan_peer_record</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">peer_info</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426esp_wifi_nan_get_peer_infoPcP7uint8_tP15nan_peer_record" title="Permalink to this definition"></a><br /></dt>
+<dd><p>brief Find Peer's Service information using Peer MAC and optionally Service Name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>svc_name</strong> -- Service Name of the published/subscribed service. </p></li>
+<li><p><strong>peer_mac</strong> -- Peer's NAN Management Interface MAC address. </p></li>
+<li><p><strong>peer_info</strong> -- <strong>[out]</strong> Peer's service information structure. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: succeed</p></li>
+<li><p>ESP_FAIL: failed </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this heading"></a></h3>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv415nan_peer_record">
+<span id="_CPPv315nan_peer_record"></span><span id="_CPPv215nan_peer_record"></span><span id="nan_peer_record"></span><span class="target" id="structnan__peer__record"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nan_peer_record</span></span></span><a class="headerlink" href="#_CPPv415nan_peer_record" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Parameters of a peer service record </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15nan_peer_record11peer_svc_idE">
+<span id="_CPPv3N15nan_peer_record11peer_svc_idE"></span><span id="_CPPv2N15nan_peer_record11peer_svc_idE"></span><span id="nan_peer_record::peer_svc_id__uint8_t"></span><span class="target" id="structnan__peer__record_1a91c166039c91932bd58ced2347fef68c"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">peer_svc_id</span></span></span><a class="headerlink" href="#_CPPv4N15nan_peer_record11peer_svc_idE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Identifier of Peer's service </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15nan_peer_record10own_svc_idE">
+<span id="_CPPv3N15nan_peer_record10own_svc_idE"></span><span id="_CPPv2N15nan_peer_record10own_svc_idE"></span><span id="nan_peer_record::own_svc_id__uint8_t"></span><span class="target" id="structnan__peer__record_1abafef0cb38d268781ffcb1270b53ca9b"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">own_svc_id</span></span></span><a class="headerlink" href="#_CPPv4N15nan_peer_record10own_svc_idE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Identifier of own service associated with Peer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15nan_peer_record8peer_nmiE">
+<span id="_CPPv3N15nan_peer_record8peer_nmiE"></span><span id="_CPPv2N15nan_peer_record8peer_nmiE"></span><span id="nan_peer_record::peer_nmi__uint8_tA"></span><span class="target" id="structnan__peer__record_1a40dd8822a42a6a66d3f492b85ef82703"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">peer_nmi</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">6</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N15nan_peer_record8peer_nmiE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Peer's NAN Management Interface address </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15nan_peer_record13peer_svc_typeE">
+<span id="_CPPv3N15nan_peer_record13peer_svc_typeE"></span><span id="_CPPv2N15nan_peer_record13peer_svc_typeE"></span><span id="nan_peer_record::peer_svc_type__uint8_t"></span><span class="target" id="structnan__peer__record_1abd6548cc571e9d652f421d18291a399b"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">peer_svc_type</span></span></span><a class="headerlink" href="#_CPPv4N15nan_peer_record13peer_svc_typeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Peer's service type (Publish/Subscribe) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15nan_peer_record6ndp_idE">
+<span id="_CPPv3N15nan_peer_record6ndp_idE"></span><span id="_CPPv2N15nan_peer_record6ndp_idE"></span><span id="nan_peer_record::ndp_id__uint8_t"></span><span class="target" id="structnan__peer__record_1a52fc8e6a0e6f3a454ef50076f5db6ccb"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ndp_id</span></span></span><a class="headerlink" href="#_CPPv4N15nan_peer_record6ndp_idE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Specifies if the peer has any active datapath </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15nan_peer_record8peer_ndiE">
+<span id="_CPPv3N15nan_peer_record8peer_ndiE"></span><span id="_CPPv2N15nan_peer_record8peer_ndiE"></span><span id="nan_peer_record::peer_ndi__uint8_tA"></span><span class="target" id="structnan__peer__record_1ae1dc2c09de99797e60b88dafaa57d767"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">peer_ndi</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">6</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N15nan_peer_record8peer_ndiE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Peer's NAN Data Interface address, only valid when ndp_id is non-zero </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.WIFI_NAN_CONFIG_DEFAULT">
+<span class="target" id="esp__nan_8h_1a8f5f8200f4aca6f34b9c92d4764016be"></span><span class="sig-name descname"><span class="n"><span class="pre">WIFI_NAN_CONFIG_DEFAULT</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.WIFI_NAN_CONFIG_DEFAULT" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.NDP_STATUS_ACCEPTED">
+<span class="target" id="esp__nan_8h_1a13167d8e218d4f3067c026f201ec0323"></span><span class="sig-name descname"><span class="n"><span class="pre">NDP_STATUS_ACCEPTED</span></span></span><a class="headerlink" href="#c.NDP_STATUS_ACCEPTED" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.NDP_STATUS_REJECTED">
+<span class="target" id="esp__nan_8h_1a4863606cc74fb9eaf2990737339e3fa7"></span><span class="sig-name descname"><span class="n"><span class="pre">NDP_STATUS_REJECTED</span></span></span><a class="headerlink" href="#c.NDP_STATUS_REJECTED" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.NAN_MAX_PEERS_RECORD">
+<span class="target" id="esp__nan_8h_1ab0d470094ea6f36924770c38a52a63db"></span><span class="sig-name descname"><span class="n"><span class="pre">NAN_MAX_PEERS_RECORD</span></span></span><a class="headerlink" href="#c.NAN_MAX_PEERS_RECORD" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_NAN_PUBLISH">
+<span class="target" id="esp__nan_8h_1a6fb6279c808e24acdff910bd4b0f300c"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_NAN_PUBLISH</span></span></span><a class="headerlink" href="#c.ESP_NAN_PUBLISH" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.ESP_NAN_SUBSCRIBE">
+<span class="target" id="esp__nan_8h_1ad040aba7b9157853f5660c58ff4f988e"></span><span class="sig-name descname"><span class="n"><span class="pre">ESP_NAN_SUBSCRIBE</span></span></span><a class="headerlink" href="#c.ESP_NAN_SUBSCRIBE" title="Permalink to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Wi-Fi AwareTM (NAN) (api-reference/network/esp_nan)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Wi-Fi AwareTM (NAN) (api-reference/network/esp_nan)&version=esp32 v5.5.5 (v5.5.5)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="esp_dpp.html" class="btn btn-neutral float-left" title="Wi-Fi Easy ConnectTM (DPP)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="esp_eth.html" class="btn btn-neutral float-right" title="Ethernet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2026, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.5.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

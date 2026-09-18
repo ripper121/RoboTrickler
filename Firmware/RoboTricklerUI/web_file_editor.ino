@@ -1,4 +1,50 @@
 File uploadFile;
+static String uploadTargetPath;
+static String uploadTemporaryPath;
+static bool uploadFailed = false;
+static bool uploadFilesystemLocked = false;
+
+bool isWebFileUploadActive()
+{
+  return uploadFilesystemLocked;
+}
+
+static void releaseUploadFilesystemLock()
+{
+  if (uploadFilesystemLocked)
+  {
+    uploadFilesystemLocked = false;
+    filesystemUnlock();
+  }
+}
+
+static bool webFilesystemAvailable()
+{
+  return filesystemActive && (activeFs != NULL);
+}
+
+static bool webFilesystemMutationAllowed()
+{
+  return webFilesystemAvailable() &&
+         !isTricklerRunning() &&
+         !isCalibrationProfilePromptPending() &&
+         !isProfileTuneTestActive();
+}
+
+void finishFileUploadRequest()
+{
+  releaseUploadFilesystemLock();
+  bool failed = uploadFailed;
+  uploadFailed = false;
+  uploadTargetPath = "";
+  uploadTemporaryPath = "";
+  if (failed)
+  {
+    server.send(409, "text/plain", "Upload rejected or failed");
+    return;
+  }
+  returnOk();
+}
 
 bool loadFromFilesystem(fs::FS &fs, const char *sourceName, String path)
 {
@@ -77,6 +123,15 @@ bool loadFromFilesystem(fs::FS &fs, const char *sourceName, String path)
   dataFile.close();
 
   String pathWithGz = path + ".gz";
+  {
+    FilesystemLockGuard filesystemGuard;
+    if (!filesystemGuard ||
+        !recoverInterruptedFileReplacement(path) ||
+        !recoverInterruptedFileReplacement(pathWithGz))
+    {
+      return false;
+    }
+  }
   if (fs.exists(pathWithGz))
   {
     path = pathWithGz;
@@ -109,7 +164,7 @@ bool loadFromFilesystem(fs::FS &fs, const char *sourceName, String path)
 
 bool loadWebFile(String path)
 {
-  return filesystemActive && loadFromFilesystem(ACTIVE_FS, activeFsIsSd ? "SD" : "LittleFS", path);
+  return webFilesystemAvailable() && loadFromFilesystem(ACTIVE_FS, activeFsIsSd ? "SD" : "LittleFS", path);
 }
 
 void handleFileUpload()
@@ -121,23 +176,56 @@ void handleFileUpload()
   HTTPUpload &upload = server.upload();
   if (upload.status == UPLOAD_FILE_START)
   {
+    if (uploadFile)
+    {
+      uploadFile.close();
+    }
+    if (uploadFilesystemLocked && webFilesystemAvailable() &&
+        (uploadTemporaryPath.length() > 0))
+    {
+      ACTIVE_FS.remove(uploadTemporaryPath.c_str());
+    }
+    releaseUploadFilesystemLock();
+    uploadFailed = true;
+    uploadTargetPath = "";
+    uploadTemporaryPath = "";
+    if (!webFilesystemMutationAllowed() || !upload.filename.startsWith("/") ||
+        (upload.filename == "/"))
+    {
+      return;
+    }
+    if (!filesystemLock())
+    {
+      return;
+    }
+    uploadFilesystemLocked = true;
     if (upload.filename.startsWith("/profiles/") && !ACTIVE_FS.exists("/profiles"))
     {
-      ACTIVE_FS.mkdir("/profiles");
+      if (!ACTIVE_FS.mkdir("/profiles"))
+      {
+        return;
+      }
     }
-    if (ACTIVE_FS.exists((char *)upload.filename.c_str()))
-    {
-      ACTIVE_FS.remove((char *)upload.filename.c_str());
-    }
-    uploadFile = ACTIVE_FS.open(upload.filename.c_str(), FILE_WRITE);
+    uploadTargetPath = upload.filename;
+    uploadTemporaryPath = uploadTargetPath + ".upload.tmp";
+    ACTIVE_FS.remove(uploadTemporaryPath.c_str());
+    uploadFile = ACTIVE_FS.open(uploadTemporaryPath.c_str(), FILE_WRITE);
+    uploadFailed = !uploadFile;
     DEBUG_PRINT("Upload: START, filename: ");
     DEBUG_PRINTLN(upload.filename);
   }
   else if (upload.status == UPLOAD_FILE_WRITE)
   {
-    if (uploadFile)
+    if (!uploadFailed && uploadFile && webFilesystemMutationAllowed())
     {
-      uploadFile.write(upload.buf, upload.currentSize);
+      if (uploadFile.write(upload.buf, upload.currentSize) != upload.currentSize)
+      {
+        uploadFailed = true;
+      }
+    }
+    else
+    {
+      uploadFailed = true;
     }
     DEBUG_PRINT("Upload: WRITE, Bytes: ");
     DEBUG_PRINTLN(upload.currentSize);
@@ -146,10 +234,33 @@ void handleFileUpload()
   {
     if (uploadFile)
     {
+      uploadFile.flush();
       uploadFile.close();
     }
+    if (!uploadFailed && webFilesystemMutationAllowed())
+    {
+      uploadFailed = !replaceFileWithTemp(uploadTargetPath, uploadTemporaryPath);
+    }
+    if (uploadFailed && webFilesystemAvailable() && (uploadTemporaryPath.length() > 0))
+    {
+      ACTIVE_FS.remove(uploadTemporaryPath.c_str());
+    }
+    releaseUploadFilesystemLock();
     DEBUG_PRINT("Upload: END, Size: ");
     DEBUG_PRINTLN(upload.totalSize);
+  }
+  else
+  {
+    uploadFailed = true;
+    if (uploadFile)
+    {
+      uploadFile.close();
+    }
+    if (webFilesystemAvailable() && (uploadTemporaryPath.length() > 0))
+    {
+      ACTIVE_FS.remove(uploadTemporaryPath.c_str());
+    }
+    releaseUploadFilesystemLock();
   }
 }
 
@@ -192,6 +303,12 @@ void deleteRecursive(String path)
 
 void handleDelete()
 {
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard || !webFilesystemMutationAllowed())
+  {
+    server.send(409, "text/plain", "Filesystem unavailable or device busy");
+    return;
+  }
   if (server.args() == 0)
   {
     return returnFail("BAD ARGS");
@@ -208,6 +325,12 @@ void handleDelete()
 
 void handleCreate()
 {
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard || !webFilesystemMutationAllowed())
+  {
+    server.send(409, "text/plain", "Filesystem unavailable or device busy");
+    return;
+  }
   if (server.args() == 0)
   {
     return returnFail("BAD ARGS");
@@ -224,20 +347,34 @@ void handleCreate()
     // Create an empty file. (The upstream SDWebServer example wrote a stray
     // NUL byte here, which broke newly created files parsed as JSON/text.)
     File file = ACTIVE_FS.open((char *)path.c_str(), FILE_WRITE);
-    if (file)
+    if (!file)
+    {
+      returnFail("CREATE FAILED");
+      return;
+    }
+    else
     {
       file.close();
     }
   }
   else
   {
-    ACTIVE_FS.mkdir((char *)path.c_str());
+    if (!ACTIVE_FS.mkdir((char *)path.c_str()))
+    {
+      returnFail("CREATE FAILED");
+      return;
+    }
   }
   returnOk();
 }
 
 void printDirectory()
 {
+  if (!webFilesystemAvailable())
+  {
+    server.send(503, "text/plain", "Filesystem unavailable");
+    return;
+  }
   if (!server.hasArg("dir"))
   {
     return returnFail("BAD ARGS");
