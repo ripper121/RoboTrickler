@@ -1,9 +1,55 @@
 const char *const MDNS_HOST = "robo-trickler";
+static const char *WEB_REQUEST_HEADERS[] = {"Origin"};
+
+bool webMutationAllowed()
+{
+  String origin = server.header("Origin");
+  if (origin.length() == 0)
+  {
+    return true; // Non-browser clients need no Origin header.
+  }
+  String host = server.hostHeader();
+  String expected = String("http://") + host;
+  String hostName = host;
+  int portSeparator = hostName.indexOf(':');
+  if (portSeparator >= 0) hostName.remove(portSeparator);
+  bool knownHost = wifiSetupApActive ||
+                   (hostName == WiFi.localIP().toString()) ||
+                   (hostName == "robo-trickler.local") ||
+                   (hostName == "robo-trickler");
+  if ((host.length() == 0) || !knownHost || (origin != expected))
+  {
+    server.send(403, "text/plain", "Cross-origin request rejected");
+    return false;
+  }
+  return true;
+}
 
 static bool webUpdateStarted = false;
 static bool webUpdateSucceeded = false;
 static bool webUpdateFilesystem = false;
 static bool webUpdateFilesystemUnmounted = false;
+static bool webUpdateFilesystemLocked = false;
+static size_t webUpdateMaxSize = 0;
+
+static size_t webUpdateLimit(bool filesystemImage)
+{
+  const esp_partition_t *partition = filesystemImage
+      ? esp_partition_find_first(ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_DATA_SPIFFS, NULL)
+      : esp_ota_get_next_update_partition(NULL);
+  if (partition == NULL) return 0;
+  const size_t productLimit = filesystemImage ? 1536 * 1024 : 3300 * 1024;
+  return (partition->size < productLimit) ? partition->size : productLimit;
+}
+
+static void releaseWebUpdateFilesystemLock()
+{
+  if (webUpdateFilesystemLocked)
+  {
+    webUpdateFilesystemLocked = false;
+    filesystemUnlock();
+  }
+}
 
 void restoreFilesystemAfterFailedUpdate()
 {
@@ -82,6 +128,8 @@ void registerWebServerRoutes()
     return;
   }
 
+  server.collectHeaders(WEB_REQUEST_HEADERS, 1);
+
   server.on("/list", HTTP_GET, printDirectory);
   server.on("/", HTTP_GET, handleHomePage);
   server.on("/system/ap", HTTP_GET, handleWifiSetupPortal);
@@ -94,19 +142,19 @@ void registerWebServerRoutes()
   server.on("/system/resources/edit", HTTP_POST, []()
             { finishFileUploadRequest(); }, handleFileUpload);
   server.onNotFound(handleNotFound);
-  server.on("/generate_204", handleNotFound);
-  server.on("/favicon.ico", handleNotFound);
-  server.on("/fwlink", handleNotFound);
-  server.on("/reboot", handleReboot);
-  server.on("/setProfile", handleSetProfile);
-  server.on("/getProfile", handleGetProfile);
-  server.on("/getLanguage", handleGetLanguage);
-  server.on("/getProfileList", handleGetProfileList);
-  server.on("/getTarget", handleGetTarget);
-  server.on("/getTricklerState", handleGetTricklerState);
-  server.on("/setTarget", handleSetTarget);
-  server.on("/system/start", handleStart);
-  server.on("/system/stop", handleStop);
+  server.on("/generate_204", HTTP_GET, handleNotFound);
+  server.on("/favicon.ico", HTTP_GET, handleNotFound);
+  server.on("/fwlink", HTTP_GET, handleNotFound);
+  server.on("/reboot", HTTP_POST, handleReboot);
+  server.on("/setProfile", HTTP_POST, handleSetProfile);
+  server.on("/getProfile", HTTP_GET, handleGetProfile);
+  server.on("/getLanguage", HTTP_GET, handleGetLanguage);
+  server.on("/getProfileList", HTTP_GET, handleGetProfileList);
+  server.on("/getTarget", HTTP_GET, handleGetTarget);
+  server.on("/getTricklerState", HTTP_GET, handleGetTricklerState);
+  server.on("/setTarget", HTTP_POST, handleSetTarget);
+  server.on("/system/start", HTTP_POST, handleStart);
+  server.on("/system/stop", HTTP_POST, handleStop);
 #if ENABLE_SCREENSHOT
   server.on("/screenshot", HTTP_GET, handleScreenshot);
 #endif
@@ -144,6 +192,14 @@ void registerWebServerRoutes()
   server.on(
       "/update", HTTP_POST, []()
       {
+        if (!webMutationAllowed() || isTricklerRunning())
+        {
+          if (Update.isRunning()) Update.abort();
+          restoreFilesystemAfterFailedUpdate();
+          releaseWebUpdateFilesystemLock();
+          server.send(409, "text/plain", "Update rejected");
+          return;
+        }
         bool updateOk = webUpdateSucceeded && !Update.hasError();
         if (!updateOk)
         {
@@ -153,6 +209,7 @@ void registerWebServerRoutes()
         webUpdateSucceeded = false;
         webUpdateFilesystem = false;
         webUpdateFilesystemUnmounted = false;
+        releaseWebUpdateFilesystemLock();
         Serial.setDebugOutput(false);
         server.sendHeader("Connection", "close");
         server.send(updateOk ? 200 : 500, "text/html",
@@ -170,6 +227,21 @@ void registerWebServerRoutes()
           webUpdateStarted = false;
           webUpdateSucceeded = false;
           webUpdateFilesystem = upload.name == "filesystem";
+          if (!webMutationAllowed() || isTricklerRunning() ||
+              (upload.name != "filesystem" && upload.name != "firmware") ||
+              isWebFileUploadActive() || !filesystemLock())
+          {
+            return;
+          }
+          webUpdateFilesystemLocked = true;
+          webUpdateMaxSize = webUpdateLimit(webUpdateFilesystem);
+          int contentLength = server.clientContentLength();
+          if ((webUpdateMaxSize == 0) || (contentLength <= 0) ||
+              ((size_t)contentLength > webUpdateMaxSize + 4096))
+          {
+            releaseWebUpdateFilesystemLock();
+            return;
+          }
           Update.clearError();
           Serial.setDebugOutput(true);
           Serial.printf("%s update: %s\n", webUpdateFilesystem ? "LittleFS" : "Firmware", upload.filename.c_str());
@@ -189,7 +261,7 @@ void registerWebServerRoutes()
           }
 
           int updateTarget = webUpdateFilesystem ? U_FLASHFS : U_FLASH;
-          if (Update.begin(UPDATE_SIZE_UNKNOWN, updateTarget))
+          if (Update.begin(webUpdateMaxSize, updateTarget))
           {
             webUpdateStarted = true;
           }
@@ -207,6 +279,23 @@ void registerWebServerRoutes()
           {
             return;
           }
+          if ((upload.totalSize > webUpdateMaxSize) ||
+              (upload.currentSize > webUpdateMaxSize - upload.totalSize))
+          {
+            Update.abort();
+            webUpdateStarted = false;
+            restoreFilesystemAfterFailedUpdate();
+            releaseWebUpdateFilesystemLock();
+            return;
+          }
+          if ((upload.totalSize == 0) && !webUpdateFilesystem &&
+              ((upload.currentSize == 0) || (upload.buf[0] != 0xE9)))
+          {
+            Update.abort();
+            webUpdateStarted = false;
+            releaseWebUpdateFilesystemLock();
+            return;
+          }
           if (Update.write(upload.buf, upload.currentSize) != upload.currentSize)
           {
             Update.printError(Serial);
@@ -218,6 +307,12 @@ void registerWebServerRoutes()
         }
         else if (upload.status == UPLOAD_FILE_END)
         {
+          if ((upload.totalSize == 0) ||
+              (webUpdateFilesystem && (upload.totalSize != webUpdateMaxSize)))
+          {
+            if (Update.isRunning()) Update.abort();
+            webUpdateStarted = false;
+          }
           if (!webUpdateStarted || Update.hasError())
           {
             if (Update.isRunning())
@@ -239,6 +334,8 @@ void registerWebServerRoutes()
             updateDisplayLog(String(langText("status_update_end_failed")) + Update.errorString());
           }
           webUpdateStarted = false;
+          if (!webUpdateSucceeded) restoreFilesystemAfterFailedUpdate();
+          releaseWebUpdateFilesystemLock();
           Serial.setDebugOutput(false);
         }
         else
@@ -247,6 +344,7 @@ void registerWebServerRoutes()
           webUpdateStarted = false;
           webUpdateSucceeded = false;
           restoreFilesystemAfterFailedUpdate();
+          releaseWebUpdateFilesystemLock();
           Serial.setDebugOutput(false);
           Serial.printf("Update Failed Unexpectedly (likely broken connection): status=%d\n", upload.status);
           updateDisplayLog(langText("status_update_unexpected"));

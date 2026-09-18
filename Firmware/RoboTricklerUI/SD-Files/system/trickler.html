@@ -176,27 +176,25 @@
             }
         }
 
-        function toggleStartStop() {
-            var request;
+        async function toggleStartStop() {
             if (!tricklerRunning) {
-                setProfile();
-                setTarget();
-                request = fetch('./start');
+                try {
+                    await setProfile();
+                    await setTarget();
+                    const response = await fetch('./start', { method: 'POST' });
+                    if (!response.ok) throw new Error('Start failed');
+                } catch (error) {
+                    console.error('Could not start trickler:', error);
+                }
             } else {
-                request = fetch('./stop');
+                try {
+                    const response = await fetch('./stop', { method: 'POST' });
+                    if (!response.ok) throw new Error('Stop failed');
+                } catch (error) {
+                    console.error('Could not stop trickler:', error);
+                }
             }
-
-            request
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return loadValue();
-                })
-                .catch(error => {
-                    console.error('Could not change trickler state:', error);
-                    loadValue();
-                });
+            loadValue();
         }
 
         function addTxtFilesToDropdown() {
@@ -237,7 +235,10 @@
                 return;
             }
             var url = '/setProfile?profileNumber=' + profileNumber;
-            fetch(url).then(response => response.text());
+            return fetch(url, { method: 'POST' }).then(response => {
+                if (!response.ok) throw new Error('Profile change failed');
+                return response.text();
+            });
         }
 
 
@@ -277,7 +278,10 @@
             var targetValue = clampTargetValue(parseFloat(document.getElementById('targetValueDisplay').value));
             document.getElementById('targetValueDisplay').value = targetValue.toFixed(3);
             var url = '/setTarget?targetWeight=' + targetValue;
-            fetch(url).then(response => response.text());
+            return fetch(url, { method: 'POST' }).then(response => {
+                if (!response.ok) throw new Error('Target change failed');
+                return response.text();
+            });
         }
 
     </script>

@@ -319,13 +319,14 @@ void setStepperRpm(int stepperNum, int stepperRpm)
   steppers[stepperNum].rpm = stepperRpm;
 }
 
-void initStepper()
+bool initStepper()
 {
   DEBUG_PRINTLN("initStepper()");
   shiftRegisterInit();
   setStepperRpm(1, 100);
   setStepperRpm(2, 100);
   stepperEnableAll(false);
+  return shiftRegisterReady && (i2sOutMutex != NULL);
 }
 
 bool step(int stepperNum, long steps, bool reverse, uint32_t runId)

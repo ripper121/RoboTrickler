@@ -40,7 +40,11 @@ void initSetup()
 
     String infoText = langText("status_init_steppers");
     updateDisplayLog(infoText, true);
-    initStepper();
+    stepperReady = initStepper();
+    if (!stepperReady)
+    {
+        updateDisplayLog(langText("status_stepper_i2s_failed"));
+    }
 
     infoText = langText("status_loading_config");
     updateDisplayLog(infoText, true);

@@ -3,6 +3,29 @@ static String uploadTargetPath;
 static String uploadTemporaryPath;
 static bool uploadFailed = false;
 static bool uploadFilesystemLocked = false;
+static const size_t WEB_EDITOR_MAX_UPLOAD = 1024 * 1024;
+static const size_t WEB_EDITOR_MAX_PATH = 80;
+
+static bool validEditorPath(const String &path, bool allowRoot = false, bool allowTrailingSlash = false)
+{
+  if ((path.length() == 0) || (path.length() > WEB_EDITOR_MAX_PATH) ||
+      (path[0] != '/') || (!allowRoot && path == "/")) return false;
+  for (size_t i = 0; i < path.length(); i++)
+  {
+    unsigned char c = path[i];
+    if ((c < 0x20) || (c == 0x7f) || (c == '\\')) return false;
+  }
+  int segmentStart = 1;
+  while (segmentStart < (int)path.length())
+  {
+    int slash = path.indexOf('/', segmentStart);
+    if (slash < 0) slash = path.length();
+    String segment = path.substring(segmentStart, slash);
+    if ((segment.length() == 0) || (segment == ".") || (segment == "..")) return false;
+    segmentStart = slash + 1;
+  }
+  return path == "/" || allowTrailingSlash || !path.endsWith("/");
+}
 
 bool isWebFileUploadActive()
 {
@@ -33,6 +56,7 @@ static bool webFilesystemMutationAllowed()
 
 void finishFileUploadRequest()
 {
+  if (!webMutationAllowed()) uploadFailed = true;
   releaseUploadFilesystemLock();
   bool failed = uploadFailed;
   uploadFailed = false;
@@ -48,6 +72,9 @@ void finishFileUploadRequest()
 
 bool loadFromFilesystem(fs::FS &fs, const char *sourceName, String path)
 {
+  if (!validEditorPath(path, true, true)) return false;
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard) return false;
   // Serve UI files with a small extension-to-content-type map. If a
   // compressed copy exists, prefer it transparently.
   String dataType = "text/plain";
@@ -123,15 +150,8 @@ bool loadFromFilesystem(fs::FS &fs, const char *sourceName, String path)
   dataFile.close();
 
   String pathWithGz = path + ".gz";
-  {
-    FilesystemLockGuard filesystemGuard;
-    if (!filesystemGuard ||
-        !recoverInterruptedFileReplacement(path) ||
-        !recoverInterruptedFileReplacement(pathWithGz))
-    {
-      return false;
-    }
-  }
+  if (!recoverInterruptedFileReplacement(path) ||
+      !recoverInterruptedFileReplacement(pathWithGz)) return false;
   if (fs.exists(pathWithGz))
   {
     path = pathWithGz;
@@ -189,8 +209,10 @@ void handleFileUpload()
     uploadFailed = true;
     uploadTargetPath = "";
     uploadTemporaryPath = "";
-    if (!webFilesystemMutationAllowed() || !upload.filename.startsWith("/") ||
-        (upload.filename == "/"))
+    if (!webMutationAllowed() || !webFilesystemMutationAllowed() ||
+        !validEditorPath(upload.filename) ||
+        (server.clientContentLength() < 0) ||
+        (server.clientContentLength() > (int)(WEB_EDITOR_MAX_UPLOAD + 4096)))
     {
       return;
     }
@@ -216,7 +238,9 @@ void handleFileUpload()
   }
   else if (upload.status == UPLOAD_FILE_WRITE)
   {
-    if (!uploadFailed && uploadFile && webFilesystemMutationAllowed())
+    if (!uploadFailed && uploadFile && webFilesystemMutationAllowed() &&
+        (upload.totalSize <= WEB_EDITOR_MAX_UPLOAD) &&
+        (upload.currentSize <= WEB_EDITOR_MAX_UPLOAD - upload.totalSize))
     {
       if (uploadFile.write(upload.buf, upload.currentSize) != upload.currentSize)
       {
@@ -303,18 +327,19 @@ void deleteRecursive(String path)
 
 void handleDelete()
 {
+  if (!webMutationAllowed()) return;
   FilesystemLockGuard filesystemGuard;
   if (!filesystemGuard || !webFilesystemMutationAllowed())
   {
     server.send(409, "text/plain", "Filesystem unavailable or device busy");
     return;
   }
-  if (server.args() == 0)
+  if ((server.args() != 1) || (server.clientContentLength() > 128))
   {
     return returnFail("BAD ARGS");
   }
   String path = server.arg(0);
-  if (path == "/" || !ACTIVE_FS.exists((char *)path.c_str()))
+  if (!validEditorPath(path) || !ACTIVE_FS.exists((char *)path.c_str()))
   {
     returnFail("BAD PATH");
     return;
@@ -325,18 +350,19 @@ void handleDelete()
 
 void handleCreate()
 {
+  if (!webMutationAllowed()) return;
   FilesystemLockGuard filesystemGuard;
   if (!filesystemGuard || !webFilesystemMutationAllowed())
   {
     server.send(409, "text/plain", "Filesystem unavailable or device busy");
     return;
   }
-  if (server.args() == 0)
+  if ((server.args() != 1) || (server.clientContentLength() > 128))
   {
     return returnFail("BAD ARGS");
   }
   String path = server.arg(0);
-  if (path == "/" || ACTIVE_FS.exists((char *)path.c_str()))
+  if (!validEditorPath(path) || ACTIVE_FS.exists((char *)path.c_str()))
   {
     returnFail("BAD PATH");
     return;
@@ -370,17 +396,28 @@ void handleCreate()
 
 void printDirectory()
 {
+  if (isTricklerRunning())
+  {
+    server.send(409, "text/plain", "Device busy");
+    return;
+  }
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard)
+  {
+    server.send(503, "text/plain", "Filesystem busy");
+    return;
+  }
   if (!webFilesystemAvailable())
   {
     server.send(503, "text/plain", "Filesystem unavailable");
     return;
   }
-  if (!server.hasArg("dir"))
+  if ((server.args() != 1) || !server.hasArg("dir"))
   {
     return returnFail("BAD ARGS");
   }
   String path = server.arg("dir");
-  if (path != "/" && !ACTIVE_FS.exists((char *)path.c_str()))
+  if (!validEditorPath(path, true) || (path != "/" && !ACTIVE_FS.exists((char *)path.c_str())))
   {
     return returnFail("BAD PATH");
   }
@@ -427,6 +464,11 @@ void printDirectory()
 
 void handleNotFound()
 {
+  if (server.method() != HTTP_GET)
+  {
+    server.send(405, "text/plain", "Method not allowed");
+    return;
+  }
   if (loadWebFile(server.uri()))
   {
     return;
@@ -438,18 +480,5 @@ void handleNotFound()
     return;
   }
 
-  String message = "Filesystem file not found\n\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
-  for (uint8_t i = 0; i < server.args(); i++)
-  {
-    message += " NAME:" + server.argName(i) + "\n VALUE:" + server.arg(i) + "\n";
-  }
-  server.send(404, "text/plain", message);
-  DEBUG_PRINT(message);
+  server.send(404, "text/plain", "File not found");
 }

@@ -58,6 +58,17 @@ void handleWifiScan()
 
 void handleWifiSave()
 {
+  if (!webMutationAllowed() || !wifiSetupApActive)
+  {
+    server.send(403, "application/json", "{\"error\":\"setup mode required\"}");
+    return;
+  }
+  if ((server.args() != 2) || !server.hasArg("ssid") || !server.hasArg("password") ||
+      (server.clientContentLength() > 256))
+  {
+    server.send(400, "application/json", "{\"error\":\"invalid request\"}");
+    return;
+  }
   if (isWebFileUploadActive())
   {
     server.send(409, "application/json", "{\"error\":\"filesystem busy\"}");
@@ -92,6 +103,8 @@ void handleWifiSave()
 // it never sits resident in heap. Use loadWebLang() once per page, then webFwText().
 bool loadWebLang(JsonDocument &doc)
 {
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard) return false;
   if (!activeFilesystemAvailable())
   {
     return false;
@@ -177,6 +190,12 @@ String webStatusPage(const char *messageKey, const char *messageFallback)
 
 void handleReboot()
 {
+  if (!webMutationAllowed()) return;
+  if (isTricklerRunning() || isWebFileUploadActive())
+  {
+    server.send(409, "text/plain", "Device busy");
+    return;
+  }
   server.send(200, "text/html", webStatusPage("rebootNow", "Reboot now."));
   ESP.restart();
 }
@@ -217,6 +236,13 @@ void handleGetTricklerState()
 
 void handleSetTarget()
 {
+  if (!webMutationAllowed()) return;
+  if ((server.args() != 1) || !server.hasArg("targetWeight") ||
+      (server.clientContentLength() > 64))
+  {
+    server.send(400, "text/plain", "Invalid target");
+    return;
+  }
   // Rewriting the target weight (and its profile file) mid-run races the Core 1
   // state machine that is actively reading config.targetWeight, so refuse while
   // trickling, matching handleSetProfile()/handleStart().
@@ -232,7 +258,19 @@ void handleSetTarget()
   {
     if (server.argName(i) == "targetWeight")
     {
-      float requestedWeight = server.arg(i).toFloat();
+      String input = server.arg(i);
+      char *end = NULL;
+      float requestedWeight = strtof(input.c_str(), &end);
+      if ((end == input.c_str()) || (*end != '\0') || !isfinite(requestedWeight))
+      {
+        server.send(400, "text/plain", "Invalid target");
+        return;
+      }
+      if ((requestedWeight <= WEIGHT_MIN) || (requestedWeight > WEIGHT_MAX))
+      {
+        server.send(400, "text/plain", "Invalid target");
+        return;
+      }
       if ((requestedWeight > WEIGHT_MIN) && (requestedWeight <= WEIGHT_MAX))
       {
         if (config.targetWeight != requestedWeight)
@@ -248,6 +286,13 @@ void handleSetTarget()
 
 void handleSetProfile()
 {
+  if (!webMutationAllowed()) return;
+  if ((server.args() != 1) || !server.hasArg("profileNumber") ||
+      (server.clientContentLength() > 64))
+  {
+    server.send(400, "text/plain", "Invalid profile");
+    return;
+  }
   if (isTricklerRunning() || isWebFileUploadActive())
   {
     server.send(409, "text/html", webStatusPage("running", "Running..."));
@@ -258,10 +303,16 @@ void handleSetProfile()
   {
     if (server.argName(i) == "profileNumber")
     {
-      if (server.arg(i).toFloat() >= 0)
+      String input = server.arg(i);
+      char *end = NULL;
+      long profileNumber = strtol(input.c_str(), &end, 10);
+      if ((end == input.c_str()) || (*end != '\0') || (profileNumber < 0) ||
+          (profileNumber >= profileListCount))
       {
-        setProfile(server.arg(i).toInt());
+        server.send(400, "text/plain", "Invalid profile");
+        return;
       }
+      setProfile((int)profileNumber);
     }
   }
   server.send(200, "text/html", webStatusPage("valueSet", "Value set."));
@@ -294,6 +345,7 @@ void handleGetProfileList()
 
 void handleStart()
 {
+  if (!webMutationAllowed()) return;
   if (isWebFileUploadActive())
   {
     server.send(409, "text/html", webStatusPage("invalidProfile", "Filesystem busy"));
@@ -307,6 +359,7 @@ void handleStart()
 }
 void handleStop()
 {
+  if (!webMutationAllowed()) return;
   stopTrickler();
   server.send(200, "text/html", webStatusPage("stopped", "Stopped..."));
 }

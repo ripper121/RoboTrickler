@@ -791,6 +791,7 @@ Um den WLAN-Modus zu aktivieren, trage `ssid` und `psk` in `config.txt` ein und 
 Beim Start zeigt der Trickler `Mit WLAN verbinden:` an. Bei erfolgreicher Verbindung steht im Tab `Info` die IP-Adresse.
 
 Die Weboberfläche verwendet HTTP auf Port 80 und hat keine eigene Anmeldung. Wenn du das Gerät im Netzwerk erreichen kannst, kannst du damit auch Dateien bearbeiten, das Gerät neu starten und Updates hochladen. WLAN-Zugangsdaten stehen in `config.txt`; behandle heruntergeladene Sicherungen entsprechend vertraulich.
+Betreibe das Gerät deshalb nur in einem vertrauenswürdigen lokalen Netzwerk. Richte keine Portweiterleitung, UPnP-Freigabe oder öffentlich erreichbaren Reverse-Proxy für Port 80 ein.
 
 ## WLAN am Display steuern
 

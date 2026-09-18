@@ -11,7 +11,12 @@ bool copyFilesystemFile(fs::FS &source, fs::FS &destination, const char *path)
   }
 
   char temporaryPath[96];
-  snprintf(temporaryPath, sizeof(temporaryPath), "%s.sync.tmp", path);
+  int pathLength = snprintf(temporaryPath, sizeof(temporaryPath), "%s.sync.tmp", path);
+  if ((pathLength < 0) || (pathLength >= (int)sizeof(temporaryPath)))
+  {
+    sourceFile.close();
+    return false;
+  }
   destination.remove(temporaryPath);
 
   File destinationFile = destination.open(temporaryPath, FILE_WRITE);
@@ -83,9 +88,9 @@ bool syncConfigAndProfiles(fs::FS &source, fs::FS &destination, int &copiedFiles
     if (!profileFile.isDirectory())
     {
       char profilePath[96];
-      strlcpy(profilePath, profileFile.path(), sizeof(profilePath));
+      bool pathFits = strlcpy(profilePath, profileFile.path(), sizeof(profilePath)) < sizeof(profilePath);
       profileFile.close();
-      if ((strncmp(profilePath, "/profiles/", 10) != 0) ||
+      if (!pathFits || (strncmp(profilePath, "/profiles/", 10) != 0) ||
           !copyFilesystemFile(source, destination, profilePath))
       {
         profileDirectory.close();
@@ -201,6 +206,12 @@ void finishFilesystemSyncConfirm(bool confirmed)
   pendingFilesystemSync = FILESYSTEM_SYNC_NONE;
   if (!confirmed || (direction == FILESYSTEM_SYNC_NONE))
   {
+    return;
+  }
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard || isTricklerRunning())
+  {
+    errorBox(langText("msg_sync_failed"), false);
     return;
   }
   if (!sdMounted || !littleFsMounted)

@@ -30,6 +30,8 @@ Events Run On: "Core 0"
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <Update.h>
+#include <esp_ota_ops.h>
+#include <esp_partition.h>
 #include <esp_heap_caps.h>
 #include <esp_mac.h>
 #include <esp_task_wdt.h>
@@ -230,6 +232,7 @@ bool profileSelectionUnsaved = false;
 // has been saved or reloaded. This avoids opening and parsing the profile on
 // every Start just to compare the stored target weight.
 bool targetWeightUnsaved = false;
+bool stepperReady = false;
 // config.totalCount as last written to (or read from) config.txt. Lets
 // stopTrickler() skip the config rewrite when no charge finished since the
 // last save (manual stop without a completed throw).

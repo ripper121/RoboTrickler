@@ -211,6 +211,8 @@ String normalizedLanguageCode()
 
 bool loadLanguage()
 {
+  FilesystemLockGuard filesystemGuard;
+  if (!filesystemGuard) return false;
   activeUiLangDoc.clear();
 
   String language = normalizedLanguageCode();

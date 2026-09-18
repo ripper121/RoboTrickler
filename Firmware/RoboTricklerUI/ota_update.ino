@@ -16,6 +16,17 @@ static void logSdUpdateStatus(const String &message)
 
 static bool performSdUpdate(File &updateFile, size_t updateSize, int updateTarget, const char *label)
 {
+  const esp_partition_t *partition = (updateTarget == U_FLASH)
+      ? esp_ota_get_next_update_partition(NULL)
+      : esp_partition_find_first(ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_DATA_SPIFFS, NULL);
+  size_t productLimit = (updateTarget == U_FLASH) ? 3300 * 1024 : 1536 * 1024;
+  if ((partition == NULL) || (updateSize > partition->size) || (updateSize > productLimit) ||
+      ((updateTarget == U_FLASHFS) && (updateSize != partition->size)) ||
+      ((updateTarget == U_FLASH) && (updateFile.peek() != 0xE9)))
+  {
+    logSdUpdateStatus(String(label) + " image rejected");
+    return false;
+  }
   Update.clearError();
   if (!Update.begin(updateSize, updateTarget))
   {
