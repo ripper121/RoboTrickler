@@ -192,6 +192,8 @@ const float WEIGHT_STEP_SIZES[] = {0.001f, 0.01f, 0.1f, 1.0f, 10.0f};
 const byte WEIGHT_STEP_COUNT = sizeof(WEIGHT_STEP_SIZES) / sizeof(WEIGHT_STEP_SIZES[0]);
 const float FACTOR_STEP_SIZES[] = {0.001f, 0.01f, 0.1f};
 const byte FACTOR_STEP_COUNT = sizeof(FACTOR_STEP_SIZES) / sizeof(FACTOR_STEP_SIZES[0]);
+const long TUNE_STEP_SIZES[] = {1, 10, 100};
+const byte TUNE_STEP_SIZE_COUNT = sizeof(TUNE_STEP_SIZES) / sizeof(TUNE_STEP_SIZES[0]);
 
 float weight = NAN;
 int decimalPlaces = WEIGHT_DECIMALS;

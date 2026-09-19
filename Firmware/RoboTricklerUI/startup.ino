@@ -57,6 +57,23 @@ void initSetup()
         }
         updateDisplayLog(readError);
 
+        // Preserve an existing unreadable configuration for diagnosis before
+        // writing defaults. A missing config has nothing to quarantine.
+        if (ACTIVE_FS.exists("/config.txt"))
+        {
+            // Keep one recovery copy. Removing it first makes replacement
+            // behavior consistent between the SD and LittleFS backends.
+            ACTIVE_FS.remove("/config.cor.txt");
+            if (ACTIVE_FS.rename("/config.txt", "/config.cor.txt"))
+            {
+                DEBUG_PRINTLN("Corrupted config renamed to: /config.cor.txt");
+            }
+            else
+            {
+                DEBUG_PRINTLN("Failed to rename corrupted config");
+            }
+        }
+
         // loadConfiguration() applies full defaults to config before it touches
         // the file, so config is already consistent here regardless of whether
         // config.txt was missing or corrupt. Persist the defaults and keep

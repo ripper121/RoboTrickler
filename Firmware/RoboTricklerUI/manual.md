@@ -213,7 +213,7 @@ dazu gehört die Datei:
 
 Die Profilliste im Display und über die Web-API enthält nur gültige Profile. Es werden bis zu 32 gültige `.txt`-Profile direkt aus `/profiles` angezeigt; Unterordner werden nicht durchsucht. Dateien mit `.cor` im Namen werden ignoriert. Verwende kurze, eindeutige Dateinamen mit höchstens 31 Zeichen vor `.txt`, vorzugsweise Kleinbuchstaben, Ziffern und Unterstriche. Die Firmware garantiert keine alphabetische Reihenfolge.
 
-Ungültige Profile werden beim Scannen ignoriert und im Display gemeldet. Wenn das aktuell ausgewählte Profil beim Start oder beim Umschalten nicht geladen werden kann, benennt die Firmware eine vorhandene defekte Datei nach `.cor.txt` um, stellt auf `calibrate` um und lädt dieses Profil direkt. Ein dabei angeforderter Start wird abgebrochen; die Wiederherstellung startet keinen Lauf automatisch. Nur wenn auch das Wiederherstellen des Kalibrierprofils scheitert, fordert die Firmware einen Neustart an.
+Ungültige Profile werden beim Scannen ignoriert und im Display gemeldet. Wenn das aktuell ausgewählte Profil beim Start oder beim Umschalten nicht geladen werden kann, benennt die Firmware eine vorhandene defekte Datei nach `.cor.txt` um und ersetzt dabei eine bereits vorhandene gleichnamige `.cor.txt`-Datei. Anschließend stellt sie auf `calibrate` um und lädt dieses Profil direkt. Ein dabei angeforderter Start wird abgebrochen; die Wiederherstellung startet keinen Lauf automatisch. Nur wenn auch das Wiederherstellen des Kalibrierprofils scheitert, fordert die Firmware einen Neustart an.
 
 ## Automatisches Profil aus Kalibrierlauf erstellen
 
@@ -309,7 +309,7 @@ Wenn du ausschließlich Messwerte änderst, werden nur diese Werte gespeichert; 
 
 ### 6. Schritte anpassen
 
-Wähle **Schritte**, um die STEP-Pulse pro `trickleMap`-Eintrag anzupassen. Der mittlere Button zeigt wie beim Messwerte-Dialog den gerade bearbeiteten `diffWeight`-Eintrag und wechselt beim Drücken zum nächsten Eintrag. Mit `+` und `-` wird die Schrittzahl jeweils um eins geändert; der kleinste zulässige Wert ist `1`.
+Wähle **Schritte**, um die STEP-Pulse pro `trickleMap`-Eintrag anzupassen. Der mittlere Button zeigt wie beim Messwerte-Dialog den gerade bearbeiteten `diffWeight`-Eintrag und wechselt beim Drücken zum nächsten Eintrag. Der Button oberhalb des `T`-Testbuttons wählt die Schrittweite `1`, `10` oder `100`; mit `+` und `-` wird die Schrittzahl um diese Schrittweite geändert. Der kleinste zulässige Wert ist `1`.
 
 Wenn du ausschließlich Schritte änderst, werden nur die `stepper.steps`-Werte überschrieben. Änderst du im selben Dialog auch Gewicht/Umdr oder den Map-Limit-Faktor, haben deine manuell geänderten Schrittzahlen Vorrang vor der Neuberechnung. Änderungen an Messwerten werden ebenfalls übernommen. Eine spätere Änderung von Gewicht/Umdr oder Map-Limit-Faktor in einer neuen Tuning-Sitzung berechnet die Schrittzahlen erneut.
 
@@ -635,7 +635,7 @@ https://www.simon42.com/grosse-sd-karte-formatieren-fat32/
 
 Die Konfiguration liegt als `/config.txt` im Hauptverzeichnis des aktiven Dateisystems. Eine beim Start erfolgreich eingebundene SD-Karte hat Vorrang; andernfalls nutzt die Firmware das interne LittleFS, sofern es eingebunden werden kann.
 
-Die Datei enthält JSON, obwohl sie auf `.txt` endet. Verwende doppelte Anführungszeichen für Schlüssel und Texte, einen Punkt als Dezimaltrennzeichen und `true`/`false` ohne Anführungszeichen. Kommentare und ein zusätzliches Komma nach dem letzten Feld gehören nicht in die Datei. Sichere die vorhandene Datei vor dem Bearbeiten: Eine ungültige Konfiguration wird beim nächsten Start durch Standardwerte ersetzt, einschließlich der WLAN-Zugangsdaten.
+Die Datei enthält JSON, obwohl sie auf `.txt` endet. Verwende doppelte Anführungszeichen für Schlüssel und Texte, einen Punkt als Dezimaltrennzeichen und `true`/`false` ohne Anführungszeichen. Kommentare und ein zusätzliches Komma nach dem letzten Feld gehören nicht in die Datei. Sichere die vorhandene Datei vor dem Bearbeiten: Eine ungültige Konfiguration wird beim nächsten Start nach `/config.cor.txt` umbenannt und durch Standardwerte ersetzt, einschließlich der WLAN-Zugangsdaten. Eine bereits vorhandene `/config.cor.txt` wird dabei ersetzt.
 
 ```json
 {
@@ -944,7 +944,7 @@ Die Antwort `200` auf `/setTarget` oder `/setProfile` ist keine vollständige Ei
 | --- | --- |
 | `NaN...` statt Gewicht | Es liegt kein gültiger Messwert vor. Neben einer fehlenden Antwort kommen unlesbare Daten oder nicht ausreichend gleichbleibende Messwerte infrage. Prüfe Waage und Verbindung; interpretiere `NaN` nicht als Nullgewicht. |
 | `Timeout!` / Hinweis auf RS232 | Innerhalb der Wartezeit kam keine Antwort. Vergleiche Stromversorgung der Waage, Kabel, Protokoll und Baudrate mit den vorhandenen Einstellungen. |
-| Konfiguration beschädigt / Standardkonfiguration erzeugt | `config.txt` war nicht lesbar oder entsprach nicht dem aktuellen Format. Die Firmware hat versucht, Standardwerte zu speichern. Prüfe deine Sicherung und trage die Einstellungen einschließlich WLAN erneut ein. |
+| Konfiguration beschädigt / Standardkonfiguration erzeugt | `config.txt` war nicht lesbar oder entsprach nicht dem aktuellen Format. Eine vorhandene defekte Datei wurde nach `/config.cor.txt` umbenannt und die Firmware hat versucht, Standardwerte zu speichern. Prüfe die umbenannte Datei oder deine Sicherung und trage die Einstellungen einschließlich WLAN erneut ein. |
 | Ungültige Profile / Profil fehlt in der Liste | Prüfe Dateiname, Speicherort direkt unter `/profiles`, `.txt`-Endung, JSON-Format und das Limit von 32 Profilen. Dateien mit `.cor` im Namen werden ausgeblendet. Starte das Gerät nach einer Korrektur neu. |
 | Profil beschädigt / `calibrate` geladen | Das ausgewählte Profil konnte nicht geladen werden und wurde durch das Wiederherstellungsprofil ersetzt. Lies die Meldung und prüfe das gewünschte Profil, bevor du erneut startest. |
 | Speichern oder Synchronisieren fehlgeschlagen | Prüfe den aktiven Speicher im Tab `Info`, den freien Platz und die Lesbarkeit. Sichere deine Dateien; bei einer fehlgeschlagenen Synchronisation können schon einzelne Dateien kopiert worden sein. |

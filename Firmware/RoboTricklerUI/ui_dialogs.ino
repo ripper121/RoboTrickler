@@ -138,6 +138,8 @@ static void ensureNoButton()
   }
   ui_ButtonMessageNo = createDialogButton(ui_PanelMessages, 70, 100, 100,
                                           UI_SYMBOL_NO, UI_FONT_LARGE, messageNo_event_cb);
+  lv_obj_set_style_bg_color(ui_ButtonMessageNo, lv_color_hex(0xFF0000), LV_PART_MAIN);
+  lv_obj_set_style_bg_opa(ui_ButtonMessageNo, 255, LV_PART_MAIN);
   ui_LabelMessageNo = lv_obj_get_child(ui_ButtonMessageNo, 0);
 }
 
@@ -289,6 +291,7 @@ float profileTuneWeightPerRev = 0.0;
 float profileTuneTrickleMapLimitFactor = DEFAULT_TRICKLE_MAP_LIMIT_FACTOR;
 byte profileTuneStepIndex = 0;
 byte profileTuneFactorStepIndex = 0;
+byte profileTuneStepSizeIndex = 0;
 enum ProfileTuneMode
 {
     PROFILE_TUNE_WEIGHT,
@@ -306,6 +309,8 @@ lv_obj_t *ui_PanelProfileTune = NULL;
 lv_obj_t *profileTuneTitleLabel = NULL;
 lv_obj_t *profileTuneValueLabel = NULL;
 lv_obj_t *profileTuneEntryLabel = NULL;
+lv_obj_t *profileTuneStepSizeButton = NULL;
+lv_obj_t *profileTuneStepSizeLabel = NULL;
 lv_obj_t *profileTuneTestButton = NULL;
 
 struct ProfileTuneTestRequest
@@ -363,6 +368,7 @@ void clearProfileTuneState()
     profileTuneTrickleMapLimitFactor = DEFAULT_TRICKLE_MAP_LIMIT_FACTOR;
     profileTuneEntryCount = 0;
     profileTuneSelectedEntry = 0;
+    profileTuneStepSizeIndex = 0;
 }
 
 void closeProfileTuneDialog()
@@ -372,6 +378,8 @@ void closeProfileTuneDialog()
     profileTuneTitleLabel = NULL;
     profileTuneValueLabel = NULL;
     profileTuneEntryLabel = NULL;
+    profileTuneStepSizeButton = NULL;
+    profileTuneStepSizeLabel = NULL;
     profileTuneTestButton = NULL;
 }
 
@@ -455,12 +463,16 @@ static void updateProfileTuneLabels()
     }
     formatWeight(text, sizeof(text), entryValue);
     lv_label_set_text(profileTuneEntryLabel, text);
+    snprintf(text, sizeof(text), "%ld", TUNE_STEP_SIZES[profileTuneStepSizeIndex]);
+    lv_label_set_text(profileTuneStepSizeLabel, text);
     if (profileTuneMode == PROFILE_TUNE_STEPS)
     {
+        lv_obj_clear_flag(profileTuneStepSizeButton, LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(profileTuneTestButton, LV_OBJ_FLAG_HIDDEN);
     }
     else
     {
+        lv_obj_add_flag(profileTuneStepSizeButton, LV_OBJ_FLAG_HIDDEN);
         lv_obj_add_flag(profileTuneTestButton, LV_OBJ_FLAG_HIDDEN);
     }
 }
@@ -499,9 +511,14 @@ static void adjustProfileTuneValue(int direction)
     else
     {
         long &value = profileTuneSteps[profileTuneSelectedEntry];
-        if ((direction < 0 && value > 1) || (direction > 0 && value < LONG_MAX))
+        long stepSize = TUNE_STEP_SIZES[profileTuneStepSizeIndex];
+        if (direction < 0)
         {
-            value += direction;
+            value = value > stepSize ? value - stepSize : 1;
+        }
+        else
+        {
+            value = value <= LONG_MAX - stepSize ? value + stepSize : LONG_MAX;
         }
     }
     updateProfileTuneLabels();
@@ -531,6 +548,16 @@ void selectTuneEntry_event_cb(lv_event_t *e)
     {
         profileTuneSelectedEntry = (profileTuneSelectedEntry + 1) % profileTuneEntryCount;
     }
+    updateProfileTuneLabels();
+}
+
+void cycleProfileTuneStepSize_event_cb(lv_event_t *e)
+{
+    if (profileTuneMode != PROFILE_TUNE_STEPS)
+    {
+        return;
+    }
+    profileTuneStepSizeIndex = (profileTuneStepSizeIndex + 1) % TUNE_STEP_SIZE_COUNT;
     updateProfileTuneLabels();
 }
 
@@ -653,9 +680,22 @@ static void createProfileTuneDialog()
     createDialogButton(ui_PanelProfileTune, -115, -42, 60, "+", UI_FONT_LARGE, increaseTuneValue_event_cb);
     lv_obj_t *entryButton = createDialogButton(ui_PanelProfileTune, 0, 22, 290, "", UI_FONT_LARGE, selectTuneEntry_event_cb);
     profileTuneEntryLabel = lv_obj_get_child(entryButton, 0);
+    profileTuneStepSizeButton = createDialogButton(ui_PanelProfileTune, 180, -42, 50, "",
+                                                   UI_FONT_NORMAL,
+                                                   cycleProfileTuneStepSize_event_cb);
+    profileTuneStepSizeLabel = lv_obj_get_child(profileTuneStepSizeButton, 0);
     profileTuneTestButton = createDialogButton(ui_PanelProfileTune, 180, 22, 50, "T", UI_FONT_LARGE, testProfileTuneSteps_event_cb);
-    createDialogButton(ui_PanelProfileTune, 70, 88, 110, UI_SYMBOL_CANCEL, UI_FONT_LARGE, cancelProfileTune_event_cb);
-    createDialogButton(ui_PanelProfileTune, -70, 88, 110, UI_SYMBOL_SAVE, UI_FONT_LARGE, saveProfileTune_event_cb);
+    lv_obj_t *closeButton = createDialogButton(ui_PanelProfileTune, 70, 88, 110,
+                                               UI_SYMBOL_CANCEL, UI_FONT_LARGE,
+                                               cancelProfileTune_event_cb);
+    lv_obj_set_style_bg_color(closeButton, lv_color_hex(0xFF0000), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(closeButton, 255, LV_PART_MAIN);
+
+    lv_obj_t *saveButton = createDialogButton(ui_PanelProfileTune, -70, 88, 110,
+                                              UI_SYMBOL_SAVE, UI_FONT_LARGE,
+                                              saveProfileTune_event_cb);
+    lv_obj_set_style_bg_color(saveButton, lv_color_hex(0x00FF00), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(saveButton, 255, LV_PART_MAIN);
 }
 
 bool tuneSelectedProfile()
@@ -689,6 +729,7 @@ bool tuneSelectedProfile()
     profileTuneTrickleMapLimitFactor = config.profileTrickleMapLimitFactor;
     profileTuneEntryCount = min(config.profileEntryCount, PROFILE_MAX_ENTRIES);
     profileTuneSelectedEntry = 0;
+    profileTuneStepSizeIndex = 0;
     for (int i = 0; i < profileTuneEntryCount; i++)
     {
         profileTuneMeasurements[i] = config.profileMeasurements[i];

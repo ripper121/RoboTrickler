@@ -40,6 +40,9 @@ bool recoverCorruptProfile(String badFilename, bool blocking)
     {
         String corruptedName = String(badFilename);
         corruptedName.replace(".txt", ".cor.txt");
+        // Keep one recovery copy, matching config recovery. Remove the old
+        // copy first so SD and LittleFS behave consistently.
+        ACTIVE_FS.remove(corruptedName.c_str());
         if (ACTIVE_FS.rename(badFilename, corruptedName.c_str()))
         {
             DEBUG_PRINT("Corrupted file renamed to: ");
