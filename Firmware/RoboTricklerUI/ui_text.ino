@@ -8,6 +8,14 @@ struct LangFallbackEntry
 };
 
 static const LangFallbackEntry LANG_FALLBACKS[] = {
+    {"action_save", "Save"},
+    {"action_cancel", "Cancel"},
+    {"action_delete", "Delete"},
+    {"action_copy", "Copy"},
+    {"action_create", "Create"},
+    {"action_test", "Test"},
+    {"action_ok", "OK"},
+
     {"tab_trickler", "Trickler"},
     {"tab_profile", "Profile"},
     {"tab_info", "Info"},

@@ -163,7 +163,8 @@ static void ensureWifiQrObject()
 
   wifiQrObject = lv_obj_create(ui_PanelPageInfo);
   lv_obj_set_size(wifiQrObject, WIFI_QR_OBJECT_SIZE, WIFI_QR_OBJECT_SIZE);
-  lv_obj_align(wifiQrObject, LV_ALIGN_CENTER, 0, 0);
+  // Keep the QR and its hint above the fixed Info action row.
+  lv_obj_align(wifiQrObject, LV_ALIGN_TOP_MID, 0, 0);
   lv_obj_set_style_bg_color(wifiQrObject, lv_color_white(), LV_PART_MAIN);
   lv_obj_set_style_bg_opa(wifiQrObject, LV_OPA_COVER, LV_PART_MAIN);
   lv_obj_set_style_border_width(wifiQrObject, 0, LV_PART_MAIN);

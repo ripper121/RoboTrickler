@@ -3,6 +3,7 @@
 ## 2.15 (pre-release)
 
 ### Highlights
+- Improved LVGL touch target sizes, spacing, action-button contrast and slide-off cancellation; long dialog messages now scroll above fixed actions. Confirmation actions and sync directions have explicit labels, and target editors show their disabled state during a run.
 - Save buttons are now green and close/cancel buttons are red across the device dialogs and web tools.
 - Added a `1`/`10`/`100` increment selector above the Step Tuning test button.
 - Normalized button spacing across the tuning and confirmation dialogs.

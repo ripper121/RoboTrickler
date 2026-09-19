@@ -167,8 +167,8 @@ void updateFilesystemSyncControls()
       lv_obj_add_flag(ui_ButtonSyncSdToFlash, LV_OBJ_FLAG_HIDDEN);
     }
 
-    lv_label_set_text_static(ui_LabelSyncFlashToSd, LV_SYMBOL_DOWNLOAD);
-    lv_label_set_text_static(ui_LabelSyncSdToFlash, LV_SYMBOL_UPLOAD);
+    lv_label_set_text_static(ui_LabelSyncFlashToSd, UI_TEXT_SYNC_FLASH_TO_SD);
+    lv_label_set_text_static(ui_LabelSyncSdToFlash, UI_TEXT_SYNC_SD_TO_FLASH);
     lvglUnlock();
   }
 }
@@ -200,7 +200,7 @@ void requestFilesystemSync(FilesystemSyncDirection direction)
   const char *messageKey = (direction == FILESYSTEM_SYNC_FLASH_TO_SD)
                                ? "msg_sync_flash_to_sd_confirm"
                                : "msg_sync_sd_to_flash_confirm";
-  showConfirmBox(langText(messageKey), UI_FONT_LARGE, lv_color_hex(0xFFFFFF));
+  showConfirmBox(langText(messageKey), UI_FONT_LARGE, lv_color_hex(0xFFFFFF), langText("action_copy"));
 }
 
 // Format the "<n> files copied" status line without ever handing the (user-editable,

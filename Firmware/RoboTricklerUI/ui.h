@@ -13,6 +13,7 @@ extern "C" {
     #include "lvgl.h"
 
 #include "ui_fonts.h"
+#include "ui_touch.h"
 #include "ui_events.h"
 // SCREEN: ui_Screen1
 // Buttons are wired straight to their *_event_cb handlers (declared in

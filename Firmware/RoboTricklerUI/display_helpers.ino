@@ -128,7 +128,10 @@ void setProfileTabEnabled(bool enabled)
         lv_tabview_set_active(ui_TabView, 0, LV_ANIM_OFF);
     }
 
-    lv_obj_t *blockedTabButtons[] = {profileTabButton, infoTabButton};
+    // The callbacks already refuse target edits during a run; show that state.
+    lv_obj_t *blockedTabButtons[] = {profileTabButton, infoTabButton,
+                                   ui_ButtonIncreaseTargetWeight, ui_ButtonDecreaseTargetWeight,
+                                   ui_ButtonAddWeightCycle};
     for (lv_obj_t *tabButton : blockedTabButtons)
     {
         if (tabButton == NULL)

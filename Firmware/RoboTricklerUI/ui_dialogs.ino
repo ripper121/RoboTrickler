@@ -1,6 +1,6 @@
 // Uniform height for all dialog UI elements (buttons and value boxes). The
 // factories below apply it, so no dialog element can end up with its own height.
-#define DIALOG_ELEMENT_HEIGHT 50
+#define DIALOG_ELEMENT_HEIGHT UI_TOUCH_TARGET_SIZE
 
 std::atomic<bool> messageBoxOpen(false);
 std::atomic<bool> confirmBoxOpen(false);
@@ -65,6 +65,7 @@ static lv_obj_t *createDialogButton(lv_obj_t *parent, int x, int y, int width,
                                     const char *text, const lv_font_t *font, lv_event_cb_t eventCb)
 {
   lv_obj_t *button = lv_btn_create(parent);
+  prepareTouchButton(button);
   lv_obj_set_width(button, width);
   lv_obj_set_height(button, DIALOG_ELEMENT_HEIGHT);
   lv_obj_set_x(button, x);
@@ -86,6 +87,7 @@ static lv_obj_t *createDialogButton(lv_obj_t *parent, int x, int y, int width,
 static lv_obj_t *createDialogPanel()
 {
   lv_obj_t *panel = lv_obj_create(ui_Screen1);
+  lv_obj_set_style_pad_all(panel, UI_TOUCH_GAP, LV_PART_MAIN);
   lv_obj_set_width(panel, lv_pct(90));
   lv_obj_set_height(panel, lv_pct(90));
   lv_obj_set_align(panel, LV_ALIGN_CENTER);
@@ -136,11 +138,13 @@ static void ensureNoButton()
   {
     return;
   }
-  ui_ButtonMessageNo = createDialogButton(ui_PanelMessages, 55, 100, 100,
-                                          UI_SYMBOL_NO, UI_FONT_LARGE, messageNo_event_cb);
+  ui_ButtonMessageNo = createDialogButton(ui_PanelMessages, 72, 100, 120,
+                                          "", UI_FONT_NORMAL, messageNo_event_cb);
   lv_obj_set_style_bg_color(ui_ButtonMessageNo, lv_color_hex(0xFF0000), LV_PART_MAIN);
   lv_obj_set_style_bg_opa(ui_ButtonMessageNo, 255, LV_PART_MAIN);
+  lv_obj_set_style_text_color(ui_ButtonMessageNo, lv_color_black(), LV_PART_MAIN);
   ui_LabelMessageNo = lv_obj_get_child(ui_ButtonMessageNo, 0);
+  lv_label_set_text(ui_LabelMessageNo, langText("action_cancel"));
 }
 
 // Lazily build the shared message/confirm panel. Mirrors the tune dialogs'
@@ -156,15 +160,24 @@ static void createMessageDialog()
 
   ui_PanelMessages = createDialogPanel();
 
-  ui_ButtonMessageOk = createDialogButton(ui_PanelMessages, 0, 100, 100,
-                                          UI_SYMBOL_OK, UI_FONT_LARGE, messageOk_event_cb);
+  ui_ButtonMessageOk = createDialogButton(ui_PanelMessages, 0, 100, 120,
+                                          "", UI_FONT_NORMAL, messageOk_event_cb);
   ui_LabelMessageOk = lv_obj_get_child(ui_ButtonMessageOk, 0);
 
-  ui_LabelMessages = lv_label_create(ui_PanelMessages);
+  // A single scroll viewport preserves the complete message while actions stay fixed.
+  lv_obj_t *messageViewport = lv_obj_create(ui_PanelMessages);
+  lv_obj_set_size(messageViewport, lv_pct(100), 192);
+  lv_obj_set_align(messageViewport, LV_ALIGN_TOP_MID);
+  lv_obj_set_style_pad_all(messageViewport, 0, LV_PART_MAIN);
+  lv_obj_set_style_border_width(messageViewport, 0, LV_PART_MAIN);
+  lv_obj_set_style_bg_opa(messageViewport, LV_OPA_TRANSP, LV_PART_MAIN);
+  lv_obj_set_scroll_dir(messageViewport, LV_DIR_VER);
+  lv_obj_clear_flag(messageViewport, LV_OBJ_FLAG_SCROLL_CHAIN);
+  ui_LabelMessages = lv_label_create(messageViewport);
   lv_obj_set_width(ui_LabelMessages, lv_pct(100));
-  lv_obj_set_height(ui_LabelMessages, lv_pct(70));
+  lv_obj_set_height(ui_LabelMessages, LV_SIZE_CONTENT);
   lv_obj_set_align(ui_LabelMessages, LV_ALIGN_TOP_MID);
-  lv_label_set_long_mode(ui_LabelMessages, LV_LABEL_LONG_MODE_DOTS);
+  lv_label_set_long_mode(ui_LabelMessages, LV_LABEL_LONG_WRAP);
   lv_obj_set_style_text_align(ui_LabelMessages, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 }
 
@@ -172,7 +185,7 @@ static void createMessageDialog()
 // messageBoxOpen/confirmBoxOpen state flags before calling so the dialog is
 // already armed by the time the panel becomes visible.
 static void presentDialog(const char *message, const lv_font_t *font,
-                          lv_color_t color, bool showNo)
+                          lv_color_t color, bool showNo, const char *actionText)
 {
   if (!lvglLock())
   {
@@ -182,8 +195,8 @@ static void presentDialog(const char *message, const lv_font_t *font,
   if (showNo)
   {
     ensureNoButton();
-    lv_obj_set_x(ui_ButtonMessageOk, -55);
-    lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_YES);
+    lv_obj_set_x(ui_ButtonMessageOk, -72);
+    lv_label_set_text(ui_LabelMessageOk, actionText);
     lv_obj_clear_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
   }
   else
@@ -195,11 +208,12 @@ static void presentDialog(const char *message, const lv_font_t *font,
       lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     }
     lv_obj_set_x(ui_ButtonMessageOk, 0);
-    lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_OK);
+    lv_label_set_text(ui_LabelMessageOk, langText("action_ok"));
   }
   lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN);
   lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN);
   lv_label_set_text(ui_LabelMessages, message);
+  lv_obj_scroll_to_y(lv_obj_get_parent(ui_LabelMessages), 0, LV_ANIM_OFF);
   showDialog(ui_PanelMessages);
   lvglUnlock();
 }
@@ -226,7 +240,7 @@ void messageBox(const char *message, const lv_font_t *font, lv_color_t color, bo
 {
   cancelInteractiveDialogs();
   messageBoxOpen = true;
-  presentDialog(message, font, color, false);
+  presentDialog(message, font, color, false, NULL);
   if (wait)
   {
     // Some startup and safety errors intentionally block until the user sees them.
@@ -267,20 +281,20 @@ void successBox(const String &message, bool wait)
   successBox(message.c_str(), wait);
 }
 
-bool confirmBox(const String &message, const lv_font_t *font, lv_color_t color)
+bool confirmBox(const String &message, const lv_font_t *font, lv_color_t color, const char *actionText)
 {
   confirmBoxResult = false;
-  showConfirmBox(message, font, color);
+  showConfirmBox(message, font, color, actionText);
   pumpUntil(messageBoxOpen);
   return confirmBoxResult.load();
 }
 
-void showConfirmBox(const String &message, const lv_font_t *font, lv_color_t color)
+void showConfirmBox(const String &message, const lv_font_t *font, lv_color_t color, const char *actionText)
 {
   cancelInteractiveDialogs();
   messageBoxOpen = true;
   confirmBoxOpen = true;
-  presentDialog(message.c_str(), font, color, true);
+  presentDialog(message.c_str(), font, color, true, actionText);
 }
 
 // ---------------------------------------------------------------------------
@@ -676,26 +690,31 @@ static void createProfileTuneDialog()
     createDialogButton(ui_PanelProfileTune, -180, -90, 50, LV_SYMBOL_LEFT, UI_FONT_LARGE, selectPreviousTuneMode_event_cb);
     createDialogButton(ui_PanelProfileTune, 180, -90, 50, LV_SYMBOL_RIGHT, UI_FONT_LARGE, selectNextTuneMode_event_cb);
     profileTuneValueLabel = createDialogValueLabel(ui_PanelProfileTune, -30);
-    createDialogButton(ui_PanelProfileTune, 113, -30, 60, "-", UI_FONT_LARGE, decreaseTuneValue_event_cb);
-    createDialogButton(ui_PanelProfileTune, -113, -30, 60, "+", UI_FONT_LARGE, increaseTuneValue_event_cb);
-    lv_obj_t *entryButton = createDialogButton(ui_PanelProfileTune, 0, 30, 290, "", UI_FONT_LARGE, selectTuneEntry_event_cb);
+    createDialogButton(ui_PanelProfileTune, 112, -30, 60, "-", UI_FONT_LARGE, decreaseTuneValue_event_cb);
+    createDialogButton(ui_PanelProfileTune, -112, -30, 60, "+", UI_FONT_LARGE, increaseTuneValue_event_cb);
+    lv_obj_t *entryButton = createDialogButton(ui_PanelProfileTune, 0, 30, 284, "", UI_FONT_LARGE, selectTuneEntry_event_cb);
     profileTuneEntryLabel = lv_obj_get_child(entryButton, 0);
-    profileTuneStepSizeButton = createDialogButton(ui_PanelProfileTune, 180, -30, 50, "",
+    profileTuneStepSizeButton = createDialogButton(ui_PanelProfileTune, 178, -30, 56, "",
                                                    UI_FONT_NORMAL,
                                                    cycleProfileTuneStepSize_event_cb);
     profileTuneStepSizeLabel = lv_obj_get_child(profileTuneStepSizeButton, 0);
-    profileTuneTestButton = createDialogButton(ui_PanelProfileTune, 180, 30, 50, "T", UI_FONT_LARGE, testProfileTuneSteps_event_cb);
+    profileTuneTestButton = createDialogButton(ui_PanelProfileTune, 178, 30, 56, "", UI_FONT_NORMAL, testProfileTuneSteps_event_cb);
+    lv_label_set_text(lv_obj_get_child(profileTuneTestButton, 0), langText("action_test"));
     lv_obj_t *closeButton = createDialogButton(ui_PanelProfileTune, 60, 90, 110,
-                                               UI_SYMBOL_CANCEL, UI_FONT_LARGE,
+                                               "", UI_FONT_NORMAL,
                                                cancelProfileTune_event_cb);
+    lv_label_set_text(lv_obj_get_child(closeButton, 0), langText("action_cancel"));
     lv_obj_set_style_bg_color(closeButton, lv_color_hex(0xFF0000), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(closeButton, 255, LV_PART_MAIN);
+    lv_obj_set_style_text_color(closeButton, lv_color_black(), LV_PART_MAIN);
 
     lv_obj_t *saveButton = createDialogButton(ui_PanelProfileTune, -60, 90, 110,
-                                              UI_SYMBOL_SAVE, UI_FONT_LARGE,
+                                              "", UI_FONT_NORMAL,
                                               saveProfileTune_event_cb);
+    lv_label_set_text(lv_obj_get_child(saveButton, 0), langText("action_save"));
     lv_obj_set_style_bg_color(saveButton, lv_color_hex(0x00FF00), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(saveButton, 255, LV_PART_MAIN);
+    lv_obj_set_style_text_color(saveButton, lv_color_black(), LV_PART_MAIN);
 }
 
 bool tuneSelectedProfile()
