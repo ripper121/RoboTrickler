@@ -107,6 +107,8 @@ static lv_obj_t *createDialogTitle(lv_obj_t *parent, int y, const char *text)
   lv_label_set_text(label, text);
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
   lv_obj_set_style_text_font(label, UI_FONT_LARGE, LV_PART_MAIN);
+  prepareTouchLabel(label);
+  lv_obj_set_y(label, y);
   return label;
 }
 
@@ -126,7 +128,8 @@ static lv_obj_t *createDialogValueLabel(lv_obj_t *parent, int y)
   lv_obj_set_style_text_color(label, lv_color_hex(0x000000), LV_PART_MAIN);
   lv_obj_set_style_border_color(label, lv_color_hex(0x808080), LV_PART_MAIN);
   lv_obj_set_style_border_width(label, 2, LV_PART_MAIN);
-  lv_obj_set_style_pad_top(label, 5, LV_PART_MAIN);
+  prepareTouchLabel(label);
+  lv_obj_set_y(label, y);
   lv_obj_clear_flag(label, LV_OBJ_FLAG_SCROLLABLE);
   return label;
 }
@@ -138,7 +141,7 @@ static void ensureNoButton()
   {
     return;
   }
-  ui_ButtonMessageNo = createDialogButton(ui_PanelMessages, 72, 100, 120,
+  ui_ButtonMessageNo = createDialogButton(ui_PanelMessages, 64, 100, 120,
                                           "", UI_FONT_NORMAL, messageNo_event_cb);
   lv_obj_set_style_bg_color(ui_ButtonMessageNo, lv_color_hex(0xFF0000), LV_PART_MAIN);
   lv_obj_set_style_bg_opa(ui_ButtonMessageNo, 255, LV_PART_MAIN);
@@ -166,7 +169,7 @@ static void createMessageDialog()
 
   // A single scroll viewport preserves the complete message while actions stay fixed.
   lv_obj_t *messageViewport = lv_obj_create(ui_PanelMessages);
-  lv_obj_set_size(messageViewport, lv_pct(100), 192);
+  lv_obj_set_size(messageViewport, lv_pct(100), 204);
   lv_obj_set_align(messageViewport, LV_ALIGN_TOP_MID);
   lv_obj_set_style_pad_all(messageViewport, 0, LV_PART_MAIN);
   lv_obj_set_style_border_width(messageViewport, 0, LV_PART_MAIN);
@@ -195,7 +198,7 @@ static void presentDialog(const char *message, const lv_font_t *font,
   if (showNo)
   {
     ensureNoButton();
-    lv_obj_set_x(ui_ButtonMessageOk, -72);
+    lv_obj_set_x(ui_ButtonMessageOk, -64);
     lv_label_set_text(ui_LabelMessageOk, actionText);
     lv_obj_clear_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
   }
@@ -466,6 +469,8 @@ static void updateProfileTuneLabels()
     lv_label_set_text(profileTuneValueLabel, text);
     lv_obj_set_style_text_font(profileTuneValueLabel,
                               strlen(text) > 6 ? UI_FONT_NORMAL : UI_FONT_LARGE, LV_PART_MAIN);
+    prepareTouchLabel(profileTuneValueLabel);
+    lv_obj_set_y(profileTuneValueLabel, -UI_ROW_PITCH / 2);
     float entryValue = config.profileDiffWeight[profileTuneSelectedEntry];
     if (profileTuneMode == PROFILE_TUNE_WEIGHT)
     {
@@ -685,22 +690,22 @@ void saveProfileTune_event_cb(lv_event_t *e)
 static void createProfileTuneDialog()
 {
     ui_PanelProfileTune = createDialogPanel();
-    profileTuneTitleLabel = createDialogTitle(ui_PanelProfileTune, -90, "");
-    lv_obj_set_width(profileTuneTitleLabel, 290);
-    createDialogButton(ui_PanelProfileTune, -180, -90, 50, LV_SYMBOL_LEFT, UI_FONT_LARGE, selectPreviousTuneMode_event_cb);
-    createDialogButton(ui_PanelProfileTune, 180, -90, 50, LV_SYMBOL_RIGHT, UI_FONT_LARGE, selectNextTuneMode_event_cb);
-    profileTuneValueLabel = createDialogValueLabel(ui_PanelProfileTune, -30);
-    createDialogButton(ui_PanelProfileTune, 112, -30, 60, "-", UI_FONT_LARGE, decreaseTuneValue_event_cb);
-    createDialogButton(ui_PanelProfileTune, -112, -30, 60, "+", UI_FONT_LARGE, increaseTuneValue_event_cb);
-    lv_obj_t *entryButton = createDialogButton(ui_PanelProfileTune, 0, 30, 284, "", UI_FONT_LARGE, selectTuneEntry_event_cb);
+    profileTuneTitleLabel = createDialogTitle(ui_PanelProfileTune, -3 * UI_ROW_PITCH / 2, "");
+    lv_obj_set_width(profileTuneTitleLabel, 276);
+    createDialogButton(ui_PanelProfileTune, -174, -3 * UI_ROW_PITCH / 2, 56, LV_SYMBOL_LEFT, UI_FONT_LARGE, selectPreviousTuneMode_event_cb);
+    createDialogButton(ui_PanelProfileTune, 174, -3 * UI_ROW_PITCH / 2, 56, LV_SYMBOL_RIGHT, UI_FONT_LARGE, selectNextTuneMode_event_cb);
+    profileTuneValueLabel = createDialogValueLabel(ui_PanelProfileTune, -UI_ROW_PITCH / 2);
+    createDialogButton(ui_PanelProfileTune, 108, -UI_ROW_PITCH / 2, 60, "-", UI_FONT_LARGE, decreaseTuneValue_event_cb);
+    createDialogButton(ui_PanelProfileTune, -108, -UI_ROW_PITCH / 2, 60, "+", UI_FONT_LARGE, increaseTuneValue_event_cb);
+    lv_obj_t *entryButton = createDialogButton(ui_PanelProfileTune, 0, UI_ROW_PITCH / 2, 276, "", UI_FONT_LARGE, selectTuneEntry_event_cb);
     profileTuneEntryLabel = lv_obj_get_child(entryButton, 0);
-    profileTuneStepSizeButton = createDialogButton(ui_PanelProfileTune, 178, -30, 56, "",
+    profileTuneStepSizeButton = createDialogButton(ui_PanelProfileTune, 174, -UI_ROW_PITCH / 2, 56, "",
                                                    UI_FONT_NORMAL,
                                                    cycleProfileTuneStepSize_event_cb);
     profileTuneStepSizeLabel = lv_obj_get_child(profileTuneStepSizeButton, 0);
-    profileTuneTestButton = createDialogButton(ui_PanelProfileTune, 178, 30, 56, "", UI_FONT_NORMAL, testProfileTuneSteps_event_cb);
+    profileTuneTestButton = createDialogButton(ui_PanelProfileTune, 174, UI_ROW_PITCH / 2, 56, "", UI_FONT_NORMAL, testProfileTuneSteps_event_cb);
     lv_label_set_text(lv_obj_get_child(profileTuneTestButton, 0), langText("action_test"));
-    lv_obj_t *closeButton = createDialogButton(ui_PanelProfileTune, 60, 90, 110,
+    lv_obj_t *closeButton = createDialogButton(ui_PanelProfileTune, 59, 3 * UI_ROW_PITCH / 2, 110,
                                                "", UI_FONT_NORMAL,
                                                cancelProfileTune_event_cb);
     lv_label_set_text(lv_obj_get_child(closeButton, 0), langText("action_cancel"));
@@ -708,7 +713,7 @@ static void createProfileTuneDialog()
     lv_obj_set_style_bg_opa(closeButton, 255, LV_PART_MAIN);
     lv_obj_set_style_text_color(closeButton, lv_color_black(), LV_PART_MAIN);
 
-    lv_obj_t *saveButton = createDialogButton(ui_PanelProfileTune, -60, 90, 110,
+    lv_obj_t *saveButton = createDialogButton(ui_PanelProfileTune, -59, 3 * UI_ROW_PITCH / 2, 110,
                                               "", UI_FONT_NORMAL,
                                               saveProfileTune_event_cb);
     lv_label_set_text(lv_obj_get_child(saveButton, 0), langText("action_save"));

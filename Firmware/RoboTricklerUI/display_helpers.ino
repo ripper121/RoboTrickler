@@ -41,7 +41,10 @@ void showDialog(lv_obj_t *dialog)
         lv_obj_set_align(dialogBackdrop, LV_ALIGN_CENTER);
         lv_obj_clear_flag(dialogBackdrop, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_style_bg_color(dialogBackdrop, lv_color_hex(0x000000), LV_PART_MAIN);
-        lv_obj_set_style_bg_opa(dialogBackdrop, LV_OPA_40, LV_PART_MAIN);
+        // Keep the backdrop opaque. A translucent full-screen object forces
+        // LVGL to render the page below every dialog as well, which exhausts
+        // the fixed 24 KiB LVGL pool on the Profile -> Tune path.
+        lv_obj_set_style_bg_opa(dialogBackdrop, LV_OPA_COVER, LV_PART_MAIN);
         lv_obj_set_style_border_width(dialogBackdrop, 0, LV_PART_MAIN);
         lv_obj_set_style_radius(dialogBackdrop, 0, LV_PART_MAIN);
         lv_obj_set_style_pad_all(dialogBackdrop, 0, LV_PART_MAIN);
@@ -69,7 +72,10 @@ void closeDialog(lv_obj_t **dialog, bool deleteAfterClose)
 
     if (deleteAfterClose)
     {
-        lv_obj_delete_async(*dialog);
+        // LVGL supports deleting a dialog from a child button's click event.
+        // Free it now so a result message cannot overlap the old dialog in the
+        // fixed LVGL pool until the next timer-handler pass.
+        lv_obj_delete(*dialog);
         *dialog = NULL;
     }
     else

@@ -93,7 +93,7 @@ static void auditButtons(lv_obj_t *root, bool segmented = false)
     for (auto button : buttons)
     {
         auto area = bounds(button);
-        require(lv_area_get_width(&area) >= 50 && lv_area_get_height(&area) >= 50, "minimum visible button size");
+        require(lv_area_get_width(&area) >= UI_TOUCH_TARGET_SIZE && lv_area_get_height(&area) == UI_TOUCH_TARGET_SIZE, "minimum visible button size");
         require(area.x1 >= 0 && area.y1 >= 0 && area.x2 < 480 && area.y2 < 320, "button outside display");
         for (auto parent = lv_obj_get_parent(button); parent; parent = lv_obj_get_parent(parent))
         {
@@ -125,6 +125,15 @@ static void auditButtons(lv_obj_t *root, bool segmented = false)
     }
 }
 
+static void equalRow(lv_obj_t *a, lv_obj_t *b, bool horizontal)
+{
+    auto first = bounds(a), second = bounds(b);
+    require(lv_area_get_height(&first) == UI_TOUCH_TARGET_SIZE &&
+            lv_area_get_height(&second) == UI_TOUCH_TARGET_SIZE, "equal row heights");
+    require(horizontal ? (first.y1 == second.y1 && second.x1 - first.x2 - 1 == UI_TOUCH_GAP) :
+                         (second.y1 - first.y2 - 1 == UI_TOUCH_GAP), "exact uniform row spacing");
+}
+
 static size_t usedMemory()
 {
     lv_mem_monitor_t memory; lv_mem_monitor(&memory);
@@ -143,6 +152,14 @@ int main()
     ui_init(); settle();
     auditButtons(lv_tabview_get_tab_bar(ui_TabView), true);
     auditButtons(ui_TabPageTrickler);
+    equalRow(ui_PanelTarget, ui_ButtonAddWeightCycle, false);
+    equalRow(ui_ButtonAddWeightCycle, ui_PanelTricklerWeight, false);
+    equalRow(ui_PanelTricklerWeight, ui_ButtonToggleTrickler, false);
+    equalRow(ui_ButtonToggleTrickler, ui_PanelInfo, false);
+    equalRow(ui_ButtonIncreaseTargetWeight, ui_ButtonAddWeightCycle, true);
+    equalRow(ui_ButtonAddWeightCycle, ui_ButtonDecreaseTargetWeight, true);
+    require(lv_obj_get_height(ui_LabelTarget) == UI_TOUCH_TARGET_SIZE &&
+            lv_obj_get_height(ui_LabelInfo) == UI_TOUCH_TARGET_SIZE, "standalone label row heights");
     savePreview("trickler.ppm");
     auto plus = bounds(ui_ButtonIncreaseTargetWeight);
     int x = (plus.x1 + plus.x2) / 2, y = (plus.y1 + plus.y2) / 2;
@@ -164,19 +181,18 @@ int main()
     require(actionCount == before, "disabled control must not activate");
     savePreview("trickler_running.ppm");
     setProfileTabEnabled(true);
+    size_t minimumTuneFreeBlock = (size_t)-1;
     for (int language = 0; language < 2; ++language)
     {
         german = language != 0;
         lv_tabview_set_active(ui_TabView, 1, LV_ANIM_OFF);
         lv_label_set_text(ui_LabelProfile, "A long profile name for layout verification");
         auditButtons(ui_TabPageProfile);
+        equalRow(ui_ButtonProfilePrev, ui_PanelProfile, false);
+        equalRow(ui_PanelProfile, ui_ButtonProfileNext, false);
+        equalRow(ui_ButtonProfileTune, ui_LabelProfile, true);
+        equalRow(ui_LabelProfile, ui_ButtonProfileDelete, true);
         savePreview(german ? "profile_de.ppm" : "profile_en.ppm");
-        lv_tabview_set_active(ui_TabView, 2, LV_ANIM_OFF);
-        lv_label_set_text(ui_LabelScaleProtocol, german ? "Waage: Sartorius" : "Scale: Sartorius");
-        lv_obj_clear_flag(ui_ButtonSyncFlashToSd, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_clear_flag(ui_ButtonSyncSdToFlash, LV_OBJ_FLAG_HIDDEN);
-        auditButtons(ui_TabPageInfo);
-        savePreview(german ? "info_de.ppm" : "info_en.ppm");
         const char *titles[] = {"msg_tune_profile_title", "msg_tune_limit_factor_title", "msg_tune_measurements_title", "msg_tune_steps_title"};
         for (auto title : titles)
         {
@@ -191,9 +207,27 @@ int main()
                 lv_obj_add_flag(profileTuneTestButton, LV_OBJ_FLAG_HIDDEN);
             }
             showDialog(ui_PanelProfileTune); auditButtons(ui_PanelProfileTune);
+            settle();
+            lv_mem_monitor_t tuneMemory; lv_mem_monitor(&tuneMemory);
+            if (tuneMemory.free_biggest_size < minimumTuneFreeBlock)
+                minimumTuneFreeBlock = tuneMemory.free_biggest_size;
+            require(tuneMemory.free_biggest_size >= 2600, "profile tuning draw-memory headroom");
+            equalRow(profileTuneTitleLabel, profileTuneValueLabel, false);
+            equalRow(profileTuneValueLabel, lv_obj_get_parent(profileTuneEntryLabel), false);
+            equalRow(lv_obj_get_parent(profileTuneEntryLabel), lv_obj_get_child(ui_PanelProfileTune, -1), false);
             if (!strcmp(title, "msg_tune_steps_title")) savePreview(german ? "tune_de.ppm" : "tune_en.ppm");
-            closeDialog(&ui_PanelProfileTune, true); settle();
+            size_t tuneUsed = usedMemory();
+            closeDialog(&ui_PanelProfileTune, true);
+            require(ui_PanelProfileTune == nullptr, "profile tuning dialog closes immediately");
+            require(usedMemory() + 1000 < tuneUsed, "profile tuning memory is freed before the next dialog");
+            settle();
         }
+        lv_tabview_set_active(ui_TabView, 2, LV_ANIM_OFF);
+        lv_label_set_text(ui_LabelScaleProtocol, german ? "Waage: Sartorius" : "Scale: Sartorius");
+        lv_obj_clear_flag(ui_ButtonSyncFlashToSd, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(ui_ButtonSyncSdToFlash, LV_OBJ_FLAG_HIDDEN);
+        auditButtons(ui_TabPageInfo);
+        savePreview(german ? "info_de.ppm" : "info_en.ppm");
         presentDialog(german ? "Profil wirklich loeschen?\nLanger Profilname\nWeitere Informationen\nZeile 4\nZeile 5\nLetzte Zeile" :
                       "Delete this profile?\nA long profile name\nAdditional details\nLine 4\nLine 5\nLast line",
                       UI_FONT_LARGE, lv_color_white(), true, langText("action_delete"));
@@ -219,6 +253,7 @@ int main()
     }
     require(usedMemory() == baseline, "repeated message dialogs must release their allocations");
     lv_mem_monitor_t memory; lv_mem_monitor(&memory);
-    std::printf("PASS: tabs, EN/DE dialogs, targets, spacing, text fit, pointer cancellation, disabled state, modal blocking, scrolling and 20 dialog lifecycles.\n");
+    std::printf("PASS: tabs, Profile-to-Tune EN/DE dialogs, draw-memory headroom, targets, spacing, text fit, pointer cancellation, disabled state, modal blocking, scrolling and 20 dialog lifecycles.\n");
+    std::printf("Minimum tuning free block: %zu bytes.\n", minimumTuneFreeBlock);
     std::printf("Native 32-bit LVGL pool: %zu bytes; peak used: %zu; final used: %zu.\n", memory.total_size, memory.max_used, usedMemory());
 }

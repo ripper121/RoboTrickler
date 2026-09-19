@@ -29,7 +29,7 @@ A physical target around 7.5 mm is the general recommendation (the example uses
 40 pixels at 135 PPI). Frequency, consequence of an error, position, screen
 size, posture and feedback should influence the final size. Frequent actions
 can be larger; consequential actions need additional separation from edges.
-**Application:** keep the full-width run control, use 50-pixel minimum visible
+**Application:** keep the full-width run control, use 44-pixel minimum visible
 buttons, inset controls, and preserve confirmation before deleting or replacing
 stored data. Physical dimensions still depend on the actual panel.
 
@@ -168,16 +168,16 @@ command is an operating control, not a certified emergency-stop system.
 
 ## Device requirements derived from the findings
 
-The existing hardware is 480 x 320 with configured `LV_DPI_DEF=130`. A 50-pixel
-square is about 9.8 mm **if that configured density matches the physical panel**.
+The existing hardware is 480 x 320 with configured `LV_DPI_DEF=130`. A 44-pixel
+square is about 8.6 mm **if that configured density matches the physical panel**.
 That conversion is an estimate, not a measurement. `ui_touch.h` centralizes the
-50-pixel target and 8-pixel spacing choices. The gap is about 1.6 mm at that density;
+44-pixel target and 8-pixel spacing choices. The gap is about 1.6 mm at that density;
 it is not a claim to satisfy the older 2 mm exception for tiny targets, which
 this design does not use. Adjacent tabs form one conventional segmented row.
 
 | Finding | UI requirement / implementation |
 | --- | --- |
-| Target size and edge clearance | At least 50 x 50 visible button pixels; inset pages, profile actions and dialogs; no overlapping hit areas. |
+| Target size and edge clearance | At least 44 x 44 visible button pixels; inset pages, profile actions and dialogs; no overlapping hit areas. |
 | Readable hierarchy and alignment | Stable three-tab organization, adjacent value controls, complete primary weights, and labels contained within parents. |
 | Clear purpose | Replace ambiguous sync arrows with source/destination text, replace tuning `T` with `Test`, and label confirm/save/cancel actions. |
 | State feedback | Keep theme pressed/disabled feedback; visibly disable target adjustment while running instead of accepting a tap with no result. |
@@ -199,18 +199,22 @@ one temporary container, destroyed with its message dialog.
 32-bit MSVC. The harness compiles the actual `ui.c`, `ui_Screen1.c`, `ui_touch.c`
 and extracts the current dialog factory bodies, avoiding a separately maintained
 mock layout. Hardware callbacks only increment counters. It checks all three
-tabs and all four tuning modes in English/German, minimum button size, ancestor
-clipping, 8-pixel button separation, button text fit, release-only activation,
-slide into a gap/neighbor cancellation, disabled target edits, modal blocking,
-long-message scrolling with fixed actions, and allocation recovery over twenty
-message-dialog lifecycles. Generated PNG previews in `%TEMP%/rtui_touch_audit`
+tabs and opens all four tuning modes from the Profile tab in English/German,
+including draw-memory headroom and immediate allocation recovery before another
+dialog can open. It also checks minimum button size, ancestor clipping, 8-pixel
+button separation, button text fit, release-only activation, slide into a
+gap/neighbor cancellation, disabled target edits, modal blocking, long-message
+scrolling with fixed actions, and allocation recovery over twenty message-dialog
+lifecycles. Generated PNG previews in `%TEMP%/rtui_touch_audit`
 were visually inspected for the main screen, Info, profile, German tuning and
 long confirmation message.
 
 The native harness uses one circle-cache entry because MSVC rejects LVGL's
 zero-length GCC cache array; this override exists only in its generated config.
 It retains the 24 KiB configured pool and enabled widgets. The monitor reported
-21,756 usable bytes, a 19,612-byte peak and 13,512 bytes after dialogs closed.
+21,748 managed bytes, a 19,664-byte peak and 13,568 bytes after dialogs closed.
+The opaque modal backdrop prevents LVGL from also drawing the covered page, and
+dialogs free synchronously so a result message cannot overlap the previous dialog.
 These are native harness measurements, not ESP32 runtime heap measurements.
 The default blue was darkened for small white labels; bright green/red/orange
 buttons retain black content. Existing red cancel and green save conventions
@@ -230,3 +234,17 @@ gap, and release; also slide toward a neighboring button. Check that no unintend
 action occurs. Read long translated messages to their end while actions remain
 visible. Check QR placement, repeated dialog opening/closing with Wi-Fi active,
 and physical readability under the intended lighting and viewing angle.
+
+## Uniform row layout
+
+Buttons and single-line labels now use a shared 44-pixel height with 8-pixel
+horizontal and vertical gaps. Five main-screen rows occupy 252 pixels, fitting
+below the 44-pixel tab bar with page margins. Profile navigation uses the same
+row pitch; tuning uses four equal rows. Standalone labels add their centering
+padding to an existing local style instead of allocating another style entry.
+Multiline
+messages and the Info log retain their variable/viewport heights. The native
+harness checks exact row heights and gaps in addition to clipping and input.
+
+Validation after row normalization: native geometry/input/lifecycle checks and
+ESP32 compile-only build passed; SD JSON and whitespace checks passed.
