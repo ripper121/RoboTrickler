@@ -136,7 +136,7 @@ static void ensureNoButton()
   {
     return;
   }
-  ui_ButtonMessageNo = createDialogButton(ui_PanelMessages, 70, 100, 100,
+  ui_ButtonMessageNo = createDialogButton(ui_PanelMessages, 55, 100, 100,
                                           UI_SYMBOL_NO, UI_FONT_LARGE, messageNo_event_cb);
   lv_obj_set_style_bg_color(ui_ButtonMessageNo, lv_color_hex(0xFF0000), LV_PART_MAIN);
   lv_obj_set_style_bg_opa(ui_ButtonMessageNo, 255, LV_PART_MAIN);
@@ -182,7 +182,7 @@ static void presentDialog(const char *message, const lv_font_t *font,
   if (showNo)
   {
     ensureNoButton();
-    lv_obj_set_x(ui_ButtonMessageOk, -70);
+    lv_obj_set_x(ui_ButtonMessageOk, -55);
     lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_YES);
     lv_obj_clear_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
   }
@@ -671,27 +671,27 @@ void saveProfileTune_event_cb(lv_event_t *e)
 static void createProfileTuneDialog()
 {
     ui_PanelProfileTune = createDialogPanel();
-    profileTuneTitleLabel = createDialogTitle(ui_PanelProfileTune, -95, "");
+    profileTuneTitleLabel = createDialogTitle(ui_PanelProfileTune, -90, "");
     lv_obj_set_width(profileTuneTitleLabel, 290);
-    createDialogButton(ui_PanelProfileTune, -180, -95, 50, LV_SYMBOL_LEFT, UI_FONT_LARGE, selectPreviousTuneMode_event_cb);
-    createDialogButton(ui_PanelProfileTune, 180, -95, 50, LV_SYMBOL_RIGHT, UI_FONT_LARGE, selectNextTuneMode_event_cb);
-    profileTuneValueLabel = createDialogValueLabel(ui_PanelProfileTune, -42);
-    createDialogButton(ui_PanelProfileTune, 115, -42, 60, "-", UI_FONT_LARGE, decreaseTuneValue_event_cb);
-    createDialogButton(ui_PanelProfileTune, -115, -42, 60, "+", UI_FONT_LARGE, increaseTuneValue_event_cb);
-    lv_obj_t *entryButton = createDialogButton(ui_PanelProfileTune, 0, 22, 290, "", UI_FONT_LARGE, selectTuneEntry_event_cb);
+    createDialogButton(ui_PanelProfileTune, -180, -90, 50, LV_SYMBOL_LEFT, UI_FONT_LARGE, selectPreviousTuneMode_event_cb);
+    createDialogButton(ui_PanelProfileTune, 180, -90, 50, LV_SYMBOL_RIGHT, UI_FONT_LARGE, selectNextTuneMode_event_cb);
+    profileTuneValueLabel = createDialogValueLabel(ui_PanelProfileTune, -30);
+    createDialogButton(ui_PanelProfileTune, 113, -30, 60, "-", UI_FONT_LARGE, decreaseTuneValue_event_cb);
+    createDialogButton(ui_PanelProfileTune, -113, -30, 60, "+", UI_FONT_LARGE, increaseTuneValue_event_cb);
+    lv_obj_t *entryButton = createDialogButton(ui_PanelProfileTune, 0, 30, 290, "", UI_FONT_LARGE, selectTuneEntry_event_cb);
     profileTuneEntryLabel = lv_obj_get_child(entryButton, 0);
-    profileTuneStepSizeButton = createDialogButton(ui_PanelProfileTune, 180, -42, 50, "",
+    profileTuneStepSizeButton = createDialogButton(ui_PanelProfileTune, 180, -30, 50, "",
                                                    UI_FONT_NORMAL,
                                                    cycleProfileTuneStepSize_event_cb);
     profileTuneStepSizeLabel = lv_obj_get_child(profileTuneStepSizeButton, 0);
-    profileTuneTestButton = createDialogButton(ui_PanelProfileTune, 180, 22, 50, "T", UI_FONT_LARGE, testProfileTuneSteps_event_cb);
-    lv_obj_t *closeButton = createDialogButton(ui_PanelProfileTune, 70, 88, 110,
+    profileTuneTestButton = createDialogButton(ui_PanelProfileTune, 180, 30, 50, "T", UI_FONT_LARGE, testProfileTuneSteps_event_cb);
+    lv_obj_t *closeButton = createDialogButton(ui_PanelProfileTune, 60, 90, 110,
                                                UI_SYMBOL_CANCEL, UI_FONT_LARGE,
                                                cancelProfileTune_event_cb);
     lv_obj_set_style_bg_color(closeButton, lv_color_hex(0xFF0000), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(closeButton, 255, LV_PART_MAIN);
 
-    lv_obj_t *saveButton = createDialogButton(ui_PanelProfileTune, -70, 88, 110,
+    lv_obj_t *saveButton = createDialogButton(ui_PanelProfileTune, -60, 90, 110,
                                               UI_SYMBOL_SAVE, UI_FONT_LARGE,
                                               saveProfileTune_event_cb);
     lv_obj_set_style_bg_color(saveButton, lv_color_hex(0x00FF00), LV_PART_MAIN);

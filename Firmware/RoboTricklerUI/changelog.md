@@ -5,6 +5,7 @@
 ### Highlights
 - Save buttons are now green and close/cancel buttons are red across the device dialogs and web tools.
 - Added a `1`/`10`/`100` increment selector above the Step Tuning test button.
+- Normalized button spacing across the tuning and confirmation dialogs.
 - Corrupt `config.txt` files are now preserved as `config.cor.txt` before the default configuration is generated, replacing an older recovery copy.
 - Corrupt profile recovery now replaces an older matching `.cor.txt` copy consistently on SD and LittleFS.
 - Added compact normal-profile support: optional settings now use documented defaults while unknown fields are still rejected.
