@@ -80,6 +80,42 @@ $local.Hash -eq $remote.Hash
 
 Use the same pattern for other SD files: local path under `SD-Files\...`, target filename as the SD-root absolute path `/...`, and fetch from the matching device URL.
 
+## Firmware UI screenshots for the manual
+
+Use the included native LVGL renderer for screenshots of the firmware UI. It
+renders the real screen and extracted dialog factories with illustrative German
+data; no Robo-Trickler hardware is accessed.
+
+From this folder, generate all firmware screenshots used by `manual.md` with:
+
+```powershell
+python tools/ui_verify_layout.py --manual
+```
+
+The tool writes the final PNG files to `docs/screenshots/`. It uses
+`tools/manual_screenshots.inc` to prepare each UI state, initially saves a PPM
+through the native LVGL harness, converts it to PNG with Pillow, and removes the
+temporary PPM. Do not capture these screens manually or edit the generated PNGs
+to simulate firmware state.
+
+To add or change a manual screenshot:
+
+1. Edit `renderManualScreenshots()` in `tools/manual_screenshots.inc`.
+2. Set the representative labels, active tab, button state, and dialog state
+   using the real UI objects and factories.
+3. Call `savePreview("touch_descriptive_name.ppm")`; keep the `.ppm` suffix in
+   the source because the Python tool performs the PNG conversion.
+4. Run `python tools/ui_verify_layout.py --manual` and reference the resulting
+   `docs/screenshots/touch_descriptive_name.png` from `manual.md`.
+5. Inspect the PNG and then run `python tools/ui_verify_layout.py` without
+   `--manual` to execute the complete layout, touch-target, text-fit, and memory
+   audit.
+
+The renderer expects the installed LVGL sources under
+`Documents/Arduino/libraries/lvgl`, Visual Studio 2022 with C++/CMake support,
+Python, and Pillow. Keep hardware callbacks inert in the native harness and use
+illustrative data only; screenshots must not depend on a connected device.
+
 ## Compile check
 
 This workspace uses Arduino IDE 1.8.x with Espressif ESP32 core `3.3.11`.

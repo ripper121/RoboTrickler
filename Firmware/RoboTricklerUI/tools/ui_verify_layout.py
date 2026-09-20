@@ -1,10 +1,12 @@
 """Render and exercise the real LVGL screen/factories on Windows, without hardware.
 
-Uses installed LVGL and Visual Studio CMake/MSVC. Generated files stay in the
-system temporary directory. Dialog factory bodies are extracted from the sketch;
-hardware action callbacks are replaced with counters and never operate a device.
+Uses installed LVGL and Visual Studio CMake/MSVC. Build and audit output stay in
+the system temporary directory; --manual writes PNGs to docs/screenshots.
+Dialog factory bodies are extracted from the sketch; hardware action callbacks
+are replaced with counters and never operate a device.
 """
 from pathlib import Path
+import argparse
 import json
 import re
 import subprocess
@@ -29,6 +31,9 @@ def function_body(source, name):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--manual", action="store_true", help="Render German manual screenshots with illustrative data")
+    args = parser.parse_args()
     AUDIT.mkdir(parents=True, exist_ok=True)
     dialogs = (ROOT / "ui_dialogs.ino").read_text(encoding="utf-8")
     helpers = (ROOT / "display_helpers.ino").read_text(encoding="utf-8")
@@ -79,12 +84,17 @@ target_link_libraries(ui_touch_audit PRIVATE lvgl)
                     "-G", "Visual Studio 17 2022", "-A", "Win32"], check=True)
     subprocess.run([str(CMAKE), "--build", str(AUDIT / "native"), "--config", "Release",
                     "--parallel", "4"], check=True)
-    subprocess.run([str(AUDIT / "native/Release/ui_touch_audit.exe")], cwd=AUDIT, check=True, timeout=45)
+    output = ROOT / "docs/screenshots" if args.manual else AUDIT
+    output.mkdir(parents=True, exist_ok=True)
+    subprocess.run([str(AUDIT / "native/Release/ui_touch_audit.exe")] +
+                   (["--manual"] if args.manual else []), cwd=output, check=True, timeout=45)
     from PIL import Image
-    for path in AUDIT.glob("*.ppm"):
+    for path in output.glob("*.ppm"):
         with Image.open(path) as picture:
             picture.save(path.with_suffix(".png"))
-    print(f"Rendered previews: {AUDIT}")
+        if args.manual:
+            path.unlink()
+    print(f"Rendered previews: {output}")
 
 
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ from partition_layout import require_partition, selected_partitions_csv
 
 DEFAULT_FLASH_BYTES = 8 * 1024 * 1024
 # Defines forced to 0 for a production package build.
-PROD_DEFINES = {"DEBUG": 0, "ENABLE_SCREENSHOT": 0}
+PROD_DEFINES = {"DEBUG": 0}
 
 
 def _define_re(name: str) -> re.Pattern[str]:
@@ -81,8 +81,7 @@ def parse_args() -> argparse.Namespace:
         dest="prod",
         action="store_true",
         help=(
-            "Production build: clean the build directory and force DEBUG 0 and "
-            "ENABLE_SCREENSHOT 0 for the build."
+            "Production build: clean the build directory and force DEBUG 0 for the build."
         ),
     )
     parser.add_argument(

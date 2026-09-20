@@ -502,11 +502,11 @@ static void layoutProfileTuneDialog(bool stepsMode)
 
     if (stepsMode)
     {
-        lv_obj_set_width(profileTuneStepSizeButton, UI_DIALOG_ENTRY_STEP_WIDTH);
-        lv_obj_set_x(profileTuneStepSizeButton, UI_DIALOG_ENTRY_STEP_X);
+        lv_obj_set_width(profileTuneStepSizeButton, UI_DIALOG_ACTION_WIDTH);
+        lv_obj_set_x(profileTuneStepSizeButton, -UI_DIALOG_ACTION_X);
         lv_obj_set_y(profileTuneStepSizeButton, UI_DIALOG_ENTRY_Y);
-        lv_obj_set_width(profileTuneTestButton, UI_DIALOG_SIDE_BUTTON_WIDTH);
-        lv_obj_set_x(profileTuneTestButton, UI_DIALOG_SIDE_BUTTON_X);
+        lv_obj_set_width(profileTuneTestButton, UI_DIALOG_ACTION_WIDTH);
+        lv_obj_set_x(profileTuneTestButton, UI_DIALOG_ACTION_X);
         lv_obj_set_y(profileTuneTestButton, UI_DIALOG_ENTRY_Y);
         lv_obj_clear_flag(profileTuneStepSizeButton, LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(profileTuneTestButton, LV_OBJ_FLAG_HIDDEN);
@@ -782,7 +782,7 @@ static void createProfileTuneDialog()
     profileTuneEntryLabel = lv_obj_get_child(profileTuneEntryButton, 0);
     profileTuneStepSizeButton = createDialogButton(
         ui_PanelProfileTune, 0, UI_DIALOG_ENTRY_Y, UI_DIALOG_CONTENT_WIDTH,
-        "", UI_FONT_NORMAL, cycleProfileTuneStepSize_event_cb);
+        "", UI_FONT_LARGE, cycleProfileTuneStepSize_event_cb);
     profileTuneStepSizeLabel = lv_obj_get_child(profileTuneStepSizeButton, 0);
     profileTuneTestButton = createDialogSymbolButton(ui_PanelProfileTune, 0,
                                                      UI_DIALOG_TEST_Y, UI_DIALOG_CONTENT_WIDTH,

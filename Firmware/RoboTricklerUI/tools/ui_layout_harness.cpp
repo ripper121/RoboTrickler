@@ -140,7 +140,9 @@ static size_t usedMemory()
     return memory.total_size - memory.free_size;
 }
 
-int main()
+#include "manual_screenshots.inc"
+
+int main(int argc, char **argv)
 {
     lv_init();
     auto display = lv_display_create(480, 320);
@@ -150,6 +152,11 @@ int main()
     lv_indev_set_type(pointerDevice, LV_INDEV_TYPE_POINTER);
     lv_indev_set_read_cb(pointerDevice, readPointer);
     ui_init(); settle();
+    if (argc == 2 && !std::strcmp(argv[1], "--manual"))
+    {
+        renderManualScreenshots();
+        return 0;
+    }
     auditButtons(lv_tabview_get_tab_bar(ui_TabView), true);
     auditButtons(ui_TabPageTrickler);
     equalRow(ui_PanelTarget, ui_ButtonAddWeightCycle, false);
@@ -264,13 +271,13 @@ int main()
                 require(stepSizeBounds.y1 - valueBounds.y2 - 1 >= UI_TOUCH_GAP &&
                         entryBounds.y1 - stepSizeBounds.y2 - 1 >= UI_TOUCH_GAP,
                         "step increments use their own row directly below the step value");
-                require(lv_obj_get_width(profileTuneStepSizeButton) == UI_DIALOG_ENTRY_STEP_WIDTH &&
+                require(lv_obj_get_width(profileTuneStepSizeButton) == UI_DIALOG_ACTION_WIDTH &&
                             !strcmp(lv_label_get_text(profileTuneStepSizeLabel), "100"),
                         "one button displays the selected 1, 10 or 100 increment");
                 require(testBounds.y1 == stepSizeBounds.y1 && testBounds.y2 == stepSizeBounds.y2 &&
-                            lv_obj_get_width(profileTuneTestButton) == UI_DIALOG_SIDE_BUTTON_WIDTH &&
+                            lv_obj_get_width(profileTuneTestButton) == lv_obj_get_width(profileTuneStepSizeButton) &&
                             testBounds.x1 - stepSizeBounds.x2 - 1 == UI_TOUCH_GAP,
-                        "motor test and step range share one row");
+                        "motor test and step range share one row at equal widths");
             }
             require(!strcmp((const char *)lv_obj_get_style_bg_image_src(profileTuneTestButton,
                                                                         LV_PART_MAIN),

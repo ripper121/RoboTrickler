@@ -155,9 +155,6 @@ void registerWebServerRoutes()
   server.on("/setTarget", HTTP_POST, handleSetTarget);
   server.on("/system/start", HTTP_POST, handleStart);
   server.on("/system/stop", HTTP_POST, handleStop);
-#if ENABLE_SCREENSHOT
-  server.on("/screenshot", HTTP_GET, handleScreenshot);
-#endif
   server.on("/fwupdate", HTTP_GET, []()
             {
             // Stream the page in fragments so we never hold the whole HTML body in heap.

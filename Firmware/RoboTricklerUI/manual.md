@@ -1,6 +1,6 @@
 # Robo-Trickler Anleitung
 
-Stand: Firmware 2.14
+Stand: Firmware 2.15
 
 Dieses Handbuch beginnt mit einer kurzen Anleitung für die erste Inbetriebnahme. Die weiteren Abschnitte beschreiben die Bedienung und Einstellungen im Detail und dienen zum Nachschlagen.
 
@@ -90,7 +90,7 @@ Die Einheit des Profils muss zur Waage passen: **Gramm und Grain werden nicht au
 1. Wechsle in den Tab `Trickler`.
 2. Stelle oben das gewünschte Zielgewicht mit `+` und `-` ein. Mit dem mittleren Button wechselst du die Schrittweite.
 3. Prüfe Profil, Zielgewicht und Einheit. Die Waage soll mit leerer Pfanne null anzeigen.
-4. Drücke den großen grünen `Start`-Button. Während des Betriebs ist er rot und dient als `Stop`-Button.
+4. Drücke den großen grünen `Start`-Button (Dreieck). Während des Betriebs ist er rot und dient als `Stop`-Button (Quadrat).
 
 Die Profilwahl und ein am Display geändertes Zielgewicht werden beim Start gespeichert.
 
@@ -115,18 +115,20 @@ Weitere Hilfe findest du unter [Fehlersuche](#fehlersuche) und [Access-Point-Ein
 
 Die Oberfläche ist in drei Tabs unterteilt: `Trickler`, `Profil` und `Info`. Trickeln, Profilwahl, Profil-Tuning sowie die wichtigsten Netzwerk- und Waagenfunktionen lassen sich am Touchscreen bedienen. Für weitergehende Einstellungen und das vollständige Bearbeiten von Profilen dient die Weboberfläche oder der direkte Zugriff auf die Dateien. Eine SD-Karte ist bei der 8-MB-Firmware mit eingerichtetem LittleFS nicht zwingend nötig; WLAN wird für die Bedienung am Display nicht benötigt.
 
-<img width="722" height="482" alt="Screen" src="https://github.com/user-attachments/assets/dddc2665-baae-4eac-bc0d-5eb91caa13f8" />
+![Tab Trickler mit Zielgewicht, Schrittweite und Start-Symbol](docs/screenshots/touch_trickler.png)
 
 ## Tab `Trickler`
 
 * Oben siehst du das Zielgewicht, darunter das aktuell von der Waage gemessene Gewicht.
 * Mit `+` und `-` veränderst du das Zielgewicht. Mit dem mittleren Button wechselst du die Schrittweite zwischen `0.001`, `0.010`, `0.100`, `1.000` und `10.000`. Das Zielgewicht ist auf maximal `500.000` begrenzt.
-* Mit dem großen Start/Stop-Button startest oder stoppst du das Trickeln. Beim Starten wird der Button rot und zeigt `Stop`, im Ruhezustand ist er grün und zeigt `Start`. Mit `Stop` brichst du auch einen gerade laufenden Stepper-Wurf zeitnah ab; ein schnelles erneutes Starten setzt den alten Wurf nicht fort.
+* Mit dem großen Start/Stop-Button startest oder stoppst du das Trickeln. Beim Starten wird der Button rot und zeigt ein Quadrat (`Stop`), im Ruhezustand ist er grün und zeigt ein Dreieck (`Start`). Mit `Stop` brichst du auch einen gerade laufenden Stepper-Wurf zeitnah ab; ein schnelles erneutes Starten setzt den alten Wurf nicht fort.
 * Am unteren Rand siehst du in einer Statuszeile die Firmware-Version bzw. aktuelle Meldungen.
 
-Während des laufenden Betriebs werden Änderungen des Zielgewichts auch am Display ignoriert. Drücke zuerst `Stop`. Die Tabs werden durch Antippen ihrer Überschriften gewechselt; Wischgesten zum Tabwechsel sind abgeschaltet.
+Während des laufenden Betriebs sind die Zielgewicht-Buttons sichtbar deaktiviert. Drücke zuerst `Stop`. Die Tabs werden durch Antippen ihrer Überschriften gewechselt; Wischgesten zum Tabwechsel sind abgeschaltet. Buttons lösen beim Loslassen aus; ziehst du den Finger vor dem Loslassen aus dem Button heraus, wird die Betätigung verworfen.
 
 Der Messwert wird am Display mit höchstens drei Nachkommastellen und, soweit erkannt, mit der Einheit der Waage angezeigt. `NaN...` bedeutet, dass gerade kein gültiger Messwert vorliegt; es ist kein Gewicht von null. Direkt nach `Stop` erscheint kurz `-.-`, bis die nächste Messung eintrifft. Im Ruhezustand wird etwa einmal pro Sekunde eine Messung angefordert; bei ausbleibenden Antworten kann es länger dauern.
+
+![Direkt nach Stop: Start ist wieder verfügbar, der Messwert wird neu angefordert](docs/screenshots/touch_stopped.png)
 
 Das geänderte Zielgewicht wird beim Starten des Trickelns in das aktive Profil geschrieben. Die Firmware merkt sich, ob das Zielgewicht seit dem Laden oder letzten Speichern geändert wurde; ohne Änderung wird die Profildatei beim Start nicht geöffnet oder neu geschrieben. Das Sonderprofil `calibrate` besitzt kein Zielgewicht; dort wird diese Änderung nicht in die Profildatei übernommen.
 
@@ -148,6 +150,8 @@ Das angezeigte Gewicht wechselt während des Trickelns die Farbe:
 * **Gelb**: Zielgewicht erreicht, aber außerhalb der `tolerance`.
 * **Rot**: Überwurf bzw. Alarm (`alarmThreshold` überschritten).
 
+![Fertige Ladung innerhalb der Toleranz; Stop bleibt für den Dauerbetrieb verfügbar](docs/screenshots/touch_finished.png)
+
 ## Tab `Profil`
 
 * Mit den Pfeil-Buttons (oben/unten) blätterst du durch die erkannten Profile; das gewählte Profil wird sofort geladen. Die Auswahl wird erst beim nächsten `Start` dauerhaft als `activeProfile` in `config.txt` gespeichert.
@@ -158,6 +162,8 @@ Das angezeigte Gewicht wechselt während des Trickelns die Farbe:
 **Während des Trickelns sind die Tabs `Profil` und `Info` gesperrt.** Die Firmware springt auf `Trickler` zurück, damit während eines laufenden Wurfs kein Profil gewechselt oder Dialog geöffnet wird. Um das Profil zu wechseln oder die Info-Seite zu nutzen, muss der Trickler zuerst gestoppt werden.
 
 ## Tab `Info`
+
+![Info mit Beispielmeldungen, Waagenwahl, Synchronisation und WLAN](docs/screenshots/touch_info.png)
 
 * Im Log-Bereich siehst du Status- und Fehlermeldungen sowie die IP-Adresse bei aktivem WLAN.
 * Beim Start wird hier außerdem angezeigt, ob der Trickler von der SD-Karte oder vom internen Flash gestartet ist.
@@ -187,7 +193,9 @@ Auch die Alarmtöne folgen der Einstellung `beeper`: Nur `done` und `both` aktiv
 
 ## Dialoge
 
-Die Firmware blendet bei Bedarf Dialoge ein, z.B. die Abfrage `Profil aus Kalibrierung erstellen?` (Ja/Nein) nach einem Kalibrierlauf, Lösch- und Synchronisations-Bestätigungen sowie Fehler-, Warn- und Erfolgsmeldungen. Während ein Dialog offen ist, sind die übrigen Bedienelemente am Touchscreen gesperrt. Diese Dialoge werden nicht in die Browser-Fernsteuerung übertragen; bestätige sie am Gerät. Bei einer Meldung mit angekündigtem Neustart wird dieser durch `OK` ausgelöst.
+Die Firmware blendet bei Bedarf Dialoge ein, z.B. die Abfrage `Profil aus Kalibrierung erstellen?` nach einem Kalibrierlauf, Lösch- und Synchronisations-Bestätigungen sowie Fehler-, Warn- und Erfolgsmeldungen. Während ein Dialog offen ist, sind die übrigen Bedienelemente am Touchscreen gesperrt. Diese Dialoge werden nicht in die Browser-Fernsteuerung übertragen; bestätige sie am Gerät. Lange Meldungen lassen sich oberhalb der feststehenden Aktionsbuttons scrollen.
+
+Die blauen Bestätigungsbuttons zeigen die jeweilige Aktion: Häkchen = `OK`, Plus = Profil erstellen, Papierkorb = Löschen und Kopiersymbol = Synchronisieren. Im Tuning-Dialog speichert die grüne Diskette. Das rote Kreuz schließt den Dialog bzw. bricht die Bestätigung ab. Bei einer Meldung mit angekündigtem Neustart löst das blaue Häkchen diesen aus.
 
 # Pulverprofile
 
@@ -227,27 +235,25 @@ YouTube-Link: https://www.youtube.com/watch?v=G3YXN6MKb8g
 
 1. Wähle im Tab `Profil` `calibrate`.
 
-<img width="480" height="320" alt="Calibrate" src="https://github.com/user-attachments/assets/36eb5c5b-7721-48a3-9a37-762c74fe1e67" />
+![Kalibrierprofil auswählen](docs/screenshots/touch_calibrate.png)
 
 2. Im Tab `Trickler` drücke `Start`, achte darauf, dass die Waage auf `0.000` steht.
 
-<img width="480" height="320" alt="Trickle_Main" src="https://github.com/user-attachments/assets/c445d0f0-6b74-408d-820d-f0e4e8454064" />
+![Start am Touchscreen](docs/screenshots/touch_trickler.png)
 
-3. Lasse den Kalibrierlauf bei frisch gefülltem Trickler am besten 3-mal laufen, damit das Rohr gleichmäßig gefüllt ist. Klicke dabei bei `Profil aus Kalibrierung erstellen?` auf `Nein`, damit noch kein neues Profil erstellt wird.
+3. Lasse den Kalibrierlauf bei frisch gefülltem Trickler am besten 3-mal laufen, damit das Rohr gleichmäßig gefüllt ist. Tippe dabei bei `Profil aus Kalibrierung erstellen?` auf das rote Kreuz (Abbrechen), damit noch kein neues Profil erstellt wird.
 
-<img width="480" height="320" alt="Calibration_Run" src="https://github.com/user-attachments/assets/a46efe2d-41fb-4140-8a00-f821d6fe14d7" />
 
-4. Nach dem Kalibrierlauf bestätige am Display `Profil aus Kalibrierung erstellen?` mit `Ja`.
+4. Nach dem Kalibrierlauf bestätige am Display `Profil aus Kalibrierung erstellen?` mit dem blauen Plus-Symbol (Erstellen).
 
-<img width="480" height="320" alt="Calibration_Run" src="https://github.com/user-attachments/assets/ce8b4c01-0785-48e5-bdb4-79179fb826fc" />
+![Profil erstellen mit blauem Plus bestätigen](docs/screenshots/touch_create_profile.png)
 
 5. Nach dem Kalibrierlauf liest die Firmware das stabile Gewicht von der Waage und erstellt ein neues Profil.
 
-<img width="480" height="320" alt="Calibration_Save" src="https://github.com/user-attachments/assets/80de2c87-3bf6-448a-a28c-2e319a4ac9ed" />
+![Erfolgsmeldung nach der Profilerstellung](docs/screenshots/touch_profile_created.png)
+
 
 6. Jetzt kannst du das neue Profil verwenden: Stelle ein Zielgewicht ein und drücke auf `Start`.
-
-<img width="480" height="320" alt="Trickle_Main" src="https://github.com/user-attachments/assets/34cb2d95-5e9f-447c-9ac6-939140b4d0b9" />
 
 
 **Infos:**
@@ -268,15 +274,15 @@ Das Profil kann direkt über die Steuerung angepasst werden.
 
 Wechsle in den Tab `Profil` und wähle das Profil aus, das angepasst werden soll.
 
-![Profil auswählen](https://github.com/user-attachments/assets/b4ba4f5b-84c8-492e-a2bc-4d74446d9ba5)
+![Profil auswählen und Tuning öffnen](docs/screenshots/touch_profile.png)
 
 ### 2. Tuning-Art wählen
 
 Klicke auf das **Zahnrad-Symbol**. Der gemeinsame Tuning-Dialog startet mit **Gewicht / Umdr**. Mit den beiden Pfeilen neben dem Titel wechselst du vorwärts oder rückwärts durch die vier Tuning-Arten:
 
 * **Gewicht / Umdr**: Passe `stepper.1.weightPerRev` an. Die Firmware berechnet dabei die nicht manuell geänderten Schrittzahlen für Stepper 1 neu. `stepper.2.weightPerRev` kannst du nur im Pulverprofil-Editor oder direkt in der Profildatei ändern.
-* **Map-Limit-Faktor**: Passe `general.trickleMapLimitFactor` zwischen `0.010` und `1.000` an. Die Firmware berechnet dabei die nicht manuell geänderten Schrittzahlen der Stepper-1-Einträge anhand von `stepper.1.weightPerRev` neu.
-* **Messwerte**: Passe die `measurements`-Werte der vorhandenen `trickleMap`-Einträge an, ohne die STEP-Pulse zu ändern.
+* **Map-Faktor**: Passe `general.trickleMapLimitFactor` zwischen `0.010` und `1.000` an. Die Firmware berechnet dabei die nicht manuell geänderten Schrittzahlen der Stepper-1-Einträge anhand von `stepper.1.weightPerRev` neu.
+* **Messungen**: Passe die `measurements`-Werte der vorhandenen `trickleMap`-Einträge an, ohne die STEP-Pulse zu ändern.
 * **Schritte**: Passe die STEP-Pulse (`stepper.steps`) der vorhandenen `trickleMap`-Einträge einzeln an.
 
 Das Profil `calibrate` kann nicht getunt werden. Der Trickler muss für alle Tuning-Funktionen gestoppt sein.
@@ -293,37 +299,43 @@ Wähle **Gewicht / Umdr**, um den Wert `stepper.1.weightPerRev` zu ändern. Die 
 - So erreichst du einen guten Kompromiss zwischen Geschwindigkeit und Genauigkeit.
 - Beim Speichern bleiben alle vorhandenen `trickleMap`-Einträge erhalten. Wenn Gewicht/Umdr oder der Map-Limit-Faktor geändert wurde, berechnet die Firmware die Schrittzahlen für Stepper 1 anhand der vorhandenen `diffWeight`-Werte neu. Im selben Dialog manuell geänderte Schrittzahlen haben Vorrang; Messwertänderungen werden ebenfalls gespeichert.
 
-![Gewicht / Umdr anpassen](https://github.com/user-attachments/assets/208370be-a8fe-4f64-bb73-0af4d2eab1e8)
+![Gewicht pro Umdrehung anpassen](docs/screenshots/touch_tune_weight.png)
 
 ### 4. Map-Limit-Faktor anpassen
 
-Wähle **Map-Limit-Faktor**, um `general.trickleMapLimitFactor` zu ändern. Der mittlere Button wechselt die Schrittweite zwischen `0.001`, `0.010` und `0.100`; zulässig sind Werte von `0.010` bis `1.000`. Kleinere Werte erzeugen weniger STEP-Pulse pro Feinwurf, größere Werte mehr.
+Wähle **Map-Faktor**, um `general.trickleMapLimitFactor` zu ändern. Der mittlere Button wechselt die Schrittweite zwischen `0.001`, `0.010` und `0.100`; zulässig sind Werte von `0.010` bis `1.000`. Kleinere Werte erzeugen weniger STEP-Pulse pro Feinwurf, größere Werte mehr.
+
+![Map-Limit-Faktor im gemeinsamen Tuning-Dialog](docs/screenshots/touch_tune_factor.png)
 
 ### 5. Messwerte anpassen
 
-Wähle **Messwerte**, um die Stabilitätszählung pro `trickleMap`-Eintrag anzupassen. Der mittlere Button zeigt den `diffWeight`-Eintrag, der gerade bearbeitet wird; mit jedem Druck wechselst du zum nächsten Eintrag. Mit `+` und `-` wird die Anzahl der Messwerte für diesen Eintrag geändert. Zulässig sind Werte von `0` bis `99`.
+Wähle **Messungen**, um die Stabilitätszählung pro `trickleMap`-Eintrag anzupassen. Der mittlere Button zeigt den `diffWeight`-Eintrag, der gerade bearbeitet wird; mit jedem Druck wechselst du zum nächsten Eintrag. Mit `+` und `-` wird die Anzahl der Messwerte für diesen Eintrag geändert. Zulässig sind Werte von `0` bis `99`.
 
 Mehr Messwerte geben der Waage mehr Zeit zum Einschwingen und machen das Dosieren ruhiger, kosten aber Zeit. Weniger Messwerte beschleunigen den Ablauf, können bei unruhigen Waagen aber zu frühen Würfen führen.
 
 Wenn du ausschließlich Messwerte änderst, werden nur diese Werte gespeichert; `diffWeight`, STEP-Pulse, Drehzahl und Stepper-Auswahl bleiben unverändert.
 
+![Messwerte für den ausgewählten Tabelleneintrag](docs/screenshots/touch_tune_measurements.png)
+
 ### 6. Schritte anpassen
 
-Wähle **Schritte**, um die STEP-Pulse pro `trickleMap`-Eintrag anzupassen. Der mittlere Button zeigt wie beim Messwerte-Dialog den gerade bearbeiteten `diffWeight`-Eintrag und wechselt beim Drücken zum nächsten Eintrag. Der Button oberhalb des `T`-Testbuttons wählt die Schrittweite `1`, `10` oder `100`; mit `+` und `-` wird die Schrittzahl um diese Schrittweite geändert. Der kleinste zulässige Wert ist `1`.
+Wähle **Schritte**, um die STEP-Pulse pro `trickleMap`-Eintrag anzupassen. Direkt unter der Schrittzahl stehen der breite Schrittweiten-Button und rechts daneben der blaue Motor-Testbutton mit Dreieck-Symbol. Der Schrittweiten-Button wechselt zwischen `1`, `10` und `100`; mit `+` und `-` wird die Schrittzahl entsprechend geändert. Der kleinste zulässige Wert ist `1`. Der breite Button in der nächsten Zeile zeigt den gerade bearbeiteten `diffWeight`-Eintrag und wechselt beim Drücken zum nächsten Eintrag.
+
+![Schritte-Tuning mit Schrittweite 1, Motor-Test und Eintragswahl](docs/screenshots/touch_tune_steps.png)
+
+Der blaue Testbutton führt **eine echte Motorbewegung** mit der aktuell im Dialog eingestellten Schrittzahl aus, auch vor dem Speichern. Stepper-Nummer, Drehzahl und Richtung stammen aus dem gewählten Tabelleneintrag. Stelle eine Auffangschale bereit. Der Test startet keinen automatischen Dosierlauf und speichert das Profil nicht. Während der Bewegung ist der Testbutton gesperrt; das Schließen des Tuning-Dialogs bricht einen noch laufenden Test ab.
 
 Wenn du ausschließlich Schritte änderst, werden nur die `stepper.steps`-Werte überschrieben. Änderst du im selben Dialog auch Gewicht/Umdr oder den Map-Limit-Faktor, haben deine manuell geänderten Schrittzahlen Vorrang vor der Neuberechnung. Änderungen an Messwerten werden ebenfalls übernommen. Eine spätere Änderung von Gewicht/Umdr oder Map-Limit-Faktor in einer neuen Tuning-Sitzung berechnet die Schrittzahlen erneut.
 
 ### 7. Einstellungen speichern
 
-Beim Wechseln der Tuning-Art bleiben die Eingaben im geöffneten Dialog erhalten. **Speichern** übernimmt alle Änderungen aus allen vier Tuning-Arten gemeinsam und schließt den Dialog, unabhängig vom gerade angezeigten Modus. **Abbrechen** verwirft alle ungespeicherten Eingaben. Die Firmware schreibt das Profil einmalig in das aktive Dateisystem. Läuft der Trickler von SD, ist das die SD-Karte; läuft er ohne SD von LittleFS, ist es der interne Flash.
+Beim Wechseln der Tuning-Art bleiben die Eingaben im geöffneten Dialog erhalten. **Speichern** (grüne Diskette unten links) übernimmt alle Änderungen aus allen vier Tuning-Arten gemeinsam und schließt den Dialog, unabhängig vom gerade angezeigten Modus. **Abbrechen** (rotes Kreuz unten rechts) verwirft alle ungespeicherten Eingaben. Die Firmware schreibt das Profil einmalig in das aktive Dateisystem. Läuft der Trickler von SD, ist das die SD-Karte; läuft er ohne SD von LittleFS, ist es der interne Flash.
 
-![Einstellungen speichern](https://github.com/user-attachments/assets/7a7d0735-f0f2-4740-8e7b-fcf7f4df550e)
 
 ### 8. Ergebnis testen
 
 Wechsle zurück in den Tab `Trickler` und teste die neuen Einstellungen.
 
-![Ergebnis testen](https://github.com/user-attachments/assets/b3d187a3-37ab-4deb-ba9e-6d8f17629922)
 
 #### Diagnose-Anzeige beim Trickeln
 
@@ -335,6 +347,8 @@ W0.482 ST167 RPM200 M5/3
 
 Das bedeutet: `W` = `diffWeight` des aktiven Eintrags, `ST` = `steps`, `RPM` = `rpm`, `M` = benötigte / aktuelle Anzahl stabiler Messwerte. Diese Anzeige hilft beim Feinabstimmen der `trickleMap`.
 
+![Laufender Trickler mit gesperrtem Zielgewicht und Diagnosezeile](docs/screenshots/touch_running.png)
+
 <a id="profil-löschen"></a>
 
 ## Profil löschen
@@ -343,18 +357,20 @@ Das bedeutet: `W` = `diffWeight` des aktiven Eintrags, `ST` = `steps`, `RPM` = `
 
 Wechsle in den Tab `Profil` und wähle das Profil aus, das gelöscht werden soll.
 
-![Profil auswählen](https://github.com/user-attachments/assets/c185afa4-03b1-41d3-b1b1-f0c7c5ff0df2)
+![Profil auswählen](docs/screenshots/touch_profile.png)
 
 ### 2. Profil löschen
 
-Klicke auf das **Löschen-Symbol**, um das ausgewählte Profil zu entfernen. Vor dem Löschen wechselt die Firmware auf `calibrate` und aktualisiert anschließend die Profilliste. Das Profil `calibrate` selbst kann am Display weder angepasst noch gelöscht werden.
+Klicke auf das **Löschen-Symbol**, um die Bestätigung zu öffnen. Der blaue Papierkorb bestätigt das Löschen; das rote Kreuz bricht ab. Nach Bestätigung wechselt die Firmware vor dem Löschen auf `calibrate` und aktualisiert anschließend die Profilliste. Das Profil `calibrate` selbst kann am Display weder angepasst noch gelöscht werden.
 
 > **Hinweis:** Das Löschen eines Profils kann nicht rückgängig gemacht werden.
 
-![Profil löschen](https://github.com/user-attachments/assets/305e6653-df4b-47c8-8035-8d8d7b95fbcd)
+![Löschen bestätigen oder abbrechen](docs/screenshots/touch_delete.png)
 
 
 ## Pulverprofil-Editor
+
+![Pulverprofil-Editor mit geladenem Beispielprofil avg](docs/screenshots/web_profile.png)
 
 Der Webserver enthält `profile_editor.html` als `Pulverprofil-Editor`. Damit können alle von der Firmware unterstützten Profilfelder (`general`, `stepper.1`/`2` und die `trickleMap`-Schritte sowie die Kalibrier-Profilform) bearbeitet, heruntergeladen und über den Webserver direkt in `/profiles` des aktiven Dateisystems gespeichert werden. Auch `general.startAtZero`, `general.sessionCounter` und `general.measurements` sind eigene Eingabefelder.
 
@@ -469,6 +485,8 @@ Beispiel für das neue Profilformat:
 
 ### `general`
 
+![Allgemeine Profilfelder im Webeditor, einschließlich Map-Limit-Faktor](docs/screenshots/web_profile_general.png)
+
 * `targetWeight`: Wird beim Laden des Profils übernommen. Änderungen am Display werden beim Starten des Trickelns wieder in dieses Profil geschrieben.
 * `tolerance`: erlaubte Abweichung zum Zielgewicht.
 * `alarmThreshold`: Überwurf-Grenze. Wenn `targetWeight + alarmThreshold` erreicht oder überschritten wird, stoppt die Firmware, piept mehrfach und zeigt eine Warnung an. Bei `0` ist der Alarm deaktiviert.
@@ -483,16 +501,20 @@ Nur `targetWeight` ist in `general` erforderlich. Fehlende unterstützte Felder 
 
 ### `stepper`
 
+![Einstellungen beider Stepper im Webeditor](docs/screenshots/web_profile_steppers.png)
+
 * `1` und `2`: Einstellungen für Trickler 1 und Trickler 2 (die Objekt-Schlüssel sind die Stepper-Nummern).
 * Mit `enabled` aktivierst du den jeweiligen Stepper für den automatischen Grobwurf.
 * `weightPerRev`: Pulvermenge pro Umdrehung bei `rpm`.
 * `rpm`: Motordrehzahl in U/min für den automatischen Grobwurf.
 
-Nur Stepper `"1"` mit `weightPerRev` ist erforderlich. Bei Stepper 1 fehlen `enabled` und `rpm` standardmäßig als `true` und `200`. Stepper 2 darf vollständig fehlen und ist dann mit `enabled: false`, `weightPerRev: 10.000` und `rpm: 200` vorbelegt.
+Nur Stepper `"1"` mit `weightPerRev` ist erforderlich. Fehlen bei Stepper 1 `enabled` und `rpm`, gelten dafür `true` und `200`. Stepper 2 darf vollständig fehlen und ist dann mit `enabled: false`, `weightPerRev: 10.000` und `rpm: 200` vorbelegt.
 
 Der automatische Grobwurf läuft einmal zu Beginn jeder neuen Ladung. Die Firmware berechnet aus Zielgewicht, aktuellem Gewicht, `weightGap` und `weightPerRev` die benötigten STEP-Pulse. Es wird genau der in `general.bulkStepper` eingetragene Grob-Stepper verwendet. Wenn der gewählte Stepper nicht aktiviert ist oder `weightPerRev` den Wert `0` hat, wird der automatische Grobwurf übersprungen.
 
 ### `trickleMap`
+
+![Ein Feinwurf-Eintrag im Webeditor mit Messungen, Schritten, Drehzahl und Richtung](docs/screenshots/web_profile_map_entry.png)
 
 `trickleMap` ist die eigentliche Trickel-Tabelle. Es sind maximal 16 Einträge möglich.
 
@@ -523,6 +545,8 @@ Damit ist beispielsweise auch dieses kompakte Profil gültig:
 ```
 
 In normalen Pulverprofilen gilt `stepper.reverse` ausschließlich für den jeweiligen Feinwurf aus der `trickleMap`. Der automatisch berechnete Grobwurf läuft immer in normaler Richtung. Im Sonderprofil `calibrate` steuert das dortige `stepper.reverse` die Richtung des gesamten Kalibrierwurfs.
+
+![Das mitgelieferte kompakte Profil min im Webeditor; fehlende optionale Felder werden ergänzt](docs/screenshots/web_profile_min.png)
 
 Die Firmware wählt den ersten Eintrag, dessen `diffWeight` noch zum Abstand zwischen aktuellem Gewicht und Zielgewicht passt. Je näher das Zielgewicht kommt, desto kleinere `diffWeight`-Einträge werden verwendet.
 
@@ -698,7 +722,7 @@ Der STREAM-Modus entspricht einem leeren `scale.protocol` und kann in `settings.
 
 Beim Öffnen von `Einstellungen` auf dem Gerät wird die vorhandene `/config.txt` geladen. `Speichern` ersetzt diese Datei; starte das Gerät anschließend über den Menüpunkt `Neustart` neu. Bis dahin arbeitet die Firmware mit den zuvor geladenen Einstellungen. Vermeide in dieser Zwischenzeit Änderungen am Display, die die Konfiguration erneut speichern und damit deine Dateibearbeitung überschreiben könnten. Offline erzeugt `Herunterladen` die Datei für den PC; kopiere sie anschließend als `config.txt` ins Hauptverzeichnis der SD-Karte.
 
-<img width="372" height="1220" alt="image" src="https://github.com/user-attachments/assets/bfb98107-4ebd-4d78-a6bd-ee829973a59f" />
+![Einstellungen mit Beispieldaten](docs/screenshots/web_settings.png)
 
 
 <a id="wann-werden-änderungen-übernommen"></a>
@@ -710,7 +734,7 @@ Beim Öffnen von `Einstellungen` auf dem Gerät wird die vorhandene `/config.txt
 | WLAN-Schalter oder Waagen-Protokoll am Display | Ja | Sofort in `config.txt`. |
 | Profil am Display oder in der Fernsteuerung wählen | Ja, das Profil wird geladen | Die Auswahl wird beim nächsten `Start` in `config.txt` gesichert. |
 | Zielgewicht am Display ändern | Anzeige sofort | Beim nächsten `Start` im aktiven Profil; ein vorheriger Profilwechsel verwirft die ungespeicherte Eingabe. |
-| Zielgewicht in der Browser-Fernsteuerung ändern | Ja | Sofort im aktiven Profil. |
+| Zielgewicht in der Browser-Fernsteuerung eingeben | Zunächst nur im Browser | Beim Browser-Start über `/setTarget` übertragen und im aktiven Profil gespeichert. |
 | Tuning am Display speichern | Ja | Die Änderungen des gesamten Dialogs werden zusammen im Profil gespeichert. |
 | `config.txt` über Einstellungen oder Dateibrowser speichern | Nein | Datei gespeichert; anschließend neu starten. |
 | Vorhandene Profildatei im Webeditor ersetzen | Beim erneuten Laden | Das Profil neu wählen oder neu starten; auch `Start` lädt die Profildatei erneut. |
@@ -723,7 +747,21 @@ Die Zielgewicht-Speicherung gilt für normale Profile; `calibrate` besitzt kein 
 
 ## Firmware-Update
 
-### Bevorzugte Variante: Update über die SD-Karte
+### Bevorzugte Variante: Web-Update
+
+Öffne den [Web-Updater](https://ripper121.github.io/RoboTrickler/) in Chrome oder Edge, verbinde die Steuerung über USB mit dem Computer, wähle eine Firmware-Version aus und folge den Anweisungen auf dem Bildschirm. Die vollständige Installation benötigt 8 MB Flash und installiert Firmware und LittleFS neu.
+
+Sichere vorher deine Konfiguration und Profile: Der Web-Updater löscht den internen Flash einschließlich LittleFS. Die ausführliche Anleitung findest du unter [Installation im Webbrowser](#installation-im-webbrowser).
+
+Für den SD-Betrieb: Sichere die Karte vor dem Formatieren, formatiere sie als FAT32 und kopiere den entpackten Inhalt der zur Firmware passenden `SD-Files.zip` direkt ins Hauptverzeichnis.
+
+### Alternative Update-Varianten
+
+1. **USB-Paket:** Lade `USB-Flash.zip` von der [Release-Seite](https://github.com/ripper121/RoboTrickler/releases/latest) herunter und entpacke es. Starte unter Windows `flash.bat`; für macOS/Linux folge der [Anleitung zum USB-Paket](#installation-aus-dem-usb-paket). Auch diese vollständige Installation ersetzt den internen Flash einschließlich LittleFS.
+2. **SD-Karte:** Kopiere die Update-Dateien aus der passenden `SD-Files.zip` auf eine FAT32-SD-Karte. Beim Start installiert die Steuerung `firmware.bin` und `littlefs.bin`; das LittleFS-Image ersetzt dabei die internen Dateien. Das genaue Vorgehen steht unten.
+3. **Geräte-Weboberfläche über WLAN:** Öffne auf der Webseite des Tricklers `Firmware-Update`, wähle `firmware.bin` und lade die Datei hoch. Nach erfolgreichem Schreiben startet der Trickler neu. Auf derselben Seite kannst du zusätzlich `littlefs.bin` hochladen. Ein reines Firmware-Update aktualisiert weder LittleFS noch die Webdateien auf SD; aktualisiere diese bei Bedarf separat aus dem passenden Release.
+
+#### SD-Karte: Vorgehen
 
 1. Drücke `Stop` und sichere deine `config.txt`, den Ordner `/profiles` sowie weitere selbst geänderte Dateien von der SD-Karte.
 2. Öffne den [neuesten RoboTrickler-Release](https://github.com/ripper121/RoboTrickler/releases/latest) und lade `SD-Files.zip` herunter.
@@ -731,14 +769,9 @@ Die Zielgewicht-Speicherung gilt für normale Profile; `calibrate` besitzt kein 
 4. Entpacke `SD-Files.zip` auf deinem Computer in einen neuen Ordner.
 5. Kopiere den gesamten **Inhalt** des entpackten Archivs in das Hauptverzeichnis der SD-Karte. `firmware.bin`, `littlefs.bin`, `config.txt` und die Ordner `profiles` und `system` müssen direkt im Hauptverzeichnis liegen. Lege keinen zusätzlichen übergeordneten Ordner auf der SD-Karte an.
 6. Übernimm bei Bedarf deine gesicherte Konfiguration und deine eigenen Profile. Prüfe sie vorher auf das aktuelle Format, da alte Dateiformate nicht automatisch migriert werden.
-7. Setze die SD-Karte in den ausgeschalteten Trickler ein und schalte ihn ein. Die Firmware installiert zuerst `firmware.bin` und nach dem Neustart `littlefs.bin`. Lasse die Stromversorgung angeschlossen, bis beide Updates abgeschlossen sind und die normale Oberfläche wieder erscheint.
+7. Setze die SD-Karte in den ausgeschalteten Trickler ein und schalte ihn ein. Die Firmware prüft zuerst `firmware.bin` und anschließend im selben Startvorgang `littlefs.bin`. Lasse die Stromversorgung angeschlossen, bis die Updates abgeschlossen sind und die normale Oberfläche wieder erscheint.
 
-Der Fortschritt wird während des frühen Startvorgangs auf Englisch angezeigt, da die Konfiguration zu diesem Zeitpunkt noch nicht geladen ist. Nach jedem erfolgreichen Teil-Update löscht die Firmware die zugehörige Datei und startet neu. Deshalb kann der vollständige Vorgang mehrere Neustarts umfassen.
-
-### Alternative Update-Varianten
-
-* **Über die Weboberfläche:** Öffne bei aktivem WLAN `Firmware-Update`, wähle `firmware.bin` und lade die Datei hoch. Nach erfolgreichem Schreiben startet der Trickler neu. Auf derselben Seite kannst du zusätzlich `littlefs.bin` hochladen, um das interne Dateisystem zu aktualisieren.
-* **Vollständige Neuinstallation über USB:** Folge der Anleitung unter [Flash via USB](#flash-via-usb).
+Der Fortschritt wird während des frühen Startvorgangs auf Englisch angezeigt, da die Konfiguration zu diesem Zeitpunkt noch nicht geladen ist. Nach jedem erfolgreichen Teil-Update löscht die Firmware die zugehörige Datei. Nachdem beide Dateien geprüft wurden, startet sie neu, wenn mindestens ein Update erfolgreich war. Scheitert das Firmware-Update, wird LittleFS in diesem Startvorgang nicht aktualisiert.
 
 `firmwareUpdate.check` steuert nur die automatische Versionsprüfung bei bestehender Netzwerkverbindung. Wird eine neuere Firmware gefunden, zeigt der Trickler einen Hinweis mit der neuen Versionsnummer und der Download-Adresse an. Das eigentliche Update wird nicht automatisch heruntergeladen oder installiert.
 
@@ -748,9 +781,9 @@ Die Versionsprüfung wird beim Starten der Webserver-Dienste in einem verbundene
 
 | Update | Auswirkung auf gespeicherte Dateien |
 | --- | --- |
-| Firmware über Browser oder `/firmware.bin` auf SD | Aktualisiert die Anwendung. SD-Dateien und das interne LittleFS werden dadurch nicht aktualisiert. |
+| Firmware-Upload über die Geräte-Weboberfläche oder `/firmware.bin` auf SD | Aktualisiert die Anwendung. SD-Dateien und das interne LittleFS werden dadurch nicht aktualisiert. |
 | `littlefs.bin` über Browser oder SD | Ersetzt das gesamte interne Dateisystem, einschließlich dort gespeicherter Konfiguration, Profile, Sprachen und Weboberfläche. Dateien auf SD bleiben erhalten. |
-| Vollständige USB-Installation | Löscht den internen Flash und installiert Firmware, Partitionierung und LittleFS neu; siehe USB-Anleitung. |
+| Vollständige USB-Installation über Web-Updater oder USB-Paket | Löscht den internen Flash und installiert Firmware, Partitionierung und LittleFS neu; siehe USB-Anleitung. |
 
 Sichere vor einem LittleFS-Update die internen Dateien per Dateibrowser oder **Flash → SD**. Das gilt auch dann, wenn gerade von SD gestartet wurde: Das LittleFS-Update überschreibt trotzdem den internen Speicher. Die Synchronisation sichert nur Konfiguration und Profile; selbst bearbeitete Sprach- oder Webdateien separat herunterladen.
 
@@ -767,14 +800,18 @@ Ab Firmware 2.13 (nur nach einem USB-Update) kann der Trickler auch ohne SD-Kart
 
 Die Auswahl gilt für **alle** Dateien. Fehlende Web-, Sprach- oder Konfigurationsdateien auf einer eingebundenen SD-Karte werden nicht einzeln aus LittleFS ergänzt. Eine leere, lesbare SD-Karte kann deshalb die interne Weboberfläche verdecken. Im Tab `Info` lässt sich der tatsächlich verwendete Speicher erkennen.
 
-Wechsle oder entferne die SD-Karte bei ausgeschaltetem Gerät und starte danach neu. Ein Wechsel des aktiven Speichers im laufenden Betrieb ist nicht vorgesehen. Kann weder SD noch LittleFS eingebunden werden, erscheint `Filesystem mount failed`; ein leeres internes Dateisystem wird nicht automatisch formatiert oder mit sämtlichen Webdateien neu aufgebaut. Stelle in diesem Fall die SD-Dateien bzw. das passende LittleFS-Image wieder her. Bei älteren Geräten mit weniger als 8 MB Flash und ohne LittleFS-Unterstützung bleibt die SD-Karte erforderlich.
+Wechsle oder entferne die SD-Karte bei ausgeschaltetem Gerät und starte danach neu. Ein Wechsel des aktiven Speichers im laufenden Betrieb ist nicht vorgesehen. Kann weder SD noch LittleFS eingebunden werden, erscheint `Filesystem mount failed`; ein leeres internes Dateisystem wird nicht automatisch formatiert oder mit sämtlichen Webdateien neu aufgebaut. Stelle in diesem Fall die SD-Dateien bzw. das passende LittleFS-Image wieder her. Die aktuellen Release-Werkzeuge erzeugen ausschließlich das 8-MB-Layout mit LittleFS. Für Geräte mit nur 4 MB Flash gibt es kein aktuelles passendes Release-Paket; eine SD-Karte ersetzt den fehlenden Flash-Speicher nicht.
 
 ## Konfiguration und Profile zwischen Flash und SD synchronisieren
 
 Sind sowohl SD-Karte als auch LittleFS verfügbar, zeigt das Display zwei Synchronisations-Funktionen an:
 
-* Mit **Flash → SD** kopierst du `config.txt` und den Ordner `/profiles` vom internen Flash auf die SD-Karte.
-* Mit **SD → Flash** kopierst du `config.txt` und den Ordner `/profiles` von der SD-Karte in den internen Flash.
+* Mit **Flash → SD** (linkes Synchronisationssymbol, Pfeil nach unten) kopierst du `config.txt` und den Ordner `/profiles` vom internen Flash auf die SD-Karte.
+* Mit **SD → Flash** (rechtes Synchronisationssymbol, Pfeil nach oben) kopierst du `config.txt` und den Ordner `/profiles` von der SD-Karte in den internen Flash.
+
+![Bestätigung mit ausgeschriebener Kopierrichtung Flash nach SD](docs/screenshots/touch_sync.png)
+
+![Die umgekehrte Richtung: SD nach Flash](docs/screenshots/touch_sync_to_flash.png)
 
 Vor dem Kopieren erscheint eine Bestätigungsabfrage. Nach Abschluss zeigt die Firmware die Anzahl der kopierten Dateien an; bei **Flash → SD** startet der Trickler nach Bestätigung der Erfolgsmeldung mit `OK` neu und lädt die SD-Dateien. Bei **SD → Flash** bleibt SD aktiv, ein Neustart wird nicht angefordert. Ist eines der beiden Dateisysteme nicht verfügbar, werden die Funktionen ausgeblendet.
 
@@ -843,7 +880,7 @@ Beispiel:
 http://192.168.178.22
 ```
 
-<img width="564" height="803" alt="image" src="https://github.com/user-attachments/assets/1020a029-fa60-4a1b-92d6-dadfe88fd2e2" />
+![WLAN-Einrichtung mit Beispielnetzwerk](docs/screenshots/web_wifi.png)
 
 
 <a id="weboberfläche"></a>
@@ -864,7 +901,9 @@ Darunter führen zwei Links zu den [Firmware-Versionen](https://github.com/rippe
 
 Die Weboberfläche ist mehrsprachig. Die Texte werden aus `/system/lang/<sprache>.json` geladen und folgen der in `config.txt` eingestellten `language` (mit Rückfall auf Englisch). Wird eine Seite offline direkt von der SD-Karte geöffnet, richtet sich die Sprache stattdessen nach der Browser-Spracheinstellung (siehe [Weboberfläche offline nutzen](#weboberfläche-offline-nutzen)).
 
-<img width="556" height="675" alt="image" src="https://github.com/user-attachments/assets/a1242108-1b66-4a10-99d4-2867f0f85b6c" />
+![Startseite der Geräte-Weboberfläche](docs/screenshots/web_home.png)
+
+Die Versionsangabe im Fußbereich der mitgelieferten Startseite ist ein fester Webseitentext und zeigt derzeit noch `2.14`. Die tatsächlich installierte Firmware-Version liest du am Touchscreen ab.
 
 
 <a id="weboberfläche-offline-nutzen"></a>
@@ -894,9 +933,13 @@ Verwende für die Offline-Werkzeuge den vollständigen entpackten SD-Release-Ord
 * Steuere das Trickeln mit `Start` und `Stop`.
 * Lies das aktuell gemessene Gewicht ab.
 
-Das Setzen von Zielgewicht und Profil wirkt sofort über dieselbe Firmware-Logik wie am Display (`/setTarget` bzw. `/setProfile`); ein Neustart ist dafür nicht nötig. Das Zielgewicht wird sofort in das aktive Profil geschrieben. Eine Profilwahl wird sofort geladen, aber erst beim Starten eines Wurfs in `config.txt` dauerhaft gespeichert. Während der Trickler läuft, weist die Firmware Änderungen an Zielgewicht und Profil mit HTTP-Status `409` zurück.
+Eine Profilwahl wird sofort über `/setProfile` geladen, aber erst beim Starten eines Wurfs in `config.txt` dauerhaft gespeichert. Das Zielgewicht bearbeitest du zunächst nur im Browser. Beim Drücken von `Start` überträgt die Seite Profil und Zielgewicht und startet dann den Trickler. `/setTarget` schreibt den übertragenen Wert sofort in das aktive Profil; ein Neustart ist dafür nicht nötig. Während der Trickler läuft, weist die Firmware API-Änderungen an Zielgewicht und Profil mit HTTP-Status `409` zurück.
 
-Die Seite fragt Gewicht und Laufstatus ungefähr einmal pro Sekunde ab. Sie zeigt keine vollständige Kopie des Touchscreens: Dialoge, Gewichtswarnfarben, Log und Zähler werden nicht mit übertragen. Ein ungültiger Messwert wird vom Gerät als `null` gemeldet; das Zahlenfeld im Browser kann dann leer erscheinen.
+Die Seite fragt Gewicht und Laufstatus ungefähr einmal pro Sekunde ab. Die Profilwahl ist während des Betriebs deaktiviert. Das Zielgewicht bleibt im Browser editierbar, wird dadurch aber nicht an den laufenden Trickler übertragen. Die Seite zeigt keine vollständige Kopie des Touchscreens: Dialoge, Gewichtswarnfarben, Log und Zähler werden nicht mit übertragen. Ein ungültiger Messwert wird vom Gerät als `null` gemeldet; das Zahlenfeld im Browser kann dann leer erscheinen.
+
+![Browser-Fernsteuerung im Ruhezustand](docs/screenshots/web_trickler.png)
+
+![Browser-Fernsteuerung während des Betriebs mit Stopp und gesperrter Profilwahl](docs/screenshots/web_trickler_running.png)
 
 Das Schließen der Browserseite oder der Verlust der WLAN-Verbindung sendet keinen `Stop`-Befehl. Der Gerätezustand bleibt bestehen. Bei einer unterbrochenen Verbindung können zuletzt geladene Browserwerte stehen bleiben; prüfe den Zustand am Display und stoppe dort bei Bedarf. Lade die Browserseite nach einem Neustart des Geräts neu.
 
@@ -906,26 +949,26 @@ Mit dem `Dateibrowser` kannst du Dateien und Ordner im aktiven Dateisystem über
 
 Ausnahmen sind die Web-API-Funktionen `/setTarget` und `/setProfile`: `/setTarget` schreibt das Zielgewicht sofort in das aktive Profil, `/setProfile` lädt das gewählte Profil sofort. Die dauerhafte `activeProfile`-Speicherung erfolgt wie am Display beim Starten eines Wurfs.
 
-Ein Upload ersetzt eine vorhandene Datei desselben Namens. Das Löschen eines Ordners entfernt auch seinen Inhalt; es gibt keinen Papierkorb. Lade wichtige Dateien vor Änderungen herunter. Nach einem Upload die Datei erneut öffnen und Inhalt bzw. Größe prüfen: Die Upload-Bestätigung allein bestätigt nicht, dass JSON gültig ist oder alle Daten auf dem Speicher angekommen sind.
+Ein Upload ersetzt eine vorhandene Datei desselben Namens. Die Firmware schreibt zunächst eine temporäre Datei und ersetzt das Ziel erst nach erfolgreichem Abschluss; fehlgeschlagene Schreibvorgänge werden als Fehler gemeldet. Dies prüft nicht, ob hochgeladenes JSON zur Konfiguration oder zum Profilformat passt. Das Löschen eines Ordners entfernt auch seinen Inhalt; es gibt keinen Papierkorb. Lade wichtige Dateien vor Änderungen herunter und prüfe Uploads durch erneutes Öffnen oder Herunterladen. Stoppe den Trickler vor Dateiänderungen; während eines Laufs werden schreibende Dateibrowser-Aktionen zurückgewiesen.
 
 Falls nach einer Änderung weiterhin die alte Weboberfläche erscheint, prüfe, ob daneben eine gleichnamige `.gz`-Datei liegt, z.B. `index.html.gz`. Der Webserver bevorzugt diese komprimierte Fassung. Aktualisiere sie ebenfalls oder entferne die veraltete `.gz`-Fassung, wenn die neue unkomprimierte Datei vorhanden ist, und lade die Browserseite neu.
 
-![image](https://github.com/ripper121/RoboTrickler/assets/11836272/e3c420b0-bd87-42ac-ae9b-8e6ad72f0107)
+![Dateibrowser des aktiven Dateisystems](docs/screenshots/web_files.png)
 
 ## Web-API
 
-Diese Endpunkte können im Browser oder aus einer eigenen Steuerung aufgerufen werden:
+Lesende Endpunkte verwenden `GET`. Zustandsänderungen benötigen `POST`, `PUT` oder `DELETE`; ein Aufruf über die Browser-Adresszeile reicht dafür nicht mehr. Die mitgelieferte Weboberfläche verwendet bereits die passenden Methoden. Eigene Clients müssen entsprechend angepasst werden.
 
 * `GET /getTricklerState`: aktuelles Gewicht und Laufstatus als JSON lesen, z. B. `{"weight":40.000,"running":true,"trickle":1}`. Ohne gültigen Messwert ist `weight` gleich `null`. `running` beschreibt den aktiven Betrieb einschließlich Wartephasen, nicht die momentane Motorbewegung. `trickle` ist `0` im Stillstand, `1` beim Dosieren oder Warten und `2`, wenn das Ziel erreicht ist und auf das Entfernen der Ladung gewartet wird.
 * `GET /getTarget`: Zielgewicht lesen.
-* `GET /setTarget?targetWeight=WERT`: Zielgewicht setzen und im aktuellen Profil speichern. Erlaubt sind Werte größer `0` bis maximal `500.000`. Während eines laufenden Trickelvorgangs antwortet die Firmware mit `409`. Beispiel: `/setTarget?targetWeight=40`.
+* `POST /setTarget?targetWeight=WERT`: Zielgewicht setzen und im aktuellen Profil speichern. Erlaubt sind endliche Zahlen größer `0` bis maximal `500.000`. Genau ein Parameter `targetWeight` ist erforderlich; ungültige Eingaben liefern `400`, ein laufender Trickelvorgang oder Datei-Upload `409`.
 * `GET /getProfile`: aktuelles Profil lesen.
 * `GET /getLanguage`: aktuell geladene Sprache lesen.
 * `GET /getProfileList`: Liste der erkannten Profile als JSON-Array lesen, z.B. `["avg","calibrate"]`.
-* `GET /setProfile?profileNumber=NUMMER`: Profil über die nullbasierte Nummer aus der Profilliste wählen und sofort laden. Während eines laufenden Trickelvorgangs antwortet die Firmware mit `409`; die Auswahl wird beim Starten eines Wurfs dauerhaft in `config.txt` gespeichert.
-* `GET /system/start`: Trickeln starten. Wenn kein gültiges Profil geladen werden kann, antwortet die Firmware mit `409`.
-* `GET /system/stop`: Trickeln stoppen.
-* `GET /reboot`: Trickler neu starten.
+* `POST /setProfile?profileNumber=NUMMER`: Profil über die nullbasierte Ganzzahl aus der Profilliste wählen und sofort laden. Genau ein Parameter `profileNumber` ist erforderlich; ungültige oder außerhalb der Liste liegende Werte liefern `400`. Während eines laufenden Trickelvorgangs oder Datei-Uploads antwortet die Firmware mit `409`; die Auswahl wird beim Starten eines Wurfs dauerhaft in `config.txt` gespeichert.
+* `POST /system/start`: Trickeln starten. Kann der Start nicht übernommen werden, etwa wegen eines Datei-Uploads, eines offenen Dialogs oder eines ungültigen Profils, antwortet die Firmware mit `409`.
+* `POST /system/stop`: Trickeln stoppen.
+* `POST /reboot`: Trickler neu starten. Während des Betriebs oder eines Datei-Uploads liefert die Firmware `409`.
 * `GET /fwupdate`: Firmware-Update-Seite öffnen.
 * `POST /update`: Firmware-Datei hochladen. Das Upload-Feld `firmware` schreibt die Firmware, das Upload-Feld `filesystem` schreibt bei aktivem LittleFS das interne Dateisystem-Image.
 * `GET /list?dir=/PFAD`: Dateien im aktiven Dateisystem auflisten.
@@ -936,7 +979,15 @@ Diese Endpunkte können im Browser oder aus einer eigenen Steuerung aufgerufen w
 * `GET /api/wifi/scan`: verfügbare WLAN-Netzwerke als JSON lesen. Während ein Scan noch läuft, antwortet die Firmware mit `202` und `{"scanning":true}`; danach kommt eine JSON-Liste mit SSID, RSSI, Kanal und Verschlüsselungsstatus.
 * `POST /api/wifi/save`: Formularfelder `ssid` und `password` speichern und das Gerät neu starten (von der Einrichtungsseite verwendet).
 
-Die Antwort `200` auf `/setTarget` oder `/setProfile` ist keine vollständige Eingabevalidierung: Nicht übernommene Werte können ebenfalls mit `200` beantwortet werden. Wenn du einen eigenen Client verwendest, lies den Wert mit `/getTarget` bzw. `/getProfile` zurück. Prüfe auch Datei-Uploads durch erneutes Herunterladen. Bei eigenen Multipart-Uploads muss der Dateiname den vollständigen Zielpfad enthalten; für `curl.exe` verhindert `-H "Expect:"` Probleme mit einer verzögerten Upload-Übertragung.
+Bei Browser-Schreibzugriffen prüft die Firmware den `Origin`-Header: Er muss zur aufgerufenen HTTP-Adresse passen. Verwende die Geräte-IP, `robo-trickler.local` oder `robo-trickler`; abweichende Ursprünge werden mit `403` abgewiesen. Clients ohne `Origin`-Header, etwa `curl.exe`, können die API weiterhin nutzen. Das ist keine Benutzeranmeldung.
+
+Für eigene Clients empfiehlt sich nach Änderungen das Zurücklesen mit `/getTarget` bzw. `/getProfile`. Bei eigenen Multipart-Uploads muss der Dateiname den vollständigen Zielpfad enthalten; für `curl.exe` verhindert `-H "Expect:"` Probleme mit einer verzögerten Upload-Übertragung. Beispiel zum Hochladen eines Profils bei gestopptem Trickler:
+
+```powershell
+curl.exe -sS -H "Expect:" -F "file=@avg.txt;filename=/profiles/avg.txt" "http://robo-trickler.local/system/resources/edit"
+```
+
+Dateipfade müssen absolute Pfade im aktiven Dateisystem sein und dürfen höchstens 80 Zeichen lang sein. Übergeordnete Pfadsegmente (`..`), leere Pfadsegmente und Rückstriche werden abgewiesen. Der Dateibrowser begrenzt einzelne Uploads auf 1 MiB. Firmware- und LittleFS-Images gehören in `Firmware-Update`, nicht in den Dateibrowser. Diese Updates sind während des Betriebs gesperrt; die Firmware prüft die Bildgrößen gegen die Zielpartition. Für LittleFS ist das vollständige passende Image erforderlich.
 
 # Fehlersuche
 
@@ -953,6 +1004,9 @@ Die Antwort `200` auf `/setTarget` oder `/setProfile` ist keine vollständige Ei
 | `Home page not found`, `WiFi setup page not found` oder `Filesystem file not found` | Webdateien fehlen im aktiven Speicher. Verwende das vollständige passende SD-Paket bzw. LittleFS-Image; eine eingebundene SD-Karte hat auch bei fehlenden Dateien Vorrang vor Flash. |
 | Browser zeigt veraltete Seite oder Werte | Prüfe die Verbindung und den tatsächlichen Zustand am Display und lade die Seite neu. Prüfe nach Änderungen an Webdateien auch vorhandene `.gz`-Kopien. |
 | Web-Start antwortet mit `409` | Start wurde nicht übernommen. Die konkrete Ursache steht am Display, etwa ein nicht ladbares Profil, ein Speicherschreibfehler oder das Profillimit. |
+| Eigener API-Client kann keine Werte mehr setzen | Seit 2.15 verwenden Setzen, Start, Stop und Neustart `POST`. Prüfe Methode und Parameter; ungültige Werte liefern `400`, belegte Ressourcen häufig `409`. |
+| Browser-Schreibzugriff liefert `403` | Öffne die Weboberfläche direkt über die Geräte-IP oder `robo-trickler.local`. Der Ursprung einer Browser-Anfrage muss zur Geräteadresse passen. |
+| I2S-/Stepper-Fehler, keine weitere Motorbewegung | Nach einem fehlgeschlagenen oder unvollständigen I2S-Schreibvorgang sperrt die Firmware weitere Bewegungen bis zum Neustart. Beende den Betrieb, prüfe Aufbau und Versorgung und starte die Steuerung anschließend neu. |
 | Firmware-Upload meldet `FAIL` | Der Web-Upload war nicht erfolgreich; es folgt kein automatischer Erfolgs-Neustart. Prüfe die Fehlermeldung am Display, den Dateityp und das passende Release. |
 
 Die Log-Anzeige ist begrenzt und wird beim Neustart gelöscht. Notiere bei wiederkehrenden Fehlern den genauen Meldungstext, die Firmware-Version, den aktiven Speicher und den verwendeten Dateinamen vor dem Neustart.
@@ -1348,19 +1402,33 @@ Lötpunkte Unterseite PCB (X geschlossen, leer offen):
 
 # Flash via USB
 
-Lade `usb-flash.zip` herunter: https://github.com/ripper121/RoboTrickler/releases/latest
+Die vollständige USB-Installation ist über den Browser oder das Paket `USB-Flash.zip` möglich. Beide Wege verwenden das aktuelle 8-MB-Layout mit LittleFS.
 
 > **Achtung:** Die vollständige USB-Installation löscht den gesamten internen Flash einschließlich der LittleFS-Konfiguration und der dort gespeicherten Profile. Sichere wichtige Dateien vorher über den Dateibrowser oder synchronisiere sie auf die SD-Karte. Dateien auf der SD-Karte werden durch den USB-Flashvorgang nicht gelöscht.
 
 Schließe die Steuerung mit dem USB-Kabel an den PC an und verbinde die Steuerung mit dem Netzteil.
 
+## Installation im Webbrowser
+
+1. Öffne den [Robo-Trickler Web-Updater](https://ripper121.github.io/RoboTrickler/) in Google Chrome oder Microsoft Edge am Computer.
+2. Wähle die gewünschte Firmware-Version. Schließe andere Programme, die den seriellen USB-Anschluss belegen, z.B. den seriellen Monitor.
+3. Verbinde die Steuerung über USB, wähle ihren Anschluss im Browser und folge den Anweisungen. Der Updater löscht den internen Flash und schreibt Bootloader, Partitionierung, Firmware und LittleFS vollständig neu.
+4. Warte bis zum Abschluss. Der Updater startet die Steuerung neu und zeigt einen Link zur passenden `SD-Files.zip` an.
+5. Falls du eine SD-Karte verwendest, sichere ihre Dateien, formatiere sie mit FAT32 und Standard-Zuordnungseinheit und kopiere den entpackten Inhalt der passenden `SD-Files.zip` direkt ins Hauptverzeichnis.
+
+Dieser USB-Web-Updater ist unabhängig vom Menüpunkt `Firmware-Update` auf der Geräte-Webseite: Ein Anwendungsupdate über WLAN ersetzt weder die Partitionierung noch automatisch LittleFS.
+
+## Installation aus dem USB-Paket
+
+Lade `USB-Flash.zip` von der [Release-Seite](https://github.com/ripper121/RoboTrickler/releases/latest) herunter und entpacke es.
+
 Für Windows:
 
-Entpacke `usb-flash.zip` und öffne `flash.bat`, dann drücke Enter.
+Öffne `flash.bat`, dann drücke Enter.
 
 Für Mac und Linux:
 
-Entpacke `usb-flash.zip`, installiere Espressifs `esptool` und führe die folgenden Befehle im entpackten Ordner aus. Die angegebenen Adressen gehören zum mitgelieferten 8-MB-Partitionsschema der Firmware 2.14; verwende sie nicht mit einem anderen Partitionsschema.
+Installiere Espressifs `esptool` und führe die folgenden Befehle im entpackten Ordner aus. Die angegebenen Adressen gehören zum mitgelieferten 8-MB-Partitionsschema der Firmware 2.15; verwende sie nicht mit einem anderen Partitionsschema.
 
 Download: [esptool](https://github.com/espressif/esptool)
 
@@ -1432,6 +1500,8 @@ Einstellung für andere Treiber:
 
 ![image](https://github.com/ripper121/RoboTrickler/assets/11836272/1617481f-c859-44ee-93a6-0f5c7c211055)
 
+<a id="trickler-schrittmotor-anschließen"></a>
+
 ## Trickler-Schrittmotor anschließen
 
 1. Schalte die Steuerung aus und trenne sie von der Stromversorgung.
@@ -1441,6 +1511,8 @@ Einstellung für andere Treiber:
 **Wichtig:** Schließe den Schrittmotor niemals bei eingeschalteter Steuerung an und ziehe den Stecker im Betrieb nicht ab. Dadurch kann der Motortreiber beschädigt werden.
 
 <img width="1000" height="1000" alt="X-MOTOR-Anschluss für den Trickler-Schrittmotor an der MKS-DLC32-Steuerung" src="https://github.com/user-attachments/assets/88b08f1f-74b2-4587-a600-72a13c42735c" />
+
+<a id="display-anschließen"></a>
 
 ## Display anschließen
 
