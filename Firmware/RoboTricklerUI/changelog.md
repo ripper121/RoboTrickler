@@ -2,7 +2,31 @@
 
 ## 2.15 (pre-release)
 
-Changes since the 2.14 release, commit `645a78a67d75b8f2af6d5e8414a474fec889adfe`.
+### Firmware-Update
+
+Es gibt zwei Möglichkeiten, die Firmware über USB zu installieren:
+
+1. **Webbrowser:** Öffne den [Web-Updater](https://ripper121.github.io/RoboTrickler/), wähle eine Version aus und folge den Anweisungen auf dem Bildschirm.
+2. **USB-Paket:** Lade `USB-Flash.zip` von der [Release-Seite](https://github.com/ripper121/RoboTrickler/releases/latest) herunter und entpacke es. Starte unter Windows `flash.bat`. Unter macOS oder Linux findest du die Anleitung zum Flashen im [Wiki](https://github.com/ripper121/RoboTrickler/wiki).
+
+Formatiere nach der gewählten Methode die SD-Karte als FAT32. Entpacke die zur Firmware passende `SD-Files.zip` und kopiere ihren Inhalt direkt in das Hauptverzeichnis der SD-Karte.
+
+Bei Fehlern oder Fragen: [Kontakt](https://shop.strenuous.dev/contact).
+
+---
+
+### Firmware update
+
+Choose one of two ways to install the firmware over USB:
+
+1. **Web browser:** Open the [browser updater](https://ripper121.github.io/RoboTrickler/), select a release, and follow the on-screen instructions.
+2. **USB package:** Download `USB-Flash.zip` from the [releases page](https://github.com/ripper121/RoboTrickler/releases/latest) and extract it. On Windows, run `flash.bat`; on macOS or Linux, follow the [wiki's USB flashing instructions](https://github.com/ripper121/RoboTrickler/wiki).
+
+After either method, format the SD card as FAT32. Extract the matching `SD-Files.zip` and copy its contents to the root of the SD card.
+
+For errors or questions, [contact us](https://shop.strenuous.dev/contact).
+
+---
 
 ### Highlights
 
@@ -44,39 +68,3 @@ Changes since the 2.14 release, commit `645a78a67d75b8f2af6d5e8414a474fec889adfe
 - Synchronized runtime state, weight snapshots and dialog flags reduce conflicting operations and duplicate completion handling across tasks.
 - Failed or partial I2S writes latch a motor-output fault and reject further moves until restart. Initialization now checks task, mutex and I2S setup failures; motor timing validation rejects unsupported step-rate combinations.
 - Step-tuning tests interrupt the idle scale-poll wait so a missing scale response does not delay the requested test.
-
-### Firmware-Update
-
-**Bevorzugte Variante: Web-Update**
-
-Öffne den [Web-Updater](https://ripper121.github.io/RoboTrickler/) in Chrome oder Edge, verbinde die Steuerung über USB, wähle eine Version aus und folge den Anweisungen auf dem Bildschirm.
-
-**Alternativen:**
-
-1. **USB-Paket:** Lade `USB-Flash.zip` von der [Release-Seite](https://github.com/ripper121/RoboTrickler/releases/latest) herunter und entpacke es. Starte unter Windows `flash.bat`. Die Anleitung für macOS/Linux findest du im [Wiki](https://github.com/ripper121/RoboTrickler/wiki/Anleitung-Firmware-2.15#flash-via-usb).
-2. **SD-Karte:** Entpacke die passende `SD-Files.zip` auf eine FAT32-SD-Karte. Beim Start installiert die Steuerung `firmware.bin` und `littlefs.bin` aus dem Hauptverzeichnis.
-3. **Geräte-Weboberfläche über WLAN:** Öffne auf der Webseite des Tricklers `Firmware-Update` und lade `firmware.bin` hoch. `littlefs.bin` kannst du auf derselben Seite separat hochladen. Ein reines Firmware-Update aktualisiert weder LittleFS noch die Webdateien auf SD.
-
-Die vollständige USB-Installation benötigt 8 MB Flash und löscht den internen Flash einschließlich Konfiguration und Profilen. Auch ein LittleFS-Update ersetzt die internen Dateien; sichere sie vorher.
-
-Für den SD-Betrieb nach der gewählten Methode: Sichere die Karte, formatiere sie als FAT32, entpacke die zur Firmware passende `SD-Files.zip` und kopiere ihren Inhalt direkt ins Hauptverzeichnis. Verwende die passenden Webdateien, da ältere Seiten noch GET für Schreibaktionen verwenden können.
-
-Bei Fehlern oder Fragen: [Kontakt](https://shop.strenuous.dev/contact).
-
-### Firmware update
-
-**Preferred method: browser updater**
-
-Open the [browser updater](https://ripper121.github.io/RoboTrickler/) in Chrome or Edge, connect the controller over USB, select a release, and follow the on-screen instructions.
-
-**Alternatives:**
-
-1. **USB package:** Download and extract `USB-Flash.zip` from the [releases page](https://github.com/ripper121/RoboTrickler/releases/latest). Run `flash.bat` on Windows; see the [wiki](https://github.com/ripper121/RoboTrickler/wiki/Anleitung-Firmware-2.15#flash-via-usb) for macOS/Linux.
-2. **SD card:** Extract the matching `SD-Files.zip` onto a FAT32 SD card. At startup, the controller installs `firmware.bin` and `littlefs.bin` from the card's root.
-3. **Device web interface over Wi-Fi:** Open `Firmware Update` on the device's website and upload `firmware.bin`. You can upload `littlefs.bin` separately on the same page. An application-only update does not update LittleFS or SD web files.
-
-The full USB installation requires 8 MB flash and erases internal settings and profiles. A LittleFS update also replaces internal files; back them up first.
-
-For SD operation after your chosen method, back up the card, format it as FAT32, then extract the matching `SD-Files.zip` and copy its contents to the card's root. Use the matching web files: older pages may still use GET for write actions.
-
-For errors or questions, [contact us](https://shop.strenuous.dev/contact).
