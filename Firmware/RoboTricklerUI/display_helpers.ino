@@ -134,24 +134,59 @@ void setProfileTabEnabled(bool enabled)
         lv_tabview_set_active(ui_TabView, 0, LV_ANIM_OFF);
     }
 
-    // The callbacks already refuse target edits during a run; show that state.
-    lv_obj_t *blockedTabButtons[] = {profileTabButton, infoTabButton,
-                                   ui_ButtonIncreaseTargetWeight, ui_ButtonDecreaseTargetWeight,
-                                   ui_ButtonAddWeightCycle};
-    for (lv_obj_t *tabButton : blockedTabButtons)
+    // The callbacks already refuse target edits during a run. Hiding the
+    // controls uses LVGL's existing object flag and needs no extra styles.
+    lv_obj_t *blockedControls[] = {profileTabButton, infoTabButton,
+                                  ui_ButtonIncreaseTargetWeight, ui_ButtonDecreaseTargetWeight,
+                                  ui_ButtonAddWeightCycle};
+    lv_obj_t *blockedTabLabels[] = {
+        lv_obj_get_child_by_type(profileTabButton, 0, &lv_label_class),
+        lv_obj_get_child_by_type(infoTabButton, 0, &lv_label_class)};
+    for (lv_obj_t *control : blockedControls)
     {
-        if (tabButton == NULL)
+        if (control == NULL)
         {
             continue;
         }
 
         if (enabled)
         {
-            lv_obj_remove_state(tabButton, LV_STATE_DISABLED);
+            lv_obj_remove_state(control, LV_STATE_DISABLED);
+            lv_obj_clear_flag(control, LV_OBJ_FLAG_HIDDEN);
         }
         else
         {
-            lv_obj_add_state(tabButton, LV_STATE_DISABLED);
+            lv_obj_add_state(control, LV_STATE_DISABLED);
+            if ((control == ui_ButtonIncreaseTargetWeight) ||
+                (control == ui_ButtonDecreaseTargetWeight))
+            {
+                lv_obj_add_flag(control, LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+    }
+    if (enabled)
+    {
+        lv_obj_set_width(ui_ButtonAddWeightCycle, 148);
+        updateAddWeightLabel();
+    }
+    else
+    {
+        lv_obj_set_width(ui_ButtonAddWeightCycle, lv_pct(100));
+        lv_label_set_text(ui_LabelAddWeightCycle, "Delta: -- - --");
+    }
+    for (lv_obj_t *tabLabel : blockedTabLabels)
+    {
+        if (tabLabel == NULL)
+        {
+            continue;
+        }
+        if (enabled)
+        {
+            lv_obj_clear_flag(tabLabel, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+            lv_obj_add_flag(tabLabel, LV_OBJ_FLAG_HIDDEN);
         }
     }
     lvglUnlock();

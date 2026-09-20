@@ -16,6 +16,7 @@ static void renderManualScreenshots()
     setProfileTabEnabled(false);
     lv_label_set_text(ui_LabelToggleTrickler, UI_SYMBOL_STOP);
     lv_obj_set_style_bg_color(ui_ButtonToggleTrickler, lv_color_hex(0xFF0000), LV_PART_MAIN);
+    lv_label_set_text(ui_LabelAddWeightCycle, "Delta: 0.400 - 0.157");
     lv_label_set_text(ui_LabelTricklerWeight, "39.600 gn");
     lv_label_set_text(ui_LabelInfo, "W0.241 ST84 RPM200 M5/3");
     savePreview("touch_running.ppm");

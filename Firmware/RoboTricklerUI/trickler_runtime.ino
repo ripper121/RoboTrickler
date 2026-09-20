@@ -122,6 +122,16 @@ static long calculateStepperStepsForWeight(double remainingWeight, double weight
   return steps;
 }
 
+static void updateDeltaLabel(double trickleWeight)
+{
+  double deltaWeight = (double)config.targetWeight - (double)weight;
+  char deltaText[48];
+  snprintf(deltaText, sizeof(deltaText), "Delta: %.*f - %.*f",
+           WEIGHT_DECIMALS, deltaWeight,
+           WEIGHT_DECIMALS, trickleWeight);
+  setLabelText(ui_LabelAddWeightCycle, deltaText);
+}
+
 static bool runBulkStepperMove(String &infoText, uint32_t runId)
 {
   // The optional bulk move removes most remaining weight first; profile steps
@@ -156,6 +166,7 @@ static bool runBulkStepperMove(String &infoText, uint32_t runId)
     return true;
   }
 
+  updateDeltaLabel(dispensedWeight);
   setStepperRpm(stepperNum, rpm);
   if (!step(stepperNum, stepsToMove, false, runId))
   {
@@ -309,6 +320,23 @@ static int selectProfileStep()
   return profileStep;
 }
 
+static void updateTricklePlanLabel(int profileStep, byte stepperNum)
+{
+  if ((profileStep < 0) || (profileStep >= config.profileEntryCount) ||
+      (stepperNum < 1) || (stepperNum > 2) ||
+      (config.motorStepsPerRev <= 0) ||
+      (config.profileStepperWeightPerRev[stepperNum] <= 0.0))
+  {
+    setLabelText(ui_LabelAddWeightCycle, "Delta: -- - --");
+    return;
+  }
+
+  double trickleWeight = (fabs((double)config.profileSteps[profileStep]) *
+                          config.profileStepperWeightPerRev[stepperNum]) /
+                         (double)config.motorStepsPerRev;
+  updateDeltaLabel(trickleWeight);
+}
+
 void updateActiveProfileStepCounterDisplay(int actualWeightCounter)
 {
   if ((activeProfileStep < 0) ||
@@ -350,6 +378,7 @@ static bool runProfileStep(bool calibrationProfile, int actualWeightCounter, uin
     stopTrickler();
     return false;
   }
+  updateTricklePlanLabel(profileStep, stepperNum);
 
   // setStepperRpm() is a plain assignment that step() reads, so set it every
   // step. A cached "if changed" guard would go stale after the bulk move (which

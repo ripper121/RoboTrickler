@@ -12,6 +12,10 @@ static lv_obj_t *dialogBackdrop = nullptr;
 static lv_obj_t *activeDialog = nullptr;
 static bool lvglLock() { return true; }
 static void lvglUnlock() {}
+static void updateAddWeightLabel()
+{
+    lv_label_set_text(ui_LabelAddWeightCycle, "0.001");
+}
 struct TextEntry { const char *key; const char *value; };
 #define DIALOG_ELEMENT_HEIGHT UI_TOUCH_TARGET_SIZE
 #include "ui_factories.inc"
@@ -181,13 +185,33 @@ int main(int argc, char **argv)
     pointerAt(x, y, true); pointerAt(240, y, true); pointerAt(240, y, false);
     require(actionCount == before, "slide into another control must not activate it");
     setProfileTabEnabled(false); settle();
+    lv_obj_t *profileTabLabel = lv_obj_get_child_by_type(
+        lv_tabview_get_tab_button(ui_TabView, 1), 0, &lv_label_class);
+    lv_obj_t *infoTabLabel = lv_obj_get_child_by_type(
+        lv_tabview_get_tab_button(ui_TabView, 2), 0, &lv_label_class);
     require(lv_obj_has_state(ui_ButtonIncreaseTargetWeight, LV_STATE_DISABLED) &&
             lv_obj_has_state(ui_ButtonDecreaseTargetWeight, LV_STATE_DISABLED) &&
-            lv_obj_has_state(ui_ButtonAddWeightCycle, LV_STATE_DISABLED), "run must visibly disable target editors");
+            lv_obj_has_state(ui_ButtonAddWeightCycle, LV_STATE_DISABLED) &&
+            lv_obj_has_flag(ui_ButtonIncreaseTargetWeight, LV_OBJ_FLAG_HIDDEN) &&
+            lv_obj_has_flag(ui_ButtonDecreaseTargetWeight, LV_OBJ_FLAG_HIDDEN) &&
+            !lv_obj_has_flag(ui_ButtonAddWeightCycle, LV_OBJ_FLAG_HIDDEN) &&
+            lv_obj_get_width(ui_ButtonAddWeightCycle) ==
+                lv_obj_get_content_width(ui_TabPageTrickler),
+            "run must replace target editors with a disabled message row");
+    require(std::strcmp(lv_label_get_text(ui_LabelAddWeightCycle),
+                        "Delta: -- - --") == 0,
+            "trickle plan placeholder text");
+    require(lv_obj_has_flag(profileTabLabel, LV_OBJ_FLAG_HIDDEN) &&
+            lv_obj_has_flag(infoTabLabel, LV_OBJ_FLAG_HIDDEN),
+            "run must hide disabled tab captions");
     pointerAt(x, y, true); pointerAt(x, y, false);
     require(actionCount == before, "disabled control must not activate");
     savePreview("trickler_running.ppm");
     setProfileTabEnabled(true);
+    settle();
+    require(lv_obj_get_width(ui_ButtonAddWeightCycle) == 148 &&
+            std::strcmp(lv_label_get_text(ui_LabelAddWeightCycle), "0.001") == 0,
+            "target increment control must be restored after a run");
     size_t minimumTuneFreeBlock = (size_t)-1;
     for (int language = 0; language < 2; ++language)
     {
