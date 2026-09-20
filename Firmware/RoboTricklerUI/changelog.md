@@ -3,10 +3,17 @@
 ## 2.15 (pre-release)
 
 ### Highlights
-- Unified touchscreen buttons and single-line labels to 44-pixel rows with 8-pixel horizontal and vertical spacing.
-- Improved LVGL touch target sizes, spacing, action-button contrast and slide-off cancellation; long dialog messages now scroll above fixed actions. Confirmation actions and sync directions have explicit labels, and target editors show their disabled state during a run.
+- Unified Trickler and tuning controls to 44-pixel rows with 8-pixel horizontal and vertical spacing.
+- Restored the larger Profile label/action row with 5-pixel action-button padding and made its Up/Down navigation buttons twice the standard touch height.
+- Improved LVGL touch target sizes, spacing, action-button contrast and slide-off cancellation; long dialog messages now scroll above fixed actions. Compact Flash/SD sync icons are restored, their confirmations state the direction explicitly, and target editors show their disabled state during a run.
 - Save buttons are now green and close/cancel buttons are red across the device dialogs and web tools.
-- Added a `1`/`10`/`100` increment selector above the Step Tuning test button.
+- Restored the compact Save and Close icons in the on-device profile-tuning dialog.
+- Expanded the profile-tuning labels and buttons to use the full dialog width.
+- Moved the tuning-mode selector to the top of its dialog and replaced the Step test text with a motor-move icon.
+- Replaced confirmation action text with standard OK, close, copy, delete and create symbols where the action is unambiguous.
+- Reorganized Step tuning so its increment selector sits below the step value, the motor test has a full-width row, and Save/Close remain at the dialog bottom.
+- Reduced Tune-dialog LVGL peak usage by rendering seven fixed button symbols directly instead of allocating child labels, and removed redundant default-theme style properties.
+- Put the Step Range and motor Test buttons on one row below the step value; the range button cycles `1`, `10`, and `100`.
 - Normalized button spacing across the tuning and confirmation dialogs.
 - Reduced LVGL dialog/style allocations and draw work so Profile tuning stays within the fixed 24 KiB UI pool.
 - Corrupt `config.txt` files are now preserved as `config.cor.txt` before the default configuration is generated, replacing an older recovery copy.

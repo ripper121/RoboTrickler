@@ -1,0 +1,1 @@
+Bring the 1,10,100 in one row directly below the Step label

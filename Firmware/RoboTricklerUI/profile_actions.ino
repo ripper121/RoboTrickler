@@ -197,7 +197,7 @@ bool deleteSelectedProfile()
     profileDeleteName = profileName;
     profileDeleteFilename = filename;
     profileDeleteConfirmPending = true;
-    showConfirmBox(String(langText("msg_delete_profile_confirm_prefix")) + profileName + langText("msg_delete_profile_confirm_suffix"), UI_FONT_LARGE, lv_color_hex(0xFFFFFF), langText("action_delete"));
+    showConfirmBox(String(langText("msg_delete_profile_confirm_prefix")) + profileName + langText("msg_delete_profile_confirm_suffix"), UI_FONT_LARGE, lv_color_hex(0xFFFFFF), UI_SYMBOL_DELETE);
     return true;
 }
 

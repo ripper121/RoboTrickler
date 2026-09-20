@@ -59,10 +59,8 @@ static void pumpUntil(std::atomic<bool> &flag)
   }
 }
 
-// Shared factory for the "button with a centered label" used throughout the
-// dialogs. Returns the button; its label is child 0 (lv_obj_get_child(btn, 0)).
-static lv_obj_t *createDialogButton(lv_obj_t *parent, int x, int y, int width,
-                                    const char *text, const lv_font_t *font, lv_event_cb_t eventCb)
+static lv_obj_t *createDialogButtonBase(lv_obj_t *parent, int x, int y, int width,
+                                        lv_event_cb_t eventCb)
 {
   lv_obj_t *button = lv_btn_create(parent);
   prepareTouchButton(button);
@@ -74,11 +72,31 @@ static lv_obj_t *createDialogButton(lv_obj_t *parent, int x, int y, int width,
   lv_obj_add_flag(button, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
   lv_obj_clear_flag(button, LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_add_event_cb(button, eventCb, LV_EVENT_CLICKED, NULL);
+  return button;
+}
 
+// Shared factory for dialog buttons whose text changes while the dialog is open.
+// Returns the button; its label is child 0 (lv_obj_get_child(btn, 0)).
+static lv_obj_t *createDialogButton(lv_obj_t *parent, int x, int y, int width,
+                                    const char *text, const lv_font_t *font, lv_event_cb_t eventCb)
+{
+  lv_obj_t *button = createDialogButtonBase(parent, x, y, width, eventCb);
   lv_obj_t *label = lv_label_create(button);
   lv_obj_set_align(label, LV_ALIGN_CENTER);
   lv_label_set_text_static(label, text);
   lv_obj_set_style_text_font(label, font, LV_PART_MAIN);
+  return button;
+}
+
+// LVGL's spinbox example renders fixed symbols as a button background image.
+// This preserves button feedback without allocating a child label per symbol.
+static lv_obj_t *createDialogSymbolButton(lv_obj_t *parent, int x, int y, int width,
+                                          const char *symbol, const lv_font_t *font,
+                                          lv_event_cb_t eventCb)
+{
+  lv_obj_t *button = createDialogButtonBase(parent, x, y, width, eventCb);
+  lv_obj_set_style_bg_image_src(button, symbol, LV_PART_MAIN);
+  lv_obj_set_style_text_font(button, font, LV_PART_MAIN);
   return button;
 }
 
@@ -142,12 +160,10 @@ static void ensureNoButton()
     return;
   }
   ui_ButtonMessageNo = createDialogButton(ui_PanelMessages, 64, 100, 120,
-                                          "", UI_FONT_NORMAL, messageNo_event_cb);
+                                          UI_SYMBOL_CANCEL, UI_FONT_LARGE, messageNo_event_cb);
   lv_obj_set_style_bg_color(ui_ButtonMessageNo, lv_color_hex(0xFF0000), LV_PART_MAIN);
-  lv_obj_set_style_bg_opa(ui_ButtonMessageNo, 255, LV_PART_MAIN);
   lv_obj_set_style_text_color(ui_ButtonMessageNo, lv_color_black(), LV_PART_MAIN);
   ui_LabelMessageNo = lv_obj_get_child(ui_ButtonMessageNo, 0);
-  lv_label_set_text(ui_LabelMessageNo, langText("action_cancel"));
 }
 
 // Lazily build the shared message/confirm panel. Mirrors the tune dialogs'
@@ -164,7 +180,7 @@ static void createMessageDialog()
   ui_PanelMessages = createDialogPanel();
 
   ui_ButtonMessageOk = createDialogButton(ui_PanelMessages, 0, 100, 120,
-                                          "", UI_FONT_NORMAL, messageOk_event_cb);
+                                          UI_SYMBOL_OK, UI_FONT_LARGE, messageOk_event_cb);
   ui_LabelMessageOk = lv_obj_get_child(ui_ButtonMessageOk, 0);
 
   // A single scroll viewport preserves the complete message while actions stay fixed.
@@ -188,7 +204,7 @@ static void createMessageDialog()
 // messageBoxOpen/confirmBoxOpen state flags before calling so the dialog is
 // already armed by the time the panel becomes visible.
 static void presentDialog(const char *message, const lv_font_t *font,
-                          lv_color_t color, bool showNo, const char *actionText)
+                          lv_color_t color, bool showNo, const char *actionSymbol)
 {
   if (!lvglLock())
   {
@@ -199,7 +215,7 @@ static void presentDialog(const char *message, const lv_font_t *font,
   {
     ensureNoButton();
     lv_obj_set_x(ui_ButtonMessageOk, -64);
-    lv_label_set_text(ui_LabelMessageOk, actionText);
+    lv_label_set_text_static(ui_LabelMessageOk, actionSymbol);
     lv_obj_clear_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
   }
   else
@@ -211,7 +227,7 @@ static void presentDialog(const char *message, const lv_font_t *font,
       lv_obj_add_flag(ui_ButtonMessageNo, LV_OBJ_FLAG_HIDDEN);
     }
     lv_obj_set_x(ui_ButtonMessageOk, 0);
-    lv_label_set_text(ui_LabelMessageOk, langText("action_ok"));
+    lv_label_set_text_static(ui_LabelMessageOk, UI_SYMBOL_OK);
   }
   lv_obj_set_style_text_font(ui_LabelMessages, font, LV_PART_MAIN);
   lv_obj_set_style_text_color(ui_LabelMessages, color, LV_PART_MAIN);
@@ -284,20 +300,20 @@ void successBox(const String &message, bool wait)
   successBox(message.c_str(), wait);
 }
 
-bool confirmBox(const String &message, const lv_font_t *font, lv_color_t color, const char *actionText)
+bool confirmBox(const String &message, const lv_font_t *font, lv_color_t color, const char *actionSymbol)
 {
   confirmBoxResult = false;
-  showConfirmBox(message, font, color, actionText);
+  showConfirmBox(message, font, color, actionSymbol);
   pumpUntil(messageBoxOpen);
   return confirmBoxResult.load();
 }
 
-void showConfirmBox(const String &message, const lv_font_t *font, lv_color_t color, const char *actionText)
+void showConfirmBox(const String &message, const lv_font_t *font, lv_color_t color, const char *actionSymbol)
 {
   cancelInteractiveDialogs();
   messageBoxOpen = true;
   confirmBoxOpen = true;
-  presentDialog(message.c_str(), font, color, true, actionText);
+  presentDialog(message.c_str(), font, color, true, actionSymbol);
 }
 
 // ---------------------------------------------------------------------------
@@ -325,10 +341,17 @@ long profileTuneSteps[PROFILE_MAX_ENTRIES];
 lv_obj_t *ui_PanelProfileTune = NULL;
 lv_obj_t *profileTuneTitleLabel = NULL;
 lv_obj_t *profileTuneValueLabel = NULL;
+lv_obj_t *profileTuneIncreaseButton = NULL;
+lv_obj_t *profileTuneDecreaseButton = NULL;
+lv_obj_t *profileTuneEntryButton = NULL;
 lv_obj_t *profileTuneEntryLabel = NULL;
+lv_obj_t *profileTuneModePreviousButton = NULL;
+lv_obj_t *profileTuneModeNextButton = NULL;
 lv_obj_t *profileTuneStepSizeButton = NULL;
 lv_obj_t *profileTuneStepSizeLabel = NULL;
 lv_obj_t *profileTuneTestButton = NULL;
+lv_obj_t *profileTuneCloseButton = NULL;
+lv_obj_t *profileTuneSaveButton = NULL;
 
 struct ProfileTuneTestRequest
 {
@@ -394,10 +417,17 @@ void closeProfileTuneDialog()
     closeDialog(&ui_PanelProfileTune, true);
     profileTuneTitleLabel = NULL;
     profileTuneValueLabel = NULL;
+    profileTuneIncreaseButton = NULL;
+    profileTuneDecreaseButton = NULL;
+    profileTuneEntryButton = NULL;
     profileTuneEntryLabel = NULL;
+    profileTuneModePreviousButton = NULL;
+    profileTuneModeNextButton = NULL;
     profileTuneStepSizeButton = NULL;
     profileTuneStepSizeLabel = NULL;
     profileTuneTestButton = NULL;
+    profileTuneCloseButton = NULL;
+    profileTuneSaveButton = NULL;
 }
 
 static bool canTuneProfile(const String &profileName, bool valid)
@@ -442,6 +472,52 @@ static void finishProfileTune(const String &profileName)
 }
 
 
+static void layoutProfileTuneDialog(bool stepsMode)
+{
+    if (!profileTuneValueLabel || !profileTuneIncreaseButton || !profileTuneDecreaseButton ||
+        !profileTuneEntryButton || !profileTuneStepSizeButton || !profileTuneTestButton ||
+        !profileTuneModePreviousButton || !profileTuneModeNextButton ||
+        !profileTuneCloseButton || !profileTuneSaveButton)
+    {
+        return;
+    }
+
+    lv_obj_set_width(profileTuneValueLabel, UI_DIALOG_VALUE_WIDTH);
+    lv_obj_set_height(ui_PanelProfileTune, lv_pct(90));
+    lv_obj_set_x(profileTuneValueLabel, 0);
+    lv_obj_set_x(profileTuneIncreaseButton, -UI_DIALOG_SIDE_BUTTON_X);
+    lv_obj_set_x(profileTuneDecreaseButton, UI_DIALOG_SIDE_BUTTON_X);
+    lv_obj_set_width(profileTuneEntryButton, UI_DIALOG_CONTENT_WIDTH);
+    lv_obj_set_x(profileTuneEntryButton, 0);
+
+    lv_obj_set_y(profileTuneTitleLabel, UI_DIALOG_SELECTOR_Y);
+    lv_obj_set_y(profileTuneModePreviousButton, UI_DIALOG_SELECTOR_Y);
+    lv_obj_set_y(profileTuneModeNextButton, UI_DIALOG_SELECTOR_Y);
+    lv_obj_set_y(profileTuneValueLabel, UI_DIALOG_VALUE_Y);
+    lv_obj_set_y(profileTuneIncreaseButton, UI_DIALOG_VALUE_Y);
+    lv_obj_set_y(profileTuneDecreaseButton, UI_DIALOG_VALUE_Y);
+    lv_obj_set_y(profileTuneEntryButton, stepsMode ? UI_DIALOG_TEST_Y : UI_DIALOG_ENTRY_Y);
+    lv_obj_set_y(profileTuneCloseButton, UI_DIALOG_ACTION_Y);
+    lv_obj_set_y(profileTuneSaveButton, UI_DIALOG_ACTION_Y);
+
+    if (stepsMode)
+    {
+        lv_obj_set_width(profileTuneStepSizeButton, UI_DIALOG_ENTRY_STEP_WIDTH);
+        lv_obj_set_x(profileTuneStepSizeButton, UI_DIALOG_ENTRY_STEP_X);
+        lv_obj_set_y(profileTuneStepSizeButton, UI_DIALOG_ENTRY_Y);
+        lv_obj_set_width(profileTuneTestButton, UI_DIALOG_SIDE_BUTTON_WIDTH);
+        lv_obj_set_x(profileTuneTestButton, UI_DIALOG_SIDE_BUTTON_X);
+        lv_obj_set_y(profileTuneTestButton, UI_DIALOG_ENTRY_Y);
+        lv_obj_clear_flag(profileTuneStepSizeButton, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(profileTuneTestButton, LV_OBJ_FLAG_HIDDEN);
+    }
+    else
+    {
+        lv_obj_add_flag(profileTuneStepSizeButton, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(profileTuneTestButton, LV_OBJ_FLAG_HIDDEN);
+    }
+}
+
 static void updateProfileTuneLabels()
 {
     const char *key = profileTuneMode == PROFILE_TUNE_WEIGHT ? "msg_tune_profile_title" :
@@ -470,7 +546,7 @@ static void updateProfileTuneLabels()
     lv_obj_set_style_text_font(profileTuneValueLabel,
                               strlen(text) > 6 ? UI_FONT_NORMAL : UI_FONT_LARGE, LV_PART_MAIN);
     prepareTouchLabel(profileTuneValueLabel);
-    lv_obj_set_y(profileTuneValueLabel, -UI_ROW_PITCH / 2);
+    lv_obj_set_y(profileTuneValueLabel, UI_DIALOG_VALUE_Y);
     float entryValue = config.profileDiffWeight[profileTuneSelectedEntry];
     if (profileTuneMode == PROFILE_TUNE_WEIGHT)
     {
@@ -484,16 +560,7 @@ static void updateProfileTuneLabels()
     lv_label_set_text(profileTuneEntryLabel, text);
     snprintf(text, sizeof(text), "%ld", TUNE_STEP_SIZES[profileTuneStepSizeIndex]);
     lv_label_set_text(profileTuneStepSizeLabel, text);
-    if (profileTuneMode == PROFILE_TUNE_STEPS)
-    {
-        lv_obj_clear_flag(profileTuneStepSizeButton, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_clear_flag(profileTuneTestButton, LV_OBJ_FLAG_HIDDEN);
-    }
-    else
-    {
-        lv_obj_add_flag(profileTuneStepSizeButton, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_flag(profileTuneTestButton, LV_OBJ_FLAG_HIDDEN);
-    }
+    layoutProfileTuneDialog(profileTuneMode == PROFILE_TUNE_STEPS);
 }
 
 void selectPreviousTuneMode_event_cb(lv_event_t *e)
@@ -690,36 +757,51 @@ void saveProfileTune_event_cb(lv_event_t *e)
 static void createProfileTuneDialog()
 {
     ui_PanelProfileTune = createDialogPanel();
-    profileTuneTitleLabel = createDialogTitle(ui_PanelProfileTune, -3 * UI_ROW_PITCH / 2, "");
-    lv_obj_set_width(profileTuneTitleLabel, 276);
-    createDialogButton(ui_PanelProfileTune, -174, -3 * UI_ROW_PITCH / 2, 56, LV_SYMBOL_LEFT, UI_FONT_LARGE, selectPreviousTuneMode_event_cb);
-    createDialogButton(ui_PanelProfileTune, 174, -3 * UI_ROW_PITCH / 2, 56, LV_SYMBOL_RIGHT, UI_FONT_LARGE, selectNextTuneMode_event_cb);
-    profileTuneValueLabel = createDialogValueLabel(ui_PanelProfileTune, -UI_ROW_PITCH / 2);
-    createDialogButton(ui_PanelProfileTune, 108, -UI_ROW_PITCH / 2, 60, "-", UI_FONT_LARGE, decreaseTuneValue_event_cb);
-    createDialogButton(ui_PanelProfileTune, -108, -UI_ROW_PITCH / 2, 60, "+", UI_FONT_LARGE, increaseTuneValue_event_cb);
-    lv_obj_t *entryButton = createDialogButton(ui_PanelProfileTune, 0, UI_ROW_PITCH / 2, 276, "", UI_FONT_LARGE, selectTuneEntry_event_cb);
-    profileTuneEntryLabel = lv_obj_get_child(entryButton, 0);
-    profileTuneStepSizeButton = createDialogButton(ui_PanelProfileTune, 174, -UI_ROW_PITCH / 2, 56, "",
-                                                   UI_FONT_NORMAL,
-                                                   cycleProfileTuneStepSize_event_cb);
+    profileTuneTitleLabel = createDialogTitle(ui_PanelProfileTune, UI_DIALOG_SELECTOR_Y, "");
+    lv_obj_set_width(profileTuneTitleLabel, UI_DIALOG_VALUE_WIDTH);
+    profileTuneModePreviousButton = createDialogSymbolButton(
+        ui_PanelProfileTune, -UI_DIALOG_SIDE_BUTTON_X, UI_DIALOG_SELECTOR_Y,
+        UI_DIALOG_SIDE_BUTTON_WIDTH, LV_SYMBOL_LEFT, UI_FONT_LARGE,
+        selectPreviousTuneMode_event_cb);
+    profileTuneModeNextButton = createDialogSymbolButton(
+        ui_PanelProfileTune, UI_DIALOG_SIDE_BUTTON_X, UI_DIALOG_SELECTOR_Y,
+        UI_DIALOG_SIDE_BUTTON_WIDTH, LV_SYMBOL_RIGHT, UI_FONT_LARGE,
+        selectNextTuneMode_event_cb);
+    profileTuneValueLabel = createDialogValueLabel(ui_PanelProfileTune, UI_DIALOG_VALUE_Y);
+    profileTuneDecreaseButton = createDialogSymbolButton(ui_PanelProfileTune, UI_DIALOG_SIDE_BUTTON_X,
+                                                          UI_DIALOG_VALUE_Y, UI_DIALOG_SIDE_BUTTON_WIDTH,
+                                                          LV_SYMBOL_MINUS, UI_FONT_LARGE,
+                                                          decreaseTuneValue_event_cb);
+    profileTuneIncreaseButton = createDialogSymbolButton(ui_PanelProfileTune, -UI_DIALOG_SIDE_BUTTON_X,
+                                                          UI_DIALOG_VALUE_Y, UI_DIALOG_SIDE_BUTTON_WIDTH,
+                                                          LV_SYMBOL_PLUS, UI_FONT_LARGE,
+                                                          increaseTuneValue_event_cb);
+    profileTuneEntryButton = createDialogButton(ui_PanelProfileTune, 0, UI_DIALOG_ENTRY_Y,
+                                                UI_DIALOG_CONTENT_WIDTH, "", UI_FONT_LARGE,
+                                                selectTuneEntry_event_cb);
+    profileTuneEntryLabel = lv_obj_get_child(profileTuneEntryButton, 0);
+    profileTuneStepSizeButton = createDialogButton(
+        ui_PanelProfileTune, 0, UI_DIALOG_ENTRY_Y, UI_DIALOG_CONTENT_WIDTH,
+        "", UI_FONT_NORMAL, cycleProfileTuneStepSize_event_cb);
     profileTuneStepSizeLabel = lv_obj_get_child(profileTuneStepSizeButton, 0);
-    profileTuneTestButton = createDialogButton(ui_PanelProfileTune, 174, UI_ROW_PITCH / 2, 56, "", UI_FONT_NORMAL, testProfileTuneSteps_event_cb);
-    lv_label_set_text(lv_obj_get_child(profileTuneTestButton, 0), langText("action_test"));
-    lv_obj_t *closeButton = createDialogButton(ui_PanelProfileTune, 59, 3 * UI_ROW_PITCH / 2, 110,
-                                               "", UI_FONT_NORMAL,
-                                               cancelProfileTune_event_cb);
-    lv_label_set_text(lv_obj_get_child(closeButton, 0), langText("action_cancel"));
-    lv_obj_set_style_bg_color(closeButton, lv_color_hex(0xFF0000), LV_PART_MAIN);
-    lv_obj_set_style_bg_opa(closeButton, 255, LV_PART_MAIN);
-    lv_obj_set_style_text_color(closeButton, lv_color_black(), LV_PART_MAIN);
+    profileTuneTestButton = createDialogSymbolButton(ui_PanelProfileTune, 0,
+                                                     UI_DIALOG_TEST_Y, UI_DIALOG_CONTENT_WIDTH,
+                                                     UI_SYMBOL_TEST_MOVE, UI_FONT_NORMAL,
+                                                     testProfileTuneSteps_event_cb);
+    profileTuneCloseButton = createDialogSymbolButton(ui_PanelProfileTune, UI_DIALOG_ACTION_X,
+                                                      UI_DIALOG_ACTION_Y, UI_DIALOG_ACTION_WIDTH,
+                                                      UI_SYMBOL_CANCEL, UI_FONT_LARGE,
+                                                      cancelProfileTune_event_cb);
+    lv_obj_set_style_bg_color(profileTuneCloseButton, lv_color_hex(0xFF0000), LV_PART_MAIN);
+    lv_obj_set_style_text_color(profileTuneCloseButton, lv_color_black(), LV_PART_MAIN);
 
-    lv_obj_t *saveButton = createDialogButton(ui_PanelProfileTune, -59, 3 * UI_ROW_PITCH / 2, 110,
-                                              "", UI_FONT_NORMAL,
-                                              saveProfileTune_event_cb);
-    lv_label_set_text(lv_obj_get_child(saveButton, 0), langText("action_save"));
-    lv_obj_set_style_bg_color(saveButton, lv_color_hex(0x00FF00), LV_PART_MAIN);
-    lv_obj_set_style_bg_opa(saveButton, 255, LV_PART_MAIN);
-    lv_obj_set_style_text_color(saveButton, lv_color_black(), LV_PART_MAIN);
+    profileTuneSaveButton = createDialogSymbolButton(ui_PanelProfileTune, -UI_DIALOG_ACTION_X,
+                                                     UI_DIALOG_ACTION_Y, UI_DIALOG_ACTION_WIDTH,
+                                                     UI_SYMBOL_SAVE, UI_FONT_LARGE,
+                                                     saveProfileTune_event_cb);
+    lv_obj_set_style_bg_color(profileTuneSaveButton, lv_color_hex(0x00FF00), LV_PART_MAIN);
+    lv_obj_set_style_text_color(profileTuneSaveButton, lv_color_black(), LV_PART_MAIN);
+    layoutProfileTuneDialog(false);
 }
 
 bool tuneSelectedProfile()

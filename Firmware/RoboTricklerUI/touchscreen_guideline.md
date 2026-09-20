@@ -179,7 +179,7 @@ this design does not use. Adjacent tabs form one conventional segmented row.
 | --- | --- |
 | Target size and edge clearance | At least 44 x 44 visible button pixels; inset pages, profile actions and dialogs; no overlapping hit areas. |
 | Readable hierarchy and alignment | Stable three-tab organization, adjacent value controls, complete primary weights, and labels contained within parents. |
-| Clear purpose | Replace ambiguous sync arrows with source/destination text, replace tuning `T` with `Test`, and label confirm/save/cancel actions. |
+| Clear purpose | Use standard symbols for unambiguous actions: sync, motor move, OK, close, copy, delete, create and Save. Keep state/value selectors as text, and state Flash/SD direction in the confirmation. |
 | State feedback | Keep theme pressed/disabled feedback; visibly disable target adjustment while running instead of accepting a tap with no result. |
 | Mistake recovery | Activate on release; slide outside to cancel; retain explicit confirmation for profile deletion and filesystem replacement. |
 | Contrast and multiple cues | Black content on bright green/red/orange buttons; distinct text/symbols as well as colors; do not rely on beeps alone. |
@@ -212,13 +212,17 @@ long confirmation message.
 The native harness uses one circle-cache entry because MSVC rejects LVGL's
 zero-length GCC cache array; this override exists only in its generated config.
 It retains the 24 KiB configured pool and enabled widgets. The monitor reported
-21,748 managed bytes, a 19,664-byte peak and 13,568 bytes after dialogs closed.
+21,748 managed bytes, an 18,280-byte peak and 13,524 bytes after dialogs closed.
 The opaque modal backdrop prevents LVGL from also drawing the covered page, and
 dialogs free synchronously so a result message cannot overlap the previous dialog.
+Fixed Tune-button symbols use LVGL's background-symbol support, following its
+spinbox example, which removes seven child-label objects. Redundant button
+opacity and inherited-font/alignment properties are also omitted. The largest
+free block during the Profile-to-Tune draw path is 4,384 bytes.
 These are native harness measurements, not ESP32 runtime heap measurements.
 The default blue was darkened for small white labels; bright green/red/orange
 buttons retain black content. Existing red cancel and green save conventions
-and existing dialog action positions are preserved.
+are preserved, with each action expanded to nearly half the tuning dialog width.
 
 Firmware compile and image generation passed with
 `python tools/firmware_build_upload.py --cli --error --compile-only`; the older `tools/compile_upload.py` named in `agents.md` is not
@@ -229,7 +233,7 @@ pointer behavior. It cannot establish actual finger accuracy, panel contrast,
 Wi-Fi timing or ESP32 peak heap usage.
 
 Physical-device follow-up: exercise all tabs and tuning modes with a finger,
-including `100`, Test, save/cancel and both sync directions. Press, slide into a
+including `100`, the motor-move action, save/cancel and both sync directions. Press, slide into a
 gap, and release; also slide toward a neighboring button. Check that no unintended
 action occurs. Read long translated messages to their end while actions remain
 visible. Check QR placement, repeated dialog opening/closing with Wi-Fi active,
@@ -237,10 +241,16 @@ and physical readability under the intended lighting and viewing angle.
 
 ## Uniform row layout
 
-Buttons and single-line labels now use a shared 44-pixel height with 8-pixel
-horizontal and vertical gaps. Five main-screen rows occupy 252 pixels, fitting
-below the 44-pixel tab bar with page margins. Profile navigation uses the same
-row pitch; tuning uses four equal rows. Standalone labels add their centering
+Trickler controls and single-line labels use a shared 44-pixel height with
+8-pixel horizontal and vertical gaps. Five main-screen rows occupy 252 pixels, fitting
+below the 44-pixel tab bar with page margins. Profile navigation uses 88-pixel
+Up/Down controls around the restored 75-pixel profile/action row, with a 5-pixel
+inset around its Tune/Delete buttons; tuning uses four equal rows across a
+404-pixel content area, with its mode selector placed at the panel's top inset
+and Save/Close at the bottom inset. In Steps mode, one wide button cycles
+through the `1`, `10`, and `100` increments beside the motor-test button,
+directly below the step value. The profile-entry selector occupies the following
+full-width row. Standalone labels add their centering
 padding to an existing local style instead of allocating another style entry.
 Multiline
 messages and the Info log retain their variable/viewport heights. The native

@@ -203,7 +203,7 @@ void handleCalibrationProfilePrompt()
   {
     newWeightData = false;
     weightCounter = 0;
-    if (confirmBox(String(langText("msg_create_profile_prompt")) + weightToString(weight) + " gn", UI_FONT_LARGE, lv_color_hex(0xFFFFFF), langText("action_create")))
+    if (confirmBox(String(langText("msg_create_profile_prompt")) + weightToString(weight) + " gn", UI_FONT_LARGE, lv_color_hex(0xFFFFFF), UI_SYMBOL_CREATE))
     {
       String profileName = "";
       if (createProfileFromCalibration(weight, profileName))

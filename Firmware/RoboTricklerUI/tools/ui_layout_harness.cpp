@@ -93,7 +93,7 @@ static void auditButtons(lv_obj_t *root, bool segmented = false)
     for (auto button : buttons)
     {
         auto area = bounds(button);
-        require(lv_area_get_width(&area) >= UI_TOUCH_TARGET_SIZE && lv_area_get_height(&area) == UI_TOUCH_TARGET_SIZE, "minimum visible button size");
+        require(lv_area_get_width(&area) >= UI_TOUCH_TARGET_SIZE && lv_area_get_height(&area) >= UI_TOUCH_TARGET_SIZE, "minimum visible button size");
         require(area.x1 >= 0 && area.y1 >= 0 && area.x2 < 480 && area.y2 < 320, "button outside display");
         for (auto parent = lv_obj_get_parent(button); parent; parent = lv_obj_get_parent(parent))
         {
@@ -188,10 +188,32 @@ int main()
         lv_tabview_set_active(ui_TabView, 1, LV_ANIM_OFF);
         lv_label_set_text(ui_LabelProfile, "A long profile name for layout verification");
         auditButtons(ui_TabPageProfile);
-        equalRow(ui_ButtonProfilePrev, ui_PanelProfile, false);
-        equalRow(ui_PanelProfile, ui_ButtonProfileNext, false);
-        equalRow(ui_ButtonProfileTune, ui_LabelProfile, true);
-        equalRow(ui_LabelProfile, ui_ButtonProfileDelete, true);
+        auto previousProfile = bounds(ui_ButtonProfilePrev);
+        auto profilePanel = bounds(ui_PanelProfile);
+        auto nextProfile = bounds(ui_ButtonProfileNext);
+        require(lv_area_get_height(&previousProfile) == UI_PROFILE_NAV_HEIGHT &&
+                lv_area_get_height(&nextProfile) == UI_PROFILE_NAV_HEIGHT,
+                "profile navigation buttons are twice the standard height");
+        require(lv_area_get_height(&profilePanel) == UI_PROFILE_CENTER_HEIGHT &&
+                profilePanel.y1 - previousProfile.y2 - 1 >= UI_TOUCH_GAP &&
+                nextProfile.y1 - profilePanel.y2 - 1 >= UI_TOUCH_GAP,
+                "profile rows fit with minimum spacing");
+        require(lv_obj_get_width(ui_ButtonProfileTune) == UI_PROFILE_ACTION_SIZE &&
+                lv_obj_get_height(ui_ButtonProfileTune) == UI_PROFILE_ACTION_SIZE &&
+                lv_obj_get_width(ui_ButtonProfileDelete) == UI_PROFILE_ACTION_SIZE &&
+                lv_obj_get_height(ui_ButtonProfileDelete) == UI_PROFILE_ACTION_SIZE,
+                "profile action buttons match commit geometry");
+        auto tuneButton = bounds(ui_ButtonProfileTune);
+        auto deleteButton = bounds(ui_ButtonProfileDelete);
+        require(tuneButton.y1 - profilePanel.y1 >= UI_PROFILE_ACTION_PADDING &&
+                profilePanel.y2 - tuneButton.y2 >= UI_PROFILE_ACTION_PADDING &&
+                tuneButton.x1 - profilePanel.x1 >= UI_PROFILE_ACTION_PADDING &&
+                deleteButton.y1 - profilePanel.y1 >= UI_PROFILE_ACTION_PADDING &&
+                profilePanel.y2 - deleteButton.y2 >= UI_PROFILE_ACTION_PADDING &&
+                profilePanel.x2 - deleteButton.x2 >= UI_PROFILE_ACTION_PADDING,
+                "profile action button padding");
+        require(lv_obj_get_width(ui_LabelProfile) == 280 && lv_obj_get_height(ui_LabelProfile) == 45,
+                "profile label matches commit geometry");
         savePreview(german ? "profile_de.ppm" : "profile_en.ppm");
         const char *titles[] = {"msg_tune_profile_title", "msg_tune_limit_factor_title", "msg_tune_measurements_title", "msg_tune_steps_title"};
         for (auto title : titles)
@@ -201,20 +223,64 @@ int main()
             lv_label_set_text(profileTuneValueLabel, "12.345");
             lv_label_set_text(profileTuneEntryLabel, "0.100");
             lv_label_set_text(profileTuneStepSizeLabel, "100");
-            if (strcmp(title, "msg_tune_steps_title"))
-            {
-                lv_obj_add_flag(profileTuneStepSizeButton, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_add_flag(profileTuneTestButton, LV_OBJ_FLAG_HIDDEN);
-            }
+            bool stepsMode = !strcmp(title, "msg_tune_steps_title");
+            layoutProfileTuneDialog(stepsMode);
             showDialog(ui_PanelProfileTune); auditButtons(ui_PanelProfileTune);
             settle();
             lv_mem_monitor_t tuneMemory; lv_mem_monitor(&tuneMemory);
             if (tuneMemory.free_biggest_size < minimumTuneFreeBlock)
                 minimumTuneFreeBlock = tuneMemory.free_biggest_size;
             require(tuneMemory.free_biggest_size >= 2600, "profile tuning draw-memory headroom");
-            equalRow(profileTuneTitleLabel, profileTuneValueLabel, false);
-            equalRow(profileTuneValueLabel, lv_obj_get_parent(profileTuneEntryLabel), false);
-            equalRow(lv_obj_get_parent(profileTuneEntryLabel), lv_obj_get_child(ui_PanelProfileTune, -1), false);
+            auto titleBounds = bounds(profileTuneTitleLabel);
+            auto valueBounds = bounds(profileTuneValueLabel);
+            auto entryBounds = bounds(profileTuneEntryButton);
+            require(lv_area_get_height(&titleBounds) == UI_TOUCH_TARGET_SIZE &&
+                    lv_area_get_height(&valueBounds) == UI_TOUCH_TARGET_SIZE &&
+                    lv_area_get_height(&entryBounds) == UI_TOUCH_TARGET_SIZE,
+                    "profile tuning rows use touch target height");
+            require(valueBounds.y1 - titleBounds.y2 - 1 >= UI_TOUCH_GAP &&
+                    entryBounds.y1 - valueBounds.y2 - 1 >= UI_TOUCH_GAP,
+                    "profile tuning rows retain vertical spacing");
+            require(lv_obj_get_width(profileTuneTitleLabel) == UI_DIALOG_VALUE_WIDTH &&
+                    lv_obj_get_width(profileTuneIncreaseButton) == UI_DIALOG_SIDE_BUTTON_WIDTH &&
+                    lv_obj_get_width(profileTuneDecreaseButton) == UI_DIALOG_SIDE_BUTTON_WIDTH,
+                    "profile tuning header and value controls use dialog width");
+            require(lv_obj_get_width(profileTuneValueLabel) == UI_DIALOG_VALUE_WIDTH &&
+                    lv_obj_get_width(profileTuneEntryButton) == UI_DIALOG_CONTENT_WIDTH,
+                    "profile tuning labels use available row width");
+            auto closeButton = lv_obj_get_child(ui_PanelProfileTune, -2);
+            auto saveButton = lv_obj_get_child(ui_PanelProfileTune, -1);
+            require(lv_obj_get_width(closeButton) == UI_DIALOG_ACTION_WIDTH &&
+                    lv_obj_get_width(saveButton) == UI_DIALOG_ACTION_WIDTH,
+                    "profile tuning action buttons use dialog width");
+            require(bounds(profileTuneTitleLabel).y1 - bounds(ui_PanelProfileTune).y1 == UI_TOUCH_GAP,
+                    "profile tuning selector is at the top of the dialog");
+            require(bounds(closeButton).y2 + UI_TOUCH_GAP == bounds(ui_PanelProfileTune).y2,
+                    "profile tuning actions are at the bottom of the dialog");
+            if (stepsMode)
+            {
+                auto stepSizeBounds = bounds(profileTuneStepSizeButton);
+                auto testBounds = bounds(profileTuneTestButton);
+                require(stepSizeBounds.y1 - valueBounds.y2 - 1 >= UI_TOUCH_GAP &&
+                        entryBounds.y1 - stepSizeBounds.y2 - 1 >= UI_TOUCH_GAP,
+                        "step increments use their own row directly below the step value");
+                require(lv_obj_get_width(profileTuneStepSizeButton) == UI_DIALOG_ENTRY_STEP_WIDTH &&
+                            !strcmp(lv_label_get_text(profileTuneStepSizeLabel), "100"),
+                        "one button displays the selected 1, 10 or 100 increment");
+                require(testBounds.y1 == stepSizeBounds.y1 && testBounds.y2 == stepSizeBounds.y2 &&
+                            lv_obj_get_width(profileTuneTestButton) == UI_DIALOG_SIDE_BUTTON_WIDTH &&
+                            testBounds.x1 - stepSizeBounds.x2 - 1 == UI_TOUCH_GAP,
+                        "motor test and step range share one row");
+            }
+            require(!strcmp((const char *)lv_obj_get_style_bg_image_src(profileTuneTestButton,
+                                                                        LV_PART_MAIN),
+                            UI_SYMBOL_TEST_MOVE),
+                    "profile tuning move test uses refresh symbol");
+            require(!strcmp((const char *)lv_obj_get_style_bg_image_src(closeButton, LV_PART_MAIN),
+                            UI_SYMBOL_CANCEL) &&
+                    !strcmp((const char *)lv_obj_get_style_bg_image_src(saveButton, LV_PART_MAIN),
+                            UI_SYMBOL_SAVE),
+                    "profile tuning save and close icons restored");
             if (!strcmp(title, "msg_tune_steps_title")) savePreview(german ? "tune_de.ppm" : "tune_en.ppm");
             size_t tuneUsed = usedMemory();
             closeDialog(&ui_PanelProfileTune, true);
@@ -227,11 +293,19 @@ int main()
         lv_obj_clear_flag(ui_ButtonSyncFlashToSd, LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(ui_ButtonSyncSdToFlash, LV_OBJ_FLAG_HIDDEN);
         auditButtons(ui_TabPageInfo);
+        require(lv_obj_get_width(ui_ButtonScaleProtocol) == 220,
+                "scale selector restored width");
+        require(!strcmp(lv_label_get_text(ui_LabelSyncFlashToSd), LV_SYMBOL_DOWNLOAD) &&
+                !strcmp(lv_label_get_text(ui_LabelSyncSdToFlash), LV_SYMBOL_UPLOAD),
+                "filesystem sync icons restored");
         savePreview(german ? "info_de.ppm" : "info_en.ppm");
         presentDialog(german ? "Profil wirklich loeschen?\nLanger Profilname\nWeitere Informationen\nZeile 4\nZeile 5\nLetzte Zeile" :
                       "Delete this profile?\nA long profile name\nAdditional details\nLine 4\nLine 5\nLast line",
-                      UI_FONT_LARGE, lv_color_white(), true, langText("action_delete"));
+                      UI_FONT_LARGE, lv_color_white(), true, UI_SYMBOL_DELETE);
         auditButtons(ui_PanelMessages);
+        require(!strcmp(lv_label_get_text(ui_LabelMessageOk), UI_SYMBOL_DELETE) &&
+                !strcmp(lv_label_get_text(ui_LabelMessageNo), UI_SYMBOL_CANCEL),
+                "confirmation actions use delete and cancel symbols");
         auto fixed = bounds(ui_ButtonMessageOk);
         auto viewport = lv_obj_get_parent(ui_LabelMessages);
         require(lv_obj_get_scroll_bottom(viewport) > 0, "long message must be scrollable");
@@ -248,7 +322,9 @@ int main()
     size_t baseline = usedMemory();
     for (int i = 0; i < 20; ++i)
     {
-        presentDialog("Repeated message", UI_FONT_LARGE, lv_color_white(), true, langText("action_copy"));
+        presentDialog("Repeated message", UI_FONT_LARGE, lv_color_white(), true, UI_SYMBOL_COPY);
+        require(!strcmp(lv_label_get_text(ui_LabelMessageOk), UI_SYMBOL_COPY),
+                "copy confirmation uses copy symbol");
         settle(); closeDialog(&ui_PanelMessages, true); settle(); ui_ButtonMessageNo = nullptr;
     }
     require(usedMemory() == baseline, "repeated message dialogs must release their allocations");

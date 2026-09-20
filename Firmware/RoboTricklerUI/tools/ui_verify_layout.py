@@ -32,9 +32,10 @@ def main():
     AUDIT.mkdir(parents=True, exist_ok=True)
     dialogs = (ROOT / "ui_dialogs.ino").read_text(encoding="utf-8")
     helpers = (ROOT / "display_helpers.ino").read_text(encoding="utf-8")
-    names = ["createDialogButton", "createDialogPanel", "createDialogTitle",
+    names = ["createDialogButtonBase", "createDialogButton", "createDialogSymbolButton",
+             "createDialogPanel", "createDialogTitle",
              "createDialogValueLabel", "ensureNoButton", "createMessageDialog",
-             "presentDialog", "createProfileTuneDialog"]
+             "presentDialog", "layoutProfileTuneDialog", "createProfileTuneDialog"]
     bodies = "\n\n".join(function_body(helpers, n) for n in
                           ["showDialog", "closeDialog", "setProfileTabEnabled"])
     bodies += "\n\n" + "\n\n".join(function_body(dialogs, n) for n in names)
