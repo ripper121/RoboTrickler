@@ -34,6 +34,8 @@ For errors or questions, [contact us](https://shop.strenuous.dev/contact).
 - One shared profile-tuning dialog for weight per revolution, map-limit factor, measurement counts, and step counts, including a motor test before saving.
 - Compact profiles with defaults for optional fields, plus a configurable `general.trickleMapLimitFactor`.
 - Complete USB installation from the browser using the 8 MB firmware/LittleFS layout.
+- Optional 180-degree rotation of both the display and touchscreen, configurable from the web settings page.
+- Redesigned browser file editor with a clearer desktop-style layout, status feedback, and improved file navigation.
 - More robust file replacement, update validation, motor-error handling, and coordination between touchscreen, web, and trickler tasks.
 - Updated German manual with current API methods and screenshots in `docs/screenshots/`.
 
@@ -46,6 +48,7 @@ For errors or questions, [contact us](https://shop.strenuous.dev/contact).
 - Browser USB installer at [ripper121.github.io/RoboTrickler](https://ripper121.github.io/RoboTrickler/) with release selection and English/German SD-card instructions. Its build verifies consistency of release images; a GitHub Pages workflow refreshes the available releases.
 - `tools/tools.py` as a common launcher for firmware, release, filesystem, manual, and profile tools.
 - Native LVGL layout verification and reproducible manual screenshots, including a local web preview with illustrative device responses.
+- Optional `display.rotate180` configuration. When enabled, the firmware applies the matching display orientation and touch calibration at startup. Existing configurations without the new `display` object remain valid and default to the normal orientation.
 
 ### Changed
 
@@ -60,6 +63,8 @@ For errors or questions, [contact us](https://shop.strenuous.dev/contact).
 - Translation parsing retains only the required JSON section. Shared dialogs, directly rendered button symbols and fewer style allocations reduce memory use within the unchanged 24 KiB LVGL pool.
 - Release tooling now builds only the 8 MB layout with LittleFS; the legacy 4 MB build option and legacy SD package are removed. Production builds clean stale build/staging output before rebuilding.
 - Updated trickler CAD models and RS232 board design files.
+- The browser file editor now uses a compact dark desktop-style interface with a title bar, current-file indicator, toolbar, Explorer sidebar, status bar, cursor position, localized operation states, and clearer upload controls. Loading a file also updates the upload target path, and text files open without retaining stale undo history.
+- The bundled web home page now identifies firmware 2.15.
 
 ### Fixed
 
@@ -68,3 +73,4 @@ For errors or questions, [contact us](https://shop.strenuous.dev/contact).
 - Synchronized runtime state, weight snapshots and dialog flags reduce conflicting operations and duplicate completion handling across tasks.
 - Failed or partial I2S writes latch a motor-output fault and reject further moves until restart. Initialization now checks task, mutex and I2S setup failures; motor timing validation rejects unsupported step-rate combinations.
 - Step-tuning tests interrupt the idle scale-poll wait so a missing scale response does not delay the requested test.
+- File-editor create, delete, and directory-list requests now send named, URL-encoded path parameters that match the firmware handlers, preventing HTTP 500 errors for these operations and supporting special characters safely.
