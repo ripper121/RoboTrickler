@@ -96,12 +96,17 @@ static bool hasRequiredNormalProfileFields(JsonObject profile)
 
 static bool hasRequiredConfigurationFields(JsonObject doc)
 {
+  static const char *const configFields[] = {
+      "wifi", "scale", "stepper", "activeProfile", "beeper", "language",
+      "display", "totalCounter", "firmwareUpdate"};
   JsonObject wifi = doc["wifi"].as<JsonObject>();
   JsonObject scale = doc["scale"].as<JsonObject>();
   JsonObject stepper = doc["stepper"].as<JsonObject>();
+  JsonObject display = doc["display"].as<JsonObject>();
   JsonObject totalCounter = doc["totalCounter"].as<JsonObject>();
   JsonObject firmwareUpdate = doc["firmwareUpdate"].as<JsonObject>();
-  return !doc.isNull() && (doc.size() == 8) &&
+  return !doc.isNull() && (doc.size() >= 8) && (doc.size() <= 9) &&
+         hasOnlyFields(doc, configFields, sizeof(configFields) / sizeof(configFields[0])) &&
          !wifi.isNull() && (wifi.size() == 7) &&
          !wifi["enabled"].isNull() &&
          !wifi["ssid"].isNull() &&
@@ -119,6 +124,7 @@ static bool hasRequiredConfigurationFields(JsonObject doc)
          !doc["activeProfile"].isNull() &&
          !doc["beeper"].isNull() &&
          !doc["language"].isNull() &&
+         (display.isNull() || ((display.size() == 1) && !display["rotate180"].isNull())) &&
          !totalCounter.isNull() && (totalCounter.size() == 2) &&
          !totalCounter["enable"].isNull() &&
          !totalCounter["count"].isNull() &&
@@ -353,6 +359,7 @@ void setDefaultConfiguration(Config &config)
   config.targetWeight = 40.0;
   strlcpy(config.beeper, "done", sizeof(config.beeper));
   strlcpy(config.language, "en", sizeof(config.language));
+  config.displayRotate180 = false;
   config.fwUpdateCheck = true;
   config.totalCounterEnable = false;
   config.totalCount = 0;
@@ -672,6 +679,7 @@ bool loadConfiguration(const char *filename, Config &config)
   strlcpy(config.profileName, doc["activeProfile"] | config.profileName, sizeof(config.profileName));
   strlcpy(config.beeper, doc["beeper"] | config.beeper, sizeof(config.beeper));
   strlcpy(config.language, doc["language"] | config.language, sizeof(config.language));
+  config.displayRotate180 = doc["display"]["rotate180"] | config.displayRotate180;
   config.totalCounterEnable = doc["totalCounter"]["enable"] | config.totalCounterEnable;
   config.totalCount = doc["totalCounter"]["count"] | config.totalCount;
   if (config.totalCount < 0)
@@ -1308,6 +1316,7 @@ bool saveConfiguration(const char *filename, const Config &config)
   doc["activeProfile"] = config.profileName;
   doc["beeper"] = config.beeper;
   doc["language"] = config.language;
+  doc["display"]["rotate180"] = config.displayRotate180;
   doc["totalCounter"]["enable"] = config.totalCounterEnable;
   doc["totalCounter"]["count"] = totalCountSnapshot;
   doc["firmwareUpdate"]["check"] = config.fwUpdateCheck;

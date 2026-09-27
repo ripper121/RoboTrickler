@@ -36,7 +36,12 @@ void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data)
   (void)indev;
   uint16_t touchX, touchY;
 
-  bool touched = tft.getTouch(&touchX, &touchY, 1);
+  // The MKS DLC32 ST7796 uses rotation 1 for the opposite landscape
+  // orientation. Its rotated calibration produces a 320 x 480 coordinate
+  // space, so swap and mirror the axes into LVGL's 480 x 320 space.
+  bool touched = config.displayRotate180
+                     ? tft.getTouch(&touchY, &touchX, 1)
+                     : tft.getTouch(&touchX, &touchY, 1);
 
   if (!touched)
   {
@@ -46,10 +51,34 @@ void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data)
   {
     data->state = LV_INDEV_STATE_PR;
 
+    if (config.displayRotate180)
+    {
+      touchX = (LV_HOR_RES_MAX - 1) - touchX;
+      touchY = (LV_VER_RES_MAX - 1) - touchY;
+    }
+
     /*Set the coordinates*/
     data->point.x = touchX;
     data->point.y = touchY;
   }
+}
+
+void applyDisplayRotation()
+{
+  if (!lvglLock())
+  {
+    return;
+  }
+
+  uint8_t rotation = config.displayRotate180 ? DISPLAY_ROTATION_180 : DISPLAY_ROTATION;
+  tft.setRotation(rotation);
+
+  uint16_t normalTouchCalibration[5] = TOUCH_CAL_DATA;
+  uint16_t rotatedTouchCalibration[5] = TOUCH_CAL_DATA_ROTATED;
+  tft.setTouch(config.displayRotate180 ? rotatedTouchCalibration : normalTouchCalibration);
+
+  lv_obj_invalidate(lv_screen_active());
+  lvglUnlock();
 }
 
 void displayInit()

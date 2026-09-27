@@ -34,7 +34,9 @@
 
 #define TOUCH_CS				    GPIO_NUM_26
 #define DISPLAY_ROTATION            0
+#define DISPLAY_ROTATION_180        1
 #define TOUCH_CAL_DATA              {248, 3571, 202, 3647, 5}
+#define TOUCH_CAL_DATA_ROTATED      {202, 3647, 248, 3571, 2}
 #define I2S_BEEPER					    7
 
 #define IIC_SCL                     GPIO_NUM_4

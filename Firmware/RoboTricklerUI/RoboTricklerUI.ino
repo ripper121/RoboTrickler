@@ -103,6 +103,7 @@ struct Config
 
   char beeper[16];
   char language[8];
+  bool displayRotate180;
   bool fwUpdateCheck;
   bool totalCounterEnable;
   long totalCount;

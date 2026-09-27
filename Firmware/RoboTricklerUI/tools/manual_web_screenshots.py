@@ -43,7 +43,8 @@ class PreviewHandler(SimpleHTTPRequestHandler):
                          "ipStatic": "", "ipGateway": "", "ipSubnet": "", "ipDns": ""},
                 "scale": {"protocol": "GG", "customCode": "", "baud": 9600},
                 "stepper": {"stepsPerRev": 200}, "activeProfile": "avg", "language": "de",
-                "beeper": "done", "totalCounter": {"enable": False, "count": 0},
+                "beeper": "done", "display": {"rotate180": False},
+                "totalCounter": {"enable": False, "count": 0},
                 "firmwareUpdate": {"check": True},
             }
         if url.path == "/list":

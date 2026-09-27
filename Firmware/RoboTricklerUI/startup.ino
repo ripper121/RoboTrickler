@@ -87,6 +87,7 @@ void initSetup()
         errorBox(message, false);
     }
 
+    applyDisplayRotation();
     applyLanguage();
     updateScaleProtocolButtonLabel();
     updateFilesystemSyncControls();

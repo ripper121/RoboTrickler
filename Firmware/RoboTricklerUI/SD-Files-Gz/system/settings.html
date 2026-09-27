@@ -86,6 +86,9 @@
                     <option value="de" data-i18n="config.german">Deutsch</option>
                 </select><br>
 
+                <label for="display_rotate180" data-i18n="config.rotate180">Rotate display by 180 degrees:</label>
+                <input type="checkbox" id="display_rotate180" name="display_rotate180"><br>
+
                 <label for="profile_name" data-i18n="config.profile">Profile:</label>
                 <input type="text" id="profile_name" name="profile_name" maxlength="31" value="calibrate"><br>
 
@@ -130,6 +133,20 @@
             return value;
         }
 
+        function requireConfigObject(value) {
+            const requiredKeys = ['wifi', 'scale', 'stepper', 'activeProfile', 'beeper', 'language', 'totalCounter', 'firmwareUpdate'];
+            const allowedKeys = requiredKeys.concat(['display']);
+            if (!value || typeof value !== 'object' || Array.isArray(value)) {
+                throw new Error('Config must be an object');
+            }
+            const actualKeys = Object.keys(value);
+            if (!requiredKeys.every(key => Object.prototype.hasOwnProperty.call(value, key)) ||
+                !actualKeys.every(key => allowedKeys.includes(key))) {
+                throw new Error('Config does not match the current schema');
+            }
+            return value;
+        }
+
         function cleanText(value, fallback, maxLength) {
             var text = value === undefined || value === null ? fallback : String(value);
             return text.substring(0, maxLength);
@@ -149,13 +166,14 @@
         }
 
         function cleanConfigJSON(jsonObject) {
-            jsonObject = requireExactObject(jsonObject,
-                ['wifi', 'scale', 'stepper', 'activeProfile', 'beeper', 'language', 'totalCounter', 'firmwareUpdate'], 'Config');
+            jsonObject = requireConfigObject(jsonObject);
             var wifi = requireExactObject(jsonObject.wifi,
                 ['enabled', 'ssid', 'psk', 'ipStatic', 'ipGateway', 'ipSubnet', 'ipDns'], 'wifi');
             var scale = requireExactObject(jsonObject.scale,
                 ['protocol', 'customCode', 'baud'], 'scale');
             var stepper = requireExactObject(jsonObject.stepper, ['stepsPerRev'], 'stepper');
+            var display = jsonObject.display === undefined ? { rotate180: false } :
+                requireExactObject(jsonObject.display, ['rotate180'], 'display');
             var totalCounter = requireExactObject(jsonObject.totalCounter, ['enable', 'count'], 'totalCounter');
             var firmwareUpdate = requireExactObject(jsonObject.firmwareUpdate, ['check'], 'firmwareUpdate');
             var scaleProtocol = scale.protocol;
@@ -185,6 +203,9 @@
                 activeProfile: profileName || 'calibrate',
                 beeper: cleanOption(jsonObject.beeper, allowedBeepers, 'done'),
                 language: cleanOption(jsonObject.language, allowedLanguages, 'en'),
+                display: {
+                    rotate180: display.rotate180 === true
+                },
                 totalCounter: {
                     enable: totalCounter.enable === true,
                     count: Math.max(0, parseInt(totalCounter.count, 10) || 0)
@@ -220,6 +241,9 @@
                 activeProfile: (formData.get('profile_name') || 'calibrate').trim() || 'calibrate',
                 beeper: formData.get('beeper'),
                 language: formData.get('language'),
+                display: {
+                    rotate180: document.getElementById('display_rotate180').checked
+                },
                 totalCounter: {
                     enable: document.getElementById('trickle_counter').checked,
                     count: Math.max(0, parseInt(formData.get('trickle_count'), 10) || 0)
@@ -255,6 +279,7 @@
                 configForm.stepsPerRev.value = jsonObject.stepper.stepsPerRev || 200;
                 configForm.beeper.value = jsonObject.beeper || 'done';
                 configForm.language.value = jsonObject.language || 'en';
+                configForm.display_rotate180.checked = jsonObject.display.rotate180 === true;
                 configForm.profile_name.value = jsonObject.activeProfile || 'calibrate';
                 configForm.trickle_counter.checked = jsonObject.totalCounter.enable === true;
                 configForm.trickle_count.value = jsonObject.totalCounter.count || 0;

@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <meta charset="UTF-8">
   <title data-i18n="titles.fileEditor">SD Editor</title>
   <link rel="icon" type="image/x-icon" href="/system/resources/favicon.ico">
   <style type="text/css" media="screen">
@@ -187,6 +188,419 @@
       background-color: #34bd50;
     }
   </style>
+  <style type="text/css" media="screen">
+    :root {
+      color-scheme: dark;
+      --titlebar: #181818;
+      --toolbar: #242424;
+      --sidebar: #181818;
+      --editor-bg: #1f1f1f;
+      --border: #2b2b2b;
+      --text: #cccccc;
+      --muted: #8b8b8b;
+      --hover: #2a2d2e;
+      --selected: #37373d;
+      --accent: #007acc;
+      --success: #2ea043;
+      --danger: #c74e39;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--editor-bg);
+      color: var(--text);
+      font: 13px "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    #titlebar {
+      position: absolute;
+      z-index: 210;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: var(--titlebar);
+      user-select: none;
+    }
+
+    .app-mark {
+      width: 35px;
+      height: 35px;
+      display: grid;
+      place-items: center;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      letter-spacing: -.5px;
+    }
+
+    .app-name {
+      padding-left: 11px;
+      color: #f0f0f0;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .2px;
+    }
+
+    .app-name span {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    #current-file {
+      position: absolute;
+      left: 50%;
+      max-width: 40%;
+      overflow: hidden;
+      color: #b9b9b9;
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transform: translateX(-50%);
+    }
+
+    #uploader {
+      top: 35px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border);
+      background: var(--toolbar);
+      color: var(--text);
+      line-height: normal;
+      white-space: nowrap;
+      scrollbar-width: thin;
+    }
+
+    #uploader .file-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #uploader .file-picker,
+    #uploader button {
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 11px;
+      border: 1px solid #454545;
+      border-radius: 3px;
+      background: #333333;
+      color: #e7e7e7;
+      cursor: pointer;
+    }
+
+    #uploader .file-picker:hover,
+    #uploader button:hover {
+      border-color: #606060;
+      background: #3d3d3d;
+    }
+
+    #uploader button:active {
+      transform: translateY(1px);
+    }
+
+    #uploader #upload-path {
+      min-width: 170px;
+      height: 30px;
+      flex: 1 1 280px;
+      padding: 0 9px;
+      border: 1px solid #3c3c3c;
+      border-radius: 2px;
+      outline: none;
+      background: #181818;
+      color: #e7e7e7;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    #uploader #upload-path:focus {
+      border-color: var(--accent);
+    }
+
+    #uploader .button-save {
+      border-color: #16825d;
+      background: #16825d;
+      color: white;
+      font-weight: 600;
+    }
+
+    #uploader .button-save:hover {
+      border-color: #1f9d70;
+      background: #1f9d70;
+    }
+
+    #uploader .button-reboot {
+      border-color: #683d38;
+      color: #f2c8c3;
+    }
+
+    #tree {
+      top: 79px;
+      bottom: 22px;
+      width: 250px;
+      overflow: auto;
+      padding: 0 0 12px;
+      border-right: 1px solid var(--border);
+      background: var(--sidebar);
+      scrollbar-color: #454545 transparent;
+      scrollbar-width: thin;
+    }
+
+    .panel-title {
+      position: sticky;
+      z-index: 2;
+      top: 0;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      background: var(--sidebar);
+      color: #bbbbbb;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .7px;
+      text-transform: uppercase;
+    }
+
+    .css-treeview {
+      padding: 0 7px;
+      color: var(--text);
+      font: 13px "Segoe UI", system-ui, sans-serif;
+    }
+
+    .css-treeview ul {
+      margin-left: 11px;
+    }
+
+    .css-treeview>ul {
+      margin-left: 0;
+    }
+
+    .css-treeview li {
+      min-width: max-content;
+    }
+
+    .css-treeview label,
+    .css-treeview span {
+      width: calc(100% - 4px);
+      height: 25px;
+      overflow: hidden;
+      padding: 3px 6px;
+      border-radius: 3px;
+      background: none;
+      color: #cccccc;
+      line-height: 19px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    .css-treeview label:hover,
+    .css-treeview span:hover {
+      background: var(--hover);
+      color: white;
+      text-decoration: none;
+    }
+
+    .css-treeview label::before {
+      width: 0;
+      height: 0;
+      margin: 0 8px 0 2px;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 6px solid #9d9d9d;
+      background: none;
+      content: "";
+      transition: transform .1s ease;
+    }
+
+    .css-treeview input:checked+label::before {
+      background: none;
+      transform: rotate(90deg);
+    }
+
+    .css-treeview span::before {
+      margin-right: 8px;
+      color: #75beff;
+      content: "\25C7";
+      font-size: 11px;
+    }
+
+    #editor,
+    #preview {
+      top: 79px;
+      bottom: 22px;
+      left: 250px;
+    }
+
+    #preview {
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background-color: #1f1f1f;
+      background-image: linear-gradient(45deg, #262626 25%, transparent 25%),
+        linear-gradient(-45deg, #262626 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #262626 75%),
+        linear-gradient(-45deg, transparent 75%, #262626 75%);
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+      background-size: 16px 16px;
+    }
+
+    #preview img {
+      border: 1px solid #3c3c3c;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, .4);
+    }
+
+    #statusbar {
+      position: absolute;
+      z-index: 220;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 9px;
+      background: var(--accent);
+      color: white;
+      font-size: 11px;
+      user-select: none;
+    }
+
+    #editor-status[data-state="error"] {
+      font-weight: 600;
+    }
+
+    .status-hint {
+      opacity: .9;
+    }
+
+    .contextMenu {
+      z-index: 300;
+      min-width: 150px;
+      overflow: hidden;
+      padding: 4px;
+      border: 1px solid #454545;
+      border-radius: 5px;
+      background: #252526;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+      color: var(--text);
+      font: 12px "Segoe UI", system-ui, sans-serif;
+      font-weight: 400;
+    }
+
+    .contextMenu li {
+      min-width: 140px;
+      border-radius: 3px;
+    }
+
+    .contextMenu span {
+      width: 100%;
+      padding: 7px 9px;
+      color: var(--text);
+    }
+
+    .contextMenu li:hover {
+      background: #094771;
+    }
+
+    .contextMenu li:hover span {
+      color: white;
+    }
+
+    .ace-tm {
+      background: #1f1f1f !important;
+      color: #d4d4d4 !important;
+    }
+
+    .ace-tm .ace_gutter {
+      background: #181818 !important;
+      color: #858585 !important;
+    }
+
+    .ace-tm .ace_gutter-active-line,
+    .ace-tm .ace_marker-layer .ace_active-line {
+      background: #2a2d2e !important;
+    }
+
+    .ace-tm .ace_marker-layer .ace_selection {
+      background: #264f78 !important;
+    }
+
+    .ace-tm .ace_cursor {
+      color: #aeafad !important;
+    }
+
+    .ace-tm .ace_keyword,
+    .ace-tm .ace_storage {
+      color: #c586c0 !important;
+    }
+
+    .ace-tm .ace_constant,
+    .ace-tm .ace_numeric {
+      color: #b5cea8 !important;
+    }
+
+    .ace-tm .ace_string {
+      color: #ce9178 !important;
+    }
+
+    .ace-tm .ace_comment {
+      color: #6a9955 !important;
+      font-style: italic;
+    }
+
+    .ace-tm .ace_support,
+    .ace-tm .ace_function {
+      color: #dcdcaa !important;
+    }
+
+    .ace-tm .ace_variable,
+    .ace-tm .ace_identifier {
+      color: #9cdcfe !important;
+    }
+
+    @media (max-width: 720px) {
+      #current-file {
+        right: 8px;
+        left: auto;
+        max-width: 45%;
+        transform: none;
+      }
+
+      #tree {
+        width: 190px;
+      }
+
+      #editor,
+      #preview {
+        left: 190px;
+      }
+    }
+  </style>
   <script>
     function textFromPath(data, path) {
       return path.split('.').reduce(function (value, key) {
@@ -242,26 +656,58 @@
       node.appendChild(span);
     }
 
+    function setEditorStatus(message, state) {
+      var status = document.getElementById('editor-status');
+      if (!status) return;
+      status.textContent = message;
+      status.dataset.state = state || 'ready';
+    }
+
+    function setActiveFile(path) {
+      var currentFile = document.getElementById('current-file');
+      if (currentFile) {
+        currentFile.textContent = path || rtT('fileEditor.noFile', 'No file open');
+        currentFile.title = path || '';
+      }
+    }
+
+    function displayName(path) {
+      var slash = path.lastIndexOf('/');
+      return slash >= 0 && slash < path.length - 1 ? path.substring(slash + 1) : path;
+    }
+
     function createFileUploader(element, tree, editor) {
       var xmlHttp;
       var input = document.createElement("input");
       input.type = "file";
       input.multiple = false;
       input.name = "data";
+      input.id = "upload-file";
+      input.className = "file-input";
+      input.title = rtT('fileEditor.chooseFile', 'Choose a local file');
       document.getElementById(element).appendChild(input);
+      var filePicker = document.createElement("label");
+      filePicker.className = "file-picker";
+      filePicker.htmlFor = input.id;
+      setFileEditorText(filePicker, 'chooseFile', 'Choose file');
+      document.getElementById(element).appendChild(filePicker);
       var path = document.createElement("input");
       path.id = "upload-path";
       path.type = "text";
       path.name = "path";
-      path.defaultValue = "/";
+      var activePath = document.getElementById('current-file').textContent;
+      path.defaultValue = activePath.charAt(0) === '/' ? activePath : "/";
       document.getElementById(element).appendChild(path);
       var button = document.createElement("button");
+      button.className = "button-upload";
       setFileEditorText(button, 'upload', 'Upload');
       document.getElementById(element).appendChild(button);
       var mkdir = document.createElement("button");
+      mkdir.className = "button-new-dir";
       setFileEditorText(mkdir, 'newDir', 'New Dir');
       document.getElementById(element).appendChild(mkdir);
       var mkfile = document.createElement("button");
+      mkfile.className = "button-new-file";
       setFileEditorText(mkfile, 'newFile', 'New File');
       document.getElementById(element).appendChild(mkfile);
       var savefile = document.createElement("button");
@@ -269,18 +715,24 @@
       setFileEditorText(savefile, 'save', 'Save');
       document.getElementById(element).appendChild(savefile);
       var reboot = document.createElement("button");
+      reboot.className = "button-reboot";
       setFileEditorText(reboot, 'reboot', 'Reboot');
       document.getElementById(element).appendChild(reboot);
 
       function httpPostProcessRequest() {
         if (xmlHttp.readyState == 4) {
-          if (xmlHttp.status != 200) alert(rtT('alerts.errorPrefix', 'ERROR') + "[" + xmlHttp.status + "]: " + xmlHttp.responseText);
+          if (xmlHttp.status != 200) {
+            setEditorStatus(rtT('fileEditor.operationFailed', 'Operation failed'), 'error');
+            alert(rtT('alerts.errorPrefix', 'ERROR') + "[" + xmlHttp.status + "]: " + xmlHttp.responseText);
+          }
           else {
+            setEditorStatus(rtT('fileEditor.ready', 'Ready'));
             tree.refreshPath(path.value);
           }
         }
       }
       function createPath(p) {
+        setEditorStatus(rtT('fileEditor.working', 'Working...'), 'working');
         xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = httpPostProcessRequest;
         xmlHttp.open("PUT", "/system/resources/edit?path=" + encodeURIComponent(p));
@@ -318,6 +770,7 @@
           return;
         }
         xmlHttp = new XMLHttpRequest();
+        setEditorStatus(rtT('fileEditor.uploading', 'Uploading...'), 'working');
         xmlHttp.onreadystatechange = httpPostProcessRequest;
         var formData = new FormData();
         formData.append("data", input.files[0], path.value);
@@ -327,6 +780,8 @@
       input.onchange = function (e) {
         if (input.files.length === 0) return;
         var filename = input.files[0].name;
+        filePicker.textContent = filename;
+        filePicker.title = filename;
         if (path.value === "/" || path.value.lastIndexOf("/") === 0) {
           path.value = "/" + filename;
         } else {
@@ -349,6 +804,8 @@
         document.getElementById("editor").style.display = "none";
         preview.style.display = "block";
         preview.innerHTML = '<img src="' + path + '" style="max-width:100%; max-height:100%; margin:auto; display:block;" />';
+        setActiveFile(path);
+        setEditorStatus(rtT('fileEditor.preview', 'Preview'));
       }
 
       function fillFolderMenu(el, path) {
@@ -463,7 +920,8 @@
         var leaf = document.createElement("li");
         leaf.id = name;
         var label = document.createElement("span");
-        label.textContent = name;
+        label.textContent = displayName(name);
+        label.title = name;
         leaf.appendChild(label);
         leaf.onclick = function (e) {
           if (isTextFile(leaf.id)) {
@@ -488,8 +946,9 @@
         if (typeof disabled !== "undefined" && disabled) check.disabled = "disabled";
         leaf.appendChild(check);
         var label = document.createElement("label");
-        label.for = check.id;
-        label.textContent = name;
+        label.htmlFor = check.id;
+        label.textContent = displayName(name);
+        label.title = name;
         leaf.appendChild(label);
         check.onchange = function (e) {
           if (check.checked) {
@@ -669,13 +1128,16 @@
       //post
       function httpPostProcessRequest() {
         if (xmlHttp.readyState == 4) {
-          if (xmlHttp.status == 200)
-            alert(rtT('alerts.fileSaved', 'Saved!'));
-          else
+          if (xmlHttp.status == 200) {
+            setEditorStatus(rtT('fileEditor.saved', 'Saved'));
+          } else {
+            setEditorStatus(rtT('fileEditor.saveFailed', 'Save failed'), 'error');
             alert(rtT('alerts.errorPrefix', 'ERROR') + "[" + xmlHttp.status + "]: " + xmlHttp.responseText);
+          }
         }
       }
       function httpPost(filename, data, type) {
+        setEditorStatus(rtT('fileEditor.saving', 'Saving...'), 'working');
         xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = httpPostProcessRequest;
         var formData = new FormData();
@@ -688,12 +1150,20 @@
         if (xmlHttp.readyState == 4) {
           document.getElementById("preview").style.display = "none";
           document.getElementById("editor").style.display = "block";
-          if (xmlHttp.status == 200) editor.setValue(xmlHttp.responseText);
-          else editor.setValue("");
+          if (xmlHttp.status == 200) {
+            editor.setValue(xmlHttp.responseText, -1);
+            editor.getSession().getUndoManager().reset();
+            setEditorStatus(rtT('fileEditor.ready', 'Ready'));
+          } else {
+            editor.setValue("", -1);
+            setEditorStatus(rtT('fileEditor.loadFailed', 'Unable to load file'), 'error');
+          }
           editor.clearSelection();
         }
       }
       function httpGet(theUrl) {
+        setActiveFile(theUrl);
+        setEditorStatus(rtT('fileEditor.loading', 'Loading...'), 'working');
         xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = httpGetProcessRequest;
         xmlHttp.open("GET", theUrl, true);
@@ -707,6 +1177,18 @@
       editor.getSession().setTabSize(2);
       editor.setHighlightActiveLine(true);
       editor.setShowPrintMargin(false);
+      editor.setOptions({
+        fontSize: "14px",
+        showFoldWidgets: true,
+        fadeFoldWidgets: false,
+        displayIndentGuides: true,
+        scrollPastEnd: 0.35
+      });
+      editor.getSelection().on('changeCursor', function () {
+        var position = editor.getCursorPosition();
+        var cursor = document.getElementById('cursor-position');
+        if (cursor) cursor.textContent = 'Ln ' + (position.row + 1) + ', Col ' + (position.column + 1);
+      });
       editor.commands.addCommand({
         name: 'saveCommand',
         bindKey: { win: 'Ctrl-S', mac: 'Command-S' },
@@ -734,6 +1216,8 @@
       httpGet(file);
       editor.loadUrl = function (filename) {
         file = filename;
+        var pathInput = document.getElementById('upload-path');
+        if (pathInput) pathInput.value = filename;
         lang = getLangFromFilename(file);
         type = lang === "json" ? "application/json" : "text/" + lang;
         if (lang !== "plain") editor.getSession().setMode("ace/mode/" + lang);
@@ -743,8 +1227,11 @@
     }
     function onBodyLoad() {
       loadEditorLanguage().then(function () {
+        setFileEditorText(document.getElementById('explorer-title'), 'explorer', 'Explorer');
+        setFileEditorText(document.getElementById('shortcut-hint'), 'shortcutHint', 'Ctrl+S to save');
+        setEditorStatus(rtT('fileEditor.loading', 'Loading...'), 'working');
         var vars = {};
-        window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) { vars[key] = value; });
+        window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) { vars[key] = decodeURIComponent(value); });
         var editor = createEditor("editor", vars.file, vars.lang, vars.theme);
         var tree = createTree("tree", editor);
         createFileUploader("uploader", tree, editor);
@@ -755,10 +1242,19 @@
 </head>
 
 <body onload="onBodyLoad();">
+  <header id="titlebar">
+    <div class="app-mark">RT</div>
+    <div class="app-name">Robo-Trickler <span>Editor</span></div>
+    <div id="current-file">/config.txt</div>
+  </header>
   <div id="uploader"></div>
-  <div id="tree"></div>
+  <aside id="tree"><div id="explorer-title" class="panel-title">Explorer</div></aside>
   <div id="editor"></div>
   <div id="preview" style="display:none;"></div>
+  <footer id="statusbar">
+    <span id="editor-status">Loading...</span>
+    <span><span id="cursor-position">Ln 1, Col 1</span>&nbsp;&nbsp; <span id="shortcut-hint">Ctrl+S to save</span></span>
+  </footer>
   <iframe id=download-frame style='display:none;'></iframe>
 </body>
 
