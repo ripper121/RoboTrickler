@@ -283,10 +283,8 @@
       function createPath(p) {
         xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = httpPostProcessRequest;
-        var formData = new FormData();
-        formData.append("path", p);
-        xmlHttp.open("PUT", "/system/resources/edit");
-        xmlHttp.send(formData);
+        xmlHttp.open("PUT", "/system/resources/edit?path=" + encodeURIComponent(p));
+        xmlHttp.send(null);
       }
 
       mkfile.onclick = function (e) {
@@ -610,10 +608,8 @@
       function httpDelete(filename) {
         xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = delCb(filename);
-        var formData = new FormData();
-        formData.append("path", filename);
-        xmlHttp.open("DELETE", "/system/resources/edit");
-        xmlHttp.send(formData);
+        xmlHttp.open("DELETE", "/system/resources/edit?path=" + encodeURIComponent(filename));
+        xmlHttp.send(null);
       }
 
       function getCb(parent, path) {
@@ -628,7 +624,7 @@
       function httpGet(parent, path) {
         xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = getCb(parent, path);
-        xmlHttp.open("GET", "/list?dir=" + path, true);
+        xmlHttp.open("GET", "/list?dir=" + encodeURIComponent(path), true);
         xmlHttp.send(null);
         //start loading
       }

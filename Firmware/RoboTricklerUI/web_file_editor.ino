@@ -5,6 +5,7 @@ static bool uploadFailed = false;
 static bool uploadFilesystemLocked = false;
 static const size_t WEB_EDITOR_MAX_UPLOAD = 1024 * 1024;
 static const size_t WEB_EDITOR_MAX_PATH = 80;
+static const int WEB_EDITOR_MAX_PATH_REQUEST = 512;
 
 static bool validEditorPath(const String &path, bool allowRoot = false, bool allowTrailingSlash = false)
 {
@@ -334,11 +335,12 @@ void handleDelete()
     server.send(409, "text/plain", "Filesystem unavailable or device busy");
     return;
   }
-  if ((server.args() != 1) || (server.clientContentLength() > 128))
+  if ((server.args() != 1) || !server.hasArg("path") ||
+      (server.clientContentLength() > WEB_EDITOR_MAX_PATH_REQUEST))
   {
     return returnFail("BAD ARGS");
   }
-  String path = server.arg(0);
+  String path = server.arg("path");
   if (!validEditorPath(path) || !ACTIVE_FS.exists((char *)path.c_str()))
   {
     returnFail("BAD PATH");
@@ -357,11 +359,12 @@ void handleCreate()
     server.send(409, "text/plain", "Filesystem unavailable or device busy");
     return;
   }
-  if ((server.args() != 1) || (server.clientContentLength() > 128))
+  if ((server.args() != 1) || !server.hasArg("path") ||
+      (server.clientContentLength() > WEB_EDITOR_MAX_PATH_REQUEST))
   {
     return returnFail("BAD ARGS");
   }
-  String path = server.arg(0);
+  String path = server.arg("path");
   if (!validEditorPath(path) || ACTIVE_FS.exists((char *)path.c_str()))
   {
     returnFail("BAD PATH");
